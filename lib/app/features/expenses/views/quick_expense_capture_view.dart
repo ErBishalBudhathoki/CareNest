@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:carenest/app/features/analytics/theme/bauhaus_theme.dart';
@@ -22,10 +23,12 @@ class QuickExpenseCaptureView extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<QuickExpenseCaptureView> createState() => _QuickExpenseCaptureViewState();
+  ConsumerState<QuickExpenseCaptureView> createState() =>
+      _QuickExpenseCaptureViewState();
 }
 
-class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureView> {
+class _QuickExpenseCaptureViewState
+    extends ConsumerState<QuickExpenseCaptureView> {
   bool _isCapturing = true;
   bool _isProcessing = false;
   XFile? _capturedImage;
@@ -44,7 +47,10 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
     return Scaffold(
       backgroundColor: BauhausTheme.black,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.quickCaptureTitle, style: BauhausTheme.headerStyle.copyWith(color: BauhausTheme.white)),
+        title: Text(
+          AppLocalizations.of(context)!.quickCaptureTitle,
+          style: BauhausTheme.headerStyle.copyWith(color: BauhausTheme.white),
+        ),
         backgroundColor: BauhausTheme.black,
         elevation: 0,
         iconTheme: const IconThemeData(color: BauhausTheme.white),
@@ -82,9 +88,16 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
                       onPressed: _scanWithNativeCamera,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: BauhausTheme.black,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(0),
+                        ),
                       ),
-                      child: Text('Open Camera', style: BauhausTheme.subHeaderStyle.copyWith(color: BauhausTheme.white)),
+                      child: Text(
+                        'Open Camera',
+                        style: BauhausTheme.subHeaderStyle.copyWith(
+                          color: BauhausTheme.white,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -96,9 +109,16 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
                       onPressed: _scanFromGallery,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: BauhausTheme.black,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(0),
+                        ),
                       ),
-                      child: Text('Open Gallery', style: BauhausTheme.subHeaderStyle.copyWith(color: BauhausTheme.white)),
+                      child: Text(
+                        'Open Gallery',
+                        style: BauhausTheme.subHeaderStyle.copyWith(
+                          color: BauhausTheme.white,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -121,25 +141,29 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
             SizedBox(
               height: 300,
               width: double.infinity,
-              child: Image.file(
-                File(_capturedImage!.path),
-                fit: BoxFit.cover,
-              ),
+              child: Image.file(File(_capturedImage!.path), fit: BoxFit.cover),
             ),
           ] else ...[
             Container(
               height: 300,
               width: double.infinity,
               color: Colors.grey[300],
-              child: Center(child: Text(AppLocalizations.of(context)!.capturedReceipt)),
+              child: Center(
+                child: Text(AppLocalizations.of(context)!.capturedReceipt),
+              ),
             ),
           ],
           const SizedBox(height: 24),
-          Text(AppLocalizations.of(context)!.receiptScanned, style: BauhausTheme.headerStyle),
+          Text(
+            AppLocalizations.of(context)!.receiptScanned,
+            style: BauhausTheme.headerStyle,
+          ),
           const SizedBox(height: 12),
           if (_ocrResult != null) ...[
             Text(
-              _ocrResult!.merchant.isNotEmpty ? _ocrResult!.merchant : 'Unknown Merchant',
+              _ocrResult!.merchant.isNotEmpty
+                  ? _ocrResult!.merchant
+                  : 'Unknown Merchant',
               style: BauhausTheme.bodyStyle.copyWith(color: BauhausTheme.blue),
               textAlign: TextAlign.center,
             ),
@@ -150,9 +174,9 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
               textAlign: TextAlign.center,
             ),
           ],
-          
+
           const SizedBox(height: 48),
-          
+
           SizedBox(
             width: double.infinity,
             height: 56,
@@ -160,9 +184,16 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
               onPressed: _navigateToAddExpenseFromState,
               style: ElevatedButton.styleFrom(
                 backgroundColor: BauhausTheme.black,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0),
+                ),
               ),
-              child: Text(AppLocalizations.of(context)!.confirmAndEdit, style: BauhausTheme.subHeaderStyle.copyWith(color: BauhausTheme.white)),
+              child: Text(
+                AppLocalizations.of(context)!.confirmAndEdit,
+                style: BauhausTheme.subHeaderStyle.copyWith(
+                  color: BauhausTheme.white,
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 16),
@@ -173,7 +204,12 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
                 _ocrResult = null;
               });
             },
-            child: Text(AppLocalizations.of(context)!.retake, style: BauhausTheme.bodyStyle.copyWith(decoration: TextDecoration.underline)),
+            child: Text(
+              AppLocalizations.of(context)!.retake,
+              style: BauhausTheme.bodyStyle.copyWith(
+                decoration: TextDecoration.underline,
+              ),
+            ),
           ),
         ],
       ),
@@ -259,7 +295,10 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
           rawText: rawText,
         );
         _capturedImage = XFile(imageFile.path);
-        await _navigateToAddExpense(imageFile: imageFile, ocrResult: _ocrResult);
+        await _navigateToAddExpense(
+          imageFile: imageFile,
+          ocrResult: _ocrResult,
+        );
         return;
       }
     } finally {
@@ -287,7 +326,8 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
       if (mounted) {
         await _showPermissionSheet(
           title: AppLocalizations.of(context)!.permissionRequired,
-          message: '${AppLocalizations.of(context)!.permissionCamera}\n\nEnable it in Settings to scan receipts.',
+          message:
+              '${AppLocalizations.of(context)!.permissionCamera}\n\nEnable it in Settings to scan receipts.',
         );
       }
       return false;
@@ -296,7 +336,8 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
       if (mounted) {
         await _showPermissionSheet(
           title: AppLocalizations.of(context)!.permissionRequired,
-          message: '${AppLocalizations.of(context)!.permissionCamera}\n\nCamera access is restricted on this device.',
+          message:
+              '${AppLocalizations.of(context)!.permissionCamera}\n\nCamera access is restricted on this device.',
         );
       }
       return false;
@@ -305,7 +346,8 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
       if (mounted) {
         await _showPermissionSheet(
           title: AppLocalizations.of(context)!.permissionRequired,
-          message: '${AppLocalizations.of(context)!.permissionCamera}\n\nCamera access is disabled. Open Settings to enable it.',
+          message:
+              '${AppLocalizations.of(context)!.permissionCamera}\n\nCamera access is disabled. Open Settings to enable it.',
         );
       }
       return false;
@@ -315,7 +357,8 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
 
   Future<bool> _showCameraRationaleDialog() async {
     final localizations = AppLocalizations.of(context)!;
-    final message = '${localizations.permissionCamera}\n\nWe only use the camera when you tap Scan Receipt.';
+    final message =
+        '${localizations.permissionCamera}\n\nWe only use the camera when you tap Scan Receipt.';
     final result = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
@@ -329,9 +372,19 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(localizations.permissionRequired, style: BauhausTheme.headerStyle.copyWith(color: BauhausTheme.white)),
+                Text(
+                  localizations.permissionRequired,
+                  style: BauhausTheme.headerStyle.copyWith(
+                    color: BauhausTheme.white,
+                  ),
+                ),
                 const SizedBox(height: 8),
-                Text(message, style: BauhausTheme.bodyStyle.copyWith(color: BauhausTheme.white)),
+                Text(
+                  message,
+                  style: BauhausTheme.bodyStyle.copyWith(
+                    color: BauhausTheme.white,
+                  ),
+                ),
                 const SizedBox(height: 24),
                 Row(
                   children: [
@@ -342,9 +395,16 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
                           onPressed: () => Navigator.pop(ctx, false),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: BauhausTheme.black,
-                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
+                            ),
                           ),
-                          child: Text(localizations.cancelButtonCaps, style: BauhausTheme.subHeaderStyle.copyWith(color: BauhausTheme.white)),
+                          child: Text(
+                            localizations.cancelButtonCaps,
+                            style: BauhausTheme.subHeaderStyle.copyWith(
+                              color: BauhausTheme.white,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -356,9 +416,16 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
                           onPressed: () => Navigator.pop(ctx, true),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: BauhausTheme.black,
-                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
+                            ),
                           ),
-                          child: Text(localizations.grantPermission, style: BauhausTheme.subHeaderStyle.copyWith(color: BauhausTheme.white)),
+                          child: Text(
+                            localizations.grantPermission,
+                            style: BauhausTheme.subHeaderStyle.copyWith(
+                              color: BauhausTheme.white,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -373,7 +440,10 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
     return result ?? false;
   }
 
-  Future<void> _showPermissionSheet({required String title, required String message}) async {
+  Future<void> _showPermissionSheet({
+    required String title,
+    required String message,
+  }) async {
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -387,9 +457,19 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(title, style: BauhausTheme.headerStyle.copyWith(color: BauhausTheme.white)),
+                Text(
+                  title,
+                  style: BauhausTheme.headerStyle.copyWith(
+                    color: BauhausTheme.white,
+                  ),
+                ),
                 const SizedBox(height: 8),
-                Text(message, style: BauhausTheme.bodyStyle.copyWith(color: BauhausTheme.white)),
+                Text(
+                  message,
+                  style: BauhausTheme.bodyStyle.copyWith(
+                    color: BauhausTheme.white,
+                  ),
+                ),
                 const SizedBox(height: 24),
                 Row(
                   children: [
@@ -402,9 +482,16 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: BauhausTheme.black,
-                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
+                            ),
                           ),
-                          child: Text('Open Settings', style: BauhausTheme.subHeaderStyle.copyWith(color: BauhausTheme.white)),
+                          child: Text(
+                            'Open Settings',
+                            style: BauhausTheme.subHeaderStyle.copyWith(
+                              color: BauhausTheme.white,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -420,9 +507,16 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: BauhausTheme.black,
-                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
+                            ),
                           ),
-                          child: Text('Retry', style: BauhausTheme.subHeaderStyle.copyWith(color: BauhausTheme.white)),
+                          child: Text(
+                            'Retry',
+                            style: BauhausTheme.subHeaderStyle.copyWith(
+                              color: BauhausTheme.white,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -506,7 +600,10 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
           rawText: rawText,
         );
         _capturedImage = XFile(imageFile.path);
-        await _navigateToAddExpense(imageFile: imageFile, ocrResult: _ocrResult);
+        await _navigateToAddExpense(
+          imageFile: imageFile,
+          ocrResult: _ocrResult,
+        );
         return;
       }
     } finally {
@@ -523,7 +620,10 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
     if (image == null) {
       return;
     }
-    await _navigateToAddExpense(imageFile: File(image.path), ocrResult: _ocrResult);
+    await _navigateToAddExpense(
+      imageFile: File(image.path),
+      ocrResult: _ocrResult,
+    );
   }
 
   Future<void> _navigateToAddExpense({
@@ -553,7 +653,9 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
   void _logOcrPreview(String rawText, String source) {
     final preview = rawText.trim();
     const maxLen = 200;
-    final snippet = preview.length > maxLen ? preview.substring(0, maxLen) : preview;
+    final snippet = preview.length > maxLen
+        ? preview.substring(0, maxLen)
+        : preview;
     debugPrint(
       'QuickExpenseCaptureView: OCR preview ($source, len=${preview.length}): $snippet',
     );
@@ -657,7 +759,8 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
     var cleaned = token.replaceAll(RegExp(r'[^\d,.\-()]'), '');
     if (cleaned.isEmpty) return null;
     final isNegative =
-        cleaned.contains('-') || (cleaned.startsWith('(') && cleaned.endsWith(')'));
+        cleaned.contains('-') ||
+        (cleaned.startsWith('(') && cleaned.endsWith(')'));
     cleaned = cleaned.replaceAll('-', '');
     cleaned = cleaned.replaceAll('(', '');
     cleaned = cleaned.replaceAll(')', '');
@@ -698,7 +801,8 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
   int? _scoreLineForTotal(String lower) {
     if (lower.contains('invoice total')) return 100;
     if (lower.contains('grand total')) return 95;
-    if (lower.contains('amount due') || lower.contains('amount payable')) return 90;
+    if (lower.contains('amount due') || lower.contains('amount payable'))
+      return 90;
     if (lower.contains('balance due') || lower.contains('total due')) return 85;
     if (lower.contains('total') && !lower.contains('subtotal')) return 80;
     if (lower.contains('subtotal') || lower.contains('sub total')) return 30;
@@ -732,8 +836,9 @@ class _QuickExpenseCaptureViewState extends ConsumerState<QuickExpenseCaptureVie
     final direct = DateTime.tryParse(trimmed);
     if (direct != null) return direct;
 
-    final match = RegExp(r'(\d{1,2})[./-](\d{1,2})[./-](\d{2,4})')
-        .firstMatch(trimmed);
+    final match = RegExp(
+      r'(\d{1,2})[./-](\d{1,2})[./-](\d{2,4})',
+    ).firstMatch(trimmed);
     if (match != null) {
       final part1 = int.tryParse(match.group(1) ?? '');
       final part2 = int.tryParse(match.group(2) ?? '');

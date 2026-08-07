@@ -15,12 +15,11 @@ class AutomaticInvoiceViewModel extends Notifier<AutomaticInvoiceState> {
   late final EnhancedInvoiceService _invoiceService;
   late final ApiMethod _apiMethod;
 
-  
   @override
   AutomaticInvoiceState build() {
     _invoiceService = ref.watch(enhancedInvoiceServiceProvider);
     _apiMethod = ref.read(app_providers.apiMethodProvider);
-    
+
     return AutomaticInvoiceState();
   }
 
@@ -64,8 +63,9 @@ class AutomaticInvoiceViewModel extends Notifier<AutomaticInvoiceState> {
         progress: 0.1,
       );
 
-      final employeesResponse =
-          await _apiMethod.getOrganizationEmployees(organizationId);
+      final employeesResponse = await _apiMethod.getOrganizationEmployees(
+        organizationId,
+      );
       if (employeesResponse['success'] != true) {
         final statusCode = employeesResponse['statusCode']?.toString() ?? '';
         final message = employeesResponse['message']?.toString() ?? '';
@@ -88,11 +88,14 @@ class AutomaticInvoiceViewModel extends Notifier<AutomaticInvoiceState> {
       // Optionally filter employees to selected ones
       final List<dynamic> filteredEmployeesData =
           (selectedEmployeeEmails == null || selectedEmployeeEmails.isEmpty)
-              ? employeesData
-              : employeesData
-                  .where((e) => selectedEmployeeEmails
-                      .contains((e['email'] ?? '') as String))
-                  .toList();
+          ? employeesData
+          : employeesData
+                .where(
+                  (e) => selectedEmployeeEmails.contains(
+                    (e['email'] ?? '') as String,
+                  ),
+                )
+                .toList();
       if (filteredEmployeesData.isEmpty) {
         throw Exception(l10n.noSelectedEmployeesError);
       }
@@ -103,8 +106,8 @@ class AutomaticInvoiceViewModel extends Notifier<AutomaticInvoiceState> {
         progress: 0.2,
       );
 
-      final List<Map<String, dynamic>> clientsData =
-          await _apiMethod.getClientsByOrganizationId(organizationId);
+      final List<Map<String, dynamic>> clientsData = await _apiMethod
+          .getClientsByOrganizationId(organizationId);
       if (clientsData.isEmpty) {
         throw Exception(l10n.noClientsFoundError);
       }
@@ -112,11 +115,14 @@ class AutomaticInvoiceViewModel extends Notifier<AutomaticInvoiceState> {
       // Filter clients to selected ones
       final List<Map<String, dynamic>> filteredClientsData =
           (selectedClientEmails == null || selectedClientEmails.isEmpty)
-              ? clientsData
-              : clientsData
-                  .where((c) => selectedClientEmails
-                      .contains((c['clientEmail'] ?? '') as String))
-                  .toList();
+          ? clientsData
+          : clientsData
+                .where(
+                  (c) => selectedClientEmails.contains(
+                    (c['clientEmail'] ?? '') as String,
+                  ),
+                )
+                .toList();
       if (filteredClientsData.isEmpty) {
         throw Exception('No selected clients found in the organization.');
       }
@@ -145,17 +151,20 @@ class AutomaticInvoiceViewModel extends Notifier<AutomaticInvoiceState> {
             0.3 + (0.4 * processedEmployees / filteredEmployeesData.length);
         state = state.copyWith(
           currentStep: l10n.processingEmployeeStep(
-              '${employeeData['firstName'] ?? ''} ${employeeData['lastName'] ?? ''}'),
+            '${employeeData['firstName'] ?? ''} ${employeeData['lastName'] ?? ''}',
+          ),
           progress: progressStep,
         );
 
         // Get assignments for this employee
-        final assignmentsResponse =
-            await _apiMethod.getUserAssignments(employeeEmail);
+        final assignmentsResponse = await _apiMethod.getUserAssignments(
+          employeeEmail,
+        );
         if (assignmentsResponse['success'] != true) {
-          final statusCode = (assignmentsResponse['status_code'] ??
-                  assignmentsResponse['statusCode'])
-              ?.toString();
+          final statusCode =
+              (assignmentsResponse['status_code'] ??
+                      assignmentsResponse['statusCode'])
+                  ?.toString();
           final failureMessage =
               assignmentsResponse['message']?.toString().toLowerCase() ?? '';
           if (statusCode == '401' ||
@@ -170,8 +179,12 @@ class AutomaticInvoiceViewModel extends Notifier<AutomaticInvoiceState> {
           } else {
             assignmentOtherFailures++;
           }
-          debugPrint(l10n.failedToGetAssignmentsLog(
-              employeeEmail, assignmentsResponse['message']?.toString() ?? ''));
+          debugPrint(
+            l10n.failedToGetAssignmentsLog(
+              employeeEmail,
+              assignmentsResponse['message']?.toString() ?? '',
+            ),
+          );
           continue;
         }
 
@@ -198,7 +211,8 @@ class AutomaticInvoiceViewModel extends Notifier<AutomaticInvoiceState> {
             employeeClients.add({
               'id': clientDetails['_id'] ?? assignment['clientId'] ?? '',
               'email': clientEmail,
-              'name': clientDetails['clientName'] ??
+              'name':
+                  clientDetails['clientName'] ??
                   assignment['clientName'] ??
                   clientEmail,
               'organizationId': organizationId,
@@ -305,7 +319,9 @@ class AutomaticInvoiceViewModel extends Notifier<AutomaticInvoiceState> {
       );
 
       // Update global providers
-      ref.read(invoiceGenerationStateProvider.notifier).state = allPdfPaths.isEmpty
+      ref
+          .read(invoiceGenerationStateProvider.notifier)
+          .state = allPdfPaths.isEmpty
           ? InvoiceGenerationState.error
           : InvoiceGenerationState.completed;
       ref.read(generatedInvoicePathsProvider.notifier).state = allPdfPaths;
@@ -491,4 +507,7 @@ class AutomaticInvoiceState {
 }
 
 /// Provider for AutomaticInvoiceViewModel
-final automaticInvoiceViewModelProvider = NotifierProvider<AutomaticInvoiceViewModel, AutomaticInvoiceState>(AutomaticInvoiceViewModel.new);
+final automaticInvoiceViewModelProvider =
+    NotifierProvider<AutomaticInvoiceViewModel, AutomaticInvoiceState>(
+      AutomaticInvoiceViewModel.new,
+    );

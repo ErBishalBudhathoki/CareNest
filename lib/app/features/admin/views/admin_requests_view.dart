@@ -86,13 +86,16 @@ class AdminRequestsView extends ConsumerWidget {
         ),
         child: SafeArea(
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
+            padding: const EdgeInsets.symmetric(
+              horizontal: BauhausDesign.space4,
+            ),
             child: Row(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.arrow_back,
-                      color: BauhausDesign.textDark),
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: BauhausDesign.textDark,
+                  ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
                 const SizedBox(width: BauhausDesign.space2),
@@ -101,14 +104,16 @@ class AdminRequestsView extends ConsumerWidget {
                     'Approvals Dashboard',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: BauhausDesign.getTextTheme(context)
-                        .displaySmall
-                        ?.copyWith(color: BauhausDesign.textDark),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).displaySmall?.copyWith(color: BauhausDesign.textDark),
                   ),
                 ),
                 IconButton(
-                  icon:
-                      const Icon(Icons.refresh, color: BauhausDesign.textDark),
+                  icon: const Icon(
+                    Icons.refresh,
+                    color: BauhausDesign.textDark,
+                  ),
                   onPressed: onRefresh,
                 ),
               ],
@@ -142,9 +147,9 @@ class AdminRequestsView extends ConsumerWidget {
             child: Text(
               'Pending approvals',
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           BauhausChip(
@@ -203,15 +208,15 @@ class _RequestCardState extends ConsumerState<_RequestCard> {
           ),
           title: Text(
             'Confirm Account Deletion',
-            style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-                  color: BauhausDesign.neoDanger,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).displaySmall?.copyWith(color: BauhausDesign.neoDanger),
           ),
           content: Text(
             'Approving this request will immediately deactivate the user account and schedule it for permanent deletion in 90 days.\n\nAre you sure you want to proceed?',
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
           ),
           actions: [
             TextButton(
@@ -245,9 +250,9 @@ class _RequestCardState extends ConsumerState<_RequestCard> {
         content: Text(
           message,
           style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.textDark,
-                fontWeight: FontWeight.w600,
-              ),
+            color: BauhausDesign.textDark,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );
@@ -290,53 +295,54 @@ class _RequestCardState extends ConsumerState<_RequestCard> {
           Text(
             'Request from ${widget.request.createdBy}',
             style: BauhausDesign.getTextTheme(context).titleSmall?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space1),
           Text(
             'Created: ${widget.request.createdAt != null ? dateFormat.format(widget.request.createdAt!) : "Unknown"}',
-            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                  color: BauhausDesign.textMuted,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
           ),
           const SizedBox(height: BauhausDesign.space3),
           if (widget.request.details.isNotEmpty)
-            ...widget.request.details.entries.map((e) => Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${e.key}: ',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
-                            ?.copyWith(
-                              color: BauhausDesign.textDark,
-                              fontWeight: FontWeight.w700,
-                            ),
+            ...widget.request.details.entries.map(
+              (e) => Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${e.key}: ',
+                      style: BauhausDesign.getTextTheme(context).bodySmall
+                          ?.copyWith(
+                            color: BauhausDesign.textDark,
+                            fontWeight: FontWeight.w700,
+                          ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        e.value.toString(),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodySmall?.copyWith(color: BauhausDesign.textDark),
                       ),
-                      Expanded(
-                        child: Text(
-                          e.value.toString(),
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodySmall
-                              ?.copyWith(color: BauhausDesign.textDark),
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           if (widget.request.note != null &&
               widget.request.note!.isNotEmpty) ...[
             const SizedBox(height: BauhausDesign.space2),
             Text(
               'Note: ${widget.request.note}',
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.textMuted,
-                    fontStyle: FontStyle.italic,
-                  ),
+                color: BauhausDesign.textMuted,
+                fontStyle: FontStyle.italic,
+              ),
             ),
           ],
           if (isPending) ...[

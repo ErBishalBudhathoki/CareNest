@@ -38,11 +38,10 @@ class ComplianceState {
 class ComplianceViewModel extends Notifier<ComplianceState> {
   late final FinancialIntelligenceRepository _repository;
 
-  
   @override
   ComplianceState build() {
     final apiMethod = ref.read(app_providers.apiMethodProvider);
-    
+
     return ComplianceState();
   }
 
@@ -59,7 +58,9 @@ class ComplianceViewModel extends Notifier<ComplianceState> {
 
       if (result['success'] == true) {
         state = state.copyWith(
-            isLoading: false, complianceCheck: result['compliance']);
+          isLoading: false,
+          complianceCheck: result['compliance'],
+        );
       } else {
         state = state.copyWith(isLoading: false, error: result['message']);
       }
@@ -92,8 +93,9 @@ class ComplianceViewModel extends Notifier<ComplianceState> {
   Future<void> getStatus(String organizationId) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final result =
-          await _repository.getComplianceStatus(organizationId: organizationId);
+      final result = await _repository.getComplianceStatus(
+        organizationId: organizationId,
+      );
       if (result['success'] == true) {
         state = state.copyWith(isLoading: false, status: result['status']);
       } else {
@@ -109,4 +111,7 @@ class ComplianceViewModel extends Notifier<ComplianceState> {
   }
 }
 
-final complianceViewModelProvider = NotifierProvider<ComplianceViewModel, ComplianceState>(ComplianceViewModel.new);
+final complianceViewModelProvider =
+    NotifierProvider<ComplianceViewModel, ComplianceState>(
+      ComplianceViewModel.new,
+    );

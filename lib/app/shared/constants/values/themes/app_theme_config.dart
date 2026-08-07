@@ -96,18 +96,24 @@ class AppThemeConfig {
   static const double radiusXXL = 24.0;
   static const double radiusCircular = 50.0;
 
-  static const BorderRadius borderRadiusXS =
-      BorderRadius.all(Radius.circular(radiusXS));
-  static const BorderRadius borderRadiusS =
-      BorderRadius.all(Radius.circular(radiusS));
-  static const BorderRadius borderRadiusM =
-      BorderRadius.all(Radius.circular(radiusM));
-  static const BorderRadius borderRadiusL =
-      BorderRadius.all(Radius.circular(radiusL));
-  static const BorderRadius borderRadiusXL =
-      BorderRadius.all(Radius.circular(radiusXL));
-  static const BorderRadius borderRadiusXXL =
-      BorderRadius.all(Radius.circular(radiusXXL));
+  static const BorderRadius borderRadiusXS = BorderRadius.all(
+    Radius.circular(radiusXS),
+  );
+  static const BorderRadius borderRadiusS = BorderRadius.all(
+    Radius.circular(radiusS),
+  );
+  static const BorderRadius borderRadiusM = BorderRadius.all(
+    Radius.circular(radiusM),
+  );
+  static const BorderRadius borderRadiusL = BorderRadius.all(
+    Radius.circular(radiusL),
+  );
+  static const BorderRadius borderRadiusXL = BorderRadius.all(
+    Radius.circular(radiusXL),
+  );
+  static const BorderRadius borderRadiusXXL = BorderRadius.all(
+    Radius.circular(radiusXXL),
+  );
 
   // ==================== SHADOWS ====================
 
@@ -145,9 +151,7 @@ class AppThemeConfig {
       horizontal: spacingL,
       vertical: spacingM,
     ),
-    shape: RoundedRectangleBorder(
-      borderRadius: borderRadiusM,
-    ),
+    shape: RoundedRectangleBorder(borderRadius: borderRadiusM),
     elevation: 2.0,
   );
 
@@ -159,9 +163,7 @@ class AppThemeConfig {
       horizontal: spacingL,
       vertical: spacingM,
     ),
-    shape: RoundedRectangleBorder(
-      borderRadius: borderRadiusM,
-    ),
+    shape: RoundedRectangleBorder(borderRadius: borderRadiusM),
     elevation: 0.0,
   );
 
@@ -172,13 +174,8 @@ class AppThemeConfig {
       horizontal: spacingL,
       vertical: spacingM,
     ),
-    shape: RoundedRectangleBorder(
-      borderRadius: borderRadiusM,
-    ),
-    side: const BorderSide(
-      color: AppColors.colorBlue,
-      width: 1.0,
-    ),
+    shape: RoundedRectangleBorder(borderRadius: borderRadiusM),
+    side: const BorderSide(color: AppColors.colorBlue, width: 1.0),
   );
 
   static final ButtonStyle dangerButtonStyle = ElevatedButton.styleFrom(
@@ -189,9 +186,7 @@ class AppThemeConfig {
       horizontal: spacingL,
       vertical: spacingM,
     ),
-    shape: RoundedRectangleBorder(
-      borderRadius: borderRadiusM,
-    ),
+    shape: RoundedRectangleBorder(borderRadius: borderRadiusM),
     elevation: 2.0,
   );
 
@@ -203,9 +198,7 @@ class AppThemeConfig {
       horizontal: spacingL,
       vertical: spacingM,
     ),
-    shape: RoundedRectangleBorder(
-      borderRadius: borderRadiusM,
-    ),
+    shape: RoundedRectangleBorder(borderRadius: borderRadiusM),
     elevation: 2.0,
   );
 
@@ -216,38 +209,23 @@ class AppThemeConfig {
     fillColor: AppColors.colorGrey50,
     border: OutlineInputBorder(
       borderRadius: borderRadiusM,
-      borderSide: const BorderSide(
-        color: AppColors.colorBorder,
-        width: 1.0,
-      ),
+      borderSide: const BorderSide(color: AppColors.colorBorder, width: 1.0),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: borderRadiusM,
-      borderSide: const BorderSide(
-        color: AppColors.colorBorder,
-        width: 1.0,
-      ),
+      borderSide: const BorderSide(color: AppColors.colorBorder, width: 1.0),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: borderRadiusM,
-      borderSide: const BorderSide(
-        color: AppColors.colorBlue,
-        width: 2.0,
-      ),
+      borderSide: const BorderSide(color: AppColors.colorBlue, width: 2.0),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: borderRadiusM,
-      borderSide: const BorderSide(
-        color: AppColors.colorRed,
-        width: 1.0,
-      ),
+      borderSide: const BorderSide(color: AppColors.colorRed, width: 1.0),
     ),
     focusedErrorBorder: OutlineInputBorder(
       borderRadius: borderRadiusM,
-      borderSide: const BorderSide(
-        color: AppColors.colorRed,
-        width: 2.0,
-      ),
+      borderSide: const BorderSide(color: AppColors.colorRed, width: 2.0),
     ),
     contentPadding: const EdgeInsets.symmetric(
       horizontal: spacingM,
@@ -263,10 +241,7 @@ class AppThemeConfig {
     color: AppColors.colorWhite,
     borderRadius: borderRadiusM,
     boxShadow: shadowLight,
-    border: Border.all(
-      color: AppColors.colorBorder,
-      width: 1.0,
-    ),
+    border: Border.all(color: AppColors.colorBorder, width: 1.0),
   );
 
   static final BoxDecoration elevatedCardDecoration = BoxDecoration(
@@ -303,14 +278,10 @@ class AppThemeConfig {
       ),
 
       // Elevated button theme
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: primaryButtonStyle,
-      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(style: primaryButtonStyle),
 
       // Outlined button theme
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: outlineButtonStyle,
-      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(style: outlineButtonStyle),
 
       // Text button theme
       textButtonTheme: TextButtonThemeData(
@@ -338,9 +309,7 @@ class AppThemeConfig {
       cardTheme: CardThemeData(
         color: AppColors.colorWhite,
         elevation: 2.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: borderRadiusM,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: borderRadiusM),
       ),
 
       // Divider theme
@@ -388,14 +357,10 @@ class AppThemeConfig {
       ),
 
       // Elevated button theme
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: primaryButtonStyle,
-      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(style: primaryButtonStyle),
 
       // Outlined button theme
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: outlineButtonStyle,
-      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(style: outlineButtonStyle),
 
       // Text button theme
       textButtonTheme: TextButtonThemeData(
@@ -427,9 +392,7 @@ class AppThemeConfig {
       cardTheme: CardThemeData(
         color: AppColors.colorGrey800,
         elevation: 2.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: borderRadiusM,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: borderRadiusM),
       ),
 
       // Divider theme

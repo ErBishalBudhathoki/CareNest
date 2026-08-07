@@ -4,11 +4,7 @@ part 'notification_preferences.freezed.dart';
 part 'notification_preferences.g.dart';
 
 /// Notification channel types
-enum NotificationChannel {
-  push,
-  sms,
-  email,
-}
+enum NotificationChannel { push, sms, email }
 
 /// Notification category types
 enum NotificationCategory {
@@ -22,12 +18,7 @@ enum NotificationCategory {
 }
 
 /// Priority levels for notifications
-enum NotificationPriority {
-  low,
-  medium,
-  high,
-  urgent,
-}
+enum NotificationPriority { low, medium, high, urgent }
 
 /// User notification preferences
 @freezed
@@ -35,7 +26,8 @@ abstract class NotificationPreferences with _$NotificationPreferences {
   const factory NotificationPreferences({
     required String userId,
     required Map<NotificationCategory, bool> categoryEnabled,
-    required Map<NotificationCategory, List<NotificationChannel>> categoryChannels,
+    required Map<NotificationCategory, List<NotificationChannel>>
+    categoryChannels,
     required QuietHours quietHours,
     @Default(true) bool smartTimingEnabled,
     @Default(true) bool geofenceEnabled,
@@ -65,21 +57,21 @@ abstract class NotificationPreferences with _$NotificationPreferences {
       categoryChannels: {
         NotificationCategory.shiftChanges: [
           NotificationChannel.push,
-          NotificationChannel.sms
+          NotificationChannel.sms,
         ],
         NotificationCategory.geofence: [NotificationChannel.push],
         NotificationCategory.compliance: [
           NotificationChannel.push,
-          NotificationChannel.email
+          NotificationChannel.email,
         ],
         NotificationCategory.approvals: [NotificationChannel.push],
         NotificationCategory.messages: [
           NotificationChannel.push,
-          NotificationChannel.sms
+          NotificationChannel.sms,
         ],
         NotificationCategory.payments: [
           NotificationChannel.push,
-          NotificationChannel.email
+          NotificationChannel.email,
         ],
         NotificationCategory.system: [NotificationChannel.push],
       },
@@ -135,12 +127,7 @@ abstract class GeofenceEvent with _$GeofenceEvent {
 }
 
 /// Geofence event types
-enum GeofenceEventType {
-  arrived,
-  departed,
-  runningLate,
-  nearLocation,
-}
+enum GeofenceEventType { arrived, departed, runningLate, nearLocation }
 
 /// Shift change notification
 @freezed

@@ -1,28 +1,37 @@
 class SchadsRateConstants {
   static const Map<String, List<String>> levelsForStream = {
-      'Social & Community Services': [
-        'Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5', 'Level 6', 'Level 7', 'Level 8'
-      ],
-      'Crisis Accommodation': [
-        'Level 1', 'Level 2', 'Level 3', 'Level 4'
-      ],
-      'Family Day Care': [
-        'Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5'
-      ],
-      'Home Care (Disability)': [
-        'Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5'
-      ],
-      'Home Care (Aged)': [
-        'Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5', 'Level 6'
-      ],
+    'Social & Community Services': [
+      'Level 1',
+      'Level 2',
+      'Level 3',
+      'Level 4',
+      'Level 5',
+      'Level 6',
+      'Level 7',
+      'Level 8',
+    ],
+    'Crisis Accommodation': ['Level 1', 'Level 2', 'Level 3', 'Level 4'],
+    'Family Day Care': ['Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5'],
+    'Home Care (Disability)': [
+      'Level 1',
+      'Level 2',
+      'Level 3',
+      'Level 4',
+      'Level 5',
+    ],
+    'Home Care (Aged)': [
+      'Level 1',
+      'Level 2',
+      'Level 3',
+      'Level 4',
+      'Level 5',
+      'Level 6',
+    ],
   };
 
   static List<String> get streams => levelsForStream.keys.toList();
 
-  static const List<String> employmentTypes = [
-    'Permanent',
-    'Casual',
-  ];
+  static const List<String> employmentTypes = ['Permanent', 'Casual'];
 
   static const Map<String, double> rates = {
     // Social & Community Services
@@ -127,37 +136,51 @@ class SchadsRateConstants {
   static List<String> getPayPoints(String stream, String level) {
     if (stream == 'Home Care (Aged)') {
       switch (level) {
-        case 'Level 1': return ['Introductory'];
-        case 'Level 2': return ['Home carer'];
-        case 'Level 3': return ['Qualified'];
-        case 'Level 4': return ['Senior'];
-        case 'Level 5': return ['Specialist'];
-        case 'Level 6': return ['Team leader'];
-        default: return [];
+        case 'Level 1':
+          return ['Introductory'];
+        case 'Level 2':
+          return ['Home carer'];
+        case 'Level 3':
+          return ['Qualified'];
+        case 'Level 4':
+          return ['Senior'];
+        case 'Level 5':
+          return ['Specialist'];
+        case 'Level 6':
+          return ['Team leader'];
+        default:
+          return [];
       }
     }
-    
+
     // Default logic for others
     // Simplified map for brevity, expanding based on the rates map above
     if (stream == 'Social & Community Services') {
-       if (level == 'Level 1') return ['Pay Point 1', 'Pay Point 2', 'Pay Point 3'];
-       if (level == 'Level 5' || level == 'Level 6' || level == 'Level 7' || level == 'Level 8') return ['Pay Point 1', 'Pay Point 2', 'Pay Point 3'];
-       return ['Pay Point 1', 'Pay Point 2', 'Pay Point 3', 'Pay Point 4'];
+      if (level == 'Level 1')
+        return ['Pay Point 1', 'Pay Point 2', 'Pay Point 3'];
+      if (level == 'Level 5' ||
+          level == 'Level 6' ||
+          level == 'Level 7' ||
+          level == 'Level 8')
+        return ['Pay Point 1', 'Pay Point 2', 'Pay Point 3'];
+      return ['Pay Point 1', 'Pay Point 2', 'Pay Point 3', 'Pay Point 4'];
     }
 
     if (stream == 'Crisis Accommodation') {
-        if (level == 'Level 3' || level == 'Level 4') return ['Pay Point 1', 'Pay Point 2', 'Pay Point 3'];
-        return ['Pay Point 1', 'Pay Point 2', 'Pay Point 3', 'Pay Point 4'];
+      if (level == 'Level 3' || level == 'Level 4')
+        return ['Pay Point 1', 'Pay Point 2', 'Pay Point 3'];
+      return ['Pay Point 1', 'Pay Point 2', 'Pay Point 3', 'Pay Point 4'];
     }
 
     if (stream == 'Family Day Care') {
-        if (level == 'Level 5') return ['Pay Point 1', 'Pay Point 2', 'Pay Point 3', 'Pay Point 4'];
+      if (level == 'Level 5')
         return ['Pay Point 1', 'Pay Point 2', 'Pay Point 3', 'Pay Point 4'];
+      return ['Pay Point 1', 'Pay Point 2', 'Pay Point 3', 'Pay Point 4'];
     }
 
     if (stream == 'Home Care (Disability)') {
-        if (level == 'Level 1') return ['Pay Point 1'];
-        return ['Pay Point 1', 'Pay Point 2'];
+      if (level == 'Level 1') return ['Pay Point 1'];
+      return ['Pay Point 1', 'Pay Point 2'];
     }
 
     return [];

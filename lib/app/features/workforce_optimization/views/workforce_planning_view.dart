@@ -8,7 +8,8 @@ class WorkforcePlanningView extends ConsumerStatefulWidget {
   const WorkforcePlanningView({super.key});
 
   @override
-  ConsumerState<WorkforcePlanningView> createState() => _WorkforcePlanningViewState();
+  ConsumerState<WorkforcePlanningView> createState() =>
+      _WorkforcePlanningViewState();
 }
 
 class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
@@ -27,17 +28,19 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
       final now = DateTime.now();
       final startDate = now.toIso8601String();
       final endDate = now.add(const Duration(days: 30)).toIso8601String();
-      
-      ref.read(workforcePlanningViewModelProvider.notifier).forecastDemand(
-        organizationId: orgId,
-        startDate: startDate,
-        endDate: endDate,
-        horizon: 30,
-      );
-      
-      ref.read(workforcePlanningViewModelProvider.notifier).predictTurnover(
-        organizationId: orgId,
-      );
+
+      ref
+          .read(workforcePlanningViewModelProvider.notifier)
+          .forecastDemand(
+            organizationId: orgId,
+            startDate: startDate,
+            endDate: endDate,
+            horizon: 30,
+          );
+
+      ref
+          .read(workforcePlanningViewModelProvider.notifier)
+          .predictTurnover(organizationId: orgId);
     }
   }
 
@@ -72,24 +75,24 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
       body: state.isLoading
           ? const Center(child: CircularProgressIndicator())
           : state.error != null
-              ? _buildError(state.error!)
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildHeader(),
-                      const SizedBox(height: 24),
-                      _buildDemandForecast(state),
-                      const SizedBox(height: 24),
-                      _buildTurnoverPredictions(state),
-                      const SizedBox(height: 24),
-                      _buildSkillGaps(state),
-                      const SizedBox(height: 24),
-                      _buildActionButtons(),
-                    ],
-                  ),
-                ),
+          ? _buildError(state.error!)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(),
+                  const SizedBox(height: 24),
+                  _buildDemandForecast(state),
+                  const SizedBox(height: 24),
+                  _buildTurnoverPredictions(state),
+                  const SizedBox(height: 24),
+                  _buildSkillGaps(state),
+                  const SizedBox(height: 24),
+                  _buildActionButtons(),
+                ],
+              ),
+            ),
     );
   }
 
@@ -112,10 +115,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
           Text(
             error,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFF666666),
-            ),
+            style: const TextStyle(fontSize: 14, color: Color(0xFF666666)),
           ),
           const SizedBox(height: 24),
           ElevatedButton(
@@ -179,10 +179,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
                 SizedBox(height: 4),
                 Text(
                   'Forecast demand and optimize staffing',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.colorWhite,
-                  ),
+                  style: TextStyle(fontSize: 14, color: AppColors.colorWhite),
                 ),
               ],
             ),
@@ -209,7 +206,10 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
             ),
             if (state.confidence != null)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.colorGreen.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
@@ -255,9 +255,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Color(0xFF1A1A1A), width: 1),
-        ),
+        border: Border(bottom: BorderSide(color: Color(0xFF1A1A1A), width: 1)),
       ),
       child: Row(
         children: [
@@ -311,10 +309,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
               ),
               Text(
                 '±${forecast.confidence ?? 0}',
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFF666666),
-                ),
+                style: const TextStyle(fontSize: 12, color: Color(0xFF666666)),
               ),
             ],
           ),
@@ -366,15 +361,13 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
     final riskColor = risk > 0.7
         ? AppColors.colorRed
         : risk > 0.4
-            ? AppColors.colorOrange
-            : AppColors.colorGreen;
+        ? AppColors.colorOrange
+        : AppColors.colorGreen;
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Color(0xFF1A1A1A), width: 1),
-        ),
+        border: Border(bottom: BorderSide(color: Color(0xFF1A1A1A), width: 1)),
       ),
       child: Row(
         children: [
@@ -385,11 +378,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
               color: riskColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
-              Icons.person_outline,
-              color: riskColor,
-              size: 24,
-            ),
+            child: Icon(Icons.person_outline, color: riskColor, size: 24),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -407,10 +396,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
                 const SizedBox(height: 4),
                 Text(
                   'Risk: ${(risk * 100).toStringAsFixed(0)}%',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: riskColor,
-                  ),
+                  style: TextStyle(fontSize: 12, color: riskColor),
                 ),
               ],
             ),
@@ -422,7 +408,11 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
-              risk > 0.7 ? 'High' : risk > 0.4 ? 'Medium' : 'Low',
+              risk > 0.7
+                  ? 'High'
+                  : risk > 0.4
+                  ? 'Medium'
+                  : 'Low',
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -470,7 +460,11 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
                   padding: const EdgeInsets.only(bottom: 12),
                   child: Row(
                     children: [
-                      const Icon(Icons.warning_amber, color: AppColors.colorOrange, size: 20),
+                      const Icon(
+                        Icons.warning_amber,
+                        color: AppColors.colorOrange,
+                        size: 20,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
@@ -510,14 +504,15 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
       child: Center(
         child: Column(
           children: [
-            const Icon(Icons.inbox_outlined, size: 48, color: Color(0xFF666666)),
+            const Icon(
+              Icons.inbox_outlined,
+              size: 48,
+              color: Color(0xFF666666),
+            ),
             const SizedBox(height: 12),
             Text(
               message,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Color(0xFF666666),
-              ),
+              style: const TextStyle(fontSize: 14, color: Color(0xFF666666)),
             ),
           ],
         ),

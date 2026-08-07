@@ -13,12 +13,15 @@ class AnalyticsRepository {
   Future<dynamic> _get(String endpoint, Map<String, String> params) async {
     // Construct query string manually as ApiMethod.get() takes a single string endpoint
     final queryString = params.entries
-        .map((e) =>
-            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .map(
+          (e) =>
+              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+        )
         .join('&');
 
-    final fullEndpoint =
-        queryString.isNotEmpty ? '$endpoint?$queryString' : endpoint;
+    final fullEndpoint = queryString.isNotEmpty
+        ? '$endpoint?$queryString'
+        : endpoint;
 
     final response = await _apiMethod.get(fullEndpoint);
 
@@ -175,10 +178,7 @@ class AnalyticsRepository {
   }) async {
     final response = await _apiMethod.post(
       'api/analytics/scenario-model',
-      body: {
-        'organizationId': organizationId,
-        'scenario': scenario,
-      },
+      body: {'organizationId': organizationId, 'scenario': scenario},
     );
 
     if (response['success'] == true) {

@@ -16,12 +16,13 @@ class FinancialTrendChart extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('FINANCIAL TREND',
-              style:
-                  BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w900,
-                        color: BauhausDesign.textDark,
-                      )),
+          Text(
+            'FINANCIAL TREND',
+            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+              fontWeight: FontWeight.w900,
+              color: BauhausDesign.textDark,
+            ),
+          ),
           const SizedBox(height: 16),
           Expanded(
             child: metrics.isEmpty
@@ -52,7 +53,8 @@ class FinancialTrendChart extends StatelessWidget {
                                   value.toInt() < metrics.length) {
                                 try {
                                   final date = DateTime.parse(
-                                      metrics[value.toInt()].date);
+                                    metrics[value.toInt()].date,
+                                  );
                                   return Padding(
                                     padding: const EdgeInsets.only(top: 8.0),
                                     child: Text(
@@ -60,7 +62,8 @@ class FinancialTrendChart extends StatelessWidget {
                                       style: BauhausDesign.getTextTheme(context)
                                           .labelSmall
                                           ?.copyWith(
-                                              fontWeight: FontWeight.bold),
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                     ),
                                   );
                                 } catch (_) {
@@ -78,17 +81,19 @@ class FinancialTrendChart extends StatelessWidget {
                             getTitlesWidget: (value, meta) {
                               return Text(
                                 value.toInt().toString(),
-                                style: BauhausDesign.getTextTheme(context)
-                                    .labelSmall
-                                    ?.copyWith(fontSize: 10),
+                                style: BauhausDesign.getTextTheme(
+                                  context,
+                                ).labelSmall?.copyWith(fontSize: 10),
                               );
                             },
                           ),
                         ),
                         topTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)),
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
                         rightTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)),
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
                       ),
                       gridData: FlGridData(
                         show: true,
@@ -105,8 +110,10 @@ class FinancialTrendChart extends StatelessWidget {
                       ),
                       borderData: FlBorderData(
                         show: true,
-                        border:
-                            Border.all(color: BauhausDesign.neutral, width: 2),
+                        border: Border.all(
+                          color: BauhausDesign.neutral,
+                          width: 2,
+                        ),
                       ),
                       barGroups: metrics.asMap().entries.map((entry) {
                         final index = entry.key;
@@ -167,16 +174,14 @@ class _LegendItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(
-          width: 12,
-          height: 12,
-          color: color,
-        ),
+        Container(width: 12, height: 12, color: color),
         const SizedBox(width: 4),
-        Text(label,
-            style: BauhausDesign.getTextTheme(context)
-                .labelSmall
-                ?.copyWith(fontWeight: FontWeight.bold)),
+        Text(
+          label,
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).labelSmall?.copyWith(fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }

@@ -13,8 +13,7 @@ class OfflineSyncDashboard extends StatefulWidget {
   const OfflineSyncDashboard({super.key, this.userId});
 
   @override
-  State<OfflineSyncDashboard> createState() =>
-      _OfflineSyncDashboardState();
+  State<OfflineSyncDashboard> createState() => _OfflineSyncDashboardState();
 }
 
 class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
@@ -32,12 +31,10 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
   void initState() {
     super.initState();
     _checkConnectivity();
-    _connectSub =
-        Connectivity().onConnectivityChanged.listen((results) {
+    _connectSub = Connectivity().onConnectivityChanged.listen((results) {
       if (!mounted) return;
       setState(() {
-        _isOnline =
-            results.any((r) => r != ConnectivityResult.none);
+        _isOnline = results.any((r) => r != ConnectivityResult.none);
       });
     });
     _syncSub = _sync.isSyncingStream.listen((syncing) {
@@ -59,8 +56,7 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
     final results = await Connectivity().checkConnectivity();
     if (!mounted) return;
     setState(() {
-      _isOnline =
-          results.any((r) => r != ConnectivityResult.none);
+      _isOnline = results.any((r) => r != ConnectivityResult.none);
     });
   }
 
@@ -99,19 +95,17 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
             Container(
               color: BauhausDesign.surfaceWhite,
               padding: const EdgeInsets.fromLTRB(
-                  BauhausDesign.space4,
-                  BauhausDesign.space3,
-                  BauhausDesign.space2,
-                  BauhausDesign.space3),
+                BauhausDesign.space4,
+                BauhausDesign.space3,
+                BauhausDesign.space2,
+                BauhausDesign.space3,
+              ),
               child: Row(
                 children: [
-                  const SizedBox(
-                      width: BauhausDesign.space2),
+                  const SizedBox(width: BauhausDesign.space2),
                   Expanded(
                     child: Text(
-                      _isOnline
-                          ? 'SYNC STATUS'
-                          : 'OFFLINE MODE',
+                      _isOnline ? 'SYNC STATUS' : 'OFFLINE MODE',
                       style: theme.headlineLarge?.copyWith(
                         color: BauhausDesign.textDark,
                         fontWeight: FontWeight.w800,
@@ -144,42 +138,38 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
             Container(height: 2, color: BauhausDesign.neoInk),
             Expanded(
               child: _isLoading
-          ? const Center(child: BauhausLoadingState())
-          : SingleChildScrollView(
-              padding:
-                  const EdgeInsets.all(BauhausDesign.space4),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _StatusBar(
-                    isOnline: _isOnline,
-                    queueCount: _queue.length,
-                    lastSync: _lastSync,
-                  ),
-                  const SizedBox(height: BauhausDesign.space6),
-                  BauhausSectionHeader(
-                      title: 'PENDING CHANGES'),
-                  const SizedBox(
-                      height: BauhausDesign.space3),
-                  if (_queue.isEmpty)
-                    _EmptyState(isOnline: _isOnline)
-                  else
-                    ..._queue.map(_buildQueueItem),
-                  const SizedBox(
-                      height: BauhausDesign.space6),
-                  if (_queue.isNotEmpty)
-                    ButtonWidget(
-                      buttonText:
-                          _isSyncing ? 'SYNCING...' : 'SYNC NOW',
-                      isLoading: _isSyncing,
-                      onPressed:
-                          (_isOnline && !_isSyncing)
-                              ? _syncNow
-                              : null,
+                  ? const Center(child: BauhausLoadingState())
+                  : SingleChildScrollView(
+                      padding: const EdgeInsets.all(BauhausDesign.space4),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _StatusBar(
+                            isOnline: _isOnline,
+                            queueCount: _queue.length,
+                            lastSync: _lastSync,
+                          ),
+                          const SizedBox(height: BauhausDesign.space6),
+                          BauhausSectionHeader(title: 'PENDING CHANGES'),
+                          const SizedBox(height: BauhausDesign.space3),
+                          if (_queue.isEmpty)
+                            _EmptyState(isOnline: _isOnline)
+                          else
+                            ..._queue.map(_buildQueueItem),
+                          const SizedBox(height: BauhausDesign.space6),
+                          if (_queue.isNotEmpty)
+                            ButtonWidget(
+                              buttonText: _isSyncing
+                                  ? 'SYNCING...'
+                                  : 'SYNC NOW',
+                              isLoading: _isSyncing,
+                              onPressed: (_isOnline && !_isSyncing)
+                                  ? _syncNow
+                                  : null,
+                            ),
+                        ],
+                      ),
                     ),
-                ],
-              ),
-            ),
             ),
           ],
         ),
@@ -200,11 +190,13 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: BauhausDesign.warning.withOpacity(0.1),
-                border: Border.all(
-                    color: BauhausDesign.warning, width: 2),
+                border: Border.all(color: BauhausDesign.warning, width: 2),
               ),
-              child: const Icon(Icons.pending_outlined,
-                  size: 20, color: BauhausDesign.warning),
+              child: const Icon(
+                Icons.pending_outlined,
+                size: 20,
+                color: BauhausDesign.warning,
+              ),
             ),
             const SizedBox(width: BauhausDesign.space3),
             Expanded(
@@ -213,34 +205,29 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
                 children: [
                   Text(
                     item.endpoint,
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelLarge
+                    style: BauhausDesign.getTextTheme(context).labelLarge
                         ?.copyWith(
                           color: BauhausDesign.textDark,
                           fontWeight: FontWeight.w700,
                         ),
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(
-                      height: BauhausDesign.space0_5),
+                  const SizedBox(height: BauhausDesign.space0_5),
                   Text(
                     '${item.method.toUpperCase()} · '
                     '${_timeAgo(item.timestamp)}',
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodySmall
-                        ?.copyWith(
-                            color: BauhausDesign.textMuted),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                   ),
                 ],
               ),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: BauhausDesign.warning.withOpacity(0.1),
-                border: Border.all(
-                    color: BauhausDesign.warning, width: 1.5),
+                border: Border.all(color: BauhausDesign.warning, width: 1.5),
               ),
               child: Text(
                 'PENDING',
@@ -287,9 +274,7 @@ class _StatusBar extends StatelessWidget {
             ? BauhausDesign.success.withOpacity(0.06)
             : BauhausDesign.warning.withOpacity(0.08),
         border: Border.all(
-          color: isOnline
-              ? BauhausDesign.success
-              : BauhausDesign.warning,
+          color: isOnline ? BauhausDesign.success : BauhausDesign.warning,
           width: 2,
         ),
       ),
@@ -298,9 +283,7 @@ class _StatusBar extends StatelessWidget {
           Icon(
             isOnline ? Icons.wifi : Icons.wifi_off,
             size: 28,
-            color: isOnline
-                ? BauhausDesign.success
-                : BauhausDesign.warning,
+            color: isOnline ? BauhausDesign.success : BauhausDesign.warning,
           ),
           const SizedBox(width: BauhausDesign.space3),
           Expanded(
@@ -309,8 +292,7 @@ class _StatusBar extends StatelessWidget {
               children: [
                 Text(
                   isOnline ? 'Connected' : 'No Connection',
-                  style: BauhausDesign.getTextTheme(context)
-                      .labelLarge
+                  style: BauhausDesign.getTextTheme(context).labelLarge
                       ?.copyWith(
                         color: BauhausDesign.textDark,
                         fontWeight: FontWeight.w700,
@@ -320,10 +302,10 @@ class _StatusBar extends StatelessWidget {
                   queueCount == 0
                       ? 'All changes synced · Last sync $lastSync'
                       : '$queueCount pending change${queueCount == 1 ? '' : 's'} · '
-                          'Last sync $lastSync',
-                  style: BauhausDesign.getTextTheme(context)
-                      .bodySmall
-                      ?.copyWith(color: BauhausDesign.textMuted),
+                            'Last sync $lastSync',
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                 ),
               ],
             ),
@@ -341,37 +323,32 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:
-          const EdgeInsets.symmetric(vertical: BauhausDesign.space8),
+      padding: const EdgeInsets.symmetric(vertical: BauhausDesign.space8),
       child: Center(
         child: Column(
           children: [
             Icon(
-              isOnline
-                  ? Icons.check_circle_outline
-                  : Icons.cloud_off,
+              isOnline ? Icons.check_circle_outline : Icons.cloud_off,
               size: 48,
               color: BauhausDesign.textMuted,
             ),
             const SizedBox(height: BauhausDesign.space3),
             Text(
-              isOnline
-                  ? 'Nothing pending'
-                  : 'No offline data yet',
-              style: BauhausDesign.getTextTheme(context)
-                  .bodyLarge
-                  ?.copyWith(color: BauhausDesign.textMuted),
+              isOnline ? 'Nothing pending' : 'No offline data yet',
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodyLarge?.copyWith(color: BauhausDesign.textMuted),
             ),
             const SizedBox(height: BauhausDesign.space1),
             Text(
               isOnline
                   ? 'All your changes have been synced.'
                   : 'Work done offline will appear here '
-                      'to sync when back online.',
+                        'to sync when back online.',
               textAlign: TextAlign.center,
-              style: BauhausDesign.getTextTheme(context)
-                  .bodySmall
-                  ?.copyWith(color: BauhausDesign.textMuted),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
             ),
           ],
         ),

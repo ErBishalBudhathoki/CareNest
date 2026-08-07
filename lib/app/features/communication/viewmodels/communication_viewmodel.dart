@@ -2,7 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/communication/repositories/communication_repository.dart';
 import 'package:carenest/app/features/communication/models/communication_models.dart';
 
-final communicationViewModelProvider = NotifierProvider<CommunicationViewModel, CommunicationState>(CommunicationViewModel.new);
+final communicationViewModelProvider =
+    NotifierProvider<CommunicationViewModel, CommunicationState>(
+      CommunicationViewModel.new,
+    );
 
 class HubBroadcastMessage {
   late final String id;
@@ -92,11 +95,10 @@ class CommunicationState {
 class CommunicationViewModel extends Notifier<CommunicationState> {
   late final CommunicationRepository _repository;
 
-  
   @override
   CommunicationState build() {
     final repository = ref.watch(communicationRepositoryProvider);
-    
+
     return CommunicationState();
   }
 
@@ -123,8 +125,9 @@ class CommunicationViewModel extends Notifier<CommunicationState> {
   Future<void> loadMessages(String conversationId) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final response =
-          await _repository.getMessages(conversationId: conversationId);
+      final response = await _repository.getMessages(
+        conversationId: conversationId,
+      );
       if (response['success'] == true && response['data'] != null) {
         final messages = (response['data'] as List)
             .map((item) => Message.fromJson(item))
@@ -144,8 +147,7 @@ class CommunicationViewModel extends Notifier<CommunicationState> {
   Future<bool> sendMessage(Map<String, dynamic> messageData) async {
     state = state.copyWith(isSending: true, error: null);
     try {
-      final response =
-          await _repository.sendMessage(messageData: messageData);
+      final response = await _repository.sendMessage(messageData: messageData);
       state = state.copyWith(isSending: false);
       return response['success'] == true;
     } catch (e) {
@@ -157,13 +159,15 @@ class CommunicationViewModel extends Notifier<CommunicationState> {
   Future<bool> broadcastMessage(Map<String, dynamic> broadcastData) async {
     state = state.copyWith(isSending: true, error: null);
     try {
-      final response =
-          await _repository.broadcastMessage(broadcastData: broadcastData);
+      final response = await _repository.broadcastMessage(
+        broadcastData: broadcastData,
+      );
       state = state.copyWith(isSending: false);
       if (response['success'] == true) {
         // Optimistically add to active broadcasts
         final newBroadcast = HubBroadcastMessage(
-          id: response['data']?['id'] ??
+          id:
+              response['data']?['id'] ??
               DateTime.now().millisecondsSinceEpoch.toString(),
           message: broadcastData['message'] ?? '',
           type: broadcastData['type'] ?? 'general',
@@ -186,7 +190,8 @@ class CommunicationViewModel extends Notifier<CommunicationState> {
   Future<void> loadActiveBroadcasts(String organizationId) async {
     try {
       final response = await _repository.getActiveBroadcasts(
-          organizationId: organizationId);
+        organizationId: organizationId,
+      );
       if (response['success'] == true && response['data'] != null) {
         final broadcasts = (response['data'] as List)
             .map((item) => HubBroadcastMessage.fromJson(item))
@@ -199,7 +204,8 @@ class CommunicationViewModel extends Notifier<CommunicationState> {
   Future<void> loadBroadcastHistory(String organizationId) async {
     try {
       final response = await _repository.getBroadcastHistory(
-          organizationId: organizationId);
+        organizationId: organizationId,
+      );
       if (response['success'] == true && response['data'] != null) {
         final history = (response['data'] as List)
             .map((item) => HubBroadcastMessage.fromJson(item))
@@ -227,18 +233,21 @@ class CommunicationViewModel extends Notifier<CommunicationState> {
     }).toList();
     state = state.copyWith(activeBroadcasts: updated);
     // Fire-and-forget to backend
-    _repository.broadcastMessage(broadcastData: {
-      'action': 'acknowledge',
-      'broadcastId': broadcastId,
-      'userId': userId,
-    });
+    _repository.broadcastMessage(
+      broadcastData: {
+        'action': 'acknowledge',
+        'broadcastId': broadcastId,
+        'userId': userId,
+      },
+    );
   }
 
   Future<bool> scheduleMessage(Map<String, dynamic> scheduleData) async {
     state = state.copyWith(isSending: true, error: null);
     try {
-      final response =
-          await _repository.scheduleMessage(scheduleData: scheduleData);
+      final response = await _repository.scheduleMessage(
+        scheduleData: scheduleData,
+      );
       state = state.copyWith(isSending: false);
       return response['success'] == true;
     } catch (e) {
@@ -261,8 +270,7 @@ class CommunicationViewModel extends Notifier<CommunicationState> {
 
   Future<void> getMessageStatus(String messageId) async {
     try {
-      final response =
-          await _repository.getMessageStatus(messageId: messageId);
+      final response = await _repository.getMessageStatus(messageId: messageId);
       if (response['success'] == true && response['data'] != null) {
         final status = MessageStatus.fromJson(response['data']);
         state = state.copyWith(messageStatus: status);

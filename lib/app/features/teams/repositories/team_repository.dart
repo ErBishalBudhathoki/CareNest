@@ -35,13 +35,15 @@ class TeamRepository {
   Future<List<TeamMember>> getOrganizationUsers() async {
     final response = await _apiMethod.get('api/user/getUsers/');
     debugPrint(
-        'TeamRepository: getOrganizationUsers response: ${response['success']}');
+      'TeamRepository: getOrganizationUsers response: ${response['success']}',
+    );
 
     if (response['success'] == true) {
       final list = response['users'];
       if (list == null || list is! List) {
         debugPrint(
-            'TeamRepository: getOrganizationUsers - users is null or not a list');
+          'TeamRepository: getOrganizationUsers - users is null or not a list',
+        );
         return [];
       }
       // we map raw user objects to TeamMember so we can reuse the display name logic
@@ -55,15 +57,13 @@ class TeamRepository {
       }).toList();
     } else {
       throw Exception(
-          response['message'] ?? 'Failed to fetch organization users');
+        response['message'] ?? 'Failed to fetch organization users',
+      );
     }
   }
 
   Future<Team> createTeam(String name) async {
-    final response = await _apiMethod.post(
-      'api/teams',
-      body: {'name': name},
-    );
+    final response = await _apiMethod.post('api/teams', body: {'name': name});
 
     if (response['success'] == true) {
       return Team.fromJson(response['data']);
@@ -115,7 +115,10 @@ class TeamRepository {
   // --- Emergency Broadcasts ---
 
   Future<EmergencyBroadcast> sendEmergencyBroadcast(
-      List<String> teamIds, String message, String type) async {
+    List<String> teamIds,
+    String message,
+    String type,
+  ) async {
     final response = await _apiMethod.post(
       'api/emergency/broadcast',
       body: {'teamIds': teamIds, 'message': message, 'type': type},
@@ -125,51 +128,59 @@ class TeamRepository {
       return EmergencyBroadcast.fromJson(response['data']);
     } else {
       throw Exception(
-          response['message'] ?? 'Failed to send emergency broadcast');
+        response['message'] ?? 'Failed to send emergency broadcast',
+      );
     }
   }
 
   Future<List<EmergencyBroadcast>> getActiveBroadcasts() async {
     final response = await _apiMethod.get('api/emergency/active');
     debugPrint(
-        'TeamRepository: getActiveBroadcasts response: ${response['success']}');
+      'TeamRepository: getActiveBroadcasts response: ${response['success']}',
+    );
 
     if (response['success'] == true) {
       final list = response['data'];
       if (list == null || list is! List) {
         debugPrint(
-            'TeamRepository: getActiveBroadcasts - data is null or not a list');
+          'TeamRepository: getActiveBroadcasts - data is null or not a list',
+        );
         return [];
       }
       return list.map((e) => EmergencyBroadcast.fromJson(e)).toList();
     } else {
       throw Exception(
-          response['message'] ?? 'Failed to fetch active broadcasts');
+        response['message'] ?? 'Failed to fetch active broadcasts',
+      );
     }
   }
 
   Future<List<EmergencyBroadcast>> getBroadcastHistory() async {
     final response = await _apiMethod.get('api/emergency/history');
     debugPrint(
-        'TeamRepository: getBroadcastHistory response: ${response['success']}');
+      'TeamRepository: getBroadcastHistory response: ${response['success']}',
+    );
 
     if (response['success'] == true) {
       final list = response['data'];
       if (list == null || list is! List) {
         debugPrint(
-            'TeamRepository: getBroadcastHistory - data is null or not a list');
+          'TeamRepository: getBroadcastHistory - data is null or not a list',
+        );
         return [];
       }
       return list.map((e) => EmergencyBroadcast.fromJson(e)).toList();
     } else {
       throw Exception(
-          response['message'] ?? 'Failed to fetch broadcast history');
+        response['message'] ?? 'Failed to fetch broadcast history',
+      );
     }
   }
 
   Future<void> acknowledgeBroadcast(String broadcastId) async {
-    final response =
-        await _apiMethod.post('api/emergency/acknowledge/$broadcastId');
+    final response = await _apiMethod.post(
+      'api/emergency/acknowledge/$broadcastId',
+    );
 
     if (response['success'] != true) {
       throw Exception(response['message'] ?? 'Failed to acknowledge broadcast');

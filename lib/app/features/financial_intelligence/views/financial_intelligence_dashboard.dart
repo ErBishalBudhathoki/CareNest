@@ -149,8 +149,10 @@ class _FinancialIntelligenceDashboardState
     });
   }
 
-  Future<void> _loadDashboardData(String organizationId,
-      {bool force = false}) async {
+  Future<void> _loadDashboardData(
+    String organizationId, {
+    bool force = false,
+  }) async {
     if (_isFetching && !force) return;
     if (!force && _loadedOrgId == organizationId) return;
 
@@ -159,27 +161,22 @@ class _FinancialIntelligenceDashboardState
 
     try {
       await Future.wait([
-        ref.read(financialAnalyticsViewModelProvider.notifier).getDashboard(
-              organizationId: organizationId,
-              period: '30d',
-            ),
+        ref
+            .read(financialAnalyticsViewModelProvider.notifier)
+            .getDashboard(organizationId: organizationId, period: '30d'),
         ref
             .read(financialAnalyticsViewModelProvider.notifier)
             .getKPIs(organizationId),
-        ref.read(cashFlowViewModelProvider.notifier).getCurrentPosition(
-              organizationId,
-            ),
-        ref.read(cashFlowViewModelProvider.notifier).forecastCashFlow(
-              organizationId: organizationId,
-              horizon: 60,
-            ),
+        ref
+            .read(cashFlowViewModelProvider.notifier)
+            .getCurrentPosition(organizationId),
+        ref
+            .read(cashFlowViewModelProvider.notifier)
+            .forecastCashFlow(organizationId: organizationId, horizon: 60),
         ref.read(cashFlowViewModelProvider.notifier).getAlerts(organizationId),
         ref
             .read(revenueForecastingViewModelProvider.notifier)
-            .generateScenarios(
-              organizationId: organizationId,
-              horizon: 90,
-            ),
+            .generateScenarios(organizationId: organizationId, horizon: 90),
       ]);
     } finally {
       _isFetching = false;
@@ -204,27 +201,33 @@ class _FinancialIntelligenceDashboardState
       });
     }
 
-    final hasAnyData = analyticsState.dashboard != null ||
+    final hasAnyData =
+        analyticsState.dashboard != null ||
         analyticsState.kpis != null ||
         cashState.position != null ||
         cashState.forecast != null ||
         revenueState.scenarios != null;
 
-    final isLoading = (analyticsState.isLoading ||
+    final isLoading =
+        (analyticsState.isLoading ||
             cashState.isLoading ||
             revenueState.isLoading) &&
         !hasAnyData;
 
     final pulseMetrics = _buildLivePulseMetrics(analyticsState, cashState);
-    final scenarios =
-        _buildLiveScenarios(analyticsState, cashState, revenueState);
+    final scenarios = _buildLiveScenarios(
+      analyticsState,
+      cashState,
+      revenueState,
+    );
     final runwayPoints = _buildLiveRunway(cashState);
     final signals = _buildLiveSignals(cashState);
 
-    final totalCash = _readDouble(
-            _dig(cashState.position, ['cash', 'total'])) ??
+    final totalCash =
+        _readDouble(_dig(cashState.position, ['cash', 'total'])) ??
         _readDouble(
-            _dig(analyticsState.dashboard, ['kpis', 'cashFlow', 'value'])) ??
+          _dig(analyticsState.dashboard, ['kpis', 'cashFlow', 'value']),
+        ) ??
         0;
     final cashChange = _readDouble(
       _dig(analyticsState.dashboard, ['kpis', 'cashFlow', 'change']),
@@ -239,11 +242,14 @@ class _FinancialIntelligenceDashboardState
         ? (projectedOutflows / horizon) * 7
         : null;
 
-    final receivablesCurrent =
-        _readDouble(_dig(cashState.position, ['receivables', 'current']));
-    final receivablesTotal =
-        _readDouble(_dig(cashState.position, ['receivables', 'total']));
-    final collectionRate = (receivablesCurrent != null &&
+    final receivablesCurrent = _readDouble(
+      _dig(cashState.position, ['receivables', 'current']),
+    );
+    final receivablesTotal = _readDouble(
+      _dig(cashState.position, ['receivables', 'total']),
+    );
+    final collectionRate =
+        (receivablesCurrent != null &&
             receivablesTotal != null &&
             receivablesTotal > 0)
         ? (receivablesCurrent / receivablesTotal)
@@ -257,60 +263,59 @@ class _FinancialIntelligenceDashboardState
       body: organizationId == null || organizationId.isEmpty
           ? _buildMissingOrganizationState(context)
           : isLoading
-              ? const Center(child: BauhausLoadingState())
-              : RefreshIndicator(
-                  color: BauhausDesign.primary,
-                  onRefresh: () =>
-                      _loadDashboardData(organizationId, force: true),
-                  child: CustomScrollView(
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(
-                            BauhausDesign.space4,
-                            BauhausDesign.space4,
-                            BauhausDesign.space4,
-                            BauhausDesign.space8,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (error != null) ...[
-                                _buildErrorBanner(context, error),
-                                const SizedBox(height: BauhausDesign.space4),
-                              ],
-                              _buildTreasuryBoard(
-                                context,
-                                netCashLabel: _formatCurrencyCompact(totalCash),
-                                varianceLabel: cashChange != null
-                                    ? _formatSignedPercent(cashChange)
-                                    : 'N/A',
-                                runwayLabel: runwayDays != null
-                                    ? '${runwayDays.toStringAsFixed(0)} days'
-                                    : 'N/A',
-                                burnLabel: weeklyBurn != null
-                                    ? '${_formatCurrencyCompact(weeklyBurn)}/wk'
-                                    : 'N/A',
-                                collectionLabel: collectionRate != null
-                                    ? _formatPercent(collectionRate)
-                                    : 'N/A',
-                                pulseMetrics: pulseMetrics,
-                              ),
-                              const SizedBox(height: BauhausDesign.space6),
-                              _buildScenarioTable(context, scenarios),
-                              const SizedBox(height: BauhausDesign.space6),
-                              _buildAllocationDesk(context),
-                              const SizedBox(height: BauhausDesign.space6),
-                              _buildLiquidityLadder(context, runwayPoints),
-                              const SizedBox(height: BauhausDesign.space6),
-                              _buildSignalTape(context, signals),
-                            ],
-                          ),
-                        ),
+          ? const Center(child: BauhausLoadingState())
+          : RefreshIndicator(
+              color: BauhausDesign.primary,
+              onRefresh: () => _loadDashboardData(organizationId, force: true),
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        BauhausDesign.space4,
+                        BauhausDesign.space4,
+                        BauhausDesign.space4,
+                        BauhausDesign.space8,
                       ),
-                    ],
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (error != null) ...[
+                            _buildErrorBanner(context, error),
+                            const SizedBox(height: BauhausDesign.space4),
+                          ],
+                          _buildTreasuryBoard(
+                            context,
+                            netCashLabel: _formatCurrencyCompact(totalCash),
+                            varianceLabel: cashChange != null
+                                ? _formatSignedPercent(cashChange)
+                                : 'N/A',
+                            runwayLabel: runwayDays != null
+                                ? '${runwayDays.toStringAsFixed(0)} days'
+                                : 'N/A',
+                            burnLabel: weeklyBurn != null
+                                ? '${_formatCurrencyCompact(weeklyBurn)}/wk'
+                                : 'N/A',
+                            collectionLabel: collectionRate != null
+                                ? _formatPercent(collectionRate)
+                                : 'N/A',
+                            pulseMetrics: pulseMetrics,
+                          ),
+                          const SizedBox(height: BauhausDesign.space6),
+                          _buildScenarioTable(context, scenarios),
+                          const SizedBox(height: BauhausDesign.space6),
+                          _buildAllocationDesk(context),
+                          const SizedBox(height: BauhausDesign.space6),
+                          _buildLiquidityLadder(context, runwayPoints),
+                          const SizedBox(height: BauhausDesign.space6),
+                          _buildSignalTape(context, signals),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                ],
+              ),
+            ),
     );
   }
 
@@ -322,10 +327,10 @@ class _FinancialIntelligenceDashboardState
       title: Text(
         'FINANCIAL INTELLIGENCE',
         style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-              color: BauhausDesign.surfaceWhite,
-              letterSpacing: 0.6,
-              fontWeight: FontWeight.w700,
-            ),
+          color: BauhausDesign.surfaceWhite,
+          letterSpacing: 0.6,
+          fontWeight: FontWeight.w700,
+        ),
       ),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: BauhausDesign.surfaceWhite),
@@ -387,16 +392,19 @@ class _FinancialIntelligenceDashboardState
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.error_outline_rounded,
-              color: BauhausDesign.textDark, size: 18),
+          const Icon(
+            Icons.error_outline_rounded,
+            color: BauhausDesign.textDark,
+            size: 18,
+          ),
           const SizedBox(width: BauhausDesign.space2),
           Expanded(
             child: Text(
               error,
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],
@@ -531,25 +539,25 @@ class _FinancialIntelligenceDashboardState
           Text(
             'Net Cash Position',
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space1),
           Text(
             netCashLabel,
             style: BauhausDesign.getTextTheme(context).displayLarge?.copyWith(
-                  color: BauhausDesign.primary,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: BauhausDesign.primary,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space1),
           Text(
             'Cashflow change: $varianceLabel',
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space3),
           Wrap(
@@ -612,7 +620,9 @@ class _FinancialIntelligenceDashboardState
   }
 
   Widget _buildTreasurySidebar(
-      BuildContext context, List<_PulseMetric> pulseMetrics) {
+    BuildContext context,
+    List<_PulseMetric> pulseMetrics,
+  ) {
     final safe = pulseMetrics.isEmpty ? _fallbackPulseMetrics : pulseMetrics;
     final firstThree = safe.take(3).toList();
 
@@ -660,28 +670,28 @@ class _FinancialIntelligenceDashboardState
               children: [
                 Text(
                   metric.title,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   metric.value,
-                  style:
-                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w800,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).titleMedium
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w800,
+                      ),
                 ),
                 Text(
                   metric.trend,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                            color: metric.accent,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: metric.accent,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
               ],
             ),
@@ -692,7 +702,9 @@ class _FinancialIntelligenceDashboardState
   }
 
   Widget _buildScenarioTable(
-      BuildContext context, List<_ScenarioRow> scenarios) {
+    BuildContext context,
+    List<_ScenarioRow> scenarios,
+  ) {
     final rows = scenarios.isEmpty ? _fallbackScenarios : scenarios;
 
     return Column(
@@ -785,9 +797,9 @@ class _FinancialIntelligenceDashboardState
         text,
         textAlign: alignRight ? TextAlign.right : TextAlign.left,
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: BauhausDesign.textDark,
-              fontWeight: FontWeight.w800,
-            ),
+          color: BauhausDesign.textDark,
+          fontWeight: FontWeight.w800,
+        ),
       ),
     );
   }
@@ -816,8 +828,7 @@ class _FinancialIntelligenceDashboardState
                 Expanded(
                   child: Text(
                     row.name,
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelLarge
+                    style: BauhausDesign.getTextTheme(context).labelLarge
                         ?.copyWith(
                           color: BauhausDesign.textDark,
                           fontWeight: FontWeight.w700,
@@ -833,9 +844,9 @@ class _FinancialIntelligenceDashboardState
               row.revenue,
               textAlign: TextAlign.right,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           Expanded(
@@ -844,9 +855,9 @@ class _FinancialIntelligenceDashboardState
               row.margin,
               textAlign: TextAlign.right,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           Expanded(
@@ -855,9 +866,9 @@ class _FinancialIntelligenceDashboardState
               row.runway,
               textAlign: TextAlign.right,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           Expanded(
@@ -876,11 +887,11 @@ class _FinancialIntelligenceDashboardState
                 ),
                 child: Text(
                   row.confidence,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w800,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w800,
+                      ),
                 ),
               ),
             ),
@@ -916,11 +927,11 @@ class _FinancialIntelligenceDashboardState
               Expanded(
                 child: Text(
                   row.name,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelLarge
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
               ),
               Container(
@@ -935,11 +946,11 @@ class _FinancialIntelligenceDashboardState
                 ),
                 child: Text(
                   row.confidence,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w800,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w800,
+                      ),
                 ),
               ),
             ],
@@ -947,17 +958,11 @@ class _FinancialIntelligenceDashboardState
           const SizedBox(height: BauhausDesign.space2),
           Row(
             children: [
-              Expanded(
-                child: _buildMiniCell(context, 'Revenue', row.revenue),
-              ),
+              Expanded(child: _buildMiniCell(context, 'Revenue', row.revenue)),
               const SizedBox(width: BauhausDesign.space2),
-              Expanded(
-                child: _buildMiniCell(context, 'Margin', row.margin),
-              ),
+              Expanded(child: _buildMiniCell(context, 'Margin', row.margin)),
               const SizedBox(width: BauhausDesign.space2),
-              Expanded(
-                child: _buildMiniCell(context, 'Runway', row.runway),
-              ),
+              Expanded(child: _buildMiniCell(context, 'Runway', row.runway)),
             ],
           ),
         ],
@@ -979,17 +984,17 @@ class _FinancialIntelligenceDashboardState
           Text(
             label,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textMuted,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: BauhausDesign.textMuted,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: 2),
           Text(
             value,
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w800,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w800,
+            ),
           ),
         ],
       ),
@@ -1096,9 +1101,9 @@ class _FinancialIntelligenceDashboardState
             child: Text(
               lane.title,
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           const SizedBox(height: BauhausDesign.space3),
@@ -1136,8 +1141,11 @@ class _FinancialIntelligenceDashboardState
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(color: BauhausDesign.neutral),
                 ),
-                child:
-                    Icon(module.icon, size: 18, color: BauhausDesign.textDark),
+                child: Icon(
+                  module.icon,
+                  size: 18,
+                  color: BauhausDesign.textDark,
+                ),
               ),
               const SizedBox(width: BauhausDesign.space2),
               Expanded(
@@ -1146,8 +1154,7 @@ class _FinancialIntelligenceDashboardState
                   children: [
                     Text(
                       module.title,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelLarge
+                      style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w700,
@@ -1155,8 +1162,7 @@ class _FinancialIntelligenceDashboardState
                     ),
                     Text(
                       module.description,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
+                      style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w600,
@@ -1179,7 +1185,9 @@ class _FinancialIntelligenceDashboardState
   }
 
   Widget _buildLiquidityLadder(
-      BuildContext context, List<_RunwayPoint> runwayPoints) {
+    BuildContext context,
+    List<_RunwayPoint> runwayPoints,
+  ) {
     final points = runwayPoints.isEmpty ? _fallbackRunwayPoints : runwayPoints;
     final maxValue = points.fold<double>(
       0,
@@ -1220,11 +1228,11 @@ class _FinancialIntelligenceDashboardState
                 ),
                 child: Text(
                   'Signal: ladder is generated from backend position and forecast data for your organization.',
-                  style:
-                      BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
               ),
             ],
@@ -1260,8 +1268,7 @@ class _FinancialIntelligenceDashboardState
                   children: [
                     Text(
                       point.label,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelLarge
+                      style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w700,
@@ -1270,8 +1277,7 @@ class _FinancialIntelligenceDashboardState
                     const Spacer(),
                     Text(
                       '${point.value.toStringAsFixed(0)}d',
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelSmall
+                      style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w800,
@@ -1293,8 +1299,9 @@ class _FinancialIntelligenceDashboardState
                     child: Container(
                       decoration: BoxDecoration(
                         color: point.accent.withOpacity(0.76),
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusSm),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusSm,
+                        ),
                       ),
                     ),
                   ),
@@ -1311,9 +1318,9 @@ class _FinancialIntelligenceDashboardState
               child: Text(
                 point.label,
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                      color: BauhausDesign.textDark,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
             Expanded(
@@ -1330,8 +1337,9 @@ class _FinancialIntelligenceDashboardState
                   child: Container(
                     decoration: BoxDecoration(
                       color: point.accent.withOpacity(0.76),
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusSm),
+                      borderRadius: BorderRadius.circular(
+                        BauhausDesign.radiusSm,
+                      ),
                     ),
                   ),
                 ),
@@ -1344,9 +1352,9 @@ class _FinancialIntelligenceDashboardState
                 '${point.value.toStringAsFixed(0)}d',
                 textAlign: TextAlign.right,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                      color: BauhausDesign.textDark,
-                      fontWeight: FontWeight.w800,
-                    ),
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ),
           ],
@@ -1376,8 +1384,9 @@ class _FinancialIntelligenceDashboardState
           ),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            padding:
-                const EdgeInsets.symmetric(horizontal: BauhausDesign.space3),
+            padding: const EdgeInsets.symmetric(
+              horizontal: BauhausDesign.space3,
+            ),
             child: Row(
               children: [
                 for (var i = 0; i < entries.length; i++) ...[
@@ -1424,11 +1433,11 @@ class _FinancialIntelligenceDashboardState
                   item.title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelLarge
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
               ),
             ],
@@ -1439,9 +1448,9 @@ class _FinancialIntelligenceDashboardState
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space2),
           Row(
@@ -1449,9 +1458,9 @@ class _FinancialIntelligenceDashboardState
               Text(
                 item.timeLabel,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                      color: BauhausDesign.textMuted,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  color: BauhausDesign.textMuted,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const Spacer(),
               Container(
@@ -1466,11 +1475,11 @@ class _FinancialIntelligenceDashboardState
                 ),
                 child: Text(
                   item.severity.toUpperCase(),
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w800,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w800,
+                      ),
                 ),
               ),
             ],
@@ -1510,9 +1519,9 @@ class _FinancialIntelligenceDashboardState
               Text(
                 label,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                      color: BauhausDesign.textDark,
-                      fontWeight: FontWeight.w800,
-                    ),
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ],
           ),
@@ -1539,9 +1548,9 @@ class _FinancialIntelligenceDashboardState
       child: Text(
         text,
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: BauhausDesign.textDark,
-              fontWeight: FontWeight.w800,
-            ),
+          color: BauhausDesign.textDark,
+          fontWeight: FontWeight.w800,
+        ),
       ),
     );
   }
@@ -1560,24 +1569,32 @@ class _FinancialIntelligenceDashboardState
     CashFlowState cashState,
   ) {
     final cashTotal = _readDouble(_dig(cashState.position, ['cash', 'total']));
-    final receivables =
-        _readDouble(_dig(cashState.position, ['receivables', 'total']));
-    final payables =
-        _readDouble(_dig(cashState.position, ['payables', 'total']));
-    final payablesOverdue =
-        _readDouble(_dig(cashState.position, ['payables', 'overdue']));
+    final receivables = _readDouble(
+      _dig(cashState.position, ['receivables', 'total']),
+    );
+    final payables = _readDouble(
+      _dig(cashState.position, ['payables', 'total']),
+    );
+    final payablesOverdue = _readDouble(
+      _dig(cashState.position, ['payables', 'overdue']),
+    );
 
     final revenueChange = _readDouble(
-        _dig(analyticsState.dashboard, ['kpis', 'revenue', 'change']));
+      _dig(analyticsState.dashboard, ['kpis', 'revenue', 'change']),
+    );
     final profitChange = _readDouble(
-        _dig(analyticsState.dashboard, ['kpis', 'profit', 'change']));
+      _dig(analyticsState.dashboard, ['kpis', 'profit', 'change']),
+    );
     final margin =
         _readDouble(_dig(analyticsState.kpis, ['financial', 'grossMargin'])) ??
-            _readDouble(
-                _dig(analyticsState.dashboard, ['kpis', 'margin', 'value']));
+        _readDouble(
+          _dig(analyticsState.dashboard, ['kpis', 'margin', 'value']),
+        );
     final marginChange = _readDouble(
-        _dig(analyticsState.dashboard, ['kpis', 'margin', 'change']));
-    final hasData = cashTotal != null ||
+      _dig(analyticsState.dashboard, ['kpis', 'margin', 'change']),
+    );
+    final hasData =
+        cashTotal != null ||
         receivables != null ||
         payables != null ||
         margin != null;
@@ -1588,24 +1605,27 @@ class _FinancialIntelligenceDashboardState
 
     final payablesTrend =
         (payables != null && payables > 0 && payablesOverdue != null)
-            ? '${_formatPercent(payablesOverdue / payables)} overdue'
-            : 'N/A';
+        ? '${_formatPercent(payablesOverdue / payables)} overdue'
+        : 'N/A';
 
     final live = [
       _PulseMetric(
         title: 'Cash Position',
         value: cashTotal != null ? _formatCurrencyCompact(cashTotal) : 'N/A',
-        trend:
-            revenueChange != null ? _formatSignedPercent(revenueChange) : 'N/A',
+        trend: revenueChange != null
+            ? _formatSignedPercent(revenueChange)
+            : 'N/A',
         accent: BauhausDesign.success,
         icon: Icons.account_balance_wallet_rounded,
       ),
       _PulseMetric(
         title: 'Receivables',
-        value:
-            receivables != null ? _formatCurrencyCompact(receivables) : 'N/A',
-        trend:
-            profitChange != null ? _formatSignedPercent(profitChange) : 'N/A',
+        value: receivables != null
+            ? _formatCurrencyCompact(receivables)
+            : 'N/A',
+        trend: profitChange != null
+            ? _formatSignedPercent(profitChange)
+            : 'N/A',
         accent: BauhausDesign.primary,
         icon: Icons.receipt_long_rounded,
       ),
@@ -1619,8 +1639,9 @@ class _FinancialIntelligenceDashboardState
       _PulseMetric(
         title: 'Gross Margin',
         value: margin != null ? _formatPercent(margin) : 'N/A',
-        trend:
-            marginChange != null ? _formatSignedPercent(marginChange) : 'N/A',
+        trend: marginChange != null
+            ? _formatSignedPercent(marginChange)
+            : 'N/A',
         accent: BauhausDesign.secondary,
         icon: Icons.pie_chart_rounded,
       ),
@@ -1634,14 +1655,16 @@ class _FinancialIntelligenceDashboardState
     CashFlowState cashState,
     RevenueForecastingState revenueState,
   ) {
-    final baseRevenue = _readDouble(
+    final baseRevenue =
+        _readDouble(
           _dig(analyticsState.dashboard, ['kpis', 'revenue', 'value']),
         ) ??
         _readDouble(_dig(analyticsState.kpis, ['financial', 'revenue']));
     final baseMargin =
         _readDouble(_dig(analyticsState.kpis, ['financial', 'grossMargin'])) ??
-            _readDouble(
-                _dig(analyticsState.dashboard, ['kpis', 'margin', 'value']));
+        _readDouble(
+          _dig(analyticsState.dashboard, ['kpis', 'margin', 'value']),
+        );
     final baseRunway = _estimateRunwayDays(cashState);
 
     final scenarios = _asMap(revenueState.scenarios);
@@ -1687,11 +1710,7 @@ class _FinancialIntelligenceDashboardState
       return _fallbackScenarios;
     }
 
-    _ScenarioRow mapScenario(
-      String key,
-      String label,
-      Color accent,
-    ) {
+    _ScenarioRow mapScenario(String key, String label, Color accent) {
       final data = _asMap(scenarios[key]);
       final revenue = _readDouble(_dig(data, ['totalRevenue']));
       final growth = _readDouble(_dig(data, ['growth'])) ?? 0;
@@ -1731,8 +1750,9 @@ class _FinancialIntelligenceDashboardState
     }
 
     final horizon = (_readDouble(_dig(forecast, ['horizon'])) ?? 60).toInt();
-    final projectedOutflows =
-        _readDouble(_dig(forecast, ['summary', 'projectedOutflows']));
+    final projectedOutflows = _readDouble(
+      _dig(forecast, ['summary', 'projectedOutflows']),
+    );
     final dailyOutflow = (projectedOutflows != null && horizon > 0)
         ? projectedOutflows / horizon
         : null;
@@ -1747,13 +1767,15 @@ class _FinancialIntelligenceDashboardState
 
     final points = <_RunwayPoint>[];
     for (var i = 0; i < 6; i++) {
-      final idx = (((daily.length - 1) * (i + 1)) / 6)
-          .round()
-          .clamp(0, daily.length - 1);
+      final idx = (((daily.length - 1) * (i + 1)) / 6).round().clamp(
+        0,
+        daily.length - 1,
+      );
       final item = _asMap(daily[idx]);
       final closingBalance = _readDouble(_dig(item, ['closingBalance'])) ?? 0;
-      final runwayDays =
-          (closingBalance / dailyOutflow).clamp(0, 999).toDouble();
+      final runwayDays = (closingBalance / dailyOutflow)
+          .clamp(0, 999)
+          .toDouble();
 
       points.add(
         _RunwayPoint(
@@ -1805,8 +1827,8 @@ class _FinancialIntelligenceDashboardState
       final type = (alert['type'] ?? 'alert').toString();
       final severity = (alert['severity'] ?? 'info').toString();
       final message = (alert['message'] ?? type).toString();
-      final action =
-          (alert['action'] ?? 'Review in operations console.').toString();
+      final action = (alert['action'] ?? 'Review in operations console.')
+          .toString();
       final timeLabel = _formatDateLabel(alert['dueDate']) ?? 'recent';
 
       return _SignalItem(
@@ -1824,8 +1846,9 @@ class _FinancialIntelligenceDashboardState
 
   double? _estimateRunwayDays(CashFlowState cashState) {
     final cashTotal = _readDouble(_dig(cashState.position, ['cash', 'total']));
-    final projectedOutflows =
-        _readDouble(_dig(cashState.forecast, ['summary', 'projectedOutflows']));
+    final projectedOutflows = _readDouble(
+      _dig(cashState.forecast, ['summary', 'projectedOutflows']),
+    );
     final horizon = _readDouble(_dig(cashState.forecast, ['horizon'])) ?? 60;
 
     if (cashTotal == null ||
@@ -1974,11 +1997,7 @@ class _DeskLane {
   final Color accent;
   final List<_FinancialModule> modules;
 
-  _DeskLane({
-    required this.title,
-    required this.accent,
-    required this.modules,
-  });
+  _DeskLane({required this.title, required this.accent, required this.modules});
 }
 
 class _PulseMetric {
@@ -2070,17 +2089,17 @@ class _KpiChip extends StatelessWidget {
           Text(
             label,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: 2),
           Text(
             value,
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w800,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w800,
+            ),
           ),
         ],
       ),

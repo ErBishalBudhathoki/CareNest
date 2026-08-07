@@ -28,9 +28,10 @@ class ProfilePlaceholder extends StatelessWidget {
           ),
           Text(
             '$firstName $lastName',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
+            style: const TextStyle(
+              fontSize: 18,
               fontWeight: FontWeight.w600,
-            ),
+            ).copyWith(fontWeight: FontWeight.w600),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             softWrap: false,

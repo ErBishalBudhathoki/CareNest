@@ -42,11 +42,10 @@ class BillingAutomationState {
 class BillingAutomationViewModel extends Notifier<BillingAutomationState> {
   late final FinancialIntelligenceRepository _repository;
 
-  
   @override
   BillingAutomationState build() {
     final apiMethod = ref.read(app_providers.apiMethodProvider);
-    
+
     return BillingAutomationState();
   }
 
@@ -76,11 +75,14 @@ class BillingAutomationViewModel extends Notifier<BillingAutomationState> {
   Future<void> validateBilling(Map<String, dynamic> billingData) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final result =
-          await _repository.validateBilling(billingData: billingData);
+      final result = await _repository.validateBilling(
+        billingData: billingData,
+      );
       if (result['success'] == true) {
-        state =
-            state.copyWith(isLoading: false, validation: result['validation']);
+        state = state.copyWith(
+          isLoading: false,
+          validation: result['validation'],
+        );
       } else {
         state = state.copyWith(isLoading: false, error: result['message']);
       }
@@ -92,8 +94,9 @@ class BillingAutomationViewModel extends Notifier<BillingAutomationState> {
   Future<void> detectAnomalies(Map<String, dynamic> invoiceData) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final result =
-          await _repository.detectBillingAnomalies(invoiceData: invoiceData);
+      final result = await _repository.detectBillingAnomalies(
+        invoiceData: invoiceData,
+      );
       if (result['success'] == true) {
         state = state.copyWith(isLoading: false, anomalies: result);
       } else {
@@ -107,11 +110,14 @@ class BillingAutomationViewModel extends Notifier<BillingAutomationState> {
   Future<void> getPendingInvoices(String organizationId) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final result =
-          await _repository.getPendingInvoices(organizationId: organizationId);
+      final result = await _repository.getPendingInvoices(
+        organizationId: organizationId,
+      );
       if (result['success'] == true) {
         state = state.copyWith(
-            isLoading: false, pendingInvoices: result['pending']);
+          isLoading: false,
+          pendingInvoices: result['pending'],
+        );
       } else {
         state = state.copyWith(isLoading: false, error: result['message']);
       }
@@ -125,4 +131,7 @@ class BillingAutomationViewModel extends Notifier<BillingAutomationState> {
   }
 }
 
-final billingAutomationViewModelProvider = NotifierProvider<BillingAutomationViewModel, BillingAutomationState>(BillingAutomationViewModel.new);
+final billingAutomationViewModelProvider =
+    NotifierProvider<BillingAutomationViewModel, BillingAutomationState>(
+      BillingAutomationViewModel.new,
+    );

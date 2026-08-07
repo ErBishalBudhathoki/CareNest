@@ -52,10 +52,7 @@ class CommandCategory {
 class BauhausCommandCenter extends StatefulWidget {
   final List<CommandCategory> categories;
 
-  const BauhausCommandCenter({
-    super.key,
-    required this.categories,
-  });
+  const BauhausCommandCenter({super.key, required this.categories});
 
   @override
   State<BauhausCommandCenter> createState() => _BauhausCommandCenterState();
@@ -96,8 +93,10 @@ class _BauhausCommandCenterState extends State<BauhausCommandCenter>
     _tabController = TabController(
       length: widget.categories.length,
       vsync: this,
-      initialIndex:
-          _selectedCategoryIndex.clamp(0, widget.categories.length - 1),
+      initialIndex: _selectedCategoryIndex.clamp(
+        0,
+        widget.categories.length - 1,
+      ),
     );
   }
 
@@ -124,10 +123,12 @@ class _BauhausCommandCenterState extends State<BauhausCommandCenter>
       0,
       (sum, category) => sum + category.actions.length,
     );
-    final hasActiveCategory = _selectedCategoryIndex >= 0 &&
+    final hasActiveCategory =
+        _selectedCategoryIndex >= 0 &&
         _selectedCategoryIndex < widget.categories.length;
-    final activeCategory =
-        hasActiveCategory ? widget.categories[_selectedCategoryIndex] : null;
+    final activeCategory = hasActiveCategory
+        ? widget.categories[_selectedCategoryIndex]
+        : null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,59 +153,59 @@ class _BauhausCommandCenterState extends State<BauhausCommandCenter>
     }
 
     return Container(
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
-        boxShadow: const [BauhausDesign.shadowHardSm],
-      ),
-      child: TabBar(
-        controller: _tabController,
-        isScrollable: true,
-        onTap: _selectCategory,
-        dividerColor: Colors.transparent,
-        indicatorColor: BauhausDesign.neutral,
-        indicatorWeight: 3,
-        indicatorSize: TabBarIndicatorSize.label,
-        labelColor: BauhausDesign.textDark,
-        unselectedLabelColor: BauhausDesign.textMuted,
-        labelStyle: GoogleFonts.inter(
-          fontSize: 11,
-          fontWeight: FontWeight.w800,
-        ),
-        unselectedLabelStyle: GoogleFonts.inter(
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-        ),
-        tabs: [
-          for (int i = 0; i < widget.categories.length; i++)
-            Tab(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: BauhausDesign.space2,
-                  vertical: BauhausDesign.space1,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: widget.categories[i].accentColor,
-                        shape: BoxShape.rectangle,
-                      ),
-                    ),
-                    const SizedBox(width: BauhausDesign.space2),
-                    Text(widget.categories[i].title),
-                    const SizedBox(width: BauhausDesign.space1),
-                    Text('(${widget.categories[i].actions.length})'),
-                  ],
-                ),
-              ),
+          decoration: BoxDecoration(
+            color: BauhausDesign.surfaceWhite,
+            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            boxShadow: const [BauhausDesign.shadowHardSm],
+          ),
+          child: TabBar(
+            controller: _tabController,
+            isScrollable: true,
+            onTap: _selectCategory,
+            dividerColor: Colors.transparent,
+            indicatorColor: BauhausDesign.neutral,
+            indicatorWeight: 3,
+            indicatorSize: TabBarIndicatorSize.label,
+            labelColor: BauhausDesign.textDark,
+            unselectedLabelColor: BauhausDesign.textMuted,
+            labelStyle: GoogleFonts.inter(
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
             ),
-        ],
-      ),
-    )
+            unselectedLabelStyle: GoogleFonts.inter(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+            ),
+            tabs: [
+              for (int i = 0; i < widget.categories.length; i++)
+                Tab(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: BauhausDesign.space2,
+                      vertical: BauhausDesign.space1,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: widget.categories[i].accentColor,
+                            shape: BoxShape.rectangle,
+                          ),
+                        ),
+                        const SizedBox(width: BauhausDesign.space2),
+                        Text(widget.categories[i].title),
+                        const SizedBox(width: BauhausDesign.space1),
+                        Text('(${widget.categories[i].actions.length})'),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        )
         .animate()
         .fadeIn(duration: 280.ms, curve: Curves.easeOut)
         .slideY(begin: 0.04, end: 0, duration: 300.ms, curve: Curves.easeOut);
@@ -212,90 +213,90 @@ class _BauhausCommandCenterState extends State<BauhausCommandCenter>
 
   Widget _buildCommandDeckHeader(int totalActions) {
     return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
-        boxShadow: const [BauhausDesign.shadowHard],
-      ),
-      padding: const EdgeInsets.all(BauhausDesign.space4),
-      child: Row(
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: BauhausDesign.neutral,
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
-              boxShadow: const [BauhausDesign.shadowHardSm],
-            ),
-            child: const Icon(
-              Icons.apps_rounded,
-              color: BauhausDesign.surfaceWhite,
-              size: 22,
-            ),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: BauhausDesign.surfaceWhite,
+            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            boxShadow: const [BauhausDesign.shadowHard],
           ),
-          const SizedBox(width: BauhausDesign.space3),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Command Desk',
-                  style: GoogleFonts.oswald(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.4,
-                    color: BauhausDesign.textDark,
-                    height: 1.1,
-                  ),
+          padding: const EdgeInsets.all(BauhausDesign.space4),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: BauhausDesign.neutral,
+                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  boxShadow: const [BauhausDesign.shadowHardSm],
                 ),
-                Text(
-                  'Focused control for admin workflows',
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: BauhausDesign.textMuted,
-                  ),
+                child: const Icon(
+                  Icons.apps_rounded,
+                  color: BauhausDesign.surfaceWhite,
+                  size: 22,
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(width: BauhausDesign.space3),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Command Desk',
+                      style: GoogleFonts.oswald(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.4,
+                        color: BauhausDesign.textDark,
+                        height: 1.1,
+                      ),
+                    ),
+                    Text(
+                      'Focused control for admin workflows',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: BauhausDesign.textMuted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: BauhausDesign.space3,
+                  vertical: BauhausDesign.space2,
+                ),
+                decoration: BoxDecoration(
+                  color: BauhausDesign.backgroundLight,
+                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      '$totalActions',
+                      style: GoogleFonts.oswald(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: BauhausDesign.textDark,
+                        height: 1,
+                      ),
+                    ),
+                    Text(
+                      'ACTIONS',
+                      style: GoogleFonts.inter(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: BauhausDesign.textMuted,
+                        letterSpacing: 0.8,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: BauhausDesign.space3,
-              vertical: BauhausDesign.space2,
-            ),
-            decoration: BoxDecoration(
-              color: BauhausDesign.backgroundLight,
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
-            ),
-            child: Column(
-              children: [
-                Text(
-                  '$totalActions',
-                  style: GoogleFonts.oswald(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: BauhausDesign.textDark,
-                    height: 1,
-                  ),
-                ),
-                Text(
-                  'ACTIONS',
-                  style: GoogleFonts.inter(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    color: BauhausDesign.textMuted,
-                    letterSpacing: 0.8,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    )
+        )
         .animate()
         .fadeIn(duration: 300.ms)
         .slideY(begin: 0.06, end: 0, duration: 350.ms, curve: Curves.easeOut);
@@ -314,22 +315,16 @@ class _BauhausCategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(
-          color: category.accentColor,
-          width: 2,
-        ),
-        boxShadow: const [BauhausDesign.shadowHard],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        children: [
-          _buildCategoryHeader(),
-          _buildExpandedContent(context),
-        ],
-      ),
-    )
+          decoration: BoxDecoration(
+            color: BauhausDesign.surfaceWhite,
+            border: Border.all(color: category.accentColor, width: 2),
+            boxShadow: const [BauhausDesign.shadowHard],
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            children: [_buildCategoryHeader(), _buildExpandedContent(context)],
+          ),
+        )
         .animate(delay: (categoryIndex * 90).ms)
         .fadeIn(duration: 360.ms, curve: Curves.easeOut)
         .slideY(begin: 0.05, end: 0, duration: 360.ms, curve: Curves.easeOut);
@@ -346,10 +341,7 @@ class _BauhausCategoryCard extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         border: Border(
-          bottom: BorderSide(
-            color: Colors.black.withOpacity(0.18),
-            width: 1,
-          ),
+          bottom: BorderSide(color: Colors.black.withOpacity(0.18), width: 1),
         ),
       ),
       child: Padding(
@@ -369,11 +361,7 @@ class _BauhausCategoryCard extends StatelessWidget {
                   width: 1.5,
                 ),
               ),
-              child: Icon(
-                category.headerIcon,
-                color: Colors.white,
-                size: 21,
-              ),
+              child: Icon(category.headerIcon, color: Colors.white, size: 21),
             ),
             const SizedBox(width: BauhausDesign.space3),
             Expanded(
@@ -558,10 +546,10 @@ class _BauhausCategoryCard extends StatelessWidget {
     final crossAxisCount = width >= 1100
         ? 4
         : width >= 760
-            ? 3
-            : width < 390
-                ? 1
-                : 2;
+        ? 3
+        : width < 390
+        ? 1
+        : 2;
     final childAspectRatio = crossAxisCount == 1 ? 2.8 : 1.18;
 
     return Padding(
@@ -640,10 +628,7 @@ class _BauhausGridActionCard extends StatelessWidget {
                       ),
                       alignment: Alignment.center,
                       child: IconTheme(
-                        data: IconThemeData(
-                          color: action.color,
-                          size: 22,
-                        ),
+                        data: IconThemeData(color: action.color, size: 22),
                         child: _constrainIcon(action.icon),
                       ),
                     ),
@@ -658,8 +643,7 @@ class _BauhausGridActionCard extends StatelessWidget {
                           color: (action.statusColor ?? BauhausDesign.warning)
                               .withOpacity(0.12),
                           border: Border.all(
-                            color:
-                                action.statusColor ?? BauhausDesign.warning,
+                            color: action.statusColor ?? BauhausDesign.warning,
                             width: 1,
                           ),
                         ),
@@ -668,8 +652,7 @@ class _BauhausGridActionCard extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 9,
                             fontWeight: FontWeight.w800,
-                            color:
-                                action.statusColor ?? BauhausDesign.warning,
+                            color: action.statusColor ?? BauhausDesign.warning,
                             letterSpacing: 0.5,
                           ),
                         ),

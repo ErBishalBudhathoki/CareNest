@@ -54,10 +54,7 @@ class _ServiceRateManagementViewState
     ref.invalidate(pricingOrgEmployeesProvider(widget.organizationId));
   }
 
-  bool _matchesFilters(
-    dynamic employee,
-    String query,
-  ) {
+  bool _matchesFilters(dynamic employee, String query) {
     final name = employee.name.toLowerCase();
     final email = employee.email.toLowerCase();
     final stream = (employee.stream ?? '').toLowerCase();
@@ -67,7 +64,8 @@ class _ServiceRateManagementViewState
         query.isEmpty || name.contains(query) || email.contains(query);
     final streamMatch =
         _selectedStream == 'all' || stream == _selectedStream.toLowerCase();
-    final employmentMatch = _selectedEmployment == 'all' ||
+    final employmentMatch =
+        _selectedEmployment == 'all' ||
         employmentType == _selectedEmployment.toLowerCase();
 
     return queryMatch && streamMatch && employmentMatch;
@@ -76,8 +74,9 @@ class _ServiceRateManagementViewState
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final employeesAsync =
-        ref.watch(pricingOrgEmployeesProvider(widget.organizationId));
+    final employeesAsync = ref.watch(
+      pricingOrgEmployeesProvider(widget.organizationId),
+    );
     final isLoading = employeesAsync.isLoading;
     final employees = employeesAsync.value ?? const [];
 
@@ -88,7 +87,7 @@ class _ServiceRateManagementViewState
     final averageRate = configured.isEmpty
         ? 0.0
         : configured.fold<double>(0.0, (sum, e) => sum + e.payRate) /
-            configured.length;
+              configured.length;
 
     return Scaffold(
       backgroundColor: _screenGray,
@@ -123,9 +122,12 @@ class _ServiceRateManagementViewState
                         controller: _tabController,
                         children: [
                           _buildCoverageList(l10n, filtered, isLoading),
-                          _buildCoverageList(l10n, missing, isLoading,
-                              emptyTitle:
-                                  l10n.moduleKeyInsightAllRatesConfigured),
+                          _buildCoverageList(
+                            l10n,
+                            missing,
+                            isLoading,
+                            emptyTitle: l10n.moduleKeyInsightAllRatesConfigured,
+                          ),
                           _buildStreamSummary(l10n, filtered, isLoading),
                         ],
                       ),
@@ -208,8 +210,7 @@ class _ServiceRateManagementViewState
                     Expanded(
                       child: Text(
                         l10n.serviceRateManagementSubtitle,
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
+                        style: BauhausDesign.getTextTheme(context).labelLarge
                             ?.copyWith(
                               color: _inkBlack,
                               fontWeight: FontWeight.w700,
@@ -227,8 +228,7 @@ class _ServiceRateManagementViewState
                       ),
                       child: Text(
                         l10n.systemActive.toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
+                        style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
                               color: BauhausDesign.surfaceWhite,
                               fontWeight: FontWeight.w800,
@@ -249,7 +249,9 @@ class _ServiceRateManagementViewState
   }
 
   Widget _buildSearchAndFilters(
-      AppLocalizations l10n, List<dynamic> employees) {
+    AppLocalizations l10n,
+    List<dynamic> employees,
+  ) {
     final streams = <String>{'all'};
     final employmentTypes = <String>{'all'};
     for (final employee in employees) {
@@ -272,9 +274,9 @@ class _ServiceRateManagementViewState
             controller: _searchController,
             decoration: InputDecoration(
               hintText: l10n.searchServiceRatesHint,
-              hintStyle: BauhausDesign.getTextTheme(context)
-                  .bodySmall
-                  ?.copyWith(color: BauhausDesign.textMuted),
+              hintStyle: BauhausDesign.getTextTheme(
+                context,
+              ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
               prefixIcon: const Icon(Icons.search, color: _inkBlack),
               isDense: true,
               filled: true,
@@ -342,10 +344,11 @@ class _ServiceRateManagementViewState
                         ? AppLocalizations.of(context)!.allFilter
                         : option,
                     overflow: TextOverflow.ellipsis,
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodySmall
+                    style: BauhausDesign.getTextTheme(context).bodySmall
                         ?.copyWith(
-                            color: _inkBlack, fontWeight: FontWeight.w700),
+                          color: _inkBlack,
+                          fontWeight: FontWeight.w700,
+                        ),
                   ),
                 ),
               )
@@ -424,8 +427,11 @@ class _ServiceRateManagementViewState
                   color: stat['color'] as Color,
                   border: Border.all(color: _inkBlack, width: 2),
                 ),
-                child: Icon(stat['icon'] as IconData,
-                    size: 12, color: BauhausDesign.surfaceWhite),
+                child: Icon(
+                  stat['icon'] as IconData,
+                  size: 12,
+                  color: BauhausDesign.surfaceWhite,
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -437,18 +443,19 @@ class _ServiceRateManagementViewState
                       stat['value'] as String,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelLarge
+                      style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
-                              color: _inkBlack, fontWeight: FontWeight.w900),
+                            color: _inkBlack,
+                            fontWeight: FontWeight.w900,
+                          ),
                     ),
                     Text(
                       stat['title'] as String,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelSmall
-                          ?.copyWith(color: BauhausDesign.textMuted),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
                     ),
                   ],
                 ),
@@ -468,18 +475,16 @@ class _ServiceRateManagementViewState
       ),
       child: TabBar(
         controller: _tabController,
-        indicator: const BoxDecoration(
-          color: _inkBlack,
-        ),
+        indicator: const BoxDecoration(color: _inkBlack),
         indicatorSize: TabBarIndicatorSize.tab,
         indicatorPadding: EdgeInsets.zero,
         padding: const EdgeInsets.symmetric(horizontal: 8),
         labelPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         labelColor: BauhausDesign.surfaceWhite,
         unselectedLabelColor: _inkBlack,
-        labelStyle: BauhausDesign.getTextTheme(context)
-            .labelSmall
-            ?.copyWith(fontWeight: FontWeight.w900),
+        labelStyle: BauhausDesign.getTextTheme(
+          context,
+        ).labelSmall?.copyWith(fontWeight: FontWeight.w900),
         tabs: [
           Tab(text: l10n.moduleMetricConfiguredRates),
           Tab(text: l10n.moduleStatusNeedsAction),
@@ -503,9 +508,9 @@ class _ServiceRateManagementViewState
       return Center(
         child: Text(
           emptyTitle ?? l10n.moduleNoDataYet,
-          style: BauhausDesign.getTextTheme(context)
-              .bodyMedium
-              ?.copyWith(color: BauhausDesign.textMuted),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
         ),
       );
     }
@@ -534,29 +539,31 @@ class _ServiceRateManagementViewState
                       employee.name.isEmpty ? employee.email : employee.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelLarge
+                      style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
-                              color: _inkBlack, fontWeight: FontWeight.w900),
+                            color: _inkBlack,
+                            fontWeight: FontWeight.w900,
+                          ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       employee.email,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelSmall
-                          ?.copyWith(color: BauhausDesign.textMuted),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       '${employee.stream ?? l10n.naLabel} · ${employee.employmentType ?? l10n.naLabel}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelSmall
+                      style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
-                              color: _inkBlack, fontWeight: FontWeight.w700),
+                            color: _inkBlack,
+                            fontWeight: FontWeight.w700,
+                          ),
                     ),
                   ],
                 ),
@@ -569,8 +576,7 @@ class _ServiceRateManagementViewState
                     hasRate
                         ? '\$${employee.payRate.toStringAsFixed(2)}'
                         : l10n.naLabel,
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelLarge
+                    style: BauhausDesign.getTextTheme(context).labelLarge
                         ?.copyWith(
                           color: hasRate
                               ? BauhausDesign.success
@@ -583,15 +589,16 @@ class _ServiceRateManagementViewState
                     onTap: _openEmployeePayRates,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: BauhausDesign.primary,
                         border: Border.all(color: _inkBlack, width: 2),
                       ),
                       child: Text(
                         l10n.configure.toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
+                        style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
                               color: BauhausDesign.surfaceWhite,
                               fontWeight: FontWeight.w800,
@@ -618,9 +625,9 @@ class _ServiceRateManagementViewState
       return Center(
         child: Text(
           l10n.moduleNoDataYet,
-          style: BauhausDesign.getTextTheme(context)
-              .bodyMedium
-              ?.copyWith(color: BauhausDesign.textMuted),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
         ),
       );
     }
@@ -646,7 +653,7 @@ class _ServiceRateManagementViewState
         final avgRate = configured.isEmpty
             ? 0.0
             : configured.fold<double>(0.0, (sum, e) => sum + e.payRate) /
-                configured.length;
+                  configured.length;
         return Container(
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.all(10),
@@ -661,21 +668,24 @@ class _ServiceRateManagementViewState
                   entry.key,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: BauhausDesign.getTextTheme(context)
-                      .labelLarge
+                  style: BauhausDesign.getTextTheme(context).labelLarge
                       ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w900),
                 ),
               ),
               Text(
                 '${entry.value.length}',
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                    color: BauhausDesign.info, fontWeight: FontWeight.w900),
+                  color: BauhausDesign.info,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
               const SizedBox(width: 8),
               Text(
                 avgRate > 0 ? '\$${avgRate.toStringAsFixed(2)}' : l10n.naLabel,
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                    color: BauhausDesign.success, fontWeight: FontWeight.w900),
+                  color: BauhausDesign.success,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
             ],
           ),

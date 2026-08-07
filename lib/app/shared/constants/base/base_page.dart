@@ -5,10 +5,7 @@ abstract class BasePage {
   final String name;
   final BaseScreen screen;
 
-  BasePage({
-    required this.name,
-    required this.screen,
-  });
+  BasePage({required this.name, required this.screen});
 
   Route<dynamic> getRoute() {
     return MaterialPageRoute(

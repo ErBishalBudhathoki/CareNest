@@ -28,7 +28,9 @@ class InvoiceAIRepository {
     required Map<String, dynamic> invoice,
   }) async {
     try {
-      final response = await _apiMethod.detectInvoiceAnomalies(invoice: invoice);
+      final response = await _apiMethod.detectInvoiceAnomalies(
+        invoice: invoice,
+      );
 
       if (response['success'] == true && response['data'] != null) {
         final anomalies = response['data']['anomalies'] as List;
@@ -46,7 +48,9 @@ class InvoiceAIRepository {
     required String invoiceId,
   }) async {
     try {
-      final response = await _apiMethod.predictPaymentDate(invoiceId: invoiceId);
+      final response = await _apiMethod.predictPaymentDate(
+        invoiceId: invoiceId,
+      );
 
       if (response['success'] == true && response['data'] != null) {
         return PaymentPrediction.fromJson(response['data']);
@@ -81,7 +85,9 @@ class InvoiceAIRepository {
         return AutoGenerateResult.fromJson(response['data']);
       }
 
-      throw Exception(response['message'] ?? 'Failed to auto-generate invoices');
+      throw Exception(
+        response['message'] ?? 'Failed to auto-generate invoices',
+      );
     } catch (e) {
       throw Exception('Error auto-generating invoices: $e');
     }
@@ -102,7 +108,9 @@ class InvoiceAIRepository {
         return AutoGenerateResult.fromJson(response['data']);
       }
 
-      throw Exception(response['message'] ?? 'Failed to generate invoice from text');
+      throw Exception(
+        response['message'] ?? 'Failed to generate invoice from text',
+      );
     } catch (e) {
       throw Exception('Error generating invoice from text: $e');
     }

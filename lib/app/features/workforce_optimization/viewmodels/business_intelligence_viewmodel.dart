@@ -40,7 +40,8 @@ class BusinessIntelligenceState {
       dashboard: dashboard ?? this.dashboard,
       revenueForecast: revenueForecast ?? this.revenueForecast,
       churnPredictions: churnPredictions ?? this.churnPredictions,
-      profitabilityAnalysis: profitabilityAnalysis ?? this.profitabilityAnalysis,
+      profitabilityAnalysis:
+          profitabilityAnalysis ?? this.profitabilityAnalysis,
       whatIfScenario: whatIfScenario ?? this.whatIfScenario,
       clvAnalysis: clvAnalysis ?? this.clvAnalysis,
       error: error,
@@ -49,14 +50,14 @@ class BusinessIntelligenceState {
 }
 
 // StateNotifier for Business Intelligence
-class BusinessIntelligenceViewModel extends Notifier<BusinessIntelligenceState> {
+class BusinessIntelligenceViewModel
+    extends Notifier<BusinessIntelligenceState> {
   late final WorkforceRepository _repository;
 
-  
   @override
   BusinessIntelligenceState build() {
     final repository = ref.watch(workforceRepositoryProvider);
-    
+
     return BusinessIntelligenceState();
   }
 
@@ -85,10 +86,7 @@ class BusinessIntelligenceViewModel extends Notifier<BusinessIntelligenceState> 
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -117,17 +115,12 @@ class BusinessIntelligenceViewModel extends Notifier<BusinessIntelligenceState> 
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
   // Predict churn
-  Future<void> predictChurn({
-    required String organizationId,
-  }) async {
+  Future<void> predictChurn({required String organizationId}) async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
@@ -147,10 +140,7 @@ class BusinessIntelligenceViewModel extends Notifier<BusinessIntelligenceState> 
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -174,7 +164,8 @@ class BusinessIntelligenceViewModel extends Notifier<BusinessIntelligenceState> 
       if (result['success'] == true) {
         state = state.copyWith(
           isLoading: false,
-          profitabilityAnalysis: result['analysis'] as List<ProfitabilityAnalysis>,
+          profitabilityAnalysis:
+              result['analysis'] as List<ProfitabilityAnalysis>,
         );
       } else {
         state = state.copyWith(
@@ -183,10 +174,7 @@ class BusinessIntelligenceViewModel extends Notifier<BusinessIntelligenceState> 
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -215,10 +203,7 @@ class BusinessIntelligenceViewModel extends Notifier<BusinessIntelligenceState> 
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -247,10 +232,7 @@ class BusinessIntelligenceViewModel extends Notifier<BusinessIntelligenceState> 
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -266,4 +248,7 @@ class BusinessIntelligenceViewModel extends Notifier<BusinessIntelligenceState> 
 }
 
 // Provider for BusinessIntelligenceViewModel
-final businessIntelligenceViewModelProvider = NotifierProvider<BusinessIntelligenceViewModel, BusinessIntelligenceState>(BusinessIntelligenceViewModel.new);
+final businessIntelligenceViewModelProvider =
+    NotifierProvider<BusinessIntelligenceViewModel, BusinessIntelligenceState>(
+      BusinessIntelligenceViewModel.new,
+    );

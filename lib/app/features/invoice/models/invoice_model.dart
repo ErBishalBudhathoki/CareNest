@@ -16,7 +16,7 @@ class InvoiceModel {
   final String invoiceNumber;
   final List<String>? attachedPhotos;
   final String? photoDescription;
-  
+
   // New Advanced Billing Fields
   final PaymentInfo? payment;
   final RecurrenceInfo? recurrence;
@@ -49,7 +49,7 @@ class InvoiceModel {
         json['clientAddress'] ?? '',
         json['clientCity'] ?? '',
         json['clientState'] ?? '',
-        json['clientZip'] ?? ''
+        json['clientZip'] ?? '',
       ],
       clientBusinessName: json['clientBusinessName'] ?? '',
       dateList: List<String>.from(json['dateList'] ?? []),
@@ -63,8 +63,12 @@ class InvoiceModel {
           ? List<String>.from(json['attachedPhotos'])
           : null,
       photoDescription: json['photoDescription'],
-      payment: json['payment'] != null ? PaymentInfo.fromJson(json['payment']) : null,
-      recurrence: json['recurrence'] != null ? RecurrenceInfo.fromJson(json['recurrence']) : null,
+      payment: json['payment'] != null
+          ? PaymentInfo.fromJson(json['payment'])
+          : null,
+      recurrence: json['recurrence'] != null
+          ? RecurrenceInfo.fromJson(json['recurrence'])
+          : null,
     );
   }
 

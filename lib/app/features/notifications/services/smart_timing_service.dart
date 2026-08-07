@@ -67,17 +67,20 @@ class SmartTimingService {
 
     // Update engagement statistics
     pattern.totalNotifications++;
-    
+
     if (readAt != null) {
       pattern.readNotifications++;
       final responseTime = readAt.difference(sentAt).inMinutes;
-      pattern.averageResponseTimeMinutes = 
-          (pattern.averageResponseTimeMinutes * (pattern.readNotifications - 1) + responseTime) / 
+      pattern.averageResponseTimeMinutes =
+          (pattern.averageResponseTimeMinutes *
+                  (pattern.readNotifications - 1) +
+              responseTime) /
           pattern.readNotifications;
-      
+
       // Track hourly engagement
       final hour = sentAt.hour;
-      pattern.hourlyEngagement[hour] = (pattern.hourlyEngagement[hour] ?? 0) + 1;
+      pattern.hourlyEngagement[hour] =
+          (pattern.hourlyEngagement[hour] ?? 0) + 1;
     }
 
     if (actionedAt != null) {
@@ -85,11 +88,11 @@ class SmartTimingService {
     }
 
     // Track category-specific engagement
-    pattern.categoryEngagement[category] = 
+    pattern.categoryEngagement[category] =
         (pattern.categoryEngagement[category] ?? 0) + 1;
 
     _engagementPatterns[userId] = pattern;
-    
+
     // In production, persist to backend
     await _persistEngagementPattern(userId, pattern);
   }
@@ -116,7 +119,7 @@ class SmartTimingService {
   }) {
     // Find peak engagement hours
     final peakHours = _findPeakEngagementHours(pattern);
-    
+
     // Check if we're in quiet hours
     if (quietHours.enabled && _isInQuietHours(now, quietHours)) {
       // Wait until quiet hours end
@@ -169,7 +172,7 @@ class SmartTimingService {
 
     final startParts = quietHours.startTime.split(':');
     final endParts = quietHours.endTime.split(':');
-    
+
     final startHour = int.parse(startParts[0]);
     final startMinute = int.parse(startParts[1]);
     final endHour = int.parse(endParts[0]);
@@ -194,7 +197,7 @@ class SmartTimingService {
     final endMinute = int.parse(endParts[1]);
 
     var endTime = DateTime(now.year, now.month, now.day, endHour, endMinute);
-    
+
     // If end time is before current time, it's tomorrow
     if (endTime.isBefore(now)) {
       endTime = endTime.add(const Duration(days: 1));
@@ -211,7 +214,7 @@ class SmartTimingService {
     // Find next peak hour that's not in quiet hours
     for (final hour in peakHours) {
       var candidateTime = DateTime(now.year, now.month, now.day, hour, 0);
-      
+
       // If hour has passed today, try tomorrow
       if (candidateTime.isBefore(now)) {
         candidateTime = candidateTime.add(const Duration(days: 1));
@@ -233,7 +236,7 @@ class SmartTimingService {
   ) {
     // Try to find the next peak hour
     final nextPeak = _findNextPeakHour(now, peakHours, quietHours);
-    
+
     // If next peak is more than 12 hours away, send sooner
     if (nextPeak.difference(now).inHours > 12) {
       // Find next non-quiet hour
@@ -274,14 +277,14 @@ class UserEngagementPattern {
     this.averageResponseTimeMinutes = 0,
     Map<int, int>? hourlyEngagement,
     Map<NotificationCategory, int>? categoryEngagement,
-  })  : hourlyEngagement = hourlyEngagement ?? {},
-        categoryEngagement = categoryEngagement ?? {};
+  }) : hourlyEngagement = hourlyEngagement ?? {},
+       categoryEngagement = categoryEngagement ?? {};
 
   factory UserEngagementPattern.defaultPattern(String userId) {
     return UserEngagementPattern(
       userId: userId,
       hourlyEngagement: {
-        9: 10,  // 9 AM
+        9: 10, // 9 AM
         12: 15, // 12 PM
         18: 12, // 6 PM
       },

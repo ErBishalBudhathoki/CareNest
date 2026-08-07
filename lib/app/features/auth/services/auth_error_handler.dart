@@ -42,7 +42,10 @@ class AuthErrorHandler {
     switch (errorType) {
       case AuthErrorType.incorrectPassword:
         await _showIncorrectPasswordDialog(
-            context, userEmail, onForgotPassword);
+          context,
+          userEmail,
+          onForgotPassword,
+        );
         break;
       case AuthErrorType.userNotFound:
         await _showUserNotFoundDialog(context, userEmail, onCreateAccount);
@@ -61,7 +64,10 @@ class AuthErrorHandler {
         break;
       case AuthErrorType.invalidCredentials:
         await _showInvalidCredentialsDialog(
-            context, userEmail, onForgotPassword);
+          context,
+          userEmail,
+          onForgotPassword,
+        );
         break;
       case AuthErrorType.invalidInput:
         await _showInvalidInputDialog(context, errorMessage);
@@ -83,14 +89,21 @@ class AuthErrorHandler {
         break;
       case AuthErrorType.unknown:
         await _showGenericErrorDialog(
-            context, errorMessage, onRetry, userEmail);
+          context,
+          errorMessage,
+          onRetry,
+          userEmail,
+        );
         break;
     }
   }
 
   /// Categorize error based on error message, error code, and status code
-  static AuthErrorType _categorizeError(String errorMessage,
-      [String? errorCode, int? statusCode]) {
+  static AuthErrorType _categorizeError(
+    String errorMessage, [
+    String? errorCode,
+    int? statusCode,
+  ]) {
     // First check status code for HTTP-specific errors
     if (statusCode != null) {
       switch (statusCode) {
@@ -272,10 +285,7 @@ class AuthErrorHandler {
     BuildContext context,
     VoidCallback? onRetry,
   ) async {
-    await EnhancedAuthDialog.showNetworkErrorDialog(
-      context,
-      onRetry: onRetry,
-    );
+    await EnhancedAuthDialog.showNetworkErrorDialog(context, onRetry: onRetry);
   }
 
   /// Show server error dialog
@@ -403,10 +413,7 @@ class AuthErrorHandler {
     BuildContext context,
     String? email,
   ) async {
-    await EnhancedAuthDialog.showEmailAlreadyInUseDialog(
-      context,
-      email: email,
-    );
+    await EnhancedAuthDialog.showEmailAlreadyInUseDialog(context, email: email);
   }
 
   /// Show generic error dialog
@@ -460,8 +467,9 @@ class AuthErrorHandler {
         throw Exception('Please enter a valid email and try again.');
       }
 
-      final response =
-          await ApiMethod().resendEmailVerificationOtp(targetEmail);
+      final response = await ApiMethod().resendEmailVerificationOtp(
+        targetEmail,
+      );
       final isSuccess =
           response['success'] == true || response['statusCode'] == 200;
 
@@ -473,7 +481,7 @@ class AuthErrorHandler {
       }
       final successMessage =
           response['message']?.toString() ??
-              'Verification link sent to $targetEmail.';
+          'Verification link sent to $targetEmail.';
 
       if (context.mounted) {
         ScaffoldMessenger.maybeOf(context)?.showSnackBar(

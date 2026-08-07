@@ -86,7 +86,8 @@ class AdminDashboardView extends ConsumerStatefulWidget {
 }
 
 class _AdminDashboardViewControllerState
-    extends ConsumerState<AdminDashboardView> with TickerProviderStateMixin {
+    extends ConsumerState<AdminDashboardView>
+    with TickerProviderStateMixin {
   Map<String, dynamic> getInitialData = {};
   late final ApiMethod _apiMethod;
   final SharedPreferencesUtils _sharedPrefs = SharedPreferencesUtils();
@@ -195,7 +196,8 @@ class _AdminDashboardViewControllerState
     if (prefsOrgId != null && prefsOrgId.isNotEmpty) return prefsOrgId;
 
     if (initData is Map<String, dynamic>) {
-      final dynamic orgId = initData['organizationId'] ??
+      final dynamic orgId =
+          initData['organizationId'] ??
           initData['orgId'] ??
           (initData['data'] is Map<String, dynamic>
               ? (initData['data'] as Map<String, dynamic>)['organizationId']
@@ -224,10 +226,7 @@ class _AdminDashboardViewControllerState
             child: Container(
               decoration: BoxDecoration(
                 color: BauhausDesign.surfaceWhite,
-                border: Border.all(
-                  color: BauhausDesign.neutral,
-                  width: 2,
-                ),
+                border: Border.all(color: BauhausDesign.neutral, width: 2),
                 boxShadow: const [BauhausDesign.shadowHard],
               ),
               child: Padding(
@@ -253,9 +252,7 @@ class _AdminDashboardViewControllerState
                             ),
                             child: Text(
                               'SETUP REQUIRED',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelLarge
+                              style: Theme.of(context).textTheme.labelLarge
                                   ?.copyWith(
                                     color: BauhausDesign.textDark,
                                     fontWeight: FontWeight.w900,
@@ -287,12 +284,12 @@ class _AdminDashboardViewControllerState
                     const SizedBox(height: 16),
                     Text(
                       'Complete email setup first',
-                      style:
-                          Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.w900,
-                                color: BauhausDesign.textDark,
-                                height: 1.05,
-                              ),
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(
+                            fontWeight: FontWeight.w900,
+                            color: BauhausDesign.textDark,
+                            height: 1.05,
+                          ),
                     ),
                     const SizedBox(height: 10),
                     Container(
@@ -310,9 +307,7 @@ class _AdminDashboardViewControllerState
                         children: [
                           Text(
                             '$workflowName needs your organization invoicing mailbox before the workflow can send invoices and delivery updates.',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
+                            style: Theme.of(context).textTheme.bodyMedium
                                 ?.copyWith(
                                   color: BauhausDesign.textDark,
                                   fontWeight: FontWeight.w700,
@@ -339,9 +334,7 @@ class _AdminDashboardViewControllerState
                               Expanded(
                                 child: Text(
                                   'Next step: Configuration & Finance -> Email Settings',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
+                                  style: Theme.of(context).textTheme.bodySmall
                                       ?.copyWith(
                                         fontWeight: FontWeight.w800,
                                         color: BauhausDesign.textMuted,
@@ -428,10 +421,10 @@ class _AdminDashboardViewControllerState
                       child: Text(
                         'Once configured, this workflow unlocks immediately when you return.',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: BauhausDesign.textDark,
-                              fontWeight: FontWeight.w700,
-                              height: 1.3,
-                            ),
+                          color: BauhausDesign.textDark,
+                          fontWeight: FontWeight.w700,
+                          height: 1.3,
+                        ),
                       ),
                     ),
                   ],
@@ -466,14 +459,15 @@ class _AdminDashboardViewControllerState
         content: Text(
           message,
           style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                fontWeight: FontWeight.w500,
-                color: BauhausDesign.surfaceWhite,
-              ),
+            fontWeight: FontWeight.w500,
+            color: BauhausDesign.surfaceWhite,
+          ),
         ),
         backgroundColor: isError ? BauhausDesign.error : BauhausDesign.success,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(BauhausDesign.radiusLg)),
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
+        ),
         margin: const EdgeInsets.all(BauhausDesign.space6),
         elevation: 8,
         duration: const Duration(seconds: 3),
@@ -505,9 +499,7 @@ class _AdminDashboardViewControllerState
   Future<void> _navigateToAddClient() async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const AddClientDetails(),
-      ),
+      MaterialPageRoute(builder: (context) => const AddClientDetails()),
     );
 
     if (result == true) {
@@ -516,8 +508,10 @@ class _AdminDashboardViewControllerState
   }
 
   Future<void> _navigateToAddBusiness() async {
-    final result = await Navigator.of(context, rootNavigator: true)
-        .pushNamed(Routes.addBusinessDetails);
+    final result = await Navigator.of(
+      context,
+      rootNavigator: true,
+    ).pushNamed(Routes.addBusinessDetails);
     if (result == true) {
       await _refreshBusinessOverview();
     }
@@ -599,10 +593,7 @@ class _AdminDashboardViewControllerState
           decoration: const BoxDecoration(
             color: BauhausDesign.primary,
             border: Border(
-              bottom: BorderSide(
-                color: BauhausDesign.neutral,
-                width: 2,
-              ),
+              bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
             ),
           ),
           child: SafeArea(
@@ -633,9 +624,7 @@ class _AdminDashboardViewControllerState
                                       color: BauhausDesign.neutral,
                                       width: 2,
                                     ),
-                                    boxShadow: const [
-                                      BauhausDesign.shadowHard,
-                                    ],
+                                    boxShadow: const [BauhausDesign.shadowHard],
                                   ),
                                   child: Container(
                                     padding: const EdgeInsets.all(0),
@@ -664,21 +653,23 @@ class _AdminDashboardViewControllerState
                                         Expanded(
                                           child: TweenAnimationBuilder<double>(
                                             duration: const Duration(
-                                                milliseconds: 600),
+                                              milliseconds: 600,
+                                            ),
                                             tween: Tween(begin: 0.0, end: 1.0),
                                             builder: (context, value, child) {
                                               return Transform.translate(
-                                                offset:
-                                                    Offset(0, 8 * (1 - value)),
+                                                offset: Offset(
+                                                  0,
+                                                  8 * (1 - value),
+                                                ),
                                                 child: Opacity(
                                                   opacity: value,
                                                   child: Text(
                                                     _getCurrentGreeting(),
-                                                    style: BauhausDesign
-                                                            .getTextTheme(
-                                                                context)
-                                                        .bodyMedium
-                                                        ?.copyWith(
+                                                    style:
+                                                        BauhausDesign.getTextTheme(
+                                                          context,
+                                                        ).bodyMedium?.copyWith(
                                                           color: BauhausDesign
                                                               .surfaceWhite,
                                                           fontWeight:
@@ -710,8 +701,9 @@ class _AdminDashboardViewControllerState
                                                           .surfaceWhite,
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              BauhausDesign
-                                                                  .radiusMd),
+                                                            BauhausDesign
+                                                                .radiusMd,
+                                                          ),
                                                       border: Border.all(
                                                         color: BauhausDesign
                                                             .neutral,
@@ -732,20 +724,21 @@ class _AdminDashboardViewControllerState
                                                   ),
                                                 ),
                                                 const SizedBox(
-                                                    width:
-                                                        BauhausDesign.space4),
+                                                  width: BauhausDesign.space4,
+                                                ),
                                                 Consumer(
-                                                  builder:
-                                                      (context, ref, child) {
+                                                  builder: (context, ref, child) {
                                                     final unreadCount = ref.watch(
-                                                        unreadNotificationCountProvider);
+                                                      unreadNotificationCountProvider,
+                                                    );
                                                     final hasUnread =
                                                         unreadCount > 0;
 
                                                     return GestureDetector(
                                                       onTap: () {
-                                                        Navigator.of(context)
-                                                            .push(
+                                                        Navigator.of(
+                                                          context,
+                                                        ).push(
                                                           MaterialPageRoute(
                                                             builder: (context) =>
                                                                 const NotificationListView(),
@@ -754,16 +747,17 @@ class _AdminDashboardViewControllerState
                                                       },
                                                       child: Container(
                                                         padding:
-                                                            const EdgeInsets
-                                                                .all(8),
-                                                        decoration:
-                                                            BoxDecoration(
+                                                            const EdgeInsets.all(
+                                                              8,
+                                                            ),
+                                                        decoration: BoxDecoration(
                                                           color: BauhausDesign
                                                               .surfaceWhite,
                                                           borderRadius:
                                                               BorderRadius.circular(
-                                                                  BauhausDesign
-                                                                      .radiusMd),
+                                                                BauhausDesign
+                                                                    .radiusMd,
+                                                              ),
                                                           border: Border.all(
                                                             color: BauhausDesign
                                                                 .neutral,
@@ -779,9 +773,9 @@ class _AdminDashboardViewControllerState
                                                             Icon(
                                                               hasUnread
                                                                   ? Icons
-                                                                      .notifications_active
+                                                                        .notifications_active
                                                                   : Icons
-                                                                      .notifications_outlined,
+                                                                        .notifications_outlined,
                                                               color:
                                                                   BauhausDesign
                                                                       .neutral,
@@ -791,19 +785,15 @@ class _AdminDashboardViewControllerState
                                                               Positioned(
                                                                 top: 0,
                                                                 right: 0,
-                                                                child:
-                                                                    Container(
+                                                                child: Container(
                                                                   width: 10,
                                                                   height: 10,
-                                                                  decoration:
-                                                                      BoxDecoration(
+                                                                  decoration: BoxDecoration(
                                                                     color: BauhausDesign
                                                                         .error,
                                                                     shape: BoxShape
                                                                         .rectangle,
-                                                                    border:
-                                                                        Border
-                                                                            .all(
+                                                                    border: Border.all(
                                                                       color: BauhausDesign
                                                                           .neutral,
                                                                       width: 1,
@@ -818,15 +808,14 @@ class _AdminDashboardViewControllerState
                                                   },
                                                 ),
                                                 const SizedBox(
-                                                    width:
-                                                        BauhausDesign.space4),
+                                                  width: BauhausDesign.space4,
+                                                ),
                                                 GestureDetector(
                                                   onTap: () {
                                                     Navigator.push(
                                                       context,
                                                       MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            SettingsView(
+                                                        builder: (context) => SettingsView(
                                                           userEmail:
                                                               widget.email,
                                                           userName: displayName,
@@ -853,8 +842,9 @@ class _AdminDashboardViewControllerState
                                                           .surfaceWhite,
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              BauhausDesign
-                                                                  .radiusMd),
+                                                            BauhausDesign
+                                                                .radiusMd,
+                                                          ),
                                                       border: Border.all(
                                                         color: BauhausDesign
                                                             .neutral,
@@ -880,10 +870,12 @@ class _AdminDashboardViewControllerState
                                       ],
                                     ),
                                     const SizedBox(
-                                        height: BauhausDesign.space1),
+                                      height: BauhausDesign.space1,
+                                    ),
                                     TweenAnimationBuilder<double>(
-                                      duration:
-                                          const Duration(milliseconds: 800),
+                                      duration: const Duration(
+                                        milliseconds: 800,
+                                      ),
                                       tween: Tween(begin: 0.0, end: 1.0),
                                       builder: (context, value, child) {
                                         return Transform.translate(
@@ -894,17 +886,18 @@ class _AdminDashboardViewControllerState
                                               displayName,
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
-                                              style: BauhausDesign.getTextTheme(
-                                                      context)
-                                                  .headlineMedium
-                                                  ?.copyWith(
+                                              style:
+                                                  BauhausDesign.getTextTheme(
+                                                    context,
+                                                  ).headlineMedium?.copyWith(
                                                     color: BauhausDesign
                                                         .surfaceWhite,
                                                     fontWeight: FontWeight.w700,
                                                     letterSpacing: -0.5,
                                                     height: 1.1,
-                                                    fontSize:
-                                                        isSmallScreen ? 24 : 32,
+                                                    fontSize: isSmallScreen
+                                                        ? 24
+                                                        : 32,
                                                   ),
                                             ),
                                           ),
@@ -912,10 +905,12 @@ class _AdminDashboardViewControllerState
                                       },
                                     ),
                                     const SizedBox(
-                                        height: BauhausDesign.space2),
+                                      height: BauhausDesign.space2,
+                                    ),
                                     TweenAnimationBuilder<double>(
-                                      duration:
-                                          const Duration(milliseconds: 1000),
+                                      duration: const Duration(
+                                        milliseconds: 1000,
+                                      ),
                                       tween: Tween(begin: 0.0, end: 1.0),
                                       builder: (context, value, child) {
                                         return Transform.translate(
@@ -925,24 +920,24 @@ class _AdminDashboardViewControllerState
                                             child: Row(
                                               children: [
                                                 _buildQuickStat(
-                                                    context,
-                                                    'Active',
-                                                    (businessStats[
-                                                                'activeInvoices'] ??
-                                                            0)
-                                                        .toString(),
-                                                    Icons.trending_up),
+                                                  context,
+                                                  'Active',
+                                                  (businessStats['activeInvoices'] ??
+                                                          0)
+                                                      .toString(),
+                                                  Icons.trending_up,
+                                                ),
                                                 const SizedBox(
-                                                    width:
-                                                        BauhausDesign.space4),
+                                                  width: BauhausDesign.space4,
+                                                ),
                                                 _buildQuickStat(
-                                                    context,
-                                                    'Pending',
-                                                    (businessStats[
-                                                                'pendingInvoices'] ??
-                                                            0)
-                                                        .toString(),
-                                                    Icons.schedule),
+                                                  context,
+                                                  'Pending',
+                                                  (businessStats['pendingInvoices'] ??
+                                                          0)
+                                                      .toString(),
+                                                  Icons.schedule,
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -981,14 +976,13 @@ class _AdminDashboardViewControllerState
                                 decoration: BoxDecoration(
                                   color: BauhausDesign.surfaceWhite,
                                   borderRadius: BorderRadius.circular(
-                                      BauhausDesign.radiusLg),
+                                    BauhausDesign.radiusLg,
+                                  ),
                                   border: Border.all(
                                     color: BauhausDesign.neutral,
                                     width: 1.5,
                                   ),
-                                  boxShadow: const [
-                                    BauhausDesign.shadowHardSm,
-                                  ],
+                                  boxShadow: const [BauhausDesign.shadowHardSm],
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -1000,8 +994,9 @@ class _AdminDashboardViewControllerState
                                         color: BauhausDesign.success,
                                         shape: BoxShape.rectangle,
                                         border: Border.all(
-                                            color: BauhausDesign.neutral,
-                                            width: 1),
+                                          color: BauhausDesign.neutral,
+                                          width: 1,
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(width: BauhausDesign.space2),
@@ -1022,14 +1017,13 @@ class _AdminDashboardViewControllerState
                                 decoration: BoxDecoration(
                                   color: BauhausDesign.accent,
                                   borderRadius: BorderRadius.circular(
-                                      BauhausDesign.radiusMd),
+                                    BauhausDesign.radiusMd,
+                                  ),
                                   border: Border.all(
                                     color: BauhausDesign.neutral,
                                     width: 2,
                                   ),
-                                  boxShadow: const [
-                                    BauhausDesign.shadowHard,
-                                  ],
+                                  boxShadow: const [BauhausDesign.shadowHard],
                                 ),
                                 child: const Icon(
                                   Icons.add_rounded,
@@ -1060,77 +1054,78 @@ class _AdminDashboardViewControllerState
     int index,
   ) {
     return Container(
-      width: 140,
-      margin: const EdgeInsets.only(right: 16),
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        borderRadius: BorderRadius.circular(
-            BauhausDesign.radiusMd), // Less rounded for Bauhaus
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
-        boxShadow: const [
-          BauhausDesign.shadowHard,
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(BauhausDesign.space4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: color, // Solid color
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
-                boxShadow: const [
-                  BauhausDesign.shadowHardSm,
-                ],
-              ),
-              child: Icon(icon,
-                  color: BauhausDesign.surfaceLight, size: 18), // White icon
-            ),
-            const SizedBox(height: BauhausDesign.space2),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      value,
-                      style: BauhausDesign.getTextTheme(context)
-                          .titleMedium
-                          ?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: BauhausDesign.neutral, // High contrast
-                            letterSpacing: -0.5,
-                          ),
-                      maxLines: 1,
+          width: 140,
+          margin: const EdgeInsets.only(right: 16),
+          decoration: BoxDecoration(
+            color: BauhausDesign.surfaceLight,
+            borderRadius: BorderRadius.circular(
+              BauhausDesign.radiusMd,
+            ), // Less rounded for Bauhaus
+            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            boxShadow: const [BauhausDesign.shadowHard],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(BauhausDesign.space4),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color, // Solid color
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.5,
                     ),
+                    boxShadow: const [BauhausDesign.shadowHardSm],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    title,
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelSmall
-                        ?.copyWith(
-                          color: BauhausDesign.neutral,
-                          height: 1.1,
-                          fontWeight: FontWeight.w600,
+                  child: Icon(
+                    icon,
+                    color: BauhausDesign.surfaceLight,
+                    size: 18,
+                  ), // White icon
+                ),
+                const SizedBox(height: BauhausDesign.space2),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          value,
+                          style: BauhausDesign.getTextTheme(context).titleMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: BauhausDesign.neutral, // High contrast
+                                letterSpacing: -0.5,
+                              ),
+                          maxLines: 1,
                         ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        title,
+                        style: BauhausDesign.getTextTheme(context).labelSmall
+                            ?.copyWith(
+                              color: BauhausDesign.neutral,
+                              height: 1.1,
+                              fontWeight: FontWeight.w600,
+                            ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    )
+          ),
+        )
         .animate(delay: (index * 150).ms)
         .scale(begin: const Offset(0.8, 0.8), curve: Curves.easeOutQuart)
         .fadeIn(duration: 600.ms, curve: Curves.easeOutQuart);
@@ -1155,8 +1150,7 @@ class _AdminDashboardViewControllerState
                   children: [
                     Text(
                       AppLocalizations.of(context)!.getStarted,
-                      style: BauhausDesign.getTextTheme(context)
-                          .titleMedium
+                      style: BauhausDesign.getTextTheme(context).titleMedium
                           ?.copyWith(
                             fontSize: 26,
                             fontWeight: FontWeight.bold,
@@ -1167,8 +1161,7 @@ class _AdminDashboardViewControllerState
                     const SizedBox(height: BauhausDesign.space1),
                     Text(
                       AppLocalizations.of(context)!.getStartedDesc,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
                             color: BauhausDesign.neutral,
                             fontWeight: FontWeight.w500,
@@ -1178,49 +1171,55 @@ class _AdminDashboardViewControllerState
                     Row(
                       children: [
                         Expanded(
-                          child: HomeDetailCard(
-                            buttonLabel:
-                                AppLocalizations.of(context)!.addClientButton,
-                            cardLabel:
-                                AppLocalizations.of(context)!.knowYourClient,
-                            image: Image.asset(
-                              AssetsStrings.cardImageGirl,
-                              fit: BoxFit.contain,
-                            ),
-                            gradientStartColor: BauhausDesign.secondary,
-                            gradientEndColor: BauhausDesign.secondary,
-                            onPressed: _navigateToAddClient,
-                          )
-                              .animate()
-                              .scale(
-                                begin: const Offset(0.9, 0.9),
-                                curve: Curves.easeOutBack,
-                                duration: 800.ms,
-                              )
-                              .fadeIn(duration: 600.ms),
+                          child:
+                              HomeDetailCard(
+                                    buttonLabel: AppLocalizations.of(
+                                      context,
+                                    )!.addClientButton,
+                                    cardLabel: AppLocalizations.of(
+                                      context,
+                                    )!.knowYourClient,
+                                    image: Image.asset(
+                                      AssetsStrings.cardImageGirl,
+                                      fit: BoxFit.contain,
+                                    ),
+                                    gradientStartColor: BauhausDesign.secondary,
+                                    gradientEndColor: BauhausDesign.secondary,
+                                    onPressed: _navigateToAddClient,
+                                  )
+                                  .animate()
+                                  .scale(
+                                    begin: const Offset(0.9, 0.9),
+                                    curve: Curves.easeOutBack,
+                                    duration: 800.ms,
+                                  )
+                                  .fadeIn(duration: 600.ms),
                         ),
                         const SizedBox(width: BauhausDesign.space6),
                         Expanded(
-                          child: HomeDetailCard(
-                            buttonLabel:
-                                AppLocalizations.of(context)!.addBusinessButton,
-                            cardLabel:
-                                AppLocalizations.of(context)!.knowYourBusiness,
-                            image: Image.asset(
-                              AssetsStrings.cardImageBoy,
-                              fit: BoxFit.contain,
-                            ),
-                            gradientStartColor: BauhausDesign.primary,
-                            gradientEndColor: BauhausDesign.primary,
-                            onPressed: _navigateToAddBusiness,
-                          )
-                              .animate(delay: 200.ms)
-                              .scale(
-                                begin: const Offset(0.9, 0.9),
-                                curve: Curves.easeOutBack,
-                                duration: 800.ms,
-                              )
-                              .fadeIn(duration: 600.ms),
+                          child:
+                              HomeDetailCard(
+                                    buttonLabel: AppLocalizations.of(
+                                      context,
+                                    )!.addBusinessButton,
+                                    cardLabel: AppLocalizations.of(
+                                      context,
+                                    )!.knowYourBusiness,
+                                    image: Image.asset(
+                                      AssetsStrings.cardImageBoy,
+                                      fit: BoxFit.contain,
+                                    ),
+                                    gradientStartColor: BauhausDesign.primary,
+                                    gradientEndColor: BauhausDesign.primary,
+                                    onPressed: _navigateToAddBusiness,
+                                  )
+                                  .animate(delay: 200.ms)
+                                  .scale(
+                                    begin: const Offset(0.9, 0.9),
+                                    curve: Curves.easeOutBack,
+                                    duration: 800.ms,
+                                  )
+                                  .fadeIn(duration: 600.ms),
                         ),
                       ],
                     ),
@@ -1321,7 +1320,8 @@ class _AdminDashboardViewControllerState
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => const AdminCertificationAuditView()),
+                builder: (_) => const AdminCertificationAuditView(),
+              ),
             ),
           ),
           CommandAction(
@@ -1332,7 +1332,8 @@ class _AdminDashboardViewControllerState
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => const AdminCertificationRequirementsView()),
+                builder: (_) => const AdminCertificationRequirementsView(),
+              ),
             ),
           ),
           CommandAction(
@@ -1343,7 +1344,8 @@ class _AdminDashboardViewControllerState
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => const AdminTrainingManagementView()),
+                builder: (_) => const AdminTrainingManagementView(),
+              ),
             ),
           ),
           CommandAction(
@@ -1354,7 +1356,8 @@ class _AdminDashboardViewControllerState
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => const AdminComplianceManagementView()),
+                builder: (_) => const AdminComplianceManagementView(),
+              ),
             ),
           ),
         ],
@@ -1378,8 +1381,10 @@ class _AdminDashboardViewControllerState
             title: l10n.requestsDashboard,
             subtitle: l10n.requestsDashboardDesc,
             color: BauhausDesign.warning,
-            onTap: () => Navigator.of(context, rootNavigator: true)
-                .pushNamed(Routes.adminRequests),
+            onTap: () => Navigator.of(
+              context,
+              rootNavigator: true,
+            ).pushNamed(Routes.adminRequests),
           ),
           CommandAction(
             icon: const Icon(Icons.groups_rounded),
@@ -1416,9 +1421,7 @@ class _AdminDashboardViewControllerState
             color: BauhausDesign.secondary,
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => const AdminMileageDashboard(),
-              ),
+              MaterialPageRoute(builder: (_) => const AdminMileageDashboard()),
             ),
           ),
           CommandAction(
@@ -1428,9 +1431,7 @@ class _AdminDashboardViewControllerState
             color: BauhausDesign.accent,
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => const AdminFeedbackFeedView(),
-              ),
+              MaterialPageRoute(builder: (_) => const AdminFeedbackFeedView()),
             ),
           ),
           CommandAction(
@@ -1462,7 +1463,8 @@ class _AdminDashboardViewControllerState
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => const EnhancedPredictiveInsightsView()),
+                builder: (_) => const EnhancedPredictiveInsightsView(),
+              ),
             ),
           ),
           CommandAction(
@@ -1483,9 +1485,10 @@ class _AdminDashboardViewControllerState
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => AutoScheduleDashboard(
-                        organizationId: widget.organizationId,
-                      )),
+                builder: (_) => AutoScheduleDashboard(
+                  organizationId: widget.organizationId,
+                ),
+              ),
             ),
           ),
           CommandAction(
@@ -1496,9 +1499,9 @@ class _AdminDashboardViewControllerState
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => InvoiceAIDashboard(
-                        organizationId: widget.organizationId,
-                      )),
+                builder: (_) =>
+                    InvoiceAIDashboard(organizationId: widget.organizationId),
+              ),
             ),
           ),
           CommandAction(
@@ -1509,9 +1512,10 @@ class _AdminDashboardViewControllerState
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => ComplianceAutomationDashboard(
-                        organizationId: widget.organizationId,
-                      )),
+                builder: (_) => ComplianceAutomationDashboard(
+                  organizationId: widget.organizationId,
+                ),
+              ),
             ),
           ),
           CommandAction(
@@ -1522,9 +1526,10 @@ class _AdminDashboardViewControllerState
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => SmartExpenseDashboard(
-                        organizationId: widget.organizationId,
-                      )),
+                builder: (_) => SmartExpenseDashboard(
+                  organizationId: widget.organizationId,
+                ),
+              ),
             ),
           ),
           CommandAction(
@@ -1542,10 +1547,11 @@ class _AdminDashboardViewControllerState
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => AdvancedPayrollDashboard(
-                        organizationId: widget.organizationId,
-                        userId: widget.email,
-                      )),
+                builder: (_) => AdvancedPayrollDashboard(
+                  organizationId: widget.organizationId,
+                  userId: widget.email,
+                ),
+              ),
             ),
           ),
           CommandAction(
@@ -1556,11 +1562,12 @@ class _AdminDashboardViewControllerState
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => CommunicationHubDashboard(
-                        userId: widget.email,
-                        currentUserId: widget.email,
-                        organizationId: widget.organizationId,
-                      )),
+                builder: (_) => CommunicationHubDashboard(
+                  userId: widget.email,
+                  currentUserId: widget.email,
+                  organizationId: widget.organizationId,
+                ),
+              ),
             ),
           ),
           CommandAction(
@@ -1578,7 +1585,8 @@ class _AdminDashboardViewControllerState
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => const RealtimePortalDashboard()),
+                builder: (_) => const RealtimePortalDashboard(),
+              ),
             ),
           ),
           CommandAction(
@@ -1589,7 +1597,8 @@ class _AdminDashboardViewControllerState
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => const WorkforceOptimizationDashboard()),
+                builder: (_) => const WorkforceOptimizationDashboard(),
+              ),
             ),
           ),
           CommandAction(
@@ -1600,7 +1609,8 @@ class _AdminDashboardViewControllerState
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => const CareIntelligenceDashboard()),
+                builder: (_) => const CareIntelligenceDashboard(),
+              ),
             ),
           ),
           CommandAction(
@@ -1611,7 +1621,8 @@ class _AdminDashboardViewControllerState
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => const FinancialIntelligenceDashboard()),
+                builder: (_) => const FinancialIntelligenceDashboard(),
+              ),
             ),
           ),
         ],
@@ -1713,10 +1724,7 @@ class _AdminDashboardViewControllerState
         animation: _contentAnimationController,
         builder: (context, child) {
           return Transform.translate(
-            offset: Offset(
-              0,
-              30 * (1 - _contentAnimationController.value),
-            ),
+            offset: Offset(0, 30 * (1 - _contentAnimationController.value)),
             child: Opacity(
               opacity: _contentAnimationController.value,
               child: Padding(
@@ -1750,8 +1758,9 @@ class _AdminDashboardViewControllerState
         context: context,
         builder: (context) => AlertDialog(
           title: Text(AppLocalizations.of(context)!.adminAccessRequiredTitle),
-          content:
-              Text(AppLocalizations.of(context)!.adminAccessRequiredMessage),
+          content: Text(
+            AppLocalizations.of(context)!.adminAccessRequiredMessage,
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -1818,9 +1827,7 @@ class _AdminDashboardViewControllerState
         },
       );
     } else {
-      _showEmailSettingsRequiredSheet(
-        workflowName: 'Employee Invoice',
-      );
+      _showEmailSettingsRequiredSheet(workflowName: 'Employee Invoice');
     }
   }
 
@@ -1838,9 +1845,7 @@ class _AdminDashboardViewControllerState
         },
       );
     } else {
-      _showEmailSettingsRequiredSheet(
-        workflowName: 'Auto Invoices',
-      );
+      _showEmailSettingsRequiredSheet(workflowName: 'Auto Invoices');
     }
   }
 
@@ -1858,9 +1863,7 @@ class _AdminDashboardViewControllerState
         ),
       );
     } else {
-      _showEmailSettingsRequiredSheet(
-        workflowName: 'Enhanced Invoice',
-      );
+      _showEmailSettingsRequiredSheet(workflowName: 'Enhanced Invoice');
     }
   }
 
@@ -1881,11 +1884,7 @@ class _AdminDashboardViewControllerState
     debugPrint("in holiday list");
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (c) => const HolidayListView(
-          holidays: [],
-        ),
-      ),
+      MaterialPageRoute(builder: (c) => const HolidayListView(holidays: [])),
     );
   }
 
@@ -1893,7 +1892,8 @@ class _AdminDashboardViewControllerState
     final sharedPrefs = SharedPreferencesUtils();
     final userEmail = sharedPrefs.getString('userEmail');
     debugPrint(
-        "Assigned client trigreed :\n\n$userEmail ${widget.email}\n\n${widget.organizationId}");
+      "Assigned client trigreed :\n\n$userEmail ${widget.email}\n\n${widget.organizationId}",
+    );
     Navigator.of(context).pushNamed(
       Routes.assignmentList,
       arguments: {
@@ -1922,7 +1922,8 @@ class _AdminDashboardViewControllerState
       ),
     ).then((result) {
       debugPrint(
-          '🔍 DEBUG: Returned from EmployeeTrackingView with result: $result');
+        '🔍 DEBUG: Returned from EmployeeTrackingView with result: $result',
+      );
     });
   }
 
@@ -1987,15 +1988,20 @@ class _AdminDashboardViewControllerState
 
   void _navigateToExpenseManagement() {
     debugPrint(
-        '=== EXPENSE NAVIGATION DEBUG: adminEmail = ${widget.email} ===');
+      '=== EXPENSE NAVIGATION DEBUG: adminEmail = ${widget.email} ===',
+    );
     debugPrint(
-        '=== EXPENSE NAVIGATION DEBUG: organizationId = ${widget.organizationId} ===');
+      '=== EXPENSE NAVIGATION DEBUG: organizationId = ${widget.organizationId} ===',
+    );
     debugPrint(
-        '=== EXPENSE NAVIGATION DEBUG: organizationName = ${widget.organizationName} ===');
+      '=== EXPENSE NAVIGATION DEBUG: organizationName = ${widget.organizationName} ===',
+    );
     debugPrint(
-        '=== EXPENSE NAVIGATION DEBUG: organizationId is null? ${widget.organizationId == null} ===');
+      '=== EXPENSE NAVIGATION DEBUG: organizationId is null? ${widget.organizationId == null} ===',
+    );
     debugPrint(
-        '=== EXPENSE NAVIGATION DEBUG: organizationId is empty? ${widget.organizationId?.isEmpty ?? true} ===');
+      '=== EXPENSE NAVIGATION DEBUG: organizationId is empty? ${widget.organizationId?.isEmpty ?? true} ===',
+    );
 
     Navigator.push(
       context,
@@ -2012,9 +2018,7 @@ class _AdminDashboardViewControllerState
   void _navigateToApiUsageDashboard() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const ApiUsageDashboardView(),
-      ),
+      MaterialPageRoute(builder: (context) => const ApiUsageDashboardView()),
     );
   }
 
@@ -2033,9 +2037,7 @@ class _AdminDashboardViewControllerState
   Future<void> _navigateToBusinessList() async {
     await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const BusinessListView(),
-      ),
+      MaterialPageRoute(builder: (context) => const BusinessListView()),
     );
     if (!mounted) return;
     await _refreshBusinessOverview();
@@ -2044,9 +2046,7 @@ class _AdminDashboardViewControllerState
   Future<void> _navigateToClientList() async {
     await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const ClientListView(),
-      ),
+      MaterialPageRoute(builder: (context) => const ClientListView()),
     );
     if (!mounted) return;
     await _refreshBusinessOverview();
@@ -2069,10 +2069,7 @@ class _AdminDashboardViewControllerState
             child: ClipRRect(
               borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
               child: BackdropFilter(
-                filter: ImageFilter.blur(
-                  sigmaX: 10,
-                  sigmaY: 10,
-                ),
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -2094,8 +2091,9 @@ class _AdminDashboardViewControllerState
                         padding: const EdgeInsets.all(3),
                         decoration: BoxDecoration(
                           color: BauhausDesign.surfaceWhite.withOpacity(0.1),
-                          borderRadius:
-                              BorderRadius.circular(BauhausDesign.radiusMd),
+                          borderRadius: BorderRadius.circular(
+                            BauhausDesign.radiusMd,
+                          ),
                         ),
                         child: const Icon(
                           Icons.dashboard_rounded,
@@ -2106,8 +2104,7 @@ class _AdminDashboardViewControllerState
                       const SizedBox(width: 6),
                       Text(
                         'Admin Dashboard',
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
+                        style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
                               color: BauhausDesign.surfaceWhite,
                               fontWeight: FontWeight.w600,
@@ -2138,41 +2135,39 @@ String _getCurrentGreeting() {
 }
 
 Widget _buildQuickStat(
-    BuildContext context, String label, String value, IconData icon) {
+  BuildContext context,
+  String label,
+  String value,
+  IconData icon,
+) {
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     decoration: BoxDecoration(
       color: BauhausDesign.surfaceWhite.withOpacity(0.1),
       borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-      border: Border.all(
-        color: BauhausDesign.surfaceWhite.withOpacity(0.1),
-      ),
+      border: Border.all(color: BauhausDesign.surfaceWhite.withOpacity(0.1)),
     ),
     child: Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon,
-          color: BauhausDesign.surfaceWhite,
-          size: 14,
-        ),
+        Icon(icon, color: BauhausDesign.surfaceWhite, size: 14),
         const SizedBox(width: 6),
         Text(
           value,
           style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-                fontWeight: FontWeight.w700,
-                fontSize: 14,
-              ),
+            color: BauhausDesign.surfaceWhite,
+            fontWeight: FontWeight.w700,
+            fontSize: 14,
+          ),
         ),
         const SizedBox(width: 4),
         Text(
           label,
           style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                color: BauhausDesign.surfaceWhite.withOpacity(0.8),
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
+            color: BauhausDesign.surfaceWhite.withOpacity(0.8),
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ],
     ),

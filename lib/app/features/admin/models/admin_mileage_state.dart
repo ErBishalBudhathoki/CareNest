@@ -13,7 +13,8 @@ abstract class AdminMileageState with _$AdminMileageState {
     @Default({}) Map<String, Map<String, dynamic>> rawTripsById,
     @Default(false) bool isLoading,
     String? error,
-    @Default('PENDING') String filterStatus, // 'ALL', 'PENDING', 'APPROVED', 'REJECTED'
+    @Default('PENDING')
+    String filterStatus, // 'ALL', 'PENDING', 'APPROVED', 'REJECTED'
   }) = _AdminMileageState;
 
   int get pendingTripsCount =>

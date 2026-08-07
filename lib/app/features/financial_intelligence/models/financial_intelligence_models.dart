@@ -22,7 +22,8 @@ abstract class RevenueForecast with _$RevenueForecast {
     required List<String> insights,
   }) = _RevenueForecast;
 
-  factory RevenueForecast.fromJson(Map<String, dynamic> json) => _$RevenueForecastFromJson(json);
+  factory RevenueForecast.fromJson(Map<String, dynamic> json) =>
+      _$RevenueForecastFromJson(json);
 }
 
 @freezed
@@ -33,7 +34,8 @@ abstract class DailyPrediction with _$DailyPrediction {
     required double confidence,
   }) = _DailyPrediction;
 
-  factory DailyPrediction.fromJson(Map<String, dynamic> json) => _$DailyPredictionFromJson(json);
+  factory DailyPrediction.fromJson(Map<String, dynamic> json) =>
+      _$DailyPredictionFromJson(json);
 }
 
 @freezed
@@ -42,7 +44,8 @@ abstract class ConfidenceIntervals with _$ConfidenceIntervals {
     required List<ConfidenceInterval> intervals,
   }) = _ConfidenceIntervals;
 
-  factory ConfidenceIntervals.fromJson(Map<String, dynamic> json) => _$ConfidenceIntervalsFromJson(json);
+  factory ConfidenceIntervals.fromJson(Map<String, dynamic> json) =>
+      _$ConfidenceIntervalsFromJson(json);
 }
 
 @freezed
@@ -54,7 +57,8 @@ abstract class ConfidenceInterval with _$ConfidenceInterval {
     required double confidence,
   }) = _ConfidenceInterval;
 
-  factory ConfidenceInterval.fromJson(Map<String, dynamic> json) => _$ConfidenceIntervalFromJson(json);
+  factory ConfidenceInterval.fromJson(Map<String, dynamic> json) =>
+      _$ConfidenceIntervalFromJson(json);
 }
 
 @freezed
@@ -65,7 +69,8 @@ abstract class ForecastScenarios with _$ForecastScenarios {
     required double worstCase,
   }) = _ForecastScenarios;
 
-  factory ForecastScenarios.fromJson(Map<String, dynamic> json) => _$ForecastScenariosFromJson(json);
+  factory ForecastScenarios.fromJson(Map<String, dynamic> json) =>
+      _$ForecastScenariosFromJson(json);
 }
 
 @freezed
@@ -79,7 +84,8 @@ abstract class ForecastMetrics with _$ForecastMetrics {
     required double rmse,
   }) = _ForecastMetrics;
 
-  factory ForecastMetrics.fromJson(Map<String, dynamic> json) => _$ForecastMetricsFromJson(json);
+  factory ForecastMetrics.fromJson(Map<String, dynamic> json) =>
+      _$ForecastMetricsFromJson(json);
 }
 
 @freezed
@@ -93,7 +99,8 @@ abstract class RevenueDrivers with _$RevenueDrivers {
     required List<String> recommendations,
   }) = _RevenueDrivers;
 
-  factory RevenueDrivers.fromJson(Map<String, dynamic> json) => _$RevenueDriversFromJson(json);
+  factory RevenueDrivers.fromJson(Map<String, dynamic> json) =>
+      _$RevenueDriversFromJson(json);
 }
 
 @freezed
@@ -106,7 +113,8 @@ abstract class PrimaryDriver with _$PrimaryDriver {
     required double elasticity,
   }) = _PrimaryDriver;
 
-  factory PrimaryDriver.fromJson(Map<String, dynamic> json) => _$PrimaryDriverFromJson(json);
+  factory PrimaryDriver.fromJson(Map<String, dynamic> json) =>
+      _$PrimaryDriverFromJson(json);
 }
 
 @freezed
@@ -118,7 +126,8 @@ abstract class ExternalFactor with _$ExternalFactor {
     required String potentialEffect,
   }) = _ExternalFactor;
 
-  factory ExternalFactor.fromJson(Map<String, dynamic> json) => _$ExternalFactorFromJson(json);
+  factory ExternalFactor.fromJson(Map<String, dynamic> json) =>
+      _$ExternalFactorFromJson(json);
 }
 
 // ============================================================================
@@ -139,7 +148,8 @@ abstract class PriceOptimization with _$PriceOptimization {
     required String recommendation,
   }) = _PriceOptimization;
 
-  factory PriceOptimization.fromJson(Map<String, dynamic> json) => _$PriceOptimizationFromJson(json);
+  factory PriceOptimization.fromJson(Map<String, dynamic> json) =>
+      _$PriceOptimizationFromJson(json);
 }
 
 @freezed
@@ -150,7 +160,8 @@ abstract class PriceImpact with _$PriceImpact {
     required double marginChange,
   }) = _PriceImpact;
 
-  factory PriceImpact.fromJson(Map<String, dynamic> json) => _$PriceImpactFromJson(json);
+  factory PriceImpact.fromJson(Map<String, dynamic> json) =>
+      _$PriceImpactFromJson(json);
 }
 
 @freezed
@@ -179,7 +190,8 @@ abstract class ABVariant with _$ABVariant {
     required ABMetrics metrics,
   }) = _ABVariant;
 
-  factory ABVariant.fromJson(Map<String, dynamic> json) => _$ABVariantFromJson(json);
+  factory ABVariant.fromJson(Map<String, dynamic> json) =>
+      _$ABVariantFromJson(json);
 }
 
 @freezed
@@ -190,7 +202,8 @@ abstract class ABMetrics with _$ABMetrics {
     required int sampleSize,
   }) = _ABMetrics;
 
-  factory ABMetrics.fromJson(Map<String, dynamic> json) => _$ABMetricsFromJson(json);
+  factory ABMetrics.fromJson(Map<String, dynamic> json) =>
+      _$ABMetricsFromJson(json);
 }
 
 @freezed
@@ -205,7 +218,8 @@ abstract class PricingRecommendations with _$PricingRecommendations {
     required String reasoning,
   }) = _PricingRecommendations;
 
-  factory PricingRecommendations.fromJson(Map<String, dynamic> json) => _$PricingRecommendationsFromJson(json);
+  factory PricingRecommendations.fromJson(Map<String, dynamic> json) =>
+      _$PricingRecommendationsFromJson(json);
 }
 
 @freezed
@@ -217,7 +231,8 @@ abstract class CurrentPricing with _$CurrentPricing {
     required String competitiveness,
   }) = _CurrentPricing;
 
-  factory CurrentPricing.fromJson(Map<String, dynamic> json) => _$CurrentPricingFromJson(json);
+  factory CurrentPricing.fromJson(Map<String, dynamic> json) =>
+      _$CurrentPricingFromJson(json);
 }
 
 @freezed
@@ -232,7 +247,8 @@ abstract class PricingStrategy with _$PricingStrategy {
     required double confidence,
   }) = _PricingStrategy;
 
-  factory PricingStrategy.fromJson(Map<String, dynamic> json) => _$PricingStrategyFromJson(json);
+  factory PricingStrategy.fromJson(Map<String, dynamic> json) =>
+      _$PricingStrategyFromJson(json);
 }
 
 @freezed
@@ -243,7 +259,8 @@ abstract class MarketInsights with _$MarketInsights {
     required double priceOptimizationPotential,
   }) = _MarketInsights;
 
-  factory MarketInsights.fromJson(Map<String, dynamic> json) => _$MarketInsightsFromJson(json);
+  factory MarketInsights.fromJson(Map<String, dynamic> json) =>
+      _$MarketInsightsFromJson(json);
 }
 
 @freezed
@@ -254,7 +271,8 @@ abstract class CompetitorPricing with _$CompetitorPricing {
     required String position,
   }) = _CompetitorPricing;
 
-  factory CompetitorPricing.fromJson(Map<String, dynamic> json) => _$CompetitorPricingFromJson(json);
+  factory CompetitorPricing.fromJson(Map<String, dynamic> json) =>
+      _$CompetitorPricingFromJson(json);
 }
 
 // ============================================================================
@@ -279,7 +297,8 @@ abstract class Invoice with _$Invoice {
     String? approvedAt,
   }) = _Invoice;
 
-  factory Invoice.fromJson(Map<String, dynamic> json) => _$InvoiceFromJson(json);
+  factory Invoice.fromJson(Map<String, dynamic> json) =>
+      _$InvoiceFromJson(json);
 }
 
 @freezed
@@ -291,7 +310,8 @@ abstract class LineItem with _$LineItem {
     required double amount,
   }) = _LineItem;
 
-  factory LineItem.fromJson(Map<String, dynamic> json) => _$LineItemFromJson(json);
+  factory LineItem.fromJson(Map<String, dynamic> json) =>
+      _$LineItemFromJson(json);
 }
 
 @freezed
@@ -303,7 +323,8 @@ abstract class ValidationResult with _$ValidationResult {
     required List<ValidationCheck> checks,
   }) = _ValidationResult;
 
-  factory ValidationResult.fromJson(Map<String, dynamic> json) => _$ValidationResultFromJson(json);
+  factory ValidationResult.fromJson(Map<String, dynamic> json) =>
+      _$ValidationResultFromJson(json);
 }
 
 @freezed
@@ -315,7 +336,8 @@ abstract class ValidationCheck with _$ValidationCheck {
     required String details,
   }) = _ValidationCheck;
 
-  factory ValidationCheck.fromJson(Map<String, dynamic> json) => _$ValidationCheckFromJson(json);
+  factory ValidationCheck.fromJson(Map<String, dynamic> json) =>
+      _$ValidationCheckFromJson(json);
 }
 
 @freezed
@@ -327,7 +349,8 @@ abstract class BillingAnomaly with _$BillingAnomaly {
     Map<String, dynamic>? details,
   }) = _BillingAnomaly;
 
-  factory BillingAnomaly.fromJson(Map<String, dynamic> json) => _$BillingAnomalyFromJson(json);
+  factory BillingAnomaly.fromJson(Map<String, dynamic> json) =>
+      _$BillingAnomalyFromJson(json);
 }
 
 @freezed
@@ -346,7 +369,8 @@ abstract class CreditNote with _$CreditNote {
     String? approvedAt,
   }) = _CreditNote;
 
-  factory CreditNote.fromJson(Map<String, dynamic> json) => _$CreditNoteFromJson(json);
+  factory CreditNote.fromJson(Map<String, dynamic> json) =>
+      _$CreditNoteFromJson(json);
 }
 
 @freezed
@@ -357,7 +381,8 @@ abstract class CreditNoteWorkflow with _$CreditNoteWorkflow {
     required bool autoApprove,
   }) = _CreditNoteWorkflow;
 
-  factory CreditNoteWorkflow.fromJson(Map<String, dynamic> json) => _$CreditNoteWorkflowFromJson(json);
+  factory CreditNoteWorkflow.fromJson(Map<String, dynamic> json) =>
+      _$CreditNoteWorkflowFromJson(json);
 }
 
 @freezed
@@ -368,7 +393,8 @@ abstract class AuditEntry with _$AuditEntry {
     required String reason,
   }) = _AuditEntry;
 
-  factory AuditEntry.fromJson(Map<String, dynamic> json) => _$AuditEntryFromJson(json);
+  factory AuditEntry.fromJson(Map<String, dynamic> json) =>
+      _$AuditEntryFromJson(json);
 }
 
 // ============================================================================
@@ -388,7 +414,8 @@ abstract class CashFlowForecast with _$CashFlowForecast {
     required List<String> recommendations,
   }) = _CashFlowForecast;
 
-  factory CashFlowForecast.fromJson(Map<String, dynamic> json) => _$CashFlowForecastFromJson(json);
+  factory CashFlowForecast.fromJson(Map<String, dynamic> json) =>
+      _$CashFlowForecastFromJson(json);
 }
 
 @freezed
@@ -400,7 +427,8 @@ abstract class CashPosition with _$CashPosition {
     required double netPosition,
   }) = _CashPosition;
 
-  factory CashPosition.fromJson(Map<String, dynamic> json) => _$CashPositionFromJson(json);
+  factory CashPosition.fromJson(Map<String, dynamic> json) =>
+      _$CashPositionFromJson(json);
 }
 
 @freezed
@@ -415,7 +443,8 @@ abstract class DailyCashFlow with _$DailyCashFlow {
     required double confidence,
   }) = _DailyCashFlow;
 
-  factory DailyCashFlow.fromJson(Map<String, dynamic> json) => _$DailyCashFlowFromJson(json);
+  factory DailyCashFlow.fromJson(Map<String, dynamic> json) =>
+      _$DailyCashFlowFromJson(json);
 }
 
 @freezed
@@ -428,7 +457,8 @@ abstract class CashFlowSummary with _$CashFlowSummary {
     required double maximumBalance,
   }) = _CashFlowSummary;
 
-  factory CashFlowSummary.fromJson(Map<String, dynamic> json) => _$CashFlowSummaryFromJson(json);
+  factory CashFlowSummary.fromJson(Map<String, dynamic> json) =>
+      _$CashFlowSummaryFromJson(json);
 }
 
 @freezed
@@ -440,7 +470,8 @@ abstract class CashFlowRisk with _$CashFlowRisk {
     required double probability,
   }) = _CashFlowRisk;
 
-  factory CashFlowRisk.fromJson(Map<String, dynamic> json) => _$CashFlowRiskFromJson(json);
+  factory CashFlowRisk.fromJson(Map<String, dynamic> json) =>
+      _$CashFlowRiskFromJson(json);
 }
 
 @freezed
@@ -458,7 +489,8 @@ abstract class PaymentPrediction with _$PaymentPrediction {
     required List<String> actions,
   }) = _PaymentPrediction;
 
-  factory PaymentPrediction.fromJson(Map<String, dynamic> json) => _$PaymentPredictionFromJson(json);
+  factory PaymentPrediction.fromJson(Map<String, dynamic> json) =>
+      _$PaymentPredictionFromJson(json);
 }
 
 // ============================================================================
@@ -478,7 +510,8 @@ abstract class FinancialDashboard with _$FinancialDashboard {
     required List<TrendData> trends,
   }) = _FinancialDashboard;
 
-  factory FinancialDashboard.fromJson(Map<String, dynamic> json) => _$FinancialDashboardFromJson(json);
+  factory FinancialDashboard.fromJson(Map<String, dynamic> json) =>
+      _$FinancialDashboardFromJson(json);
 }
 
 @freezed
@@ -500,7 +533,8 @@ abstract class RevenueByService with _$RevenueByService {
     required double percentage,
   }) = _RevenueByService;
 
-  factory RevenueByService.fromJson(Map<String, dynamic> json) => _$RevenueByServiceFromJson(json);
+  factory RevenueByService.fromJson(Map<String, dynamic> json) =>
+      _$RevenueByServiceFromJson(json);
 }
 
 @freezed
@@ -513,7 +547,8 @@ abstract class ClientProfitability with _$ClientProfitability {
     required double margin,
   }) = _ClientProfitability;
 
-  factory ClientProfitability.fromJson(Map<String, dynamic> json) => _$ClientProfitabilityFromJson(json);
+  factory ClientProfitability.fromJson(Map<String, dynamic> json) =>
+      _$ClientProfitabilityFromJson(json);
 }
 
 @freezed
@@ -525,7 +560,8 @@ abstract class CostAnalysis with _$CostAnalysis {
     required CostCategory other,
   }) = _CostAnalysis;
 
-  factory CostAnalysis.fromJson(Map<String, dynamic> json) => _$CostAnalysisFromJson(json);
+  factory CostAnalysis.fromJson(Map<String, dynamic> json) =>
+      _$CostAnalysisFromJson(json);
 }
 
 @freezed
@@ -535,7 +571,8 @@ abstract class CostCategory with _$CostCategory {
     required double percentage,
   }) = _CostCategory;
 
-  factory CostCategory.fromJson(Map<String, dynamic> json) => _$CostCategoryFromJson(json);
+  factory CostCategory.fromJson(Map<String, dynamic> json) =>
+      _$CostCategoryFromJson(json);
 }
 
 @freezed
@@ -546,7 +583,8 @@ abstract class TrendData with _$TrendData {
     required double profit,
   }) = _TrendData;
 
-  factory TrendData.fromJson(Map<String, dynamic> json) => _$TrendDataFromJson(json);
+  factory TrendData.fromJson(Map<String, dynamic> json) =>
+      _$TrendDataFromJson(json);
 }
 
 // ============================================================================
@@ -577,7 +615,8 @@ abstract class BudgetCategory with _$BudgetCategory {
     Map<String, dynamic>? breakdown,
   }) = _BudgetCategory;
 
-  factory BudgetCategory.fromJson(Map<String, dynamic> json) => _$BudgetCategoryFromJson(json);
+  factory BudgetCategory.fromJson(Map<String, dynamic> json) =>
+      _$BudgetCategoryFromJson(json);
 }
 
 @freezed
@@ -588,7 +627,8 @@ abstract class BudgetScenarios with _$BudgetScenarios {
     required BudgetScenario worst,
   }) = _BudgetScenarios;
 
-  factory BudgetScenarios.fromJson(Map<String, dynamic> json) => _$BudgetScenariosFromJson(json);
+  factory BudgetScenarios.fromJson(Map<String, dynamic> json) =>
+      _$BudgetScenariosFromJson(json);
 }
 
 @freezed
@@ -598,7 +638,8 @@ abstract class BudgetScenario with _$BudgetScenario {
     required double profit,
   }) = _BudgetScenario;
 
-  factory BudgetScenario.fromJson(Map<String, dynamic> json) => _$BudgetScenarioFromJson(json);
+  factory BudgetScenario.fromJson(Map<String, dynamic> json) =>
+      _$BudgetScenarioFromJson(json);
 }
 
 // ============================================================================
@@ -618,7 +659,8 @@ abstract class Payment with _$Payment {
     required String estimatedCompletion,
   }) = _Payment;
 
-  factory Payment.fromJson(Map<String, dynamic> json) => _$PaymentFromJson(json);
+  factory Payment.fromJson(Map<String, dynamic> json) =>
+      _$PaymentFromJson(json);
 }
 
 @freezed
@@ -629,7 +671,8 @@ abstract class PaymentRouting with _$PaymentRouting {
     required double estimatedFee,
   }) = _PaymentRouting;
 
-  factory PaymentRouting.fromJson(Map<String, dynamic> json) => _$PaymentRoutingFromJson(json);
+  factory PaymentRouting.fromJson(Map<String, dynamic> json) =>
+      _$PaymentRoutingFromJson(json);
 }
 
 @freezed
@@ -640,7 +683,8 @@ abstract class PaymentFees with _$PaymentFees {
     required double total,
   }) = _PaymentFees;
 
-  factory PaymentFees.fromJson(Map<String, dynamic> json) => _$PaymentFeesFromJson(json);
+  factory PaymentFees.fromJson(Map<String, dynamic> json) =>
+      _$PaymentFeesFromJson(json);
 }
 
 // ============================================================================
@@ -661,7 +705,8 @@ abstract class ComplianceCheck with _$ComplianceCheck {
     required List<String> recommendations,
   }) = _ComplianceCheck;
 
-  factory ComplianceCheck.fromJson(Map<String, dynamic> json) => _$ComplianceCheckFromJson(json);
+  factory ComplianceCheck.fromJson(Map<String, dynamic> json) =>
+      _$ComplianceCheckFromJson(json);
 }
 
 @freezed
@@ -671,7 +716,8 @@ abstract class ComplianceArea with _$ComplianceArea {
     required List<ComplianceAreaCheck> checks,
   }) = _ComplianceArea;
 
-  factory ComplianceArea.fromJson(Map<String, dynamic> json) => _$ComplianceAreaFromJson(json);
+  factory ComplianceArea.fromJson(Map<String, dynamic> json) =>
+      _$ComplianceAreaFromJson(json);
 }
 
 @freezed
@@ -681,7 +727,8 @@ abstract class ComplianceAreaCheck with _$ComplianceAreaCheck {
     required bool passed,
   }) = _ComplianceAreaCheck;
 
-  factory ComplianceAreaCheck.fromJson(Map<String, dynamic> json) => _$ComplianceAreaCheckFromJson(json);
+  factory ComplianceAreaCheck.fromJson(Map<String, dynamic> json) =>
+      _$ComplianceAreaCheckFromJson(json);
 }
 
 // ============================================================================
@@ -700,7 +747,8 @@ abstract class ClientCredit with _$ClientCredit {
     required PaymentHistory paymentHistory,
   }) = _ClientCredit;
 
-  factory ClientCredit.fromJson(Map<String, dynamic> json) => _$ClientCreditFromJson(json);
+  factory ClientCredit.fromJson(Map<String, dynamic> json) =>
+      _$ClientCreditFromJson(json);
 }
 
 @freezed
@@ -712,7 +760,8 @@ abstract class CreditCurrent with _$CreditCurrent {
     required double utilizationRate,
   }) = _CreditCurrent;
 
-  factory CreditCurrent.fromJson(Map<String, dynamic> json) => _$CreditCurrentFromJson(json);
+  factory CreditCurrent.fromJson(Map<String, dynamic> json) =>
+      _$CreditCurrentFromJson(json);
 }
 
 @freezed
@@ -723,7 +772,8 @@ abstract class CreditRecommended with _$CreditRecommended {
     required double confidence,
   }) = _CreditRecommended;
 
-  factory CreditRecommended.fromJson(Map<String, dynamic> json) => _$CreditRecommendedFromJson(json);
+  factory CreditRecommended.fromJson(Map<String, dynamic> json) =>
+      _$CreditRecommendedFromJson(json);
 }
 
 @freezed
@@ -734,7 +784,8 @@ abstract class PaymentHistory with _$PaymentHistory {
     required int averageDaysLate,
   }) = _PaymentHistory;
 
-  factory PaymentHistory.fromJson(Map<String, dynamic> json) => _$PaymentHistoryFromJson(json);
+  factory PaymentHistory.fromJson(Map<String, dynamic> json) =>
+      _$PaymentHistoryFromJson(json);
 }
 
 @freezed
@@ -749,7 +800,8 @@ abstract class ClientLifetimeValue with _$ClientLifetimeValue {
     required List<UpsellOpportunity> opportunities,
   }) = _ClientLifetimeValue;
 
-  factory ClientLifetimeValue.fromJson(Map<String, dynamic> json) => _$ClientLifetimeValueFromJson(json);
+  factory ClientLifetimeValue.fromJson(Map<String, dynamic> json) =>
+      _$ClientLifetimeValueFromJson(json);
 }
 
 @freezed
@@ -760,7 +812,8 @@ abstract class CLVCurrent with _$CLVCurrent {
     required int tenure,
   }) = _CLVCurrent;
 
-  factory CLVCurrent.fromJson(Map<String, dynamic> json) => _$CLVCurrentFromJson(json);
+  factory CLVCurrent.fromJson(Map<String, dynamic> json) =>
+      _$CLVCurrentFromJson(json);
 }
 
 @freezed
@@ -772,7 +825,8 @@ abstract class CLVPredicted with _$CLVPredicted {
     required int expectedTenure,
   }) = _CLVPredicted;
 
-  factory CLVPredicted.fromJson(Map<String, dynamic> json) => _$CLVPredictedFromJson(json);
+  factory CLVPredicted.fromJson(Map<String, dynamic> json) =>
+      _$CLVPredictedFromJson(json);
 }
 
 @freezed
@@ -782,7 +836,8 @@ abstract class UpsellOpportunity with _$UpsellOpportunity {
     required double potential,
   }) = _UpsellOpportunity;
 
-  factory UpsellOpportunity.fromJson(Map<String, dynamic> json) => _$UpsellOpportunityFromJson(json);
+  factory UpsellOpportunity.fromJson(Map<String, dynamic> json) =>
+      _$UpsellOpportunityFromJson(json);
 }
 
 // ============================================================================
@@ -802,7 +857,8 @@ abstract class ExecutiveReport with _$ExecutiveReport {
     required List<String> insights,
   }) = _ExecutiveReport;
 
-  factory ExecutiveReport.fromJson(Map<String, dynamic> json) => _$ExecutiveReportFromJson(json);
+  factory ExecutiveReport.fromJson(Map<String, dynamic> json) =>
+      _$ExecutiveReportFromJson(json);
 }
 
 @freezed
@@ -815,7 +871,8 @@ abstract class ProfitAndLoss with _$ProfitAndLoss {
     required double netProfit,
   }) = _ProfitAndLoss;
 
-  factory ProfitAndLoss.fromJson(Map<String, dynamic> json) => _$ProfitAndLossFromJson(json);
+  factory ProfitAndLoss.fromJson(Map<String, dynamic> json) =>
+      _$ProfitAndLossFromJson(json);
 }
 
 @freezed
@@ -826,7 +883,8 @@ abstract class BalanceSheet with _$BalanceSheet {
     required double equity,
   }) = _BalanceSheet;
 
-  factory BalanceSheet.fromJson(Map<String, dynamic> json) => _$BalanceSheetFromJson(json);
+  factory BalanceSheet.fromJson(Map<String, dynamic> json) =>
+      _$BalanceSheetFromJson(json);
 }
 
 @freezed
@@ -837,7 +895,8 @@ abstract class BalanceSheetAssets with _$BalanceSheetAssets {
     required double total,
   }) = _BalanceSheetAssets;
 
-  factory BalanceSheetAssets.fromJson(Map<String, dynamic> json) => _$BalanceSheetAssetsFromJson(json);
+  factory BalanceSheetAssets.fromJson(Map<String, dynamic> json) =>
+      _$BalanceSheetAssetsFromJson(json);
 }
 
 @freezed
@@ -848,7 +907,8 @@ abstract class BalanceSheetLiabilities with _$BalanceSheetLiabilities {
     required double total,
   }) = _BalanceSheetLiabilities;
 
-  factory BalanceSheetLiabilities.fromJson(Map<String, dynamic> json) => _$BalanceSheetLiabilitiesFromJson(json);
+  factory BalanceSheetLiabilities.fromJson(Map<String, dynamic> json) =>
+      _$BalanceSheetLiabilitiesFromJson(json);
 }
 
 @freezed
@@ -860,5 +920,6 @@ abstract class CashFlowStatement with _$CashFlowStatement {
     required double netChange,
   }) = _CashFlowStatement;
 
-  factory CashFlowStatement.fromJson(Map<String, dynamic> json) => _$CashFlowStatementFromJson(json);
+  factory CashFlowStatement.fromJson(Map<String, dynamic> json) =>
+      _$CashFlowStatementFromJson(json);
 }

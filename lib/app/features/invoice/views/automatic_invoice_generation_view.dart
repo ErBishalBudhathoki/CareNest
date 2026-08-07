@@ -11,7 +11,8 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 /// Automatic Invoice Generation View
 /// Modern UI for one-click invoice generation for all employees and clients
@@ -83,7 +84,6 @@ class _AutomaticInvoiceGenerationViewState
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,18 +104,18 @@ class _AutomaticInvoiceGenerationViewState
           Text(
             AppLocalizations.of(context)!.automaticInvoiceGenerationTitle,
             style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 0.8,
-                  color: BauhausDesign.textDark,
-                ),
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.8,
+              color: BauhausDesign.textDark,
+            ),
           ),
           Text(
             widget.organizationName ??
                 AppLocalizations.of(context)!.organizationLabel,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textDark.withOpacity(0.7),
-                  fontWeight: FontWeight.w700,
-                ),
+              color: BauhausDesign.textDark.withOpacity(0.7),
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
       ),
@@ -123,19 +123,14 @@ class _AutomaticInvoiceGenerationViewState
       surfaceTintColor: Colors.transparent,
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(3),
-        child: Container(
-          height: 3,
-          color: BauhausDesign.neutral,
-        ),
+        child: Container(height: 3, color: BauhausDesign.neutral),
       ),
     );
   }
 
   Widget _buildBody() {
     if (_organizationId == null) {
-      return const Center(
-        child: BauhausLoadingState(showMessage: false),
-      );
+      return const Center(child: BauhausLoadingState(showMessage: false));
     }
 
     return Consumer(
@@ -199,8 +194,7 @@ class _AutomaticInvoiceGenerationViewState
                   ),
                   child: Text(
                     AppLocalizations.of(context)!.oneClickGenerationTitle,
-                    style: BauhausDesign.getTextTheme(context)
-                        .titleMedium
+                    style: BauhausDesign.getTextTheme(context).titleMedium
                         ?.copyWith(
                           fontWeight: FontWeight.w900,
                           color: BauhausDesign.surfaceWhite,
@@ -226,9 +220,7 @@ class _AutomaticInvoiceGenerationViewState
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(BauhausDesign.space5),
-            decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
-            ),
+            decoration: BoxDecoration(color: BauhausDesign.surfaceWhite),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -237,8 +229,10 @@ class _AutomaticInvoiceGenerationViewState
                   height: 34,
                   decoration: BoxDecoration(
                     color: BauhausDesign.surfaceOffWhite,
-                    border:
-                        Border.all(color: BauhausDesign.neutral, width: 1.5),
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.5,
+                    ),
                   ),
                   alignment: Alignment.center,
                   child: const Icon(
@@ -250,10 +244,10 @@ class _AutomaticInvoiceGenerationViewState
                 const SizedBox(width: BauhausDesign.space3),
                 Expanded(
                   child: Text(
-                    AppLocalizations.of(context)!
-                        .automaticInvoiceGenerationDesc,
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
+                    AppLocalizations.of(
+                      context,
+                    )!.automaticInvoiceGenerationDesc,
+                    style: BauhausDesign.getTextTheme(context).bodyMedium
                         ?.copyWith(
                           color: BauhausDesign.textDark,
                           fontWeight: FontWeight.w600,
@@ -287,14 +281,14 @@ class _AutomaticInvoiceGenerationViewState
               vertical: BauhausDesign.space4,
             ),
             child: Text(
-              AppLocalizations.of(context)!
-                  .invoiceConfigurationTitle
-                  .toUpperCase(),
+              AppLocalizations.of(
+                context,
+              )!.invoiceConfigurationTitle.toUpperCase(),
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                    color: BauhausDesign.surfaceWhite,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1.1,
-                  ),
+                color: BauhausDesign.surfaceWhite,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.1,
+              ),
             ),
           ),
           Padding(
@@ -385,15 +379,16 @@ class _AutomaticInvoiceGenerationViewState
                   ),
                   decoration: BoxDecoration(
                     color: BauhausDesign.surfaceWhite,
-                    border:
-                        Border.all(color: BauhausDesign.neutral, width: 1.5),
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.5,
+                    ),
                   ),
                   child: Text(
                     (_selectedStartDate != null && _selectedEndDate != null)
                         ? '${_formatDate(_selectedStartDate!)}  →  ${_formatDate(_selectedEndDate!)}'
                         : AppLocalizations.of(context)!.noPeriodSelectedText,
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
+                    style: BauhausDesign.getTextTheme(context).bodyMedium
                         ?.copyWith(
                           color: BauhausDesign.textDark,
                           fontWeight: FontWeight.w700,
@@ -410,11 +405,11 @@ class _AutomaticInvoiceGenerationViewState
                     lastDate: DateTime(2100),
                     initialDateRange:
                         (_selectedStartDate != null && _selectedEndDate != null)
-                            ? DateTimeRange(
-                                start: _selectedStartDate!,
-                                end: _selectedEndDate!,
-                              )
-                            : null,
+                        ? DateTimeRange(
+                            start: _selectedStartDate!,
+                            end: _selectedEndDate!,
+                          )
+                        : null,
                     builder: (context, child) {
                       return Theme(
                         data: Theme.of(context).copyWith(
@@ -457,9 +452,9 @@ class _AutomaticInvoiceGenerationViewState
                 label: Text(AppLocalizations.of(context)!.clearButton),
                 style: TextButton.styleFrom(
                   foregroundColor: BauhausDesign.error,
-                  textStyle: BauhausDesign.getTextTheme(context)
-                      .labelMedium
-                      ?.copyWith(fontWeight: FontWeight.w700),
+                  textStyle: BauhausDesign.getTextTheme(
+                    context,
+                  ).labelMedium?.copyWith(fontWeight: FontWeight.w700),
                 ),
               ),
             ),
@@ -507,13 +502,15 @@ class _AutomaticInvoiceGenerationViewState
                   Expanded(
                     child: Text(
                       _selectedEmployeeEmails.isEmpty
-                          ? AppLocalizations.of(context)!
-                              .noEmployeesSelectedText
-                          : AppLocalizations.of(context)!
-                              .employeesSelectedCount(
-                                  _selectedEmployeeEmails.length.toString()),
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
+                          ? AppLocalizations.of(
+                              context,
+                            )!.noEmployeesSelectedText
+                          : AppLocalizations.of(
+                              context,
+                            )!.employeesSelectedCount(
+                              _selectedEmployeeEmails.length.toString(),
+                            ),
+                      style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w700,
@@ -535,7 +532,6 @@ class _AutomaticInvoiceGenerationViewState
       ),
     );
   }
-
 
   Widget _buildModuleFrame({
     required IconData icon,
@@ -570,11 +566,7 @@ class _AutomaticInvoiceGenerationViewState
                   height: 30,
                   color: BauhausDesign.accent,
                   alignment: Alignment.center,
-                  child: Icon(
-                    icon,
-                    color: BauhausDesign.textDark,
-                    size: 18,
-                  ),
+                  child: Icon(icon, color: BauhausDesign.textDark, size: 18),
                 ),
                 const SizedBox(width: BauhausDesign.space3),
                 Expanded(
@@ -583,8 +575,7 @@ class _AutomaticInvoiceGenerationViewState
                     children: [
                       Text(
                         title,
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
+                        style: BauhausDesign.getTextTheme(context).labelLarge
                             ?.copyWith(
                               color: BauhausDesign.textDark,
                               fontWeight: FontWeight.w900,
@@ -592,8 +583,7 @@ class _AutomaticInvoiceGenerationViewState
                       ),
                       Text(
                         subtitle,
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
+                        style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
                               color: BauhausDesign.textMuted,
                               fontWeight: FontWeight.w700,
@@ -654,8 +644,7 @@ class _AutomaticInvoiceGenerationViewState
                 children: [
                   Text(
                     title,
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
+                    style: BauhausDesign.getTextTheme(context).bodyMedium
                         ?.copyWith(
                           color: BauhausDesign.textDark,
                           fontWeight: FontWeight.w800,
@@ -664,11 +653,11 @@ class _AutomaticInvoiceGenerationViewState
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style:
-                        BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                              color: BauhausDesign.textMuted,
-                              fontWeight: FontWeight.w600,
-                            ),
+                    style: BauhausDesign.getTextTheme(context).bodySmall
+                        ?.copyWith(
+                          color: BauhausDesign.textMuted,
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                 ],
               ),
@@ -706,14 +695,16 @@ class _AutomaticInvoiceGenerationViewState
               width: 34,
               height: 34,
               decoration: BoxDecoration(
-                color:
-                    value ? BauhausDesign.primary : BauhausDesign.surfaceWhite,
+                color: value
+                    ? BauhausDesign.primary
+                    : BauhausDesign.surfaceWhite,
                 border: Border.all(color: BauhausDesign.neutral, width: 1.5),
               ),
               child: Icon(
                 icon,
-                color:
-                    value ? BauhausDesign.surfaceWhite : BauhausDesign.textDark,
+                color: value
+                    ? BauhausDesign.surfaceWhite
+                    : BauhausDesign.textDark,
                 size: 18,
               ),
             ),
@@ -724,8 +715,7 @@ class _AutomaticInvoiceGenerationViewState
                 children: [
                   Text(
                     title,
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
+                    style: BauhausDesign.getTextTheme(context).bodyMedium
                         ?.copyWith(
                           fontWeight: FontWeight.w800,
                           color: BauhausDesign.textDark,
@@ -734,11 +724,11 @@ class _AutomaticInvoiceGenerationViewState
                   const SizedBox(height: BauhausDesign.space1),
                   Text(
                     subtitle,
-                    style:
-                        BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                              color: BauhausDesign.textMuted,
-                              fontWeight: FontWeight.w600,
-                            ),
+                    style: BauhausDesign.getTextTheme(context).bodySmall
+                        ?.copyWith(
+                          color: BauhausDesign.textMuted,
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                 ],
               ),
@@ -771,9 +761,9 @@ class _AutomaticInvoiceGenerationViewState
               Text(
                 AppLocalizations.of(context)!.taxRateLabel,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: BauhausDesign.textDark,
-                    ),
+                  fontWeight: FontWeight.w800,
+                  color: BauhausDesign.textDark,
+                ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
@@ -786,11 +776,11 @@ class _AutomaticInvoiceGenerationViewState
                 ),
                 child: Text(
                   '${(_taxRate * 100).toStringAsFixed(1)}%',
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w900,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w900,
+                      ),
                 ),
               ),
             ],
@@ -839,8 +829,7 @@ class _AutomaticInvoiceGenerationViewState
                 Expanded(
                   child: Text(
                     AppLocalizations.of(context)!.generatingInvoicesTitle,
-                    style: BauhausDesign.getTextTheme(context)
-                        .titleMedium
+                    style: BauhausDesign.getTextTheme(context).titleMedium
                         ?.copyWith(
                           color: BauhausDesign.textDark,
                           fontWeight: FontWeight.bold,
@@ -864,22 +853,20 @@ class _AutomaticInvoiceGenerationViewState
                 Expanded(
                   child: Text(
                     state.currentStep,
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
-                        ?.copyWith(
-                          color: BauhausDesign.textMuted,
-                        ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Text(
                   '${(state.progress * 100).toStringAsFixed(0)}%',
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: BauhausDesign.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(
+                        color: BauhausDesign.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ],
             ),
@@ -892,13 +879,11 @@ class _AutomaticInvoiceGenerationViewState
 
   Widget _buildGenerateButton() {
     return Container(
-      decoration: BoxDecoration(
-        boxShadow: const [BauhausDesign.shadowHard],
-      ),
+      decoration: BoxDecoration(boxShadow: const [BauhausDesign.shadowHard]),
       child: BauhausActionButton(
-        text: AppLocalizations.of(context)!
-            .generateAllInvoicesButton
-            .toUpperCase(),
+        text: AppLocalizations.of(
+          context,
+        )!.generateAllInvoicesButton.toUpperCase(),
         onPressed: _generateInvoices,
         icon: Icons.auto_awesome,
         isFullWidth: true,
@@ -933,11 +918,10 @@ class _AutomaticInvoiceGenerationViewState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      AppLocalizations.of(context)!
-                          .generationCompleteTitle
-                          .toUpperCase(),
-                      style: BauhausDesign.getTextTheme(context)
-                          .titleLarge
+                      AppLocalizations.of(
+                        context,
+                      )!.generationCompleteTitle.toUpperCase(),
+                      style: BauhausDesign.getTextTheme(context).titleLarge
                           ?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: BauhausDesign.success,
@@ -946,11 +930,9 @@ class _AutomaticInvoiceGenerationViewState
                     const SizedBox(height: BauhausDesign.space2),
                     Text(
                       AppLocalizations.of(context)!.generationCompleteDesc,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
-                          ?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                     ),
                   ],
                 ),
@@ -958,25 +940,38 @@ class _AutomaticInvoiceGenerationViewState
             ],
           ),
           const SizedBox(height: BauhausDesign.space4),
-          _buildStatCard(AppLocalizations.of(context)!.totalEmployeesStat,
-              state.totalEmployees.toString(), Icons.people),
+          _buildStatCard(
+            AppLocalizations.of(context)!.totalEmployeesStat,
+            state.totalEmployees.toString(),
+            Icons.people,
+          ),
           const SizedBox(height: BauhausDesign.space2),
-          _buildStatCard(AppLocalizations.of(context)!.totalClientsStat,
-              state.totalClients.toString(), Icons.business),
+          _buildStatCard(
+            AppLocalizations.of(context)!.totalClientsStat,
+            state.totalClients.toString(),
+            Icons.business,
+          ),
           const SizedBox(height: BauhausDesign.space2),
-          _buildStatCard(AppLocalizations.of(context)!.validPairsStat,
-              state.validPairs.toString(), Icons.link),
+          _buildStatCard(
+            AppLocalizations.of(context)!.validPairsStat,
+            state.validPairs.toString(),
+            Icons.link,
+          ),
           const SizedBox(height: BauhausDesign.space2),
-          _buildStatCard(AppLocalizations.of(context)!.generatedInvoicesStat,
-              state.generatedPdfPaths.length.toString(), Icons.description),
+          _buildStatCard(
+            AppLocalizations.of(context)!.generatedInvoicesStat,
+            state.generatedPdfPaths.length.toString(),
+            Icons.description,
+          ),
           const SizedBox(height: BauhausDesign.space4),
           if (state.generatedPdfPaths.isNotEmpty) ...[
             _buildGeneratedPdfsSection(state.generatedPdfPaths),
             const SizedBox(height: BauhausDesign.space4),
           ],
           BauhausActionButton(
-            text:
-                AppLocalizations.of(context)!.generateAgainButton.toUpperCase(),
+            text: AppLocalizations.of(
+              context,
+            )!.generateAgainButton.toUpperCase(),
             onPressed: _resetGeneration,
             isFullWidth: true,
             icon: Icons.refresh_rounded,
@@ -1003,27 +998,23 @@ class _AutomaticInvoiceGenerationViewState
       ),
       child: Row(
         children: [
-          Icon(
-            icon,
-            color: BauhausDesign.primary,
-            size: 24,
-          ),
+          Icon(icon, color: BauhausDesign.primary, size: 24),
           const SizedBox(width: BauhausDesign.space4),
           Expanded(
             child: Text(
               label,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: BauhausDesign.textDark,
-                  ),
+                fontWeight: FontWeight.w600,
+                color: BauhausDesign.textDark,
+              ),
             ),
           ),
           Text(
             value,
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  color: BauhausDesign.primary,
-                  fontWeight: FontWeight.bold,
-                ),
+              color: BauhausDesign.primary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),
@@ -1051,21 +1042,14 @@ class _AutomaticInvoiceGenerationViewState
                   border: Border.all(color: accent, width: 2),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 ),
-                child: Icon(
-                  icon,
-                  color: accent,
-                  size: 28,
-                ),
+                child: Icon(icon, color: accent, size: 28),
               ),
               const SizedBox(width: BauhausDesign.space4),
               Expanded(
                 child: Text(
                   title,
-                  style:
-                      BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: accent,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).titleLarge
+                      ?.copyWith(fontWeight: FontWeight.w800, color: accent),
                 ),
               ),
             ],
@@ -1074,9 +1058,9 @@ class _AutomaticInvoiceGenerationViewState
           Text(
             state.errorMessage,
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space4),
           BauhausActionButton(
@@ -1109,22 +1093,28 @@ class _AutomaticInvoiceGenerationViewState
     }
 
     // If using selected employees, ensure at least one is chosen
-    if (widget.invoiceType != 'client' && _useSelectedEmployees && _selectedEmployeeEmails.isEmpty) {
+    if (widget.invoiceType != 'client' &&
+        _useSelectedEmployees &&
+        _selectedEmployeeEmails.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content:
-              Text(AppLocalizations.of(context)!.errorSelectAtLeastOneEmployee),
+          content: Text(
+            AppLocalizations.of(context)!.errorSelectAtLeastOneEmployee,
+          ),
         ),
       );
       return;
     }
 
     // If using selected clients, ensure at least one is chosen
-    if (widget.invoiceType != 'employee' && _useSelectedClients && _selectedClientEmails.isEmpty) {
+    if (widget.invoiceType != 'employee' &&
+        _useSelectedClients &&
+        _selectedClientEmails.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content:
-              Text('Please select at least one client to include.'), // AppLocalizations doesn't exist for this right now
+          content: Text(
+            'Please select at least one client to include.',
+          ), // AppLocalizations doesn't exist for this right now
         ),
       );
       return;
@@ -1167,10 +1157,12 @@ class _AutomaticInvoiceGenerationViewState
       applyTax: _applyTax,
       taxRate: _taxRate,
       includeExpenses: _includeExpenses,
-      selectedEmployeeEmails:
-          _useSelectedEmployees ? _selectedEmployeeEmails.toList() : null,
-      selectedClientEmails:
-          _useSelectedClients ? _selectedClientEmails.toList() : null,
+      selectedEmployeeEmails: _useSelectedEmployees
+          ? _selectedEmployeeEmails.toList()
+          : null,
+      selectedClientEmails: _useSelectedClients
+          ? _selectedClientEmails.toList()
+          : null,
       startDate: _selectedStartDate,
       endDate: _selectedEndDate,
       invoiceType: widget.invoiceType,
@@ -1194,8 +1186,9 @@ class _AutomaticInvoiceGenerationViewState
       isScrollControlled: true,
       backgroundColor: BauhausDesign.surfaceWhite,
       shape: const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(BauhausDesign.radiusXl)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(BauhausDesign.radiusXl),
+        ),
       ),
       builder: (ctx) {
         return Consumer(
@@ -1206,7 +1199,8 @@ class _AutomaticInvoiceGenerationViewState
                 left: BauhausDesign.space4,
                 right: BauhausDesign.space4,
                 top: BauhausDesign.space4,
-                bottom: BauhausDesign.space4 +
+                bottom:
+                    BauhausDesign.space4 +
                     MediaQuery.of(context).padding.bottom,
               ),
               child: Column(
@@ -1218,21 +1212,23 @@ class _AutomaticInvoiceGenerationViewState
                         padding: const EdgeInsets.all(BauhausDesign.space2),
                         decoration: BoxDecoration(
                           color: BauhausDesign.primary.withOpacity(0.1),
-                          borderRadius:
-                              BorderRadius.circular(BauhausDesign.radiusSm),
+                          borderRadius: BorderRadius.circular(
+                            BauhausDesign.radiusSm,
+                          ),
                           border: Border.all(color: BauhausDesign.primary),
                         ),
-                        child: const Icon(Icons.people_alt,
-                            color: BauhausDesign.primary, size: 20),
+                        child: const Icon(
+                          Icons.people_alt,
+                          color: BauhausDesign.primary,
+                          size: 20,
+                        ),
                       ),
                       const SizedBox(width: BauhausDesign.space3),
                       Text(
                         AppLocalizations.of(context)!.selectEmployeesModalTitle,
-                        style: BauhausDesign.getTextTheme(context)
-                            .titleLarge
-                            ?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).titleLarge?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const Spacer(),
                       IconButton(
@@ -1247,8 +1243,10 @@ class _AutomaticInvoiceGenerationViewState
                     const Padding(
                       padding: EdgeInsets.all(16.0),
                       child: Center(
-                          child: CircularProgressIndicator(
-                              color: BauhausDesign.primary)),
+                        child: CircularProgressIndicator(
+                          color: BauhausDesign.primary,
+                        ),
+                      ),
                     )
                   else if (s.employees.isEmpty)
                     Text(
@@ -1263,17 +1261,21 @@ class _AutomaticInvoiceGenerationViewState
                       itemCount: s.employees.length,
                       itemBuilder: (context, index) {
                         final emp = s.employees[index];
-                        final isChecked = emp.isSelected ||
+                        final isChecked =
+                            emp.isSelected ||
                             _selectedEmployeeEmails.contains(emp.email);
                         return CheckboxListTile(
-                          title: Text(emp.name,
-                              style: BauhausDesign.getTextTheme(context)
-                                  .bodyMedium
-                                  ?.copyWith(fontWeight: FontWeight.w600)),
-                          subtitle: Text(emp.email,
-                              style: BauhausDesign.getTextTheme(context)
-                                  .bodySmall
-                                  ?.copyWith(color: BauhausDesign.textMuted)),
+                          title: Text(
+                            emp.name,
+                            style: BauhausDesign.getTextTheme(
+                              context,
+                            ).bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                          subtitle: Text(
+                            emp.email,
+                            style: BauhausDesign.getTextTheme(context).bodySmall
+                                ?.copyWith(color: BauhausDesign.textMuted),
+                          ),
                           value: isChecked,
                           activeColor: BauhausDesign.primary,
                           checkColor: BauhausDesign.surfaceWhite,
@@ -1288,9 +1290,9 @@ class _AutomaticInvoiceGenerationViewState
                   ),
                   const SizedBox(height: BauhausDesign.space4),
                   BauhausActionButton(
-                    text: AppLocalizations.of(context)!
-                        .confirmSelectionButton
-                        .toUpperCase(),
+                    text: AppLocalizations.of(
+                      context,
+                    )!.confirmSelectionButton.toUpperCase(),
                     onPressed: () {
                       final picked = ref
                           .read(provider)
@@ -1322,7 +1324,8 @@ class _AutomaticInvoiceGenerationViewState
   Widget _buildClientsSelection() {
     return _buildModuleFrame(
       icon: Icons.business_rounded,
-      title: 'Clients', // Assuming localization might not cover it directly, fallback
+      title:
+          'Clients', // Assuming localization might not cover it directly, fallback
       subtitle: 'Run for all clients or target only selected clients.',
       child: Column(
         children: [
@@ -1358,8 +1361,7 @@ class _AutomaticInvoiceGenerationViewState
                       _selectedClientEmails.isEmpty
                           ? 'No clients selected'
                           : '${_selectedClientEmails.length} client(s) selected',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
+                      style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w700,
@@ -1396,8 +1398,9 @@ class _AutomaticInvoiceGenerationViewState
       isScrollControlled: true,
       backgroundColor: BauhausDesign.surfaceWhite,
       shape: const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(BauhausDesign.radiusXl)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(BauhausDesign.radiusXl),
+        ),
       ),
       builder: (ctx) {
         return StatefulBuilder(
@@ -1405,21 +1408,24 @@ class _AutomaticInvoiceGenerationViewState
             // Fetch once
             if (isLoading && clientsData.isEmpty && error.isEmpty) {
               final api = ref.read(app_providers.apiMethodProvider);
-              api.getClientsByOrganizationId(_organizationId!).then((clients) {
-                if (mounted) {
-                  setModalState(() {
-                    clientsData = clients;
-                    isLoading = false;
+              api
+                  .getClientsByOrganizationId(_organizationId!)
+                  .then((clients) {
+                    if (mounted) {
+                      setModalState(() {
+                        clientsData = clients;
+                        isLoading = false;
+                      });
+                    }
+                  })
+                  .catchError((e) {
+                    if (mounted) {
+                      setModalState(() {
+                        error = 'Failed to load clients: $e';
+                        isLoading = false;
+                      });
+                    }
                   });
-                }
-              }).catchError((e) {
-                if (mounted) {
-                  setModalState(() {
-                    error = 'Failed to load clients: $e';
-                    isLoading = false;
-                  });
-                }
-              });
             }
 
             return Padding(
@@ -1427,7 +1433,8 @@ class _AutomaticInvoiceGenerationViewState
                 left: BauhausDesign.space4,
                 right: BauhausDesign.space4,
                 top: BauhausDesign.space4,
-                bottom: BauhausDesign.space4 +
+                bottom:
+                    BauhausDesign.space4 +
                     MediaQuery.of(context).padding.bottom,
               ),
               child: Column(
@@ -1439,21 +1446,23 @@ class _AutomaticInvoiceGenerationViewState
                         padding: const EdgeInsets.all(BauhausDesign.space2),
                         decoration: BoxDecoration(
                           color: BauhausDesign.primary.withOpacity(0.1),
-                          borderRadius:
-                              BorderRadius.circular(BauhausDesign.radiusSm),
+                          borderRadius: BorderRadius.circular(
+                            BauhausDesign.radiusSm,
+                          ),
                           border: Border.all(color: BauhausDesign.primary),
                         ),
-                        child: const Icon(Icons.business_rounded,
-                            color: BauhausDesign.primary, size: 20),
+                        child: const Icon(
+                          Icons.business_rounded,
+                          color: BauhausDesign.primary,
+                          size: 20,
+                        ),
                       ),
                       const SizedBox(width: BauhausDesign.space3),
                       Text(
                         'Select Clients',
-                        style: BauhausDesign.getTextTheme(context)
-                            .titleLarge
-                            ?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).titleLarge?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const Spacer(),
                       IconButton(
@@ -1468,17 +1477,19 @@ class _AutomaticInvoiceGenerationViewState
                     const Padding(
                       padding: EdgeInsets.all(16.0),
                       child: Center(
-                          child: CircularProgressIndicator(
-                              color: BauhausDesign.primary)),
+                        child: CircularProgressIndicator(
+                          color: BauhausDesign.primary,
+                        ),
+                      ),
                     )
                   else if (error.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
                         error,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium
-                            ?.copyWith(color: BauhausDesign.error),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodyMedium?.copyWith(color: BauhausDesign.error),
                       ),
                     )
                   else if (clientsData.isEmpty)
@@ -1496,11 +1507,13 @@ class _AutomaticInvoiceGenerationViewState
                         itemBuilder: (context, index) {
                           final client = clientsData[index];
                           final clientEmail = client['clientEmail'] ?? '';
-                          final clientName = client['clientName'] ??
+                          final clientName =
+                              client['clientName'] ??
                               client['clientEmail'] ??
                               'Unknown';
-                          final isChecked =
-                              _selectedClientEmails.contains(clientEmail);
+                          final isChecked = _selectedClientEmails.contains(
+                            clientEmail,
+                          );
 
                           // Important: skip empty emails
                           if (clientEmail.toString().isEmpty) {
@@ -1508,14 +1521,18 @@ class _AutomaticInvoiceGenerationViewState
                           }
 
                           return CheckboxListTile(
-                            title: Text(clientName,
-                                style: BauhausDesign.getTextTheme(context)
-                                    .bodyMedium
-                                    ?.copyWith(fontWeight: FontWeight.w600)),
-                            subtitle: Text(clientEmail,
-                                style: BauhausDesign.getTextTheme(context)
-                                    .bodySmall
-                                    ?.copyWith(color: BauhausDesign.textMuted)),
+                            title: Text(
+                              clientName,
+                              style: BauhausDesign.getTextTheme(context)
+                                  .bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600),
+                            ),
+                            subtitle: Text(
+                              clientEmail,
+                              style: BauhausDesign.getTextTheme(context)
+                                  .bodySmall
+                                  ?.copyWith(color: BauhausDesign.textMuted),
+                            ),
                             value: isChecked,
                             activeColor: BauhausDesign.primary,
                             checkColor: BauhausDesign.surfaceWhite,
@@ -1536,9 +1553,9 @@ class _AutomaticInvoiceGenerationViewState
                     ),
                   const SizedBox(height: BauhausDesign.space4),
                   BauhausActionButton(
-                    text: AppLocalizations.of(context)!
-                        .confirmSelectionButton
-                        .toUpperCase(),
+                    text: AppLocalizations.of(
+                      context,
+                    )!.confirmSelectionButton.toUpperCase(),
                     onPressed: () => Navigator.of(context).pop(),
                     icon: Icons.check_circle,
                     isFullWidth: true,
@@ -1589,21 +1606,19 @@ class _AutomaticInvoiceGenerationViewState
                   children: [
                     Text(
                       AppLocalizations.of(context)!.generatedInvoicesTitle,
-                      style: BauhausDesign.getTextTheme(context)
-                          .titleMedium
+                      style: BauhausDesign.getTextTheme(context).titleMedium
                           ?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: BauhausDesign.primary,
                           ),
                     ),
                     Text(
-                      AppLocalizations.of(context)!
-                          .invoicesReadyCount(generatedPdfs.length),
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelSmall
-                          ?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
+                      AppLocalizations.of(
+                        context,
+                      )!.invoicesReadyCount(generatedPdfs.length),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
                     ),
                   ],
                 ),
@@ -1623,10 +1638,7 @@ class _AutomaticInvoiceGenerationViewState
               decoration: BoxDecoration(
                 color: BauhausDesign.surfaceWhite,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                border: Border.all(
-                  color: BauhausDesign.neutral,
-                  width: 1.5,
-                ),
+                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
                 boxShadow: const [BauhausDesign.shadowHardSm],
               ),
               child: Material(
@@ -1642,8 +1654,9 @@ class _AutomaticInvoiceGenerationViewState
                           padding: const EdgeInsets.all(8.0),
                           decoration: BoxDecoration(
                             color: BauhausDesign.success.withOpacity(0.1),
-                            borderRadius:
-                                BorderRadius.circular(BauhausDesign.radiusSm),
+                            borderRadius: BorderRadius.circular(
+                              BauhausDesign.radiusSm,
+                            ),
                             border: Border.all(color: BauhausDesign.success),
                           ),
                           child: const Icon(
@@ -1661,9 +1674,7 @@ class _AutomaticInvoiceGenerationViewState
                                 fileName,
                                 style: BauhausDesign.getTextTheme(context)
                                     .bodyMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                    ?.copyWith(fontWeight: FontWeight.w600),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -1672,9 +1683,7 @@ class _AutomaticInvoiceGenerationViewState
                                 AppLocalizations.of(context)!.tapToViewPdf,
                                 style: BauhausDesign.getTextTheme(context)
                                     .labelSmall
-                                    ?.copyWith(
-                                      color: BauhausDesign.textMuted,
-                                    ),
+                                    ?.copyWith(color: BauhausDesign.textMuted),
                               ),
                             ],
                           ),
@@ -1691,15 +1700,17 @@ class _AutomaticInvoiceGenerationViewState
                                   _buildActionButton(
                                     icon: Icons.visibility_rounded,
                                     onPressed: () => _viewPdf(pdfPath),
-                                    tooltip: AppLocalizations.of(context)!
-                                        .viewPdfTooltip,
+                                    tooltip: AppLocalizations.of(
+                                      context,
+                                    )!.viewPdfTooltip,
                                   ),
                                   const SizedBox(width: 8.0),
                                   _buildActionButton(
                                     icon: Icons.send_rounded,
                                     onPressed: () => _sendInvoices(pdfPath),
-                                    tooltip: AppLocalizations.of(context)!
-                                        .sendInvoiceTooltip,
+                                    tooltip: AppLocalizations.of(
+                                      context,
+                                    )!.sendInvoiceTooltip,
                                   ),
                                 ],
                               );
@@ -1707,8 +1718,9 @@ class _AutomaticInvoiceGenerationViewState
                               return _buildActionButton(
                                 icon: Icons.visibility_rounded,
                                 onPressed: () => _viewPdf(pdfPath),
-                                tooltip: AppLocalizations.of(context)!
-                                    .viewPdfTooltip,
+                                tooltip: AppLocalizations.of(
+                                  context,
+                                )!.viewPdfTooltip,
                               );
                             }
                           },
@@ -1760,7 +1772,8 @@ class _AutomaticInvoiceGenerationViewState
                       return AppConfig.buildFilesDownloadUrl(resolved);
                     } catch (e) {
                       debugPrint(
-                          'Error building receipt download URL in _viewPdf: $e');
+                        'Error building receipt download URL in _viewPdf: $e',
+                      );
                       return resolved;
                     }
                   }
@@ -1801,10 +1814,8 @@ class _AutomaticInvoiceGenerationViewState
         await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PdfViewPage(
-              pdfPath: pdfPath,
-              receiptUrls: receiptUrls,
-            ),
+            builder: (context) =>
+                PdfViewPage(pdfPath: pdfPath, receiptUrls: receiptUrls),
           ),
         );
       } catch (e) {

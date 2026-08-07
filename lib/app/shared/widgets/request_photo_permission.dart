@@ -1,12 +1,11 @@
-
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 final _scaffoldKey = GlobalKey<ScaffoldState>(
-    debugLabel: 'request_photo_permission_scaffold_key');
+  debugLabel: 'request_photo_permission_scaffold_key',
+);
 Future<void> requestPhotoPermission() async {
   if (await checkAndRequestPhotosPermission() == false) {
     ScaffoldMessenger.of(_scaffoldKey.currentContext!).showSnackBar(

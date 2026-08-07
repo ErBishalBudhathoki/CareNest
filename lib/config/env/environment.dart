@@ -1,10 +1,7 @@
 import 'package:carenest/config/env/development.dart';
 import 'package:carenest/config/env/production.dart';
 
-enum Flavor {
-  development,
-  production,
-}
+enum Flavor { development, production }
 
 class AppConfig {
   static Flavor? appFlavor;

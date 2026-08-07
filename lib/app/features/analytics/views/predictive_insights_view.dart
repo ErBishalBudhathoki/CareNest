@@ -22,18 +22,22 @@ class PredictiveInsightsView extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh, color: BauhausDesign.primary),
-            onPressed: () => ref.read(predictiveInsightsViewModelProvider.notifier).fetchRevenueForecast(),
+            onPressed: () => ref
+                .read(predictiveInsightsViewModelProvider.notifier)
+                .fetchRevenueForecast(),
           ),
         ],
       ),
       body: state.isLoading
           ? const BauhausLoadingState(message: 'Generating forecast...')
           : state.error != null
-              ? BauhausErrorState(
-                  description: state.error!,
-                  onRetry: () => ref.read(predictiveInsightsViewModelProvider.notifier).fetchRevenueForecast(),
-                )
-              : _buildContent(context, state.revenueForecast),
+          ? BauhausErrorState(
+              description: state.error!,
+              onRetry: () => ref
+                  .read(predictiveInsightsViewModelProvider.notifier)
+                  .fetchRevenueForecast(),
+            )
+          : _buildContent(context, state.revenueForecast),
     );
   }
 
@@ -41,14 +45,15 @@ class PredictiveInsightsView extends ConsumerWidget {
     if (data.isEmpty) {
       return const Center(child: Text('No forecast data available'));
     }
-    
+
     final firstMetric = data.first;
     final lastMetric = data.last;
     final isUp = lastMetric.predictedRevenue > firstMetric.predictedRevenue;
     final trendColor = isUp ? BauhausDesign.success : BauhausDesign.warning;
     final trendIcon = isUp ? Icons.trending_up : Icons.trending_down;
-    final growthRate = firstMetric.predictedRevenue > 0 
-        ? (lastMetric.predictedRevenue - firstMetric.predictedRevenue) / firstMetric.predictedRevenue 
+    final growthRate = firstMetric.predictedRevenue > 0
+        ? (lastMetric.predictedRevenue - firstMetric.predictedRevenue) /
+              firstMetric.predictedRevenue
         : 0.0;
 
     return SingleChildScrollView(
@@ -77,9 +82,11 @@ class PredictiveInsightsView extends ConsumerWidget {
                     ),
                     Text(
                       isUp ? 'Growing' : 'Declining',
-                      style: BauhausDesign.getTextTheme(context)
-                          .headlineSmall
-                          ?.copyWith(color: trendColor, fontWeight: FontWeight.bold),
+                      style: BauhausDesign.getTextTheme(context).headlineSmall
+                          ?.copyWith(
+                            color: trendColor,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                   ],
                 ),
@@ -87,15 +94,18 @@ class PredictiveInsightsView extends ConsumerWidget {
                 if (growthRate != 0)
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: BauhausDesign.space3, vertical: BauhausDesign.space1),
+                      horizontal: BauhausDesign.space3,
+                      vertical: BauhausDesign.space1,
+                    ),
                     decoration: BoxDecoration(
                       color: trendColor,
-                      borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
+                      borderRadius: BorderRadius.circular(
+                        BauhausDesign.radiusFull,
+                      ),
                     ),
                     child: Text(
                       '${(growthRate * 100).abs().toStringAsFixed(1)}%',
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelMedium
+                      style: BauhausDesign.getTextTheme(context).labelMedium
                           ?.copyWith(color: BauhausDesign.surfaceWhite),
                     ),
                   ),
@@ -110,8 +120,10 @@ class PredictiveInsightsView extends ConsumerWidget {
           const SizedBox(height: BauhausDesign.space3),
           ...data.map((item) {
             final date = DateTime.tryParse(item.date);
-            final dateStr = date != null ? DateFormat('MMM yyyy').format(date) : item.date;
-            
+            final dateStr = date != null
+                ? DateFormat('MMM yyyy').format(date)
+                : item.date;
+
             return Padding(
               padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
               child: BauhausCard(
@@ -123,13 +135,17 @@ class PredictiveInsightsView extends ConsumerWidget {
                       children: [
                         Text(
                           dateStr,
-                          style: BauhausDesign.getTextTheme(context).titleMedium,
+                          style: BauhausDesign.getTextTheme(
+                            context,
+                          ).titleMedium,
                         ),
                         Text(
                           '\$${item.predictedRevenue.toStringAsFixed(2)}',
-                          style: BauhausDesign.getTextTheme(context)
-                              .titleMedium
-                              ?.copyWith(fontWeight: FontWeight.bold, color: BauhausDesign.primary),
+                          style: BauhausDesign.getTextTheme(context).titleMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: BauhausDesign.primary,
+                              ),
                         ),
                       ],
                     ),
@@ -155,9 +171,10 @@ class PredictiveInsightsView extends ConsumerWidget {
           const SizedBox(height: BauhausDesign.space4),
           Text(
             'Note: Forecast based on historical data analysis.',
-            style: BauhausDesign.getTextTheme(context)
-                .bodySmall
-                ?.copyWith(color: BauhausDesign.textMuted, fontStyle: FontStyle.italic),
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+              color: BauhausDesign.textMuted,
+              fontStyle: FontStyle.italic,
+            ),
           ),
         ],
       ),

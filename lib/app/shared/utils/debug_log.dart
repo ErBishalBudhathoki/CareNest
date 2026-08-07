@@ -25,8 +25,12 @@ class DebugLog {
   }
 
   /// Mark the end of a flow with success/failure and optional summary.
-  static void endFlow(String flowId,
-      {bool success = true, String? message, Map<String, dynamic>? summary}) {
+  static void endFlow(
+    String flowId, {
+    bool success = true,
+    String? message,
+    Map<String, dynamic>? summary,
+  }) {
     final entry = {
       'ts': _ts(),
       'level': success ? 'INFO' : 'ERROR',
@@ -50,8 +54,11 @@ class DebugLog {
   }
 
   /// Log a UI state change.
-  static void uiState(String state, Map<String, dynamic> details,
-      {String? flowId}) {
+  static void uiState(
+    String state,
+    Map<String, dynamic> details, {
+    String? flowId,
+  }) {
     final entry = {
       'ts': _ts(),
       'level': 'INFO',
@@ -64,8 +71,12 @@ class DebugLog {
   }
 
   /// Log a network request with method, url, and payload.
-  static void networkRequest(String method, String url,
-      {Map<String, dynamic>? payload, String? flowId}) {
+  static void networkRequest(
+    String method,
+    String url, {
+    Map<String, dynamic>? payload,
+    String? flowId,
+  }) {
     final entry = {
       'ts': _ts(),
       'level': 'INFO',
@@ -79,8 +90,13 @@ class DebugLog {
   }
 
   /// Log a network response with status and body and optional duration.
-  static void networkResponse(String url, int statusCode,
-      {dynamic body, int? durationMs, String? flowId}) {
+  static void networkResponse(
+    String url,
+    int statusCode, {
+    dynamic body,
+    int? durationMs,
+    String? flowId,
+  }) {
     final entry = {
       'ts': _ts(),
       'level': statusCode >= 200 && statusCode < 300 ? 'INFO' : 'ERROR',
@@ -95,7 +111,11 @@ class DebugLog {
   }
 
   /// Log an error with contextual details.
-  static void error(String message, {Map<String, dynamic>? details, String? flowId}) {
+  static void error(
+    String message, {
+    Map<String, dynamic>? details,
+    String? flowId,
+  }) {
     final entry = {
       'ts': _ts(),
       'level': 'ERROR',

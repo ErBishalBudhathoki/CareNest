@@ -37,36 +37,43 @@ class ClientPortalRepository {
   }
 
   Map<String, dynamic> _normalizeInvoiceLineItem(
-      Map<String, dynamic> sourceItem) {
+    Map<String, dynamic> sourceItem,
+  ) {
     final item = Map<String, dynamic>.from(sourceItem);
 
-    final supportItemNumber = (item['supportItemNumber'] ??
-            item['itemNumber'] ??
-            item['ndisItemNumber'])
-        ?.toString()
-        .trim();
-    final supportItemName = (item['supportItemName'] ??
-            item['description'] ??
-            item['itemName'] ??
-            item['serviceName'])
-        ?.toString()
-        .trim();
+    final supportItemNumber =
+        (item['supportItemNumber'] ??
+                item['itemNumber'] ??
+                item['ndisItemNumber'])
+            ?.toString()
+            .trim();
+    final supportItemName =
+        (item['supportItemName'] ??
+                item['description'] ??
+                item['itemName'] ??
+                item['serviceName'])
+            ?.toString()
+            .trim();
 
     final rawQuantity =
         item['quantity'] ?? item['hoursWorked'] ?? item['hours'];
     final rawQuantityStr = rawQuantity?.toString() ?? '';
     final quantityLooksLikeNumber =
         rawQuantity is num || int.tryParse(rawQuantityStr) != null;
-    final quantityInt =
-        quantityLooksLikeNumber ? _toIntOrNull(rawQuantity) : null;
+    final quantityInt = quantityLooksLikeNumber
+        ? _toIntOrNull(rawQuantity)
+        : null;
 
-    final unitPrice =
-        _toDouble(item['unitPrice'] ?? item['price'] ?? item['rate']);
+    final unitPrice = _toDouble(
+      item['unitPrice'] ?? item['price'] ?? item['rate'],
+    );
     final quantityForAmount = quantityInt ?? _toIntOrNull(item['units']) ?? 0;
-    final total = _toDouble(item['total'] ??
-        item['totalPrice'] ??
-        item['amount'] ??
-        (unitPrice * quantityForAmount));
+    final total = _toDouble(
+      item['total'] ??
+          item['totalPrice'] ??
+          item['amount'] ??
+          (unitPrice * quantityForAmount),
+    );
 
     final unit = (item['unit'] ?? item['unitType'] ?? '').toString().trim();
     final hoursWorked = _toDouble(item['hoursWorked'] ?? item['hours']);
@@ -74,8 +81,8 @@ class ClientPortalRepository {
     final description = (supportItemName != null && supportItemName.isNotEmpty)
         ? supportItemName
         : ((supportItemNumber != null && supportItemNumber.isNotEmpty)
-            ? 'Support Item $supportItemNumber'
-            : 'Support Item');
+              ? 'Support Item $supportItemNumber'
+              : 'Support Item');
 
     final roundedHours = hoursWorked > 0
         ? double.parse(hoursWorked.toStringAsFixed(2))
@@ -93,7 +100,8 @@ class ClientPortalRepository {
       'total': total,
       'totalPrice': total,
       'hoursWorked': roundedHours,
-      'hours': roundedHours, // Overwrite raw hours so fallback never shows long decimals
+      'hours':
+          roundedHours, // Overwrite raw hours so fallback never shows long decimals
     };
 
     // If legacy payload stored support item number in quantity, recover it.
@@ -137,8 +145,11 @@ class ClientPortalRepository {
       if (lineItems is List) {
         final subtotal = lineItems
             .whereType<Map>()
-            .map((item) => _toDouble(
-                item['total'] ?? item['totalPrice'] ?? item['amount']))
+            .map(
+              (item) => _toDouble(
+                item['total'] ?? item['totalPrice'] ?? item['amount'],
+              ),
+            )
             .fold<double>(0.0, (acc, value) => acc + value);
         financialSummary['subtotal'] = subtotal;
       }
@@ -149,8 +160,10 @@ class ClientPortalRepository {
     if (lineItemsRaw is List) {
       data['lineItems'] = lineItemsRaw
           .whereType<Map>()
-          .map((item) =>
-              _normalizeInvoiceLineItem(Map<String, dynamic>.from(item)))
+          .map(
+            (item) =>
+                _normalizeInvoiceLineItem(Map<String, dynamic>.from(item)),
+          )
           .toList();
     } else {
       data['lineItems'] = <Map<String, dynamic>>[];
@@ -168,8 +181,9 @@ class ClientPortalRepository {
     return data;
   }
 
-  Future<Map<String, dynamic>> getClientDashboard(
-      {required String clientId}) async {
+  Future<Map<String, dynamic>> getClientDashboard({
+    required String clientId,
+  }) async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
       return await apiMethod.getClientDashboard(clientId: clientId);
@@ -179,8 +193,9 @@ class ClientPortalRepository {
     }
   }
 
-  Future<Map<String, dynamic>> getWorkerLocation(
-      {required String appointmentId}) async {
+  Future<Map<String, dynamic>> getWorkerLocation({
+    required String appointmentId,
+  }) async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
       return await apiMethod.getWorkerLocation(appointmentId: appointmentId);
@@ -190,8 +205,9 @@ class ClientPortalRepository {
     }
   }
 
-  Future<Map<String, dynamic>> getAppointmentStatus(
-      {required String appointmentId}) async {
+  Future<Map<String, dynamic>> getAppointmentStatus({
+    required String appointmentId,
+  }) async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
       return await apiMethod.getAppointmentStatus(appointmentId: appointmentId);
@@ -201,8 +217,9 @@ class ClientPortalRepository {
     }
   }
 
-  Future<Map<String, dynamic>> sendMessage(
-      {required Map<String, dynamic> messageData}) async {
+  Future<Map<String, dynamic>> sendMessage({
+    required Map<String, dynamic> messageData,
+  }) async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
       return await apiMethod.sendClientMessage(messageData: messageData);
@@ -212,8 +229,9 @@ class ClientPortalRepository {
     }
   }
 
-  Future<Map<String, dynamic>> submitFeedback(
-      {required Map<String, dynamic> feedbackData}) async {
+  Future<Map<String, dynamic>> submitFeedback({
+    required Map<String, dynamic> feedbackData,
+  }) async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
       return await apiMethod.submitServiceFeedback(feedbackData: feedbackData);
@@ -252,14 +270,16 @@ class ClientPortalRepository {
       final statusCode = primaryResponse['statusCode'];
       final message =
           primaryResponse['message']?.toString().toLowerCase() ?? '';
-      final shouldFallback = statusCode == 404 ||
+      final shouldFallback =
+          statusCode == 404 ||
           message.contains('route not found') ||
           message.contains('cannot get');
 
       if (!shouldFallback) return [];
 
-      final fallbackResponse =
-          await apiMethod.get('client-portal-enhanced/appointments');
+      final fallbackResponse = await apiMethod.get(
+        'client-portal-enhanced/appointments',
+      );
       if (fallbackResponse['success'] == true &&
           fallbackResponse['data'] != null) {
         return fallbackResponse['data'] as List;
@@ -285,7 +305,7 @@ class ClientPortalRepository {
     } catch (e) {
       return {
         'success': false,
-        'message': 'Error fetching appointment detail: $e'
+        'message': 'Error fetching appointment detail: $e',
       };
     }
   }
@@ -298,8 +318,10 @@ class ClientPortalRepository {
       if (response['success'] == true && response['data'] != null) {
         final rows = (response['data'] as List)
             .whereType<Map>()
-            .map((item) =>
-                _normalizeInvoiceDocument(Map<String, dynamic>.from(item)))
+            .map(
+              (item) =>
+                  _normalizeInvoiceDocument(Map<String, dynamic>.from(item)),
+            )
             .toList();
         return rows;
       }
@@ -353,7 +375,8 @@ class ClientPortalRepository {
 
   /// Request appointment (for existing client portal views)
   Future<Map<String, dynamic>> requestAppointment(
-      Map<String, dynamic> requestData) async {
+    Map<String, dynamic> requestData,
+  ) async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
       final response = await apiMethod.post(

@@ -9,15 +9,19 @@ class OrganizationDashboardView extends ConsumerStatefulWidget {
   const OrganizationDashboardView({super.key});
 
   @override
-  ConsumerState<OrganizationDashboardView> createState() => _OrganizationDashboardViewState();
+  ConsumerState<OrganizationDashboardView> createState() =>
+      _OrganizationDashboardViewState();
 }
 
-class _OrganizationDashboardViewState extends ConsumerState<OrganizationDashboardView> {
+class _OrganizationDashboardViewState
+    extends ConsumerState<OrganizationDashboardView> {
   @override
   void initState() {
     super.initState();
     // Refresh list on entry
-    Future.microtask(() => ref.read(organizationProvider.notifier).loadUserOrganizations());
+    Future.microtask(
+      () => ref.read(organizationProvider.notifier).loadUserOrganizations(),
+    );
   }
 
   @override
@@ -44,7 +48,9 @@ class _OrganizationDashboardViewState extends ConsumerState<OrganizationDashboar
       body: orgState.isLoading && orgState.userOrganizations.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
-              onRefresh: () => ref.read(organizationProvider.notifier).loadUserOrganizations(),
+              onRefresh: () => ref
+                  .read(organizationProvider.notifier)
+                  .loadUserOrganizations(),
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(BauhausDesign.space4),
                 child: Column(
@@ -63,7 +69,9 @@ class _OrganizationDashboardViewState extends ConsumerState<OrganizationDashboar
                       const Center(
                         child: Padding(
                           padding: EdgeInsets.all(20.0),
-                          child: Text('You don\'t belong to any organizations yet.'),
+                          child: Text(
+                            'You don\'t belong to any organizations yet.',
+                          ),
                         ),
                       )
                     else
@@ -71,28 +79,34 @@ class _OrganizationDashboardViewState extends ConsumerState<OrganizationDashboar
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: orgState.userOrganizations.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: BauhausDesign.space3),
+                        separatorBuilder: (_, __) =>
+                            const SizedBox(height: BauhausDesign.space3),
                         itemBuilder: (context, index) {
                           final org = orgState.userOrganizations[index];
                           // Check if this is current active org
                           // Simple check: compare ID if available in currentOrganization
-                          final isSelected = orgState.currentOrganization?.id == org['id'];
-                          
+                          final isSelected =
+                              orgState.currentOrganization?.id == org['id'];
+
                           return OrganizationCard(
                             organization: org,
                             isSelected: isSelected,
                             onTap: () {
-                              ref.read(organizationProvider.notifier).switchOrganization(org['id']);
+                              ref
+                                  .read(organizationProvider.notifier)
+                                  .switchOrganization(org['id']);
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Switched to ${org['name']}')),
+                                SnackBar(
+                                  content: Text('Switched to ${org['name']}'),
+                                ),
                               );
                             },
                           );
                         },
                       ),
-                    
+
                     const SizedBox(height: BauhausDesign.space5),
-                    
+
                     const Text(
                       'Cross-Organization Reports',
                       style: TextStyle(
@@ -102,7 +116,7 @@ class _OrganizationDashboardViewState extends ConsumerState<OrganizationDashboar
                       ),
                     ),
                     const SizedBox(height: BauhausDesign.space3),
-                    
+
                     BauhausContainer(
                       width: double.infinity,
                       child: ListTile(
@@ -110,10 +124,15 @@ class _OrganizationDashboardViewState extends ConsumerState<OrganizationDashboar
                           width: 40,
                           height: 40,
                           color: BauhausDesign.primaryYellow,
-                          child: const Icon(Icons.bar_chart, color: Colors.black),
+                          child: const Icon(
+                            Icons.bar_chart,
+                            color: Colors.black,
+                          ),
                         ),
                         title: const Text('Consolidated Revenue'),
-                        subtitle: const Text('View revenue across all organizations'),
+                        subtitle: const Text(
+                          'View revenue across all organizations',
+                        ),
                         trailing: const Icon(Icons.arrow_forward),
                         onTap: () {
                           // Navigate to cross-org report

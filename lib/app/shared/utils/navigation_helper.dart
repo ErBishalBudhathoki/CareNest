@@ -1,4 +1,3 @@
-
 import 'dart:io';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -20,10 +19,14 @@ class NavigationHelper {
       // Apple Maps
       primaryUri = Uri.parse('https://maps.apple.com/?daddr=$encodedAddress');
       // Google Maps fallback for iOS
-      fallbackUri = Uri.parse('https://www.google.com/maps/dir/?api=1&destination=$encodedAddress');
+      fallbackUri = Uri.parse(
+        'https://www.google.com/maps/dir/?api=1&destination=$encodedAddress',
+      );
     } else {
       // Google Maps for Android
-      primaryUri = Uri.parse('https://www.google.com/maps/dir/?api=1&destination=$encodedAddress');
+      primaryUri = Uri.parse(
+        'https://www.google.com/maps/dir/?api=1&destination=$encodedAddress',
+      );
     }
 
     try {

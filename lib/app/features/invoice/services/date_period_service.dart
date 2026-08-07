@@ -24,7 +24,7 @@ class DatePeriodService {
   final DateParserService _parser;
 
   DatePeriodService(this._repository, [DateParserService? parser])
-      : _parser = parser ?? DateParserService();
+    : _parser = parser ?? DateParserService();
 
   /// Compute the week period (inclusive) for a given date.
   ///
@@ -32,7 +32,10 @@ class DatePeriodService {
   /// - `date`: Target date.
   /// - `weekStartDay`: Week start day as `DateTime.monday (1)` .. `DateTime.sunday (7)`.
   /// Returns a `DatePeriod` from start-of-week to end-of-week.
-  DatePeriod weekPeriodFor(DateTime date, {int weekStartDay = DateTime.monday}) {
+  DatePeriod weekPeriodFor(
+    DateTime date, {
+    int weekStartDay = DateTime.monday,
+  }) {
     final normalized = DateTime(date.year, date.month, date.day);
     int wd = normalized.weekday; // 1..7
     int ws = weekStartDay;
@@ -44,7 +47,8 @@ class DatePeriodService {
     final start = normalized.subtract(Duration(days: deltaToStart));
     final end = start.add(const Duration(days: 6));
     debugPrint(
-        'DatePeriodService.weekPeriodFor: date=$normalized, weekStart=$ws => start=$start, end=$end');
+      'DatePeriodService.weekPeriodFor: date=$normalized, weekStart=$ws => start=$start, end=$end',
+    );
     return DatePeriod(start: start, end: end);
   }
 
@@ -58,8 +62,10 @@ class DatePeriodService {
   /// - If all valid dates fall within a single week, returns that week period.
   /// - If dates span multiple weeks, returns the union from the earliest week-start
   ///   to the latest week-end, based on the provided `weekStartDay`.
-  DatePeriod derivePeriodFromItems(List<String> itemDates,
-      {int weekStartDay = DateTime.monday}) {
+  DatePeriod derivePeriodFromItems(
+    List<String> itemDates, {
+    int weekStartDay = DateTime.monday,
+  }) {
     // Parse once and capture invalids for diagnostic logging
     final parsedEntries = <MapEntry<String, DateTime?>>[];
     for (final raw in itemDates) {
@@ -79,7 +85,8 @@ class DatePeriodService {
 
     if (invalidDates.isNotEmpty) {
       debugPrint(
-          'DatePeriodService.derivePeriodFromItems: Ignoring invalid dates: $invalidDates (count=${invalidDates.length})');
+        'DatePeriodService.derivePeriodFromItems: Ignoring invalid dates: $invalidDates (count=${invalidDates.length})',
+      );
     }
 
     if (validDates.isEmpty) {
@@ -87,18 +94,24 @@ class DatePeriodService {
     }
 
     // Group dates by week key (start-of-week)
-    DateTime startOfWeek(DateTime d) => weekPeriodFor(d, weekStartDay: weekStartDay).start;
-    final weeks = validDates.map(startOfWeek).toSet().toList()..sort((a, b) => a.compareTo(b));
+    DateTime startOfWeek(DateTime d) =>
+        weekPeriodFor(d, weekStartDay: weekStartDay).start;
+    final weeks = validDates.map(startOfWeek).toSet().toList()
+      ..sort((a, b) => a.compareTo(b));
 
     if (weeks.length == 1) {
       return weekPeriodFor(validDates.first, weekStartDay: weekStartDay);
     }
 
     final firstWeekStart = weeks.first;
-    final lastWeekEnd = weekPeriodFor(weeks.last, weekStartDay: weekStartDay).end;
+    final lastWeekEnd = weekPeriodFor(
+      weeks.last,
+      weekStartDay: weekStartDay,
+    ).end;
     final period = DatePeriod(start: firstWeekStart, end: lastWeekEnd);
     debugPrint(
-        'DatePeriodService.derivePeriodFromItems: multi-week union => ${period.start} to ${period.end}');
+      'DatePeriodService.derivePeriodFromItems: multi-week union => ${period.start} to ${period.end}',
+    );
     return period;
   }
 
@@ -125,10 +138,12 @@ class DatePeriodService {
       if (config != null) {
         weekStartDay = config.weekStartDay;
         debugPrint(
-            'DatePeriodService.resolve: Using configured weekStartDay=$weekStartDay for $employeeEmail/$clientEmail');
+          'DatePeriodService.resolve: Using configured weekStartDay=$weekStartDay for $employeeEmail/$clientEmail',
+        );
       } else {
         debugPrint(
-            'DatePeriodService.resolve: No config found for $employeeEmail/$clientEmail, using default Monday');
+          'DatePeriodService.resolve: No config found for $employeeEmail/$clientEmail, using default Monday',
+        );
       }
     } catch (e) {
       debugPrint('DatePeriodService.resolve: Error loading config: $e');
@@ -167,7 +182,9 @@ class DatePeriodService {
     final currentWeek = weekPeriodFor(now, weekStartDay: weekStartDay);
     final prevWeekEnd = currentWeek.start.subtract(const Duration(days: 1));
     final prevWeek = weekPeriodFor(prevWeekEnd, weekStartDay: weekStartDay);
-    debugPrint('DatePeriodService.resolve: Fallback to previous week => ${prevWeek.start} to ${prevWeek.end}');
+    debugPrint(
+      'DatePeriodService.resolve: Fallback to previous week => ${prevWeek.start} to ${prevWeek.end}',
+    );
     return prevWeek;
   }
 }

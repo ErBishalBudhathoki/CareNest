@@ -11,12 +11,10 @@ import 'onboarding_app_complete.dart';
 class OnboardingAppRouter extends StatefulWidget {
   final VoidCallback onFinished;
 
-  const OnboardingAppRouter(
-      {super.key, required this.onFinished});
+  const OnboardingAppRouter({super.key, required this.onFinished});
 
   @override
-  State<OnboardingAppRouter> createState() =>
-      _OnboardingAppRouterState();
+  State<OnboardingAppRouter> createState() => _OnboardingAppRouterState();
 }
 
 class _OnboardingAppRouterState extends State<OnboardingAppRouter>
@@ -33,8 +31,7 @@ class _OnboardingAppRouterState extends State<OnboardingAppRouter>
   static const int _complete = 4;
   static const int _totalSteps = 5;
 
-  double _progressFor(int page) =>
-      (page + 1) / _totalSteps;
+  double _progressFor(int page) => (page + 1) / _totalSteps;
 
   @override
   void initState() {
@@ -75,12 +72,8 @@ class _OnboardingAppRouterState extends State<OnboardingAppRouter>
   }
 
   void _onSignupComplete(String email) {
-    final name = email
-        .split('@')
-        .first
-        .replaceAll(RegExp(r'[^a-zA-Z]'), ' ');
-    final words =
-        name.split(' ').where((w) => w.isNotEmpty);
+    final name = email.split('@').first.replaceAll(RegExp(r'[^a-zA-Z]'), ' ');
+    final words = name.split(' ').where((w) => w.isNotEmpty);
     _displayName = words.isNotEmpty
         ? '${words.first[0].toUpperCase()}${words.first.substring(1)}'
         : '';
@@ -101,7 +94,8 @@ class _OnboardingAppRouterState extends State<OnboardingAppRouter>
             if (_page > _splash)
               Padding(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: BauhausDesign.space6),
+                  horizontal: BauhausDesign.space6,
+                ),
                 child: AnimatedBuilder(
                   animation: _progressCtrl,
                   builder: (context, _) {
@@ -109,38 +103,29 @@ class _OnboardingAppRouterState extends State<OnboardingAppRouter>
                     return SizedBox(
                       height: 6,
                       child: Row(
-                        children: List.generate(
-                            _totalSteps, (i) {
+                        children: List.generate(_totalSteps, (i) {
                           final segEnd = _progressFor(i);
-                          final segStart = i > 0
-                              ? _progressFor(i - 1)
-                              : 0.0;
+                          final segStart = i > 0 ? _progressFor(i - 1) : 0.0;
                           final segLen = segEnd - segStart;
                           final raw = segLen > 0
-                              ? ((p - segStart) / segLen)
-                                  .clamp(0.0, 1.0)
+                              ? ((p - segStart) / segLen).clamp(0.0, 1.0)
                               : 0.0;
-                          final fill =
-                              i < _page ? 1.0 : raw;
+                          final fill = i < _page ? 1.0 : raw;
                           return Expanded(
                             child: Container(
-                              margin: EdgeInsets.only(
-                                  left: i > 0 ? 6 : 0),
+                              margin: EdgeInsets.only(left: i > 0 ? 6 : 0),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: BauhausDesign
-                                        .neoInk,
-                                    width: 1.5),
+                                  color: BauhausDesign.neoInk,
+                                  width: 1.5,
+                                ),
                                 color: fill > 0.0
                                     ? Color.lerp(
-                                        BauhausDesign
-                                            .surfaceWhite,
+                                        BauhausDesign.surfaceWhite,
                                         BauhausDesign.neoInk,
-                                        fill.clamp(
-                                            0.0, 1.0),
+                                        fill.clamp(0.0, 1.0),
                                       )
-                                    : BauhausDesign
-                                        .surfaceWhite,
+                                    : BauhausDesign.surfaceWhite,
                               ),
                             ),
                           );
@@ -150,8 +135,7 @@ class _OnboardingAppRouterState extends State<OnboardingAppRouter>
                   },
                 ),
               ),
-            if (_page > _splash)
-              const SizedBox(height: BauhausDesign.space4),
+            if (_page > _splash) const SizedBox(height: BauhausDesign.space4),
             Expanded(
               child: PageView(
                 controller: _controller,
@@ -160,18 +144,10 @@ class _OnboardingAppRouterState extends State<OnboardingAppRouter>
                     ? const NeverScrollableScrollPhysics()
                     : const BouncingScrollPhysics(),
                 children: [
-                  OnboardingAppSplash(
-                    onComplete: _goForward,
-                  ),
-                  OnboardingAppCarousel(
-                    onNext: _goForward,
-                  ),
-                  OnboardingAppPersonalization(
-                    onNext: _goForward,
-                  ),
-                  OnboardingAppSignup(
-                    onNext: _goForward,
-                  ),
+                  OnboardingAppSplash(onComplete: _goForward),
+                  OnboardingAppCarousel(onNext: _goForward),
+                  OnboardingAppPersonalization(onNext: _goForward),
+                  OnboardingAppSignup(onNext: _goForward),
                   OnboardingAppComplete(
                     displayName: _displayName,
                     onEnter: widget.onFinished,

@@ -64,10 +64,13 @@ void main() {
   late DateFormatSettingsViewModel vm;
 
   setUp(() {
-    container = ProviderContainer(overrides: [
-      datePreferenceRepositoryProvider
-          .overrideWith((ref) => DatePreferenceRepository(_FakePrefs())),
-    ]);
+    container = ProviderContainer(
+      overrides: [
+        datePreferenceRepositoryProvider.overrideWith(
+          (ref) => DatePreferenceRepository(_FakePrefs()),
+        ),
+      ],
+    );
     vm = container.read(dateFormatSettingsViewModelProvider.notifier);
   });
 

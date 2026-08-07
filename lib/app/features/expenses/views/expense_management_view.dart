@@ -49,7 +49,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
     'Add Expense',
     'Approvals',
     'Recurring',
-    'Reports'
+    'Reports',
   ];
 
   final List<String> _normalUserTabs = [
@@ -57,7 +57,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
     'Expense List',
     'Add Expense',
     'Recurring',
-    'Reports'
+    'Reports',
   ];
 
   AppLocalizations get l10n => AppLocalizations.of(context)!;
@@ -176,10 +176,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               _buildSliverAppBar(),
               SliverToBoxAdapter(
                 child: Column(
-                  children: [
-                    _buildStatsCards(),
-                    _buildTabSection(),
-                  ],
+                  children: [_buildStatsCards(), _buildTabSection()],
                 ),
               ),
             ],
@@ -225,9 +222,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
         title: Text(
           l10n.expensesTitle,
           style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-                color: BauhausDesign.textDark,
-                fontWeight: FontWeight.w800,
-              ),
+            color: BauhausDesign.textDark,
+            fontWeight: FontWeight.w800,
+          ),
         ),
         background: Container(
           decoration: const BoxDecoration(
@@ -271,10 +268,13 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
 
     final totalAmount = expenses.totalAmount;
     final pendingCount = expenses.filterByStatus('pending').length;
-    final thisMonthAmount = expenses.where((expense) {
-      final now = DateTime.now();
-      return expense.date.year == now.year && expense.date.month == now.month;
-    }).fold<double>(0.0, (sum, expense) => sum + expense.amount);
+    final thisMonthAmount = expenses
+        .where((expense) {
+          final now = DateTime.now();
+          return expense.date.year == now.year &&
+              expense.date.month == now.month;
+        })
+        .fold<double>(0.0, (sum, expense) => sum + expense.amount);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -285,39 +285,42 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
             child: Row(
               children: [
                 Expanded(
-                  child: _buildTopStatCard(
-                    title: l10n.statsTotalExpenses,
-                    value: currencyFormat.format(totalAmount),
-                    icon: Icons.account_balance_wallet_outlined,
-                    color: BauhausDesign.success,
-                  )
-                      .animate()
-                      .fadeIn(duration: 400.ms)
-                      .slideX(begin: 0.2, end: 0),
+                  child:
+                      _buildTopStatCard(
+                            title: l10n.statsTotalExpenses,
+                            value: currencyFormat.format(totalAmount),
+                            icon: Icons.account_balance_wallet_outlined,
+                            color: BauhausDesign.success,
+                          )
+                          .animate()
+                          .fadeIn(duration: 400.ms)
+                          .slideX(begin: 0.2, end: 0),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: _buildTopStatCard(
-                    title: l10n.statsPendingApproval,
-                    value: pendingCount.toString(),
-                    icon: Icons.pending_actions_outlined,
-                    color: BauhausDesign.warning,
-                  )
-                      .animate(delay: 150.ms)
-                      .fadeIn(duration: 400.ms)
-                      .slideX(begin: 0.2, end: 0),
+                  child:
+                      _buildTopStatCard(
+                            title: l10n.statsPendingApproval,
+                            value: pendingCount.toString(),
+                            icon: Icons.pending_actions_outlined,
+                            color: BauhausDesign.warning,
+                          )
+                          .animate(delay: 150.ms)
+                          .fadeIn(duration: 400.ms)
+                          .slideX(begin: 0.2, end: 0),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: _buildTopStatCard(
-                    title: l10n.statsThisMonth,
-                    value: currencyFormat.format(thisMonthAmount),
-                    icon: Icons.date_range_outlined,
-                    color: BauhausDesign.info,
-                  )
-                      .animate(delay: 300.ms)
-                      .fadeIn(duration: 400.ms)
-                      .slideX(begin: 0.2, end: 0),
+                  child:
+                      _buildTopStatCard(
+                            title: l10n.statsThisMonth,
+                            value: currencyFormat.format(thisMonthAmount),
+                            icon: Icons.date_range_outlined,
+                            color: BauhausDesign.info,
+                          )
+                          .animate(delay: 300.ms)
+                          .fadeIn(duration: 400.ms)
+                          .slideX(begin: 0.2, end: 0),
                 ),
               ],
             ),
@@ -332,27 +335,29 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               Row(
                 children: [
                   Expanded(
-                    child: _buildTopStatCard(
-                      title: l10n.statsTotalExpenses,
-                      value: currencyFormat.format(totalAmount),
-                      icon: Icons.account_balance_wallet_outlined,
-                      color: BauhausDesign.success,
-                    )
-                        .animate()
-                        .fadeIn(duration: 400.ms)
-                        .slideX(begin: 0.2, end: 0),
+                    child:
+                        _buildTopStatCard(
+                              title: l10n.statsTotalExpenses,
+                              value: currencyFormat.format(totalAmount),
+                              icon: Icons.account_balance_wallet_outlined,
+                              color: BauhausDesign.success,
+                            )
+                            .animate()
+                            .fadeIn(duration: 400.ms)
+                            .slideX(begin: 0.2, end: 0),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: _buildTopStatCard(
-                      title: l10n.statsPendingApproval,
-                      value: pendingCount.toString(),
-                      icon: Icons.pending_actions_outlined,
-                      color: BauhausDesign.warning,
-                    )
-                        .animate(delay: 150.ms)
-                        .fadeIn(duration: 400.ms)
-                        .slideX(begin: 0.2, end: 0),
+                    child:
+                        _buildTopStatCard(
+                              title: l10n.statsPendingApproval,
+                              value: pendingCount.toString(),
+                              icon: Icons.pending_actions_outlined,
+                              color: BauhausDesign.warning,
+                            )
+                            .animate(delay: 150.ms)
+                            .fadeIn(duration: 400.ms)
+                            .slideX(begin: 0.2, end: 0),
                   ),
                 ],
               ),
@@ -360,15 +365,16 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               Row(
                 children: [
                   Expanded(
-                    child: _buildTopStatCard(
-                      title: l10n.statsThisMonth,
-                      value: currencyFormat.format(thisMonthAmount),
-                      icon: Icons.date_range_outlined,
-                      color: BauhausDesign.info,
-                    )
-                        .animate(delay: 300.ms)
-                        .fadeIn(duration: 400.ms)
-                        .slideX(begin: 0.2, end: 0),
+                    child:
+                        _buildTopStatCard(
+                              title: l10n.statsThisMonth,
+                              value: currencyFormat.format(thisMonthAmount),
+                              icon: Icons.date_range_outlined,
+                              color: BauhausDesign.info,
+                            )
+                            .animate(delay: 300.ms)
+                            .fadeIn(duration: 400.ms)
+                            .slideX(begin: 0.2, end: 0),
                   ),
                   const Expanded(child: SizedBox()),
                 ],
@@ -382,62 +388,64 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
 
   Widget _buildTabSection() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.fromBorderSide(
-          BorderSide(color: BauhausDesign.neutral, width: 2),
-        ),
-        boxShadow: [BauhausDesign.shadowHardSm],
-      ),
-      child: Column(
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              color: BauhausDesign.surfaceOffWhite,
-              border: Border(
-                bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          decoration: const BoxDecoration(
+            color: BauhausDesign.surfaceWhite,
+            border: Border.fromBorderSide(
+              BorderSide(color: BauhausDesign.neutral, width: 2),
+            ),
+            boxShadow: [BauhausDesign.shadowHardSm],
+          ),
+          child: Column(
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  color: BauhausDesign.surfaceOffWhite,
+                  border: Border(
+                    bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+                  ),
+                ),
+                child: TabBar(
+                  controller: _tabController,
+                  isScrollable: true,
+                  labelColor: BauhausDesign.surfaceWhite,
+                  unselectedLabelColor: BauhausDesign.textDark,
+                  labelStyle: BauhausDesign.getTextTheme(
+                    context,
+                  ).labelLarge?.copyWith(fontWeight: FontWeight.w900),
+                  unselectedLabelStyle: BauhausDesign.getTextTheme(
+                    context,
+                  ).labelLarge?.copyWith(fontWeight: FontWeight.w700),
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicator: const BoxDecoration(color: BauhausDesign.neutral),
+                  indicatorPadding: EdgeInsets.zero,
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  labelPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 6,
+                  ),
+                  tabs: _tabs.map((tab) {
+                    String label = tab;
+                    if (tab == 'Dashboard') label = l10n.expensesTabDashboard;
+                    if (tab == 'Expense List') label = l10n.expensesTabList;
+                    if (tab == 'Add Expense') label = l10n.expensesTabAdd;
+                    if (tab == 'Approvals') label = l10n.expensesTabApprovals;
+                    if (tab == 'Recurring') label = l10n.expensesTabRecurring;
+                    if (tab == 'Reports') label = l10n.expensesTabReports;
+                    return Tab(text: label);
+                  }).toList(),
+                ),
               ),
-            ),
-            child: TabBar(
-              controller: _tabController,
-              isScrollable: true,
-              labelColor: BauhausDesign.surfaceWhite,
-              unselectedLabelColor: BauhausDesign.textDark,
-              labelStyle: BauhausDesign.getTextTheme(context)
-                  .labelLarge
-                  ?.copyWith(fontWeight: FontWeight.w900),
-              unselectedLabelStyle: BauhausDesign.getTextTheme(context)
-                  .labelLarge
-                  ?.copyWith(fontWeight: FontWeight.w700),
-              indicatorSize: TabBarIndicatorSize.tab,
-              indicator: const BoxDecoration(color: BauhausDesign.neutral),
-              indicatorPadding: EdgeInsets.zero,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              labelPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              tabs: _tabs.map((tab) {
-                String label = tab;
-                if (tab == 'Dashboard') label = l10n.expensesTabDashboard;
-                if (tab == 'Expense List') label = l10n.expensesTabList;
-                if (tab == 'Add Expense') label = l10n.expensesTabAdd;
-                if (tab == 'Approvals') label = l10n.expensesTabApprovals;
-                if (tab == 'Recurring') label = l10n.expensesTabRecurring;
-                if (tab == 'Reports') label = l10n.expensesTabReports;
-                return Tab(text: label);
-              }).toList(),
-            ),
+              SizedBox(
+                height: 600,
+                child: TabBarView(
+                  controller: _tabController,
+                  children: _buildTabViews(),
+                ),
+              ),
+            ],
           ),
-          SizedBox(
-            height: 600,
-            child: TabBarView(
-              controller: _tabController,
-              children: _buildTabViews(),
-            ),
-          ),
-        ],
-      ),
-    )
+        )
         .animate(delay: 300.ms)
         .fadeIn(duration: 800.ms)
         .slideY(begin: 0.2, end: 0, curve: Curves.easeOutQuart);
@@ -480,126 +488,133 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
     final currencyFormat = NumberFormat.currency(symbol: '\$');
 
     return Container(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-        child: RefreshIndicator(
-          onRefresh: _fetchExpenses,
-          child: ListView(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).padding.bottom +
-                  kBottomNavigationBarHeight +
-                  16,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+      child: RefreshIndicator(
+        onRefresh: _fetchExpenses,
+        child: ListView(
+          padding: EdgeInsets.only(
+            bottom:
+                MediaQuery.of(context).padding.bottom +
+                kBottomNavigationBarHeight +
+                16,
+          ),
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: _buildDashboardCard(
+                    'Total Expenses',
+                    currencyFormat.format(totalAmount),
+                    Icons.account_balance_wallet,
+                    BauhausDesign.info,
+                  ),
+                ),
+              ],
             ),
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildDashboardCard(
-                      'Total Expenses',
-                      currencyFormat.format(totalAmount),
-                      Icons.account_balance_wallet,
-                      BauhausDesign.info,
-                    ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: _buildDashboardCard(
+                    'Approved',
+                    currencyFormat.format(approvedAmount),
+                    Icons.check_circle,
+                    BauhausDesign.success,
                   ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: _buildDashboardCard(
-                      'Approved',
-                      currencyFormat.format(approvedAmount),
-                      Icons.check_circle,
-                      BauhausDesign.success,
-                    ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  flex: 1,
+                  child: _buildDashboardCard(
+                    'Pending',
+                    currencyFormat.format(pendingAmount),
+                    Icons.pending,
+                    BauhausDesign.warning,
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    flex: 1,
-                    child: _buildDashboardCard(
-                      'Pending',
-                      currencyFormat.format(pendingAmount),
-                      Icons.pending,
-                      BauhausDesign.warning,
-                    ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  l10n.dashboardRecentExpenses,
+                  style: BauhausDesign.getTextTheme(context).headlineMedium,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: BauhausActionButton(
+                    text: l10n.dashboardViewAll,
+                    icon: Icons.list,
+                    variant: BauhausActionVariant.ghost,
+                    onPressed: () {
+                      _tabController.animateTo(1);
+                    },
                   ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            ...latestExpenses.map(
+              (expense) => _buildRecentExpenseItem(expense),
+            ),
+            const SizedBox(height: 24),
+            _squareCard(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    l10n.dashboardRecentExpenses,
+                    l10n.dashboardQuickActions,
                     style: BauhausDesign.getTextTheme(context).headlineMedium,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: BauhausActionButton(
-                      text: l10n.dashboardViewAll,
-                      icon: Icons.list,
-                      variant: BauhausActionVariant.ghost,
-                      onPressed: () {
-                        _tabController.animateTo(1);
-                      },
-                    ),
+                  const SizedBox(height: 20),
+                  _buildModernActionButton(
+                    l10n.expensesTabAdd,
+                    l10n.dashboardAddExpenseDesc,
+                    Icons.add_circle_outline,
+                    BauhausDesign.success,
+                    () {
+                      _tabController.animateTo(2);
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  _buildModernActionButton(
+                    l10n.expensesTabApprovals,
+                    l10n.dashboardApprovalsDesc,
+                    Icons.approval_outlined,
+                    BauhausDesign.warning,
+                    () {
+                      _tabController.animateTo(3);
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  _buildModernActionButton(
+                    l10n.expensesTabReports,
+                    l10n.dashboardReportsDesc,
+                    Icons.bar_chart_outlined,
+                    BauhausDesign.info,
+                    () {
+                      _tabController.animateTo(5);
+                    },
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              ...latestExpenses
-                  .map((expense) => _buildRecentExpenseItem(expense)),
-              const SizedBox(height: 24),
-              _squareCard(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.dashboardQuickActions,
-                      style: BauhausDesign.getTextTheme(context).headlineMedium,
-                    ),
-                    const SizedBox(height: 20),
-                    _buildModernActionButton(
-                      l10n.expensesTabAdd,
-                      l10n.dashboardAddExpenseDesc,
-                      Icons.add_circle_outline,
-                      BauhausDesign.success,
-                      () {
-                        _tabController.animateTo(2);
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    _buildModernActionButton(
-                      l10n.expensesTabApprovals,
-                      l10n.dashboardApprovalsDesc,
-                      Icons.approval_outlined,
-                      BauhausDesign.warning,
-                      () {
-                        _tabController.animateTo(3);
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    _buildModernActionButton(
-                      l10n.expensesTabReports,
-                      l10n.dashboardReportsDesc,
-                      Icons.bar_chart_outlined,
-                      BauhausDesign.info,
-                      () {
-                        _tabController.animateTo(5);
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ));
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildDashboardCard(
-      String title, String value, IconData icon, Color color) {
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return _squareCard(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -613,20 +628,15 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   color: color.withOpacity(0.1),
                   border: Border.all(color: BauhausDesign.neutral, width: 1),
                 ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 20,
-                ),
+                child: Icon(icon, color: color, size: 20),
               ),
               const SizedBox(width: 12.0),
               Expanded(
                 child: Text(
                   title,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -679,11 +689,8 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                 const SizedBox(height: 4.0),
                 Text(
                   '${expense.category} • ${dateFormat.format(expense.date)}',
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: BauhausDesign.textMuted,
-                            fontSize: 12,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(color: BauhausDesign.textMuted, fontSize: 12),
                 ),
               ],
             ),
@@ -695,9 +702,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
             children: [
               Text(
                 currencyFormat.format(expense.amount ?? 0.0),
-                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                      color: BauhausDesign.success,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).labelLarge?.copyWith(color: BauhausDesign.success),
               ),
               const SizedBox(height: 8.0),
               _buildStatusBadge(expense.status),
@@ -708,16 +715,18 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
     );
   }
 
-  Widget _buildModernActionButton(String title, String subtitle, IconData icon,
-      Color color, VoidCallback onPressed) {
+  Widget _buildModernActionButton(
+    String title,
+    String subtitle,
+    IconData icon,
+    Color color,
+    VoidCallback onPressed,
+  ) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        border: Border.all(
-          color: BauhausDesign.neutral,
-          width: 2,
-        ),
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
       ),
       child: Material(
         color: Colors.transparent,
@@ -735,11 +744,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                     color: color.withOpacity(0.1),
                     border: Border.all(color: BauhausDesign.neutral, width: 1),
                   ),
-                  child: Icon(
-                    icon,
-                    color: color,
-                    size: 24,
-                  ),
+                  child: Icon(icon, color: color, size: 24),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -753,8 +758,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                       const SizedBox(height: 4),
                       Text(
                         subtitle,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
                             ?.copyWith(
                               color: BauhausDesign.textMuted,
                               fontSize: 12,
@@ -908,29 +912,23 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               ),
               Text(
                 currencyFormat.format(expense.amount ?? 0.0),
-                style: BauhausDesign.getTextTheme(context)
-                    .headlineMedium
-                    ?.copyWith(
-                      color: BauhausDesign.primary,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).headlineMedium?.copyWith(color: BauhausDesign.primary),
               ),
             ],
           ),
           const SizedBox(height: 8.0),
           Row(
             children: [
-              Icon(
-                Icons.category,
-                size: 14,
-                color: BauhausDesign.textMuted,
-              ),
+              Icon(Icons.category, size: 14, color: BauhausDesign.textMuted),
               const SizedBox(width: 4.0),
               Text(
                 expense.category,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.textMuted,
-                      fontSize: 12,
-                    ),
+                  color: BauhausDesign.textMuted,
+                  fontSize: 12,
+                ),
               ),
               const SizedBox(width: 16.0),
               Icon(
@@ -942,9 +940,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               Text(
                 dateFormat.format(expense.date),
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.textMuted,
-                      fontSize: 12,
-                    ),
+                  color: BauhausDesign.textMuted,
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
@@ -964,8 +962,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                     const SizedBox(width: 4.0),
                     Text(
                       'Recurring',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
                             color: BauhausDesign.textMuted,
                             fontSize: 12,
@@ -1062,10 +1059,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                 const SizedBox(height: 8.0),
                 Text(
                   'Create a new expense entry with details, receipts, and optional recurring settings.',
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -1120,11 +1116,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                 Expanded(
                   child: Text(
                     'Pro tip: Attaching a receipt speeds up approvals and reduces back-and-forth.',
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
-                        ?.copyWith(
-                          color: BauhausDesign.textMuted,
-                        ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                   ),
                 ),
               ],
@@ -1152,10 +1146,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
         title: 'No Pending Approvals',
         message: 'All expenses have been reviewed',
         icon: Icons.approval_rounded,
-        action: BauhausActionButton(
-          text: 'Refresh',
-          onPressed: _fetchExpenses,
-        ),
+        action: BauhausActionButton(text: 'Refresh', onPressed: _fetchExpenses),
       );
     }
 
@@ -1227,11 +1218,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               ),
               Text(
                 currencyFormat.format(expense.amount ?? 0.0),
-                style: BauhausDesign.getTextTheme(context)
-                    .headlineMedium
-                    ?.copyWith(
-                      color: BauhausDesign.success,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).headlineMedium?.copyWith(color: BauhausDesign.success),
               ),
             ],
           ),
@@ -1245,10 +1234,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
           const SizedBox(height: 12.0),
           Row(
             children: [
-              _buildTag(
-                label: expense.category,
-                icon: Icons.category_outlined,
-              ),
+              _buildTag(label: expense.category, icon: Icons.category_outlined),
               const SizedBox(width: 8.0),
               _buildTag(
                 label: dateFormat.format(expense.date),
@@ -1267,9 +1253,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               ),
               child: Text(
                 expense.description!,
-                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.textMuted,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1287,11 +1273,8 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               Expanded(
                 child: Text(
                   'Submitted by ${expense.submittedBy}',
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: BauhausDesign.textMuted,
-                            fontSize: 12,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(color: BauhausDesign.textMuted, fontSize: 12),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -1304,9 +1287,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               Text(
                 dateFormat.format(expense.createdAt),
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.textMuted,
-                      fontSize: 12,
-                    ),
+                  color: BauhausDesign.textMuted,
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
@@ -1327,8 +1310,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                       _fetchExpenses();
                     } catch (e) {
                       _showSnackBar(
-                          'Failed to approve expense: ${e.toString()}',
-                          isError: true);
+                        'Failed to approve expense: ${e.toString()}',
+                        isError: true,
+                      );
                     }
                   },
                 ),
@@ -1347,8 +1331,10 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                       _showSnackBar('Expense rejected successfully');
                       _fetchExpenses();
                     } catch (e) {
-                      _showSnackBar('Failed to reject expense: ${e.toString()}',
-                          isError: true);
+                      _showSnackBar(
+                        'Failed to reject expense: ${e.toString()}',
+                        isError: true,
+                      );
                     }
                   },
                 ),
@@ -1385,8 +1371,10 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   ),
                   tooltip: 'View',
                   padding: const EdgeInsets.all(8.0),
-                  constraints:
-                      const BoxConstraints.tightFor(width: 44, height: 44),
+                  constraints: const BoxConstraints.tightFor(
+                    width: 44,
+                    height: 44,
+                  ),
                   visualDensity: VisualDensity.compact,
                 ),
               ),
@@ -1502,20 +1490,16 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: BauhausDesign.surfaceOffWhite,
-              border: Border.all(
-                color: BauhausDesign.neutral,
-              ),
+              border: Border.all(color: BauhausDesign.neutral),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   currencyFormat.format(expense.amount ?? 0.0),
-                  style: BauhausDesign.getTextTheme(context)
-                      .headlineMedium
-                      ?.copyWith(
-                        color: BauhausDesign.primary,
-                      ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).headlineMedium?.copyWith(color: BauhausDesign.primary),
                 ),
                 _buildStatusBadge(expense.status),
               ],
@@ -1531,8 +1515,11 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                 style: BauhausDesign.getTextTheme(context).bodyMedium,
               ),
               const SizedBox(width: 20),
-              Icon(Icons.calendar_today,
-                  size: 16, color: BauhausDesign.textMuted),
+              Icon(
+                Icons.calendar_today,
+                size: 16,
+                color: BauhausDesign.textMuted,
+              ),
               const SizedBox(width: 8),
               Text(
                 'Next: ${dateFormat.format(expense.date)}',
@@ -1657,8 +1644,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
     final totalAmount = expenses.totalAmount;
     final approvedAmount = expenses.totalAmountByStatus('approved');
 
-    final sortedCategories =
-        expenses.sortedCategoriesByAmount(filterStatus: 'approved');
+    final sortedCategories = expenses.sortedCategoriesByAmount(
+      filterStatus: 'approved',
+    );
 
     final currencyFormat = NumberFormat.currency(symbol: '\$');
     final percentFormat = NumberFormat.percentPattern();
@@ -1669,7 +1657,8 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
         onRefresh: _fetchExpenses,
         child: ListView(
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).padding.bottom +
+            bottom:
+                MediaQuery.of(context).padding.bottom +
                 kBottomNavigationBarHeight +
                 16,
           ),
@@ -1791,11 +1780,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
                     'No approved expenses to show category breakdown',
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
-                        ?.copyWith(
-                          color: BauhausDesign.textMuted,
-                        ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                   ),
                 ),
               )
@@ -1813,8 +1800,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                             flex: 3,
                             child: Text(
                               entry.key,
-                              style: BauhausDesign.getTextTheme(context)
-                                  .labelLarge,
+                              style: BauhausDesign.getTextTheme(
+                                context,
+                              ).labelLarge,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
@@ -1823,8 +1811,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                             flex: 4,
                             child: Text(
                               '${currencyFormat.format(entry.value)} (${percentFormat.format(percentage)})',
-                              style: BauhausDesign.getTextTheme(context)
-                                  .labelLarge,
+                              style: BauhausDesign.getTextTheme(
+                                context,
+                              ).labelLarge,
                               textAlign: TextAlign.end,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -1837,7 +1826,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                         decoration: BoxDecoration(
                           color: BauhausDesign.surfaceOffWhite,
                           border: Border.all(
-                              color: BauhausDesign.neutral, width: 1),
+                            color: BauhausDesign.neutral,
+                            width: 1,
+                          ),
                         ),
                         child: FractionallySizedBox(
                           alignment: Alignment.centerLeft,
@@ -1868,7 +1859,11 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
   }
 
   Widget _buildSummaryCard(
-      String title, String value, IconData icon, Color color) {
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return _squareCard(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -1882,21 +1877,14 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   color: color.withOpacity(0.1),
                   border: Border.all(color: BauhausDesign.neutral, width: 2),
                 ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 18,
-                ),
+                child: Icon(icon, color: color, size: 18),
               ),
               const SizedBox(width: 8.0),
               Expanded(
                 child: Text(
                   title,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: BauhausDesign.textMuted,
-                            fontSize: 12,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(color: BauhausDesign.textMuted, fontSize: 12),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -1960,11 +1948,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
             color: BauhausDesign.surfaceWhite,
             border: Border.all(color: BauhausDesign.neutral, width: 2),
           ),
-          child: Icon(
-            icon,
-            size: 18,
-            color: BauhausDesign.textDark,
-          ),
+          child: Icon(icon, size: 18, color: BauhausDesign.textDark),
         ),
       ),
     );
@@ -1998,12 +1982,12 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.textMuted,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 0.4,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: BauhausDesign.textMuted,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.4,
+                      ),
                 ),
               ),
             ],
@@ -2014,7 +1998,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-                color: BauhausDesign.textDark, fontWeight: FontWeight.w900),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w900,
+            ),
           ),
         ],
       ),
@@ -2043,9 +2029,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
           Text(
             label,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: textColor,
-                  fontWeight: FontWeight.w800,
-                ),
+              color: textColor,
+              fontWeight: FontWeight.w800,
+            ),
           ),
         ],
       ),
@@ -2079,9 +2065,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               Text(
                 label,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                      color: BauhausDesign.textDark,
-                      fontWeight: FontWeight.w800,
-                    ),
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ],
           ),

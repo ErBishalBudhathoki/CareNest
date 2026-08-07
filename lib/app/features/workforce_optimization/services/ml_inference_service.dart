@@ -18,7 +18,8 @@ class MLInferenceService {
       return await _repository.trainModel(
         modelType: modelType,
         trainingData: trainingData,
-        hyperparameters: hyperparameters ?? _getDefaultHyperparameters(modelType),
+        hyperparameters:
+            hyperparameters ?? _getDefaultHyperparameters(modelType),
       );
     } catch (e) {
       return {'success': false, 'message': e.toString()};
@@ -67,14 +68,14 @@ class MLInferenceService {
   }) async {
     try {
       final predictions = <MLPrediction>[];
-      
+
       for (final features in batchFeatures) {
         final prediction = await predict(modelId: modelId, features: features);
         if (prediction != null) {
           predictions.add(prediction);
         }
       }
-      
+
       return predictions;
     } catch (e) {
       return [];
@@ -82,9 +83,7 @@ class MLInferenceService {
   }
 
   /// List available models
-  Future<List<MLModel>> listModels({
-    required String organizationId,
-  }) async {
+  Future<List<MLModel>> listModels({required String organizationId}) async {
     try {
       final result = await _repository.listMLModels(
         organizationId: organizationId,
@@ -100,13 +99,9 @@ class MLInferenceService {
   }
 
   /// Get model information
-  Future<MLModel?> getModelInfo({
-    required String modelId,
-  }) async {
+  Future<MLModel?> getModelInfo({required String modelId}) async {
     try {
-      final result = await _repository.getMLModelInfo(
-        modelId: modelId,
-      );
+      final result = await _repository.getMLModelInfo(modelId: modelId);
 
       if (result['success'] == true) {
         return result['model'] as MLModel?;
@@ -224,7 +219,7 @@ class MLInferenceService {
   ) {
     // Simplified feature importance calculation
     final importance = <String, double>{};
-    
+
     for (final prediction in predictions) {
       final features = prediction['features'] as Map<String, dynamic>?;
       if (features != null) {
@@ -261,19 +256,15 @@ class MLInferenceService {
           'optimizer': 'adam',
         };
       default:
-        return {
-          'learningRate': 0.001,
-          'epochs': 100,
-          'batchSize': 32,
-        };
+        return {'learningRate': 0.001, 'epochs': 100, 'batchSize': 32};
     }
   }
 
   /// Validate model performance
   bool validateModelPerformance(MLMetrics metrics, {double threshold = 0.8}) {
     return metrics.accuracy >= threshold &&
-           metrics.precision >= threshold &&
-           metrics.recall >= threshold;
+        metrics.precision >= threshold &&
+        metrics.recall >= threshold;
   }
 
   /// Compare two models

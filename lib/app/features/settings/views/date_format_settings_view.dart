@@ -20,7 +20,8 @@ class DateFormatSettingsView extends ConsumerWidget {
     if (!vm.isLoaded && !vm.isLoading) {
       // Schedule asynchronously to avoid side-effects during build.
       Future.microtask(
-          () => ref.read(dateFormatSettingsViewModelProvider.notifier).load());
+        () => ref.read(dateFormatSettingsViewModelProvider.notifier).load(),
+      );
     }
 
     return Scaffold(
@@ -28,7 +29,8 @@ class DateFormatSettingsView extends ConsumerWidget {
       appBar: _buildBauhausAppBar(context),
       body: vm.isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: BauhausDesign.primary))
+              child: CircularProgressIndicator(color: BauhausDesign.primary),
+            )
           : Padding(
               padding: const EdgeInsets.all(BauhausDesign.space4),
               child: Column(
@@ -43,12 +45,15 @@ class DateFormatSettingsView extends ConsumerWidget {
                           padding: const EdgeInsets.all(BauhausDesign.space3),
                           decoration: BoxDecoration(
                             color: BauhausDesign.primary.withOpacity(0.1),
-                            borderRadius:
-                                BorderRadius.circular(BauhausDesign.radiusMd),
+                            borderRadius: BorderRadius.circular(
+                              BauhausDesign.radiusMd,
+                            ),
                             border: Border.all(color: BauhausDesign.primary),
                           ),
-                          child: const Icon(Icons.event_outlined,
-                              color: BauhausDesign.primary),
+                          child: const Icon(
+                            Icons.event_outlined,
+                            color: BauhausDesign.primary,
+                          ),
                         ),
                         const SizedBox(width: BauhausDesign.space4),
                         Expanded(
@@ -68,8 +73,7 @@ class DateFormatSettingsView extends ConsumerWidget {
                   const SizedBox(height: BauhausDesign.space6),
                   Text(
                     AppLocalizations.of(context)!.formatOptions,
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelSmall
+                    style: BauhausDesign.getTextTheme(context).labelSmall
                         ?.copyWith(
                           color: BauhausDesign.textMuted,
                           fontWeight: FontWeight.bold,
@@ -83,7 +87,9 @@ class DateFormatSettingsView extends ConsumerWidget {
                     subtitle: AppLocalizations.of(context)!.monthDayYearExample,
                     icon: Icons.flag_outlined,
                     isSelected: vm.selected == 'mdy',
-                    onTap: () => ref.read(dateFormatSettingsViewModelProvider.notifier).select('mdy'),
+                    onTap: () => ref
+                        .read(dateFormatSettingsViewModelProvider.notifier)
+                        .select('mdy'),
                   ),
                   const SizedBox(height: BauhausDesign.space4),
                   _buildOptionCard(
@@ -92,15 +98,17 @@ class DateFormatSettingsView extends ConsumerWidget {
                     subtitle: AppLocalizations.of(context)!.dayMonthYearExample,
                     icon: Icons.public,
                     isSelected: vm.selected == 'dmy',
-                    onTap: () => ref.read(dateFormatSettingsViewModelProvider.notifier).select('dmy'),
+                    onTap: () => ref
+                        .read(dateFormatSettingsViewModelProvider.notifier)
+                        .select('dmy'),
                   ),
                   if (vm.errorMessage != null) ...[
                     const SizedBox(height: BauhausDesign.space4),
                     Text(
                       vm.errorMessage!,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
-                          ?.copyWith(color: BauhausDesign.error),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodySmall?.copyWith(color: BauhausDesign.error),
                     ),
                   ],
                   const Spacer(),
@@ -111,23 +119,32 @@ class DateFormatSettingsView extends ConsumerWidget {
                       onPressed: vm.isLoading
                           ? null
                           : () async {
-                              await ref.read(dateFormatSettingsViewModelProvider.notifier).save();
+                              await ref
+                                  .read(
+                                    dateFormatSettingsViewModelProvider
+                                        .notifier,
+                                  )
+                                  .save();
                               if (vm.saveSucceeded && context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Row(
                                       children: [
-                                        const Icon(Icons.check_circle,
-                                            color: BauhausDesign.surfaceWhite),
+                                        const Icon(
+                                          Icons.check_circle,
+                                          color: BauhausDesign.surfaceWhite,
+                                        ),
                                         const SizedBox(
-                                            width: BauhausDesign.space3),
+                                          width: BauhausDesign.space3,
+                                        ),
                                         Text(
-                                          AppLocalizations.of(context)!
-                                              .dateFormatSaved,
-                                          style: BauhausDesign.getTextTheme(
-                                                  context)
-                                              .bodyMedium
-                                              ?.copyWith(
+                                          AppLocalizations.of(
+                                            context,
+                                          )!.dateFormatSaved,
+                                          style:
+                                              BauhausDesign.getTextTheme(
+                                                context,
+                                              ).bodyMedium?.copyWith(
                                                 color:
                                                     BauhausDesign.surfaceWhite,
                                               ),
@@ -138,10 +155,12 @@ class DateFormatSettingsView extends ConsumerWidget {
                                     behavior: SnackBarBehavior.floating,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(
-                                          BauhausDesign.radiusMd),
+                                        BauhausDesign.radiusMd,
+                                      ),
                                       side: const BorderSide(
-                                          color: BauhausDesign.neutral,
-                                          width: 1.5),
+                                        color: BauhausDesign.neutral,
+                                        width: 1.5,
+                                      ),
                                     ),
                                   ),
                                 );
@@ -171,8 +190,9 @@ class DateFormatSettingsView extends ConsumerWidget {
         ),
         child: SafeArea(
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
+            padding: const EdgeInsets.symmetric(
+              horizontal: BauhausDesign.space4,
+            ),
             child: Row(
               children: [
                 BauhausIconButton(
@@ -230,8 +250,9 @@ class DateFormatSettingsView extends ConsumerWidget {
               ),
               child: Icon(
                 icon,
-                color:
-                    isSelected ? BauhausDesign.primary : BauhausDesign.neutral,
+                color: isSelected
+                    ? BauhausDesign.primary
+                    : BauhausDesign.neutral,
                 size: 24,
               ),
             ),
@@ -242,8 +263,7 @@ class DateFormatSettingsView extends ConsumerWidget {
                 children: [
                   Text(
                     title,
-                    style: BauhausDesign.getTextTheme(context)
-                        .titleSmall
+                    style: BauhausDesign.getTextTheme(context).titleSmall
                         ?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: isSelected
@@ -254,10 +274,9 @@ class DateFormatSettingsView extends ConsumerWidget {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style:
-                        BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                              color: BauhausDesign.textMuted,
-                            ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                   ),
                 ],
               ),
@@ -270,8 +289,11 @@ class DateFormatSettingsView extends ConsumerWidget {
                   shape: BoxShape.circle,
                   color: BauhausDesign.primary,
                 ),
-                child: const Icon(Icons.check,
-                    size: 16, color: BauhausDesign.surfaceWhite),
+                child: const Icon(
+                  Icons.check,
+                  size: 16,
+                  color: BauhausDesign.surfaceWhite,
+                ),
               ),
           ],
         ),

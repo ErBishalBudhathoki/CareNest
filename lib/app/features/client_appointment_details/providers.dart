@@ -6,8 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final clientAppointmentRepositoryProvider =
     Provider<ClientAppointmentRepository>((ref) {
-  return ClientAppointmentRepository(ref.read(app_providers.apiMethodProvider));
-});
+      return ClientAppointmentRepository(
+        ref.read(app_providers.apiMethodProvider),
+      );
+    });
 
 class ClientAppointmentDetailsParams {
   final String clientId;
@@ -29,6 +31,7 @@ class ClientAppointmentDetailsParams {
   int get hashCode => Object.hash(clientId, clientEmail);
 }
 
-
-
-final clientAppointmentDetailsViewModelProvider = NotifierProvider.autoDispose<ClientAppointmentDetailsViewModel, int>(ClientAppointmentDetailsViewModel.new);
+final clientAppointmentDetailsViewModelProvider =
+    NotifierProvider.autoDispose<ClientAppointmentDetailsViewModel, int>(
+      ClientAppointmentDetailsViewModel.new,
+    );

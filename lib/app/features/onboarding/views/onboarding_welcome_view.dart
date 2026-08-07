@@ -66,10 +66,7 @@ class _OnboardingWelcomeViewState extends ConsumerState<OnboardingWelcomeView> {
                         gradient: const LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [
-                            Color(0xFFF1F6FF),
-                            Color(0xFFF8FAFF),
-                          ],
+                          colors: [Color(0xFFF1F6FF), Color(0xFFF8FAFF)],
                         ),
                         borderRadius: BorderRadius.circular(28),
                       ),
@@ -135,10 +132,7 @@ class _OnboardingWelcomeViewState extends ConsumerState<OnboardingWelcomeView> {
 }
 
 class _WelcomePoint extends StatelessWidget {
-  const _WelcomePoint({
-    required this.title,
-    required this.body,
-  });
+  const _WelcomePoint({required this.title, required this.body});
 
   final String title;
   final String body;

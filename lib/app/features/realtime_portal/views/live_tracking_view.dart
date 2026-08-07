@@ -67,9 +67,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
     });
 
     // Animate camera to new position
-    _mapController?.animateCamera(
-      CameraUpdate.newLatLng(LatLng(lat, lng)),
-    );
+    _mapController?.animateCamera(CameraUpdate.newLatLng(LatLng(lat, lng)));
   }
 
   void _showGeofenceAlert(String event) {
@@ -106,8 +104,10 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Location Update',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text(
+                    'Location Update',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   Text(message),
                 ],
               ),
@@ -254,8 +254,10 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
                   flex: 2,
                   child: GoogleMap(
                     initialCameraPosition: const CameraPosition(
-                      target:
-                          LatLng(37.7749, -122.4194), // Default: San Francisco
+                      target: LatLng(
+                        37.7749,
+                        -122.4194,
+                      ), // Default: San Francisco
                       zoom: 14,
                     ),
                     markers: _markers,
@@ -314,8 +316,11 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.access_time,
-                      color: AppColors.colorPrimary, size: 32),
+                  Icon(
+                    Icons.access_time,
+                    color: AppColors.colorPrimary,
+                    size: 32,
+                  ),
                   const SizedBox(width: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -419,8 +424,11 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
   }) {
     return Row(
       children: [
-        Icon(icon,
-            color: Color(0xFF666666), size: 20), // BauhausDesign.textMuted
+        Icon(
+          icon,
+          color: Color(0xFF666666),
+          size: 20,
+        ), // BauhausDesign.textMuted
         const SizedBox(width: 12),
         Text(
           label,

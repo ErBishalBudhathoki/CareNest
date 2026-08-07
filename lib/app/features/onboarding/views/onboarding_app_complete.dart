@@ -14,12 +14,10 @@ class OnboardingAppComplete extends StatefulWidget {
   });
 
   @override
-  State<OnboardingAppComplete> createState() =>
-      _OnboardingAppCompleteState();
+  State<OnboardingAppComplete> createState() => _OnboardingAppCompleteState();
 }
 
-class _OnboardingAppCompleteState
-    extends State<OnboardingAppComplete>
+class _OnboardingAppCompleteState extends State<OnboardingAppComplete>
     with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl;
   late final Animation<double> _iconScale;
@@ -37,8 +35,7 @@ class _OnboardingAppCompleteState
     _iconScale = Tween<double>(begin: 0.7, end: 1.0).animate(
       CurvedAnimation(
         parent: _ctrl,
-        curve: const Interval(0.0, 0.5,
-            curve: OnboardingCurves.splashLogoEase),
+        curve: const Interval(0.0, 0.5, curve: OnboardingCurves.splashLogoEase),
       ),
     );
     _bodyOp = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -47,16 +44,13 @@ class _OnboardingAppCompleteState
         curve: const Interval(0.3, 0.8, curve: Curves.easeOut),
       ),
     );
-    _bodySlide = Tween<Offset>(
-      begin: const Offset(0, 0.1),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _ctrl,
-        curve: const Interval(0.3, 0.8,
-            curve: Curves.easeOutCubic),
-      ),
-    );
+    _bodySlide = Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _ctrl,
+            curve: const Interval(0.3, 0.8, curve: Curves.easeOutCubic),
+          ),
+        );
     _ctaOp = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _ctrl,
@@ -97,16 +91,14 @@ class _OnboardingAppCompleteState
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: BauhausDesign.success,
-                    border: Border.all(
-                        color: BauhausDesign.neoInk,
-                        width: 3),
-                    boxShadow: const [
-                      BauhausDesign.shadowHard
-                    ],
+                    border: Border.all(color: BauhausDesign.neoInk, width: 3),
+                    boxShadow: const [BauhausDesign.shadowHard],
                   ),
-                  child: const Icon(Icons.check,
-                      size: 40,
-                      color: BauhausDesign.surfaceWhite),
+                  child: const Icon(
+                    Icons.check,
+                    size: 40,
+                    color: BauhausDesign.surfaceWhite,
+                  ),
                 ),
               ),
               const SizedBox(height: BauhausDesign.space8),
@@ -125,8 +117,7 @@ class _OnboardingAppCompleteState
                           height: 1.25,
                         ),
                       ),
-                      const SizedBox(
-                          height: BauhausDesign.space4),
+                      const SizedBox(height: BauhausDesign.space4),
                       Text(
                         OnboardingContent.completeSubtext,
                         textAlign: TextAlign.center,
@@ -159,12 +150,10 @@ class _BrutalistButton extends StatefulWidget {
   final String label;
   final VoidCallback onTap;
 
-  const _BrutalistButton(
-      {required this.label, required this.onTap});
+  const _BrutalistButton({required this.label, required this.onTap});
 
   @override
-  State<_BrutalistButton> createState() =>
-      _BrutalistButtonState();
+  State<_BrutalistButton> createState() => _BrutalistButtonState();
 }
 
 class _BrutalistButtonState extends State<_BrutalistButton>
@@ -180,12 +169,13 @@ class _BrutalistButtonState extends State<_BrutalistButton>
       vsync: this,
       duration: OnboardingDurations.buttonPress,
     );
-    _scale = Tween<double>(
-            begin: 1.0,
-            end: OnboardingButtonPress.scaleTarget)
-        .animate(CurvedAnimation(
+    _scale = Tween<double>(begin: 1.0, end: OnboardingButtonPress.scaleTarget)
+        .animate(
+          CurvedAnimation(
             parent: _ctrl,
-            curve: OnboardingCurves.buttonPressEase));
+            curve: OnboardingCurves.buttonPressEase,
+          ),
+        );
   }
 
   @override
@@ -225,13 +215,11 @@ class _BrutalistButtonState extends State<_BrutalistButton>
         child: AnimatedContainer(
           duration: OnboardingDurations.buttonPress,
           curve: OnboardingCurves.buttonPressEase,
-          padding: const EdgeInsets.symmetric(
-              vertical: BauhausDesign.space4),
+          padding: const EdgeInsets.symmetric(vertical: BauhausDesign.space4),
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: BauhausDesign.neoInk,
-            border: Border.all(
-                color: BauhausDesign.neoInk, width: 2.5),
+            border: Border.all(color: BauhausDesign.neoInk, width: 2.5),
             boxShadow: [
               BoxShadow(
                 color: const Color(0xFF000000),
@@ -242,13 +230,11 @@ class _BrutalistButtonState extends State<_BrutalistButton>
           ),
           child: Text(
             widget.label,
-            style: BauhausDesign.getTextTheme(context)
-                .labelLarge
-                ?.copyWith(
-                  color: BauhausDesign.surfaceWhite,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.5,
-                ),
+            style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+              color: BauhausDesign.surfaceWhite,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+            ),
           ),
         ),
       ),

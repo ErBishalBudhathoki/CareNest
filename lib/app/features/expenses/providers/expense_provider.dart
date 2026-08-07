@@ -2,7 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/expenses/models/expense_model.dart';
 import 'package:carenest/app/features/expenses/data/expense_repository.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 // State class for expense management
 class ExpenseState {
@@ -10,11 +11,7 @@ class ExpenseState {
   late final bool isLoading;
   late final String? error;
 
-  ExpenseState({
-    required this.expenses,
-    required this.isLoading,
-    this.error,
-  });
+  ExpenseState({required this.expenses, required this.isLoading, this.error});
 
   ExpenseState copyWith({
     List<ExpenseModel>? expenses,
@@ -33,11 +30,10 @@ class ExpenseState {
 class ExpenseNotifier extends Notifier<ExpenseState> {
   late final ExpenseRepository _repository;
 
-  
   @override
   ExpenseState build() {
     final repository = ref.watch(expenseRepositoryProvider);
-    
+
     return ExpenseState(expenses: [], isLoading: false);
   }
 
@@ -46,8 +42,9 @@ class ExpenseNotifier extends Notifier<ExpenseState> {
     try {
       state = state.copyWith(isLoading: true, error: null);
 
-      final expenses =
-          await _repository.getOrganizationExpenses(organizationId);
+      final expenses = await _repository.getOrganizationExpenses(
+        organizationId,
+      );
       state = state.copyWith(expenses: expenses, isLoading: false);
     } catch (e) {
       state = state.copyWith(
@@ -62,17 +59,20 @@ class ExpenseNotifier extends Notifier<ExpenseState> {
     try {
       debugPrint('=== EXPENSE PROVIDER DEBUG: Starting addExpense ===');
       debugPrint(
-          '=== EXPENSE PROVIDER DEBUG: Current expenses count: ${state.expenses.length} ===');
+        '=== EXPENSE PROVIDER DEBUG: Current expenses count: ${state.expenses.length} ===',
+      );
 
       state = state.copyWith(isLoading: true, error: null);
 
       final createdExpense = await _repository.createExpense(expense);
       debugPrint(
-          '=== EXPENSE PROVIDER DEBUG: Created expense with ID: ${createdExpense.id} ===');
+        '=== EXPENSE PROVIDER DEBUG: Created expense with ID: ${createdExpense.id} ===',
+      );
 
       final updatedExpenses = [...state.expenses, createdExpense];
       debugPrint(
-          '=== EXPENSE PROVIDER DEBUG: Updated expenses count: ${updatedExpenses.length} ===');
+        '=== EXPENSE PROVIDER DEBUG: Updated expenses count: ${updatedExpenses.length} ===',
+      );
 
       state = state.copyWith(expenses: updatedExpenses, isLoading: false);
       debugPrint('=== EXPENSE PROVIDER DEBUG: State updated successfully ===');
@@ -114,8 +114,9 @@ class ExpenseNotifier extends Notifier<ExpenseState> {
       state = state.copyWith(isLoading: true, error: null);
 
       await _repository.deleteExpense(expenseId);
-      final updatedExpenses =
-          state.expenses.where((expense) => expense.id != expenseId).toList();
+      final updatedExpenses = state.expenses
+          .where((expense) => expense.id != expenseId)
+          .toList();
 
       state = state.copyWith(expenses: updatedExpenses, isLoading: false);
     } catch (e) {
@@ -131,8 +132,10 @@ class ExpenseNotifier extends Notifier<ExpenseState> {
     try {
       state = state.copyWith(isLoading: true, error: null);
 
-      final success =
-          await _repository.approveExpense(expenseId, approverEmail);
+      final success = await _repository.approveExpense(
+        expenseId,
+        approverEmail,
+      );
       if (success) {
         // Update the expense status locally
         final updatedExpenses = state.expenses.map((expense) {
@@ -212,11 +215,13 @@ class ExpenseNotifier extends Notifier<ExpenseState> {
     try {
       state = state.copyWith(isLoading: true, error: null);
 
-      final recurringExpenses =
-          await _repository.getRecurringExpenses(organizationId);
+      final recurringExpenses = await _repository.getRecurringExpenses(
+        organizationId,
+      );
       // Filter the current state to only include non-recurring expenses
-      final nonRecurringExpenses =
-          state.expenses.where((e) => !e.isRecurring).toList();
+      final nonRecurringExpenses = state.expenses
+          .where((e) => !e.isRecurring)
+          .toList();
 
       // Combine non-recurring expenses with the fetched recurring expenses
       final allExpenses = [...nonRecurringExpenses, ...recurringExpenses];
@@ -236,4 +241,6 @@ final expenseRepositoryProvider = Provider<ExpenseRepository>((ref) {
 });
 
 // Provider for expense state
-final expenseProvider = NotifierProvider<ExpenseNotifier, ExpenseState>(ExpenseNotifier.new);
+final expenseProvider = NotifierProvider<ExpenseNotifier, ExpenseState>(
+  ExpenseNotifier.new,
+);

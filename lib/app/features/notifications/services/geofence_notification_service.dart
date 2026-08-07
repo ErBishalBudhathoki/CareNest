@@ -172,8 +172,7 @@ class GeofenceMonitor {
     }
 
     // Check for running late (15 minutes before appointment, not yet arrived)
-    final minutesUntilAppointment =
-        appointmentTime.difference(now).inMinutes;
+    final minutesUntilAppointment = appointmentTime.difference(now).inMinutes;
     if (minutesUntilAppointment <= 15 &&
         minutesUntilAppointment > 0 &&
         !_hasArrived &&
@@ -188,7 +187,9 @@ class GeofenceMonitor {
     }
 
     // Check for near location (within 2x radius, approaching)
-    if (distance <= radiusMeters * 2 && distance > radiusMeters && !_hasArrived) {
+    if (distance <= radiusMeters * 2 &&
+        distance > radiusMeters &&
+        !_hasArrived) {
       _triggerEvent(
         GeofenceEventType.nearLocation,
         position,
@@ -205,7 +206,8 @@ class GeofenceMonitor {
     String notes,
   ) {
     final event = GeofenceEvent(
-      eventId: '${appointmentId}_${eventType.name}_${DateTime.now().millisecondsSinceEpoch}',
+      eventId:
+          '${appointmentId}_${eventType.name}_${DateTime.now().millisecondsSinceEpoch}',
       workerId: workerId,
       workerName: workerName,
       appointmentId: appointmentId,

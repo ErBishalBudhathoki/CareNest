@@ -24,9 +24,9 @@ class BauhausLogoutDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final headerForeground =
         ThemeData.estimateBrightnessForColor(BauhausDesign.error) ==
-                Brightness.dark
-            ? BauhausDesign.textLight
-            : BauhausDesign.textDark;
+            Brightness.dark
+        ? BauhausDesign.textLight
+        : BauhausDesign.textDark;
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -52,17 +52,11 @@ class BauhausLogoutDialog extends StatelessWidget {
           children: [
             // Header Strip
             Container(
-              padding: const EdgeInsets.symmetric(
-                vertical: 16,
-                horizontal: 24,
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
               decoration: BoxDecoration(
                 color: BauhausDesign.error, // Red header for destructive action
                 border: Border(
-                  bottom: BorderSide(
-                    color: BauhausDesign.textDark,
-                    width: 3,
-                  ),
+                  bottom: BorderSide(color: BauhausDesign.textDark, width: 3),
                 ),
               ),
               child: Row(
@@ -96,12 +90,12 @@ class BauhausLogoutDialog extends StatelessWidget {
                 children: [
                   Text(
                     content,
-                    style:
-                        BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                              color: BauhausDesign.textDark,
-                              fontSize: 16,
-                              height: 1.5,
-                            ),
+                    style: BauhausDesign.getTextTheme(context).bodyLarge
+                        ?.copyWith(
+                          color: BauhausDesign.textDark,
+                          fontSize: 16,
+                          height: 1.5,
+                        ),
                   ),
                   const SizedBox(height: 32),
 

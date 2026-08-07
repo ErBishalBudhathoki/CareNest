@@ -54,7 +54,8 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
   @override
   void didUpdateWidget(ClientDashboardView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final needsReload = (widget.isFamilyViewer != oldWidget.isFamilyViewer ||
+    final needsReload =
+        (widget.isFamilyViewer != oldWidget.isFamilyViewer ||
             widget.clientId != oldWidget.clientId) &&
         widget.isFamilyViewer &&
         widget.clientId != null;
@@ -115,8 +116,9 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
         useSafeArea: false,
         isFamilyViewer: widget.isFamilyViewer,
         viewerPermissions: viewerPermissions,
-        footer:
-            widget.isFamilyViewer ? null : _buildDeleteAccountFooter(context),
+        footer: widget.isFamilyViewer
+            ? null
+            : _buildDeleteAccountFooter(context),
       ),
     ];
 
@@ -125,14 +127,17 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
     }
 
     if (showAppointments) {
-      pages.add(ClientAppointmentView(
-        clientId: widget.clientId,
-        isFamilyViewer: widget.isFamilyViewer,
-      ));
+      pages.add(
+        ClientAppointmentView(
+          clientId: widget.clientId,
+          isFamilyViewer: widget.isFamilyViewer,
+        ),
+      );
     }
 
-    final headerTitle =
-        widget.isFamilyViewer ? 'FAMILY DASHBOARD' : 'CLIENT DASHBOARD';
+    final headerTitle = widget.isFamilyViewer
+        ? 'FAMILY DASHBOARD'
+        : 'CLIENT DASHBOARD';
     final headerSubtitle = widget.isFamilyViewer
         ? 'View your loved one\'s care updates'
         : 'Manage services, invoices, and appointments';
@@ -163,8 +168,9 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
                         color: widget.isFamilyViewer
                             ? BauhausDesign.warning.withOpacity(0.1)
                             : BauhausDesign.primary.withOpacity(0.1),
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusSm),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusSm,
+                        ),
                         border: Border.all(
                           color: widget.isFamilyViewer
                               ? BauhausDesign.warning
@@ -198,11 +204,8 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
                           ),
                           Text(
                             headerSubtitle,
-                            style: BauhausDesign.getTextTheme(context)
-                                .bodySmall
-                                ?.copyWith(
-                                  color: BauhausDesign.textMuted,
-                                ),
+                            style: BauhausDesign.getTextTheme(context).bodySmall
+                                ?.copyWith(color: BauhausDesign.textMuted),
                           ),
                         ],
                       ),
@@ -256,9 +259,7 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
   void _openFamilyAccess(BuildContext context) {
     Navigator.of(context).pushNamed(
       Routes.familyManagement,
-      arguments: {
-        'clientId': widget.clientId,
-      },
+      arguments: {'clientId': widget.clientId},
     );
   }
 
@@ -324,9 +325,7 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
     return Container(
       decoration: const BoxDecoration(
         color: BauhausDesign.surfaceWhite,
-        border: Border(
-          top: BorderSide(color: BauhausDesign.neutral, width: 2),
-        ),
+        border: Border(top: BorderSide(color: BauhausDesign.neutral, width: 2)),
       ),
       child: SafeArea(
         top: false,
@@ -335,9 +334,7 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
             horizontal: BauhausDesign.space4,
             vertical: BauhausDesign.space2,
           ),
-          child: Row(
-            children: navItems,
-          ),
+          child: Row(children: navItems),
         ),
       ),
     );
@@ -356,9 +353,7 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
         onTap: () => setState(() => _currentIndex = index),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(
-            vertical: BauhausDesign.space2,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: BauhausDesign.space2),
           decoration: BoxDecoration(
             color: isSelected ? BauhausDesign.primary : Colors.transparent,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
@@ -436,15 +431,21 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
                     decoration: BoxDecoration(
                       color: BauhausDesign.neoHighlight.withOpacity(0.1),
                       border: Border.all(
-                          color: BauhausDesign.neoHighlight, width: 2),
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusSm),
+                        color: BauhausDesign.neoHighlight,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        BauhausDesign.radiusSm,
+                      ),
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.info_outline,
-                            color: BauhausDesign.neoHighlight, size: 20),
+                        const Icon(
+                          Icons.info_outline,
+                          color: BauhausDesign.neoHighlight,
+                          size: 20,
+                        ),
                         const SizedBox(width: BauhausDesign.space2),
                         Expanded(
                           child: Text(
@@ -478,8 +479,9 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
                       : () async {
                           setState(() => isLoading = true);
                           try {
-                            final orgId =
-                                ref.read(app_providers.organizationIdProvider);
+                            final orgId = ref.read(
+                              app_providers.organizationIdProvider,
+                            );
                             final currentUser =
                                 FirebaseAuth.instance.currentUser;
 
@@ -487,7 +489,8 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
                                 orgId.isEmpty ||
                                 currentUser == null) {
                               throw Exception(
-                                  'Missing organization or user context');
+                                'Missing organization or user context',
+                              );
                             }
 
                             final request = RequestModel(
@@ -509,7 +512,9 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
                             await ref
                                 .read(requestRepositoryProvider)
                                 .createRequest(
-                                    request, currentUser.email ?? '');
+                                  request,
+                                  currentUser.email ?? '',
+                                );
 
                             if (!context.mounted) return;
                             Navigator.of(context).pop();

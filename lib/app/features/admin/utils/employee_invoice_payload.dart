@@ -10,9 +10,11 @@ List<Map<String, dynamic>> buildEmployeeInvoiceSelectionPayload({
   final selectedClients = allClientsMode
       ? clients
       : clients
-          .where((c) =>
-              (c['clientEmail']?.toString() ?? '') == selectedClientEmail)
-          .toList();
+            .where(
+              (c) =>
+                  (c['clientEmail']?.toString() ?? '') == selectedClientEmail,
+            )
+            .toList();
 
   return [
     {
@@ -23,18 +25,21 @@ List<Map<String, dynamic>> buildEmployeeInvoiceSelectionPayload({
         'organizationId': organizationId,
       },
       'clients': selectedClients
-          .map((c) => {
-                'id': c['clientId']?.toString() ?? '',
-                'email': c['clientEmail']?.toString() ?? '',
-                'name': c['clientName']?.toString() ??
-                    c['clientEmail']?.toString() ??
-                    '',
-                'organizationId': organizationId,
-              })
+          .map(
+            (c) => {
+              'id': c['clientId']?.toString() ?? '',
+              'email': c['clientEmail']?.toString() ?? '',
+              'name':
+                  c['clientName']?.toString() ??
+                  c['clientEmail']?.toString() ??
+                  '',
+              'organizationId': organizationId,
+            },
+          )
           .where((c) => (c['email'] ?? '').toString().isNotEmpty)
           .toList(),
       'organizationId': organizationId,
-    }
+    },
   ];
 }
 
@@ -66,9 +71,12 @@ List<Map<String, dynamic>> buildEmployeeInvoiceSelectionsPayload({
     final selectedClients = e.allClientsMode
         ? e.clients
         : e.clients
-            .where((c) =>
-                (c['clientEmail']?.toString() ?? '') == e.selectedClientEmail)
-            .toList();
+              .where(
+                (c) =>
+                    (c['clientEmail']?.toString() ?? '') ==
+                    e.selectedClientEmail,
+              )
+              .toList();
 
     payload.add({
       'employee': {
@@ -78,14 +86,17 @@ List<Map<String, dynamic>> buildEmployeeInvoiceSelectionsPayload({
         'organizationId': organizationId,
       },
       'clients': selectedClients
-          .map((c) => {
-                'id': c['clientId']?.toString() ?? '',
-                'email': c['clientEmail']?.toString() ?? '',
-                'name': c['clientName']?.toString() ??
-                    c['clientEmail']?.toString() ??
-                    '',
-                'organizationId': organizationId,
-              })
+          .map(
+            (c) => {
+              'id': c['clientId']?.toString() ?? '',
+              'email': c['clientEmail']?.toString() ?? '',
+              'name':
+                  c['clientName']?.toString() ??
+                  c['clientEmail']?.toString() ??
+                  '',
+              'organizationId': organizationId,
+            },
+          )
           .where((c) => (c['email'] ?? '').toString().isNotEmpty)
           .toList(),
       'organizationId': organizationId,

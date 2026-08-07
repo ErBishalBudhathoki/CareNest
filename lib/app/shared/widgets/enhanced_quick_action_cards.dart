@@ -96,7 +96,8 @@ class _EnhancedQuickActionCardState extends State<EnhancedQuickActionCard>
             scale: 1.0 - (_pressController.value * 0.05),
             child: Container(
               decoration: BoxDecoration(
-                gradient: widget.data.gradient ??
+                gradient:
+                    widget.data.gradient ??
                     LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -190,21 +191,16 @@ class _EnhancedQuickActionCardState extends State<EnhancedQuickActionCard>
         color: widget.data.color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Icon(
-        widget.data.icon,
-        color: widget.data.color,
-        size: 24,
-      ),
+      child: Icon(widget.data.icon, color: widget.data.color, size: 24),
     );
   }
 
   Widget _buildTitle() {
     return Text(
       widget.data.title,
-      style: const TextStyle(fontSize: 16).copyWith(
-        fontWeight: FontWeight.w600,
-        color: const Color(0xFF1F2937),
-      ),
+      style: const TextStyle(
+        fontSize: 16,
+      ).copyWith(fontWeight: FontWeight.w600, color: const Color(0xFF1F2937)),
       textAlign: TextAlign.center,
       overflow: TextOverflow.ellipsis,
       maxLines: 2,
@@ -214,9 +210,9 @@ class _EnhancedQuickActionCardState extends State<EnhancedQuickActionCard>
   Widget _buildSubtitle() {
     return Text(
       widget.data.subtitle!,
-      style: const TextStyle(fontSize: 12).copyWith(
-        color: const Color(0xFF6B7280),
-      ),
+      style: const TextStyle(
+        fontSize: 12,
+      ).copyWith(color: const Color(0xFF6B7280)),
       textAlign: TextAlign.center,
       overflow: TextOverflow.ellipsis,
       maxLines: 1,
@@ -225,20 +221,17 @@ class _EnhancedQuickActionCardState extends State<EnhancedQuickActionCard>
 
   Widget _buildBadge() {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 8.0,
-        vertical: 2,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 2),
       decoration: BoxDecoration(
         color: widget.data.badgeColor ?? Colors.red,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
         widget.data.badge!,
-        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500).copyWith(
-          fontWeight: FontWeight.w600,
-          color: Colors.white,
-        ),
+        style: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+        ).copyWith(fontWeight: FontWeight.w600, color: Colors.white),
       ),
     );
   }

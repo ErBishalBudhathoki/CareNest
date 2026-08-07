@@ -48,29 +48,23 @@ class SmartExpenseState {
 class SmartExpenseViewModel extends Notifier<SmartExpenseState> {
   late final SmartExpenseRepository repository;
 
-  
   @override
   SmartExpenseState build() {
     final repository = ref.watch(smartExpenseRepositoryProvider);
-    
+
     return SmartExpenseState();
   }
 
   /// Scan receipt
   Future<void> scanReceipt(String imageBase64) async {
     state = state.copyWith(isLoading: true, error: null);
-    
+
     try {
-      final response = await repository.scanReceipt(
-        imageBase64: imageBase64,
-      );
-      
+      final response = await repository.scanReceipt(imageBase64: imageBase64);
+
       if (response['success'] == true && response['data'] != null) {
         final receiptScan = ReceiptScan.fromJson(response['data']);
-        state = state.copyWith(
-          isLoading: false,
-          receiptScan: receiptScan,
-        );
+        state = state.copyWith(isLoading: false, receiptScan: receiptScan);
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -79,28 +73,22 @@ class SmartExpenseViewModel extends Notifier<SmartExpenseState> {
       }
     } catch (e) {
       debugPrint('Error in scanReceipt: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
   /// Categorize expense
   Future<void> categorizeExpense(Map<String, dynamic> expenseData) async {
     state = state.copyWith(isLoading: true, error: null);
-    
+
     try {
       final response = await repository.categorizeExpense(
         expenseData: expenseData,
       );
-      
+
       if (response['success'] == true && response['data'] != null) {
         final category = ExpenseCategory.fromJson(response['data']);
-        state = state.copyWith(
-          isLoading: false,
-          category: category,
-        );
+        state = state.copyWith(isLoading: false, category: category);
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -109,28 +97,22 @@ class SmartExpenseViewModel extends Notifier<SmartExpenseState> {
       }
     } catch (e) {
       debugPrint('Error in categorizeExpense: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
   /// Validate expense policy
   Future<void> validateExpensePolicy(Map<String, dynamic> expenseData) async {
     state = state.copyWith(isLoading: true, error: null);
-    
+
     try {
       final response = await repository.validateExpensePolicy(
         expenseData: expenseData,
       );
-      
+
       if (response['success'] == true && response['data'] != null) {
         final validation = PolicyValidation.fromJson(response['data']);
-        state = state.copyWith(
-          isLoading: false,
-          policyValidation: validation,
-        );
+        state = state.copyWith(isLoading: false, policyValidation: validation);
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -139,22 +121,19 @@ class SmartExpenseViewModel extends Notifier<SmartExpenseState> {
       }
     } catch (e) {
       debugPrint('Error in validateExpensePolicy: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
   /// Check duplicate receipt
   Future<void> checkDuplicateReceipt(String receiptHash) async {
     state = state.copyWith(isLoading: true, error: null);
-    
+
     try {
       final response = await repository.checkDuplicateReceipt(
         receiptHash: receiptHash,
       );
-      
+
       if (response['success'] == true && response['data'] != null) {
         final duplicateCheck = DuplicateCheck.fromJson(response['data']);
         state = state.copyWith(
@@ -169,24 +148,21 @@ class SmartExpenseViewModel extends Notifier<SmartExpenseState> {
       }
     } catch (e) {
       debugPrint('Error in checkDuplicateReceipt: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
   /// Calculate mileage
   Future<void> calculateMileage(List<Map<String, dynamic>> locations) async {
     state = state.copyWith(isLoading: true, error: null);
-    
+
     try {
-      final response = await repository.calculateMileage(
-        locations: locations,
-      );
-      
+      final response = await repository.calculateMileage(locations: locations);
+
       if (response['success'] == true && response['data'] != null) {
-        final mileageCalculation = MileageCalculation.fromJson(response['data']);
+        final mileageCalculation = MileageCalculation.fromJson(
+          response['data'],
+        );
         state = state.copyWith(
           isLoading: false,
           mileageCalculation: mileageCalculation,
@@ -199,13 +175,13 @@ class SmartExpenseViewModel extends Notifier<SmartExpenseState> {
       }
     } catch (e) {
       debugPrint('Error in calculateMileage: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 }
 
 /// Provider for smart expense viewmodel
-final smartExpenseViewModelProvider = NotifierProvider<SmartExpenseViewModel, SmartExpenseState>(SmartExpenseViewModel.new);
+final smartExpenseViewModelProvider =
+    NotifierProvider<SmartExpenseViewModel, SmartExpenseState>(
+      SmartExpenseViewModel.new,
+    );

@@ -19,10 +19,7 @@ class VoiceRepository {
   }) async {
     final response = await _apiMethod.post(
       'api/voice/command',
-      body: {
-        'commandText': text,
-        if (context != null) 'context': context,
-      },
+      body: {'commandText': text, if (context != null) 'context': context},
     );
 
     if (response['success'] == true) {
@@ -40,7 +37,8 @@ class VoiceRepository {
       return list.map((e) => VoiceCommand.fromJson(e)).toList();
     } else {
       throw Exception(
-          response['message'] ?? 'Failed to fetch voice command history');
+        response['message'] ?? 'Failed to fetch voice command history',
+      );
     }
   }
 }

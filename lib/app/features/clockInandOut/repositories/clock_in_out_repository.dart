@@ -41,10 +41,7 @@ class ClockInOutRepository {
   }) async {
     final response = await _apiMethod.post(
       'active-timers/stop',
-      body: {
-        'userEmail': userEmail,
-        'organizationId': organizationId,
-      },
+      body: {'userEmail': userEmail, 'organizationId': organizationId},
     );
 
     if (response['success'] == true) {

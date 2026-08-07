@@ -1,5 +1,3 @@
-
-
 class EmployeeSelectionModel {
   final String id;
   final String email;

@@ -7,8 +7,8 @@ class SessionTimeoutService {
   SessionTimeoutService({
     SharedPreferencesUtils? sharedPrefs,
     FirebaseAuth? firebaseAuth,
-  })  : _sharedPrefs = sharedPrefs ?? SharedPreferencesUtils(),
-        _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
+  }) : _sharedPrefs = sharedPrefs ?? SharedPreferencesUtils(),
+       _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
 
   // Security requirement: users must re-authenticate after this duration.
   static const Duration maxSessionAge = Duration(hours: 10);
@@ -48,7 +48,8 @@ class SessionTimeoutService {
       }
     } catch (e) {
       debugPrint(
-          'SessionTimeoutService: failed to resolve authTime from token: $e');
+        'SessionTimeoutService: failed to resolve authTime from token: $e',
+      );
     }
 
     final lastSignInTime = firebaseUser.metadata.lastSignInTime;
@@ -77,7 +78,8 @@ class SessionTimeoutService {
     final expired = await isSessionExpired(timeout: timeout);
     if (expired) {
       debugPrint(
-          'SessionTimeoutService: session expired for user ${firebaseUser.email}');
+        'SessionTimeoutService: session expired for user ${firebaseUser.email}',
+      );
       return false;
     }
 

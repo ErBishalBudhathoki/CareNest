@@ -19,11 +19,11 @@ class AnalyticsData {
     this.hasFinancialLoss = false,
   });
 
-  bool get isEmpty => 
-    financials.isEmpty && 
-    utilization.isEmpty && 
-    overtime.isEmpty && 
-    reliability.isEmpty;
+  bool get isEmpty =>
+      financials.isEmpty &&
+      utilization.isEmpty &&
+      overtime.isEmpty &&
+      reliability.isEmpty;
 }
 
 class AnalyticsController extends AsyncNotifier<AnalyticsData> {
@@ -61,7 +61,8 @@ class AnalyticsController extends AsyncNotifier<AnalyticsData> {
       utilization: utilization,
       overtime: overtime,
       reliability: reliability,
-      hasFinancialLoss: totalRevenue < totalLaborCost || hasSignificantDailyLoss,
+      hasFinancialLoss:
+          totalRevenue < totalLaborCost || hasSignificantDailyLoss,
     );
   }
 
@@ -75,8 +76,10 @@ class AnalyticsController extends AsyncNotifier<AnalyticsData> {
   }
 
   void updateDateFilter(DateTimeRange range) {
-    ref.read(analyticsDateRangeProvider.notifier).state =
-        AnalyticsFilter(startDate: range.start, endDate: range.end);
+    ref.read(analyticsDateRangeProvider.notifier).state = AnalyticsFilter(
+      startDate: range.start,
+      endDate: range.end,
+    );
     refreshData();
   }
 
@@ -101,4 +104,7 @@ class AnalyticsController extends AsyncNotifier<AnalyticsData> {
   }
 }
 
-final analyticsControllerProvider = AsyncNotifierProvider<AnalyticsController, AnalyticsData>(AnalyticsController.new);
+final analyticsControllerProvider =
+    AsyncNotifierProvider<AnalyticsController, AnalyticsData>(
+      AnalyticsController.new,
+    );

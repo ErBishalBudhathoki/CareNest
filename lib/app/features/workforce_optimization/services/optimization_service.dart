@@ -35,7 +35,9 @@ class OptimizationService {
       }).toList();
 
       // Sort by score
-      scores.sort((a, b) => (b['score'] as double).compareTo(a['score'] as double));
+      scores.sort(
+        (a, b) => (b['score'] as double).compareTo(a['score'] as double),
+      );
 
       // Assign best worker
       final bestMatch = scores.first;
@@ -116,8 +118,12 @@ class OptimizationService {
     final dLat = _toRadians(lat2 - lat1);
     final dLon = _toRadians(lon2 - lon1);
 
-    final a = sin(dLat / 2) * sin(dLat / 2) +
-        cos(_toRadians(lat1)) * cos(_toRadians(lat2)) * sin(dLon / 2) * sin(dLon / 2);
+    final a =
+        sin(dLat / 2) * sin(dLat / 2) +
+        cos(_toRadians(lat1)) *
+            cos(_toRadians(lat2)) *
+            sin(dLon / 2) *
+            sin(dLon / 2);
 
     final c = 2 * atan2(sqrt(a), sqrt(1 - a));
     return R * c;
@@ -144,7 +150,7 @@ class OptimizationService {
     required Map<String, dynamic> constraints,
   }) {
     final optimized = <Map<String, dynamic>>[];
-    
+
     // Sort by start time
     appointments.sort((a, b) {
       final timeA = DateTime.parse(a['startTime'] as String);
@@ -155,7 +161,7 @@ class OptimizationService {
     // Check for conflicts and optimize
     for (final appointment in appointments) {
       final hasConflict = _hasScheduleConflict(appointment, optimized);
-      
+
       if (!hasConflict) {
         optimized.add(appointment);
       } else {
@@ -203,8 +209,9 @@ class OptimizationService {
     final durationMinutes = (duration * 60).toInt();
 
     for (int offset = 30; offset <= 480; offset += 30) {
-      final newStart = DateTime.parse(appointment['startTime'] as String)
-          .add(Duration(minutes: offset));
+      final newStart = DateTime.parse(
+        appointment['startTime'] as String,
+      ).add(Duration(minutes: offset));
       final newEnd = newStart.add(Duration(minutes: durationMinutes));
 
       final testAppointment = Map<String, dynamic>.from(appointment);
@@ -228,9 +235,9 @@ class OptimizationService {
         .toList();
 
     final mean = utilizations.reduce((a, b) => a + b) / utilizations.length;
-    final variance = utilizations
-        .map((u) => pow(u - mean, 2))
-        .reduce((a, b) => a + b) / utilizations.length;
+    final variance =
+        utilizations.map((u) => pow(u - mean, 2)).reduce((a, b) => a + b) /
+        utilizations.length;
     final stdDev = sqrt(variance);
 
     // Balance score: 1.0 = perfect balance, 0.0 = very unbalanced
@@ -248,7 +255,7 @@ class OptimizationService {
 
     for (final resource in resources) {
       final utilization = resource['utilization'] as double? ?? 0.0;
-      
+
       if (utilization < targetUtilization * 0.8) {
         underutilized.add(resource);
       } else if (utilization > targetUtilization * 1.2) {
@@ -282,8 +289,10 @@ class OptimizationService {
       recommendations.add({
         'type': 'rebalance',
         'priority': 'high',
-        'message': 'Redistribute work from ${overutilized.length} overutilized workers',
-        'action': 'Reduce workload by ${((overutilized.length * 0.2) * 100).toInt()}%',
+        'message':
+            'Redistribute work from ${overutilized.length} overutilized workers',
+        'action':
+            'Reduce workload by ${((overutilized.length * 0.2) * 100).toInt()}%',
       });
     }
 
@@ -291,8 +300,10 @@ class OptimizationService {
       recommendations.add({
         'type': 'optimize',
         'priority': 'medium',
-        'message': 'Increase assignments for ${underutilized.length} underutilized workers',
-        'action': 'Increase workload by ${((underutilized.length * 0.3) * 100).toInt()}%',
+        'message':
+            'Increase assignments for ${underutilized.length} underutilized workers',
+        'action':
+            'Increase workload by ${((underutilized.length * 0.3) * 100).toInt()}%',
       });
     }
 
@@ -321,8 +332,8 @@ class OptimizationService {
       'recommendation': roi > 100
           ? 'Highly recommended - ROI > 100%'
           : roi > 50
-              ? 'Recommended - Positive ROI'
-              : 'Consider alternatives - Low ROI',
+          ? 'Recommended - Positive ROI'
+          : 'Consider alternatives - Low ROI',
     };
   }
 
@@ -346,7 +357,7 @@ class OptimizationService {
   }) {
     final completionRate = completedTasks / totalTasks;
     final timeEfficiency = min(1.0, targetCompletionTime / avgCompletionTime);
-    
+
     return (completionRate * 0.6) + (timeEfficiency * 0.4);
   }
 }

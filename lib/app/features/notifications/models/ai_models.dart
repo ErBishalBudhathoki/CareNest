@@ -1,4 +1,3 @@
-
 class TimingPrediction {
   final String? id;
   final String userId;
@@ -149,7 +148,9 @@ class SnoozeRule {
       keyword: json['keyword'] as String?,
       sender: json['sender'] as String?,
       snoozeDurationMinutes: json['snoozeDurationMinutes'] as int,
-      snoozeUntil: json['snoozeUntil'] != null ? DateTime.parse(json['snoozeUntil'] as String) : null,
+      snoozeUntil: json['snoozeUntil'] != null
+          ? DateTime.parse(json['snoozeUntil'] as String)
+          : null,
       autoReply: json['autoReply'] as bool? ?? false,
       autoReplyMessage: json['autoReplyMessage'] as String?,
       active: json['active'] as bool? ?? true,
@@ -169,7 +170,7 @@ class SnoozeRule {
       'active': active,
     };
   }
-  
+
   SnoozeRule copyWith({
     String? id,
     String? userId,
@@ -186,7 +187,8 @@ class SnoozeRule {
       userId: userId ?? this.userId,
       keyword: keyword ?? this.keyword,
       sender: sender ?? this.sender,
-      snoozeDurationMinutes: snoozeDurationMinutes ?? this.snoozeDurationMinutes,
+      snoozeDurationMinutes:
+          snoozeDurationMinutes ?? this.snoozeDurationMinutes,
       snoozeUntil: snoozeUntil ?? this.snoozeUntil,
       autoReply: autoReply ?? this.autoReply,
       autoReplyMessage: autoReplyMessage ?? this.autoReplyMessage,

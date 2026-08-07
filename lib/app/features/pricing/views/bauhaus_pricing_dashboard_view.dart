@@ -72,24 +72,27 @@ class _BauhausPricingDashboardViewState
     final records = recordsAsync.value ?? const <PricingLiveRecord>[];
     final employees = employeesAsync.value ?? const <User>[];
     final analytics = analyticsAsync.value;
-    final isLoading = recordsAsync.isLoading ||
+    final isLoading =
+        recordsAsync.isLoading ||
         employeesAsync.isLoading ||
         analyticsAsync.isLoading;
 
     final totalItems = records.length;
     final customItems = records.where((r) => r.isCustom).length;
-    final configuredRates =
-        employees.where((e) => e.payRate > 0 || e.detailedRates != null).length;
+    final configuredRates = employees
+        .where((e) => e.payRate > 0 || e.detailedRates != null)
+        .length;
     final missingRates = (employees.length - configuredRates).clamp(0, 99999);
     final averageRate = configuredRates == 0
         ? 0.0
         : employees
-                .where((e) => e.payRate > 0)
-                .map((e) => e.payRate)
-                .fold<double>(0.0, (sum, v) => sum + v) /
-            configuredRates;
+                  .where((e) => e.payRate > 0)
+                  .map((e) => e.payRate)
+                  .fold<double>(0.0, (sum, v) => sum + v) /
+              configuredRates;
 
-    final compliance = analytics?.metrics.complianceRate ??
+    final compliance =
+        analytics?.metrics.complianceRate ??
         (totalItems == 0 ? 0.0 : (customItems / totalItems) * 100);
     final revenue = analytics?.metrics.totalRevenue ?? 0.0;
     final violations = analytics?.metrics.nonCompliantItems ?? 0;
@@ -127,10 +130,7 @@ class _BauhausPricingDashboardViewState
                     if (recordsAsync.hasError ||
                         employeesAsync.hasError ||
                         analyticsAsync.hasError)
-                      _buildInlineNotice(
-                        l10n.errorOccurred,
-                        isWarning: true,
-                      ),
+                      _buildInlineNotice(l10n.errorOccurred, isWarning: true),
                     _buildMetricsGrid(
                       l10n: l10n,
                       isLoading: isLoading,
@@ -239,8 +239,7 @@ class _BauhausPricingDashboardViewState
                     Expanded(
                       child: Text(
                         l10n.pricingUpdateMessage,
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
+                        style: BauhausDesign.getTextTheme(context).labelLarge
                             ?.copyWith(
                               color: _inkBlack,
                               fontWeight: FontWeight.w700,
@@ -259,8 +258,7 @@ class _BauhausPricingDashboardViewState
                       ),
                       child: Text(
                         l10n.systemActive.toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
+                        style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
                               color: BauhausDesign.surfaceWhite,
                               fontWeight: FontWeight.w800,
@@ -294,10 +292,9 @@ class _BauhausPricingDashboardViewState
       ),
       child: Text(
         text,
-        style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-              color: _inkBlack,
-              fontWeight: FontWeight.w700,
-            ),
+        style: BauhausDesign.getTextTheme(
+          context,
+        ).bodyMedium?.copyWith(color: _inkBlack, fontWeight: FontWeight.w700),
       ),
     );
   }
@@ -378,8 +375,11 @@ class _BauhausPricingDashboardViewState
                       color: card['color'] as Color,
                       border: Border.all(color: _inkBlack, width: 2),
                     ),
-                    child: Icon(card['icon'] as IconData,
-                        size: 14, color: BauhausDesign.surfaceWhite),
+                    child: Icon(
+                      card['icon'] as IconData,
+                      size: 14,
+                      color: BauhausDesign.surfaceWhite,
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
@@ -387,8 +387,7 @@ class _BauhausPricingDashboardViewState
                       (card['title'] as String).toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelSmall
+                      style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
                             color: _inkBlack,
                             fontWeight: FontWeight.w800,
@@ -403,11 +402,8 @@ class _BauhausPricingDashboardViewState
                 card['value'] as String,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style:
-                    BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                          color: _inkBlack,
-                          fontWeight: FontWeight.w900,
-                        ),
+                style: BauhausDesign.getTextTheme(context).headlineSmall
+                    ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w900),
               ),
               const SizedBox(height: 4),
               Text(
@@ -415,9 +411,9 @@ class _BauhausPricingDashboardViewState
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                      color: BauhausDesign.textMuted,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  color: BauhausDesign.textMuted,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ],
           ),
@@ -463,10 +459,9 @@ class _BauhausPricingDashboardViewState
       children: [
         Text(
           l10n.quickActions,
-          style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                color: _inkBlack,
-                fontWeight: FontWeight.w900,
-              ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).labelLarge?.copyWith(color: _inkBlack, fontWeight: FontWeight.w900),
         ),
         const SizedBox(height: 10),
         GridView.builder(
@@ -500,8 +495,11 @@ class _BauhausPricingDashboardViewState
                         color: action['color'] as Color,
                         border: Border.all(color: _inkBlack, width: 2),
                       ),
-                      child: Icon(action['icon'] as IconData,
-                          size: 14, color: BauhausDesign.surfaceWhite),
+                      child: Icon(
+                        action['icon'] as IconData,
+                        size: 14,
+                        color: BauhausDesign.surfaceWhite,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
@@ -568,10 +566,10 @@ class _BauhausPricingDashboardViewState
           Text(
             l10n.pricingAnalyticsTitle.toUpperCase(),
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: _inkBlack,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 0.4,
-                ),
+              color: _inkBlack,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.4,
+            ),
           ),
           const SizedBox(height: 8),
           _buildInsightLine(
@@ -583,8 +581,8 @@ class _BauhausPricingDashboardViewState
             value: isLoading
                 ? '--'
                 : (averageRate > 0
-                    ? '\$${averageRate.toStringAsFixed(2)}'
-                    : l10n.naLabel),
+                      ? '\$${averageRate.toStringAsFixed(2)}'
+                      : l10n.naLabel),
           ),
           _buildInsightLine(
             title: l10n.moduleMetricCompliance,
@@ -603,9 +601,9 @@ class _BauhausPricingDashboardViewState
                     totalItems.toString(),
                   ),
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textMuted,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: BauhausDesign.textMuted,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
       ),
@@ -621,17 +619,17 @@ class _BauhausPricingDashboardViewState
             child: Text(
               title,
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: _inkBlack,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: _inkBlack,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           Text(
             value,
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: _inkBlack,
-                  fontWeight: FontWeight.w900,
-                ),
+              color: _inkBlack,
+              fontWeight: FontWeight.w900,
+            ),
           ),
         ],
       ),
@@ -656,10 +654,10 @@ class _BauhausPricingDashboardViewState
           Text(
             l10n.recentActivity.toUpperCase(),
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: _inkBlack,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 0.4,
-                ),
+              color: _inkBlack,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.4,
+            ),
           ),
           const SizedBox(height: 8),
           if (isLoading)
@@ -667,66 +665,61 @@ class _BauhausPricingDashboardViewState
           else if (changes.isEmpty)
             Text(
               l10n.moduleNoTrackedChanges,
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.textMuted,
-                  ),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
             )
           else
-            ...changes.map(
-              (record) {
-                final stamp = record.effectiveTimestamp;
-                final dateText = stamp == null
-                    ? l10n.moduleNoDataYet
-                    : '${stamp.year}-${stamp.month.toString().padLeft(2, '0')}-${stamp.day.toString().padLeft(2, '0')}';
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 6),
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: BauhausDesign.backgroundLight,
-                    border: Border.all(color: _inkBlack, width: 1),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          '${record.supportItemNumber} · ${record.supportItemName}',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: BauhausDesign.getTextTheme(context)
-                              .labelSmall
-                              ?.copyWith(
-                                color: _inkBlack,
-                                fontWeight: FontWeight.w800,
-                              ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        record.customPrice == null
-                            ? l10n.naLabel
-                            : '\$${record.customPrice!.toStringAsFixed(2)}',
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
+            ...changes.map((record) {
+              final stamp = record.effectiveTimestamp;
+              final dateText = stamp == null
+                  ? l10n.moduleNoDataYet
+                  : '${stamp.year}-${stamp.month.toString().padLeft(2, '0')}-${stamp.day.toString().padLeft(2, '0')}';
+              return Container(
+                margin: const EdgeInsets.only(bottom: 6),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: BauhausDesign.backgroundLight,
+                  border: Border.all(color: _inkBlack, width: 1),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '${record.supportItemNumber} · ${record.supportItemName}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
-                              color: BauhausDesign.primary,
-                              fontWeight: FontWeight.w900,
+                              color: _inkBlack,
+                              fontWeight: FontWeight.w800,
                             ),
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        dateText,
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
-                            ?.copyWith(
-                              color: BauhausDesign.textMuted,
-                              fontWeight: FontWeight.w700,
-                            ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      record.customPrice == null
+                          ? l10n.naLabel
+                          : '\$${record.customPrice!.toStringAsFixed(2)}',
+                      style: BauhausDesign.getTextTheme(context).labelSmall
+                          ?.copyWith(
+                            color: BauhausDesign.primary,
+                            fontWeight: FontWeight.w900,
+                          ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      dateText,
+                      style: BauhausDesign.getTextTheme(context).labelSmall
+                          ?.copyWith(
+                            color: BauhausDesign.textMuted,
+                            fontWeight: FontWeight.w700,
+                          ),
+                    ),
+                  ],
+                ),
+              );
+            }),
         ],
       ),
     );
@@ -771,9 +764,7 @@ class _BauhausPricingDashboardViewState
         return;
     }
 
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => destination),
-    );
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => destination));
   }
 
   void _openPricingSettings() {

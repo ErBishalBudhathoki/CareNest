@@ -134,7 +134,7 @@ class EnhancedAuthDialog {
           ? [
               'Password is case-sensitive',
               'Check if Caps Lock is on',
-              'Try typing it in a text editor first'
+              'Try typing it in a text editor first',
             ]
           : null,
     );
@@ -165,25 +165,25 @@ class EnhancedAuthDialog {
       ),
       helpAction:
           onContactSupport != null && attemptCount != null && attemptCount >= 2
-              ? _DialogAction(
-                  label: 'Get Support',
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    onContactSupport();
-                  },
-                  style: _ActionStyle.text,
-                  icon: Icons.support_agent_outlined,
-                )
-              : attemptCount != null && attemptCount >= 2
-                  ? _DialogAction(
-                      label: 'Need Help?',
-                      onPressed: () => _showPasswordHelpDialog(
-                        context,
-                        onResetPassword: onResetPassword,
-                      ),
-                      style: _ActionStyle.text,
-                    )
-                  : null,
+          ? _DialogAction(
+              label: 'Get Support',
+              onPressed: () {
+                Navigator.of(context).pop();
+                onContactSupport();
+              },
+              style: _ActionStyle.text,
+              icon: Icons.support_agent_outlined,
+            )
+          : attemptCount != null && attemptCount >= 2
+          ? _DialogAction(
+              label: 'Need Help?',
+              onPressed: () => _showPasswordHelpDialog(
+                context,
+                onResetPassword: onResetPassword,
+              ),
+              style: _ActionStyle.text,
+            )
+          : null,
     );
   }
 
@@ -249,15 +249,17 @@ class EnhancedAuthDialog {
       type: _DialogType.info,
       icon: Icons.help_outline,
       title: 'Need Help Finding Your Email?',
-      message: 'Try checking:\n'
+      message:
+          'Try checking:\n'
           '• Your most commonly used email addresses\n'
           '• Work or school email accounts\n'
           '• Email accounts linked to other services\n\n'
           'Still can\'t find it? '
           '${onContactSupport != null ? 'Report this sign-in issue and our team will help.' : 'Try another email and sign in again.'}',
       primaryAction: _DialogAction(
-        label:
-            onContactSupport != null ? 'Report Sign-In Issue' : 'Back to Login',
+        label: onContactSupport != null
+            ? 'Report Sign-In Issue'
+            : 'Back to Login',
         style: _ActionStyle.primary,
         icon: onContactSupport != null
             ? Icons.support_agent_outlined
@@ -286,7 +288,8 @@ class EnhancedAuthDialog {
       type: _DialogType.error,
       icon: Icons.wifi_off_outlined,
       title: 'Connection Problem',
-      message: 'Unable to connect to our servers. Please check your '
+      message:
+          'Unable to connect to our servers. Please check your '
           'internet connection and try again.',
       primaryAction: _DialogAction(
         label: 'Retry Connection',
@@ -322,13 +325,15 @@ class EnhancedAuthDialog {
   }
 
   static Future<void> _showConnectionTroubleshootDialog(
-      BuildContext context) async {
+    BuildContext context,
+  ) async {
     return _showSemanticDialog(
       context: context,
       type: _DialogType.info,
       icon: Icons.info_outline,
       title: 'Connection Troubleshooting',
-      message: 'Try these steps to fix connection issues:\n\n'
+      message:
+          'Try these steps to fix connection issues:\n\n'
           '1. Check your WiFi or mobile data\n'
           '2. Move closer to your router\n'
           '3. Restart your internet connection\n'
@@ -409,7 +414,8 @@ class EnhancedAuthDialog {
       type: _DialogType.info,
       icon: Icons.help_outline,
       title: 'Report This Issue',
-      message: 'Help us improve by reporting this error. '
+      message:
+          'Help us improve by reporting this error. '
           'Your feedback helps us fix issues faster.\n\n'
           '${errorCode != null ? "Error Code: $errorCode\n\n" : ""}'
           'What were you trying to do when this happened?',
@@ -467,7 +473,8 @@ class EnhancedAuthDialog {
   }
 
   static String _buildAccountLockedMessage(Duration? lockoutDuration) {
-    final baseMessage = 'Your account has been temporarily locked due to '
+    final baseMessage =
+        'Your account has been temporarily locked due to '
         'multiple failed login attempts. This is a security measure to '
         'protect your account.';
 
@@ -490,7 +497,8 @@ class EnhancedAuthDialog {
       type: _DialogType.info,
       icon: Icons.security_outlined,
       title: 'Account Security',
-      message: 'We lock accounts temporarily after several failed login '
+      message:
+          'We lock accounts temporarily after several failed login '
           'attempts to protect against unauthorized access.\n\n'
           'This helps keep your account safe from:\n'
           '• Brute force attacks\n'
@@ -542,7 +550,8 @@ class EnhancedAuthDialog {
   }
 
   static String _buildSessionTimeoutMessage(bool showAutoSave) {
-    final baseMessage = 'Your session has expired for security reasons. '
+    final baseMessage =
+        'Your session has expired for security reasons. '
         'Please log in again to continue.';
 
     if (showAutoSave) {
@@ -558,7 +567,8 @@ class EnhancedAuthDialog {
       type: _DialogType.info,
       icon: Icons.schedule_outlined,
       title: 'About Session Timeouts',
-      message: 'Sessions expire automatically for your security after a '
+      message:
+          'Sessions expire automatically for your security after a '
           'period of inactivity.\n\n'
           'This helps protect your account by:\n'
           '• Preventing unauthorized access on shared devices\n'
@@ -586,8 +596,11 @@ class EnhancedAuthDialog {
       type: _DialogType.warning,
       icon: Icons.warning_amber_outlined,
       title: 'Input Validation Error',
-      message:
-          _buildValidationMessage(fieldName, customMessage, validationErrors),
+      message: _buildValidationMessage(
+        fieldName,
+        customMessage,
+        validationErrors,
+      ),
       primaryAction: _DialogAction(
         label: 'Fix Input',
         style: _ActionStyle.primary,
@@ -635,7 +648,8 @@ class EnhancedAuthDialog {
       type: _DialogType.info,
       icon: Icons.check_box_outlined,
       title: 'Input Requirements',
-      message: 'Please ensure your input meets these requirements:\n\n'
+      message:
+          'Please ensure your input meets these requirements:\n\n'
           '${requirements.map((req) => '✓ $req').join('\n')}',
       primaryAction: _DialogAction(
         label: 'Got It',
@@ -656,7 +670,8 @@ class EnhancedAuthDialog {
       type: _DialogType.warning,
       icon: Icons.vpn_key_outlined,
       title: 'Couldn\'t Sign You In',
-      message: 'The email or password you entered is incorrect. '
+      message:
+          'The email or password you entered is incorrect. '
           'Please check your details and try again.',
       primaryAction: _DialogAction(
         label: 'Edit Details',
@@ -702,7 +717,8 @@ class EnhancedAuthDialog {
       type: _DialogType.warning,
       icon: Icons.timer_outlined,
       title: 'Too Many Attempts',
-      message: 'For your security, sign-in is temporarily locked after '
+      message:
+          'For your security, sign-in is temporarily locked after '
           'multiple failed attempts.\n\n'
           'Please try again in ${lockoutDuration.inMinutes} minutes.',
       primaryAction: _DialogAction(
@@ -738,9 +754,9 @@ class EnhancedAuthDialog {
       title: 'Email Verification Required',
       message: email != null && email.isNotEmpty
           ? 'We sent a verification link to $email. '
-              'Please open your inbox and verify your account before signing in.'
+                'Please open your inbox and verify your account before signing in.'
           : 'Please verify your email address before signing in. '
-              'Check your inbox for a verification link.',
+                'Check your inbox for a verification link.',
       primaryAction: _DialogAction(
         label: 'Got It',
         style: _ActionStyle.primary,
@@ -781,7 +797,8 @@ class EnhancedAuthDialog {
       type: _DialogType.error,
       icon: Icons.person_off_outlined,
       title: 'Account Suspended',
-      message: 'Your account has been temporarily suspended. '
+      message:
+          'Your account has been temporarily suspended. '
           'This may be due to a security concern or policy violation.',
       primaryAction: _DialogAction(
         label: onContactSupport != null ? 'Contact Support' : 'Got It',
@@ -814,7 +831,8 @@ class EnhancedAuthDialog {
       type: _DialogType.warning,
       icon: Icons.gpp_bad_outlined,
       title: 'Strengthen Your Password',
-      message: 'Your password needs to be stronger for better security.\n\n'
+      message:
+          'Your password needs to be stronger for better security.\n\n'
           '• At least 8 characters\n'
           '• Uppercase and lowercase letters\n'
           '• Numbers and special characters',
@@ -1064,8 +1082,9 @@ class _ModernDialogState extends State<_ModernDialog>
   Widget build(BuildContext context) {
     final semanticColor = _getSemanticColor();
     final surfaceColor = Theme.of(context).colorScheme.surface;
-    final surfaceBrightness =
-        ThemeData.estimateBrightnessForColor(surfaceColor);
+    final surfaceBrightness = ThemeData.estimateBrightnessForColor(
+      surfaceColor,
+    );
     final effectiveOnSurface = surfaceBrightness == Brightness.dark
         ? BauhausDesign.surfaceLight
         : BauhausDesign.neutral;
@@ -1120,8 +1139,10 @@ class _ModernDialogState extends State<_ModernDialog>
                     height: 80,
                     decoration: BoxDecoration(
                       color: semanticColor,
-                      border:
-                          Border.all(color: BauhausDesign.neutral, width: 2),
+                      border: Border.all(
+                        color: BauhausDesign.neutral,
+                        width: 2,
+                      ),
                     ),
                     child: Icon(
                       widget.icon,
@@ -1137,9 +1158,9 @@ class _ModernDialogState extends State<_ModernDialog>
           Text(
             widget.title,
             style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: effectiveOnSurface,
-                ),
+              fontWeight: FontWeight.w600,
+              color: effectiveOnSurface,
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -1156,9 +1177,9 @@ class _ModernDialogState extends State<_ModernDialog>
             widget.message,
             textAlign: TextAlign.center,
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.neutral.withOpacity(0.8),
-                  height: 1.5,
-                ),
+              color: BauhausDesign.neutral.withOpacity(0.8),
+              height: 1.5,
+            ),
           ),
         ],
       ),
@@ -1194,9 +1215,10 @@ class _ModernDialogState extends State<_ModernDialog>
         backgroundColor: action.style == _ActionStyle.primary
             ? semanticColor
             : (action.style == _ActionStyle.destructive
-                ? BauhausDesign.error
-                : BauhausDesign.backgroundLight),
-        textColor: action.style == _ActionStyle.primary ||
+                  ? BauhausDesign.error
+                  : BauhausDesign.backgroundLight),
+        textColor:
+            action.style == _ActionStyle.primary ||
                 action.style == _ActionStyle.destructive
             ? BauhausDesign.surfaceWhite
             : BauhausDesign.neutral,

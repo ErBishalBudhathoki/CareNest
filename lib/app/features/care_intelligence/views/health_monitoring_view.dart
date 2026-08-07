@@ -27,10 +27,9 @@ class _HealthMonitoringViewState extends ConsumerState<HealthMonitoringView> {
     const clientId = 'placeholder_client_id';
 
     if (orgId != null) {
-      ref.read(intelligenceViewModelProvider.notifier).analyzeCarePatterns(
-            clientId: clientId,
-            organizationId: orgId,
-          );
+      ref
+          .read(intelligenceViewModelProvider.notifier)
+          .analyzeCarePatterns(clientId: clientId, organizationId: orgId);
     }
   }
 
@@ -46,61 +45,61 @@ class _HealthMonitoringViewState extends ConsumerState<HealthMonitoringView> {
         title: Text(
           'HEALTH MONITORING',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-                fontWeight: FontWeight.bold,
-              ),
+            color: BauhausDesign.surfaceWhite,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         elevation: 0,
       ),
       body: state.isLoading
           ? const Center(child: BauhausLoadingState())
           : state.error != null
-              ? Center(
-                  child: BauhausEmptyState(
-                    title: 'Error',
-                    message: state.error!,
-                    icon: Icons.error_outline,
-                    onAction: _loadData,
-                    actionLabel: 'RETRY',
+          ? Center(
+              child: BauhausEmptyState(
+                title: 'Error',
+                message: state.error!,
+                icon: Icons.error_outline,
+                onAction: _loadData,
+                actionLabel: 'RETRY',
+              ),
+            )
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  BauhausSectionHeader(title: 'VITAL SIGNS & TRENDS'),
+                  const SizedBox(height: 16),
+                  _buildHealthSummaryCard(state),
+                  const SizedBox(height: 32),
+                  BauhausSectionHeader(title: 'MONITORED INDICATORS'),
+                  const SizedBox(height: 16),
+                  _buildIndicatorCard(
+                    title: 'HEART RATE',
+                    value: '72 BPM',
+                    status: 'Stable',
+                    color: BauhausDesign.success,
+                    icon: Icons.favorite_outline,
                   ),
-                )
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BauhausSectionHeader(title: 'VITAL SIGNS & TRENDS'),
-                      const SizedBox(height: 16),
-                      _buildHealthSummaryCard(state),
-                      const SizedBox(height: 32),
-                      BauhausSectionHeader(title: 'MONITORED INDICATORS'),
-                      const SizedBox(height: 16),
-                      _buildIndicatorCard(
-                        title: 'HEART RATE',
-                        value: '72 BPM',
-                        status: 'Stable',
-                        color: BauhausDesign.success,
-                        icon: Icons.favorite_outline,
-                      ),
-                      const SizedBox(height: 16),
-                      _buildIndicatorCard(
-                        title: 'BLOOD PRESSURE',
-                        value: '120/80',
-                        status: 'Normal',
-                        color: BauhausDesign.success,
-                        icon: Icons.speed,
-                      ),
-                      const SizedBox(height: 16),
-                      _buildIndicatorCard(
-                        title: 'SLEEP PATTERN',
-                        value: '6.5 Hours',
-                        status: 'Decreased',
-                        color: BauhausDesign.warning,
-                        icon: Icons.nightlight_outlined,
-                      ),
-                    ],
+                  const SizedBox(height: 16),
+                  _buildIndicatorCard(
+                    title: 'BLOOD PRESSURE',
+                    value: '120/80',
+                    status: 'Normal',
+                    color: BauhausDesign.success,
+                    icon: Icons.speed,
                   ),
-                ),
+                  const SizedBox(height: 16),
+                  _buildIndicatorCard(
+                    title: 'SLEEP PATTERN',
+                    value: '6.5 Hours',
+                    status: 'Decreased',
+                    color: BauhausDesign.warning,
+                    icon: Icons.nightlight_outlined,
+                  ),
+                ],
+              ),
+            ),
     );
   }
 
@@ -113,16 +112,19 @@ class _HealthMonitoringViewState extends ConsumerState<HealthMonitoringView> {
           children: [
             Row(
               children: [
-                const Icon(Icons.monitor_heart_outlined,
-                    color: BauhausDesign.primary, size: 28),
+                const Icon(
+                  Icons.monitor_heart_outlined,
+                  color: BauhausDesign.primary,
+                  size: 28,
+                ),
                 const SizedBox(width: 12),
                 Text(
                   'HEALTH STATUS: OPTIMAL',
-                  style:
-                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                            color: BauhausDesign.primary,
-                            fontWeight: FontWeight.w900,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).titleMedium
+                      ?.copyWith(
+                        color: BauhausDesign.primary,
+                        fontWeight: FontWeight.w900,
+                      ),
                 ),
               ],
             ),
@@ -166,17 +168,16 @@ class _HealthMonitoringViewState extends ConsumerState<HealthMonitoringView> {
                   Text(
                     title,
                     style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.1),
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.1,
+                    ),
                   ),
                   Text(
                     value,
-                    style: BauhausDesign.getTextTheme(context)
-                        .headlineSmall
-                        ?.copyWith(
-                          fontWeight: FontWeight.w900,
-                        ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).headlineSmall?.copyWith(fontWeight: FontWeight.w900),
                   ),
                 ],
               ),
@@ -185,8 +186,10 @@ class _HealthMonitoringViewState extends ConsumerState<HealthMonitoringView> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: color,
                     borderRadius: BorderRadius.circular(2),
@@ -194,9 +197,10 @@ class _HealthMonitoringViewState extends ConsumerState<HealthMonitoringView> {
                   child: Text(
                     status.toUpperCase(),
                     style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],

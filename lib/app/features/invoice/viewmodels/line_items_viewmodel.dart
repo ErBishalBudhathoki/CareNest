@@ -16,8 +16,8 @@ class LineItemViewModel extends Notifier<List<Map<String, dynamic>>> {
   Future<List<Map<String, dynamic>>> getSupportItems() async {
     try {
       if (state.isEmpty) {
-        final List<Map<String, dynamic>> supportItems =
-            await _apiMethod.getLineItems();
+        final List<Map<String, dynamic>> supportItems = await _apiMethod
+            .getLineItems();
         state = supportItems; // Update state immutably
       }
       return state;

@@ -10,10 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 class ClientServiceHistoryView extends ConsumerStatefulWidget {
   final String clientId;
 
-  const ClientServiceHistoryView({
-    super.key,
-    required this.clientId,
-  });
+  const ClientServiceHistoryView({super.key, required this.clientId});
 
   @override
   ConsumerState<ClientServiceHistoryView> createState() =>
@@ -35,10 +32,7 @@ class _ClientServiceHistoryViewState
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
           .read(clientPortalViewModelProvider.notifier)
-          .loadServiceHistory(
-            widget.clientId,
-            limit: _limit,
-          );
+          .loadServiceHistory(widget.clientId, limit: _limit);
     });
   }
 
@@ -82,60 +76,59 @@ class _ClientServiceHistoryViewState
       body: state.isLoading
           ? const Center(child: BauhausLoadingState())
           : state.error != null && state.serviceHistory.isEmpty
-              ? Center(
-                  child: BauhausErrorState(
-                    title: 'Unable to Load History',
-                    message: state.error!,
-                    onRetry: () => ref
-                        .read(clientPortalViewModelProvider.notifier)
-                        .loadServiceHistory(widget.clientId),
-                  ),
-                )
-              : Column(
-                  children: [
-                    _buildFilterBar(context),
-                    _buildSummaryRow(context, state.serviceHistory.length),
-                    Expanded(
-                      child: history.isEmpty
-                          ? const BauhausEmptyState(
-                              title: 'No Services Found',
-                              message: 'Completed services will appear here.',
-                            )
-                          : RefreshIndicator(
-                              color: BauhausDesign.primary,
-                              backgroundColor: BauhausDesign.surfaceWhite,
-                              onRefresh: () async {
-                                await ref
-                                    .read(clientPortalViewModelProvider.notifier)
-                                    .loadServiceHistory(
-                                      widget.clientId,
-                                      limit: _limit,
-                                    );
-                              },
-                              child: ListView.separated(
-                                padding:
-                                    const EdgeInsets.all(BauhausDesign.space4),
-                                itemCount: history.length + 1,
-                                separatorBuilder: (_, __) =>
-                                    const SizedBox(height: BauhausDesign.space3),
-                                itemBuilder: (context, index) {
-                                  if (index == history.length) {
-                                    return _buildLoadMoreFooter(
-                                      context,
-                                      canLoadMore: canLoadMore,
-                                    );
-                                  }
+          ? Center(
+              child: BauhausErrorState(
+                title: 'Unable to Load History',
+                message: state.error!,
+                onRetry: () => ref
+                    .read(clientPortalViewModelProvider.notifier)
+                    .loadServiceHistory(widget.clientId),
+              ),
+            )
+          : Column(
+              children: [
+                _buildFilterBar(context),
+                _buildSummaryRow(context, state.serviceHistory.length),
+                Expanded(
+                  child: history.isEmpty
+                      ? const BauhausEmptyState(
+                          title: 'No Services Found',
+                          message: 'Completed services will appear here.',
+                        )
+                      : RefreshIndicator(
+                          color: BauhausDesign.primary,
+                          backgroundColor: BauhausDesign.surfaceWhite,
+                          onRefresh: () async {
+                            await ref
+                                .read(clientPortalViewModelProvider.notifier)
+                                .loadServiceHistory(
+                                  widget.clientId,
+                                  limit: _limit,
+                                );
+                          },
+                          child: ListView.separated(
+                            padding: const EdgeInsets.all(BauhausDesign.space4),
+                            itemCount: history.length + 1,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: BauhausDesign.space3),
+                            itemBuilder: (context, index) {
+                              if (index == history.length) {
+                                return _buildLoadMoreFooter(
+                                  context,
+                                  canLoadMore: canLoadMore,
+                                );
+                              }
 
-                                  return _ServiceHistoryCard(
-                                    service: history[index],
-                                    clientId: widget.clientId,
-                                  );
-                                },
-                              ),
-                            ),
-                    ),
-                  ],
+                              return _ServiceHistoryCard(
+                                service: history[index],
+                                clientId: widget.clientId,
+                              );
+                            },
+                          ),
+                        ),
                 ),
+              ],
+            ),
     );
   }
 
@@ -191,7 +184,9 @@ class _ClientServiceHistoryViewState
           vertical: BauhausDesign.space2,
         ),
         decoration: BoxDecoration(
-          color: isSelected ? BauhausDesign.primary : BauhausDesign.surfaceWhite,
+          color: isSelected
+              ? BauhausDesign.primary
+              : BauhausDesign.surfaceWhite,
           borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
           border: Border.all(
             color: isSelected ? BauhausDesign.primary : BauhausDesign.neutral,
@@ -204,7 +199,9 @@ class _ClientServiceHistoryViewState
           style: GoogleFonts.inter(
             fontSize: 12,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            color: isSelected ? BauhausDesign.surfaceWhite : BauhausDesign.textDark,
+            color: isSelected
+                ? BauhausDesign.surfaceWhite
+                : BauhausDesign.textDark,
           ),
         ),
       ),
@@ -214,15 +211,18 @@ class _ClientServiceHistoryViewState
   List<ServiceHistory> _applyFilter(List<ServiceHistory> history) {
     if (_filter == 'with_feedback') {
       return history
-          .where((item) =>
-              item.rating > 0 || (item.feedback ?? '').trim().isNotEmpty)
+          .where(
+            (item) =>
+                item.rating > 0 || (item.feedback ?? '').trim().isNotEmpty,
+          )
           .toList();
     }
 
     if (_filter == 'needs_feedback') {
       return history
-          .where((item) =>
-              item.rating == 0 && (item.feedback ?? '').trim().isEmpty)
+          .where(
+            (item) => item.rating == 0 && (item.feedback ?? '').trim().isEmpty,
+          )
           .toList();
     }
 
@@ -256,9 +256,9 @@ class _ClientServiceHistoryViewState
         children: [
           Text(
             'Loaded: $totalLoaded services',
-            style: BauhausDesign.getTextTheme(context)
-                .bodySmall
-                ?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
           ),
         ],
       ),
@@ -308,10 +308,7 @@ class _ServiceHistoryCard extends ConsumerWidget {
   final ServiceHistory service;
   final String clientId;
 
-  const _ServiceHistoryCard({
-    required this.service,
-    required this.clientId,
-  });
+  const _ServiceHistoryCard({required this.service, required this.clientId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -326,23 +323,23 @@ class _ServiceHistoryCard extends ConsumerWidget {
         children: [
           Text(
             service.serviceName,
-            style: BauhausDesign.getTextTheme(context)
-                .labelLarge
-                ?.copyWith(fontWeight: FontWeight.w700),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).labelLarge?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: BauhausDesign.space1),
           Text(
             '${service.date} • ${service.startTime} - ${service.endTime}',
-            style: BauhausDesign.getTextTheme(context)
-                .bodySmall
-                ?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
           ),
           const SizedBox(height: BauhausDesign.space1),
           Text(
             'Worker: ${service.workerName}',
-            style: BauhausDesign.getTextTheme(context)
-                .bodySmall
-                ?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
           ),
           const SizedBox(height: BauhausDesign.space2),
           if (rating > 0)

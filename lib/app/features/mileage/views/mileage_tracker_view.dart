@@ -18,8 +18,10 @@ class MileageTrackerView extends ConsumerWidget {
     final textTheme = BauhausDesign.getTextTheme(context);
 
     // Show error snackbar if error exists
-    ref.listen<String?>(mileageViewModelProvider.select((s) => s.error),
-        (_, error) {
+    ref.listen<String?>(mileageViewModelProvider.select((s) => s.error), (
+      _,
+      error,
+    ) {
       if (error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -50,10 +52,7 @@ class MileageTrackerView extends ConsumerWidget {
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),
-          child: Container(
-            color: BauhausDesign.neutral,
-            height: 2,
-          ),
+          child: Container(color: BauhausDesign.neutral, height: 2),
         ),
       ),
       body: SingleChildScrollView(
@@ -75,8 +74,11 @@ class MileageTrackerView extends ConsumerWidget {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.info_outline,
-                      color: BauhausDesign.textDark, size: 20),
+                  const Icon(
+                    Icons.info_outline,
+                    color: BauhausDesign.textDark,
+                    size: 20,
+                  ),
                   const SizedBox(width: BauhausDesign.space3),
                   Text(
                     'Reimbursement Rate: \$0.99 / km', // Dynamic in future
@@ -131,10 +133,7 @@ class MileageTrackerView extends ConsumerWidget {
                     );
                     clientName = clientMap['name'];
                   }
-                  return TripListItem(
-                    trip: trip,
-                    clientName: clientName,
-                  );
+                  return TripListItem(trip: trip, clientName: clientName);
                 },
               ),
           ],
@@ -144,7 +143,10 @@ class MileageTrackerView extends ConsumerWidget {
   }
 
   Future<void> _handleToggle(
-      BuildContext context, MileageViewState state, MileageViewModel notifier) async {
+    BuildContext context,
+    MileageViewState state,
+    MileageViewModel notifier,
+  ) async {
     if (state.isTracking) {
       // Stop tracking -> Confirm End Trip
       final distance = await notifier.stopTracking();
@@ -158,7 +160,11 @@ class MileageTrackerView extends ConsumerWidget {
   }
 
   void _showEndTripDialog(
-      BuildContext context, MileageViewState state, MileageViewModel notifier, double distance) {
+    BuildContext context,
+    MileageViewState state,
+    MileageViewModel notifier,
+    double distance,
+  ) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -177,11 +183,9 @@ class MileageTrackerView extends ConsumerWidget {
                 SnackBar(
                   content: Text(
                     'Trip saved successfully!',
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
-                        ?.copyWith(
-                          color: BauhausDesign.surfaceWhite,
-                        ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
                   ),
                   backgroundColor: BauhausDesign.success,
                 ),
@@ -227,9 +231,9 @@ class _EndTripDialogState extends State<_EndTripDialog> {
           children: [
             Text(
               'Trip Complete',
-              style: BauhausDesign.getTextTheme(context)
-                  .headlineSmall
-                  ?.copyWith(color: BauhausDesign.textDark),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).headlineSmall?.copyWith(color: BauhausDesign.textDark),
             ),
             const SizedBox(height: BauhausDesign.space4),
             Text(
@@ -243,10 +247,9 @@ class _EndTripDialogState extends State<_EndTripDialog> {
               children: [
                 Text(
                   'With Client?',
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodyLarge?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const Spacer(),
                 BauhausSwitch(
@@ -262,9 +265,9 @@ class _EndTripDialogState extends State<_EndTripDialog> {
               if (widget.clients.isEmpty)
                 Text(
                   'No assigned clients found for this account.',
-                  style: BauhausDesign.getTextTheme(context)
-                      .bodySmall
-                      ?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                 )
               else
                 DropdownButtonFormField<String>(
@@ -272,16 +275,17 @@ class _EndTripDialogState extends State<_EndTripDialog> {
                   decoration: BauhausDesign.inputDecoration('Select Client'),
                   dropdownColor: BauhausDesign.surfaceWhite,
                   items: widget.clients
-                      .map((client) => DropdownMenuItem(
-                            value: client['id'],
-                            child: Text(
-                              client['name'] ??
-                                  client['id'] ??
-                                  'Unknown Client',
-                              style: BauhausDesign.getTextTheme(context)
-                                  .bodyMedium,
-                            ),
-                          ))
+                      .map(
+                        (client) => DropdownMenuItem(
+                          value: client['id'],
+                          child: Text(
+                            client['name'] ?? client['id'] ?? 'Unknown Client',
+                            style: BauhausDesign.getTextTheme(
+                              context,
+                            ).bodyMedium,
+                          ),
+                        ),
+                      )
                       .toList(),
                   onChanged: (val) => setState(() => _selectedClientId = val),
                 ),

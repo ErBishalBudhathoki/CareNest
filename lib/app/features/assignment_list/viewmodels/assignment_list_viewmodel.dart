@@ -7,8 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final assignmentListViewModelProvider =
     NotifierProvider<AssignmentListViewModel, AssignmentListState>(
-  AssignmentListViewModel.new,
-);
+      AssignmentListViewModel.new,
+    );
 
 // --- State Class ---
 @immutable
@@ -122,15 +122,19 @@ class AssignmentListViewModel extends Notifier<AssignmentListState> {
 
       if (response != null && response['success'] == true) {
         final List<dynamic> assignmentData = response['assignments'] ?? [];
-        final newAssignments = assignmentData
-            .map((item) => Map<String, dynamic>.from(item)
-              ..['assignedNdisItemNumber'] = item['assignedNdisItemNumber'])
-            .toList()
-          ..sort((a, b) {
-            final aDate = a['createdAt']?.toString() ?? '';
-            final bDate = b['createdAt']?.toString() ?? '';
-            return bDate.compareTo(aDate); // Sort newest first
-          });
+        final newAssignments =
+            assignmentData
+                .map(
+                  (item) => Map<String, dynamic>.from(item)
+                    ..['assignedNdisItemNumber'] =
+                        item['assignedNdisItemNumber'],
+                )
+                .toList()
+              ..sort((a, b) {
+                final aDate = a['createdAt']?.toString() ?? '';
+                final bDate = b['createdAt']?.toString() ?? '';
+                return bDate.compareTo(aDate); // Sort newest first
+              });
 
         state = state.copyWith(assignments: newAssignments, isLoading: false);
       } else {
@@ -171,15 +175,19 @@ class AssignmentListViewModel extends Notifier<AssignmentListState> {
         final List<dynamic> assignmentData = response['assignments'] ?? [];
 
         // Convert to List<Map<String, dynamic>> and sort by creation date
-        final newAssignments = assignmentData
-            .map((item) => Map<String, dynamic>.from(item)
-              ..['assignedNdisItemNumber'] = item['assignedNdisItemNumber'])
-            .toList()
-          ..sort((a, b) {
-            final aDate = a['createdAt']?.toString() ?? '';
-            final bDate = b['createdAt']?.toString() ?? '';
-            return bDate.compareTo(aDate); // Sort newest first
-          });
+        final newAssignments =
+            assignmentData
+                .map(
+                  (item) => Map<String, dynamic>.from(item)
+                    ..['assignedNdisItemNumber'] =
+                        item['assignedNdisItemNumber'],
+                )
+                .toList()
+              ..sort((a, b) {
+                final aDate = a['createdAt']?.toString() ?? '';
+                final bDate = b['createdAt']?.toString() ?? '';
+                return bDate.compareTo(aDate); // Sort newest first
+              });
 
         state = state.copyWith(assignments: newAssignments, isLoading: false);
         debugPrint('Loaded ${state.assignments.length} user assignments');
@@ -208,11 +216,7 @@ class AssignmentListViewModel extends Notifier<AssignmentListState> {
 
   /// Clear all data
   void clearData() {
-    state = state.copyWith(
-      assignments: [],
-      errorMessage: '',
-      isLoading: false,
-    );
+    state = state.copyWith(assignments: [], errorMessage: '', isLoading: false);
   }
 
   /// Get assignment count
@@ -224,18 +228,22 @@ class AssignmentListViewModel extends Notifier<AssignmentListState> {
   /// Get assignments for a specific user
   List<Map<String, dynamic>> getAssignmentsForUser(String userEmail) {
     return state.assignments
-        .where((assignment) =>
-            assignment['userEmail']?.toString().toLowerCase() ==
-            userEmail.toLowerCase())
+        .where(
+          (assignment) =>
+              assignment['userEmail']?.toString().toLowerCase() ==
+              userEmail.toLowerCase(),
+        )
         .toList();
   }
 
   /// Get assignments for a specific client
   List<Map<String, dynamic>> getAssignmentsForClient(String clientEmail) {
     return state.assignments
-        .where((assignment) =>
-            assignment['clientEmail']?.toString().toLowerCase() ==
-            clientEmail.toLowerCase())
+        .where(
+          (assignment) =>
+              assignment['clientEmail']?.toString().toLowerCase() ==
+              clientEmail.toLowerCase(),
+        )
         .toList();
   }
 
@@ -266,7 +274,10 @@ class AssignmentListViewModel extends Notifier<AssignmentListState> {
 
   /// Calculate hours for a single assignment
   double _calculateAssignmentHours(
-      List<dynamic> startTimes, List<dynamic> endTimes, List<dynamic> breaks) {
+    List<dynamic> startTimes,
+    List<dynamic> endTimes,
+    List<dynamic> breaks,
+  ) {
     if (startTimes.isEmpty || endTimes.isEmpty) return 0.0;
 
     double totalHours = 0.0;
@@ -285,7 +296,10 @@ class AssignmentListViewModel extends Notifier<AssignmentListState> {
 
   /// Calculate hours for a single shift
   double _calculateShiftHours(
-      String startTime, String endTime, String breakTime) {
+    String startTime,
+    String endTime,
+    String breakTime,
+  ) {
     try {
       final start = _parseTime(startTime);
       final end = _parseTime(endTime);

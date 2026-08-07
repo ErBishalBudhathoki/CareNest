@@ -12,7 +12,8 @@ class PaymentSettingsView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final organizationState = ref.watch(organizationProvider);
     final organization = organizationState.currentOrganization;
-    final isConnected = organization?.stripeAccountId != null &&
+    final isConnected =
+        organization?.stripeAccountId != null &&
         organization!.stripeAccountId!.isNotEmpty;
 
     return Scaffold(
@@ -20,9 +21,9 @@ class PaymentSettingsView extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           'PAYMENT SETTINGS',
-          style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-                color: BauhausDesign.textDark,
-              ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).displaySmall?.copyWith(color: BauhausDesign.textDark),
         ),
         backgroundColor: BauhausDesign.surfaceLight,
         elevation: 0,
@@ -47,14 +48,15 @@ class PaymentSettingsView extends ConsumerWidget {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.account_balance,
-                      color: BauhausDesign.secondary),
+                  const Icon(
+                    Icons.account_balance,
+                    color: BauhausDesign.secondary,
+                  ),
                   const SizedBox(width: BauhausDesign.space3),
                   Expanded(
                     child: Text(
                       'Stripe payout account',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w700,
@@ -70,13 +72,14 @@ class PaymentSettingsView extends ConsumerWidget {
                       color: isConnected
                           ? BauhausDesign.success
                           : BauhausDesign.warning,
-                      border:
-                          Border.all(color: BauhausDesign.neutral, width: 1),
+                      border: Border.all(
+                        color: BauhausDesign.neutral,
+                        width: 1,
+                      ),
                     ),
                     child: Text(
                       isConnected ? 'CONNECTED' : 'ACTION NEEDED',
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelSmall
+                      style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w800,
@@ -90,17 +93,17 @@ class PaymentSettingsView extends ConsumerWidget {
             Text(
               'Connect with Stripe',
               style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
               'Link your bank account to receive payments directly from clients. '
               'We use Stripe Connect to ensure secure and compliant payouts for your NDIS business.',
-              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textDark,
-                  ),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
             ),
             const SizedBox(height: 24),
             Container(
@@ -123,7 +126,9 @@ class PaymentSettingsView extends ConsumerWidget {
                               ? BauhausDesign.success
                               : BauhausDesign.warning,
                           border: Border.all(
-                              color: BauhausDesign.neutral, width: 2),
+                            color: BauhausDesign.neutral,
+                            width: 2,
+                          ),
                         ),
                         child: Icon(
                           isConnected ? Icons.check : Icons.link,
@@ -170,8 +175,8 @@ class PaymentSettingsView extends ConsumerWidget {
                           debugPrint('Organization is null');
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                                content:
-                                    Text('Error: Organization data missing')),
+                              content: Text('Error: Organization data missing'),
+                            ),
                           );
                           return;
                         }
@@ -185,15 +190,19 @@ class PaymentSettingsView extends ConsumerWidget {
                             final uri = Uri.parse(url);
                             if (await canLaunchUrl(uri)) {
                               debugPrint('Launching URL: $url');
-                              await launchUrl(uri,
-                                  mode: LaunchMode.externalApplication);
+                              await launchUrl(
+                                uri,
+                                mode: LaunchMode.externalApplication,
+                              );
                             } else {
                               debugPrint('Could not launch URL: $url');
                               if (context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                      content:
-                                          Text('Could not launch Stripe URL')),
+                                    content: Text(
+                                      'Could not launch Stripe URL',
+                                    ),
+                                  ),
                                 );
                               }
                             }
@@ -202,8 +211,10 @@ class PaymentSettingsView extends ConsumerWidget {
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                    content: Text(
-                                        'Failed to generate onboarding link')),
+                                  content: Text(
+                                    'Failed to generate onboarding link',
+                                  ),
+                                ),
                               );
                             }
                           }
@@ -222,13 +233,14 @@ class PaymentSettingsView extends ConsumerWidget {
                         decoration: BoxDecoration(
                           color: BauhausDesign.secondary,
                           border: Border.all(
-                              color: BauhausDesign.neutral, width: 2),
+                            color: BauhausDesign.neutral,
+                            width: 2,
+                          ),
                           boxShadow: const [BauhausDesign.shadowHardSm],
                         ),
                         child: Text(
                           'CONNECT WITH STRIPE',
-                          style: BauhausDesign.getTextTheme(context)
-                              .labelLarge
+                          style: BauhausDesign.getTextTheme(context).labelLarge
                               ?.copyWith(
                                 color: BauhausDesign.surfaceLight,
                                 fontWeight: FontWeight.w900,
@@ -242,8 +254,8 @@ class PaymentSettingsView extends ConsumerWidget {
                         // Ideally open Stripe Dashboard
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content:
-                                  Text('Dashboard link not implemented yet')),
+                            content: Text('Dashboard link not implemented yet'),
+                          ),
                         );
                       },
                       child: Container(
@@ -252,13 +264,14 @@ class PaymentSettingsView extends ConsumerWidget {
                         decoration: BoxDecoration(
                           color: BauhausDesign.surfaceLight,
                           border: Border.all(
-                              color: BauhausDesign.neutral, width: 2),
+                            color: BauhausDesign.neutral,
+                            width: 2,
+                          ),
                           boxShadow: const [BauhausDesign.shadowHardSm],
                         ),
                         child: Text(
                           'VIEW STRIPE DASHBOARD',
-                          style: BauhausDesign.getTextTheme(context)
-                              .labelLarge
+                          style: BauhausDesign.getTextTheme(context).labelLarge
                               ?.copyWith(
                                 color: BauhausDesign.textDark,
                                 fontWeight: FontWeight.w900,

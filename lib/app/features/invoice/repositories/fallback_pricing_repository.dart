@@ -50,7 +50,8 @@ class FallbackPricingRepository {
         return (result['fallbackBaseRate'] as num).toDouble();
       }
       throw FallbackPricingException(
-          result['message'] ?? 'Failed to update fallback base rate');
+        result['message'] ?? 'Failed to update fallback base rate',
+      );
     } catch (e) {
       debugPrint('setFallbackBaseRate error: $e');
       throw FallbackPricingException('Error updating fallback base rate');

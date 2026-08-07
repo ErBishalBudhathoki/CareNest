@@ -14,7 +14,8 @@ abstract class ComplianceChecklist with _$ComplianceChecklist {
     @JsonKey(includeFromJson: false) UserChecklistStatus? userStatus,
   }) = _ComplianceChecklist;
 
-  factory ComplianceChecklist.fromJson(Map<String, dynamic> json) => _$ComplianceChecklistFromJson(json);
+  factory ComplianceChecklist.fromJson(Map<String, dynamic> json) =>
+      _$ComplianceChecklistFromJson(json);
 }
 
 @freezed
@@ -25,7 +26,8 @@ abstract class ChecklistItem with _$ChecklistItem {
     @JsonKey(name: '_id') String? id,
   }) = _ChecklistItem;
 
-  factory ChecklistItem.fromJson(Map<String, dynamic> json) => _$ChecklistItemFromJson(json);
+  factory ChecklistItem.fromJson(Map<String, dynamic> json) =>
+      _$ChecklistItemFromJson(json);
 }
 
 @freezed
@@ -39,5 +41,6 @@ abstract class UserChecklistStatus with _$UserChecklistStatus {
     required DateTime lastUpdated,
   }) = _UserChecklistStatus;
 
-  factory UserChecklistStatus.fromJson(Map<String, dynamic> json) => _$UserChecklistStatusFromJson(json);
+  factory UserChecklistStatus.fromJson(Map<String, dynamic> json) =>
+      _$UserChecklistStatusFromJson(json);
 }

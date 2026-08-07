@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/backend/api_method.dart';
@@ -20,10 +21,12 @@ class IntegrationOAuthCallbackView extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<IntegrationOAuthCallbackView> createState() => _IntegrationOAuthCallbackViewState();
+  ConsumerState<IntegrationOAuthCallbackView> createState() =>
+      _IntegrationOAuthCallbackViewState();
 }
 
-class _IntegrationOAuthCallbackViewState extends ConsumerState<IntegrationOAuthCallbackView> {
+class _IntegrationOAuthCallbackViewState
+    extends ConsumerState<IntegrationOAuthCallbackView> {
   late final ApiMethod _apiMethod;
   bool _isProcessing = true;
   String? _errorMessage;
@@ -76,7 +79,8 @@ class _IntegrationOAuthCallbackViewState extends ConsumerState<IntegrationOAuthC
       if (result['success'] == true) {
         setState(() {
           _isProcessing = false;
-          _successMessage = 'Successfully connected ${_getIntegrationName(integrationType)}!';
+          _successMessage =
+              'Successfully connected ${_getIntegrationName(integrationType)}!';
         });
 
         // Auto-close after 2 seconds
@@ -142,8 +146,8 @@ class _IntegrationOAuthCallbackViewState extends ConsumerState<IntegrationOAuthC
                   color: _errorMessage != null
                       ? BauhausDesign.error
                       : _successMessage != null
-                          ? BauhausDesign.success
-                          : BauhausDesign.primary,
+                      ? BauhausDesign.success
+                      : BauhausDesign.primary,
                   border: Border(
                     bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
                   ),
@@ -158,13 +162,13 @@ class _IntegrationOAuthCallbackViewState extends ConsumerState<IntegrationOAuthC
                         _errorMessage != null
                             ? Icons.error_outline
                             : _successMessage != null
-                                ? Icons.check_circle_outline
-                                : Icons.link,
+                            ? Icons.check_circle_outline
+                            : Icons.link,
                         color: _errorMessage != null
                             ? BauhausDesign.error
                             : _successMessage != null
-                                ? BauhausDesign.success
-                                : BauhausDesign.primary,
+                            ? BauhausDesign.success
+                            : BauhausDesign.primary,
                         size: 24,
                       ),
                     ),
@@ -192,7 +196,9 @@ class _IntegrationOAuthCallbackViewState extends ConsumerState<IntegrationOAuthC
                     if (_isProcessing) ...[
                       const CircularProgressIndicator(
                         strokeWidth: 3,
-                        valueColor: AlwaysStoppedAnimation<Color>(BauhausDesign.primary),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          BauhausDesign.primary,
+                        ),
                       ),
                       const SizedBox(height: BauhausDesign.space4),
                       Text(

@@ -138,35 +138,32 @@ class _BauhausDateRangePickerDialogState
   }
 
   void _prevMonth() => setState(() {
-        _viewMonth =
-            DateTime(_viewMonth.year, _viewMonth.month - 1, 1);
-      });
+    _viewMonth = DateTime(_viewMonth.year, _viewMonth.month - 1, 1);
+  });
 
   void _nextMonth() => setState(() {
-        _viewMonth =
-            DateTime(_viewMonth.year, _viewMonth.month + 1, 1);
-      });
+    _viewMonth = DateTime(_viewMonth.year, _viewMonth.month + 1, 1);
+  });
 
   String _monthLabel(DateTime d) =>
       '${_monthName(d.month).toUpperCase()}  ${d.year}';
 
   String _monthName(int m) => const [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December'
-      ][m - 1];
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ][m - 1];
 
-  String _dayAbbr(int d) =>
-      ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'][d];
+  String _dayAbbr(int d) => ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'][d];
 
   // Format a date for the summary bar
   String _fmt(DateTime? d) {
@@ -192,11 +189,7 @@ class _BauhausDateRangePickerDialogState
           color: _paper,
           border: Border.all(color: _ink, width: BauhausDesign.neoBorderWidth),
           boxShadow: const [
-            BoxShadow(
-              color: _ink,
-              offset: Offset(8, 8),
-              blurRadius: 0,
-            ),
+            BoxShadow(color: _ink, offset: Offset(8, 8), blurRadius: 0),
           ],
         ),
         child: Column(
@@ -222,11 +215,7 @@ class _BauhausDateRangePickerDialogState
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(
         children: [
-          Container(
-            width: 6,
-            height: 28,
-            color: _highlight,
-          ),
+          Container(width: 6, height: 28, color: _highlight),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -247,8 +236,7 @@ class _BauhausDateRangePickerDialogState
               decoration: BoxDecoration(
                 border: Border.all(color: _paper.withOpacity(0.5), width: 1.5),
               ),
-              child: const Icon(Icons.close_rounded,
-                  color: _paper, size: 16),
+              child: const Icon(Icons.close_rounded, color: _paper, size: 16),
             ),
           ),
         ],
@@ -354,7 +342,10 @@ class _BauhausDateRangePickerDialogState
         width: 34,
         height: 34,
         decoration: BoxDecoration(
-          border: Border.all(color: _ink, width: BauhausDesign.neoInnerBorderWidth),
+          border: Border.all(
+            color: _ink,
+            width: BauhausDesign.neoInnerBorderWidth,
+          ),
         ),
         child: Icon(icon, color: _signal, size: 20),
       ),
@@ -386,8 +377,7 @@ class _BauhausDateRangePickerDialogState
     final today = DateTime.now();
     // First weekday of month (Monday=0 … Sunday=6)
     int firstWd = (_viewMonth.weekday - 1) % 7;
-    int daysInMonth =
-        DateTime(_viewMonth.year, _viewMonth.month + 1, 0).day;
+    int daysInMonth = DateTime(_viewMonth.year, _viewMonth.month + 1, 0).day;
     int totalCells = firstWd + daysInMonth;
     int rows = (totalCells / 7).ceil();
 
@@ -400,8 +390,7 @@ class _BauhausDateRangePickerDialogState
             if (dayNum < 1 || dayNum > daysInMonth) {
               return const Expanded(child: SizedBox(height: 38));
             }
-            final day =
-                DateTime(_viewMonth.year, _viewMonth.month, dayNum);
+            final day = DateTime(_viewMonth.year, _viewMonth.month, dayNum);
             return Expanded(child: _buildDayCell(day, today));
           }),
         );
@@ -436,17 +425,20 @@ class _BauhausDateRangePickerDialogState
         decoration: BoxDecoration(
           color: bg,
           border: isEndpoint
-              ? Border.all(color: _ink, width: BauhausDesign.neoInnerBorderWidth)
+              ? Border.all(
+                  color: _ink,
+                  width: BauhausDesign.neoInnerBorderWidth,
+                )
               : inRange
-                  ? Border.all(color: _signal.withOpacity(0.3), width: 1)
-                  : null,
+              ? Border.all(color: _signal.withOpacity(0.3), width: 1)
+              : null,
           boxShadow: isEndpoint
               ? [
                   const BoxShadow(
                     color: _ink,
                     offset: Offset(2, 2),
                     blurRadius: 0,
-                  )
+                  ),
                 ]
               : null,
         ),
@@ -488,8 +480,8 @@ class _BauhausDateRangePickerDialogState
     final msg = _start == null
         ? 'TAP A DAY TO SET START DATE'
         : (_end == null
-            ? 'NOW TAP AN END DATE'
-            : 'RANGE SELECTED — CONFIRM BELOW');
+              ? 'NOW TAP AN END DATE'
+              : 'RANGE SELECTED — CONFIRM BELOW');
 
     return Container(
       margin: const EdgeInsets.fromLTRB(12, 10, 12, 0),
@@ -512,7 +504,9 @@ class _BauhausDateRangePickerDialogState
                 ? Icons.check_rounded
                 : Icons.touch_app_rounded,
             size: 13,
-            color: _start != null && _end != null ? _highlight : _ink.withOpacity(0.5),
+            color: _start != null && _end != null
+                ? _highlight
+                : _ink.withOpacity(0.5),
           ),
           const SizedBox(width: 6),
           Text(
@@ -557,10 +551,11 @@ class _BauhausDateRangePickerDialogState
                 decoration: BoxDecoration(
                   color: _paper,
                   border: Border.all(
-                      color: _ink, width: BauhausDesign.neoInnerBorderWidth),
+                    color: _ink,
+                    width: BauhausDesign.neoInnerBorderWidth,
+                  ),
                   boxShadow: const [
-                    BoxShadow(
-                        color: _ink, offset: Offset(3, 3), blurRadius: 0),
+                    BoxShadow(color: _ink, offset: Offset(3, 3), blurRadius: 0),
                   ],
                 ),
                 alignment: Alignment.center,
@@ -582,23 +577,25 @@ class _BauhausDateRangePickerDialogState
             flex: 2,
             child: GestureDetector(
               onTap: canConfirm
-                  ? () => Navigator.of(context).pop(
-                        DateTimeRange(start: _start!, end: _end!),
-                      )
+                  ? () => Navigator.of(
+                      context,
+                    ).pop(DateTimeRange(start: _start!, end: _end!))
                   : null,
               child: Container(
                 height: 44,
                 decoration: BoxDecoration(
                   color: canConfirm ? _danger : _ink.withOpacity(0.25),
                   border: Border.all(
-                      color: _ink,
-                      width: BauhausDesign.neoBorderWidth),
+                    color: _ink,
+                    width: BauhausDesign.neoBorderWidth,
+                  ),
                   boxShadow: canConfirm
                       ? const [
                           BoxShadow(
-                              color: _ink,
-                              offset: Offset(4, 4),
-                              blurRadius: 0),
+                            color: _ink,
+                            offset: Offset(4, 4),
+                            blurRadius: 0,
+                          ),
                         ]
                       : [],
                 ),
@@ -615,8 +612,7 @@ class _BauhausDateRangePickerDialogState
                     Text(
                       'CONFIRM PERIOD',
                       style: GoogleFonts.oswald(
-                        color:
-                            canConfirm ? _paper : _paper.withOpacity(0.45),
+                        color: canConfirm ? _paper : _paper.withOpacity(0.45),
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
@@ -653,8 +649,7 @@ class _BauhausDatePickerDialog extends StatefulWidget {
       _BauhausDatePickerDialogState();
 }
 
-class _BauhausDatePickerDialogState
-    extends State<_BauhausDatePickerDialog> {
+class _BauhausDatePickerDialogState extends State<_BauhausDatePickerDialog> {
   late DateTime _selected;
   late DateTime _viewMonth;
 
@@ -669,13 +664,14 @@ class _BauhausDatePickerDialogState
       a.year == b.year && a.month == b.month && a.day == b.day;
 
   String _monthLabel(DateTime d) =>
-      '${['January', 'February', 'March', 'April', 'May', 'June', 'July',
-          'August', 'September', 'October', 'November', 'December'][d.month - 1].toUpperCase()}  ${d.year}';
+      '${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][d.month - 1].toUpperCase()}  ${d.year}';
 
-  void _prevMonth() => setState(() =>
-      _viewMonth = DateTime(_viewMonth.year, _viewMonth.month - 1, 1));
-  void _nextMonth() => setState(() =>
-      _viewMonth = DateTime(_viewMonth.year, _viewMonth.month + 1, 1));
+  void _prevMonth() => setState(
+    () => _viewMonth = DateTime(_viewMonth.year, _viewMonth.month - 1, 1),
+  );
+  void _nextMonth() => setState(
+    () => _viewMonth = DateTime(_viewMonth.year, _viewMonth.month + 1, 1),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -721,7 +717,9 @@ class _BauhausDatePickerDialogState
             child: Text(
               'SELECT DATE',
               style: GoogleFonts.oswald(
-                color: _paper, fontSize: 18, fontWeight: FontWeight.w700,
+                color: _paper,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
               ),
             ),
@@ -766,7 +764,9 @@ class _BauhausDatePickerDialogState
             child: Text(
               _monthLabel(_viewMonth),
               style: GoogleFonts.oswald(
-                color: _ink, fontSize: 16, fontWeight: FontWeight.w700,
+                color: _ink,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
               ),
             ),
@@ -781,9 +781,13 @@ class _BauhausDatePickerDialogState
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 34, height: 34,
+        width: 34,
+        height: 34,
         decoration: BoxDecoration(
-          border: Border.all(color: _ink, width: BauhausDesign.neoInnerBorderWidth),
+          border: Border.all(
+            color: _ink,
+            width: BauhausDesign.neoInnerBorderWidth,
+          ),
         ),
         child: Icon(icon, color: _signal, size: 20),
       ),
@@ -793,17 +797,22 @@ class _BauhausDatePickerDialogState
   Widget _buildWeekdayRow() {
     const abbr = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
     return Row(
-      children: List.generate(7, (i) => Expanded(
-        child: Center(
-          child: Text(
-            abbr[i],
-            style: GoogleFonts.robotoMono(
-              color: i >= 5 ? _danger : _ink.withOpacity(0.55),
-              fontSize: 9, fontWeight: FontWeight.w700, letterSpacing: 1,
+      children: List.generate(
+        7,
+        (i) => Expanded(
+          child: Center(
+            child: Text(
+              abbr[i],
+              style: GoogleFonts.robotoMono(
+                color: i >= 5 ? _danger : _ink.withOpacity(0.55),
+                fontSize: 9,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1,
+              ),
             ),
           ),
         ),
-      )),
+      ),
     );
   }
 
@@ -815,17 +824,20 @@ class _BauhausDatePickerDialogState
     int rows = (totalCells / 7).ceil();
 
     return Column(
-      children: List.generate(rows, (r) => Row(
-        children: List.generate(7, (c) {
-          int idx = r * 7 + c;
-          int dayNum = idx - firstWd + 1;
-          if (dayNum < 1 || dayNum > daysInMonth) {
-            return const Expanded(child: SizedBox(height: 38));
-          }
-          final day = DateTime(_viewMonth.year, _viewMonth.month, dayNum);
-          return Expanded(child: _buildDayCell(day, today));
-        }),
-      )),
+      children: List.generate(
+        rows,
+        (r) => Row(
+          children: List.generate(7, (c) {
+            int idx = r * 7 + c;
+            int dayNum = idx - firstWd + 1;
+            if (dayNum < 1 || dayNum > daysInMonth) {
+              return const Expanded(child: SizedBox(height: 38));
+            }
+            final day = DateTime(_viewMonth.year, _viewMonth.month, dayNum);
+            return Expanded(child: _buildDayCell(day, today));
+          }),
+        ),
+      ),
     );
   }
 
@@ -842,10 +854,15 @@ class _BauhausDatePickerDialogState
         decoration: BoxDecoration(
           color: isSelected ? _signal : Colors.transparent,
           border: isSelected
-              ? Border.all(color: _ink, width: BauhausDesign.neoInnerBorderWidth)
+              ? Border.all(
+                  color: _ink,
+                  width: BauhausDesign.neoInnerBorderWidth,
+                )
               : null,
           boxShadow: isSelected
-              ? const [BoxShadow(color: _ink, offset: Offset(2, 2), blurRadius: 0)]
+              ? const [
+                  BoxShadow(color: _ink, offset: Offset(2, 2), blurRadius: 0),
+                ]
               : null,
         ),
         child: Stack(
@@ -854,7 +871,9 @@ class _BauhausDatePickerDialogState
             Text(
               '${day.day}',
               style: GoogleFonts.oswald(
-                color: isSelected ? _paper : (isWeekend ? _danger.withOpacity(0.75) : _ink),
+                color: isSelected
+                    ? _paper
+                    : (isWeekend ? _danger.withOpacity(0.75) : _ink),
                 fontSize: 15,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
               ),
@@ -863,9 +882,11 @@ class _BauhausDatePickerDialogState
               Positioned(
                 bottom: 4,
                 child: Container(
-                  width: 4, height: 4,
+                  width: 4,
+                  height: 4,
                   decoration: const BoxDecoration(
-                    color: _highlight, shape: BoxShape.circle,
+                    color: _highlight,
+                    shape: BoxShape.circle,
                   ),
                 ),
               ),
@@ -887,7 +908,10 @@ class _BauhausDatePickerDialogState
                 height: 44,
                 decoration: BoxDecoration(
                   color: _paper,
-                  border: Border.all(color: _ink, width: BauhausDesign.neoInnerBorderWidth),
+                  border: Border.all(
+                    color: _ink,
+                    width: BauhausDesign.neoInnerBorderWidth,
+                  ),
                   boxShadow: const [
                     BoxShadow(color: _ink, offset: Offset(3, 3), blurRadius: 0),
                   ],
@@ -896,7 +920,9 @@ class _BauhausDatePickerDialogState
                 child: Text(
                   'CANCEL',
                   style: GoogleFonts.oswald(
-                    color: _ink, fontSize: 13, fontWeight: FontWeight.w700,
+                    color: _ink,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -912,7 +938,10 @@ class _BauhausDatePickerDialogState
                 height: 44,
                 decoration: BoxDecoration(
                   color: _danger,
-                  border: Border.all(color: _ink, width: BauhausDesign.neoBorderWidth),
+                  border: Border.all(
+                    color: _ink,
+                    width: BauhausDesign.neoBorderWidth,
+                  ),
                   boxShadow: const [
                     BoxShadow(color: _ink, offset: Offset(4, 4), blurRadius: 0),
                   ],
@@ -926,7 +955,9 @@ class _BauhausDatePickerDialogState
                     Text(
                       'CONFIRM DATE',
                       style: GoogleFonts.oswald(
-                        color: _paper, fontSize: 13, fontWeight: FontWeight.w700,
+                        color: _paper,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                       ),
                     ),

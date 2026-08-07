@@ -35,8 +35,9 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
 
   late final TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
-  final TextEditingController _percentageController =
-      TextEditingController(text: '5');
+  final TextEditingController _percentageController = TextEditingController(
+    text: '5',
+  );
   final TextEditingController _fixedRateController = TextEditingController();
 
   bool _isProcessing = false;
@@ -124,8 +125,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
     var failed = 0;
 
     for (final row in rows) {
-      final itemNumber =
-          (row['supportItemNumber'] ?? row['itemNumber'] ?? '').trim();
+      final itemNumber = (row['supportItemNumber'] ?? row['itemNumber'] ?? '')
+          .trim();
       final priceRaw = row['customPrice'] ?? row['price'] ?? '';
       final price = pricingToDouble(priceRaw);
 
@@ -172,8 +173,9 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
 
     await _refreshAll();
     _showSnackBar(
-        success > 0 ? l10n.importCompletedMsg('CSV') : l10n.errorOccurred,
-        isError: success == 0);
+      success > 0 ? l10n.importCompletedMsg('CSV') : l10n.errorOccurred,
+      isError: success == 0,
+    );
   }
 
   String _buildExportCsv(List<PricingLiveRecord> records) {
@@ -237,7 +239,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
     final api = ref.read(app_providers.apiMethodProvider);
     final selected = records
         .where(
-            (record) => _selectedItemNumbers.contains(record.supportItemNumber))
+          (record) => _selectedItemNumbers.contains(record.supportItemNumber),
+        )
         .toList();
 
     final percentage = pricingToDouble(_percentageController.text);
@@ -249,8 +252,9 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
 
     for (final record in selected) {
       final base = record.customPrice ?? record.standardPrice;
-      final updatedPrice =
-          _bulkMode == 'fixed' ? fixedRate : (base * (1 + (percentage / 100)));
+      final updatedPrice = _bulkMode == 'fixed'
+          ? fixedRate
+          : (base * (1 + (percentage / 100)));
 
       if (updatedPrice <= 0) {
         failed++;
@@ -306,10 +310,12 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final recordsAsync =
-        ref.watch(pricingLiveRecordsProvider(widget.organizationId));
-    final analyticsAsync =
-        ref.watch(pricingOrgAnalyticsProvider(widget.organizationId));
+    final recordsAsync = ref.watch(
+      pricingLiveRecordsProvider(widget.organizationId),
+    );
+    final analyticsAsync = ref.watch(
+      pricingOrgAnalyticsProvider(widget.organizationId),
+    );
 
     final records = recordsAsync.value ?? const <PricingLiveRecord>[];
     final analytics = analyticsAsync.value;
@@ -318,7 +324,8 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
     final customCount = records.where((record) => record.isCustom).length;
     final pendingCount = records.where((record) => !record.isCustom).length;
     final violations = analytics?.metrics.nonCompliantItems ?? 0;
-    final compliance = analytics?.metrics.complianceRate ??
+    final compliance =
+        analytics?.metrics.complianceRate ??
         (records.isEmpty ? 0.0 : (customCount / records.length) * 100);
 
     final search = _searchController.text.trim().toLowerCase();
@@ -445,8 +452,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                     Expanded(
                       child: Text(
                         l10n.bulkOperationsDesc,
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
+                        style: BauhausDesign.getTextTheme(context).labelLarge
                             ?.copyWith(
                               color: _inkBlack,
                               fontWeight: FontWeight.w700,
@@ -464,8 +470,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                       ),
                       child: Text(
                         l10n.systemActive.toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
+                        style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
                               color: BauhausDesign.surfaceWhite,
                               fontWeight: FontWeight.w800,
@@ -550,8 +555,11 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                   color: stat['color'] as Color,
                   border: Border.all(color: _inkBlack, width: 2),
                 ),
-                child: Icon(stat['icon'] as IconData,
-                    size: 12, color: BauhausDesign.surfaceWhite),
+                child: Icon(
+                  stat['icon'] as IconData,
+                  size: 12,
+                  color: BauhausDesign.surfaceWhite,
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -563,18 +571,19 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                       stat['value'] as String,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelLarge
+                      style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
-                              color: _inkBlack, fontWeight: FontWeight.w900),
+                            color: _inkBlack,
+                            fontWeight: FontWeight.w900,
+                          ),
                     ),
                     Text(
                       stat['title'] as String,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelSmall
-                          ?.copyWith(color: BauhausDesign.textMuted),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
                     ),
                   ],
                 ),
@@ -601,9 +610,9 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
         labelPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         labelColor: BauhausDesign.surfaceWhite,
         unselectedLabelColor: _inkBlack,
-        labelStyle: BauhausDesign.getTextTheme(context)
-            .labelSmall
-            ?.copyWith(fontWeight: FontWeight.w900),
+        labelStyle: BauhausDesign.getTextTheme(
+          context,
+        ).labelSmall?.copyWith(fontWeight: FontWeight.w900),
         tabs: [
           Tab(text: l10n.tabImport),
           Tab(text: l10n.tabExport),
@@ -615,7 +624,9 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
   }
 
   Widget _buildImportTab(
-      AppLocalizations l10n, List<PricingLiveRecord> records) {
+    AppLocalizations l10n,
+    List<PricingLiveRecord> records,
+  ) {
     return ListView(
       primary: false,
       padding: const EdgeInsets.only(top: 0),
@@ -636,8 +647,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                 const SizedBox(height: 4),
                 Text(
                   _lastImportSummary,
-                  style: BauhausDesign.getTextTheme(context)
-                      .bodySmall
+                  style: BauhausDesign.getTextTheme(context).bodySmall
                       ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w700),
                 ),
               ],
@@ -649,7 +659,9 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
   }
 
   Widget _buildExportTab(
-      AppLocalizations l10n, List<PricingLiveRecord> records) {
+    AppLocalizations l10n,
+    List<PricingLiveRecord> records,
+  ) {
     return ListView(
       primary: false,
       padding: const EdgeInsets.only(top: 0),
@@ -689,9 +701,9 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                 child: SingleChildScrollView(
                   child: SelectableText(
                     _exportCsv.isEmpty ? l10n.moduleNoDataYet : _exportCsv,
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelSmall
-                        ?.copyWith(color: _inkBlack),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).labelSmall?.copyWith(color: _inkBlack),
                   ),
                 ),
               ),
@@ -737,20 +749,20 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
               const SizedBox(height: 4),
               Row(
                 children: [
-                  Expanded(
-                    child: _buildSimpleModeDropdown(),
-                  ),
+                  Expanded(child: _buildSimpleModeDropdown()),
                   const SizedBox(width: 8),
                   Expanded(
                     child: TextField(
                       controller: _bulkMode == 'fixed'
                           ? _fixedRateController
                           : _percentageController,
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       decoration: InputDecoration(
-                        hintText:
-                            _bulkMode == 'fixed' ? 'Fixed rate' : 'Percent',
+                        hintText: _bulkMode == 'fixed'
+                            ? 'Fixed rate'
+                            : 'Percent',
                         isDense: true,
                         filled: true,
                         fillColor: BauhausDesign.surfaceWhite,
@@ -783,31 +795,35 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                   Expanded(
                     child: Text(
                       l10n.pricingFilterCustom,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
+                      style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
-                              color: _inkBlack, fontWeight: FontWeight.w700),
+                            color: _inkBlack,
+                            fontWeight: FontWeight.w700,
+                          ),
                     ),
                   ),
                   Text(
                     '${_selectedItemNumbers.length} ${l10n.employeesSelected}',
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelSmall
-                        ?.copyWith(color: BauhausDesign.textMuted),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
                   ),
                 ],
               ),
               const SizedBox(height: 4),
               _buildPrimaryButton(
                 label: l10n.bulkUpdatesQuickAction,
-                onTap:
-                    _isProcessing ? null : () => _applyBulkUpdate(allRecords),
+                onTap: _isProcessing
+                    ? null
+                    : () => _applyBulkUpdate(allRecords),
               ),
             ],
           ),
         ),
         const SizedBox(height: 4),
-        ...filtered.take(80).map(
+        ...filtered
+            .take(80)
+            .map(
               (record) => Container(
                 margin: const EdgeInsets.only(bottom: 8),
                 padding: const EdgeInsets.all(8),
@@ -818,15 +834,17 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                 child: Row(
                   children: [
                     Checkbox(
-                      value: _selectedItemNumbers
-                          .contains(record.supportItemNumber),
+                      value: _selectedItemNumbers.contains(
+                        record.supportItemNumber,
+                      ),
                       onChanged: (selected) {
                         setState(() {
                           if (selected == true) {
                             _selectedItemNumbers.add(record.supportItemNumber);
                           } else {
-                            _selectedItemNumbers
-                                .remove(record.supportItemNumber);
+                            _selectedItemNumbers.remove(
+                              record.supportItemNumber,
+                            );
                           }
                         });
                       },
@@ -846,8 +864,9 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                             style: BauhausDesign.getTextTheme(context)
                                 .labelSmall
                                 ?.copyWith(
-                                    color: _inkBlack,
-                                    fontWeight: FontWeight.w900),
+                                  color: _inkBlack,
+                                  fontWeight: FontWeight.w900,
+                                ),
                           ),
                           const SizedBox(height: 2),
                           Text(
@@ -870,7 +889,9 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
   }
 
   Widget _buildHistoryTab(
-      AppLocalizations l10n, List<PricingLiveRecord> records) {
+    AppLocalizations l10n,
+    List<PricingLiveRecord> records,
+  ) {
     final timeline = records
         .where((record) => record.isCustom && record.effectiveTimestamp != null)
         .take(20)
@@ -886,9 +907,9 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
           child: _events.isEmpty
               ? Text(
                   l10n.moduleNoTrackedChanges,
-                  style: BauhausDesign.getTextTheme(context)
-                      .bodySmall
-                      ?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                 )
               : Column(
                   children: _events
@@ -912,9 +933,9 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
           child: timeline.isEmpty
               ? Text(
                   l10n.moduleNoTrackedChanges,
-                  style: BauhausDesign.getTextTheme(context)
-                      .bodySmall
-                      ?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                 )
               : Column(
                   children: timeline
@@ -955,30 +976,32 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
         children: [
           Text(
             title,
-            style: BauhausDesign.getTextTheme(context)
-                .labelSmall
-                ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w900),
+            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+              color: _inkBlack,
+              fontWeight: FontWeight.w900,
+            ),
           ),
           Text(
             detail,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: BauhausDesign.getTextTheme(context)
-                .labelSmall
-                ?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
           ),
           const SizedBox(height: 2),
           Text(
             summary,
-            style: BauhausDesign.getTextTheme(context)
-                .labelSmall
-                ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w700),
+            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+              color: _inkBlack,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           Text(
             stamp,
-            style: BauhausDesign.getTextTheme(context)
-                .labelSmall
-                ?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
           ),
         ],
       ),
@@ -1002,16 +1025,17 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
         children: [
           Text(
             title.toUpperCase(),
-            style: BauhausDesign.getTextTheme(context)
-                .labelLarge
-                ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w900),
+            style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+              color: _inkBlack,
+              fontWeight: FontWeight.w900,
+            ),
           ),
           const SizedBox(height: 2),
           Text(
             subtitle,
-            style: BauhausDesign.getTextTheme(context)
-                .labelSmall
-                ?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
           ),
           const SizedBox(height: 4),
           child,
@@ -1058,18 +1082,19 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: BoxDecoration(
-          color:
-              onTap == null ? BauhausDesign.textMuted : BauhausDesign.primary,
+          color: onTap == null
+              ? BauhausDesign.textMuted
+              : BauhausDesign.primary,
           border: Border.all(color: _inkBlack, width: 2),
         ),
         child: Text(
           label.toUpperCase(),
           textAlign: TextAlign.center,
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 0.4,
-              ),
+            color: BauhausDesign.surfaceWhite,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 0.4,
+          ),
         ),
       ),
     );
@@ -1091,9 +1116,9 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
         child: Text(
           label.toUpperCase(),
           textAlign: TextAlign.center,
-          style: BauhausDesign.getTextTheme(context)
-              .labelSmall
-              ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w900),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).labelSmall?.copyWith(color: _inkBlack, fontWeight: FontWeight.w900),
         ),
       ),
     );

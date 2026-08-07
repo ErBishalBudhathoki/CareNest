@@ -2,7 +2,9 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/payment_repository.dart';
 
-final paymentViewModelProvider = AsyncNotifierProvider<PaymentViewModel, void>(PaymentViewModel.new);
+final paymentViewModelProvider = AsyncNotifierProvider<PaymentViewModel, void>(
+  PaymentViewModel.new,
+);
 
 class PaymentViewModel extends AsyncNotifier<void> {
   late final PaymentRepository _repository;
@@ -27,12 +29,12 @@ class PaymentViewModel extends AsyncNotifier<void> {
         currency: currency,
         clientEmail: clientEmail,
       );
-      
+
       if (result['clientSecret'] != null) {
         state = const AsyncData(null);
         // In a real app, we would return the clientSecret to the UI to initialize Stripe Elements
       } else {
-         throw Exception(result['message'] ?? 'Failed to create payment intent');
+        throw Exception(result['message'] ?? 'Failed to create payment intent');
       }
     } catch (e, st) {
       state = AsyncError(e, st);
@@ -55,7 +57,7 @@ class PaymentViewModel extends AsyncNotifier<void> {
         reference: reference,
         notes: notes,
       );
-      
+
       if (result['success'] == true) {
         state = const AsyncData(null);
       } else {
@@ -73,7 +75,7 @@ class PaymentViewModel extends AsyncNotifier<void> {
       if (result['success'] == true) {
         state = const AsyncData(null);
       } else {
-         throw Exception(result['message'] ?? 'Failed to issue credit note');
+        throw Exception(result['message'] ?? 'Failed to issue credit note');
       }
     } catch (e, st) {
       state = AsyncError(e, st);
@@ -82,7 +84,9 @@ class PaymentViewModel extends AsyncNotifier<void> {
 
   Future<String?> createOnboardingLink(String organizationId) async {
     try {
-      final result = await _repository.createStripeOnboardingLink(organizationId);
+      final result = await _repository.createStripeOnboardingLink(
+        organizationId,
+      );
       if (result['success'] == true && result['url'] != null) {
         return result['url'] as String;
       }

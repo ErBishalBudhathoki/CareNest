@@ -46,13 +46,7 @@ abstract class WorkerLocation with _$WorkerLocation {
 }
 
 /// Worker status enum
-enum WorkerStatus {
-  available,
-  enRoute,
-  atAppointment,
-  onBreak,
-  offline,
-}
+enum WorkerStatus { available, enRoute, atAppointment, onBreak, offline }
 
 /// Quick action item
 @freezed
@@ -110,12 +104,7 @@ enum ComplianceAlertType {
 }
 
 /// Compliance severity levels
-enum ComplianceSeverity {
-  low,
-  medium,
-  high,
-  critical,
-}
+enum ComplianceSeverity { low, medium, high, critical }
 
 /// Revenue chart data point
 @freezed
@@ -155,11 +144,7 @@ abstract class RevenueComparison with _$RevenueComparison {
 }
 
 /// Trend direction
-enum TrendDirection {
-  up,
-  down,
-  flat,
-}
+enum TrendDirection { up, down, flat }
 
 /// Dashboard state combining all widget data
 @freezed
@@ -179,8 +164,6 @@ abstract class DashboardState with _$DashboardState {
       _$DashboardStateFromJson(json);
 
   factory DashboardState.initial() {
-    return const DashboardState(
-      isLoading: true,
-    );
+    return const DashboardState(isLoading: true);
   }
 }

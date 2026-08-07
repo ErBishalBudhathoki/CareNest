@@ -1,4 +1,3 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/notifications/models/ai_models.dart';
 import 'package:carenest/app/features/notifications/repositories/ai_repository.dart';
@@ -9,7 +8,7 @@ class AiState {
   final List<SnoozeRule> snoozeRules;
   final bool isLoading;
   final String? errorMessage;
-  
+
   const AiState({
     this.predictions = const [],
     this.calendarEvents = const [],
@@ -63,7 +62,10 @@ class AiViewModel extends Notifier<AiState> {
   Future<void> loadCalendarEvents({DateTime? start, DateTime? end}) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
-      final result = await _repository.getCalendarEvents(start: start, end: end);
+      final result = await _repository.getCalendarEvents(
+        start: start,
+        end: end,
+      );
       state = state.copyWith(calendarEvents: result);
     } catch (e) {
       state = state.copyWith(errorMessage: e.toString());

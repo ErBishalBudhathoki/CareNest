@@ -14,7 +14,8 @@ class BauhausResponsiveLayout extends StatelessWidget {
     required this.mobile,
     this.tablet,
     this.desktop,
-    this.mobileBreakpoint = 768, // BauhausDesign doesn't have breakpoints yet, using standard
+    this.mobileBreakpoint =
+        768, // BauhausDesign doesn't have breakpoints yet, using standard
     this.tabletBreakpoint = 1024,
   });
 
@@ -81,4 +82,3 @@ class BauhausResponsiveGrid extends StatelessWidget {
     );
   }
 }
-

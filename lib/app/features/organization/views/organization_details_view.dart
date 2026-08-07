@@ -100,10 +100,7 @@ class _OrganizationDetailsViewState
     updates.forEach((key, value) {
       if (value is Map) {
         final existing = _toStringDynamicMap(merged[key]);
-        merged[key] = {
-          ...existing,
-          ..._toStringDynamicMap(value),
-        };
+        merged[key] = {...existing, ..._toStringDynamicMap(value)};
       } else {
         merged[key] = value;
       }
@@ -136,8 +133,8 @@ class _OrganizationDetailsViewState
       _toStringDynamicMap(_organization?['contactDetails']);
 
   String? get _organizationContactEmail => _normalizedString(
-        _organization?['organizationEmail'] ?? _contactDetailsMap['email'],
-      );
+    _organization?['organizationEmail'] ?? _contactDetailsMap['email'],
+  );
 
   String? get _ownerEmail =>
       _normalizedString(_organization?['ownerEmail'] ?? widget.userEmail);
@@ -226,8 +223,9 @@ class _OrganizationDetailsViewState
 
     setState(() => _sendingOrganizationVerification = true);
     try {
-      final response =
-          await _api.sendOrganizationContactVerification(organizationId);
+      final response = await _api.sendOrganizationContactVerification(
+        organizationId,
+      );
       if (!mounted) return;
 
       final success = response['success'] == true;
@@ -239,16 +237,19 @@ class _OrganizationDetailsViewState
             message.isNotEmpty
                 ? message
                 : success
-                    ? AppLocalizations.of(context)!
-                        .organizationVerificationSentSuccess
-                    : AppLocalizations.of(context)!
-                        .organizationVerificationSentFailure,
-            style: BauhausDesign.getTextTheme(context)
-                .bodyMedium
-                ?.copyWith(color: BauhausDesign.surfaceWhite),
+                ? AppLocalizations.of(
+                    context,
+                  )!.organizationVerificationSentSuccess
+                : AppLocalizations.of(
+                    context,
+                  )!.organizationVerificationSentFailure,
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
           ),
-          backgroundColor:
-              success ? BauhausDesign.success : BauhausDesign.warning,
+          backgroundColor: success
+              ? BauhausDesign.success
+              : BauhausDesign.warning,
         ),
       );
 
@@ -261,9 +262,9 @@ class _OrganizationDetailsViewState
         SnackBar(
           content: Text(
             AppLocalizations.of(context)!.organizationVerificationSentFailure,
-            style: BauhausDesign.getTextTheme(context)
-                .bodyMedium
-                ?.copyWith(color: BauhausDesign.surfaceWhite),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
           ),
           backgroundColor: BauhausDesign.warning,
         ),
@@ -280,147 +281,149 @@ class _OrganizationDetailsViewState
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
-        width: double.infinity,
-        margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceWhite,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        boxShadow: const [BauhausDesign.shadowHardXs],
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(BauhausDesign.space3),
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
+          color: isVerified
+              ? BauhausDesign.success.withOpacity(0.12)
+              : BauhausDesign.accent.withOpacity(0.18),
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
-          boxShadow: const [BauhausDesign.shadowHardXs],
         ),
-        child: Container(
-          padding: const EdgeInsets.all(BauhausDesign.space3),
-          decoration: BoxDecoration(
-            color: isVerified
-                ? BauhausDesign.success.withOpacity(0.12)
-                : BauhausDesign.accent.withOpacity(0.18),
-            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  isVerified
+                      ? Icons.verified_user_rounded
+                      : Icons.mark_email_unread_outlined,
+                  color: BauhausDesign.neutral,
+                  size: 18,
+                ),
+                const SizedBox(width: BauhausDesign.space2),
+                Expanded(
+                  child: Text(
+                    _organizationVerificationTitle(l10n),
+                    style: BauhausDesign.getTextTheme(context).labelLarge
+                        ?.copyWith(
+                          color: BauhausDesign.neutral,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 0.8,
+                        ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: BauhausDesign.space2,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isVerified
+                        ? BauhausDesign.success
+                        : BauhausDesign.surfaceWhite,
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                    border: Border.all(color: BauhausDesign.neutral),
+                  ),
+                  child: Text(
                     isVerified
-                        ? Icons.verified_user_rounded
-                        : Icons.mark_email_unread_outlined,
-                    color: BauhausDesign.neutral,
-                    size: 18,
+                        ? l10n.verified.toUpperCase()
+                        : l10n.unverified.toUpperCase(),
+                    style: BauhausDesign.getTextTheme(context).labelSmall
+                        ?.copyWith(
+                          color: BauhausDesign.neutral,
+                          fontWeight: FontWeight.w900,
+                        ),
                   ),
-                  const SizedBox(width: BauhausDesign.space2),
-                  Expanded(
-                    child: Text(
-                      _organizationVerificationTitle(l10n),
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelLarge
-                          ?.copyWith(
-                            color: BauhausDesign.neutral,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 0.8,
-                          ),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: BauhausDesign.space2,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isVerified
-                          ? BauhausDesign.success
-                          : BauhausDesign.surfaceWhite,
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusSm),
-                      border: Border.all(color: BauhausDesign.neutral),
-                    ),
-                    child: Text(
-                      isVerified
-                          ? l10n.verified.toUpperCase()
-                          : l10n.unverified.toUpperCase(),
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelSmall
-                          ?.copyWith(
-                            color: BauhausDesign.neutral,
-                            fontWeight: FontWeight.w900,
-                          ),
-                    ),
-                  ),
-                ],
+                ),
+              ],
+            ),
+            const SizedBox(height: BauhausDesign.space2),
+            Text(
+              _organizationVerificationMessage(l10n),
+              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                color: BauhausDesign.neutral,
+                fontWeight: FontWeight.w700,
               ),
-              const SizedBox(height: BauhausDesign.space2),
-              Text(
-                _organizationVerificationMessage(l10n),
-                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+            ),
+            const SizedBox(height: BauhausDesign.space3),
+            Wrap(
+              spacing: BauhausDesign.space2,
+              runSpacing: BauhausDesign.space2,
+              children: [
+                OutlinedButton.icon(
+                  onPressed: _navigateToEdit,
+                  icon: const Icon(Icons.edit_outlined, size: 16),
+                  label: Text(
+                    (_organizationContactEmail == null
+                            ? l10n.setOrganizationEmail
+                            : l10n.editContactDetails)
+                        .toUpperCase(),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: BauhausDesign.neutral,
+                    backgroundColor: BauhausDesign.surfaceWhite,
+                    side: const BorderSide(
                       color: BauhausDesign.neutral,
-                      fontWeight: FontWeight.w700,
+                      width: 2,
                     ),
-              ),
-              const SizedBox(height: BauhausDesign.space3),
-              Wrap(
-                spacing: BauhausDesign.space2,
-                runSpacing: BauhausDesign.space2,
-                children: [
-                  OutlinedButton.icon(
-                    onPressed: _navigateToEdit,
-                    icon: const Icon(Icons.edit_outlined, size: 16),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: BauhausDesign.space3,
+                      vertical: BauhausDesign.space2,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        BauhausDesign.radiusMd,
+                      ),
+                    ),
+                  ),
+                ),
+                if (_hasDedicatedOrganizationEmail &&
+                    !_organizationEmailVerified)
+                  FilledButton.icon(
+                    onPressed: _sendingOrganizationVerification
+                        ? null
+                        : _sendOrganizationVerificationEmail,
+                    icon: Icon(
+                      _organizationVerificationSentAt == null
+                          ? Icons.mark_email_read_outlined
+                          : Icons.refresh_rounded,
+                      size: 16,
+                    ),
                     label: Text(
-                      (_organizationContactEmail == null
-                              ? l10n.setOrganizationEmail
-                              : l10n.editContactDetails)
+                      (_organizationVerificationSentAt == null
+                              ? l10n.sendVerification
+                              : l10n.resendVerification)
                           .toUpperCase(),
                     ),
-                    style: OutlinedButton.styleFrom(
+                    style: FilledButton.styleFrom(
                       foregroundColor: BauhausDesign.neutral,
-                      backgroundColor: BauhausDesign.surfaceWhite,
-                      side: const BorderSide(
-                          color: BauhausDesign.neutral, width: 2),
+                      backgroundColor: BauhausDesign.accent,
                       padding: const EdgeInsets.symmetric(
                         horizontal: BauhausDesign.space3,
                         vertical: BauhausDesign.space2,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusMd),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusMd,
+                        ),
                       ),
                     ),
                   ),
-                  if (_hasDedicatedOrganizationEmail &&
-                      !_organizationEmailVerified)
-                    FilledButton.icon(
-                      onPressed: _sendingOrganizationVerification
-                          ? null
-                          : _sendOrganizationVerificationEmail,
-                      icon: Icon(
-                        _organizationVerificationSentAt == null
-                            ? Icons.mark_email_read_outlined
-                            : Icons.refresh_rounded,
-                        size: 16,
-                      ),
-                      label: Text(
-                        (_organizationVerificationSentAt == null
-                                ? l10n.sendVerification
-                                : l10n.resendVerification)
-                            .toUpperCase(),
-                      ),
-                      style: FilledButton.styleFrom(
-                        foregroundColor: BauhausDesign.neutral,
-                        backgroundColor: BauhausDesign.accent,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: BauhausDesign.space3,
-                          vertical: BauhausDesign.space2,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(BauhausDesign.radiusMd),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          ),
-        ));
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _loadOrganization({bool forceRefresh = false}) async {
@@ -442,18 +445,18 @@ class _OrganizationDetailsViewState
           SnackBar(
             content: Text(
               'Session expired. Please sign in again.',
-              style: BauhausDesign.getTextTheme(context)
-                  .bodyMedium
-                  ?.copyWith(color: BauhausDesign.surfaceWhite),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
             ),
             backgroundColor: BauhausDesign.warning,
           ),
         );
 
-        Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(
-          Routes.login,
-          (route) => false,
-        );
+        Navigator.of(
+          context,
+          rootNavigator: true,
+        ).pushNamedAndRemoveUntil(Routes.login, (route) => false);
         return;
       }
 
@@ -505,9 +508,9 @@ class _OrganizationDetailsViewState
         SnackBar(
           content: Text(
             AppLocalizations.of(context)!.organizationSaved,
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.surfaceWhite,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
           ),
           backgroundColor: BauhausDesign.success,
         ),
@@ -527,9 +530,7 @@ class _OrganizationDetailsViewState
     final code = (_organization?['code'] ?? widget.organizationCode ?? '')
         .toString()
         .trim();
-    return DeepLinkHandler.generateCustomSchemeSignupLink(
-      code,
-    );
+    return DeepLinkHandler.generateCustomSchemeSignupLink(code);
   }
 
   Future<void> _shareOrganizationCode() async {
@@ -539,7 +540,8 @@ class _OrganizationDetailsViewState
     final code = (_organization?['code'] ?? widget.organizationCode ?? '')
         .toString()
         .trim();
-    final shareText = '''
+    final shareText =
+        '''
 ${l10n.joinOrganizationMessage(widget.organizationName ?? l10n.organization)}
 
 ${l10n.organizationCodeParam(code)}
@@ -558,9 +560,8 @@ $appLink
     final shareOrigin = (overlayRenderBox != null && overlayRenderBox.hasSize)
         ? (Offset.zero & overlayRenderBox.size)
         : (currentRenderBox != null && currentRenderBox.hasSize)
-            ? (currentRenderBox.localToGlobal(Offset.zero) &
-                currentRenderBox.size)
-            : const Rect.fromLTWH(0, 0, 1, 1);
+        ? (currentRenderBox.localToGlobal(Offset.zero) & currentRenderBox.size)
+        : const Rect.fromLTWH(0, 0, 1, 1);
 
     try {
       await Share.share(
@@ -576,9 +577,9 @@ $appLink
         SnackBar(
           content: Text(
             'Share failed. Invite text copied to clipboard.',
-            style: BauhausDesign.getTextTheme(context)
-                .bodyMedium
-                ?.copyWith(color: BauhausDesign.surfaceWhite),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
           ),
           backgroundColor: BauhausDesign.warning,
         ),
@@ -591,8 +592,10 @@ $appLink
         .toString()
         .trim();
     if (code.isEmpty) return;
-    await _copyValueToClipboard(code,
-        successMessage: 'Organization code copied');
+    await _copyValueToClipboard(
+      code,
+      successMessage: 'Organization code copied',
+    );
   }
 
   Future<void> _copyValueToClipboard(
@@ -607,22 +610,21 @@ $appLink
       SnackBar(
         content: Text(
           successMessage,
-          style: BauhausDesign.getTextTheme(context)
-              .bodyMedium
-              ?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
         ),
         backgroundColor: BauhausDesign.success,
       ),
     );
   }
 
-  Future<void> _launchExternalUri(
-    Uri uri, {
-    String? fallbackCopyValue,
-  }) async {
+  Future<void> _launchExternalUri(Uri uri, {String? fallbackCopyValue}) async {
     try {
-      final launched =
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
+      final launched = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
       if (!launched && fallbackCopyValue != null) {
         await _copyValueToClipboard(fallbackCopyValue);
       }
@@ -638,10 +640,7 @@ $appLink
     final normalized = email.trim();
     if (!_hasDisplayValue(normalized)) return;
     await _launchExternalUri(
-      Uri(
-        scheme: 'mailto',
-        path: normalized,
-      ),
+      Uri(scheme: 'mailto', path: normalized),
       fallbackCopyValue: normalized,
     );
   }
@@ -650,10 +649,7 @@ $appLink
     final normalized = phone.trim();
     if (!_hasDisplayValue(normalized)) return;
     await _launchExternalUri(
-      Uri(
-        scheme: 'tel',
-        path: normalized,
-      ),
+      Uri(scheme: 'tel', path: normalized),
       fallbackCopyValue: normalized,
     );
   }
@@ -664,10 +660,7 @@ $appLink
     final normalized = raw.startsWith('http://') || raw.startsWith('https://')
         ? raw
         : 'https://$raw';
-    await _launchExternalUri(
-      Uri.parse(normalized),
-      fallbackCopyValue: raw,
-    );
+    await _launchExternalUri(Uri.parse(normalized), fallbackCopyValue: raw);
   }
 
   String _composeFullAddress(Map<String, dynamic> address) {
@@ -676,15 +669,23 @@ $appLink
     final state = (address['state'] ?? '').toString().trim();
     final postcode = (address['postcode'] ?? '').toString().trim();
     final rawCountry = (address['country'] ?? '').toString().trim();
-    final hasAddressCore =
-        [street, city, state, postcode].any((part) => part.isNotEmpty);
+    final hasAddressCore = [
+      street,
+      city,
+      state,
+      postcode,
+    ].any((part) => part.isNotEmpty);
     final country = rawCountry.isNotEmpty
         ? rawCountry
         : (hasAddressCore ? 'Australia' : '');
 
-    return [street, city, state, postcode, country]
-        .where((part) => part.isNotEmpty)
-        .join(', ');
+    return [
+      street,
+      city,
+      state,
+      postcode,
+      country,
+    ].where((part) => part.isNotEmpty).join(', ');
   }
 
   Future<void> _loadLocation() async {
@@ -700,7 +701,9 @@ $appLink
         if (mounted) {
           setState(() {
             _organizationLocation = latlong2.LatLng(
-                locations.first.latitude, locations.first.longitude);
+              locations.first.latitude,
+              locations.first.longitude,
+            );
           });
         }
       }
@@ -715,9 +718,9 @@ $appLink
         SnackBar(
           content: Text(
             AppLocalizations.of(context)!.locationUnavailable,
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.surfaceWhite,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
           ),
           backgroundColor: BauhausDesign.error,
         ),
@@ -735,7 +738,8 @@ $appLink
         backgroundColor: BauhausDesign.surfaceWhite,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
-              top: Radius.circular(BauhausDesign.radiusLg)),
+            top: Radius.circular(BauhausDesign.radiusLg),
+          ),
         ),
         builder: (BuildContext context) {
           return SafeArea(
@@ -759,33 +763,36 @@ $appLink
                       style: BauhausDesign.getTextTheme(context).titleLarge,
                     ),
                     const SizedBox(height: BauhausDesign.space4),
-                    ...availableMaps.map((map) => ListTile(
-                          onTap: () {
-                            Navigator.pop(context);
-                            map.showMarker(
-                              coords: Coords(
-                                _organizationLocation!.latitude,
-                                _organizationLocation!.longitude,
-                              ),
-                              title: _organization?['name'] ??
-                                  AppLocalizations.of(context)!.organization,
-                            );
-                          },
-                          leading: ClipRRect(
-                            borderRadius:
-                                BorderRadius.circular(BauhausDesign.radiusSm),
-                            child: SvgPicture.asset(
-                              map.icon,
-                              width: 32,
-                              height: 32,
+                    ...availableMaps.map(
+                      (map) => ListTile(
+                        onTap: () {
+                          Navigator.pop(context);
+                          map.showMarker(
+                            coords: Coords(
+                              _organizationLocation!.latitude,
+                              _organizationLocation!.longitude,
                             ),
+                            title:
+                                _organization?['name'] ??
+                                AppLocalizations.of(context)!.organization,
+                          );
+                        },
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                            BauhausDesign.radiusSm,
                           ),
-                          title: Text(
-                            map.mapName,
-                            style:
-                                BauhausDesign.getTextTheme(context).bodyLarge,
+                          child: SvgPicture.asset(
+                            map.icon,
+                            width: 32,
+                            height: 32,
                           ),
-                        )),
+                        ),
+                        title: Text(
+                          map.mapName,
+                          style: BauhausDesign.getTextTheme(context).bodyLarge,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -817,12 +824,13 @@ $appLink
               const SizedBox(height: BauhausDesign.space2),
               Text(
                 AppLocalizations.of(context)!.scanToJoin(
-                    widget.organizationName ??
-                        AppLocalizations.of(context)!.organization),
+                  widget.organizationName ??
+                      AppLocalizations.of(context)!.organization,
+                ),
                 textAlign: TextAlign.center,
-                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.textMuted,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
               ),
               const SizedBox(height: BauhausDesign.space6),
               Container(
@@ -887,14 +895,14 @@ $appLink
     final l10n = AppLocalizations.of(context)!;
     final userRole = ref.watch(app_providers.userRoleProvider);
     final isEmployee = userRole == UserRole.employee;
-    
+
     // Data extraction
     final name =
         _organization?['name'] ?? widget.organizationName ?? l10n.organization;
     final tradingName =
         (_organization?['tradingName']?.toString().isNotEmpty == true)
-            ? _organization!['tradingName']
-            : _organization?['name'] ?? l10n.notSet;
+        ? _organization!['tradingName']
+        : _organization?['name'] ?? l10n.notSet;
     final code = _organization?['code'] ?? widget.organizationCode ?? '...';
     final abn = _organization?['abn'] ?? l10n.notSet;
     final address = _organization?['address'] as Map<String, dynamic>? ?? {};
@@ -919,10 +927,10 @@ $appLink
         title: Text(
           l10n.organizationDetails.toUpperCase(),
           style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                letterSpacing: 1.0,
-                color: BauhausDesign.surfaceWhite,
-                fontWeight: FontWeight.w900,
-              ),
+            letterSpacing: 1.0,
+            color: BauhausDesign.surfaceWhite,
+            fontWeight: FontWeight.w900,
+          ),
         ),
         centerTitle: true,
         actions: [
@@ -935,10 +943,7 @@ $appLink
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(
-            color: BauhausDesign.neutral,
-            height: 1,
-          ),
+          child: Container(color: BauhausDesign.neutral, height: 1),
         ),
       ),
       body: _loading
@@ -968,18 +973,30 @@ $appLink
                       ),
                       child: Row(
                         children: [
-                          _buildTab(AppLocalizations.of(context)!.generalTab,
-                              'General', _selectedTab == 'General'),
+                          _buildTab(
+                            AppLocalizations.of(context)!.generalTab,
+                            'General',
+                            _selectedTab == 'General',
+                          ),
                           const SizedBox(width: BauhausDesign.space3),
-                          _buildTab(AppLocalizations.of(context)!.contactTab,
-                              'Contact', _selectedTab == 'Contact'),
+                          _buildTab(
+                            AppLocalizations.of(context)!.contactTab,
+                            'Contact',
+                            _selectedTab == 'Contact',
+                          ),
                           if (!isEmployee) ...[
                             const SizedBox(width: BauhausDesign.space3),
-                            _buildTab(AppLocalizations.of(context)!.banking,
-                                'Banking', _selectedTab == 'Banking'),
+                            _buildTab(
+                              AppLocalizations.of(context)!.banking,
+                              'Banking',
+                              _selectedTab == 'Banking',
+                            ),
                             const SizedBox(width: BauhausDesign.space3),
-                            _buildTab(AppLocalizations.of(context)!.ndisTab,
-                                'NDIS', _selectedTab == 'NDIS'),
+                            _buildTab(
+                              AppLocalizations.of(context)!.ndisTab,
+                              'NDIS',
+                              _selectedTab == 'NDIS',
+                            ),
                           ],
                         ],
                       ),
@@ -1000,27 +1017,35 @@ $appLink
                         title: AppLocalizations.of(context)!.generalInformation,
                         icon: Icons.info_outline,
                         iconColor: BauhausDesign.primary,
-                        iconBackgroundColor:
-                            BauhausDesign.primary.withOpacity(0.1),
+                        iconBackgroundColor: BauhausDesign.primary.withOpacity(
+                          0.1,
+                        ),
                         children: [
                           _buildDetailRow(
-                              context,
-                              AppLocalizations.of(context)!.tradingNameLabel,
-                              tradingName),
+                            context,
+                            AppLocalizations.of(context)!.tradingNameLabel,
+                            tradingName,
+                          ),
                           _buildDetailRow(
-                              context,
-                              AppLocalizations.of(context)!.companyNameLabel,
-                              name), // Fallback if same
-                          _buildDetailRow(context,
-                              AppLocalizations.of(context)!.abnLabel, abn),
+                            context,
+                            AppLocalizations.of(context)!.companyNameLabel,
+                            name,
+                          ), // Fallback if same
+                          _buildDetailRow(
+                            context,
+                            AppLocalizations.of(context)!.abnLabel,
+                            abn,
+                          ),
                           // Map Section
                           const SizedBox(height: BauhausDesign.space4),
                           _buildMetaLabel(
-                              AppLocalizations.of(context)!.location),
+                            AppLocalizations.of(context)!.location,
+                          ),
                           const SizedBox(height: BauhausDesign.space2),
                           _buildLocationPanel(
-                            fullAddress:
-                                fullAddress.isEmpty ? l10n.notSet : fullAddress,
+                            fullAddress: fullAddress.isEmpty
+                                ? l10n.notSet
+                                : fullAddress,
                           ),
                         ],
                       ),
@@ -1034,8 +1059,9 @@ $appLink
                         title: AppLocalizations.of(context)!.contactDetails,
                         icon: Icons.contact_phone_outlined,
                         iconColor: BauhausDesign.accent,
-                        iconBackgroundColor:
-                            BauhausDesign.accent.withOpacity(0.16),
+                        iconBackgroundColor: BauhausDesign.accent.withOpacity(
+                          0.16,
+                        ),
                         children: [
                           _buildVerificationCallout(),
                           _buildDetailRow(
@@ -1054,9 +1080,9 @@ $appLink
                           ),
                           _buildDetailRow(
                             context,
-                            AppLocalizations.of(context)!
-                                .phoneNumber
-                                .toUpperCase(),
+                            AppLocalizations.of(
+                              context,
+                            )!.phoneNumber.toUpperCase(),
                             contact['phone'] ?? l10n.notSet,
                             isPhone: true,
                             showCopy: true,
@@ -1075,240 +1101,276 @@ $appLink
                         const SizedBox(height: BauhausDesign.space4),
 
                         // Banking Details
-                      _buildSectionCard(
-                        context,
-                        key: _bankingKey,
-                        title: AppLocalizations.of(context)!.bankDetailsTitle,
-                        icon: Icons.account_balance_outlined,
-                        iconColor: BauhausDesign.warning,
-                        iconBackgroundColor:
-                            BauhausDesign.warning.withOpacity(0.1),
-                        trailing: Builder(builder: (context) {
-                          final isVerified = bank['isVerified'] == true;
-                          return Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: isVerified
-                                  ? BauhausDesign.success.withOpacity(0.1)
-                                  : BauhausDesign.error.withOpacity(0.1),
-                              borderRadius:
-                                  BorderRadius.circular(BauhausDesign.radiusSm),
-                              border: Border.all(
+                        _buildSectionCard(
+                          context,
+                          key: _bankingKey,
+                          title: AppLocalizations.of(context)!.bankDetailsTitle,
+                          icon: Icons.account_balance_outlined,
+                          iconColor: BauhausDesign.warning,
+                          iconBackgroundColor: BauhausDesign.warning
+                              .withOpacity(0.1),
+                          trailing: Builder(
+                            builder: (context) {
+                              final isVerified = bank['isVerified'] == true;
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
                                   color: isVerified
-                                      ? BauhausDesign.success.withOpacity(0.5)
-                                      : BauhausDesign.error.withOpacity(0.5)),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (isVerified) ...[
-                                  const Icon(Icons.check_circle,
-                                      size: 12, color: BauhausDesign.success),
-                                  const SizedBox(width: 4),
-                                ],
-                                Text(
-                                  isVerified
-                                      ? AppLocalizations.of(context)!
-                                          .verified
-                                          .toUpperCase()
-                                      : AppLocalizations.of(context)!
-                                          .unverified
-                                          .toUpperCase(),
-                                  style: BauhausDesign.getTextTheme(context)
-                                      .labelSmall
-                                      ?.copyWith(
-                                        color: isVerified
-                                            ? BauhausDesign.success
-                                            : BauhausDesign.error,
-                                        fontWeight: FontWeight.bold,
+                                      ? BauhausDesign.success.withOpacity(0.1)
+                                      : BauhausDesign.error.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(
+                                    BauhausDesign.radiusSm,
+                                  ),
+                                  border: Border.all(
+                                    color: isVerified
+                                        ? BauhausDesign.success.withOpacity(0.5)
+                                        : BauhausDesign.error.withOpacity(0.5),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (isVerified) ...[
+                                      const Icon(
+                                        Icons.check_circle,
+                                        size: 12,
+                                        color: BauhausDesign.success,
                                       ),
+                                      const SizedBox(width: 4),
+                                    ],
+                                    Text(
+                                      isVerified
+                                          ? AppLocalizations.of(
+                                              context,
+                                            )!.verified.toUpperCase()
+                                          : AppLocalizations.of(
+                                              context,
+                                            )!.unverified.toUpperCase(),
+                                      style: BauhausDesign.getTextTheme(context)
+                                          .labelSmall
+                                          ?.copyWith(
+                                            color: isVerified
+                                                ? BauhausDesign.success
+                                                : BauhausDesign.error,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                          children: [
+                            _buildInstitutionRow(
+                              context,
+                              bank['bankName'] ?? l10n.notSet,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildDetailRow(
+                                    context,
+                                    AppLocalizations.of(context)!.bsbLabel,
+                                    bank['bsb'] ?? l10n.notSet,
+                                  ),
+                                ),
+                                const SizedBox(width: BauhausDesign.space3),
+                                Expanded(
+                                  child: _buildDetailRow(
+                                    context,
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.accountNoLabel,
+                                    bank['accountNumber'] ?? l10n.notSet,
+                                  ),
                                 ),
                               ],
                             ),
-                          );
-                        }),
-                        children: [
-                          _buildInstitutionRow(
-                              context, bank['bankName'] ?? l10n.notSet),
-                          Row(
-                            children: [
-                              Expanded(
-                                  child: _buildDetailRow(
-                                      context,
-                                      AppLocalizations.of(context)!.bsbLabel,
-                                      bank['bsb'] ?? l10n.notSet)),
-                              const SizedBox(width: BauhausDesign.space3),
-                              Expanded(
-                                  child: _buildDetailRow(
-                                      context,
-                                      AppLocalizations.of(context)!
-                                          .accountNoLabel,
-                                      bank['accountNumber'] ?? l10n.notSet)),
-                            ],
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
 
-                      const SizedBox(height: BauhausDesign.space4),
+                        const SizedBox(height: BauhausDesign.space4),
 
-                      // NDIS Registration
-                      _buildSectionCard(
-                        context,
-                        key: _ndisKey,
-                        title: AppLocalizations.of(context)!.ndisRegistration,
-                        icon: Icons.medical_services_outlined,
-                        iconColor: BauhausDesign.secondary,
-                        iconBackgroundColor:
-                            BauhausDesign.secondary.withOpacity(0.12),
-                        children: [
-                          if (ndis['isRegistered'] == true) ...[
-                            Builder(builder: (context) {
-                              final status = _getNdisStatus(ndis);
-                              return Container(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: BauhausDesign.space4,
-                                    horizontal: BauhausDesign.space4),
-                                decoration: BoxDecoration(
-                                  color: BauhausDesign.surfaceWhite,
-                                  borderRadius: BorderRadius.circular(
-                                      BauhausDesign.radiusMd),
-                                  border:
-                                      Border.all(color: BauhausDesign.neutral),
-                                ),
-                                child: IntrinsicHeight(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              AppLocalizations.of(context)!
-                                                  .status,
-                                              style: BauhausDesign.getTextTheme(
-                                                      context)
-                                                  .labelSmall
-                                                  ?.copyWith(
-                                                      color: BauhausDesign
-                                                          .textMuted),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Row(
+                        // NDIS Registration
+                        _buildSectionCard(
+                          context,
+                          key: _ndisKey,
+                          title: AppLocalizations.of(context)!.ndisRegistration,
+                          icon: Icons.medical_services_outlined,
+                          iconColor: BauhausDesign.secondary,
+                          iconBackgroundColor: BauhausDesign.secondary
+                              .withOpacity(0.12),
+                          children: [
+                            if (ndis['isRegistered'] == true) ...[
+                              Builder(
+                                builder: (context) {
+                                  final status = _getNdisStatus(ndis);
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: BauhausDesign.space4,
+                                      horizontal: BauhausDesign.space4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: BauhausDesign.surfaceWhite,
+                                      borderRadius: BorderRadius.circular(
+                                        BauhausDesign.radiusMd,
+                                      ),
+                                      border: Border.all(
+                                        color: BauhausDesign.neutral,
+                                      ),
+                                    ),
+                                    child: IntrinsicHeight(
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
-                                                Container(
-                                                  width: 8,
-                                                  height: 8,
-                                                  decoration: BoxDecoration(
-                                                    color: status['color']
-                                                        as Color,
-                                                    shape: BoxShape.circle,
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 6),
                                                 Text(
-                                                  status['text'] as String,
-                                                  style: BauhausDesign
-                                                          .getTextTheme(context)
-                                                      .bodyMedium
-                                                      ?.copyWith(
-                                                        color: status['color']
-                                                            as Color,
+                                                  AppLocalizations.of(
+                                                    context,
+                                                  )!.status,
+                                                  style:
+                                                      BauhausDesign.getTextTheme(
+                                                        context,
+                                                      ).labelSmall?.copyWith(
+                                                        color: BauhausDesign
+                                                            .textMuted,
+                                                      ),
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      width: 8,
+                                                      height: 8,
+                                                      decoration: BoxDecoration(
+                                                        color:
+                                                            status['color']
+                                                                as Color,
+                                                        shape: BoxShape.circle,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 6),
+                                                    Text(
+                                                      status['text'] as String,
+                                                      style:
+                                                          BauhausDesign.getTextTheme(
+                                                            context,
+                                                          ).bodyMedium?.copyWith(
+                                                            color:
+                                                                status['color']
+                                                                    as Color,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          VerticalDivider(
+                                            color: BauhausDesign.neutral,
+                                            thickness: 1,
+                                            width: 24,
+                                          ),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              children: [
+                                                Text(
+                                                  AppLocalizations.of(
+                                                    context,
+                                                  )!.expires,
+                                                  style:
+                                                      BauhausDesign.getTextTheme(
+                                                        context,
+                                                      ).labelSmall?.copyWith(
+                                                        color: BauhausDesign
+                                                            .textMuted,
+                                                      ),
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  _formatDate(
+                                                    ndis['renewalDate'] ??
+                                                        ndis['expiryDate'],
+                                                  ),
+                                                  style:
+                                                      BauhausDesign.getTextTheme(
+                                                        context,
+                                                      ).bodyMedium?.copyWith(
                                                         fontWeight:
                                                             FontWeight.bold,
                                                       ),
                                                 ),
                                               ],
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
-                                      VerticalDivider(
-                                        color: BauhausDesign.neutral,
-                                        thickness: 1,
-                                        width: 24,
-                                      ),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              AppLocalizations.of(context)!
-                                                  .expires,
-                                              style: BauhausDesign.getTextTheme(
-                                                      context)
-                                                  .labelSmall
-                                                  ?.copyWith(
-                                                      color: BauhausDesign
-                                                          .textMuted),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              _formatDate(ndis['renewalDate'] ??
-                                                  ndis['expiryDate']),
-                                              style: BauhausDesign.getTextTheme(
-                                                      context)
-                                                  .bodyMedium
-                                                  ?.copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
+                                    ),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: BauhausDesign.space4),
+                              _buildDetailRow(
+                                context,
+                                AppLocalizations.of(
+                                  context,
+                                )!.registrationNumberLabel,
+                                ndis['registrationNumber'] ?? l10n.notSet,
+                                showCopy: true,
+                              ),
+                            ] else ...[
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: BauhausDesign.space3,
+                                  vertical: BauhausDesign.space3,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: BauhausDesign.surfaceOffWhite,
+                                  borderRadius: BorderRadius.circular(
+                                    BauhausDesign.radiusMd,
+                                  ),
+                                  border: Border.all(
+                                    color: BauhausDesign.neutral,
                                   ),
                                 ),
-                              );
-                            }),
-                            const SizedBox(height: BauhausDesign.space4),
-                            _buildDetailRow(
-                                context,
-                                AppLocalizations.of(context)!
-                                    .registrationNumberLabel,
-                                ndis['registrationNumber'] ?? l10n.notSet,
-                                showCopy: true),
-                          ] else ...[
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: BauhausDesign.space3,
-                                vertical: BauhausDesign.space3,
-                              ),
-                              decoration: BoxDecoration(
-                                color: BauhausDesign.surfaceOffWhite,
-                                borderRadius: BorderRadius.circular(
-                                    BauhausDesign.radiusMd),
-                                border:
-                                    Border.all(color: BauhausDesign.neutral),
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 10,
-                                    height: 10,
-                                    decoration: const BoxDecoration(
-                                      color: BauhausDesign.neutral,
-                                      shape: BoxShape.circle,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 10,
+                                      height: 10,
+                                      decoration: const BoxDecoration(
+                                        color: BauhausDesign.neutral,
+                                        shape: BoxShape.circle,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(width: BauhausDesign.space2),
-                                  Text(
-                                    AppLocalizations.of(context)!.notRegistered,
-                                    style: BauhausDesign.getTextTheme(context)
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                  ),
-                                ],
+                                    const SizedBox(width: BauhausDesign.space2),
+                                    Text(
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.notRegistered,
+                                      style: BauhausDesign.getTextTheme(context)
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
+                            ],
                           ],
-                        ],
-                      ),
+                        ),
                       ],
                       const SizedBox(height: BauhausDesign.space6),
                     ],
@@ -1407,11 +1469,11 @@ $appLink
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
                         subtitle,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
+                        style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
-                              color:
-                                  BauhausDesign.surfaceWhite.withOpacity(0.85),
+                              color: BauhausDesign.surfaceWhite.withOpacity(
+                                0.85,
+                              ),
                             ),
                       ),
                       const SizedBox(height: BauhausDesign.space2),
@@ -1424,16 +1486,16 @@ $appLink
                           color: isVerified
                               ? BauhausDesign.success
                               : BauhausDesign.accent,
-                          borderRadius:
-                              BorderRadius.circular(BauhausDesign.radiusSm),
+                          borderRadius: BorderRadius.circular(
+                            BauhausDesign.radiusSm,
+                          ),
                           border: Border.all(color: BauhausDesign.neutral),
                         ),
                         child: Text(
                           isVerified
                               ? l10n.verified.toUpperCase()
                               : l10n.unverified.toUpperCase(),
-                          style: BauhausDesign.getTextTheme(context)
-                              .labelSmall
+                          style: BauhausDesign.getTextTheme(context).labelSmall
                               ?.copyWith(
                                 color: BauhausDesign.neutral,
                                 fontWeight: FontWeight.w900,
@@ -1464,8 +1526,7 @@ $appLink
                     children: [
                       Text(
                         l10n.organizationCode.toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
+                        style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
                               color: BauhausDesign.primary,
                               letterSpacing: 1.2,
@@ -1475,8 +1536,7 @@ $appLink
                       const SizedBox(height: BauhausDesign.space2),
                       Text(
                         code,
-                        style: BauhausDesign.getTextTheme(context)
-                            .headlineLarge
+                        style: BauhausDesign.getTextTheme(context).headlineLarge
                             ?.copyWith(
                               fontWeight: FontWeight.w900,
                               letterSpacing: 2,
@@ -1485,9 +1545,9 @@ $appLink
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
                         l10n.shareCodeInvite,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
-                            ?.copyWith(color: BauhausDesign.textMuted),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                       ),
                     ],
                   ),
@@ -1557,9 +1617,9 @@ $appLink
             Text(
               title,
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                    color: BauhausDesign.neutral,
-                    fontWeight: FontWeight.w900,
-                  ),
+                color: BauhausDesign.neutral,
+                fontWeight: FontWeight.w900,
+              ),
             ),
           ],
         ),
@@ -1571,16 +1631,14 @@ $appLink
     return Text(
       text.toUpperCase(),
       style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-            color: BauhausDesign.secondary,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 1.1,
-          ),
+        color: BauhausDesign.secondary,
+        fontWeight: FontWeight.w900,
+        letterSpacing: 1.1,
+      ),
     );
   }
 
-  Widget _buildMapCtaChip({
-    required VoidCallback onTap,
-  }) {
+  Widget _buildMapCtaChip({required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -1606,9 +1664,9 @@ $appLink
             Text(
               AppLocalizations.of(context)!.openMap.toUpperCase(),
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.neutral,
-                    fontWeight: FontWeight.w900,
-                  ),
+                color: BauhausDesign.neutral,
+                fontWeight: FontWeight.w900,
+              ),
             ),
           ],
         ),
@@ -1622,10 +1680,7 @@ $appLink
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(
-          color: BauhausDesign.neutral,
-          width: 2,
-        ),
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
         color: BauhausDesign.surfaceOffWhite,
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
@@ -1647,16 +1702,16 @@ $appLink
                     ),
                     decoration: BoxDecoration(
                       color: BauhausDesign.surfaceWhite,
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusSm),
+                      borderRadius: BorderRadius.circular(
+                        BauhausDesign.radiusSm,
+                      ),
                       border: Border.all(color: BauhausDesign.neutral),
                     ),
                     child: Text(
                       hasLocation
                           ? l10n.location.toUpperCase()
                           : l10n.locationNotSet.toUpperCase(),
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelSmall
+                      style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
                             color: BauhausDesign.neutral,
                             fontWeight: FontWeight.w900,
@@ -1681,10 +1736,7 @@ $appLink
             decoration: const BoxDecoration(
               color: BauhausDesign.surfaceWhite,
               border: Border(
-                top: BorderSide(
-                  color: BauhausDesign.neutral,
-                  width: 2,
-                ),
+                top: BorderSide(color: BauhausDesign.neutral, width: 2),
               ),
             ),
             child: Row(
@@ -1699,11 +1751,9 @@ $appLink
                 Expanded(
                   child: Text(
                     fullAddress,
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
-                        ?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                   ),
                 ),
               ],
@@ -1723,9 +1773,9 @@ $appLink
           Center(
             child: Text(
               AppLocalizations.of(context)!.locationNotSet,
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.textMuted,
-                  ),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
             ),
           ),
         ],
@@ -1807,10 +1857,7 @@ $appLink
     }
   }
 
-  Color _tabTextColorFor(
-    String key, {
-    required bool isSelected,
-  }) {
+  Color _tabTextColorFor(String key, {required bool isSelected}) {
     if (!isSelected) return BauhausDesign.textMuted;
     final color = _tabColorFor(key);
     if (color == BauhausDesign.accent || color.computeLuminance() > 0.6) {
@@ -1854,10 +1901,10 @@ $appLink
             Text(
               label.toUpperCase(),
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: _tabTextColorFor(key, isSelected: isSelected),
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 0.8,
-                  ),
+                color: _tabTextColorFor(key, isSelected: isSelected),
+                fontWeight: FontWeight.w900,
+                letterSpacing: 0.8,
+              ),
             ),
           ],
         ),
@@ -1908,10 +1955,12 @@ $appLink
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: iconBackgroundColor ??
+                        color:
+                            iconBackgroundColor ??
                             accentColor.withOpacity(0.15),
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusSm),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusSm,
+                        ),
                         border: Border.all(color: BauhausDesign.neutral),
                       ),
                       child: Icon(icon, color: accentColor, size: 20),
@@ -1920,8 +1969,7 @@ $appLink
                     Expanded(
                       child: Text(
                         title.toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
+                        style: BauhausDesign.getTextTheme(context).labelLarge
                             ?.copyWith(
                               fontWeight: FontWeight.w900,
                               letterSpacing: 1.0,
@@ -1943,8 +1991,9 @@ $appLink
 
   Widget _buildInstitutionRow(BuildContext context, String bankName) {
     final l10n = AppLocalizations.of(context)!;
-    final normalizedName =
-        bankName.trim().isEmpty ? l10n.notSet : bankName.trim();
+    final normalizedName = bankName.trim().isEmpty
+        ? l10n.notSet
+        : bankName.trim();
     final hasInstitution = _hasDisplayValue(normalizedName);
     String initials = '';
     if (hasInstitution) {
@@ -1986,9 +2035,9 @@ $appLink
               child: Text(
                 initials,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                      color: BauhausDesign.neutral,
-                      fontWeight: FontWeight.w900,
-                    ),
+                  color: BauhausDesign.neutral,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
             ),
             Expanded(
@@ -1997,8 +2046,7 @@ $appLink
                 children: [
                   Text(
                     l10n.institutionLabel.toUpperCase(),
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelSmall
+                    style: BauhausDesign.getTextTheme(context).labelSmall
                         ?.copyWith(
                           color: BauhausDesign.secondary,
                           fontWeight: FontWeight.w900,
@@ -2008,13 +2056,13 @@ $appLink
                   const SizedBox(height: BauhausDesign.space1),
                   Text(
                     normalizedName,
-                    style:
-                        BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: hasInstitution
-                                  ? BauhausDesign.textDark
-                                  : BauhausDesign.textMuted,
-                            ),
+                    style: BauhausDesign.getTextTheme(context).bodyLarge
+                        ?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: hasInstitution
+                              ? BauhausDesign.textDark
+                              : BauhausDesign.textMuted,
+                        ),
                   ),
                 ],
               ),
@@ -2030,7 +2078,7 @@ $appLink
     if (dateStr == null) {
       return {
         'text': AppLocalizations.of(context)!.active,
-        'color': BauhausDesign.success
+        'color': BauhausDesign.success,
       };
     }
 
@@ -2043,17 +2091,17 @@ $appLink
       if (expiry.isBefore(today)) {
         return {
           'text': AppLocalizations.of(context)!.expired,
-          'color': BauhausDesign.error
+          'color': BauhausDesign.error,
         };
       }
       return {
         'text': AppLocalizations.of(context)!.active,
-        'color': BauhausDesign.success
+        'color': BauhausDesign.success,
       };
     } catch (_) {
       return {
         'text': AppLocalizations.of(context)!.active,
-        'color': BauhausDesign.success
+        'color': BauhausDesign.success,
       };
     }
   }
@@ -2074,7 +2122,7 @@ $appLink
         'Sep',
         'Oct',
         'Nov',
-        'Dec'
+        'Dec',
       ];
       return '${date.day} ${months[date.month - 1]} ${date.year}';
     } catch (_) {
@@ -2114,8 +2162,7 @@ $appLink
                 children: [
                   Text(
                     label,
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelSmall
+                    style: BauhausDesign.getTextTheme(context).labelSmall
                         ?.copyWith(
                           color: BauhausDesign.secondary,
                           fontWeight: FontWeight.w900,
@@ -2144,8 +2191,7 @@ $appLink
                         )
                       : Text(
                           normalizedValue,
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodyLarge
+                          style: BauhausDesign.getTextTheme(context).bodyLarge
                               ?.copyWith(
                                 fontWeight: FontWeight.w700,
                                 color: hasValue
@@ -2261,10 +2307,7 @@ $appLink
           const SizedBox(height: 4),
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -2280,7 +2323,10 @@ class _SectionHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Container(
       height: height,
       decoration: BoxDecoration(

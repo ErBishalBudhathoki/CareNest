@@ -16,8 +16,9 @@ class ConfigRepository {
 
   Future<List<JobRoleModel>> getJobRoles(String organizationId) async {
     try {
-      final response =
-          await _apiMethod.get('api/config/job-roles/$organizationId');
+      final response = await _apiMethod.get(
+        'api/config/job-roles/$organizationId',
+      );
 
       if (response['success'] == true) {
         final List data = response['data'];
@@ -31,8 +32,9 @@ class ConfigRepository {
 
   Future<List<LeaveTypeModel>> getLeaveTypes(String organizationId) async {
     try {
-      final response =
-          await _apiMethod.get('api/config/leave-types/$organizationId');
+      final response = await _apiMethod.get(
+        'api/config/leave-types/$organizationId',
+      );
 
       if (response['success'] == true) {
         final List data = response['data'];

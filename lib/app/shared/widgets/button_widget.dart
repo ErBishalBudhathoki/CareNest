@@ -26,7 +26,9 @@ class ButtonWidget extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDisabled ? BauhausDesign.surfaceOffWhite : effectiveBackgroundColor,
+        color: isDisabled
+            ? BauhausDesign.surfaceOffWhite
+            : effectiveBackgroundColor,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         border: Border.all(color: BauhausDesign.neutral, width: 1.5),
         boxShadow: isDisabled ? [] : [BauhausDesign.shadowHard],
@@ -49,13 +51,17 @@ class ButtonWidget extends StatelessWidget {
                     height: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(effectiveTextColor),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        effectiveTextColor,
+                      ),
                     ),
                   )
                 : Text(
                     buttonText,
                     style: GoogleFonts.inter(
-                      color: isDisabled ? BauhausDesign.textMuted : effectiveTextColor,
+                      color: isDisabled
+                          ? BauhausDesign.textMuted
+                          : effectiveTextColor,
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
                     ),

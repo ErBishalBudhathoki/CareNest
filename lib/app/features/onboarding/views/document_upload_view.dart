@@ -41,22 +41,22 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-        Text(
-          widget.title,
-          style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                color: BauhausDesign.textDark,
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-        const SizedBox(height: BauhausDesign.space2),
-        Text(
-          widget.description,
-          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.textDark.withOpacity(0.7),
-              ),
-        ),
-        const SizedBox(height: 16),
-        ListView.separated(
+          Text(
+            widget.title,
+            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: BauhausDesign.space2),
+          Text(
+            widget.description,
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: BauhausDesign.textDark.withOpacity(0.7),
+            ),
+          ),
+          const SizedBox(height: 16),
+          ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: widget.documentTypes.length,
@@ -85,11 +85,11 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
                 contentPadding: EdgeInsets.zero,
                 title: Text(
                   isOptional ? '$docType (Optional)' : docType,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w500,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodyLarge
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w500,
+                      ),
                 ),
                 subtitle: Text(
                   isUploaded ? 'Uploaded' : 'Tap to upload',
@@ -132,63 +132,64 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
               );
             },
           ),
-        const SizedBox(height: 16),
-        if (state.isLoading)
-          const Center(child: CircularProgressIndicator())
-        else
-          ButtonWidget(
-            buttonText: widget.buttonText,
-            onPressed: () {
-              final requiredDocs = widget.documentTypes
-                  .where((doc) => !widget.optionalDocumentTypes.contains(doc))
-                  .toList();
-              final uploadedTypes = documents.map((d) => d.type).toSet();
-              final missingDocs = requiredDocs
-                  .where((doc) => !uploadedTypes.contains(doc))
-                  .toList();
+          const SizedBox(height: 16),
+          if (state.isLoading)
+            const Center(child: CircularProgressIndicator())
+          else
+            ButtonWidget(
+              buttonText: widget.buttonText,
+              onPressed: () {
+                final requiredDocs = widget.documentTypes
+                    .where((doc) => !widget.optionalDocumentTypes.contains(doc))
+                    .toList();
+                final uploadedTypes = documents.map((d) => d.type).toSet();
+                final missingDocs = requiredDocs
+                    .where((doc) => !uploadedTypes.contains(doc))
+                    .toList();
 
-              if (missingDocs.isNotEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Missing required documents:\n- ${missingDocs.join('\n- ')}',
+                if (missingDocs.isNotEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Missing required documents:\n- ${missingDocs.join('\n- ')}',
+                      ),
+                      backgroundColor: BauhausDesign.error,
+                      duration: const Duration(seconds: 4),
                     ),
-                    backgroundColor: BauhausDesign.error,
-                    duration: const Duration(seconds: 4),
-                  ),
-                );
-                return;
-              }
+                  );
+                  return;
+                }
 
-              widget.onComplete();
-            },
-          ),
-        const SizedBox(height: 12),
-        GestureDetector(
-          onTap: widget.onComplete,
-          child: Container(
-            height: 48,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
-              border: Border.all(
-                  color: BauhausDesign.neoInk.withOpacity(0.3),
-                  width: 2),
+                widget.onComplete();
+              },
             ),
-            child: Text(
-              'Skip for now',
-              style: BauhausDesign.neoMonoStyle(
-                context,
-                color: BauhausDesign.textMuted,
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.8,
+          const SizedBox(height: 12),
+          GestureDetector(
+            onTap: widget.onComplete,
+            child: Container(
+              height: 48,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: BauhausDesign.surfaceWhite,
+                border: Border.all(
+                  color: BauhausDesign.neoInk.withOpacity(0.3),
+                  width: 2,
+                ),
+              ),
+              child: Text(
+                'Skip for now',
+                style: BauhausDesign.neoMonoStyle(
+                  context,
+                  color: BauhausDesign.textMuted,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.8,
+                ),
               ),
             ),
           ),
-        ),
-      ],
-    ),
+        ],
+      ),
     );
   }
 
@@ -198,15 +199,14 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
       final file = File(result.files.single.path!);
 
       try {
-        await ref.read(onboardingViewModelProvider.notifier).uploadDocument(
-              file,
-              docType,
-            );
+        await ref
+            .read(onboardingViewModelProvider.notifier)
+            .uploadDocument(file, docType);
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Upload failed: $e')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Upload failed: $e')));
         }
       }
     }

@@ -2,10 +2,7 @@ import 'package:carenest/config/env/development.dart';
 import 'package:carenest/config/env/production.dart';
 import 'package:flutter/foundation.dart';
 
-enum Flavor {
-  development,
-  production,
-}
+enum Flavor { development, production }
 
 class AppConfig {
   static Flavor appFlavor = Flavor.development;
@@ -125,7 +122,7 @@ class AppConfig {
 
     final isAbsoluteHttp =
         (resourceUri.scheme == 'http' || resourceUri.scheme == 'https') &&
-            resourceUri.host.isNotEmpty;
+        resourceUri.host.isNotEmpty;
     if (!isAbsoluteHttp) return normalizedResource;
 
     final normalizedBaseUrl = normalizeBaseUrl(baseUrlOverride);
@@ -226,7 +223,8 @@ class AppConfig {
           );
           if (enableLogging) {
             debugPrint(
-                'URL resolver: Rewrote local URL host "$host" to "${baseUri.host}"');
+              'URL resolver: Rewrote local URL host "$host" to "${baseUri.host}"',
+            );
           }
           return rebuilt.toString();
         }

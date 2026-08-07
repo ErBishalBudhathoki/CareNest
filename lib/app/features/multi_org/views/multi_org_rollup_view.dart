@@ -44,78 +44,86 @@ class _MultiOrgRollupViewState extends ConsumerState<MultiOrgRollupView> {
     return Scaffold(
       backgroundColor: BauhausTheme.white,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.multiOrgRollupTitle,
-            style: BauhausTheme.headerStyle),
+        title: Text(
+          AppLocalizations.of(context)!.multiOrgRollupTitle,
+          style: BauhausTheme.headerStyle,
+        ),
         backgroundColor: BauhausTheme.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: BauhausTheme.black),
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: BauhausTheme.blue))
+              child: CircularProgressIndicator(color: BauhausTheme.blue),
+            )
           : _error != null
-              ? Center(
-                  child: Text(_error!,
-                      style: BauhausTheme.bodyStyle
-                          .copyWith(color: BauhausTheme.red)))
-              : _orgs.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+          ? Center(
+              child: Text(
+                _error!,
+                style: BauhausTheme.bodyStyle.copyWith(color: BauhausTheme.red),
+              ),
+            )
+          : _orgs.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.business_rounded,
+                    size: 64,
+                    color: Colors.grey,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No Organization Data',
+                    style: BauhausTheme.subHeaderStyle,
+                  ),
+                ],
+              ),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: _orgs.length,
+              itemBuilder: (context, index) {
+                final org = _orgs[index];
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BauhausTheme.blockDecoration.copyWith(
+                    border: Border.all(color: BauhausTheme.black, width: 2),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        org.organizationName.isNotEmpty
+                            ? org.organizationName
+                            : AppLocalizations.of(context)!.unknownOrg,
+                        style: BauhausTheme.subHeaderStyle,
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Icon(Icons.business_rounded,
-                              size: 64, color: Colors.grey),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No Organization Data',
-                            style: BauhausTheme.subHeaderStyle,
+                          _buildStat(
+                            AppLocalizations.of(context)!.clientsCaps,
+                            org.clientCount.toString(),
+                          ),
+                          _buildStat(
+                            AppLocalizations.of(context)!.invoicesCaps,
+                            org.invoiceCount.toString(),
+                          ),
+                          _buildStat(
+                            AppLocalizations.of(context)!.revenueCaps,
+                            '\$${org.revenue.toStringAsFixed(2)}',
                           ),
                         ],
                       ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: _orgs.length,
-                      itemBuilder: (context, index) {
-                        final org = _orgs[index];
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 16),
-                          padding: const EdgeInsets.all(16),
-                          decoration: BauhausTheme.blockDecoration.copyWith(
-                            border:
-                                Border.all(color: BauhausTheme.black, width: 2),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                  org.organizationName.isNotEmpty
-                                      ? org.organizationName
-                                      : AppLocalizations.of(context)!
-                                          .unknownOrg,
-                                  style: BauhausTheme.subHeaderStyle),
-                              const SizedBox(height: 12),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  _buildStat(
-                                      AppLocalizations.of(context)!.clientsCaps,
-                                      org.clientCount.toString()),
-                                  _buildStat(
-                                      AppLocalizations.of(context)!
-                                          .invoicesCaps,
-                                      org.invoiceCount.toString()),
-                                  _buildStat(
-                                      AppLocalizations.of(context)!.revenueCaps,
-                                      '\$${org.revenue.toStringAsFixed(2)}'),
-                                ],
-                              )
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                    ],
+                  ),
+                );
+              },
+            ),
     );
   }
 
@@ -124,9 +132,10 @@ class _MultiOrgRollupViewState extends ConsumerState<MultiOrgRollupView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label.toUpperCase(), style: BauhausTheme.labelStyle),
-        Text(value,
-            style:
-                BauhausTheme.bodyStyle.copyWith(fontWeight: FontWeight.bold)),
+        Text(
+          value,
+          style: BauhausTheme.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }

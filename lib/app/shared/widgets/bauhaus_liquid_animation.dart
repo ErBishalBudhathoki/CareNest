@@ -25,8 +25,9 @@ class _BauhausLiquidAnimationState extends State<BauhausLiquidAnimation>
     super.initState();
     // Original duration: 12000ms. Slowed down to 20000ms as requested.
     _controller = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 20000))
-      ..repeat();
+      vsync: this,
+      duration: const Duration(milliseconds: 20000),
+    )..repeat();
   }
 
   @override

@@ -4,9 +4,10 @@ class InvoicingEmailDetails {
   String email;
   String password;
 
-  InvoicingEmailDetails(
-      {required this.userEmail,
-      required this.invoicingBusinessName,
-      required this.email,
-      required this.password});
+  InvoicingEmailDetails({
+    required this.userEmail,
+    required this.invoicingBusinessName,
+    required this.email,
+    required this.password,
+  });
 }

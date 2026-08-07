@@ -62,14 +62,16 @@ final currentUserProvider = FutureProvider<User?>((ref) async {
     }
 
     debugPrint(
-        '⚠️ currentUserProvider: API failed or invalid response: $response');
+      '⚠️ currentUserProvider: API failed or invalid response: $response',
+    );
   } catch (e) {
     debugPrint('⚠️ currentUserProvider: API exception: $e');
   }
 
   // Fallback to SharedPreferences
   debugPrint(
-      'ℹ️ currentUserProvider: Attempting fallback to SharedPreferences');
+    'ℹ️ currentUserProvider: Attempting fallback to SharedPreferences',
+  );
   final sharedPrefs = SharedPreferencesUtils();
   await sharedPrefs.init();
 
@@ -90,6 +92,7 @@ final currentUserProvider = FutureProvider<User?>((ref) async {
   }
 
   debugPrint(
-      '❌ currentUserProvider: Failed to restore user from SharedPreferences');
+    '❌ currentUserProvider: Failed to restore user from SharedPreferences',
+  );
   return null;
 });

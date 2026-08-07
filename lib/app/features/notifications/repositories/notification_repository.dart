@@ -24,12 +24,14 @@ class NotificationRepository {
       return NotificationSettingsModel.fromJson(response['data']);
     } else {
       throw Exception(
-          response['message'] ?? 'Failed to fetch notification settings');
+        response['message'] ?? 'Failed to fetch notification settings',
+      );
     }
   }
 
   Future<NotificationSettingsModel> updateSettings(
-      NotificationSettingsModel settings) async {
+    NotificationSettingsModel settings,
+  ) async {
     final response = await _apiMethod.put(
       'api/notifications/settings',
       body: settings.toJson(),
@@ -39,14 +41,18 @@ class NotificationRepository {
       return NotificationSettingsModel.fromJson(response['data']);
     } else {
       throw Exception(
-          response['message'] ?? 'Failed to update notification settings');
+        response['message'] ?? 'Failed to update notification settings',
+      );
     }
   }
 
   // --- History ---
 
-  Future<List<NotificationModel>> getHistory(
-      {int page = 1, int limit = 20, String? type}) async {
+  Future<List<NotificationModel>> getHistory({
+    int page = 1,
+    int limit = 20,
+    String? type,
+  }) async {
     String query = '?page=$page&limit=$limit';
     if (type != null) {
       query += '&type=$type';
@@ -59,7 +65,8 @@ class NotificationRepository {
       return list.map((e) => NotificationModel.fromJson(e)).toList();
     } else {
       throw Exception(
-          response['message'] ?? 'Failed to fetch notification history');
+        response['message'] ?? 'Failed to fetch notification history',
+      );
     }
   }
 
@@ -68,7 +75,8 @@ class NotificationRepository {
 
     if (response['success'] != true) {
       throw Exception(
-          response['message'] ?? 'Failed to mark notification as read');
+        response['message'] ?? 'Failed to mark notification as read',
+      );
     }
   }
 
@@ -87,7 +95,8 @@ class NotificationRepository {
       return list.map((e) => GeofenceModel.fromJson(e)).toList();
     } else {
       throw Exception(
-          response['message'] ?? 'Failed to fetch geofence locations');
+        response['message'] ?? 'Failed to fetch geofence locations',
+      );
     }
   }
 
@@ -101,7 +110,8 @@ class NotificationRepository {
       return GeofenceModel.fromJson(response['data']);
     } else {
       throw Exception(
-          response['message'] ?? 'Failed to create geofence location');
+        response['message'] ?? 'Failed to create geofence location',
+      );
     }
   }
 
@@ -115,7 +125,8 @@ class NotificationRepository {
       return GeofenceModel.fromJson(response['data']);
     } else {
       throw Exception(
-          response['message'] ?? 'Failed to update geofence location');
+        response['message'] ?? 'Failed to update geofence location',
+      );
     }
   }
 
@@ -124,7 +135,8 @@ class NotificationRepository {
 
     if (response['success'] != true) {
       throw Exception(
-          response['message'] ?? 'Failed to delete geofence location');
+        response['message'] ?? 'Failed to delete geofence location',
+      );
     }
   }
 }

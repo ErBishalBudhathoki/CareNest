@@ -26,9 +26,9 @@ class AnalyticsDashboardView extends ConsumerWidget {
         title: Text(
           'WORKFORCE ANALYTICS',
           style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: BauhausDesign.textDark,
-              ),
+            fontWeight: FontWeight.w700,
+            color: BauhausDesign.textDark,
+          ),
         ),
         centerTitle: true,
         backgroundColor: BauhausDesign.surfaceWhite,
@@ -55,10 +55,13 @@ class AnalyticsDashboardView extends ConsumerWidget {
                     padding: const EdgeInsets.all(BauhausDesign.space3),
                     decoration: BoxDecoration(
                       color: BauhausDesign.surfaceLight,
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusSm),
-                      border:
-                          Border.all(color: BauhausDesign.neutral, width: 2),
+                      borderRadius: BorderRadius.circular(
+                        BauhausDesign.radiusSm,
+                      ),
+                      border: Border.all(
+                        color: BauhausDesign.neutral,
+                        width: 2,
+                      ),
                       boxShadow: const [BauhausDesign.shadowHardSm],
                     ),
                     child: Row(
@@ -66,8 +69,7 @@ class AnalyticsDashboardView extends ConsumerWidget {
                       children: [
                         Text(
                           'PERIOD:',
-                          style: BauhausDesign.getTextTheme(context)
-                              .labelMedium
+                          style: BauhausDesign.getTextTheme(context).labelMedium
                               ?.copyWith(
                                 fontWeight: FontWeight.w900,
                                 color: BauhausDesign.textDark,
@@ -90,16 +92,21 @@ class AnalyticsDashboardView extends ConsumerWidget {
                         padding: const EdgeInsets.all(BauhausDesign.space3),
                         decoration: BoxDecoration(
                           color: BauhausDesign.surfaceLight,
-                          borderRadius:
-                              BorderRadius.circular(BauhausDesign.radiusSm),
-                          border:
-                              Border.all(color: BauhausDesign.error, width: 2),
+                          borderRadius: BorderRadius.circular(
+                            BauhausDesign.radiusSm,
+                          ),
+                          border: Border.all(
+                            color: BauhausDesign.error,
+                            width: 2,
+                          ),
                           boxShadow: const [BauhausDesign.shadowHardSm],
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.warning,
-                                color: BauhausDesign.error),
+                            const Icon(
+                              Icons.warning,
+                              color: BauhausDesign.error,
+                            ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
@@ -120,7 +127,8 @@ class AnalyticsDashboardView extends ConsumerWidget {
                     data: (data) {
                       if (data.isEmpty) {
                         return const BauhausEmptyState(
-                            message: 'No data for this period');
+                          message: 'No data for this period',
+                        );
                       }
                       return Column(
                         children: [
@@ -144,12 +152,16 @@ class AnalyticsDashboardView extends ConsumerWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Expanded(
-                                        child: OvertimeHeatmap(
-                                            metrics: data.overtime)),
+                                      child: OvertimeHeatmap(
+                                        metrics: data.overtime,
+                                      ),
+                                    ),
                                     const SizedBox(width: 16),
                                     Expanded(
-                                        child: UtilizationGauge(
-                                            metrics: data.utilization)),
+                                      child: UtilizationGauge(
+                                        metrics: data.utilization,
+                                      ),
+                                    ),
                                   ],
                                 );
                               }
@@ -180,7 +192,10 @@ class AnalyticsDashboardView extends ConsumerWidget {
   }
 
   void _showFilterOptions(
-      BuildContext context, WidgetRef ref, AnalyticsFilter currentFilter) {
+    BuildContext context,
+    WidgetRef ref,
+    AnalyticsFilter currentFilter,
+  ) {
     showModalBottomSheet(
       context: context,
       backgroundColor: BauhausDesign.surfaceWhite,
@@ -194,12 +209,14 @@ class AnalyticsDashboardView extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('SELECT PERIOD',
-                style:
-                    BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                          fontWeight: FontWeight.w900,
-                          color: BauhausDesign.textDark,
-                        )),
+            Text(
+              'SELECT PERIOD',
+              style: BauhausDesign.getTextTheme(context).headlineSmall
+                  ?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: BauhausDesign.textDark,
+                  ),
+            ),
             const SizedBox(height: 24),
             _FilterOption(
               label: 'This Week',
@@ -230,8 +247,9 @@ class AnalyticsDashboardView extends ConsumerWidget {
                   firstDate: DateTime(2020),
                   lastDate: DateTime.now().add(const Duration(days: 365)),
                   initialDateRange: DateTimeRange(
-                      start: currentFilter.startDate,
-                      end: currentFilter.endDate),
+                    start: currentFilter.startDate,
+                    end: currentFilter.endDate,
+                  ),
                   builder: (context, child) {
                     return Theme(
                       data: Theme.of(context).copyWith(
@@ -283,9 +301,9 @@ class _DashboardStatusStrip extends StatelessWidget {
             child: Text(
               'Monitoring period',
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           Container(
@@ -300,9 +318,9 @@ class _DashboardStatusStrip extends StatelessWidget {
             child: Text(
               activeLabel,
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.surfaceLight,
-                    fontWeight: FontWeight.w800,
-                  ),
+                color: BauhausDesign.surfaceLight,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
         ],
@@ -330,14 +348,17 @@ class _FilterOption extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label,
-                style:
-                    BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: BauhausDesign.textDark, // Ensure visible text
-                        )),
-            Icon(Icons.arrow_forward,
-                color: BauhausDesign.textDark), // Ensure visible icon
+            Text(
+              label,
+              style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: BauhausDesign.textDark, // Ensure visible text
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward,
+              color: BauhausDesign.textDark,
+            ), // Ensure visible icon
           ],
         ),
       ),
@@ -363,15 +384,19 @@ class _DateFilterButton extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Text(currentRange,
-                style:
-                    BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: BauhausDesign.textDark, // Ensure visible text
-                        )),
+            Text(
+              currentRange,
+              style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: BauhausDesign.textDark, // Ensure visible text
+              ),
+            ),
             const SizedBox(width: 8),
-            Icon(Icons.calendar_today,
-                size: 16, color: BauhausDesign.textDark), // Ensure visible icon
+            Icon(
+              Icons.calendar_today,
+              size: 16,
+              color: BauhausDesign.textDark,
+            ), // Ensure visible icon
           ],
         ),
       ),
@@ -413,14 +438,18 @@ class _ErrorBlock extends StatelessWidget {
           children: [
             Icon(Icons.error_outline, color: BauhausDesign.error, size: 32),
             const SizedBox(height: 8),
-            Text('Error loading data',
-                style: BauhausDesign.getTextTheme(context)
-                    .titleMedium
-                    ?.copyWith(fontWeight: FontWeight.bold)),
-            Text(error,
-                style: BauhausDesign.getTextTheme(context)
-                    .bodySmall
-                    ?.copyWith(fontSize: 10)),
+            Text(
+              'Error loading data',
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              error,
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodySmall?.copyWith(fontSize: 10),
+            ),
           ],
         ),
       ),

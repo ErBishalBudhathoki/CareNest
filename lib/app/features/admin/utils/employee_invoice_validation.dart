@@ -128,7 +128,8 @@ EmployeeInvoiceValidationResult validateMultiEmployeeInvoiceConfig({
     if (!e.bankDetailsComplete) {
       return EmployeeInvoiceValidationResult(
         isValid: false,
-        message: 'Employee bank details must be complete for ${e.employeeName}.',
+        message:
+            'Employee bank details must be complete for ${e.employeeName}.',
       );
     }
   }

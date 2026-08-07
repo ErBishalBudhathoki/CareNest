@@ -15,8 +15,11 @@ class AddUpdateInvoicingEmailView extends ConsumerStatefulWidget {
   final String appPassword;
   final String organizationName;
   const AddUpdateInvoicingEmailView(
-      this.email, this.appPassword, this.organizationName,
-      {super.key});
+    this.email,
+    this.appPassword,
+    this.organizationName, {
+    super.key,
+  });
 
   @override
   ConsumerState<AddUpdateInvoicingEmailView> createState() =>
@@ -26,8 +29,9 @@ class AddUpdateInvoicingEmailView extends ConsumerStatefulWidget {
 class _AddUpdateInvoicingEmailViewState
     extends ConsumerState<AddUpdateInvoicingEmailView> {
   late final ApiMethod apiMethod;
-  final _formKey =
-      GlobalKey<FormState>(debugLabel: 'add_update_invoice_email_form_key');
+  final _formKey = GlobalKey<FormState>(
+    debugLabel: 'add_update_invoice_email_form_key',
+  );
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final UpdateInvoiceEmailViewModel _addUpdateInvoicingEmailViewController =
       UpdateInvoiceEmailViewModel();
@@ -36,8 +40,9 @@ class _AddUpdateInvoicingEmailViewState
   final _invoicingBusinessEmailPasswordController = TextEditingController();
 
   // Separate notifier for password visibility
-  final ValueNotifier<bool> _passwordVisibilityNotifier =
-      ValueNotifier<bool>(true); // Default to hidden
+  final ValueNotifier<bool> _passwordVisibilityNotifier = ValueNotifier<bool>(
+    true,
+  ); // Default to hidden
 
   @override
   void initState() {
@@ -69,17 +74,14 @@ class _AddUpdateInvoicingEmailViewState
         title: Text(
           'Add Invoicing Email Details',
           style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
-                color: BauhausDesign.textDark,
-                fontWeight: FontWeight.bold,
-              ),
+            color: BauhausDesign.textDark,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(
-            color: BauhausDesign.neutral,
-            height: 1,
-          ),
+          child: Container(color: BauhausDesign.neutral, height: 1),
         ),
       ),
       body: Form(
@@ -100,8 +102,10 @@ class _AddUpdateInvoicingEmailViewState
                       decoration: BoxDecoration(
                         color: BauhausDesign.primary,
                         borderRadius: BorderRadius.zero,
-                        border:
-                            Border.all(color: BauhausDesign.neutral, width: 2),
+                        border: Border.all(
+                          color: BauhausDesign.neutral,
+                          width: 2,
+                        ),
                         boxShadow: const [BauhausDesign.shadowHardSm],
                       ),
                       child: Image.asset(
@@ -119,18 +123,14 @@ class _AddUpdateInvoicingEmailViewState
                             'Organization',
                             style: BauhausDesign.getTextTheme(context)
                                 .labelMedium
-                                ?.copyWith(
-                                  color: BauhausDesign.textMuted,
-                                ),
+                                ?.copyWith(color: BauhausDesign.textMuted),
                           ),
                           const SizedBox(height: BauhausDesign.space1),
                           Text(
                             widget.organizationName,
                             style: BauhausDesign.getTextTheme(context)
                                 .headlineMedium
-                                ?.copyWith(
-                                  color: BauhausDesign.primary,
-                                ),
+                                ?.copyWith(color: BauhausDesign.primary),
                           ),
                         ],
                       ),
@@ -144,16 +144,16 @@ class _AddUpdateInvoicingEmailViewState
               Text(
                 'Email Configuration',
                 style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: BauhausDesign.primary,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: BauhausDesign.primary,
+                ),
               ),
               const SizedBox(height: BauhausDesign.space2),
               Text(
                 'Configure your email settings for invoice delivery',
-                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.textMuted,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
               ),
               const SizedBox(height: BauhausDesign.space4),
               // Email Field
@@ -180,16 +180,18 @@ class _AddUpdateInvoicingEmailViewState
                           ),
                         ),
                         suffixIcon:
-                            _isValidEmail(_invoicingBusinessEmailController.text)
-                                ? Padding(
-                                    padding: const EdgeInsets.all(12.0),
-                                    child: Image.asset(
-                                      'assets/icons/3D Icons/3dicons-shield-dynamic-color.png',
-                                      width: 20,
-                                      height: 20,
-                                    ),
-                                  )
-                                : null,
+                            _isValidEmail(
+                              _invoicingBusinessEmailController.text,
+                            )
+                            ? Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Image.asset(
+                                  'assets/icons/3D Icons/3dicons-shield-dynamic-color.png',
+                                  width: 20,
+                                  height: 20,
+                                ),
+                              )
+                            : null,
                       ),
                       onChanged: (_) => setState(() {}),
                       validator: (value) {
@@ -235,7 +237,9 @@ class _AddUpdateInvoicingEmailViewState
                             ),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                isHidden ? Icons.visibility_off : Icons.visibility,
+                                isHidden
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
                                 color: BauhausDesign.textMuted,
                               ),
                               onPressed: () {
@@ -250,7 +254,8 @@ class _AddUpdateInvoicingEmailViewState
                             return null;
                           },
                           onChanged: (value) {
-                            _addUpdateInvoicingEmailViewController.email = value;
+                            _addUpdateInvoicingEmailViewController.email =
+                                value;
                           },
                         ),
                       ],
@@ -279,8 +284,7 @@ class _AddUpdateInvoicingEmailViewState
                     Expanded(
                       child: Text(
                         'Use an app-specific password for enhanced security. You can generate one in your email provider\'s security settings.',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
+                        style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
                               color: BauhausDesign.info,
                               fontWeight: FontWeight.w500,
@@ -306,15 +310,16 @@ class _AddUpdateInvoicingEmailViewState
                       decoration: BoxDecoration(
                         color: BauhausDesign.primary,
                         borderRadius: BorderRadius.zero,
-                        border:
-                            Border.all(color: BauhausDesign.neutral, width: 2),
+                        border: Border.all(
+                          color: BauhausDesign.neutral,
+                          width: 2,
+                        ),
                         boxShadow: const [BauhausDesign.shadowHardSm],
                       ),
                       child: Text(
                         'Add Email Details',
                         textAlign: TextAlign.center,
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
+                        style: BauhausDesign.getTextTheme(context).labelLarge
                             ?.copyWith(
                               color: BauhausDesign.surfaceWhite,
                               fontWeight: FontWeight.w800,
@@ -344,9 +349,9 @@ class _AddUpdateInvoicingEmailViewState
 
     return InputDecoration(
       hintText: hintText,
-      hintStyle: BauhausDesign.getTextTheme(context)
-          .bodyMedium
-          ?.copyWith(color: BauhausDesign.textMuted),
+      hintStyle: BauhausDesign.getTextTheme(
+        context,
+      ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
       filled: true,
       fillColor: BauhausDesign.surfaceWhite,
       contentPadding: const EdgeInsets.symmetric(
@@ -376,9 +381,9 @@ class _AddUpdateInvoicingEmailViewState
     return Text(
       text,
       style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-            color: BauhausDesign.textDark,
-            fontWeight: FontWeight.w700,
-          ),
+        color: BauhausDesign.textDark,
+        fontWeight: FontWeight.w700,
+      ),
     );
   }
 
@@ -416,8 +421,8 @@ class _AddUpdateInvoicingEmailViewState
       detailMessage: detailsMessage.isNotEmpty
           ? detailsMessage
           : (isSuccess
-              ? 'Invoicing email details added successfully'
-              : 'Failed to add invoicing email details'),
+                ? 'Invoicing email details added successfully'
+                : 'Failed to add invoicing email details'),
     );
   }
 
@@ -429,10 +434,11 @@ class _AddUpdateInvoicingEmailViewState
 
   Future<Map<String, dynamic>> _addInvoicingEmailDetails(String email) async {
     var ins = await apiMethod.addUpdateInvoicingEmailDetail(
-        email,
-        widget.organizationName,
-        _invoicingBusinessEmailController.text,
-        _invoicingBusinessEmailPasswordController.text);
+      email,
+      widget.organizationName,
+      _invoicingBusinessEmailController.text,
+      _invoicingBusinessEmailPasswordController.text,
+    );
     if (kDebugMode) {
       print("Response: $ins");
     }

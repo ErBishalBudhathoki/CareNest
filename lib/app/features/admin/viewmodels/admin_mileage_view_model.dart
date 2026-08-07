@@ -83,8 +83,9 @@ class AdminMileageViewModel extends Notifier<AdminMileageState> {
           final updatedTrips = List<Trip>.from(state.trips);
           updatedTrips[index] = updatedTrips[index].copyWith(status: status);
 
-          final updatedRawTrips =
-              Map<String, Map<String, dynamic>>.from(state.rawTripsById);
+          final updatedRawTrips = Map<String, Map<String, dynamic>>.from(
+            state.rawTripsById,
+          );
           if (updatedRawTrips[tripId] != null) {
             updatedRawTrips[tripId]!['status'] = status;
             updatedRawTrips[tripId]!['adminApprovalStatus'] = status;
@@ -107,14 +108,14 @@ class AdminMileageViewModel extends Notifier<AdminMileageState> {
   }
 
   Future<bool> updateTripDetails(
-      String tripId, double distance, String? clientId) async {
+    String tripId,
+    double distance,
+    String? clientId,
+  ) async {
     try {
       final response = await _apiMethod.patch(
         'trips/$tripId',
-        body: {
-          'distance': distance,
-          'clientId': clientId,
-        },
+        body: {'distance': distance, 'clientId': clientId},
       );
 
       if (response != null && response['success'] == true) {
@@ -132,5 +133,5 @@ class AdminMileageViewModel extends Notifier<AdminMileageState> {
 
 final adminMileageViewModelProvider =
     NotifierProvider<AdminMileageViewModel, AdminMileageState>(
-  AdminMileageViewModel.new,
-);
+      AdminMileageViewModel.new,
+    );

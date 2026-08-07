@@ -7,20 +7,26 @@ import 'package:carenest/app/features/holiday/services/holiday_service.dart';
 import 'package:open_file/open_file.dart';
 import 'package:carenest/app/features/pricing/constants/schads_rate_constants.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import '../../mileage/repositories/mileage_repository.dart';
 import '../../mileage/models/trip_model.dart';
 
-final employeeInvoiceServiceProvider =
-    Provider((ref) => EmployeeInvoiceService(ref));
+final employeeInvoiceServiceProvider = Provider(
+  (ref) => EmployeeInvoiceService(ref),
+);
 
 class EmployeeInvoiceService {
   final Ref _ref;
 
   EmployeeInvoiceService(this._ref);
 
-  Future<void> generateAndOpenInvoice(BuildContext context, String userEmail,
-      DateTime startDate, DateTime endDate) async {
+  Future<void> generateAndOpenInvoice(
+    BuildContext context,
+    String userEmail,
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
     final l10n = AppLocalizations.of(context)!;
     try {
       // 1. Fetch Earnings Data
@@ -42,22 +48,27 @@ class EmployeeInvoiceService {
       }).toSet();
 
       // Also check standard ISO format matches just in case "YYYY-MM-DD"
-      final holidayIsoSet =
-          holidays.map((h) => h.date.toIso8601String().split('T')[0]).toSet();
+      final holidayIsoSet = holidays
+          .map((h) => h.date.toIso8601String().split('T')[0])
+          .toSet();
 
       // 1c. Fetch Mileage/Trips for the period
       final mileageRepo = _ref.read(mileageRepositoryProvider);
       // Convert dates to YYYY-MM-DD for API
       final startStr = startDate.toIso8601String().split('T')[0];
       final endStr = endDate.toIso8601String().split('T')[0];
-      
+
       // Fetch trips
       final user = _ref.read(currentUserProvider).value;
       final userId = user?.id;
-      
+
       List<Trip> trips = [];
       if (userId != null) {
-         trips = await mileageRepo.getTrips(userId, startDate: startStr, endDate: endStr);
+        trips = await mileageRepo.getTrips(
+          userId,
+          startDate: startStr,
+          endDate: endStr,
+        );
       }
 
       // 2. Prepare Invoice Data Structure
@@ -84,7 +95,7 @@ class EmployeeInvoiceService {
 
       // Construct line items from daily history
       final items = <Map<String, dynamic>>[];
-      
+
       final activeAllowances = user?.activeAllowances ?? [];
 
       // Track weekly caps
@@ -98,7 +109,8 @@ class EmployeeInvoiceService {
             "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}";
         final dateStrISO = item.date.split('T')[0];
 
-        final isHoliday = holidaySet.contains(dateStrDDMMYYYY) ||
+        final isHoliday =
+            holidaySet.contains(dateStrDDMMYYYY) ||
             holidayIsoSet.contains(dateStrISO);
 
         final applicableRate = getRateForDate(item.date, isHoliday);
@@ -170,7 +182,8 @@ class EmployeeInvoiceService {
         // unless award says otherwise. Simplification: Weekend/PH rates apply to ALL hours.
         // Weekday base hours > 8 get OT.
 
-        final isStandardDay = !isHoliday &&
+        final isStandardDay =
+            !isHoliday &&
             date.weekday != DateTime.saturday &&
             date.weekday != DateTime.sunday;
 
@@ -267,23 +280,23 @@ class EmployeeInvoiceService {
       for (final trip in trips) {
         // Filter for reimbursable trips within the date range (double check date)
         // Ensure status is APPROVED
-        if (trip.isReimbursable && 
+        if (trip.isReimbursable &&
             trip.status == 'APPROVED' &&
             trip.date.isAfter(startDate.subtract(const Duration(seconds: 1))) &&
             trip.date.isBefore(endDate.add(const Duration(seconds: 1)))) {
-          
           final amount = trip.distance * vehicleRate;
           vehicleAllowanceTotal += amount;
 
           items.add({
             'date': trip.date.toIso8601String().split('T')[0],
             'startTime': '', // Not applicable
-            'endTime': '',   // Not applicable
+            'endTime': '', // Not applicable
             'hours': trip.distance, // Using 'hours' field for Quantity (km)
             'rate': vehicleRate,
             'amount': amount,
             'itemCode': 'ALW-VEH',
-            'itemName': 'Vehicle Allowance (${trip.startLocation} - ${trip.endLocation})',
+            'itemName':
+                'Vehicle Allowance (${trip.startLocation} - ${trip.endLocation})',
             'clientState': '',
           });
         }
@@ -310,7 +323,9 @@ class EmployeeInvoiceService {
 
       // Recalculate total because rates might differ from the simple summary total
       final finalTotal = items.fold<double>(
-          0, (sum, item) => sum + (item['amount'] as double));
+        0,
+        (sum, item) => sum + (item['amount'] as double),
+      );
 
       final invoiceData = {
         'invoiceNumber': 'PAY-${DateTime.now().millisecondsSinceEpoch}',
@@ -340,10 +355,12 @@ class EmployeeInvoiceService {
       };
 
       // 3. Generate PDF
-      final generator = InvoicePdfGenerator(api: _ref.read(app_providers.apiMethodProvider));
+      final generator = InvoicePdfGenerator(
+        api: _ref.read(app_providers.apiMethodProvider),
+      );
       final paths = await generator.generatePdfs(
         {
-          'clients': [invoiceData]
+          'clients': [invoiceData],
         }, // Wrap in 'clients' list as expected by generator
         showTax: false,
         taxRate: 0.0,
@@ -353,15 +370,15 @@ class EmployeeInvoiceService {
       if (paths.isNotEmpty) {
         await OpenFile.open(paths.first);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.pdfGenerationFailed)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.pdfGenerationFailed)));
       }
     } catch (e) {
       debugPrint('Error generating employee invoice: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
 }

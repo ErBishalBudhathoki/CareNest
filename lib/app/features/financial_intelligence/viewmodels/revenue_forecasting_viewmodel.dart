@@ -41,15 +41,13 @@ class RevenueForecastingState {
 }
 
 /// Revenue Forecasting ViewModel
-class RevenueForecastingViewModel
-    extends Notifier<RevenueForecastingState> {
+class RevenueForecastingViewModel extends Notifier<RevenueForecastingState> {
   late final FinancialIntelligenceRepository _repository;
 
-  
   @override
   RevenueForecastingState build() {
     final apiMethod = ref.read(app_providers.apiMethodProvider);
-    
+
     return RevenueForecastingState();
   }
 
@@ -68,10 +66,7 @@ class RevenueForecastingViewModel
       );
 
       if (result['success'] == true) {
-        state = state.copyWith(
-          isLoading: false,
-          forecast: result['forecast'],
-        );
+        state = state.copyWith(isLoading: false, forecast: result['forecast']);
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -79,10 +74,7 @@ class RevenueForecastingViewModel
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -99,10 +91,7 @@ class RevenueForecastingViewModel
       );
 
       if (result['success'] == true) {
-        state = state.copyWith(
-          isLoading: false,
-          drivers: result['drivers'],
-        );
+        state = state.copyWith(isLoading: false, drivers: result['drivers']);
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -110,10 +99,7 @@ class RevenueForecastingViewModel
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -141,10 +127,7 @@ class RevenueForecastingViewModel
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -161,9 +144,7 @@ class RevenueForecastingViewModel
       );
 
       if (result['success'] == true) {
-        state = state.copyWith(
-          isLoading: false,
-        );
+        state = state.copyWith(isLoading: false);
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -171,10 +152,7 @@ class RevenueForecastingViewModel
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -191,10 +169,7 @@ class RevenueForecastingViewModel
       );
 
       if (result['success'] == true) {
-        state = state.copyWith(
-          isLoading: false,
-          trends: result['trends'],
-        );
+        state = state.copyWith(isLoading: false, trends: result['trends']);
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -202,10 +177,7 @@ class RevenueForecastingViewModel
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -230,10 +202,7 @@ class RevenueForecastingViewModel
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -244,4 +213,7 @@ class RevenueForecastingViewModel
 }
 
 /// Provider for Revenue Forecasting ViewModel
-final revenueForecastingViewModelProvider = NotifierProvider<RevenueForecastingViewModel, RevenueForecastingState>(RevenueForecastingViewModel.new);
+final revenueForecastingViewModelProvider =
+    NotifierProvider<RevenueForecastingViewModel, RevenueForecastingState>(
+      RevenueForecastingViewModel.new,
+    );

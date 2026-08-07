@@ -93,10 +93,7 @@ class NotesResponse {
   final List<Note> notes;
   final NotesPagination pagination;
 
-  NotesResponse({
-    required this.notes,
-    required this.pagination,
-  });
+  NotesResponse({required this.notes, required this.pagination});
 
   factory NotesResponse.fromJson(Map<String, dynamic> json) {
     final List<dynamic> notesList = json['notes'] ?? [];

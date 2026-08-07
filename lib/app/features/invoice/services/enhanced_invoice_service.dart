@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
- // StateProvider
+// StateProvider
 import 'package:intl/intl.dart';
 import 'package:carenest/app/core/providers/invoice_providers.dart';
 import 'package:carenest/app/core/services/file_upload_service.dart';
@@ -44,23 +44,36 @@ class EnhancedInvoiceService {
     String? organizationId,
     required AppLocalizations l10n,
   }) async {
-    return _checkForMissingPrices(processedData,
-        organizationId: organizationId, l10n: l10n);
+    return _checkForMissingPrices(
+      processedData,
+      organizationId: organizationId,
+      l10n: l10n,
+    );
   }
 
   @visibleForTesting
-  void testApplyPriceResolutions(Map<String, dynamic> processedData,
-      List<Map<String, dynamic>> resolutions,
-      {bool? applyTax, double? taxRate, required AppLocalizations l10n}) {
+  void testApplyPriceResolutions(
+    Map<String, dynamic> processedData,
+    List<Map<String, dynamic>> resolutions, {
+    bool? applyTax,
+    double? taxRate,
+    required AppLocalizations l10n,
+  }) {
     // Ensure taxRate is never null to prevent 'Null is not a subtype of double' error
     taxRate = taxRate ?? 0.0;
-    _applyPriceResolutions(processedData, resolutions,
-        applyTax: applyTax, taxRate: taxRate, l10n: l10n);
+    _applyPriceResolutions(
+      processedData,
+      resolutions,
+      applyTax: applyTax,
+      taxRate: taxRate,
+      l10n: l10n,
+    );
   }
 
   @visibleForTesting
   Future<Map<String, dynamic>> testProcessSelectedEmployeesAndClients(
-      List<Map<String, dynamic>> selectedEmployeesAndClients) async {
+    List<Map<String, dynamic>> selectedEmployeesAndClients,
+  ) async {
     return _processSelectedEmployeesAndClients(selectedEmployeesAndClients);
   }
 
@@ -70,8 +83,11 @@ class EnhancedInvoiceService {
   }
 
   @visibleForTesting
-  void testRecalculateInvoiceTotal(Map<String, dynamic> client,
-      {bool? applyTax, double? taxRate}) {
+  void testRecalculateInvoiceTotal(
+    Map<String, dynamic> client, {
+    bool? applyTax,
+    double? taxRate,
+  }) {
     _recalculateInvoiceTotal(client, applyTax: applyTax, taxRate: taxRate);
   }
 
@@ -80,14 +96,13 @@ class EnhancedInvoiceService {
     this._apiMethod, {
     InvoiceDataProcessor? dataProcessor,
     MileageRepository? mileageRepository,
-  })  : _repository = InvoiceRepository(_apiMethod),
-        _helpers = InvoiceHelpers(),
-        _emailService = InvoiceEmailService(apiMethod: _apiMethod),
-        _dataProcessor = dataProcessor ?? InvoiceDataProcessor(ref),
-        _pdfGenerator = InvoicePdfGenerator(api: _apiMethod),
-        _fileUploadService = FileUploadService(api: _apiMethod),
-        _mileageRepository =
-            mileageRepository ?? MileageRepository(_apiMethod) {
+  }) : _repository = InvoiceRepository(_apiMethod),
+       _helpers = InvoiceHelpers(),
+       _emailService = InvoiceEmailService(apiMethod: _apiMethod),
+       _dataProcessor = dataProcessor ?? InvoiceDataProcessor(ref),
+       _pdfGenerator = InvoicePdfGenerator(api: _apiMethod),
+       _fileUploadService = FileUploadService(api: _apiMethod),
+       _mileageRepository = mileageRepository ?? MileageRepository(_apiMethod) {
     // Set the enhanced service reference after initialization
     _dataProcessor.setEnhancedInvoiceService(this);
   }
@@ -110,8 +125,7 @@ class EnhancedInvoiceService {
     return defaultValue;
   }
 
-  Map<String, String> _extractBankDetailsFromMap(
-      Map<String, dynamic> source) {
+  Map<String, String> _extractBankDetailsFromMap(Map<String, dynamic> source) {
     final merged = <String, dynamic>{}..addAll(source);
     for (final key in const [
       'bankDetails',
@@ -130,18 +144,22 @@ class EnhancedInvoiceService {
         (merged['bankName'] ?? merged['bank'] ?? merged['bank_name'] ?? '')
             .toString()
             .trim();
-    final accountName = (merged['accountName'] ??
-            merged['accountHolderName'] ??
-            merged['account_holder_name'] ??
-            '')
-        .toString()
-        .trim();
+    final accountName =
+        (merged['accountName'] ??
+                merged['accountHolderName'] ??
+                merged['account_holder_name'] ??
+                '')
+            .toString()
+            .trim();
     final bsb =
         (merged['bsb'] ?? merged['BSB'] ?? merged['routingNumber'] ?? '')
             .toString()
             .trim();
     final accountNumber =
-        (merged['accountNumber'] ?? merged['accountNo'] ?? merged['account_number'] ?? '')
+        (merged['accountNumber'] ??
+                merged['accountNo'] ??
+                merged['account_number'] ??
+                '')
             .toString()
             .trim();
 
@@ -161,14 +179,16 @@ class EnhancedInvoiceService {
   }
 
   Future<Map<String, String>> _fetchOrganizationBankDetails(
-      String? organizationId) async {
+    String? organizationId,
+  ) async {
     if (organizationId == null || organizationId.trim().isEmpty) {
       return {};
     }
 
     try {
-      final resp =
-          await _apiMethod.getOrganizationDetails(organizationId.trim());
+      final resp = await _apiMethod.getOrganizationDetails(
+        organizationId.trim(),
+      );
       if (resp['success'] != true) {
         return {};
       }
@@ -233,16 +253,17 @@ class EnhancedInvoiceService {
   String _composeAddress(dynamic address) {
     try {
       if (address is Map<String, dynamic>) {
-        final parts = [
-          address['street'],
-          address['city'],
-          address['state'],
-          address['postcode'],
-          address['country']
-        ]
-            .map((e) => (e ?? '').toString().trim())
-            .where((e) => e.isNotEmpty)
-            .toList();
+        final parts =
+            [
+                  address['street'],
+                  address['city'],
+                  address['state'],
+                  address['postcode'],
+                  address['country'],
+                ]
+                .map((e) => (e ?? '').toString().trim())
+                .where((e) => e.isNotEmpty)
+                .toList();
         return parts.join(', ');
       }
     } catch (_) {}
@@ -278,7 +299,8 @@ class EnhancedInvoiceService {
   /// in `assignedClients`. Considers worked times and assignment schedules.
   /// Returns a tuple as a `Map` with keys `start` and `end`.
   Map<String, DateTime?> _derivePeriodFromAssignedClients(
-      Map<String, dynamic>? assignedClients) {
+    Map<String, dynamic>? assignedClients,
+  ) {
     if (assignedClients == null) {
       return {'start': null, 'end': null};
     }
@@ -435,8 +457,11 @@ class EnhancedInvoiceService {
 
       if (startDate != null && endDate != null) {
         // Normalize provided dates to remove time component
-        effectiveStart =
-            DateTime(startDate.year, startDate.month, startDate.day);
+        effectiveStart = DateTime(
+          startDate.year,
+          startDate.month,
+          startDate.day,
+        );
         effectiveEnd = DateTime(endDate.year, endDate.month, endDate.day);
       } else {
         // No dates selected initially; will derive after loading clients
@@ -476,7 +501,8 @@ class EnhancedInvoiceService {
       debugPrint('Starting enhanced invoice generation process');
       debugPrint('=== DEBUG: validatePrices parameter: $validatePrices ===');
       debugPrint(
-          '🔥🔥🔥 ENHANCED INVOICE SERVICE CALLED - validatePrices: $validatePrices 🔥🔥🔥');
+        '🔥🔥🔥 ENHANCED INVOICE SERVICE CALLED - validatePrices: $validatePrices 🔥🔥🔥',
+      );
       final startTime = DateTime.now();
 
       // Get assigned clients and line items
@@ -487,17 +513,21 @@ class EnhancedInvoiceService {
             selectedEmployeesAndClients.isNotEmpty) {
           // Use selected employees and clients data
           debugPrint(
-              'Using selected employees and clients: ${selectedEmployeesAndClients.length} employees');
+            'Using selected employees and clients: ${selectedEmployeesAndClients.length} employees',
+          );
           assignedClients = await _processSelectedEmployeesAndClients(
-              selectedEmployeesAndClients);
+            selectedEmployeesAndClients,
+          );
 
           // Check if we have a critical error in processing
           if (assignedClients.containsKey('metadata') &&
-              (assignedClients['metadata'] as Map<String, dynamic>)
-                  .containsKey('criticalError')) {
+              (assignedClients['metadata'] as Map<String, dynamic>).containsKey(
+                'criticalError',
+              )) {
             final errorMsg = assignedClients['metadata']['criticalError'];
             debugPrint(
-                'Critical error in processing selected employees and clients: $errorMsg');
+              'Critical error in processing selected employees and clients: $errorMsg',
+            );
 
             _errorMessage = errorMsg;
             ref.read(invoiceGenerationStateProvider.notifier).state =
@@ -593,7 +623,8 @@ class EnhancedInvoiceService {
           try {
             final sp = SharedPreferencesUtils();
             await sp.init();
-            final spEmail = sp.getUserEmail() ??
+            final spEmail =
+                sp.getUserEmail() ??
                 await sp.getUserEmailFromSharedPreferences() ??
                 '';
             if (spEmail.isNotEmpty) {
@@ -606,7 +637,8 @@ class EnhancedInvoiceService {
         // If no client email is available, use a placeholder or skip the API call
         if (clientEmail == null || clientEmail.isEmpty) {
           debugPrint(
-              'Warning: No client email available for invoice data retrieval');
+            'Warning: No client email available for invoice data retrieval',
+          );
           // Set empty data instead of making API call that will fail
           invoiceData = {
             'lineItems': <dynamic>[],
@@ -621,7 +653,8 @@ class EnhancedInvoiceService {
           // Using the effective period computed above
 
           debugPrint(
-              'Calling getInvoiceData with userEmail: $userEmail, clientEmail: $clientEmail');
+            'Calling getInvoiceData with userEmail: $userEmail, clientEmail: $clientEmail',
+          );
 
           // If no dates were provided, resolve a period using employee-client configuration
           if (effectiveStart == null && effectiveEnd == null) {
@@ -669,31 +702,38 @@ class EnhancedInvoiceService {
                 }
               } catch (e) {
                 debugPrint(
-                    'EnhancedInvoiceService: Error collecting itemDates for $userEmail/$clientEmail: $e');
+                  'EnhancedInvoiceService: Error collecting itemDates for $userEmail/$clientEmail: $e',
+                );
               }
 
-              final resolved =
-                  await periodService.resolvePeriodForEmployeeClient(
-                employeeEmail: userEmail ?? 'unknown@example.com',
-                clientEmail: clientEmail ?? 'unknown@example.com',
-                itemDates: itemDates,
-              );
+              final resolved = await periodService
+                  .resolvePeriodForEmployeeClient(
+                    employeeEmail: userEmail ?? 'unknown@example.com',
+                    clientEmail: clientEmail ?? 'unknown@example.com',
+                    itemDates: itemDates,
+                  );
 
               effectiveStart = resolved.start;
               effectiveEnd = resolved.end;
               debugPrint(
-                  'EnhancedInvoiceService: Resolved period => $effectiveStart to $effectiveEnd');
+                'EnhancedInvoiceService: Resolved period => $effectiveStart to $effectiveEnd',
+              );
             } catch (e) {
               debugPrint(
-                  'EnhancedInvoiceService: Period resolution failed: $e');
+                'EnhancedInvoiceService: Period resolution failed: $e',
+              );
               // Month fallback to ensure a valid range exists
               final prevMonthStart = DateTime(now.year, now.month - 1, 1);
-              final prevMonthEnd =
-                  DateTime(prevMonthStart.year, prevMonthStart.month + 1, 0);
+              final prevMonthEnd = DateTime(
+                prevMonthStart.year,
+                prevMonthStart.month + 1,
+                0,
+              );
               effectiveStart = prevMonthStart;
               effectiveEnd = prevMonthEnd;
               debugPrint(
-                  'EnhancedInvoiceService: Applied previous-month fallback => $effectiveStart to $effectiveEnd');
+                'EnhancedInvoiceService: Applied previous-month fallback => $effectiveStart to $effectiveEnd',
+              );
             }
           }
 
@@ -709,12 +749,14 @@ class EnhancedInvoiceService {
           expenses = List<dynamic>.from(invoiceData['expenses'] ?? []);
         }
         debugPrint(
-            'Retrieved ${lineItems.length} line items and ${expenses.length} expenses');
+          'Retrieved ${lineItems.length} line items and ${expenses.length} expenses',
+        );
         debugPrint('Include expenses: $includeExpenses');
 
         if (lineItems.isEmpty && expenses.isEmpty) {
           debugPrint(
-              'Warning: No line items or expenses found. Invoices may be empty.');
+            'Warning: No line items or expenses found. Invoices may be empty.',
+          );
         }
       } catch (e) {
         final errorMsg = 'Error retrieving invoice data: ${e.toString()}';
@@ -751,7 +793,8 @@ class EnhancedInvoiceService {
         if (!processedData.containsKey('clients')) {
           processedData['clients'] = [];
           debugPrint(
-              'Warning: Processed data missing clients key, adding empty list');
+            'Warning: Processed data missing clients key, adding empty list',
+          );
         }
 
         debugPrint('=== DEBUG: processedData structure ===');
@@ -769,7 +812,8 @@ class EnhancedInvoiceService {
                 final firstItem = items[0] as Map<String, dynamic>;
                 debugPrint('First item keys: ${firstItem.keys.toList()}');
                 debugPrint(
-                    'First item ndisItemNumber: ${firstItem['ndisItemNumber']}');
+                  'First item ndisItemNumber: ${firstItem['ndisItemNumber']}',
+                );
               }
             }
           }
@@ -806,25 +850,29 @@ class EnhancedInvoiceService {
 
               if (itemDates.isNotEmpty) {
                 try {
-                  final resolved =
-                      await periodService.resolvePeriodForEmployeeClient(
-                    employeeEmail: client['employeeEmail'] as String? ??
-                        'unknown@example.com',
-                    clientEmail: client['clientEmail'] as String? ??
-                        'unknown@example.com',
-                    itemDates: itemDates,
-                  );
+                  final resolved = await periodService
+                      .resolvePeriodForEmployeeClient(
+                        employeeEmail:
+                            client['employeeEmail'] as String? ??
+                            'unknown@example.com',
+                        clientEmail:
+                            client['clientEmail'] as String? ??
+                            'unknown@example.com',
+                        itemDates: itemDates,
+                      );
                   client['startDate'] = df.format(resolved.start);
                   client['endDate'] = df.format(resolved.end);
                 } catch (e) {
                   debugPrint(
-                      'EnhancedInvoiceService: Per-client period derivation failed: $e');
+                    'EnhancedInvoiceService: Per-client period derivation failed: $e',
+                  );
                 }
               }
             }
           } catch (e) {
             debugPrint(
-                'EnhancedInvoiceService: Error during per-client period calculation: $e');
+              'EnhancedInvoiceService: Error during per-client period calculation: $e',
+            );
           }
         }
 
@@ -868,8 +916,9 @@ class EnhancedInvoiceService {
 
       // Add photo attachment data if provided
       if (attachedPhotos != null && attachedPhotos.isNotEmpty) {
-        metadata['attachedPhotos'] =
-            attachedPhotos.map((photo) => photo.path).toList();
+        metadata['attachedPhotos'] = attachedPhotos
+            .map((photo) => photo.path)
+            .toList();
         metadata['photoCount'] = attachedPhotos.length;
       }
       if (photoDescription != null && photoDescription.isNotEmpty) {
@@ -878,8 +927,9 @@ class EnhancedInvoiceService {
 
       // If there were errors in client processing, add them to metadata
       if (assignedClients.containsKey('metadata') &&
-          (assignedClients['metadata'] as Map<String, dynamic>)
-              .containsKey('errors')) {
+          (assignedClients['metadata'] as Map<String, dynamic>).containsKey(
+            'errors',
+          )) {
         metadata['processingErrors'] = assignedClients['metadata']['errors'];
         metadata['hasProcessingErrors'] = true;
       }
@@ -888,10 +938,14 @@ class EnhancedInvoiceService {
       List<Map<String, dynamic>> missingPricePrompts = [];
       if (validatePrices) {
         debugPrint('Validating prices for line items');
-        missingPricePrompts = await _checkForMissingPrices(processedData,
-            organizationId: organizationId, l10n: l10n);
+        missingPricePrompts = await _checkForMissingPrices(
+          processedData,
+          organizationId: organizationId,
+          l10n: l10n,
+        );
         debugPrint(
-            'Found ${missingPricePrompts.length} items with missing prices');
+          'Found ${missingPricePrompts.length} items with missing prices',
+        );
       }
 
       // If there are missing prices, show price prompt dialog
@@ -922,18 +976,28 @@ class EnhancedInvoiceService {
 
         // Apply price resolutions to processed data
         debugPrint('Applying ${resolutions.length} price resolutions');
-        _applyPriceResolutions(processedData, resolutions,
-            applyTax: applyTax, taxRate: taxRate, l10n: l10n);
+        _applyPriceResolutions(
+          processedData,
+          resolutions,
+          applyTax: applyTax,
+          taxRate: taxRate,
+          l10n: l10n,
+        );
 
         // Save custom pricing if requested
-        await _saveCustomPricing(resolutions,
-            userEmail: userEmail,
-            organizationId: assignedClients['organizationId'] as String?);
+        await _saveCustomPricing(
+          resolutions,
+          userEmail: userEmail,
+          organizationId: assignedClients['organizationId'] as String?,
+        );
 
         // Re-validate after applying price resolutions
         debugPrint('Re-validating prices after resolution');
-        await _checkForMissingPrices(processedData,
-            organizationId: organizationId, l10n: l10n);
+        await _checkForMissingPrices(
+          processedData,
+          organizationId: organizationId,
+          l10n: l10n,
+        );
       }
 
       // Store processed invoices
@@ -946,7 +1010,7 @@ class EnhancedInvoiceService {
           // Calculate next date based on frequency
           final issueDate =
               _tryParseDateFlexible(invoice['issueDate'] as String?) ??
-                  DateTime.now();
+              DateTime.now();
           DateTime nextDate = issueDate;
           switch (recurrence['frequency']) {
             case 'weekly':
@@ -956,16 +1020,25 @@ class EnhancedInvoiceService {
               nextDate = nextDate.add(const Duration(days: 14));
               break;
             case 'monthly':
-              nextDate =
-                  DateTime(nextDate.year, nextDate.month + 1, nextDate.day);
+              nextDate = DateTime(
+                nextDate.year,
+                nextDate.month + 1,
+                nextDate.day,
+              );
               break;
             case 'quarterly':
-              nextDate =
-                  DateTime(nextDate.year, nextDate.month + 3, nextDate.day);
+              nextDate = DateTime(
+                nextDate.year,
+                nextDate.month + 3,
+                nextDate.day,
+              );
               break;
             case 'annually':
-              nextDate =
-                  DateTime(nextDate.year + 1, nextDate.month, nextDate.day);
+              nextDate = DateTime(
+                nextDate.year + 1,
+                nextDate.month,
+                nextDate.day,
+              );
               break;
           }
           // Ensure we don't produce invalid dates (e.g. Feb 30)
@@ -1003,7 +1076,8 @@ class EnhancedInvoiceService {
           if (client['pricingValidation'] != null) {
             final validation =
                 client['pricingValidation'] as Map<String, dynamic>;
-            totalItems += (validation['validItems'] as num).toInt() +
+            totalItems +=
+                (validation['validItems'] as num).toInt() +
                 (validation['invalidItems'] as num).toInt();
             compliantItems += (validation['validItems'] as num).toInt();
             nonCompliantItems += (validation['invalidItems'] as num).toInt();
@@ -1022,16 +1096,17 @@ class EnhancedInvoiceService {
                 'description': item['description'],
                 'price': item['price'],
                 'priceCap': item['priceCap'],
-                'difference':
-                    (item['price'] - item['priceCap']).toStringAsFixed(2),
+                'difference': (item['price'] - item['priceCap'])
+                    .toStringAsFixed(2),
               });
             }
           }
         }
 
         // Calculate overall compliance percentage
-        double compliancePercentage =
-            totalItems > 0 ? (compliantItems / totalItems) * 100 : 100.0;
+        double compliancePercentage = totalItems > 0
+            ? (compliantItems / totalItems) * 100
+            : 100.0;
 
         // Update validation summary
         validationSummary = {
@@ -1064,7 +1139,8 @@ class EnhancedInvoiceService {
           uploadedPhotoUrls = await _fileUploadService
               .uploadMultipleReceiptFiles(attachedPhotos);
           debugPrint(
-              'Successfully uploaded ${uploadedPhotoUrls.length} photo attachments');
+            'Successfully uploaded ${uploadedPhotoUrls.length} photo attachments',
+          );
 
           // Add uploaded photo URLs to metadata
           metadata['uploadedPhotoUrls'] = uploadedPhotoUrls;
@@ -1074,11 +1150,13 @@ class EnhancedInvoiceService {
         // Upload additional file attachments if provided
         if (additionalAttachments != null && additionalAttachments.isNotEmpty) {
           debugPrint(
-              'Uploading ${additionalAttachments.length} additional file attachments...');
+            'Uploading ${additionalAttachments.length} additional file attachments...',
+          );
           uploadedAdditionalFileUrls = await _fileUploadService
               .uploadMultipleReceiptFiles(additionalAttachments);
           debugPrint(
-              'Successfully uploaded ${uploadedAdditionalFileUrls.length} additional file attachments');
+            'Successfully uploaded ${uploadedAdditionalFileUrls.length} additional file attachments',
+          );
 
           // Add uploaded additional file URLs to metadata
           metadata['uploadedAdditionalFileUrls'] = uploadedAdditionalFileUrls;
@@ -1100,10 +1178,12 @@ class EnhancedInvoiceService {
       try {
         if (organizationId != null && organizationId.isNotEmpty) {
           // Prefer organization details for issuer header
-          final orgResp =
-              await _apiMethod.getOrganizationDetails(organizationId);
-          final org = (orgResp['organization'] ?? orgResp['data'])
-              as Map<String, dynamic>?;
+          final orgResp = await _apiMethod.getOrganizationDetails(
+            organizationId,
+          );
+          final org =
+              (orgResp['organization'] ?? orgResp['data'])
+                  as Map<String, dynamic>?;
           if (org != null) {
             adminProfile = {
               'businessName': org['name'] ?? org['organizationName'] ?? '',
@@ -1116,8 +1196,9 @@ class EnhancedInvoiceService {
               'abn': org['abn'] ?? '',
             };
           } else {
-            final resp =
-                await _apiMethod.getAdminInvoiceProfile(organizationId);
+            final resp = await _apiMethod.getAdminInvoiceProfile(
+              organizationId,
+            );
             if (resp['success'] == true &&
                 resp['data'] is Map<String, dynamic>) {
               adminProfile = Map<String, dynamic>.from(resp['data']);
@@ -1163,7 +1244,7 @@ class EnhancedInvoiceService {
               client['clientAddress'] ?? '',
               client['clientCity'] ?? '',
               client['clientState'] ?? '',
-              client['clientZip'] ?? ''
+              client['clientZip'] ?? '',
             ].where((e) => (e ?? '').toString().isNotEmpty).join(', '),
             'phone': client['clientPhone'] ?? '',
             'businessName': client['businessName'] ?? '',
@@ -1193,26 +1274,33 @@ class EnhancedInvoiceService {
 
       // Generate PDFs for each invoice
       debugPrint(
-          'Enhanced Invoice Service: About to generate PDFs for ${_invoices.length} invoices');
+        'Enhanced Invoice Service: About to generate PDFs for ${_invoices.length} invoices',
+      );
 
       // Debug: Check what data we're passing to PDF generator
       debugPrint(
-          'Enhanced Invoice Service: includeExpenses flag was: $includeExpenses');
+        'Enhanced Invoice Service: includeExpenses flag was: $includeExpenses',
+      );
       for (int i = 0; i < _invoices.length; i++) {
         final client = _invoices[i];
         final expenses = client['expenses'] as List<dynamic>? ?? [];
         debugPrint(
-            'Enhanced Invoice Service: Client ${i + 1} (${client['clientName']}) has ${expenses.length} expenses');
+          'Enhanced Invoice Service: Client ${i + 1} (${client['clientName']}) has ${expenses.length} expenses',
+        );
         debugPrint(
-            'Enhanced Invoice Service: Client data keys: ${client.keys.toList()}');
+          'Enhanced Invoice Service: Client data keys: ${client.keys.toList()}',
+        );
         if (expenses.isNotEmpty) {
           debugPrint(
-              'Enhanced Invoice Service: First expense for client ${i + 1}: ${expenses.first}');
+            'Enhanced Invoice Service: First expense for client ${i + 1}: ${expenses.first}',
+          );
           debugPrint(
-              'Enhanced Invoice Service: All expenses for client ${i + 1}: $expenses');
+            'Enhanced Invoice Service: All expenses for client ${i + 1}: $expenses',
+          );
         } else {
           debugPrint(
-              'Enhanced Invoice Service: No expenses found for client ${i + 1}');
+            'Enhanced Invoice Service: No expenses found for client ${i + 1}',
+          );
         }
       }
 
@@ -1233,25 +1321,26 @@ class EnhancedInvoiceService {
         }
       }
 
-      final pdfPaths = await _pdfGenerator.generatePdfs({
-        'clients': _invoices,
-        'metadata': processedData['metadata'],
-      },
-          showTax: applyTax,
-          taxRate: taxRate,
-          attachedPhotos: attachedPhotos,
-          photoDescription: photoDescription,
-          uploadedPhotoUrls: uploadedPhotoUrls,
-          uploadedAdditionalFileUrls: uploadedAdditionalFileUrls,
-          useAdminBankDetails: useAdminBankDetails);
+      final pdfPaths = await _pdfGenerator.generatePdfs(
+        {'clients': _invoices, 'metadata': processedData['metadata']},
+        showTax: applyTax,
+        taxRate: taxRate,
+        attachedPhotos: attachedPhotos,
+        photoDescription: photoDescription,
+        uploadedPhotoUrls: uploadedPhotoUrls,
+        uploadedAdditionalFileUrls: uploadedAdditionalFileUrls,
+        useAdminBankDetails: useAdminBankDetails,
+      );
       debugPrint(
-          'Enhanced Invoice Service: PDF generation returned ${pdfPaths.length} paths');
+        'Enhanced Invoice Service: PDF generation returned ${pdfPaths.length} paths',
+      );
       debugPrint('Enhanced Invoice Service: PDF paths: $pdfPaths');
 
       final endTime = DateTime.now();
       final duration = endTime.difference(startTime);
       debugPrint(
-          'Invoice generation completed in ${duration.inSeconds} seconds');
+        'Invoice generation completed in ${duration.inSeconds} seconds',
+      );
 
       // Update state to indicate completion
       ref.read(invoiceGenerationStateProvider.notifier).state =
@@ -1262,10 +1351,13 @@ class EnhancedInvoiceService {
 
       // Save invoices to backend database and get updated invoice numbers
       final updatedPdfPaths = await _saveInvoicesToBackend(
-          processedData, pdfPaths, organizationId,
-          invoiceType: type,
-          adminProfile: adminProfile,
-          useAdminBankDetails: useAdminBankDetails);
+        processedData,
+        pdfPaths,
+        organizationId,
+        invoiceType: type,
+        adminProfile: adminProfile,
+        useAdminBankDetails: useAdminBankDetails,
+      );
 
       return updatedPdfPaths ?? pdfPaths;
     } catch (e) {
@@ -1275,9 +1367,9 @@ class EnhancedInvoiceService {
 
       // Check for web-specific errors related to Argon2
       if (e.toString().contains('0xFFFFFFFFFFFFFFFF') ||
-          e
-              .toString()
-              .contains('cannot be represented exactly in JavaScript')) {
+          e.toString().contains(
+            'cannot be represented exactly in JavaScript',
+          )) {
         errorMsg = l10n?.webEncryptionLimitationError ?? errorMsg;
         debugPrint('Web-specific Argon2 error detected: ${e.toString()}');
       } else if (e.toString().contains('BANK_DETAILS_REQUIRED')) {
@@ -1365,11 +1457,13 @@ class EnhancedInvoiceService {
       );
 
       debugPrint(
-          'EnhancedInvoiceService: Public getBulkPricingLookup result: $result');
+        'EnhancedInvoiceService: Public getBulkPricingLookup result: $result',
+      );
       return result;
     } catch (e) {
       debugPrint(
-          'EnhancedInvoiceService: Error in public getBulkPricingLookup: $e');
+        'EnhancedInvoiceService: Error in public getBulkPricingLookup: $e',
+      );
       return null;
     }
   }
@@ -1388,14 +1482,16 @@ class EnhancedInvoiceService {
     required AppLocalizations l10n,
   }) async {
     debugPrint(
-        'Enhanced Invoice Service: _checkForMissingPrices method called!');
+      'Enhanced Invoice Service: _checkForMissingPrices method called!',
+    );
     final List<Map<String, dynamic>> missingPricePrompts = [];
     final List<String> validationErrors = [];
 
     // Validate input structure
     if (!processedData.containsKey('clients')) {
       debugPrint(
-          'Warning: processedData missing clients key in _checkForMissingPrices');
+        'Warning: processedData missing clients key in _checkForMissingPrices',
+      );
       return missingPricePrompts; // Return empty list
     }
 
@@ -1416,10 +1512,12 @@ class EnhancedInvoiceService {
         debugPrint('Enhanced Invoice Service: Processing item: $item');
         final itemMap = item as Map<String, dynamic>;
         // Check both possible field names for NDIS item number
-        final ndisItemNumber = itemMap['ndisItemNumber'] as String? ??
+        final ndisItemNumber =
+            itemMap['ndisItemNumber'] as String? ??
             itemMap['itemCode'] as String?;
         debugPrint(
-            'Enhanced Invoice Service: Found NDIS item number: $ndisItemNumber');
+          'Enhanced Invoice Service: Found NDIS item number: $ndisItemNumber',
+        );
         if (ndisItemNumber != null && ndisItemNumber.isNotEmpty) {
           ndisItemNumbers.add(ndisItemNumber);
         }
@@ -1427,7 +1525,8 @@ class EnhancedInvoiceService {
     }
 
     debugPrint(
-        'Enhanced Invoice Service: Collected NDIS item numbers for bulk lookup: $ndisItemNumbers');
+      'Enhanced Invoice Service: Collected NDIS item numbers for bulk lookup: $ndisItemNumbers',
+    );
 
     // Perform bulk pricing lookup if we have NDIS item numbers
     Map<String, dynamic>? bulkPricingData = {};
@@ -1439,7 +1538,8 @@ class EnhancedInvoiceService {
         String? finalOrganizationId = resolvedOrganizationId;
         if (finalOrganizationId == null && clients.isNotEmpty) {
           final firstClient = clients.first as Map<String, dynamic>;
-          finalOrganizationId = firstClient['organizationId'] as String? ??
+          finalOrganizationId =
+              firstClient['organizationId'] as String? ??
               processedData['organizationId'] as String?;
         }
         finalOrganizationId ??=
@@ -1447,37 +1547,47 @@ class EnhancedInvoiceService {
         resolvedOrganizationId = finalOrganizationId;
 
         debugPrint(
-            'Enhanced Invoice Service: About to call getBulkPricingLookup with organizationId: $finalOrganizationId');
+          'Enhanced Invoice Service: About to call getBulkPricingLookup with organizationId: $finalOrganizationId',
+        );
         debugPrint(
-            'Enhanced Invoice Service: Performing bulk pricing lookup for ${ndisItemNumbers.length} items');
+          'Enhanced Invoice Service: Performing bulk pricing lookup for ${ndisItemNumbers.length} items',
+        );
         bulkPricingData = await _apiMethod.getBulkPricingLookup(
           finalOrganizationId,
           ndisItemNumbers.toList(),
         );
         debugPrint(
-            'Enhanced Invoice Service: Bulk pricing lookup completed successfully');
+          'Enhanced Invoice Service: Bulk pricing lookup completed successfully',
+        );
         debugPrint(
-            'Enhanced Invoice Service: Organization ID used: $finalOrganizationId');
+          'Enhanced Invoice Service: Organization ID used: $finalOrganizationId',
+        );
         debugPrint(
-            'Enhanced Invoice Service: NDIS items requested: $ndisItemNumbers');
+          'Enhanced Invoice Service: NDIS items requested: $ndisItemNumbers',
+        );
         debugPrint(
-            'Enhanced Invoice Service: Bulk pricing data received: $bulkPricingData');
+          'Enhanced Invoice Service: Bulk pricing data received: $bulkPricingData',
+        );
 
         // Debug: Check specific items mentioned by user
         if (bulkPricingData != null) {
           final item01020 = bulkPricingData['01_020_0120_1_1'];
           debugPrint(
-              'Enhanced Invoice Service: DEBUG - Item 01_020_0120_1_1 data: $item01020');
+            'Enhanced Invoice Service: DEBUG - Item 01_020_0120_1_1 data: $item01020',
+          );
           if (item01020 != null) {
             debugPrint(
-                'Enhanced Invoice Service: DEBUG - Custom price for 01_020_0120_1_1: ${item01020['customPrice']}');
+              'Enhanced Invoice Service: DEBUG - Custom price for 01_020_0120_1_1: ${item01020['customPrice']}',
+            );
             debugPrint(
-                'Enhanced Invoice Service: DEBUG - Standard price for 01_020_0120_1_1: ${item01020['standardPrice']}');
+              'Enhanced Invoice Service: DEBUG - Standard price for 01_020_0120_1_1: ${item01020['standardPrice']}',
+            );
           }
         }
       } catch (e) {
         debugPrint(
-            'Enhanced Invoice Service: Error in bulk pricing lookup: $e');
+          'Enhanced Invoice Service: Error in bulk pricing lookup: $e',
+        );
         bulkPricingData = {};
       }
     }
@@ -1486,16 +1596,19 @@ class EnhancedInvoiceService {
         resolvedOrganizationId.isNotEmpty &&
         resolvedOrganizationId != 'default-org') {
       try {
-        final fallbackRate =
-            await _apiMethod.getFallbackBaseRate(resolvedOrganizationId);
+        final fallbackRate = await _apiMethod.getFallbackBaseRate(
+          resolvedOrganizationId,
+        );
         if (fallbackRate != null && fallbackRate > 0) {
           organizationFallbackBaseRate = fallbackRate;
           debugPrint(
-              'Enhanced Invoice Service: Organization fallback base rate detected: $organizationFallbackBaseRate');
+            'Enhanced Invoice Service: Organization fallback base rate detected: $organizationFallbackBaseRate',
+          );
         }
       } catch (e) {
         debugPrint(
-            'Enhanced Invoice Service: Failed to fetch organization fallback base rate: $e');
+          'Enhanced Invoice Service: Failed to fetch organization fallback base rate: $e',
+        );
       }
     }
 
@@ -1503,7 +1616,8 @@ class EnhancedInvoiceService {
     for (int clientIndex = 0; clientIndex < clients.length; clientIndex++) {
       try {
         final client = clients[clientIndex] as Map<String, dynamic>;
-        final lineItems = (client['lineItems'] as List<dynamic>?) ??
+        final lineItems =
+            (client['lineItems'] as List<dynamic>?) ??
             (client['items'] as List<dynamic>?) ??
             <dynamic>[];
         final items = (client['items'] as List<dynamic>?) ?? lineItems;
@@ -1512,7 +1626,8 @@ class EnhancedInvoiceService {
 
         if (lineItems.isEmpty) {
           debugPrint(
-              'Warning: Client at index $clientIndex has empty lineItems');
+            'Warning: Client at index $clientIndex has empty lineItems',
+          );
           continue; // Skip to next client
         }
 
@@ -1551,9 +1666,11 @@ class EnhancedInvoiceService {
             }
           } catch (e) {
             debugPrint(
-                'Error processing line item $itemIndex for client $clientName: $e');
-            validationErrors
-                .add('Error processing line item for $clientName: $e');
+              'Error processing line item $itemIndex for client $clientName: $e',
+            );
+            validationErrors.add(
+              'Error processing line item for $clientName: $e',
+            );
           }
         }
 
@@ -1570,13 +1687,16 @@ class EnhancedInvoiceService {
                 validationResult['data'] != null &&
                 validationResult['data']['validationResults'] != null) {
               // Process validation results
-              final validationResults = validationResult['data']
-                  ['validationResults'] as List<dynamic>;
+              final validationResults =
+                  validationResult['data']['validationResults']
+                      as List<dynamic>;
 
               // Update line items with validation information
-              for (int itemIndex = 0;
-                  itemIndex < lineItems.length;
-                  itemIndex++) {
+              for (
+                int itemIndex = 0;
+                itemIndex < lineItems.length;
+                itemIndex++
+              ) {
                 try {
                   final item = lineItems[itemIndex] as Map<String, dynamic>;
                   final ndisItemNumber = item['ndisItemNumber'];
@@ -1618,13 +1738,15 @@ class EnhancedInvoiceService {
                   }
                 } catch (e) {
                   debugPrint(
-                      'Error updating line item $itemIndex with validation info: $e');
+                    'Error updating line item $itemIndex with validation info: $e',
+                  );
                 }
               }
 
               // Add validation summary to client
               try {
-                final summary = validationResult['data']['summary']
+                final summary =
+                    validationResult['data']['summary']
                         as Map<String, dynamic>? ??
                     {};
                 client['pricingValidation'] = {
@@ -1640,9 +1762,11 @@ class EnhancedInvoiceService {
                 };
               } catch (e) {
                 debugPrint(
-                    'Error adding validation summary to client $clientName: $e');
+                  'Error adding validation summary to client $clientName: $e',
+                );
                 validationErrors.add(
-                    'Error adding validation summary to client $clientName: $e');
+                  'Error adding validation summary to client $clientName: $e',
+                );
 
                 // Add default validation summary
                 client['pricingValidation'] = {
@@ -1652,7 +1776,7 @@ class EnhancedInvoiceService {
                   'invalidItems': 0,
                   'totalAmount': 0,
                   'compliantAmount': 0,
-                  'error': 'Failed to process validation summary: $e'
+                  'error': 'Failed to process validation summary: $e',
                 };
               }
             } else {
@@ -1660,8 +1784,9 @@ class EnhancedInvoiceService {
               final errorMsg =
                   validationResult['message'] ?? 'Unknown validation error';
               debugPrint('Validation error for client $clientName: $errorMsg');
-              validationErrors
-                  .add('Validation error for client $clientName: $errorMsg');
+              validationErrors.add(
+                'Validation error for client $clientName: $errorMsg',
+              );
 
               // Add error validation summary
               client['pricingValidation'] = {
@@ -1671,13 +1796,14 @@ class EnhancedInvoiceService {
                 'invalidItems': 0,
                 'totalAmount': 0,
                 'compliantAmount': 0,
-                'error': errorMsg
+                'error': errorMsg,
               };
             }
           } catch (e) {
             debugPrint('Error validating pricing for client $clientName: $e');
-            validationErrors
-                .add('Error validating pricing for client $clientName: $e');
+            validationErrors.add(
+              'Error validating pricing for client $clientName: $e',
+            );
 
             // Add error validation summary
             client['pricingValidation'] = {
@@ -1687,7 +1813,7 @@ class EnhancedInvoiceService {
               'invalidItems': 0,
               'totalAmount': 0,
               'compliantAmount': 0,
-              'error': 'Validation failed: $e'
+              'error': 'Validation failed: $e',
             };
           }
         } else {
@@ -1702,7 +1828,7 @@ class EnhancedInvoiceService {
             'invalidItems': 0,
             'totalAmount': 0,
             'compliantAmount': 0,
-            'note': 'No items to validate'
+            'note': 'No items to validate',
           };
         }
 
@@ -1723,33 +1849,41 @@ class EnhancedInvoiceService {
             // Check for custom pricing in bulk data regardless of existing price
             final cachedPricing = bulkPricingData?[ndisItemNumber];
             debugPrint(
-                'Enhanced Invoice Service: DEBUG - Processing item $ndisItemNumber with existing price: $price');
+              'Enhanced Invoice Service: DEBUG - Processing item $ndisItemNumber with existing price: $price',
+            );
             debugPrint(
-                'Enhanced Invoice Service: DEBUG - Cached pricing data for $ndisItemNumber: $cachedPricing');
+              'Enhanced Invoice Service: DEBUG - Cached pricing data for $ndisItemNumber: $cachedPricing',
+            );
 
             if (cachedPricing != null && cachedPricing['customPrice'] != null) {
               final customPriceStr = cachedPricing['customPrice'].toString();
               debugPrint(
-                  'Enhanced Invoice Service: DEBUG - Custom price string for $ndisItemNumber: "$customPriceStr"');
+                'Enhanced Invoice Service: DEBUG - Custom price string for $ndisItemNumber: "$customPriceStr"',
+              );
               if (customPriceStr.isNotEmpty && customPriceStr != 'null') {
                 customPrice = double.tryParse(customPriceStr);
                 debugPrint(
-                    'Enhanced Invoice Service: DEBUG - Parsed custom price for $ndisItemNumber: $customPrice');
+                  'Enhanced Invoice Service: DEBUG - Parsed custom price for $ndisItemNumber: $customPrice',
+                );
                 if (customPrice != null && customPrice > 0) {
                   hasCustomPricing = true;
                   debugPrint(
-                      'Enhanced Invoice Service: Found custom price for $ndisItemNumber: $customPrice');
+                    'Enhanced Invoice Service: Found custom price for $ndisItemNumber: $customPrice',
+                  );
                 } else {
                   debugPrint(
-                      'Enhanced Invoice Service: DEBUG - Custom price is null or zero for $ndisItemNumber');
+                    'Enhanced Invoice Service: DEBUG - Custom price is null or zero for $ndisItemNumber',
+                  );
                 }
               } else {
                 debugPrint(
-                    'Enhanced Invoice Service: DEBUG - Custom price string is empty or null for $ndisItemNumber');
+                  'Enhanced Invoice Service: DEBUG - Custom price string is empty or null for $ndisItemNumber',
+                );
               }
             } else {
               debugPrint(
-                  'Enhanced Invoice Service: DEBUG - No cached pricing or custom price for $ndisItemNumber');
+                'Enhanced Invoice Service: DEBUG - No cached pricing or custom price for $ndisItemNumber',
+              );
             }
 
             // Apply custom pricing immediately if available
@@ -1758,7 +1892,8 @@ class EnhancedInvoiceService {
               item['pricingSource'] = l10n.sourceOrganizationWide;
               item['hasCustomPricing'] = true;
               debugPrint(
-                  'Enhanced Invoice Service: Applied custom price $customPrice to $ndisItemNumber');
+                'Enhanced Invoice Service: Applied custom price $customPrice to $ndisItemNumber',
+              );
 
               // Recalculate total for this line item
               final quantity = item['quantity'] ?? 1;
@@ -1774,7 +1909,8 @@ class EnhancedInvoiceService {
                   final cachedPricing = bulkPricingData?[ndisItemNumber];
                   final source =
                       cachedPricing?['source']?.toString().toLowerCase() ?? '';
-                  final isNdisDefaultSource = source == 'ndis_default' ||
+                  final isNdisDefaultSource =
+                      source == 'ndis_default' ||
                       source == 'fallback' ||
                       source == 'standard';
 
@@ -1815,8 +1951,9 @@ class EnhancedInvoiceService {
                     if (cap != null && cap > 0 && applied > cap) {
                       applied = cap;
                     }
-                    final roundedPrice =
-                        double.parse(applied.toStringAsFixed(2));
+                    final roundedPrice = double.parse(
+                      applied.toStringAsFixed(2),
+                    );
 
                     item['price'] = roundedPrice;
                     item['pricingSource'] = resolvedSource;
@@ -1828,13 +1965,15 @@ class EnhancedInvoiceService {
                     // Recalculate total for this line item
                     final quantity = item['quantity'] ?? 1;
                     final qty = (quantity is num) ? quantity.toDouble() : 1.0;
-                    item['total'] =
-                        double.parse((roundedPrice * qty).toStringAsFixed(2));
+                    item['total'] = double.parse(
+                      (roundedPrice * qty).toStringAsFixed(2),
+                    );
                     return true;
                   }
                 } catch (e) {
                   debugPrint(
-                      'Enhanced Invoice Service: Error applying fallback base rate from bulk pricing for $ndisItemNumber: $e');
+                    'Enhanced Invoice Service: Error applying fallback base rate from bulk pricing for $ndisItemNumber: $e',
+                  );
                 }
                 return false;
               }();
@@ -1854,7 +1993,8 @@ class EnhancedInvoiceService {
 
                 // Use bulk pricing data if available
                 debugPrint(
-                    'Enhanced Invoice Service: Using cached pricing for $ndisItemNumber: $cachedPricing');
+                  'Enhanced Invoice Service: Using cached pricing for $ndisItemNumber: $cachedPricing',
+                );
 
                 if (cachedPricing != null) {
                   try {
@@ -1865,19 +2005,21 @@ class EnhancedInvoiceService {
                       if (organizationFallbackBaseRate > 0) {
                         suggestedPrice = organizationFallbackBaseRate;
                         debugPrint(
-                            'Enhanced Invoice Service: Using organization fallback base rate for $ndisItemNumber: $suggestedPrice');
+                          'Enhanced Invoice Service: Using organization fallback base rate for $ndisItemNumber: $suggestedPrice',
+                        );
                       }
                     }
 
                     if (suggestedPrice == null || suggestedPrice <= 0) {
                       if (cachedPricing['standardPrice'] != null) {
-                        final standardPriceStr =
-                            cachedPricing['standardPrice'].toString();
+                        final standardPriceStr = cachedPricing['standardPrice']
+                            .toString();
                         if (standardPriceStr.isNotEmpty &&
                             standardPriceStr != 'null') {
                           suggestedPrice = double.tryParse(standardPriceStr);
                           debugPrint(
-                              'Enhanced Invoice Service: Using standard price for $ndisItemNumber: $suggestedPrice');
+                            'Enhanced Invoice Service: Using standard price for $ndisItemNumber: $suggestedPrice',
+                          );
                         }
                       }
                     }
@@ -1891,18 +2033,22 @@ class EnhancedInvoiceService {
                     }
                   } catch (e) {
                     debugPrint(
-                        'Enhanced Invoice Service: Error parsing cached pricing for $ndisItemNumber: $e');
+                      'Enhanced Invoice Service: Error parsing cached pricing for $ndisItemNumber: $e',
+                    );
                   }
                 }
 
                 // Fallback to individual API calls if bulk data is not available
                 if (suggestedPrice == null || suggestedPrice <= 0) {
                   try {
-                    suggestedPrice =
-                        await _getSuggestedPrice(ndisItemNumber, clientId);
+                    suggestedPrice = await _getSuggestedPrice(
+                      ndisItemNumber,
+                      clientId,
+                    );
                   } catch (e) {
                     debugPrint(
-                        'Enhanced Invoice Service: Error getting suggested price for $ndisItemNumber: $e');
+                      'Enhanced Invoice Service: Error getting suggested price for $ndisItemNumber: $e',
+                    );
                     suggestedPrice = null;
                   }
                 }
@@ -1912,18 +2058,22 @@ class EnhancedInvoiceService {
                     priceCap = await _getPriceCap(ndisItemNumber);
                   } catch (e) {
                     debugPrint(
-                        'Enhanced Invoice Service: Error getting price cap for $ndisItemNumber: $e');
+                      'Enhanced Invoice Service: Error getting price cap for $ndisItemNumber: $e',
+                    );
                     priceCap = null;
                   }
                 }
 
                 // Get price history (this is not typically in bulk data)
                 try {
-                  priceHistory =
-                      await _getPriceHistory(ndisItemNumber, clientId);
+                  priceHistory = await _getPriceHistory(
+                    ndisItemNumber,
+                    clientId,
+                  );
                 } catch (e) {
                   debugPrint(
-                      'Enhanced Invoice Service: Error getting price history for $ndisItemNumber: $e');
+                    'Enhanced Invoice Service: Error getting price history for $ndisItemNumber: $e',
+                  );
                   priceHistory = [];
                 }
 
@@ -1942,7 +2092,8 @@ class EnhancedInvoiceService {
                   'priceCap': priceCap,
                   'suggestedPrice': suggestedPrice,
                   'priceHistory': priceHistory ?? [],
-                  'hasCustomPricing': suggestedPrice != null &&
+                  'hasCustomPricing':
+                      suggestedPrice != null &&
                       suggestedPrice > 0 &&
                       priceCap != null &&
                       suggestedPrice != priceCap,
@@ -1951,15 +2102,18 @@ class EnhancedInvoiceService {
             }
           } catch (e) {
             debugPrint(
-                'Error checking for missing prices in item $itemIndex for client $clientName: $e');
+              'Error checking for missing prices in item $itemIndex for client $clientName: $e',
+            );
             validationErrors.add(
-                'Error checking prices for item in client $clientName: $e');
+              'Error checking prices for item in client $clientName: $e',
+            );
           }
         }
       } catch (e) {
         debugPrint('Error processing client at index $clientIndex: $e');
-        validationErrors
-            .add('Error processing client at index $clientIndex: $e');
+        validationErrors.add(
+          'Error processing client at index $clientIndex: $e',
+        );
       }
     }
 
@@ -1996,34 +2150,42 @@ class EnhancedInvoiceService {
   /// Enhanced with prioritized pricing sources and better logging.
   /// Note: Standard price is metadata-only (NDIS cap); not used as a billable rate.
   Future<double?> _getSuggestedPrice(
-      String? ndisItemNumber, String? clientId) async {
+    String? ndisItemNumber,
+    String? clientId,
+  ) async {
     if (ndisItemNumber == null) return null;
 
     try {
       // Try to get custom price for this client first
       if (clientId != null) {
-        final clientPrice =
-            await _apiMethod.getCustomPriceForClient(ndisItemNumber, clientId);
+        final clientPrice = await _apiMethod.getCustomPriceForClient(
+          ndisItemNumber,
+          clientId,
+        );
         if (clientPrice > 0) {
           debugPrint(
-              'Using client-specific price for $ndisItemNumber: $clientPrice');
+            'Using client-specific price for $ndisItemNumber: $clientPrice',
+          );
           return clientPrice;
         }
       }
 
       // Try to get organization-wide custom price
-      final orgPrice =
-          await _apiMethod.getCustomPriceForOrganization(ndisItemNumber);
+      final orgPrice = await _apiMethod.getCustomPriceForOrganization(
+        ndisItemNumber,
+      );
       if (orgPrice > 0) {
         debugPrint(
-            'Using organization-wide price for $ndisItemNumber: $orgPrice');
+          'Using organization-wide price for $ndisItemNumber: $orgPrice',
+        );
         return orgPrice;
       }
 
       // Fall back to standard price (metadata only)
       final standardPrice = await _apiMethod.getStandardPrice(ndisItemNumber);
       debugPrint(
-          'Using standard price metadata for $ndisItemNumber: $standardPrice');
+        'Using standard price metadata for $ndisItemNumber: $standardPrice',
+      );
       return standardPrice;
     } catch (e) {
       debugPrint('Error getting suggested price: $e');
@@ -2040,14 +2202,17 @@ class EnhancedInvoiceService {
   /// Returns: The standard price as `double` if available; otherwise `null`.
   /// Backend now returns `price: null` and cap metadata only; this method returns
   /// `null` when backend indicates no base price is available.
-  Future<double?> getStandardPriceForItem(String ndisItemNumber,
-      {String? clientId}) async {
+  Future<double?> getStandardPriceForItem(
+    String ndisItemNumber, {
+    String? clientId,
+  }) async {
     try {
       final price = await _apiMethod.getStandardPrice(ndisItemNumber);
       return price > 0 ? price : null;
     } catch (e) {
       debugPrint(
-          'EnhancedInvoiceService: Error fetching standard price for $ndisItemNumber: $e');
+        'EnhancedInvoiceService: Error fetching standard price for $ndisItemNumber: $e',
+      );
       return null;
     }
   }
@@ -2055,14 +2220,18 @@ class EnhancedInvoiceService {
   /// Get price history for an NDIS item
   /// Returns recent pricing decisions for this item
   Future<List<Map<String, dynamic>>> _getPriceHistory(
-      String? ndisItemNumber, String? clientId) async {
+    String? ndisItemNumber,
+    String? clientId,
+  ) async {
     if (ndisItemNumber == null) return [];
 
     try {
       // Get price history from API if available
       if (clientId != null) {
-        final history =
-            await _apiMethod.getPriceHistory(ndisItemNumber, clientId);
+        final history = await _apiMethod.getPriceHistory(
+          ndisItemNumber,
+          clientId,
+        );
         return history ?? [];
       }
       return [];
@@ -2074,9 +2243,13 @@ class EnhancedInvoiceService {
 
   /// Apply price resolutions to processed data
   /// Enhanced with better validation and detailed pricing information
-  void _applyPriceResolutions(Map<String, dynamic> processedData,
-      List<Map<String, dynamic>> resolutions,
-      {bool? applyTax, double? taxRate, required AppLocalizations l10n}) {
+  void _applyPriceResolutions(
+    Map<String, dynamic> processedData,
+    List<Map<String, dynamic>> resolutions, {
+    bool? applyTax,
+    double? taxRate,
+    required AppLocalizations l10n,
+  }) {
     final clients = processedData['clients'] as List<dynamic>? ?? [];
 
     for (final resolution in resolutions) {
@@ -2139,7 +2312,9 @@ class EnhancedInvoiceService {
 
   /// Determine the source of pricing based on resolution data
   String _determinePricingSource(
-      Map<String, dynamic> resolutionData, AppLocalizations l10n) {
+    Map<String, dynamic> resolutionData,
+    AppLocalizations l10n,
+  ) {
     if (resolutionData['applyToClient'] == true) {
       return l10n.sourceClientSpecific;
     } else if (resolutionData['applyToOrganization'] == true) {
@@ -2156,28 +2331,20 @@ class EnhancedInvoiceService {
   }) async {
     final normalizedType = (invoiceType ?? 'client').toLowerCase();
     if (normalizedType == 'employee') {
-      await _attachEmployeeMileage(
-        applyTax: applyTax,
-        taxRate: taxRate,
-      );
+      await _attachEmployeeMileage(applyTax: applyTax, taxRate: taxRate);
       return;
     }
-    await _attachClientMileage(
-      applyTax: applyTax,
-      taxRate: taxRate,
-    );
+    await _attachClientMileage(applyTax: applyTax, taxRate: taxRate);
   }
 
-  Future<void> _attachClientMileage({
-    bool? applyTax,
-    double? taxRate,
-  }) async {
+  Future<void> _attachClientMileage({bool? applyTax, double? taxRate}) async {
     const rate = 0.99;
 
     for (final client in _invoices) {
       final clientId = client['clientId']?.toString();
-      final parsedStart =
-          _tryParseDateFlexible(client['startDate']?.toString());
+      final parsedStart = _tryParseDateFlexible(
+        client['startDate']?.toString(),
+      );
       final parsedEnd = _tryParseDateFlexible(client['endDate']?.toString());
       if (clientId == null ||
           clientId.isEmpty ||
@@ -2195,7 +2362,8 @@ class EnhancedInvoiceService {
       );
       if (trips.isEmpty) continue;
 
-      final lineItems = (client['lineItems'] as List<dynamic>?) ??
+      final lineItems =
+          (client['lineItems'] as List<dynamic>?) ??
           (client['items'] as List<dynamic>?) ??
           <dynamic>[];
       final items = (client['items'] as List<dynamic>?) ?? lineItems;
@@ -2209,8 +2377,10 @@ class EnhancedInvoiceService {
             trip.status != 'APPROVED') {
           continue;
         }
-        final alreadyExists = lineItems.any((item) =>
-            item is Map<String, dynamic> && item['mileageTripId'] == trip.id);
+        final alreadyExists = lineItems.any(
+          (item) =>
+              item is Map<String, dynamic> && item['mileageTripId'] == trip.id,
+        );
         if (alreadyExists) continue;
 
         final amount = trip.distance * rate;
@@ -2245,17 +2415,15 @@ class EnhancedInvoiceService {
     }
   }
 
-  Future<void> _attachEmployeeMileage({
-    bool? applyTax,
-    double? taxRate,
-  }) async {
+  Future<void> _attachEmployeeMileage({bool? applyTax, double? taxRate}) async {
     const rate = 0.99;
     final seenEmployeePeriods = <String>{};
 
     for (final client in _invoices) {
       final employeeId = _resolveEmployeeId(client);
-      final parsedStart =
-          _tryParseDateFlexible(client['startDate']?.toString());
+      final parsedStart = _tryParseDateFlexible(
+        client['startDate']?.toString(),
+      );
       final parsedEnd = _tryParseDateFlexible(client['endDate']?.toString());
       if (employeeId == null ||
           employeeId.isEmpty ||
@@ -2278,7 +2446,8 @@ class EnhancedInvoiceService {
       );
       if (trips.isEmpty) continue;
 
-      final lineItems = (client['lineItems'] as List<dynamic>?) ??
+      final lineItems =
+          (client['lineItems'] as List<dynamic>?) ??
           (client['items'] as List<dynamic>?) ??
           <dynamic>[];
       final items = (client['items'] as List<dynamic>?) ?? lineItems;
@@ -2292,8 +2461,10 @@ class EnhancedInvoiceService {
             trip.status != 'APPROVED') {
           continue;
         }
-        final alreadyExists = items.any((item) =>
-            item is Map<String, dynamic> && item['mileageTripId'] == trip.id);
+        final alreadyExists = items.any(
+          (item) =>
+              item is Map<String, dynamic> && item['mileageTripId'] == trip.id,
+        );
         if (alreadyExists) continue;
 
         final amount = trip.distance * rate;
@@ -2399,9 +2570,13 @@ class EnhancedInvoiceService {
   }
 
   /// Recalculate invoice total for a client
-  void _recalculateInvoiceTotal(Map<String, dynamic> client,
-      {bool? applyTax, double? taxRate}) {
-    final lineItems = (client['lineItems'] as List<dynamic>?) ??
+  void _recalculateInvoiceTotal(
+    Map<String, dynamic> client, {
+    bool? applyTax,
+    double? taxRate,
+  }) {
+    final lineItems =
+        (client['lineItems'] as List<dynamic>?) ??
         (client['items'] as List<dynamic>?) ??
         <dynamic>[];
     final items = (client['items'] as List<dynamic>?) ?? lineItems;
@@ -2417,7 +2592,8 @@ class EnhancedInvoiceService {
         if (amount > 0) {
           itemsSubtotal += amount;
         } else {
-          itemsSubtotal += _asDouble(item['hours'] ?? item['quantity'] ?? 0.0) *
+          itemsSubtotal +=
+              _asDouble(item['hours'] ?? item['quantity'] ?? 0.0) *
               _asDouble(item['rate'] ?? item['unitPrice'] ?? 0.0);
         }
       }
@@ -2427,10 +2603,12 @@ class EnhancedInvoiceService {
     double expensesTotal = 0;
     for (final expense in expenses) {
       if (expense is Map<String, dynamic>) {
-        expensesTotal += _asDouble(expense['totalAmount'] ??
-            expense['amount'] ??
-            expense['unitCost'] ??
-            0.0);
+        expensesTotal += _asDouble(
+          expense['totalAmount'] ??
+              expense['amount'] ??
+              expense['unitCost'] ??
+              0.0,
+        );
       }
     }
 
@@ -2444,7 +2622,8 @@ class EnhancedInvoiceService {
     // Calculate tax if applicable - use provided parameters or fall back to client data
     final shouldApplyTax = applyTax ?? (client['taxExempt'] != true);
     debugPrint(
-        'Enhanced Invoice Service _recalculateInvoiceTotal: applyTax=$applyTax, taxRate=$taxRate');
+      'Enhanced Invoice Service _recalculateInvoiceTotal: applyTax=$applyTax, taxRate=$taxRate',
+    );
     final currentTaxRate =
         taxRate ?? client['taxRate'] ?? 0.0; // Default 0% tax
     final taxAmount = shouldApplyTax ? (subtotal * currentTaxRate) : 0.0;
@@ -2505,7 +2684,8 @@ class EnhancedInvoiceService {
                 'originalPrice': item['originalPrice'] ?? 0.0,
                 'suggestedPrice': item['suggestedPrice'] ?? 0.0,
                 'priceCap': item['priceCap'],
-                'exceedsPriceCap': item['priceCap'] != null &&
+                'exceedsPriceCap':
+                    item['priceCap'] != null &&
                     price > _asDouble(item['priceCap']),
                 'source': 'invoice_generation',
                 'itemDescription': item['description'] ?? '',
@@ -2518,54 +2698,61 @@ class EnhancedInvoiceService {
                       client['clientId'] != null) {
                     // Save custom price for this client
                     debugPrint(
-                        'Saving client-specific custom price for $ndisItemNumber: $price');
-                    final saveResult =
-                        await _apiMethod.saveCustomPriceForClient(
-                      ndisItemNumber,
-                      client['clientId'],
-                      price,
-                      notes ?? '',
-                      metadata: pricingMetadata,
-                      userEmail: userEmail,
-                      organizationId: organizationId,
+                      'Saving client-specific custom price for $ndisItemNumber: $price',
                     );
+                    final saveResult = await _apiMethod
+                        .saveCustomPriceForClient(
+                          ndisItemNumber,
+                          client['clientId'],
+                          price,
+                          notes ?? '',
+                          metadata: pricingMetadata,
+                          userEmail: userEmail,
+                          organizationId: organizationId,
+                        );
 
                     if (saveResult != null && saveResult['success'] == true) {
                       saved = true;
                     } else {
-                      final errorMsg = saveResult?['message'] ??
+                      final errorMsg =
+                          saveResult?['message'] ??
                           'Unknown error saving client price';
                       result['errors'].add(
-                          'Error saving client price for $ndisItemNumber: $errorMsg');
+                        'Error saving client price for $ndisItemNumber: $errorMsg',
+                      );
                       debugPrint('Error saving client price: $errorMsg');
                     }
                   } else if (res['applyToOrganization'] == true) {
                     // Save custom price for the entire organization
                     debugPrint(
-                        'Saving organization-wide custom price for $ndisItemNumber: $price');
-                    final saveResult =
-                        await _apiMethod.saveCustomPriceForOrganization(
-                      ndisItemNumber,
-                      price,
-                      notes ?? '',
-                      metadata: pricingMetadata,
-                      userEmail: userEmail,
-                      organizationId: organizationId,
+                      'Saving organization-wide custom price for $ndisItemNumber: $price',
                     );
+                    final saveResult = await _apiMethod
+                        .saveCustomPriceForOrganization(
+                          ndisItemNumber,
+                          price,
+                          notes ?? '',
+                          metadata: pricingMetadata,
+                          userEmail: userEmail,
+                          organizationId: organizationId,
+                        );
 
                     if (saveResult != null && saveResult['success'] == true) {
                       saved = true;
                     } else {
-                      final errorMsg = saveResult?['message'] ??
+                      final errorMsg =
+                          saveResult?['message'] ??
                           'Unknown error saving organization price';
                       result['errors'].add(
-                          'Error saving organization price for $ndisItemNumber: $errorMsg');
+                        'Error saving organization price for $ndisItemNumber: $errorMsg',
+                      );
                       debugPrint('Error saving organization price: $errorMsg');
                     }
                   } else {
                     // Just for this invoice, no need to save to database
                     debugPrint(
-                        'Using custom price for this invoice only: $ndisItemNumber: $price');
+                      'Using custom price for this invoice only: $ndisItemNumber: $price',
+                    );
                     result['skippedCount'] =
                         (result['skippedCount'] as int) + 1;
                   }
@@ -2575,14 +2762,16 @@ class EnhancedInvoiceService {
                   }
                 } catch (e) {
                   debugPrint('Error saving custom pricing: $e');
-                  result['errors']
-                      .add('Error saving price for $ndisItemNumber: $e');
+                  result['errors'].add(
+                    'Error saving price for $ndisItemNumber: $e',
+                  );
                   result['skippedCount'] = (result['skippedCount'] as int) + 1;
                   // Continue with other price saves even if one fails
                 }
               } else {
                 debugPrint(
-                    'Cannot save custom price: Missing NDIS item number');
+                  'Cannot save custom price: Missing NDIS item number',
+                );
                 result['skippedCount'] = (result['skippedCount'] as int) + 1;
                 result['errors'].add('Missing NDIS item number for price save');
               }
@@ -2619,7 +2808,10 @@ class EnhancedInvoiceService {
   /// Send invoice emails
   /// Enhanced with better validation, error handling, and pricing metadata
   Future<bool> sendInvoiceEmails(
-      String pdfPath, String email, String genKey) async {
+    String pdfPath,
+    String email,
+    String genKey,
+  ) async {
     try {
       bool isLoading = true;
       String errorMessage = '';
@@ -2703,7 +2895,8 @@ class EnhancedInvoiceService {
   /// 3. Match clientAssignments with workedTime using shiftIndex
   /// 4. Handle break time calculations (30 min deduction if shiftBreak = "Yes")
   Future<Map<String, dynamic>> _processSelectedEmployeesAndClients(
-      List<Map<String, dynamic>> selectedEmployeesAndClients) async {
+    List<Map<String, dynamic>> selectedEmployeesAndClients,
+  ) async {
     // Create a structure similar to what getAssignedClients() returns
     Map<String, dynamic> result = {
       'clients': [],
@@ -2717,7 +2910,7 @@ class EnhancedInvoiceService {
           'client_business_names',
           'employee_details_from_login',
           'worked_time_with_break_calculation',
-          'schedule_to_worked_time_mapping'
+          'schedule_to_worked_time_mapping',
         ],
       },
     };
@@ -2727,7 +2920,7 @@ class EnhancedInvoiceService {
     int skippedClientCount = 0;
     List<String> errors = [];
     final Map<String, Map<String, Map<String, dynamic>>>
-        employeeDirectoryByOrg = {};
+    employeeDirectoryByOrg = {};
 
     // For each selected employee
     for (var employee in selectedEmployeesAndClients) {
@@ -2735,20 +2928,23 @@ class EnhancedInvoiceService {
       final selectedClients = employee['clients'] as List<dynamic>? ?? [];
       totalClientCount += selectedClients.length;
       debugPrint(
-          'Processing employee with ${employee['employee']?['email']} email');
+        'Processing employee with ${employee['employee']?['email']} email',
+      );
 
       String employeeEmail = employee['employee']?['email'] as String? ?? '';
       if (employeeEmail.isEmpty) {
         try {
           final sp = SharedPreferencesUtils();
           await sp.init();
-          final spEmail = sp.getUserEmail() ??
+          final spEmail =
+              sp.getUserEmail() ??
               await sp.getUserEmailFromSharedPreferences() ??
               '';
           if (spEmail.isNotEmpty) {
             employeeEmail = spEmail;
             debugPrint(
-                'Using SharedPreferences fallback for employee email: $employeeEmail');
+              'Using SharedPreferences fallback for employee email: $employeeEmail',
+            );
           } else {
             debugPrint('Warning: Employee with no email found, skipping');
             continue;
@@ -2760,7 +2956,8 @@ class EnhancedInvoiceService {
       }
 
       debugPrint(
-          'Processing employee: $employeeEmail with ${selectedClients.length} clients');
+        'Processing employee: $employeeEmail with ${selectedClients.length} clients',
+      );
 
       // Get user assignments for this employee once to avoid multiple API calls
       Map<String, dynamic>? assignments;
@@ -2792,8 +2989,8 @@ class EnhancedInvoiceService {
 
       String organizationIdForEmployee =
           employee['employee']?['organizationId'] as String? ??
-              employee['organizationId'] as String? ??
-              '';
+          employee['organizationId'] as String? ??
+          '';
       final assignmentsListForOrg =
           assignments['assignments'] as List<dynamic>? ?? [];
       if (organizationIdForEmployee.isEmpty) {
@@ -2810,8 +3007,9 @@ class EnhancedInvoiceService {
 
       // Build employee details from selected payload first, then enrich from
       // organization employee directory (live route).
-      final employeeMap =
-          Map<String, dynamic>.from(employee['employee'] as Map? ?? {});
+      final employeeMap = Map<String, dynamic>.from(
+        employee['employee'] as Map? ?? {},
+      );
       final embeddedDetails = employeeMap['details'];
       Map<String, dynamic> employeeDetails = {
         ...employeeMap,
@@ -2830,8 +3028,9 @@ class EnhancedInvoiceService {
         if (!employeeDirectoryByOrg.containsKey(organizationIdForEmployee)) {
           final Map<String, Map<String, dynamic>> byEmail = {};
           try {
-            final orgEmployees = await _apiMethod
-                .getOrganizationEmployees(organizationIdForEmployee);
+            final orgEmployees = await _apiMethod.getOrganizationEmployees(
+              organizationIdForEmployee,
+            );
             if (orgEmployees['success'] == true &&
                 orgEmployees['employees'] is List) {
               final list = orgEmployees['employees'] as List<dynamic>;
@@ -2847,18 +3046,18 @@ class EnhancedInvoiceService {
             }
           } catch (e) {
             debugPrint(
-                'Warning: Could not load org employee directory for $organizationIdForEmployee: $e');
+              'Warning: Could not load org employee directory for $organizationIdForEmployee: $e',
+            );
           }
           employeeDirectoryByOrg[organizationIdForEmployee] = byEmail;
         }
 
-        final orgMatch = employeeDirectoryByOrg[organizationIdForEmployee]
-            ?[employeeEmail.toLowerCase().trim()];
+        final orgMatch =
+            employeeDirectoryByOrg[organizationIdForEmployee]?[employeeEmail
+                .toLowerCase()
+                .trim()];
         if (orgMatch != null) {
-          employeeDetails = {
-            ...orgMatch,
-            ...employeeDetails,
-          };
+          employeeDetails = {...orgMatch, ...employeeDetails};
         }
       }
 
@@ -2880,7 +3079,8 @@ class EnhancedInvoiceService {
           final clientEmail = client['email'] as String? ?? '';
 
           debugPrint(
-              'Processing client: $clientEmail for employee: $employeeEmail with ID: $clientId and name: $clientName');
+            'Processing client: $clientEmail for employee: $employeeEmail with ID: $clientId and name: $clientName',
+          );
 
           // ENHANCEMENT 2: Get detailed client information including businessName from clients collection
           Map<String, dynamic>? clientDetails;
@@ -2897,10 +3097,12 @@ class EnhancedInvoiceService {
               (result['clientDetail'] as List).add(clientDetails);
             }
             debugPrint(
-                'Client details from clients collection: $clientDetails');
+              'Client details from clients collection: $clientDetails',
+            );
           } catch (e) {
             debugPrint(
-                'Warning: Could not fetch client details from clients collection: $e');
+              'Warning: Could not fetch client details from clients collection: $e',
+            );
             clientDetails = {
               'clientEmail': clientEmail,
               'clientFirstName': clientName.split(' ').first,
@@ -2927,7 +3129,8 @@ class EnhancedInvoiceService {
               final assignmentClientEmail =
                   assignment['clientEmail'] as String? ?? '';
               debugPrint(
-                  'Assignment $i: clientEmail = "$assignmentClientEmail"');
+                'Assignment $i: clientEmail = "$assignmentClientEmail"',
+              );
             }
           }
 
@@ -2936,12 +3139,14 @@ class EnhancedInvoiceService {
               final assignmentClientEmail =
                   assignment['clientEmail'] as String? ?? '';
               debugPrint(
-                  'Checking assignment with clientEmail: $assignmentClientEmail');
+                'Checking assignment with clientEmail: $assignmentClientEmail',
+              );
 
               if (assignmentClientEmail == clientEmail) {
                 clientAssignment = assignment;
                 debugPrint(
-                    'Found matching assignment for client: $clientEmail');
+                  'Found matching assignment for client: $clientEmail',
+                );
                 break;
               }
             }
@@ -2979,32 +3184,39 @@ class EnhancedInvoiceService {
               final organizationId = organizationIdForEmployee.isNotEmpty
                   ? organizationIdForEmployee
                   : (employee['employee']?['organizationId'] as String? ??
-                      clientAssignment['organizationId'] as String? ??
-                      employeeDetails['organizationId']?.toString() ??
-                      '');
+                        clientAssignment['organizationId'] as String? ??
+                        employeeDetails['organizationId']?.toString() ??
+                        '');
 
               if (organizationId.isNotEmpty) {
                 debugPrint(
-                    'Fetching worked time data for $employeeEmail and $clientEmail in organization $organizationId');
+                  'Fetching worked time data for $employeeEmail and $clientEmail in organization $organizationId',
+                );
                 workedTimeData = await _apiMethod.getWorkedTime(
-                    employeeEmail, clientEmail, organizationId);
+                  employeeEmail,
+                  clientEmail,
+                  organizationId,
+                );
                 debugPrint('Raw worked time data response: $workedTimeData');
 
                 // ENHANCEMENT 4: Process worked time data with break calculations and schedule mapping
                 enhancedWorkedTimeData = _processWorkedTimeWithBreaks(
-                    workedTimeData,
-                    clientAssignment,
-                    employeeEmail,
-                    clientEmail);
+                  workedTimeData,
+                  clientAssignment,
+                  employeeEmail,
+                  clientEmail,
+                );
                 debugPrint(
-                    'Enhanced worked time data: $enhancedWorkedTimeData');
+                  'Enhanced worked time data: $enhancedWorkedTimeData',
+                );
               } else {
                 debugPrint(
-                    'Warning: No organization ID found for worked time lookup');
+                  'Warning: No organization ID found for worked time lookup',
+                );
                 workedTimeData = {
                   'success': false,
                   'message': 'No organization ID available',
-                  'workedTimes': []
+                  'workedTimes': [],
                 };
                 enhancedWorkedTimeData = workedTimeData;
               }
@@ -3013,7 +3225,7 @@ class EnhancedInvoiceService {
               workedTimeData = {
                 'success': false,
                 'message': 'Error fetching worked time: $e',
-                'workedTimes': []
+                'workedTimes': [],
               };
               enhancedWorkedTimeData = workedTimeData;
             }
@@ -3034,7 +3246,8 @@ class EnhancedInvoiceService {
                   workedTimeData, // Original data for debugging
               'pricingPreferences': pricingPreferences,
               'invoiceMetadata': {
-                'generatedBy': employeeDetails['name'] ??
+                'generatedBy':
+                    employeeDetails['name'] ??
                     employee['employee']?['name'] ??
                     employeeEmail,
                 'generatedFor': _formatClientDisplayName(clientDetails),
@@ -3046,10 +3259,12 @@ class EnhancedInvoiceService {
 
             result['clients'].add(enhancedClientData);
             debugPrint(
-                'Adding enhanced client to result. processedClientCount before increment: $processedClientCount');
+              'Adding enhanced client to result. processedClientCount before increment: $processedClientCount',
+            );
             processedClientCount++;
             debugPrint(
-                'processedClientCount after increment: $processedClientCount');
+              'processedClientCount after increment: $processedClientCount',
+            );
           } else {
             skippedClientCount++;
             String errorMsg =
@@ -3079,7 +3294,8 @@ class EnhancedInvoiceService {
 
     // If no clients were processed successfully, add an error message
     debugPrint(
-        'Final validation: processedClientCount = $processedClientCount, totalClientCount = $totalClientCount');
+      'Final validation: processedClientCount = $processedClientCount, totalClientCount = $totalClientCount',
+    );
     if (processedClientCount == 0) {
       if (result['clients'] is List) {
         (result['clients'] as List).clear(); // Ensure it's empty
@@ -3129,8 +3345,9 @@ class EnhancedInvoiceService {
           );
         } catch (_) {}
 
-        final breakFromSchedule =
-            _parseBreakMinutesToHours(raw['breakMinutes'] ?? raw['break']);
+        final breakFromSchedule = _parseBreakMinutesToHours(
+          raw['breakMinutes'] ?? raw['break'],
+        );
 
         final meta = <String, dynamic>{
           'index': i,
@@ -3158,13 +3375,16 @@ class EnhancedInvoiceService {
       int deduplicatedEntries = 0;
 
       debugPrint(
-          'Processing ${workedTimes.length} worked time entries with ${schedule.length} schedule entries');
+        'Processing ${workedTimes.length} worked time entries with ${schedule.length} schedule entries',
+      );
 
       for (var workedTime in workedTimes) {
         if (workedTime is! Map<String, dynamic>) continue;
 
-        final shiftIndex =
-            _coerceInt(workedTime['shiftIndex'], defaultValue: -1);
+        final shiftIndex = _coerceInt(
+          workedTime['shiftIndex'],
+          defaultValue: -1,
+        );
         final workedShiftKey = _normalizeShiftKey(workedTime['shiftKey']);
         final workedDate = _extractWorkedDate(workedTime);
         final workedStart = _extractWorkedTimeLabel(workedTime, isStart: true);
@@ -3197,7 +3417,8 @@ class EnhancedInvoiceService {
             final exactTimeMatches = dateCandidates.where((candidate) {
               final cStart = candidate['start']?.toString() ?? '';
               final cEnd = candidate['end']?.toString() ?? '';
-              final startMatches = workedStart.isNotEmpty &&
+              final startMatches =
+                  workedStart.isNotEmpty &&
                   cStart.isNotEmpty &&
                   workedStart == cStart;
               final endMatches =
@@ -3224,14 +3445,17 @@ class EnhancedInvoiceService {
         if (matchedScheduleMeta == null) {
           skippedUnmatched++;
           debugPrint(
-              'Skipping unmatched worked time entry. shiftIndex=$shiftIndex, shiftKey=$workedShiftKey, date=$workedDate, start=$workedStart');
+            'Skipping unmatched worked time entry. shiftIndex=$shiftIndex, shiftKey=$workedShiftKey, date=$workedDate, start=$workedStart',
+          );
           continue;
         }
 
         final correspondingSchedule =
             matchedScheduleMeta['schedule'] as Map<String, dynamic>?;
-        final canonicalShiftIndex =
-            _coerceInt(matchedScheduleMeta['index'], defaultValue: shiftIndex);
+        final canonicalShiftIndex = _coerceInt(
+          matchedScheduleMeta['index'],
+          defaultValue: shiftIndex,
+        );
         final canonicalShiftKey =
             matchedScheduleMeta['key']?.toString() ?? workedShiftKey;
 
@@ -3265,8 +3489,9 @@ class EnhancedInvoiceService {
         }
 
         final scheduledHours = _safeDouble(
-            matchedScheduleMeta['scheduledHours'],
-            defaultValue: 0.0);
+          matchedScheduleMeta['scheduledHours'],
+          defaultValue: 0.0,
+        );
         final scheduleBreakHours = _safeDouble(
           matchedScheduleMeta['scheduleBreakHours'],
           defaultValue: 0.0,
@@ -3285,7 +3510,8 @@ class EnhancedInvoiceService {
         if (actualWorkedTime < minBillableHours) {
           skippedTiny++;
           debugPrint(
-              'Skipping tiny worked time entry (<1 min). shiftIndex=$shiftIndex, actualWorkedTime=$actualWorkedTime');
+            'Skipping tiny worked time entry (<1 min). shiftIndex=$shiftIndex, actualWorkedTime=$actualWorkedTime',
+          );
           continue;
         }
 
@@ -3296,15 +3522,16 @@ class EnhancedInvoiceService {
             : double.infinity;
         final hasNdisItemNumber =
             ((workedTime['ndisItem'] as Map<String, dynamic>?)?['itemNumber'] ??
-                        '')
-                    .toString()
-                    .isNotEmpty ||
-                ((correspondingSchedule?['ndisItem']
-                            as Map<String, dynamic>?)?['itemNumber'] ??
-                        '')
-                    .toString()
-                    .isNotEmpty;
-        final qualityScore = (workedShiftKey.isNotEmpty ? 60 : 0) +
+                    '')
+                .toString()
+                .isNotEmpty ||
+            ((correspondingSchedule?['ndisItem']
+                        as Map<String, dynamic>?)?['itemNumber'] ??
+                    '')
+                .toString()
+                .isNotEmpty;
+        final qualityScore =
+            (workedShiftKey.isNotEmpty ? 60 : 0) +
             (workedTime['assignedClientId'] != null ? 20 : 0) +
             (workedTime['organizationId'] != null ? 10 : 0) +
             (workedTime['startTime'] != null && workedTime['endTime'] != null
@@ -3341,22 +3568,22 @@ class EnhancedInvoiceService {
         }
 
         debugPrint(
-            'Processed worked time entry: rawShiftIndex=$shiftIndex, canonicalShiftIndex=$canonicalShiftIndex, timeWorked=$timeWorked, breakTime=$breakTime, actualWorkedTime=$actualWorkedTime');
+          'Processed worked time entry: rawShiftIndex=$shiftIndex, canonicalShiftIndex=$canonicalShiftIndex, timeWorked=$timeWorked, breakTime=$breakTime, actualWorkedTime=$actualWorkedTime',
+        );
       }
 
       final List<Map<String, dynamic>> enhancedWorkedTimes =
-          bestByScheduleKey.values.toList()
-            ..sort((a, b) {
-              final aDate =
-                  _normalizeDateOnly(a['correspondingSchedule']?['date']) ?? '';
-              final bDate =
-                  _normalizeDateOnly(b['correspondingSchedule']?['date']) ?? '';
-              final byDate = aDate.compareTo(bDate);
-              if (byDate != 0) return byDate;
-              final ai = _coerceInt(a['shiftIndex'], defaultValue: 9999);
-              final bi = _coerceInt(b['shiftIndex'], defaultValue: 9999);
-              return ai.compareTo(bi);
-            });
+          bestByScheduleKey.values.toList()..sort((a, b) {
+            final aDate =
+                _normalizeDateOnly(a['correspondingSchedule']?['date']) ?? '';
+            final bDate =
+                _normalizeDateOnly(b['correspondingSchedule']?['date']) ?? '';
+            final byDate = aDate.compareTo(bDate);
+            if (byDate != 0) return byDate;
+            final ai = _coerceInt(a['shiftIndex'], defaultValue: 9999);
+            final bi = _coerceInt(b['shiftIndex'], defaultValue: 9999);
+            return ai.compareTo(bi);
+          });
 
       for (final entry in enhancedWorkedTimes) {
         entry.remove('__qualityScore');
@@ -3380,8 +3607,9 @@ class EnhancedInvoiceService {
         'totalHoursWorked': totalHoursWorked,
         'totalBreakTime': totalBreakTime,
         'totalScheduledEntries': schedule.length,
-        'entriesWithBreaks':
-            enhancedWorkedTimes.where((e) => e['hasBreak'] == true).length,
+        'entriesWithBreaks': enhancedWorkedTimes
+            .where((e) => e['hasBreak'] == true)
+            .length,
         'entriesWithScheduleMatch': enhancedWorkedTimes
             .where((e) => e['scheduleMatched'] == true)
             .length,
@@ -3391,7 +3619,8 @@ class EnhancedInvoiceService {
       };
 
       debugPrint(
-          'Enhanced worked time summary: ${enhancedResponse['summary']}');
+        'Enhanced worked time summary: ${enhancedResponse['summary']}',
+      );
       return enhancedResponse;
     } catch (e) {
       debugPrint('Error processing worked time with breaks: $e');
@@ -3408,26 +3637,38 @@ class EnhancedInvoiceService {
     Map<String, dynamic> candidate,
     Map<String, dynamic> existing,
   ) {
-    final candidateScore =
-        _coerceInt(candidate['__qualityScore'], defaultValue: 0);
-    final existingScore =
-        _coerceInt(existing['__qualityScore'], defaultValue: 0);
+    final candidateScore = _coerceInt(
+      candidate['__qualityScore'],
+      defaultValue: 0,
+    );
+    final existingScore = _coerceInt(
+      existing['__qualityScore'],
+      defaultValue: 0,
+    );
     if (candidateScore != existingScore) {
       return candidateScore > existingScore;
     }
 
-    final candidateDelta = _safeDouble(candidate['__scheduleDelta'],
-        defaultValue: double.infinity);
-    final existingDelta =
-        _safeDouble(existing['__scheduleDelta'], defaultValue: double.infinity);
+    final candidateDelta = _safeDouble(
+      candidate['__scheduleDelta'],
+      defaultValue: double.infinity,
+    );
+    final existingDelta = _safeDouble(
+      existing['__scheduleDelta'],
+      defaultValue: double.infinity,
+    );
     if (candidateDelta != existingDelta) {
       return candidateDelta < existingDelta;
     }
 
-    final candidateHours =
-        _safeDouble(candidate['actualWorkedTime'], defaultValue: 0.0);
-    final existingHours =
-        _safeDouble(existing['actualWorkedTime'], defaultValue: 0.0);
+    final candidateHours = _safeDouble(
+      candidate['actualWorkedTime'],
+      defaultValue: 0.0,
+    );
+    final existingHours = _safeDouble(
+      existing['actualWorkedTime'],
+      defaultValue: 0.0,
+    );
     if (candidateHours != existingHours) {
       return candidateHours > existingHours;
     }
@@ -3476,7 +3717,8 @@ class EnhancedInvoiceService {
     );
     if (explicit.isNotEmpty) return explicit;
     return _normalizeTimeLabel(
-        isStart ? workedTime['startTime'] : workedTime['endTime']);
+      isStart ? workedTime['startTime'] : workedTime['endTime'],
+    );
   }
 
   String _normalizeDateOnly(dynamic value) {
@@ -3544,8 +3786,10 @@ class EnhancedInvoiceService {
 
   /// Format client display name with business name if available
   /// Format: "Client Name (Business Name)" or just "Client Name" if no business
-  String _formatClientDisplayName(Map<String, dynamic>? clientDetails,
-      [AppLocalizations? l10n]) {
+  String _formatClientDisplayName(
+    Map<String, dynamic>? clientDetails, [
+    AppLocalizations? l10n,
+  ]) {
     final unknownClient = l10n?.unknownClient ?? 'Unknown Client';
     if (clientDetails == null) return unknownClient;
 
@@ -3621,9 +3865,12 @@ class EnhancedInvoiceService {
       if (raw.contains(':')) {
         final parts = raw.split(':');
         final h = int.tryParse(parts[0]) ?? 0;
-        final m = int.tryParse(parts.length > 1
-                ? parts[1].replaceAll(RegExp(r'[^0-9]'), '')
-                : '0') ??
+        final m =
+            int.tryParse(
+              parts.length > 1
+                  ? parts[1].replaceAll(RegExp(r'[^0-9]'), '')
+                  : '0',
+            ) ??
             0;
         return h + (m / 60.0);
       }
@@ -3663,19 +3910,21 @@ class EnhancedInvoiceService {
   }
 
   /// Get line items from repository
-  Future<List<Map<String, dynamic>>> getLineItems(
-      {bool includeExpenses = false}) async {
+  Future<List<Map<String, dynamic>>> getLineItems({
+    bool includeExpenses = false,
+  }) async {
     return await _repository.getLineItems(includeExpenses: includeExpenses);
   }
 
   /// Save generated invoices to backend database and regenerate PDFs with correct invoice numbers
   Future<List<String>?> _saveInvoicesToBackend(
-      Map<String, dynamic> processedData,
-      List<String> pdfPaths,
-      String? organizationId,
-      {String? invoiceType,
-      Map<String, dynamic>? adminProfile,
-      bool useAdminBankDetails = false}) async {
+    Map<String, dynamic> processedData,
+    List<String> pdfPaths,
+    String? organizationId, {
+    String? invoiceType,
+    Map<String, dynamic>? adminProfile,
+    bool useAdminBankDetails = false,
+  }) async {
     final savedInvoiceIndexes = <int>[];
 
     try {
@@ -3697,20 +3946,23 @@ class EnhancedInvoiceService {
         // Extract provider details from employee data
         final employeeDetails =
             invoice['employeeDetails'] as Map<String, dynamic>? ?? {};
-        final providerName = employeeDetails['name'] ??
+        final providerName =
+            employeeDetails['name'] ??
             employeeDetails['firstName'] ??
             'Provider Name';
         final providerABN =
             employeeDetails['abn'] ?? employeeDetails['providerABN'] ?? 'N/A';
-        String employeeEmailForSave = (employeeDetails['email'] ??
-                invoice['employeeEmail'] ??
-                (processedData['metadata']?['employeeEmail'] ?? ''))
-            .toString();
+        String employeeEmailForSave =
+            (employeeDetails['email'] ??
+                    invoice['employeeEmail'] ??
+                    (processedData['metadata']?['employeeEmail'] ?? ''))
+                .toString();
         if (employeeEmailForSave.isEmpty) {
           try {
             final sp = SharedPreferencesUtils();
             await sp.init();
-            final spEmail = sp.getUserEmail() ??
+            final spEmail =
+                sp.getUserEmail() ??
                 await sp.getUserEmailFromSharedPreferences() ??
                 '';
             if (spEmail.isNotEmpty) {
@@ -3724,9 +3976,11 @@ class EnhancedInvoiceService {
             invoice['clientDetails'] as Map<String, dynamic>? ?? {};
         final clientNameStr = invoice['clientName']?.toString() ?? '';
         final nameParts = clientNameStr.split(' ');
-        final clientFirstName = clientDetails['clientFirstName'] ??
+        final clientFirstName =
+            clientDetails['clientFirstName'] ??
             (nameParts.isNotEmpty ? nameParts.first : '');
-        final clientLastName = clientDetails['clientLastName'] ??
+        final clientLastName =
+            clientDetails['clientLastName'] ??
             (nameParts.length > 1 ? nameParts.last : '');
         final clientAddress = clientDetails['clientAddress'] ?? '';
         final clientCity = clientDetails['clientCity'] ?? '';
@@ -3751,7 +4005,8 @@ class EnhancedInvoiceService {
 
             if (bankDetails.isEmpty && adminProfile != null) {
               bankDetails = _extractBankDetailsFromMap(
-                  Map<String, dynamic>.from(adminProfile));
+                Map<String, dynamic>.from(adminProfile),
+              );
             }
 
             if (bankDetails.isEmpty) {
@@ -3761,10 +4016,13 @@ class EnhancedInvoiceService {
               final String? currentUserEmail = sp.getUserEmail();
               if (currentUserEmail != null && organizationId != null) {
                 final resp = await _apiMethod.getBankDetailsForUserEmail(
-                    currentUserEmail, organizationId);
+                  currentUserEmail,
+                  organizationId,
+                );
                 if (resp['success'] == true && resp['data'] is Map) {
                   bankDetails = _extractBankDetailsFromMap(
-                      Map<String, dynamic>.from(resp['data']));
+                    Map<String, dynamic>.from(resp['data']),
+                  );
                 }
               }
             }
@@ -3772,10 +4030,13 @@ class EnhancedInvoiceService {
             // Employee selected
             if (employeeEmailForSave.isNotEmpty && organizationId != null) {
               final resp = await _apiMethod.getBankDetailsForUserEmail(
-                  employeeEmailForSave, organizationId);
+                employeeEmailForSave,
+                organizationId,
+              );
               if (resp['success'] == true && resp['data'] is Map) {
                 bankDetails = _extractBankDetailsFromMap(
-                    Map<String, dynamic>.from(resp['data']));
+                  Map<String, dynamic>.from(resp['data']),
+                );
               }
             }
           }
@@ -3794,14 +4055,16 @@ class EnhancedInvoiceService {
         final endDate = invoice['endDate'] ?? '';
 
         // Derive persisted tax flags and rate from mutated invoice data, with processedData as fallback
-        final bool persistedShowTax = ((invoice['applyTax'] ??
+        final bool persistedShowTax =
+            ((invoice['applyTax'] ??
                     invoice['showTax'] ??
                     invoice['includesTax'] ??
                     processedData['applyTax'] ??
                     (processedData['metadata']?['includesTax'])) ??
                 false) ==
             true;
-        final dynamic taxRateSource = invoice['taxRate'] ??
+        final dynamic taxRateSource =
+            invoice['taxRate'] ??
             processedData['taxRate'] ??
             (processedData['metadata']?['taxRate']);
         double persistedTaxRate = 0.0;
@@ -3855,7 +4118,7 @@ class EnhancedInvoiceService {
               'useAdminBankDetails': useAdminBankDetails,
               // Add admin profile for issuer header
               'adminProfile': invoice['adminProfile'] ?? {},
-            }
+            },
           ],
           // invoiceNumber is authoritative
           'invoiceNumber': invoiceNumber,
@@ -3901,19 +4164,24 @@ class EnhancedInvoiceService {
             'recurrence': invoice['recurrence'],
             'metadata': processedData['metadata'] ?? {},
             'issuer': {
-              'businessName': adminProfile?['businessName'] ??
+              'businessName':
+                  adminProfile?['businessName'] ??
                   invoice['adminProfile']?['businessName'] ??
                   '',
-              'businessAddress': adminProfile?['businessAddress'] ??
+              'businessAddress':
+                  adminProfile?['businessAddress'] ??
                   invoice['adminProfile']?['businessAddress'] ??
                   '',
-              'contactEmail': adminProfile?['contactEmail'] ??
+              'contactEmail':
+                  adminProfile?['contactEmail'] ??
                   invoice['adminProfile']?['contactEmail'] ??
                   '',
-              'contactPhone': adminProfile?['contactPhone'] ??
+              'contactPhone':
+                  adminProfile?['contactPhone'] ??
                   invoice['adminProfile']?['contactPhone'] ??
                   '',
-              'taxIdentifiers': adminProfile?['taxIdentifiers'] ??
+              'taxIdentifiers':
+                  adminProfile?['taxIdentifiers'] ??
                   invoice['adminProfile']?['taxIdentifiers'],
               'abn': adminProfile?['abn'] ?? invoice['adminProfile']?['abn'],
             },
@@ -3929,7 +4197,8 @@ class EnhancedInvoiceService {
           'clientEmail': invoice['clientEmail'] ?? '',
           'clientName': invoice['clientName'] ?? '',
           'businessName': businessName,
-          'jobTitle': invoice['jobTitle'] ??
+          'jobTitle':
+              invoice['jobTitle'] ??
               'Personal Care Assistance', // Ensure job title is always set
           'invoiceType': invoice['invoiceType'] ?? invoiceType ?? 'client',
 
@@ -3966,19 +4235,24 @@ class EnhancedInvoiceService {
           // Save PDF generation parameters
           'pdfGenerationParams': pdfGenerationParams,
           'issuer': {
-            'businessName': adminProfile?['businessName'] ??
+            'businessName':
+                adminProfile?['businessName'] ??
                 invoice['adminProfile']?['businessName'] ??
                 '',
-            'businessAddress': adminProfile?['businessAddress'] ??
+            'businessAddress':
+                adminProfile?['businessAddress'] ??
                 invoice['adminProfile']?['businessAddress'] ??
                 '',
-            'contactEmail': adminProfile?['contactEmail'] ??
+            'contactEmail':
+                adminProfile?['contactEmail'] ??
                 invoice['adminProfile']?['contactEmail'] ??
                 '',
-            'contactPhone': adminProfile?['contactPhone'] ??
+            'contactPhone':
+                adminProfile?['contactPhone'] ??
                 invoice['adminProfile']?['contactPhone'] ??
                 '',
-            'taxIdentifiers': adminProfile?['taxIdentifiers'] ??
+            'taxIdentifiers':
+                adminProfile?['taxIdentifiers'] ??
                 invoice['adminProfile']?['taxIdentifiers'],
             'abn': adminProfile?['abn'] ?? invoice['adminProfile']?['abn'],
           },
@@ -3995,8 +4269,8 @@ class EnhancedInvoiceService {
             'includesExpenses': processedData['includeExpenses'] ?? false,
             'hasAttachments':
                 (processedData['attachedPhotos'] as List?)?.isNotEmpty ?? false,
-            'validationSummary': processedData['metadata']
-                ?['validationSummary'],
+            'validationSummary':
+                processedData['metadata']?['validationSummary'],
             'uploadedPhotoUrls': processedData['uploadedPhotoUrls'],
             'uploadedAdditionalFileUrls':
                 processedData['uploadedAdditionalFileUrls'],
@@ -4014,7 +4288,8 @@ class EnhancedInvoiceService {
         const maxCreateAttempts = 3;
         for (int attempt = 1; attempt <= maxCreateAttempts; attempt++) {
           debugPrint(
-              'Saving invoice for client: ${invoice['clientName']} (attempt $attempt/$maxCreateAttempts)');
+            'Saving invoice for client: ${invoice['clientName']} (attempt $attempt/$maxCreateAttempts)',
+          );
           response = await _apiMethod.post('invoices', body: invoiceData);
           debugPrint('Save invoice response: $response');
           if (response['success'] == true) {
@@ -4027,14 +4302,16 @@ class EnhancedInvoiceService {
           }
 
           debugPrint(
-              'Duplicate invoice number detected for ${invoice['clientName']}. Retrying with backend-generated number.');
+            'Duplicate invoice number detected for ${invoice['clientName']}. Retrying with backend-generated number.',
+          );
           invoiceData.remove('invoiceNumber');
           await Future<void>.delayed(Duration(milliseconds: 75 * attempt));
         }
 
         if (response['success'] == true) {
           debugPrint(
-              'Invoice saved successfully for client: ${invoice['clientName']}');
+            'Invoice saved successfully for client: ${invoice['clientName']}',
+          );
           final backendInvoiceNumber =
               response['data']?['invoiceNumber']?.toString() ?? '';
           if (backendInvoiceNumber.isNotEmpty) {
@@ -4042,14 +4319,16 @@ class EnhancedInvoiceService {
             invoice['invoiceNumber'] = backendInvoiceNumber;
             _invoices[i]['invoiceNumber'] = backendInvoiceNumber;
             debugPrint(
-                'Using persisted backend invoice number: $backendInvoiceNumber');
+              'Using persisted backend invoice number: $backendInvoiceNumber',
+            );
           }
           savedInvoiceIndexes.add(i);
         } else {
           final errorMessage =
               response['message'] ?? response['error'] ?? 'Unknown error';
           debugPrint(
-              'Failed to save invoice for client: ${invoice['clientName']}, error: $errorMessage');
+            'Failed to save invoice for client: ${invoice['clientName']}, error: $errorMessage',
+          );
           debugPrint('Full response: $response');
         }
       }
@@ -4060,7 +4339,8 @@ class EnhancedInvoiceService {
 
     if (savedInvoiceIndexes.isEmpty) {
       debugPrint(
-          'No invoices were persisted to backend. Skipping PDF regeneration.');
+        'No invoices were persisted to backend. Skipping PDF regeneration.',
+      );
       return _dedupePdfPaths(pdfPaths);
     }
 
@@ -4078,7 +4358,8 @@ class EnhancedInvoiceService {
       regenerationPayload['clients'] = clientsForRegeneration;
 
       debugPrint(
-          'Regenerating PDFs with backend invoice numbers for ${clientsForRegeneration.length} invoice(s)...');
+        'Regenerating PDFs with backend invoice numbers for ${clientsForRegeneration.length} invoice(s)...',
+      );
       // Resolve tax rate safely with robust fallbacks to avoid null → double errors
       double resolvedTaxRate = _safeDouble(
         regenerationPayload['taxRate'] ??
@@ -4097,18 +4378,21 @@ class EnhancedInvoiceService {
           } else {
             final List<dynamic> altClients =
                 regenerationPayload['calculatedPayloadData']?['clients']
-                        as List<dynamic>? ??
-                    [];
+                    as List<dynamic>? ??
+                [];
             if (altClients.isNotEmpty && altClients.first is Map) {
               firstClient = altClients.first as Map<String, dynamic>;
             }
           }
           if (firstClient != null) {
-            final double subtotal =
-                _safeDouble(firstClient['subtotal'], defaultValue: 0.0);
+            final double subtotal = _safeDouble(
+              firstClient['subtotal'],
+              defaultValue: 0.0,
+            );
             final double taxAmount = _safeDouble(
-                firstClient['tax'] ?? firstClient['taxAmount'],
-                defaultValue: 0.0);
+              firstClient['tax'] ?? firstClient['taxAmount'],
+              defaultValue: 0.0,
+            );
             if (subtotal > 0 && taxAmount > 0) {
               resolvedTaxRate = taxAmount / subtotal;
             }
@@ -4117,7 +4401,8 @@ class EnhancedInvoiceService {
       }
 
       // Respect processedData's tax display preference when regenerating PDFs
-      final bool showTaxFlag = ((regenerationPayload['applyTax'] ??
+      final bool showTaxFlag =
+          ((regenerationPayload['applyTax'] ??
               regenerationPayload['metadata']?['includesTax'] ??
               regenerationPayload['pdfGenerationParams']?['showTax'] ??
               true) ==
@@ -4129,7 +4414,8 @@ class EnhancedInvoiceService {
         taxRate: resolvedTaxRate,
       );
       debugPrint(
-          'Successfully regenerated ${updatedPdfPaths.length} PDFs with backend invoice numbers');
+        'Successfully regenerated ${updatedPdfPaths.length} PDFs with backend invoice numbers',
+      );
       return _dedupePdfPaths(updatedPdfPaths);
     } catch (e) {
       debugPrint('Error regenerating PDFs with backend invoice numbers: $e');

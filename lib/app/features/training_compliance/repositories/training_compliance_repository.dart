@@ -55,14 +55,17 @@ class TrainingComplianceRepository {
   }
 
   Future<Map<String, dynamic>> createCertificationRequirement(
-      Map<String, dynamic> data,
-      {String? organizationId}) async {
+    Map<String, dynamic> data, {
+    String? organizationId,
+  }) async {
     final orgId = await _resolveOrganizationId(organizationId);
     if (orgId != null) {
       data = {...data, 'organizationId': orgId};
     }
-    final response =
-        await _apiMethod.post('$_basePath/certification-requirements', body: data);
+    final response = await _apiMethod.post(
+      '$_basePath/certification-requirements',
+      body: data,
+    );
     if (response['success'] == true) {
       return Map<String, dynamic>.from(response['data'] as Map);
     }
@@ -70,8 +73,10 @@ class TrainingComplianceRepository {
   }
 
   Future<Map<String, dynamic>> updateCertificationRequirement(
-      String id, Map<String, dynamic> data,
-      {String? organizationId}) async {
+    String id,
+    Map<String, dynamic> data, {
+    String? organizationId,
+  }) async {
     final orgId = await _resolveOrganizationId(organizationId);
     if (orgId != null) {
       data = {...data, 'organizationId': orgId};
@@ -86,8 +91,10 @@ class TrainingComplianceRepository {
     throw Exception(response['message'] ?? 'Failed to update requirement');
   }
 
-  Future<void> deleteCertificationRequirement(String id,
-      {String? organizationId}) async {
+  Future<void> deleteCertificationRequirement(
+    String id, {
+    String? organizationId,
+  }) async {
     var endpoint = '$_basePath/certification-requirements/$id';
     final orgId = await _resolveOrganizationId(organizationId);
     if (orgId != null) {
@@ -117,7 +124,7 @@ class TrainingComplianceRepository {
       'issuer': issuer,
       'expiryDate': expiryDate.toIso8601String(),
     };
-    
+
     if (notes != null) fields['notes'] = notes;
     if (certificationNumber != null) {
       fields['certificationNumber'] = certificationNumber;
@@ -128,22 +135,25 @@ class TrainingComplianceRepository {
     if (orgId != null) {
       fields['organizationId'] = orgId;
     }
-    
-    final filePart = await http.MultipartFile.fromPath('certification', file.path);
-    
+
+    final filePart = await http.MultipartFile.fromPath(
+      'certification',
+      file.path,
+    );
+
     final response = await _apiMethod.postMultipart(
       '$_basePath/certifications/upload',
       fields: fields,
       files: [filePart],
     );
-    
+
     if (response['success'] == true) {
       return _parseCertification(response['data']);
     } else {
       throw Exception(response['message'] ?? 'Failed to upload certification');
     }
   }
-  
+
   Future<List<Certification>> getCertifications({
     String? status,
     String? userId,
@@ -151,17 +161,18 @@ class TrainingComplianceRepository {
   }) async {
     String endpoint = '$_basePath/certifications';
     final queryParams = <String, String>{};
-    if (status != null) queryParams['status'] = _toBackendCertificationStatus(status);
+    if (status != null)
+      queryParams['status'] = _toBackendCertificationStatus(status);
     if (userId != null) queryParams['userId'] = userId;
     final orgId = await _resolveOrganizationId(organizationId);
     if (orgId != null) queryParams['organizationId'] = orgId;
-    
+
     if (queryParams.isNotEmpty) {
       endpoint += '?${Uri(queryParameters: queryParams).query}';
     }
-    
+
     final response = await _apiMethod.get(endpoint);
-    
+
     if (response['success'] == true) {
       final list = response['data'] as List;
       return list.map((e) => _parseCertification(e)).toList();
@@ -197,7 +208,7 @@ class TrainingComplianceRepository {
       '$_basePath/certifications/$id/audit',
       body: body,
     );
-    
+
     if (response['success'] == true) {
       return _parseCertification(response['data']);
     } else {
@@ -242,8 +253,7 @@ class TrainingComplianceRepository {
     throw Exception(response['message'] ?? 'Failed to update certification');
   }
 
-  Future<void> deleteCertification(String id,
-      {String? organizationId}) async {
+  Future<void> deleteCertification(String id, {String? organizationId}) async {
     var endpoint = '$_basePath/certifications/$id';
     final orgId = await _resolveOrganizationId(organizationId);
     if (orgId != null) {
@@ -256,18 +266,22 @@ class TrainingComplianceRepository {
   }
 
   // --- Training ---
-  
+
   Future<TrainingModule> createTrainingModule(Map<String, dynamic> data) async {
-    final orgId = await _resolveOrganizationId(data['organizationId']?.toString());
+    final orgId = await _resolveOrganizationId(
+      data['organizationId']?.toString(),
+    );
     if (orgId != null) {
       data = {...data, 'organizationId': orgId};
     }
     final response = await _apiMethod.post('$_basePath/training', body: data);
-    
+
     if (response['success'] == true) {
       return _parseTrainingModule(response['data'] as Map<String, dynamic>);
     } else {
-      throw Exception(response['message'] ?? 'Failed to create training module');
+      throw Exception(
+        response['message'] ?? 'Failed to create training module',
+      );
     }
   }
 
@@ -278,25 +292,34 @@ class TrainingComplianceRepository {
       endpoint = _appendOrgQuery(endpoint, orgId);
     }
     final response = await _apiMethod.get(endpoint);
-    
+
     if (response['success'] == true) {
       final list = response['data'] as List;
       return list
           .map((e) => _parseTrainingModule(e as Map<String, dynamic>))
           .toList();
     } else {
-      throw Exception(response['message'] ?? 'Failed to fetch training modules');
+      throw Exception(
+        response['message'] ?? 'Failed to fetch training modules',
+      );
     }
   }
 
-  Future<TrainingProgress> updateTrainingProgress(String moduleId, String status, int percentage) async {
+  Future<TrainingProgress> updateTrainingProgress(
+    String moduleId,
+    String status,
+    int percentage,
+  ) async {
     final orgId = await _resolveOrganizationId(null);
-    final response = await _apiMethod.post('$_basePath/training/$moduleId/progress', body: {
-      'status': status,
-      'progressPercentage': percentage,
-      if (orgId != null) 'organizationId': orgId,
-    });
-    
+    final response = await _apiMethod.post(
+      '$_basePath/training/$moduleId/progress',
+      body: {
+        'status': status,
+        'progressPercentage': percentage,
+        if (orgId != null) 'organizationId': orgId,
+      },
+    );
+
     if (response['success'] == true) {
       final normalized = _normalizeTrainingProgress(
         response['data'] as Map<String, dynamic>,
@@ -308,12 +331,19 @@ class TrainingComplianceRepository {
   }
 
   Future<TrainingModule> updateTrainingModule(
-      String moduleId, Map<String, dynamic> data) async {
-    final orgId = await _resolveOrganizationId(data['organizationId']?.toString());
+    String moduleId,
+    Map<String, dynamic> data,
+  ) async {
+    final orgId = await _resolveOrganizationId(
+      data['organizationId']?.toString(),
+    );
     if (orgId != null) {
       data = {...data, 'organizationId': orgId};
     }
-    final response = await _apiMethod.put('$_basePath/training/$moduleId', body: data);
+    final response = await _apiMethod.put(
+      '$_basePath/training/$moduleId',
+      body: data,
+    );
     if (response['success'] == true) {
       return _parseTrainingModule(response['data'] as Map<String, dynamic>);
     }
@@ -328,11 +358,15 @@ class TrainingComplianceRepository {
     }
     final response = await _apiMethod.delete(endpoint);
     if (response['success'] != true) {
-      throw Exception(response['message'] ?? 'Failed to delete training module');
+      throw Exception(
+        response['message'] ?? 'Failed to delete training module',
+      );
     }
   }
 
-  Future<Map<String, dynamic>> getTrainingModuleProgress(String moduleId) async {
+  Future<Map<String, dynamic>> getTrainingModuleProgress(
+    String moduleId,
+  ) async {
     var endpoint = '$_basePath/training/$moduleId/progress';
     final orgId = await _resolveOrganizationId(null);
     if (orgId != null) {
@@ -346,14 +380,16 @@ class TrainingComplianceRepository {
   }
 
   // --- Compliance ---
-  
+
   Future<ComplianceChecklist> createChecklist(Map<String, dynamic> data) async {
-    final orgId = await _resolveOrganizationId(data['organizationId']?.toString());
+    final orgId = await _resolveOrganizationId(
+      data['organizationId']?.toString(),
+    );
     if (orgId != null) {
       data = {...data, 'organizationId': orgId};
     }
     final response = await _apiMethod.post('$_basePath/compliance', body: data);
-    
+
     if (response['success'] == true) {
       return _parseChecklist(response['data'] as Map<String, dynamic>);
     } else {
@@ -368,7 +404,7 @@ class TrainingComplianceRepository {
       endpoint = _appendOrgQuery(endpoint, orgId);
     }
     final response = await _apiMethod.get(endpoint);
-    
+
     if (response['success'] == true) {
       final list = response['data'] as List;
       return list
@@ -379,21 +415,28 @@ class TrainingComplianceRepository {
     }
   }
 
-  Future<UserChecklistStatus> updateChecklistStatus(String checklistId, Map<String, bool> itemsStatus, bool isCompleted) async {
+  Future<UserChecklistStatus> updateChecklistStatus(
+    String checklistId,
+    Map<String, bool> itemsStatus,
+    bool isCompleted,
+  ) async {
     final completedItems = itemsStatus.entries
         .where((entry) => entry.value)
         .map((entry) => entry.key)
         .toList();
 
     final orgId = await _resolveOrganizationId(null);
-    final response = await _apiMethod.post('$_basePath/compliance/status', body: {
-      'checklistId': checklistId,
-      'completedItems': completedItems,
-      'itemsStatus': itemsStatus,
-      'isCompleted': isCompleted,
-      if (orgId != null) 'organizationId': orgId,
-    });
-    
+    final response = await _apiMethod.post(
+      '$_basePath/compliance/status',
+      body: {
+        'checklistId': checklistId,
+        'completedItems': completedItems,
+        'itemsStatus': itemsStatus,
+        'isCompleted': isCompleted,
+        if (orgId != null) 'organizationId': orgId,
+      },
+    );
+
     if (response['success'] == true) {
       final data = response['data'] as Map<String, dynamic>;
       final normalized = _normalizeUserChecklistStatus(
@@ -402,18 +445,26 @@ class TrainingComplianceRepository {
       );
       return UserChecklistStatus.fromJson(normalized);
     } else {
-      throw Exception(response['message'] ?? 'Failed to update checklist status');
+      throw Exception(
+        response['message'] ?? 'Failed to update checklist status',
+      );
     }
   }
 
   Future<ComplianceChecklist> updateChecklist(
-      String checklistId, Map<String, dynamic> data) async {
-    final orgId = await _resolveOrganizationId(data['organizationId']?.toString());
+    String checklistId,
+    Map<String, dynamic> data,
+  ) async {
+    final orgId = await _resolveOrganizationId(
+      data['organizationId']?.toString(),
+    );
     if (orgId != null) {
       data = {...data, 'organizationId': orgId};
     }
-    final response =
-        await _apiMethod.put('$_basePath/compliance/$checklistId', body: data);
+    final response = await _apiMethod.put(
+      '$_basePath/compliance/$checklistId',
+      body: data,
+    );
     if (response['success'] == true) {
       return _parseChecklist(response['data'] as Map<String, dynamic>);
     }
@@ -445,7 +496,10 @@ class TrainingComplianceRepository {
       'fileUrl': map['fileUrl'] ?? '',
       'status': _toFrontendCertificationStatus(map['status']),
       'expiryDate': map['expiryDate'] ?? DateTime.now().toIso8601String(),
-      'uploadedAt': map['uploadedAt'] ?? map['createdAt'] ?? DateTime.now().toIso8601String(),
+      'uploadedAt':
+          map['uploadedAt'] ??
+          map['createdAt'] ??
+          DateTime.now().toIso8601String(),
     };
     return Certification.fromJson(normalized);
   }
@@ -456,10 +510,15 @@ class TrainingComplianceRepository {
       '_id': raw['_id'] ?? raw['id'],
       'title': raw['title'] ?? '',
       'description': raw['description'] ?? '',
-      'contentType': raw['contentType'] ??
-          ((raw['contentText'] != null && raw['contentText'].toString().isNotEmpty)
+      'contentType':
+          raw['contentType'] ??
+          ((raw['contentText'] != null &&
+                  raw['contentText'].toString().isNotEmpty)
               ? 'Text'
-              : ((raw['contentUrl'] != null && raw['contentUrl'].toString().isNotEmpty) ? 'Video' : 'Text')),
+              : ((raw['contentUrl'] != null &&
+                        raw['contentUrl'].toString().isNotEmpty)
+                    ? 'Video'
+                    : 'Text')),
       'contentUrl': raw['contentUrl'],
       'contentText': raw['contentText'],
       'durationMinutes': raw['durationMinutes'] ?? 0,
@@ -484,17 +543,15 @@ class TrainingComplianceRepository {
   }
 
   ComplianceChecklist _parseChecklist(Map<String, dynamic> raw) {
-    final normalizedItems = (raw['items'] as List<dynamic>? ?? [])
-        .map((item) {
-          final map = Map<String, dynamic>.from(item as Map);
-          return <String, dynamic>{
-            ...map,
-            '_id': map['_id'] ?? map['id'],
-            'text': map['text'] ?? '',
-            'isRequired': map['isRequired'] ?? map['isMandatory'] ?? true,
-          };
-        })
-        .toList();
+    final normalizedItems = (raw['items'] as List<dynamic>? ?? []).map((item) {
+      final map = Map<String, dynamic>.from(item as Map);
+      return <String, dynamic>{
+        ...map,
+        '_id': map['_id'] ?? map['id'],
+        'text': map['text'] ?? '',
+        'isRequired': map['isRequired'] ?? map['isMandatory'] ?? true,
+      };
+    }).toList();
 
     final normalizedChecklist = <String, dynamic>{
       ...raw,
@@ -531,7 +588,8 @@ class TrainingComplianceRepository {
           ? moduleIdOverride
           : _stringId(rawProgress['moduleId']),
       'status': rawProgress['status'] ?? 'not_started',
-      'progressPercentage': rawProgress['progressPercentage'] ?? rawProgress['progress'] ?? 0,
+      'progressPercentage':
+          rawProgress['progressPercentage'] ?? rawProgress['progress'] ?? 0,
       'completedAt': rawProgress['completedAt'],
     };
   }
@@ -564,7 +622,9 @@ class TrainingComplianceRepository {
       'itemsStatus': itemsStatus,
       'isCompleted': rawStatus['isCompleted'] ?? false,
       'lastUpdated':
-          rawStatus['lastUpdated'] ?? rawStatus['updatedAt'] ?? DateTime.now().toIso8601String(),
+          rawStatus['lastUpdated'] ??
+          rawStatus['updatedAt'] ??
+          DateTime.now().toIso8601String(),
     };
   }
 

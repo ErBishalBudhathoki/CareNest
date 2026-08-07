@@ -6,24 +6,13 @@ const Set<String> _adminRoleTags = {
   'moderator',
 };
 
-const Set<String> _employeeRoleTags = {
-  'employee',
-};
+const Set<String> _employeeRoleTags = {'employee'};
 
-const Set<String> _clientRoleTags = {
-  'client',
-};
+const Set<String> _clientRoleTags = {'client'};
 
-const Set<String> _familyRoleTags = {
-  'family',
-};
+const Set<String> _familyRoleTags = {'family'};
 
-enum UserRole {
-  employee,
-  admin,
-  client,
-  family,
-}
+enum UserRole { employee, admin, client, family }
 
 class UserRoleResolver {
   const UserRoleResolver._();

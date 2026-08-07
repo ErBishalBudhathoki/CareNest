@@ -11,10 +11,7 @@ import 'package:intl/intl.dart';
 class ClientInvoiceListView extends ConsumerStatefulWidget {
   final bool isFamilyViewer;
 
-  const ClientInvoiceListView({
-    super.key,
-    this.isFamilyViewer = false,
-  });
+  const ClientInvoiceListView({super.key, this.isFamilyViewer = false});
 
   @override
   ConsumerState<ClientInvoiceListView> createState() =>
@@ -32,18 +29,18 @@ class _ClientInvoiceListViewState extends ConsumerState<ClientInvoiceListView> {
     {
       'value': 'approved',
       'label': 'Approved',
-      'icon': Icons.check_circle_outline
+      'icon': Icons.check_circle_outline,
     },
     {'value': 'paid', 'label': 'Paid', 'icon': Icons.paid_outlined},
     {
       'value': 'overdue',
       'label': 'Overdue',
-      'icon': Icons.warning_amber_outlined
+      'icon': Icons.warning_amber_outlined,
     },
     {
       'value': 'disputed',
       'label': 'Disputed',
-      'icon': Icons.report_problem_outlined
+      'icon': Icons.report_problem_outlined,
     },
   ];
 
@@ -58,8 +55,8 @@ class _ClientInvoiceListViewState extends ConsumerState<ClientInvoiceListView> {
 
     if (_selectedFilter != 'all') {
       filtered = filtered.where((invoice) {
-        final status =
-            (invoice.workflow['status'] as String? ?? '').toLowerCase();
+        final status = (invoice.workflow['status'] as String? ?? '')
+            .toLowerCase();
         return status == _selectedFilter;
       }).toList();
     }
@@ -95,9 +92,7 @@ class _ClientInvoiceListViewState extends ConsumerState<ClientInvoiceListView> {
 
               return _buildInvoiceList(context, filteredInvoices);
             },
-            loading: () => const Center(
-              child: BauhausLoadingState(),
-            ),
+            loading: () => const Center(child: BauhausLoadingState()),
             error: (e, _) => Center(
               child: BauhausErrorState(
                 title: 'Error Loading Invoices',
@@ -160,16 +155,18 @@ class _ClientInvoiceListViewState extends ConsumerState<ClientInvoiceListView> {
                       color: isSelected
                           ? BauhausDesign.primary
                           : BauhausDesign.surfaceWhite,
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusSm),
+                      borderRadius: BorderRadius.circular(
+                        BauhausDesign.radiusSm,
+                      ),
                       border: Border.all(
                         color: isSelected
                             ? BauhausDesign.primary
                             : BauhausDesign.neutral,
                         width: 1.5,
                       ),
-                      boxShadow:
-                          isSelected ? const [BauhausDesign.shadowHardXs] : [],
+                      boxShadow: isSelected
+                          ? const [BauhausDesign.shadowHardXs]
+                          : [],
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -186,8 +183,9 @@ class _ClientInvoiceListViewState extends ConsumerState<ClientInvoiceListView> {
                           filter['label'] as String,
                           style: GoogleFonts.inter(
                             fontSize: 12,
-                            fontWeight:
-                                isSelected ? FontWeight.bold : FontWeight.w500,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.w500,
                             color: isSelected
                                 ? BauhausDesign.surfaceWhite
                                 : BauhausDesign.textDark,
@@ -380,11 +378,8 @@ class _InvoiceCard extends StatelessWidget {
                       children: [
                         Text(
                           'AMOUNT DUE',
-                          style: BauhausDesign.getTextTheme(context)
-                              .labelSmall
-                              ?.copyWith(
-                                color: BauhausDesign.textMuted,
-                              ),
+                          style: BauhausDesign.getTextTheme(context).labelSmall
+                              ?.copyWith(color: BauhausDesign.textMuted),
                         ),
                         const SizedBox(height: 2),
                         Text(
@@ -405,18 +400,14 @@ class _InvoiceCard extends StatelessWidget {
                             'DUE DATE',
                             style: BauhausDesign.getTextTheme(context)
                                 .labelSmall
-                                ?.copyWith(
-                                  color: BauhausDesign.textMuted,
-                                ),
+                                ?.copyWith(color: BauhausDesign.textMuted),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             _formatDate(dueDate),
-                            style: BauhausDesign.getTextTheme(context)
-                                .bodyMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
+                            style: BauhausDesign.getTextTheme(
+                              context,
+                            ).bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                           ),
                         ],
                       ),
@@ -432,7 +423,8 @@ class _InvoiceCard extends StatelessWidget {
                     color: BauhausDesign.backgroundLight,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                     border: Border.all(
-                        color: BauhausDesign.neutral.withOpacity(0.3)),
+                      color: BauhausDesign.neutral.withOpacity(0.3),
+                    ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -445,11 +437,9 @@ class _InvoiceCard extends StatelessWidget {
                       const SizedBox(width: BauhausDesign.space2),
                       Text(
                         'Tap to view details',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
-                            ?.copyWith(
-                              color: BauhausDesign.textMuted,
-                            ),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                       ),
                     ],
                   ),

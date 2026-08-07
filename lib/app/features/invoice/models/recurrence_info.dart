@@ -13,7 +13,9 @@ class RecurrenceInfo {
     return RecurrenceInfo(
       isRecurring: json['isRecurring'] ?? false,
       frequency: json['frequency'] ?? 'monthly',
-      nextDate: json['nextDate'] != null ? DateTime.parse(json['nextDate']) : null,
+      nextDate: json['nextDate'] != null
+          ? DateTime.parse(json['nextDate'])
+          : null,
     );
   }
 

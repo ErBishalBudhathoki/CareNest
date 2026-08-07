@@ -49,29 +49,17 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
 
-    _rotationAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _rotationController,
-      curve: Curves.linear,
-    ));
+    _rotationAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _rotationController, curve: Curves.linear),
+    );
 
-    _pulseAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.2,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
+    _pulseAnimation = Tween<double>(begin: 0.8, end: 1.2).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
 
     if (widget.isVisible) {
       _startAnimations();
@@ -157,7 +145,7 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
                                       width: 2,
                                     ),
                                     boxShadow: const [
-                                      BauhausDesign.shadowHardSm
+                                      BauhausDesign.shadowHardSm,
                                     ],
                                   ),
                                   child: Icon(
@@ -177,8 +165,7 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
                     // Loading message
                     Text(
                       widget.message,
-                      style: BauhausDesign.getTextTheme(context)
-                          .titleMedium
+                      style: BauhausDesign.getTextTheme(context).titleMedium
                           ?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: BauhausDesign.textDark,
@@ -190,11 +177,9 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
                     // Subtitle
                     Text(
                       'Please wait while we verify your credentials',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
-                          ?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                       textAlign: TextAlign.center,
                     ),
 
@@ -212,11 +197,9 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
                         ),
                         child: Text(
                           'Cancel',
-                          style: BauhausDesign.getTextTheme(context)
-                              .labelLarge
-                              ?.copyWith(
-                                fontWeight: FontWeight.w500,
-                              ),
+                          style: BauhausDesign.getTextTheme(
+                            context,
+                          ).labelLarge?.copyWith(fontWeight: FontWeight.w500),
                         ),
                       ),
                     ],

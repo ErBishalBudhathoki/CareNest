@@ -120,10 +120,8 @@ abstract class AppointmentStatus with _$AppointmentStatus {
 
 @freezed
 abstract class ChecklistItem with _$ChecklistItem {
-  const factory ChecklistItem({
-    required String item,
-    required bool completed,
-  }) = _ChecklistItem;
+  const factory ChecklistItem({required String item, required bool completed}) =
+      _ChecklistItem;
 
   factory ChecklistItem.fromJson(Map<String, dynamic> json) =>
       _$ChecklistItemFromJson(json);
@@ -145,7 +143,6 @@ abstract class ServiceHistory with _$ServiceHistory {
   factory ServiceHistory.fromJson(Map<String, dynamic> json) =>
       _$ServiceHistoryFromJson(json);
 }
-
 
 // Additional models for existing client portal views
 @freezed

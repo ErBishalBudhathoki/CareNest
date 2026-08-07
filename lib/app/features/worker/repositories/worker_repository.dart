@@ -56,8 +56,10 @@ class WorkerRepository {
         return WorkerDashboardData.fromJson(response['data']);
       } else {
         // Backend returned success: false
-        throw Exception(response['message'] ??
-            'Failed to fetch worker dashboard: ${response['code'] ?? 'UNKNOWN_ERROR'}');
+        throw Exception(
+          response['message'] ??
+              'Failed to fetch worker dashboard: ${response['code'] ?? 'UNKNOWN_ERROR'}',
+        );
       }
     } catch (e) {
       // Re-throw with context for better error messages
@@ -81,10 +83,7 @@ class WorkerRepository {
   /// - `null` => all available history (bounded by backend limit)
   Future<List<ShiftModel>> getShiftHistory({int? days, int limit = 200}) async {
     try {
-      final params = <String>[
-        if (days != null) 'days=$days',
-        'limit=$limit',
-      ];
+      final params = <String>[if (days != null) 'days=$days', 'limit=$limit'];
       final endpoint = params.isEmpty
           ? 'worker/shift-history'
           : 'worker/shift-history?${params.join('&')}';
@@ -99,8 +98,10 @@ class WorkerRepository {
             .toList();
       }
 
-      throw Exception(response['message'] ??
-          'Failed to fetch shift history: ${response['code'] ?? 'UNKNOWN_ERROR'}');
+      throw Exception(
+        response['message'] ??
+            'Failed to fetch shift history: ${response['code'] ?? 'UNKNOWN_ERROR'}',
+      );
     } catch (e) {
       if (e is Exception) rethrow;
       throw Exception('Unexpected error fetching shift history: $e');
@@ -117,7 +118,9 @@ class WorkerRepository {
       );
 
       if (response['success'] != true) {
-        throw Exception(response['message'] ?? 'Failed to acknowledge broadcast');
+        throw Exception(
+          response['message'] ?? 'Failed to acknowledge broadcast',
+        );
       }
     } catch (e) {
       if (e is Exception) rethrow;

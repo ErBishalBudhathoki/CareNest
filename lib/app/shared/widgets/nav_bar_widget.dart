@@ -22,8 +22,9 @@ import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:flutter/services.dart' show SystemNavigator, MethodChannel;
 
 // Use a static GlobalKey to prevent duplicates
-final _navBarScaffoldKey =
-    GlobalKey<ScaffoldState>(debugLabel: 'navbar_scaffold_key');
+final _navBarScaffoldKey = GlobalKey<ScaffoldState>(
+  debugLabel: 'navbar_scaffold_key',
+);
 
 class NavBarWidget extends ConsumerWidget {
   final BuildContext context;
@@ -65,11 +66,13 @@ class NavBarWidget extends ConsumerWidget {
         final photoDataState = ref.watch(photoDataProvider);
         final currentPhotoData = photoDataState.photoData ?? photoData;
         final sharedPrefs = ref.watch(sharedPreferencesUtilsProvider);
-        final currentImageUrl = sharedPrefs.getString('profilePic') ??
+        final currentImageUrl =
+            sharedPrefs.getString('profilePic') ??
             sharedPrefs.getString('photoUrl');
 
         return SizedBox(
-          width: MediaQuery.of(context).size.width *
+          width:
+              MediaQuery.of(context).size.width *
               0.5, // Adjust the width as needed
           child: Drawer(
             key: _navBarScaffoldKey,
@@ -86,8 +89,7 @@ class NavBarWidget extends ConsumerWidget {
                       if (organizationName != null)
                         Text(
                           'Org: $organizationName',
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodyMedium
+                          style: BauhausDesign.getTextTheme(context).bodyMedium
                               ?.copyWith(
                                 fontSize: 12,
                                 fontStyle: FontStyle.italic,
@@ -96,8 +98,7 @@ class NavBarWidget extends ConsumerWidget {
                       if (organizationCode != null)
                         Text(
                           'Code: $organizationCode',
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodyMedium
+                          style: BauhausDesign.getTextTheme(context).bodyMedium
                               ?.copyWith(
                                 fontSize: 12,
                                 fontStyle: FontStyle.italic,
@@ -126,45 +127,51 @@ class NavBarWidget extends ConsumerWidget {
                 if (role == UserRole.admin)
                   ListTile(
                     leading: const Icon(Icons.favorite),
-                    title: Text('Assign C 2 E',
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.onSurface,
-                          fontFamily: "ShadowsIntoLightTwo",
-                        )),
+                    title: Text(
+                      'Assign C 2 E',
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: theme.colorScheme.onSurface,
+                        fontFamily: "ShadowsIntoLightTwo",
+                      ),
+                    ),
                     onTap: () async => {
                       await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const AssignC2E(),
                         ),
-                      )
+                      ),
                     },
                   ),
                 if (role == UserRole.admin)
                   ListTile(
                     leading: const Icon(Icons.person),
-                    title: Text('Line Items',
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.onSurface,
-                          fontFamily: "ShadowsIntoLightTwo",
-                        )),
+                    title: Text(
+                      'Line Items',
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: theme.colorScheme.onSurface,
+                        fontFamily: "ShadowsIntoLightTwo",
+                      ),
+                    ),
                     onTap: () async => {
                       await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const LineItemsView(),
                         ),
-                      )
+                      ),
                     },
                   ),
                 if (role == UserRole.admin)
                   ListTile(
                     leading: const Icon(Icons.update),
-                    title: Text('Update Holiday',
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.onSurface,
-                          fontFamily: "ShadowsIntoLightTwo",
-                        )),
+                    title: Text(
+                      'Update Holiday',
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: theme.colorScheme.onSurface,
+                        fontFamily: "ShadowsIntoLightTwo",
+                      ),
+                    ),
                     onTap: () async {
                       var value = await apiMethod.uploadCSV();
                       if (value['message'].toString() == "Upload successful") {
@@ -192,11 +199,13 @@ class NavBarWidget extends ConsumerWidget {
                   ),
                 ListTile(
                   leading: const Icon(Icons.notifications),
-                  title: Text('Request',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: theme.colorScheme.onSurface,
-                        fontFamily: "ShadowsIntoLightTwo",
-                      )),
+                  title: Text(
+                    'Request',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                      fontFamily: "ShadowsIntoLightTwo",
+                    ),
+                  ),
                   onTap: () {},
                   trailing: ClipOval(
                     child: Container(
@@ -216,11 +225,13 @@ class NavBarWidget extends ConsumerWidget {
                 ),
                 ListTile(
                   leading: const Icon(Icons.school),
-                  title: Text('Training & Compliance',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: theme.colorScheme.onSurface,
-                        fontFamily: "ShadowsIntoLightTwo",
-                      )),
+                  title: Text(
+                    'Training & Compliance',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                      fontFamily: "ShadowsIntoLightTwo",
+                    ),
+                  ),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -233,20 +244,24 @@ class NavBarWidget extends ConsumerWidget {
                 const Divider(),
                 ListTile(
                   leading: const Icon(Icons.settings),
-                  title: Text('Settings',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: theme.colorScheme.onSurface,
-                        fontFamily: "ShadowsIntoLightTwo",
-                      )),
+                  title: Text(
+                    'Settings',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                      fontFamily: "ShadowsIntoLightTwo",
+                    ),
+                  ),
                   onTap: () {},
                 ),
                 ListTile(
                   leading: const Icon(Icons.delete_forever_outlined),
-                  title: Text('Delete Account',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: theme.colorScheme.onSurface,
-                        fontFamily: "ShadowsIntoLightTwo",
-                      )),
+                  title: Text(
+                    'Delete Account',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                      fontFamily: "ShadowsIntoLightTwo",
+                    ),
+                  ),
                   onTap: () {
                     // Show the delete confirmation dialog
                     _showDeleteConfirmationDialog(context, theme, ref);
@@ -254,23 +269,27 @@ class NavBarWidget extends ConsumerWidget {
                 ),
                 const Divider(),
                 ListTile(
-                  title: Text('Exit',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: theme.colorScheme.onSurface,
-                        fontFamily: "ShadowsIntoLightTwo",
-                      )),
+                  title: Text(
+                    'Exit',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                      fontFamily: "ShadowsIntoLightTwo",
+                    ),
+                  ),
                   leading: const Icon(Icons.exit_to_app),
                   onTap: () async {
                     if (Navigator.canPop(context)) {
                       Navigator.pop(
-                          context); // Pop the current screen on both platforms
+                        context,
+                      ); // Pop the current screen on both platforms
                     } else {
                       final role = getRole(ref);
                       if (Platform.isAndroid) {
                         SystemNavigator.pop(); // Close the Android app
                       } else {
-                        const platform =
-                            MethodChannel('app.channel.shared.data');
+                        const platform = MethodChannel(
+                          'app.channel.shared.data',
+                        );
                         platform.invokeMethod('exitApp');
                       }
                     }
@@ -292,7 +311,10 @@ class NavBarWidget extends ConsumerWidget {
   }
 
   void _showDeleteConfirmationDialog(
-      BuildContext context, ThemeData theme, WidgetRef ref) {
+    BuildContext context,
+    ThemeData theme,
+    WidgetRef ref,
+  ) {
     showDialog(
       context: context,
       builder: (BuildContext context) {

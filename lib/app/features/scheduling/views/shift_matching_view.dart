@@ -8,10 +8,7 @@ import 'package:carenest/app/features/scheduling/viewmodels/shift_matching_viewm
 class ShiftMatchingView extends ConsumerStatefulWidget {
   final String? organizationId;
 
-  const ShiftMatchingView({
-    super.key,
-    this.organizationId,
-  });
+  const ShiftMatchingView({super.key, this.organizationId});
 
   @override
   ConsumerState<ShiftMatchingView> createState() => _ShiftMatchingViewState();
@@ -32,9 +29,9 @@ class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
         title: Text(
           'SHIFT MATCHING',
           style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-                fontWeight: FontWeight.bold,
-              ),
+            color: BauhausDesign.surfaceWhite,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
       ),
@@ -126,8 +123,9 @@ class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
                             Expanded(
                               child: Text(
                                 state.error!,
-                                style: BauhausDesign.getTextTheme(context)
-                                    .bodyMedium,
+                                style: BauhausDesign.getTextTheme(
+                                  context,
+                                ).bodyMedium,
                               ),
                             ),
                           ],
@@ -205,20 +203,16 @@ class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
                     children: [
                       Text(
                         match.workerName.toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context)
-                            .titleMedium
-                            ?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).titleMedium?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         match.workerEmail,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
-                            ?.copyWith(
-                              color: BauhausDesign.neutral,
-                            ),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodySmall?.copyWith(color: BauhausDesign.neutral),
                       ),
                     ],
                   ),
@@ -234,8 +228,7 @@ class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
                   ),
                   child: Text(
                     '${match.matchScore.toStringAsFixed(0)}%',
-                    style: BauhausDesign.getTextTheme(context)
-                        .titleLarge
+                    style: BauhausDesign.getTextTheme(context).titleLarge
                         ?.copyWith(
                           color: matchColor,
                           fontWeight: FontWeight.bold,
@@ -247,27 +240,27 @@ class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
             const SizedBox(height: 12),
             const Divider(color: BauhausDesign.neutral, thickness: 1),
             const SizedBox(height: 12),
-            ...match.factors.map((factor) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          factor.factor,
-                          style: BauhausDesign.getTextTheme(context).bodySmall,
-                        ),
+            ...match.factors.map(
+              (factor) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        factor.factor,
+                        style: BauhausDesign.getTextTheme(context).bodySmall,
                       ),
-                      Text(
-                        '${factor.score.toStringAsFixed(0)}%',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
-                            ?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ],
-                  ),
-                )),
+                    ),
+                    Text(
+                      '${factor.score.toStringAsFixed(0)}%',
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodySmall?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             if (match.conflicts.isNotEmpty) ...[
               const SizedBox(height: 8),
               Container(
@@ -281,17 +274,18 @@ class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
                   children: [
                     Text(
                       'CONFLICTS:',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
+                      style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: BauhausDesign.warning,
                           ),
                     ),
-                    ...match.conflicts.map((conflict) => Text(
-                          '• $conflict',
-                          style: BauhausDesign.getTextTheme(context).bodySmall,
-                        )),
+                    ...match.conflicts.map(
+                      (conflict) => Text(
+                        '• $conflict',
+                        style: BauhausDesign.getTextTheme(context).bodySmall,
+                      ),
+                    ),
                   ],
                 ),
               ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class LaunchMapStatus {
   final bool success;
   final String title;

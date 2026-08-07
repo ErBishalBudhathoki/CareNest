@@ -39,8 +39,10 @@ class TeamMember {
       email: email,
       role: (json['role'] ?? 'member').toString(),
       status: (json['status'] ?? 'active').toString(),
-      joinedAt: DateTime.tryParse(
-              (json['joinedAt'] ?? json['createdAt'] ?? '') as String? ?? '') ??
+      joinedAt:
+          DateTime.tryParse(
+            (json['joinedAt'] ?? json['createdAt'] ?? '') as String? ?? '',
+          ) ??
           DateTime.now(),
     );
   }
@@ -85,9 +87,11 @@ class Team {
           .map((e) => TeamMember.fromJson(e as Map<String, dynamic>))
           .toList(),
       settings: json['settings'] as Map<String, dynamic>? ?? {},
-      createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ??
+      createdAt:
+          DateTime.tryParse(json['createdAt'] as String? ?? '') ??
           DateTime.now(),
-      updatedAt: DateTime.tryParse(json['updatedAt'] as String? ?? '') ??
+      updatedAt:
+          DateTime.tryParse(json['updatedAt'] as String? ?? '') ??
           DateTime.now(),
     );
   }
@@ -151,7 +155,8 @@ class EmergencyBroadcast {
     return EmergencyBroadcast(
       id: (json['id'] ?? json['_id'])?.toString(),
       teamId: (json['teamId'] ?? '').toString(),
-      teamIds: (json['teamIds'] as List<dynamic>?)
+      teamIds:
+          (json['teamIds'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
           [],
@@ -161,11 +166,13 @@ class EmergencyBroadcast {
       type: (json['type'] ?? 'general').toString(),
       message: (json['message'] ?? '').toString(),
       status: (json['status'] ?? 'active').toString(),
-      acknowledgments: (json['acknowledgments'] as List<dynamic>?)
+      acknowledgments:
+          (json['acknowledgments'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
           [],
-      createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ??
+      createdAt:
+          DateTime.tryParse(json['createdAt'] as String? ?? '') ??
           DateTime.now(),
     );
   }

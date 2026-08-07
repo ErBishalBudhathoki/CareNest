@@ -132,8 +132,9 @@ void main() async {
     try {
       final packageInfo = await PackageInfo.fromPlatform();
       final packageName = packageInfo.packageName;
-      AppConfig.appFlavor =
-          packageName.endsWith('.dev') ? Flavor.development : Flavor.production;
+      AppConfig.appFlavor = packageName.endsWith('.dev')
+          ? Flavor.development
+          : Flavor.production;
     } catch (e) {
       debugPrint('Error getting package info: $e');
       AppConfig.appFlavor = Flavor.development;
@@ -151,9 +152,7 @@ void main() async {
   setupLocator();
 
   SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      systemNavigationBarColor: Colors.transparent,
-    ),
+    const SystemUiOverlayStyle(systemNavigationBarColor: Colors.transparent),
   );
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
@@ -167,11 +166,7 @@ void main() async {
   await _initializeDeepLinks();
   await _initializeTimerService();
   setupLogger();
-  runApp(
-    const ProviderScope(
-      child: MyApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: MyApp()));
   WidgetsBinding.instance.addPostFrameCallback((_) {
     _processPendingInitialDeepLink();
   });
@@ -201,7 +196,8 @@ Future<void> _initializeFirebase() async {
       // Firebase was already initialized natively (e.g., GoogleService-Info.plist on iOS).
       // Safe to ignore — the existing [DEFAULT] app will be used.
       debugPrint(
-          'ℹ️ Firebase already initialized (native), reusing existing app.');
+        'ℹ️ Firebase already initialized (native), reusing existing app.',
+      );
     } else {
       debugPrint('❌ Firebase initialization failed: $e');
       debugPrint('=== END FIREBASE INITIALIZATION (WITH ERROR) ===\n');
@@ -218,7 +214,8 @@ Future<void> _initializeFirebase() async {
     final token = await FirebaseMessaging.instance.getToken();
     if (token != null) {
       debugPrint(
-          '✅ FCM Token available at startup: ${token.substring(0, 20)}...');
+        '✅ FCM Token available at startup: ${token.substring(0, 20)}...',
+      );
       debugPrint('Full FCM Token: $token');
     } else {
       debugPrint('❌ No FCM Token available at startup');
@@ -294,35 +291,43 @@ Future<void> _initializeAppCheck() async {
     await FirebaseAppCheck.instance.activate(
       webProvider: ReCaptchaV3Provider(_envValue('RECAPTCHA_SITE_KEY')),
       androidProvider: androidSelection.provider,
-      appleProvider:
-          isDevelopmentFlavor ? AppleProvider.debug : AppleProvider.appAttest,
+      appleProvider: isDevelopmentFlavor
+          ? AppleProvider.debug
+          : AppleProvider.appAttest,
     );
 
     debugPrint('✅ App Check activated successfully');
     debugPrint('Android Provider: ${androidSelection.label}');
     debugPrint('Android Provider Reason: ${androidSelection.reason}');
     debugPrint(
-        'Android Installer Package: ${androidSelection.installerPackage ?? "unknown"}');
+      'Android Installer Package: ${androidSelection.installerPackage ?? "unknown"}',
+    );
 
     if (androidSelection.provider == AndroidProvider.debug) {
       final debugSecret = await AppCheckProviderResolver.getDebugSecret();
       debugPrint('');
       debugPrint(
-          '╔════════════════════════════════════════════════════════════════════════╗');
+        '╔════════════════════════════════════════════════════════════════════════╗',
+      );
       debugPrint(
-          '║             🔥 FIREBASE APP CHECK — DEBUG TOKEN INFO 🔥                ║');
+        '║             🔥 FIREBASE APP CHECK — DEBUG TOKEN INFO 🔥                ║',
+      );
       debugPrint(
-          '╠════════════════════════════════════════════════════════════════════════╣');
+        '╠════════════════════════════════════════════════════════════════════════╣',
+      );
       debugPrint(
-          '║ Fixed debug token (already registered; stable across reinstalls):      ║');
+        '║ Fixed debug token (already registered; stable across reinstalls):      ║',
+      );
+      debugPrint('║   $debugSecret');
       debugPrint(
-          '║   $debugSecret');
+        '║ If you ever change it, re-register at:                                 ║',
+      );
       debugPrint(
-          '║ If you ever change it, re-register at:                                 ║');
+        '║   Firebase Console → App Check → Apps → Android → Manage debug tokens ║',
+      );
       debugPrint(
-          '║   Firebase Console → App Check → Apps → Android → Manage debug tokens ║');
-      debugPrint(
-          '╚════════════════════════════════════════════════════════════════════════╝');
+        '╚════════════════════════════════════════════════════════════════════════╝',
+      );
       debugPrint('');
     }
 
@@ -338,7 +343,8 @@ Future<void> _initializeAppCheck() async {
       debugPrint('❌ Error getting App Check token: ${e.message}');
       if (androidSelection.provider == AndroidProvider.debug) {
         debugPrint(
-            '   → Register debug secret printed earlier by DebugAppCheckProvider in Firebase Console');
+          '   → Register debug secret printed earlier by DebugAppCheckProvider in Firebase Console',
+        );
       }
     } catch (e) {
       debugPrint('❌ Error getting App Check token: $e');
@@ -452,8 +458,9 @@ class MyApp extends ConsumerWidget {
           '/': (context) => const SplashScreen(), // Add root route
           Routes.splashScreen: (context) => const SplashScreen(),
           Routes.admin: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
-                as Map<String, dynamic>?;
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>?;
             final email = arguments?['email'] as String? ?? '';
             final organizationId = arguments?['organizationId'] as String?;
             final organizationName = arguments?['organizationName'] as String?;
@@ -462,11 +469,14 @@ class MyApp extends ConsumerWidget {
             // Debug prints to track organizationId flow
             debugPrint('=== ADMIN ROUTE DEBUG: email = $email ===');
             debugPrint(
-                '=== ADMIN ROUTE DEBUG: organizationId = $organizationId ===');
+              '=== ADMIN ROUTE DEBUG: organizationId = $organizationId ===',
+            );
             debugPrint(
-                '=== ADMIN ROUTE DEBUG: organizationName = $organizationName ===');
+              '=== ADMIN ROUTE DEBUG: organizationName = $organizationName ===',
+            );
             debugPrint(
-                '=== ADMIN ROUTE DEBUG: organizationCode = $organizationCode ===');
+              '=== ADMIN ROUTE DEBUG: organizationCode = $organizationCode ===',
+            );
 
             return AdminDashboardView(
               email: email,
@@ -476,7 +486,8 @@ class MyApp extends ConsumerWidget {
             );
           },
           Routes.employeeSelection: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
                 {};
             final String email = arguments['email'] as String? ?? '';
@@ -492,21 +503,21 @@ class MyApp extends ConsumerWidget {
           },
           Routes.login: (context) => LoginView(),
           Routes.home: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
-                as Map<String, dynamic>?;
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>?;
             final email = arguments?['email'] as String? ?? '';
             return EmployeeHomeView(email: email);
           },
           Routes.signup: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
-                as Map<String, dynamic>?;
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>?;
 
             final prefilledOrgCode =
                 arguments?['prefilledOrgCode'] as String? ?? '';
 
-            return SignUpView(
-              prefilledOrgCode: prefilledOrgCode,
-            );
+            return SignUpView(prefilledOrgCode: prefilledOrgCode);
           },
 
           Routes.forgotPassword: (context) => ForgotPasswordView(),
@@ -516,87 +527,99 @@ class MyApp extends ConsumerWidget {
           Routes.addBusinessDetails: (context) => const AddBusinessDetails(),
           Routes.businessList: (context) => const BusinessListView(),
           '/client-portal': (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
                 {};
             final clientId = arguments['clientId'] as String?;
             return ClientDashboardView(
-              clientId:
-                  (clientId != null && clientId.isNotEmpty) ? clientId : null,
+              clientId: (clientId != null && clientId.isNotEmpty)
+                  ? clientId
+                  : null,
             );
           },
           Routes.clientPortal: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
                 {};
             final clientId = arguments['clientId'] as String?;
             return ClientDashboardView(
-              clientId:
-                  (clientId != null && clientId.isNotEmpty) ? clientId : null,
+              clientId: (clientId != null && clientId.isNotEmpty)
+                  ? clientId
+                  : null,
             );
           },
           Routes.clientDashboard: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
                 {};
             final clientId = arguments['clientId'] as String?;
-            final isFamilyViewer = arguments['isFamilyViewer'] as bool? ?? false;
+            final isFamilyViewer =
+                arguments['isFamilyViewer'] as bool? ?? false;
             return ClientDashboardView(
-              clientId:
-                  (clientId != null && clientId.isNotEmpty) ? clientId : null,
+              clientId: (clientId != null && clientId.isNotEmpty)
+                  ? clientId
+                  : null,
               isFamilyViewer: isFamilyViewer,
             );
           },
           Routes.realtimePortal: (context) => const RealtimePortalDashboard(),
           Routes.liveTracking: (context) => const LiveTrackingView(),
-          Routes.appointmentTimeline: (context) => const AppointmentTimelineView(),
+          Routes.appointmentTimeline: (context) =>
+              const AppointmentTimelineView(),
           Routes.secureMessaging: (context) => const SecureMessagingView(),
-          Routes.serviceConfirmation: (context) => const ServiceConfirmationView(),
+          Routes.serviceConfirmation: (context) =>
+              const ServiceConfirmationView(),
           Routes.familyManagement: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
                 {};
             final clientId = arguments['clientId'] as String?;
             return FamilyManagementView(
-              clientId:
-                  (clientId != null && clientId.isNotEmpty) ? clientId : null,
+              clientId: (clientId != null && clientId.isNotEmpty)
+                  ? clientId
+                  : null,
             );
           },
           Routes.adminFamilyManagement: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
                 {};
             final clientId = arguments['clientId'] as String?;
-            return AdminFamilyManagementView(
-              clientId: clientId ?? '',
-            );
+            return AdminFamilyManagementView(clientId: clientId ?? '');
           },
           Routes.messagingAudit: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
                 {};
             final appointmentId = arguments['appointmentId'] as String?;
-            return MessagingAuditView(
-              appointmentId: appointmentId,
-            );
+            return MessagingAuditView(appointmentId: appointmentId);
           },
           Routes.assignC2E: (context) => const AssignC2E(),
           Routes.onboarding: (context) => const OnboardingWelcomeView(),
-          Routes.onboardingStepper: (context) =>
-              const OnboardingStepperView(),
+          Routes.onboardingStepper: (context) => const OnboardingStepperView(),
           Routes.onboardingAppIntro: (context) {
-            final args = ModalRoute.of(context)?.settings.arguments
-                as Map<String, dynamic>?;
+            final args =
+                ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>?;
             return OnboardingAppRouter(
               onFinished: () {
                 Navigator.pushReplacementNamed(
-                    context, args?['nextRoute'] as String? ?? Routes.login);
+                  context,
+                  args?['nextRoute'] as String? ?? Routes.login,
+                );
               },
             );
           },
           Routes.navBar: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
-                as Map<String, dynamic>?;
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>?;
             final email =
                 arguments?['email'] as String? ?? 'defaultemail@default.com';
             final firstName = arguments?['firstName'] as String? ?? 'First';
@@ -611,8 +634,9 @@ class MyApp extends ConsumerWidget {
             );
           },
           Routes.bottomNavBar: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
-                as Map<String, dynamic>?;
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>?;
             final email = arguments?['email'] as String? ?? '';
             final role = arguments?['role'] as UserRole? ?? UserRole.employee;
             final organizationId =
@@ -633,8 +657,9 @@ class MyApp extends ConsumerWidget {
             );
           },
           Routes.clientAndAppointmentDetails: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
-                as Map<String, dynamic>?;
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>?;
             final userEmail = arguments?['userEmail'] as String? ?? '';
             final clientEmail = arguments?['clientEmail'] as String? ?? '';
             return ClientAndAppointmentDetails(
@@ -643,26 +668,24 @@ class MyApp extends ConsumerWidget {
             );
           },
           Routes.addNotes: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
-                as Map<String, dynamic>?;
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>?;
             final userEmail = arguments?['userEmail'] as String? ?? '';
             final clientEmail = arguments?['clientEmail'] as String? ?? '';
-            return AddNotesView(
-              userEmail: userEmail,
-              clientEmail: clientEmail,
-            );
+            return AddNotesView(userEmail: userEmail, clientEmail: clientEmail);
           },
           Routes.clockInAndOutView: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
-                as Map<String, dynamic>?;
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
+                    as Map<String, dynamic>?;
             final userEmail = arguments?['userEmail'] as String? ?? '';
-            return ClockInAndOutView(
-              email: userEmail,
-            );
+            return ClockInAndOutView(email: userEmail);
           },
           // <<< --- THIS IS THE CORRECTED BLOCK --- >>>
           Routes.assignmentList: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
                 {};
             final String userEmail = arguments['userEmail'] as String? ?? '';
@@ -674,7 +697,8 @@ class MyApp extends ConsumerWidget {
             );
           },
           Routes.shiftDetails: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
                 {};
             final userEmail = arguments['userEmail'] as String? ?? '';
@@ -718,16 +742,15 @@ class MyApp extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Expanded(
-                      child: ShiftDetailsWidget(shiftData: shiftData),
-                    ),
+                    Expanded(child: ShiftDetailsWidget(shiftData: shiftData)),
                   ],
                 ),
               ),
             );
           },
           Routes.enhancedInvoiceGeneration: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
                 {};
             final String userEmail = arguments['userEmail'] as String? ?? '';
@@ -747,7 +770,8 @@ class MyApp extends ConsumerWidget {
           },
 
           Routes.employeeInvoice: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
                 {};
             final String adminEmail = arguments['email'] as String? ?? '';
@@ -763,7 +787,8 @@ class MyApp extends ConsumerWidget {
             );
           },
           Routes.automaticInvoiceGeneration: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
                 {};
             final String? organizationId =
@@ -783,7 +808,8 @@ class MyApp extends ConsumerWidget {
             );
           },
           Routes.invoiceList: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
                 {};
             final String organizationId =
@@ -795,7 +821,8 @@ class MyApp extends ConsumerWidget {
             );
           },
           Routes.invoiceDetails: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments
+            final arguments =
+                ModalRoute.of(context)?.settings.arguments
                     as Map<String, dynamic>? ??
                 {};
             final String invoiceId = arguments['invoiceId'] as String? ?? '';
@@ -825,7 +852,8 @@ class MyApp extends ConsumerWidget {
           Routes.behaviorSupport: (context) => const BehaviorSupportView(),
           Routes.healthMonitoring: (context) => const HealthMonitoringView(),
           Routes.outcomeTracking: (context) => const OutcomeTrackingView(),
-          Routes.workerDashboard: (context) => const DeprecatedWorkerDashboardView(),
+          Routes.workerDashboard: (context) =>
+              const DeprecatedWorkerDashboardView(),
           Routes.workerShiftHistory: (context) =>
               const WorkerShiftHistoryView(),
           Routes.teamDashboard: (context) => const TeamDashboardView(),

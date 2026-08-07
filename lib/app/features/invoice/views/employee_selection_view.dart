@@ -33,8 +33,11 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
     if (widget.organizationId != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ref
-            .read(employeeSelectionViewModelProvider(widget.organizationId!)
-                .notifier)
+            .read(
+              employeeSelectionViewModelProvider(
+                widget.organizationId!,
+              ).notifier,
+            )
             .fetchEmployees();
       });
     }
@@ -42,8 +45,9 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref
-        .watch(employeeSelectionViewModelProvider(widget.organizationId ?? ''));
+    final state = ref.watch(
+      employeeSelectionViewModelProvider(widget.organizationId ?? ''),
+    );
 
     // Show error messages in snackbar
     if (state.errorMessage.isNotEmpty && state.employees.isNotEmpty) {
@@ -53,9 +57,9 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
             content: Text(
               state.errorMessage,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.surfaceLight,
-                    fontWeight: FontWeight.w500,
-                  ),
+                color: BauhausDesign.surfaceLight,
+                fontWeight: FontWeight.w500,
+              ),
             ),
             backgroundColor: BauhausDesign.error,
             behavior: SnackBarBehavior.floating,
@@ -68,8 +72,10 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
         );
         ref
             .read(
-                employeeSelectionViewModelProvider(widget.organizationId ?? '')
-                    .notifier)
+              employeeSelectionViewModelProvider(
+                widget.organizationId ?? '',
+              ).notifier,
+            )
             .clearErrorMessage();
       });
     }
@@ -108,25 +114,22 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
           Text(
             AppLocalizations.of(context)!.selectEmployeesAndClients,
             style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           Text(
             AppLocalizations.of(context)!.chooseEmpAndClientsDesc,
             style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                  color: BauhausDesign.neutral,
-                  fontWeight: FontWeight.w500,
-                ),
+              color: BauhausDesign.neutral,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(4),
-        child: Container(
-          height: 4,
-          color: BauhausDesign.neutral,
-        ),
+        child: Container(height: 4, color: BauhausDesign.neutral),
       ),
     );
   }
@@ -175,8 +178,10 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
                   decoration: BoxDecoration(
                     color: BauhausDesign.secondary,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                    border:
-                        Border.all(color: BauhausDesign.neutral, width: 1.5),
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.5,
+                    ),
                   ),
                   child: const SizedBox(
                     width: 24,
@@ -190,11 +195,11 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
                 const SizedBox(height: BauhausDesign.space4),
                 Text(
                   AppLocalizations.of(context)!.loadingEmployeesAndClients,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodyLarge
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
               ],
             ),
@@ -236,19 +241,19 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
               const SizedBox(height: BauhausDesign.space4),
               Text(
                 AppLocalizations.of(context)!.errorLoadingEmployees,
-                style:
-                    BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
-                          color: BauhausDesign.textDark,
-                          fontWeight: FontWeight.w700,
-                        ),
+                style: BauhausDesign.getTextTheme(context).headlineLarge
+                    ?.copyWith(
+                      color: BauhausDesign.textDark,
+                      fontWeight: FontWeight.w700,
+                    ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: BauhausDesign.space2),
               Text(
                 errorMessage,
-                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.neutral,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyMedium?.copyWith(color: BauhausDesign.neutral),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: BauhausDesign.space6),
@@ -258,9 +263,11 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
                 backgroundColor: BauhausDesign.primary,
                 onPressed: () {
                   ref
-                      .read(employeeSelectionViewModelProvider(
-                              widget.organizationId ?? '')
-                          .notifier)
+                      .read(
+                        employeeSelectionViewModelProvider(
+                          widget.organizationId ?? '',
+                        ).notifier,
+                      )
                       .fetchEmployees();
                 },
               ),
@@ -303,19 +310,19 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
               const SizedBox(height: BauhausDesign.space4),
               Text(
                 AppLocalizations.of(context)!.noEmployeesFound,
-                style:
-                    BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
-                          color: BauhausDesign.textDark,
-                          fontWeight: FontWeight.w700,
-                        ),
+                style: BauhausDesign.getTextTheme(context).headlineLarge
+                    ?.copyWith(
+                      color: BauhausDesign.textDark,
+                      fontWeight: FontWeight.w700,
+                    ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: BauhausDesign.space2),
               Text(
                 AppLocalizations.of(context)!.noEmployeesAvailableDesc,
-                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.neutral,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyMedium?.copyWith(color: BauhausDesign.neutral),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -346,18 +353,22 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
             InkWell(
               onTap: () {
                 ref
-                    .read(employeeSelectionViewModelProvider(
-                            widget.organizationId ?? '')
-                        .notifier)
+                    .read(
+                      employeeSelectionViewModelProvider(
+                        widget.organizationId ?? '',
+                      ).notifier,
+                    )
                     .toggleEmployeeSelection(employee.id);
 
                 if (!employee.isSelected &&
                     !employee.hasLoadedClients &&
                     !employee.isLoadingClients) {
                   ref
-                      .read(employeeSelectionViewModelProvider(
-                              widget.organizationId ?? '')
-                          .notifier)
+                      .read(
+                        employeeSelectionViewModelProvider(
+                          widget.organizationId ?? '',
+                        ).notifier,
+                      )
                       .fetchClientsForEmployee(employee.email);
                 }
               },
@@ -376,10 +387,13 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
                         color: isSelected
                             ? BauhausDesign.primary
                             : BauhausDesign.secondary,
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusSm),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusSm,
+                        ),
                         border: Border.all(
-                            color: BauhausDesign.neutral, width: 1.5),
+                          color: BauhausDesign.neutral,
+                          width: 1.5,
+                        ),
                         boxShadow: const [BauhausDesign.shadowHardSm],
                       ),
                       child: Center(
@@ -403,8 +417,7 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
                         children: [
                           Text(
                             employee.name,
-                            style: BauhausDesign.getTextTheme(context)
-                                .bodyLarge
+                            style: BauhausDesign.getTextTheme(context).bodyLarge
                                 ?.copyWith(
                                   color: BauhausDesign.textDark,
                                   fontWeight: FontWeight.w700,
@@ -413,11 +426,9 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
                           const SizedBox(height: 2),
                           Text(
                             employee.email,
-                            style: BauhausDesign.getTextTheme(context)
-                                .bodySmall
-                                ?.copyWith(
-                                  color: BauhausDesign.neutral,
-                                ),
+                            style: BauhausDesign.getTextTheme(
+                              context,
+                            ).bodySmall?.copyWith(color: BauhausDesign.neutral),
                           ),
                         ],
                       ),
@@ -430,10 +441,7 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
             ),
             // Client list if employee is selected
             if (employee.isSelected) ...[
-              Container(
-                height: 2,
-                color: BauhausDesign.neutral,
-              ),
+              Container(height: 2, color: BauhausDesign.neutral),
               _buildClientList(employee),
             ],
           ],
@@ -447,13 +455,11 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
       width: 28,
       height: 28,
       decoration: BoxDecoration(
-        color:
-            isSelected ? BauhausDesign.primary : BauhausDesign.backgroundLight,
+        color: isSelected
+            ? BauhausDesign.primary
+            : BauhausDesign.backgroundLight,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(
-          color: BauhausDesign.neutral,
-          width: 2,
-        ),
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
         boxShadow: isSelected ? const [BauhausDesign.shadowHardXs] : null,
       ),
       child: isSelected
@@ -492,9 +498,9 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
             const SizedBox(width: BauhausDesign.space3),
             Text(
               AppLocalizations.of(context)!.loadingClientsText,
-              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.neutral,
-                  ),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodyMedium?.copyWith(color: BauhausDesign.neutral),
             ),
           ],
         ),
@@ -510,7 +516,9 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
             color: BauhausDesign.backgroundLight,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
             border: Border.all(
-                color: BauhausDesign.neutral.withOpacity(0.3), width: 1.5),
+              color: BauhausDesign.neutral.withOpacity(0.3),
+              width: 1.5,
+            ),
           ),
           child: Row(
             children: [
@@ -523,10 +531,9 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
               Expanded(
                 child: Text(
                   AppLocalizations.of(context)!.noClientsAssignedText,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                            color: BauhausDesign.neutral,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodySmall?.copyWith(color: BauhausDesign.neutral),
                 ),
               ),
             ],
@@ -553,15 +560,16 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
             child: Text(
               AppLocalizations.of(context)!.selectClientsHeader,
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.textLight,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.0,
-                  ),
+                color: BauhausDesign.textLight,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.0,
+              ),
             ),
           ),
           const SizedBox(height: BauhausDesign.space3),
-          ...employee.clients
-              .map((client) => _buildClientTile(employee, client)),
+          ...employee.clients.map(
+            (client) => _buildClientTile(employee, client),
+          ),
         ],
       ),
     );
@@ -575,9 +583,11 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
       child: InkWell(
         onTap: () {
           ref
-              .read(employeeSelectionViewModelProvider(
-                      widget.organizationId ?? '')
-                  .notifier)
+              .read(
+                employeeSelectionViewModelProvider(
+                  widget.organizationId ?? '',
+                ).notifier,
+              )
               .toggleClientSelection(employee.email, client.id);
         },
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
@@ -586,7 +596,7 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
           decoration: BoxDecoration(
             color: isSelected
                 ? BauhausDesign
-                    .accent // Removed opacity to match design requirement
+                      .accent // Removed opacity to match design requirement
                 : BauhausDesign.backgroundLight,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
             border: Border.all(
@@ -604,8 +614,9 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color:
-                      isSelected ? BauhausDesign.accent : BauhausDesign.success,
+                  color: isSelected
+                      ? BauhausDesign.accent
+                      : BauhausDesign.success,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusXs),
                   border: Border.all(color: BauhausDesign.neutral, width: 1),
                 ),
@@ -624,8 +635,7 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
                   children: [
                     Text(
                       client.name,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
                             color: isSelected
                                 ? Colors.white
@@ -635,8 +645,7 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
                     ),
                     Text(
                       client.email,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
+                      style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
                             color: isSelected
                                 ? Colors.white.withOpacity(0.9)
@@ -679,12 +688,15 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
   }
 
   Widget _buildBottomBar(EmployeeSelectionState state) {
-    final hasSelectedClients = state.employees.any((employee) =>
-        employee.isSelected &&
-        employee.clients.any((client) => client.isSelected));
+    final hasSelectedClients = state.employees.any(
+      (employee) =>
+          employee.isSelected &&
+          employee.clients.any((client) => client.isSelected),
+    );
 
-    final selectedEmployeesCount =
-        state.employees.where((e) => e.isSelected).length;
+    final selectedEmployeesCount = state.employees
+        .where((e) => e.isSelected)
+        .length;
     final selectedClientsCount = state.employees
         .where((e) => e.isSelected)
         .expand((e) => e.clients.where((c) => c.isSelected))
@@ -724,14 +736,16 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
                     // Stats badges
                     _buildStatsBadge(
                       '$selectedEmployeesCount',
-                      AppLocalizations.of(context)!
-                          .employeeCount(selectedEmployeesCount),
+                      AppLocalizations.of(
+                        context,
+                      )!.employeeCount(selectedEmployeesCount),
                       BauhausDesign.secondary,
                     ),
                     _buildStatsBadge(
                       '$selectedClientsCount',
-                      AppLocalizations.of(context)!
-                          .clientCount(selectedClientsCount),
+                      AppLocalizations.of(
+                        context,
+                      )!.clientCount(selectedClientsCount),
                       BauhausDesign.success,
                     ),
                   ],
@@ -747,15 +761,17 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
                           color: BauhausDesign.success,
                           shape: BoxShape.circle,
                           border: Border.all(
-                              color: BauhausDesign.neutral, width: 1),
+                            color: BauhausDesign.neutral,
+                            width: 1,
+                          ),
                         ),
                       ),
                       const SizedBox(width: BauhausDesign.space2),
                       Text(
-                        AppLocalizations.of(context)!
-                            .readyToGenerateInvoiceText,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
+                        AppLocalizations.of(
+                          context,
+                        )!.readyToGenerateInvoiceText,
+                        style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
                               color: BauhausDesign.success,
                               fontWeight: FontWeight.w600,
@@ -801,17 +817,17 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
           Text(
             count,
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(width: 4),
           Text(
             label,
             style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w500,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
@@ -820,8 +836,8 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
 
   void _navigateToInvoiceGeneration() {
     final viewModel = ref.read(
-        employeeSelectionViewModelProvider(widget.organizationId ?? '')
-            .notifier);
+      employeeSelectionViewModelProvider(widget.organizationId ?? '').notifier,
+    );
     final selectedData = viewModel.getSelectedEmployeesAndClients();
 
     Navigator.of(context).pushNamed(

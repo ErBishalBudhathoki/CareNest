@@ -38,11 +38,10 @@ class BudgetManagementState {
 class BudgetManagementViewModel extends Notifier<BudgetManagementState> {
   late final FinancialIntelligenceRepository _repository;
 
-  
   @override
   BudgetManagementState build() {
     final apiMethod = ref.read(app_providers.apiMethodProvider);
-    
+
     return BudgetManagementState();
   }
 
@@ -79,8 +78,10 @@ class BudgetManagementViewModel extends Notifier<BudgetManagementState> {
       );
 
       if (result['success'] == true) {
-        state =
-            state.copyWith(isLoading: false, monitoring: result['monitoring']);
+        state = state.copyWith(
+          isLoading: false,
+          monitoring: result['monitoring'],
+        );
       } else {
         state = state.copyWith(isLoading: false, error: result['message']);
       }
@@ -92,8 +93,9 @@ class BudgetManagementViewModel extends Notifier<BudgetManagementState> {
   Future<void> getStatus(String organizationId) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final result =
-          await _repository.getBudgetStatus(organizationId: organizationId);
+      final result = await _repository.getBudgetStatus(
+        organizationId: organizationId,
+      );
       if (result['success'] == true) {
         state = state.copyWith(isLoading: false, status: result['status']);
       } else {
@@ -109,4 +111,7 @@ class BudgetManagementViewModel extends Notifier<BudgetManagementState> {
   }
 }
 
-final budgetManagementViewModelProvider = NotifierProvider<BudgetManagementViewModel, BudgetManagementState>(BudgetManagementViewModel.new);
+final budgetManagementViewModelProvider =
+    NotifierProvider<BudgetManagementViewModel, BudgetManagementState>(
+      BudgetManagementViewModel.new,
+    );

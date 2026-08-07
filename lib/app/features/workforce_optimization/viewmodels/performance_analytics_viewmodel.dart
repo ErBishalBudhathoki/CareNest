@@ -41,14 +41,14 @@ class PerformanceAnalyticsState {
 }
 
 // StateNotifier for Performance Analytics
-class PerformanceAnalyticsViewModel extends Notifier<PerformanceAnalyticsState> {
+class PerformanceAnalyticsViewModel
+    extends Notifier<PerformanceAnalyticsState> {
   late final WorkforceRepository _repository;
 
-  
   @override
   PerformanceAnalyticsState build() {
     final repository = ref.watch(workforceRepositoryProvider);
-    
+
     return PerformanceAnalyticsState();
   }
 
@@ -81,10 +81,7 @@ class PerformanceAnalyticsViewModel extends Notifier<PerformanceAnalyticsState> 
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -104,10 +101,7 @@ class PerformanceAnalyticsViewModel extends Notifier<PerformanceAnalyticsState> 
       );
 
       if (result['success'] == true) {
-        state = state.copyWith(
-          isLoading: false,
-          trends: result,
-        );
+        state = state.copyWith(isLoading: false, trends: result);
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -115,10 +109,7 @@ class PerformanceAnalyticsViewModel extends Notifier<PerformanceAnalyticsState> 
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -147,10 +138,7 @@ class PerformanceAnalyticsViewModel extends Notifier<PerformanceAnalyticsState> 
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -179,10 +167,7 @@ class PerformanceAnalyticsViewModel extends Notifier<PerformanceAnalyticsState> 
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -198,4 +183,7 @@ class PerformanceAnalyticsViewModel extends Notifier<PerformanceAnalyticsState> 
 }
 
 // Provider for PerformanceAnalyticsViewModel
-final performanceAnalyticsViewModelProvider = NotifierProvider<PerformanceAnalyticsViewModel, PerformanceAnalyticsState>(PerformanceAnalyticsViewModel.new);
+final performanceAnalyticsViewModelProvider =
+    NotifierProvider<PerformanceAnalyticsViewModel, PerformanceAnalyticsState>(
+      PerformanceAnalyticsViewModel.new,
+    );

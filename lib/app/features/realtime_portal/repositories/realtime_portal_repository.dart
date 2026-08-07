@@ -33,7 +33,8 @@ class RealtimePortalRepository {
   }
 
   Map<String, dynamic> _normalizeFamilyPermissions(
-      Map<String, dynamic>? input) {
+    Map<String, dynamic>? input,
+  ) {
     final map = Map<String, dynamic>.from(input ?? const {});
     return {
       'viewAppointments': map['viewAppointments'] == true,
@@ -67,8 +68,8 @@ class RealtimePortalRepository {
       map['permissions'] is Map<String, dynamic>
           ? map['permissions'] as Map<String, dynamic>
           : map['permissions'] is Map
-              ? Map<String, dynamic>.from(map['permissions'] as Map)
-              : null,
+          ? Map<String, dynamic>.from(map['permissions'] as Map)
+          : null,
     );
     return map;
   }
@@ -90,8 +91,8 @@ class RealtimePortalRepository {
       map['permissions'] is Map<String, dynamic>
           ? map['permissions'] as Map<String, dynamic>
           : map['permissions'] is Map
-              ? Map<String, dynamic>.from(map['permissions'] as Map)
-              : null,
+          ? Map<String, dynamic>.from(map['permissions'] as Map)
+          : null,
     );
     return map;
   }
@@ -159,9 +160,7 @@ class RealtimePortalRepository {
   }
 
   /// Stop tracking session
-  Future<TrackingSession> stopTracking({
-    required String appointmentId,
-  }) async {
+  Future<TrackingSession> stopTracking({required String appointmentId}) async {
     try {
       final response = await _apiMethod.stopRealtimeTracking(
         appointmentId: appointmentId,
@@ -178,9 +177,7 @@ class RealtimePortalRepository {
   }
 
   /// Get live tracking data
-  Future<LiveLocation?> getLiveTracking({
-    required String appointmentId,
-  }) async {
+  Future<LiveLocation?> getLiveTracking({required String appointmentId}) async {
     try {
       final response = await _apiMethod.getLiveTracking(
         appointmentId: appointmentId,
@@ -300,9 +297,7 @@ class RealtimePortalRepository {
     required String userId,
   }) async {
     try {
-      final response = await _apiMethod.getUserConversations(
-        userId: userId,
-      );
+      final response = await _apiMethod.getUserConversations(userId: userId);
 
       if (response['success'] == true && response['data'] != null) {
         final conversations = response['data'] as List;
@@ -471,9 +466,7 @@ class RealtimePortalRepository {
     required String clientId,
   }) async {
     try {
-      final response = await _apiMethod.getFamilyMembers(
-        clientId: clientId,
-      );
+      final response = await _apiMethod.getFamilyMembers(clientId: clientId);
 
       if (response['success'] == true && response['data'] != null) {
         final members = response['data'] as List;
@@ -507,20 +500,27 @@ class RealtimePortalRepository {
       if (response['success'] == true && response['data'] != null) {
         final data = response['data'] as Map<String, dynamic>;
         debugPrint('🔐 getMyFamilyPermissions data keys: ${data.keys}');
-        debugPrint('🔐 getMyFamilyPermissions raw permissions: ${data['permissions']}');
+        debugPrint(
+          '🔐 getMyFamilyPermissions raw permissions: ${data['permissions']}',
+        );
         final normalized = _normalizeFamilyMember(data);
-        debugPrint('🔐 getMyFamilyPermissions normalized permissions: ${normalized['permissions']}');
+        debugPrint(
+          '🔐 getMyFamilyPermissions normalized permissions: ${normalized['permissions']}',
+        );
         final member = FamilyMember.fromJson(normalized);
-        debugPrint('🔐 getMyFamilyPermissions parsed permissions: '
-            'viewApp=${member.permissions.viewAppointments}, '
-            'viewInv=${member.permissions.viewInvoices}, '
-            'viewMsg=${member.permissions.viewMessages}, '
-            'viewLoc=${member.permissions.viewLocation}');
+        debugPrint(
+          '🔐 getMyFamilyPermissions parsed permissions: '
+          'viewApp=${member.permissions.viewAppointments}, '
+          'viewInv=${member.permissions.viewInvoices}, '
+          'viewMsg=${member.permissions.viewMessages}, '
+          'viewLoc=${member.permissions.viewLocation}',
+        );
         return member.permissions;
       }
 
       throw Exception(
-          response['message'] ?? 'Failed to get family permissions');
+        response['message'] ?? 'Failed to get family permissions',
+      );
     } catch (e) {
       debugPrint('🔐 getMyFamilyPermissions ERROR: $e');
       throw Exception('Error getting family permissions: $e');

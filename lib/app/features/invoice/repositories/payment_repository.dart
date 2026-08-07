@@ -18,12 +18,15 @@ class PaymentRepository {
     required String currency,
     required String clientEmail,
   }) async {
-    final response = await _api.post('api/payments/create-intent', body: {
-      'invoiceId': invoiceId,
-      'amount': amount,
-      'currency': currency,
-      'clientEmail': clientEmail,
-    });
+    final response = await _api.post(
+      'api/payments/create-intent',
+      body: {
+        'invoiceId': invoiceId,
+        'amount': amount,
+        'currency': currency,
+        'clientEmail': clientEmail,
+      },
+    );
     return response;
   }
 
@@ -34,29 +37,35 @@ class PaymentRepository {
     String? reference,
     String? notes,
   }) async {
-    final response = await _api.post('api/payments/record', body: {
-      'invoiceId': invoiceId,
-      'paymentData': {
-        'amount': amount,
-        'method': method,
-        'reference': reference,
-        'notes': notes,
+    final response = await _api.post(
+      'api/payments/record',
+      body: {
+        'invoiceId': invoiceId,
+        'paymentData': {
+          'amount': amount,
+          'method': method,
+          'reference': reference,
+          'notes': notes,
+        },
       },
-    });
+    );
     return response;
   }
 
   Future<Map<String, dynamic>> createCreditNote(
-      Map<String, dynamic> data) async {
+    Map<String, dynamic> data,
+  ) async {
     final response = await _api.post('api/payments/credit-note', body: data);
     return response;
   }
 
   Future<Map<String, dynamic>> createStripeOnboardingLink(
-      String organizationId) async {
-    final response = await _api.post('api/payments/stripe/onboarding', body: {
-      'organizationId': organizationId,
-    });
+    String organizationId,
+  ) async {
+    final response = await _api.post(
+      'api/payments/stripe/onboarding',
+      body: {'organizationId': organizationId},
+    );
     return response;
   }
 }

@@ -8,10 +8,12 @@ class BusinessIntelligenceView extends ConsumerStatefulWidget {
   const BusinessIntelligenceView({super.key});
 
   @override
-  ConsumerState<BusinessIntelligenceView> createState() => _BusinessIntelligenceViewState();
+  ConsumerState<BusinessIntelligenceView> createState() =>
+      _BusinessIntelligenceViewState();
 }
 
-class _BusinessIntelligenceViewState extends ConsumerState<BusinessIntelligenceView> {
+class _BusinessIntelligenceViewState
+    extends ConsumerState<BusinessIntelligenceView> {
   @override
   void initState() {
     super.initState();
@@ -24,13 +26,13 @@ class _BusinessIntelligenceViewState extends ConsumerState<BusinessIntelligenceV
     final orgState = ref.read(organizationProvider);
     final orgId = orgState.currentOrganization?.id;
     if (orgId != null) {
-      ref.read(businessIntelligenceViewModelProvider.notifier).getExecutiveDashboard(
-        organizationId: orgId,
-      );
-      
-      ref.read(businessIntelligenceViewModelProvider.notifier).predictChurn(
-        organizationId: orgId,
-      );
+      ref
+          .read(businessIntelligenceViewModelProvider.notifier)
+          .getExecutiveDashboard(organizationId: orgId);
+
+      ref
+          .read(businessIntelligenceViewModelProvider.notifier)
+          .predictChurn(organizationId: orgId);
     }
   }
 
@@ -65,24 +67,24 @@ class _BusinessIntelligenceViewState extends ConsumerState<BusinessIntelligenceV
       body: state.isLoading
           ? const Center(child: CircularProgressIndicator())
           : state.error != null
-              ? _buildError(state.error!)
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildHeader(),
-                      const SizedBox(height: 24),
-                      _buildKPIs(state),
-                      const SizedBox(height: 24),
-                      _buildRevenueForecast(state),
-                      const SizedBox(height: 24),
-                      _buildChurnPrediction(state),
-                      const SizedBox(height: 24),
-                      _buildActionButtons(),
-                    ],
-                  ),
-                ),
+          ? _buildError(state.error!)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(),
+                  const SizedBox(height: 24),
+                  _buildKPIs(state),
+                  const SizedBox(height: 24),
+                  _buildRevenueForecast(state),
+                  const SizedBox(height: 24),
+                  _buildChurnPrediction(state),
+                  const SizedBox(height: 24),
+                  _buildActionButtons(),
+                ],
+              ),
+            ),
     );
   }
 
@@ -105,10 +107,7 @@ class _BusinessIntelligenceViewState extends ConsumerState<BusinessIntelligenceV
           Text(
             error,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFF666666),
-            ),
+            style: const TextStyle(fontSize: 14, color: Color(0xFF666666)),
           ),
         ],
       ),
@@ -164,10 +163,7 @@ class _BusinessIntelligenceViewState extends ConsumerState<BusinessIntelligenceV
                 SizedBox(height: 4),
                 Text(
                   'Strategic business intelligence',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.colorWhite,
-                  ),
+                  style: TextStyle(fontSize: 14, color: AppColors.colorWhite),
                 ),
               ],
             ),
@@ -283,10 +279,7 @@ class _BusinessIntelligenceViewState extends ConsumerState<BusinessIntelligenceV
               const SizedBox(width: 8),
               Text(
                 label,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFF666666),
-                ),
+                style: const TextStyle(fontSize: 12, color: Color(0xFF666666)),
               ),
             ],
           ),
@@ -315,7 +308,9 @@ class _BusinessIntelligenceViewState extends ConsumerState<BusinessIntelligenceV
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
-                    color: isPositive ? AppColors.colorGreen : AppColors.colorRed,
+                    color: isPositive
+                        ? AppColors.colorGreen
+                        : AppColors.colorRed,
                   ),
                 ),
               ),
@@ -368,9 +363,7 @@ class _BusinessIntelligenceViewState extends ConsumerState<BusinessIntelligenceV
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Color(0xFF1A1A1A), width: 1),
-        ),
+        border: Border(bottom: BorderSide(color: Color(0xFF1A1A1A), width: 1)),
       ),
       child: Row(
         children: [
@@ -467,15 +460,13 @@ class _BusinessIntelligenceViewState extends ConsumerState<BusinessIntelligenceV
     final riskColor = risk > 0.7
         ? AppColors.colorRed
         : risk > 0.4
-            ? AppColors.colorOrange
-            : AppColors.colorGreen;
+        ? AppColors.colorOrange
+        : AppColors.colorGreen;
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Color(0xFF1A1A1A), width: 1),
-        ),
+        border: Border(bottom: BorderSide(color: Color(0xFF1A1A1A), width: 1)),
       ),
       child: Row(
         children: [
@@ -486,11 +477,7 @@ class _BusinessIntelligenceViewState extends ConsumerState<BusinessIntelligenceV
               color: riskColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
-              Icons.person_outline,
-              color: riskColor,
-              size: 24,
-            ),
+            child: Icon(Icons.person_outline, color: riskColor, size: 24),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -508,10 +495,7 @@ class _BusinessIntelligenceViewState extends ConsumerState<BusinessIntelligenceV
                 const SizedBox(height: 4),
                 Text(
                   'Risk: ${(risk * 100).toStringAsFixed(0)}%',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: riskColor,
-                  ),
+                  style: TextStyle(fontSize: 12, color: riskColor),
                 ),
               ],
             ),
@@ -523,7 +507,11 @@ class _BusinessIntelligenceViewState extends ConsumerState<BusinessIntelligenceV
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
-              risk > 0.7 ? 'High' : risk > 0.4 ? 'Medium' : 'Low',
+              risk > 0.7
+                  ? 'High'
+                  : risk > 0.4
+                  ? 'Medium'
+                  : 'Low',
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -547,14 +535,15 @@ class _BusinessIntelligenceViewState extends ConsumerState<BusinessIntelligenceV
       child: Center(
         child: Column(
           children: [
-            const Icon(Icons.inbox_outlined, size: 48, color: Color(0xFF666666)),
+            const Icon(
+              Icons.inbox_outlined,
+              size: 48,
+              color: Color(0xFF666666),
+            ),
             const SizedBox(height: 12),
             Text(
               message,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Color(0xFF666666),
-              ),
+              style: const TextStyle(fontSize: 14, color: Color(0xFF666666)),
             ),
           ],
         ),

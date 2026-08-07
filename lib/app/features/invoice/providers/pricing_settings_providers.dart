@@ -1,10 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/app/features/invoice/repositories/pricing_settings_repository.dart';
 import 'package:carenest/app/features/invoice/viewmodels/pricing_settings_view_model.dart';
 import 'package:carenest/app/features/invoice/models/pricing_settings.dart';
 
-final pricingSettingsRepositoryProvider = Provider<PricingSettingsRepository>((ref) {
+final pricingSettingsRepositoryProvider = Provider<PricingSettingsRepository>((
+  ref,
+) {
   final api = ref.read(app_providers.apiMethodProvider);
   return PricingSettingsRepository(api);
 });
@@ -28,4 +31,7 @@ final defaultPricingSettingsProvider = Provider<PricingSettings>((ref) {
   );
 });
 
-final pricingSettingsViewModelProvider = NotifierProvider<PricingSettingsViewModel, PricingSettingsState>(() => PricingSettingsViewModel(null));
+final pricingSettingsViewModelProvider =
+    NotifierProvider<PricingSettingsViewModel, PricingSettingsState>(
+      () => PricingSettingsViewModel(null),
+    );

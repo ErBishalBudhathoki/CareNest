@@ -21,7 +21,11 @@ class AnalyticsDateRangeNotifier extends Notifier<AnalyticsFilter> {
     );
   }
 }
-final analyticsDateRangeProvider = NotifierProvider<AnalyticsDateRangeNotifier, AnalyticsFilter>(AnalyticsDateRangeNotifier.new);
+
+final analyticsDateRangeProvider =
+    NotifierProvider<AnalyticsDateRangeNotifier, AnalyticsFilter>(
+      AnalyticsDateRangeNotifier.new,
+    );
 
 // Financials Provider
 final financialMetricsProvider = FutureProvider<List<FinancialMetric>>((

@@ -57,16 +57,16 @@ class EarningsCacheService {
         endDate: endDate,
       );
       final jsonString = prefs.getString(key);
-      
+
       if (jsonString == null) return null;
-      
+
       final cacheEntry = jsonDecode(jsonString);
       final timestamp = DateTime.parse(cacheEntry['timestamp']);
-      
+
       if (DateTime.now().difference(timestamp) > _defaultCacheDuration) {
         return null; // Expired
       }
-      
+
       return cacheEntry['data'] as Map<String, dynamic>;
     } catch (e) {
       debugPrint('Error reading cached earnings summary: $e');
@@ -95,16 +95,16 @@ class EarningsCacheService {
       final prefs = await SharedPreferences.getInstance();
       final key = '$_historyKeyPrefix$userEmail';
       final jsonString = prefs.getString(key);
-      
+
       if (jsonString == null) return null;
-      
+
       final cacheEntry = jsonDecode(jsonString);
       final timestamp = DateTime.parse(cacheEntry['timestamp']);
-      
+
       if (DateTime.now().difference(timestamp) > _defaultCacheDuration) {
         return null; // Expired
       }
-      
+
       return cacheEntry['data'] as List<dynamic>;
     } catch (e) {
       debugPrint('Error reading cached earnings history: $e');
@@ -131,16 +131,16 @@ class EarningsCacheService {
     try {
       final prefs = await SharedPreferences.getInstance();
       final jsonString = prefs.getString(_taxConfigKey);
-      
+
       if (jsonString == null) return null;
-      
+
       final cacheEntry = jsonDecode(jsonString);
       // Tax config expires less frequently (e.g. 24 hours)
       final timestamp = DateTime.parse(cacheEntry['timestamp']);
-       if (DateTime.now().difference(timestamp) > const Duration(hours: 24)) {
-        return null; 
+      if (DateTime.now().difference(timestamp) > const Duration(hours: 24)) {
+        return null;
       }
-      
+
       return cacheEntry['data'] as Map<String, dynamic>;
     } catch (e) {
       debugPrint('Error reading cached tax config: $e');
@@ -149,13 +149,13 @@ class EarningsCacheService {
   }
 
   Future<void> clearCache() async {
-     final prefs = await SharedPreferences.getInstance();
-     // Clear only earnings keys
-     final keys = prefs.getKeys();
-     for (final key in keys) {
-       if (key.startsWith('earnings_') || key == _taxConfigKey) {
-         await prefs.remove(key);
-       }
-     }
+    final prefs = await SharedPreferences.getInstance();
+    // Clear only earnings keys
+    final keys = prefs.getKeys();
+    for (final key in keys) {
+      if (key.startsWith('earnings_') || key == _taxConfigKey) {
+        await prefs.remove(key);
+      }
+    }
   }
 }

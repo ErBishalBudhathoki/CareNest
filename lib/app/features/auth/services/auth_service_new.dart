@@ -9,10 +9,7 @@ class AuthService {
   final Dio _dio = DioClient().dio;
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  Future<Response<dynamic>> _postAuthV2(
-    String action, {
-    Object? data,
-  }) async {
+  Future<Response<dynamic>> _postAuthV2(String action, {Object? data}) async {
     try {
       return await _dio.post('/auth/v2/$action', data: data);
     } on DioException catch (e) {
@@ -25,10 +22,10 @@ class AuthService {
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
-      final response = await _postAuthV2('login', data: {
-        'email': email,
-        'password': password,
-      });
+      final response = await _postAuthV2(
+        'login',
+        data: {'email': email, 'password': password},
+      );
 
       if (response.statusCode == 200) {
         final data = response.data['data'];
@@ -49,19 +46,22 @@ class AuthService {
         if (userData != null) {
           await sharedPrefs.saveUserData(
             email: userData['email'] ?? '',
-            organizationId: userData['organizationId'] ??
+            organizationId:
+                userData['organizationId'] ??
                 userData['organization']?['_id'] ??
                 '',
             name: '${userData['firstName'] ?? ''} ${userData['lastName'] ?? ''}'
                 .trim(),
             userId: userData['_id'] ?? userData['id'] ?? '',
-            organizationCode: userData['organization']?['code'] ??
+            organizationCode:
+                userData['organization']?['code'] ??
                 userData['organizationCode'] ??
                 '',
           );
         }
-        await SessionTimeoutService(sharedPrefs: sharedPrefs)
-            .markSessionStarted();
+        await SessionTimeoutService(
+          sharedPrefs: sharedPrefs,
+        ).markSessionStarted();
 
         // Parse User
         return {
@@ -76,28 +76,33 @@ class AuthService {
   }
 
   Future<void> register(
-      String email, String password, String firstName, String lastName) async {
-    await _postAuthV2('register', data: {
-      'email': email,
-      'password': password,
-      'firstName': firstName,
-      'lastName': lastName,
-      'confirmPassword':
-          password // Backend v2 (zod) doesn't check confirmPassword inside controller usually?
-      // Wait, my v2 controller schema didn't check confirmPassword.
-      // It just checked email/pass/names.
-      // The secureAuthOriginal DID check confirmPassword.
-      // I should pass it anyway if UI sends it, but my controller doesn't enforce it.
-    });
+    String email,
+    String password,
+    String firstName,
+    String lastName,
+  ) async {
+    await _postAuthV2(
+      'register',
+      data: {
+        'email': email,
+        'password': password,
+        'firstName': firstName,
+        'lastName': lastName,
+        'confirmPassword':
+            password, // Backend v2 (zod) doesn't check confirmPassword inside controller usually?
+        // Wait, my v2 controller schema didn't check confirmPassword.
+        // It just checked email/pass/names.
+        // The secureAuthOriginal DID check confirmPassword.
+        // I should pass it anyway if UI sends it, but my controller doesn't enforce it.
+      },
+    );
   }
 
   Future<void> logout() async {
     try {
       final refreshToken = await _storage.read(key: 'refreshToken');
       if (refreshToken != null) {
-        await _postAuthV2('logout', data: {
-          'refreshToken': refreshToken,
-        });
+        await _postAuthV2('logout', data: {'refreshToken': refreshToken});
       }
     } catch (_) {
       // Ignore network error on logout
@@ -107,18 +112,19 @@ class AuthService {
 
       // Also clear local session state and Firebase session.
       final sharedPrefs = await SharedPreferencesUtils.getInstance();
-      await SessionTimeoutService(sharedPrefs: sharedPrefs)
-          .logoutAndClearSession(
-        reason: 'auth_service_logout',
-      );
+      await SessionTimeoutService(
+        sharedPrefs: sharedPrefs,
+      ).logoutAndClearSession(reason: 'auth_service_logout');
     }
   }
 
   Future<void> changePassword(
-      String currentPassword, String newPassword) async {
-    await _postAuthV2('change-password', data: {
-      'currentPassword': currentPassword,
-      'newPassword': newPassword,
-    });
+    String currentPassword,
+    String newPassword,
+  ) async {
+    await _postAuthV2(
+      'change-password',
+      data: {'currentPassword': currentPassword, 'newPassword': newPassword},
+    );
   }
 }

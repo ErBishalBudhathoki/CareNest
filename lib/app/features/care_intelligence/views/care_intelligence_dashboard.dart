@@ -200,11 +200,15 @@ class _CareIntelligenceDashboardState
               clientId: clientId,
               organizationId: organizationId,
             ),
-        ref.read(riskPredictionViewModelProvider.notifier).predictAllRisks(
+        ref
+            .read(riskPredictionViewModelProvider.notifier)
+            .predictAllRisks(
               clientId: clientId,
               organizationId: organizationId,
             ),
-        ref.read(medicationViewModelProvider.notifier).getMedicationAlerts(
+        ref
+            .read(medicationViewModelProvider.notifier)
+            .getMedicationAlerts(
               clientId: clientId,
               organizationId: organizationId,
             ),
@@ -246,17 +250,20 @@ class _CareIntelligenceDashboardState
       alerts: liveAlerts,
     );
 
-    final hasAnyData = intelligenceState.report != null ||
+    final hasAnyData =
+        intelligenceState.report != null ||
         riskState.assessment != null ||
         medicationState.alerts.isNotEmpty;
 
-    final isLoading = (clientState.isLoading ||
+    final isLoading =
+        (clientState.isLoading ||
             intelligenceState.isLoading ||
             riskState.isLoading ||
             medicationState.isLoading) &&
         !hasAnyData;
 
-    final error = intelligenceState.error ??
+    final error =
+        intelligenceState.error ??
         riskState.error ??
         medicationState.error ??
         clientState.error;
@@ -267,51 +274,49 @@ class _CareIntelligenceDashboardState
       body: organizationId == null || organizationId.isEmpty
           ? _buildMissingOrganizationState(context)
           : _activeClientId == null && !clientState.isLoading
-              ? _buildMissingClientState(context)
-              : isLoading
-                  ? const Center(child: BauhausLoadingState())
-                  : RefreshIndicator(
-                      color: BauhausDesign.primary,
-                      onRefresh: () async {
-                        if (organizationId.isNotEmpty) {
-                          await _initializeDashboard(organizationId,
-                              force: true);
-                        }
-                      },
-                      child: CustomScrollView(
-                        slivers: [
-                          SliverToBoxAdapter(
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                BauhausDesign.space4,
-                                BauhausDesign.space4,
-                                BauhausDesign.space4,
-                                BauhausDesign.space8,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  if (error != null) ...[
-                                    _buildErrorBanner(context, error),
-                                    const SizedBox(
-                                        height: BauhausDesign.space4),
-                                  ],
-                                  _buildClinicalCanvas(context, summary),
-                                  const SizedBox(height: BauhausDesign.space6),
-                                  _buildJourneyBand(context),
-                                  const SizedBox(height: BauhausDesign.space6),
-                                  _buildModuleAtlas(context),
-                                  const SizedBox(height: BauhausDesign.space6),
-                                  _buildRiskMatrix(context, liveRiskSignals),
-                                  const SizedBox(height: BauhausDesign.space6),
-                                  _buildAlertTimeline(context, liveAlerts),
-                                ],
-                              ),
-                            ),
-                          ),
+          ? _buildMissingClientState(context)
+          : isLoading
+          ? const Center(child: BauhausLoadingState())
+          : RefreshIndicator(
+              color: BauhausDesign.primary,
+              onRefresh: () async {
+                if (organizationId.isNotEmpty) {
+                  await _initializeDashboard(organizationId, force: true);
+                }
+              },
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        BauhausDesign.space4,
+                        BauhausDesign.space4,
+                        BauhausDesign.space4,
+                        BauhausDesign.space8,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (error != null) ...[
+                            _buildErrorBanner(context, error),
+                            const SizedBox(height: BauhausDesign.space4),
+                          ],
+                          _buildClinicalCanvas(context, summary),
+                          const SizedBox(height: BauhausDesign.space6),
+                          _buildJourneyBand(context),
+                          const SizedBox(height: BauhausDesign.space6),
+                          _buildModuleAtlas(context),
+                          const SizedBox(height: BauhausDesign.space6),
+                          _buildRiskMatrix(context, liveRiskSignals),
+                          const SizedBox(height: BauhausDesign.space6),
+                          _buildAlertTimeline(context, liveAlerts),
                         ],
                       ),
                     ),
+                  ),
+                ],
+              ),
+            ),
     );
   }
 
@@ -323,10 +328,10 @@ class _CareIntelligenceDashboardState
       title: Text(
         'CARE INTELLIGENCE',
         style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-              color: BauhausDesign.surfaceWhite,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.7,
-            ),
+          color: BauhausDesign.surfaceWhite,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.7,
+        ),
       ),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: BauhausDesign.surfaceWhite),
@@ -412,8 +417,11 @@ class _CareIntelligenceDashboardState
         children: [
           Row(
             children: [
-              _buildBadge(context,
-                  text: 'CLINICAL COMMAND', accent: BauhausDesign.primary),
+              _buildBadge(
+                context,
+                text: 'CLINICAL COMMAND',
+                accent: BauhausDesign.primary,
+              ),
               const SizedBox(width: BauhausDesign.space2),
               _buildBadge(
                 context,
@@ -432,8 +440,7 @@ class _CareIntelligenceDashboardState
                   children: [
                     Text(
                       'Clients Under Active Monitoring',
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelLarge
+                      style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w700,
@@ -442,8 +449,7 @@ class _CareIntelligenceDashboardState
                     const SizedBox(height: BauhausDesign.space1),
                     Text(
                       summary.monitoredClients,
-                      style: BauhausDesign.getTextTheme(context)
-                          .displayLarge
+                      style: BauhausDesign.getTextTheme(context).displayLarge
                           ?.copyWith(
                             color: BauhausDesign.primary,
                             fontWeight: FontWeight.w700,
@@ -452,8 +458,7 @@ class _CareIntelligenceDashboardState
                     const SizedBox(height: BauhausDesign.space1),
                     Text(
                       summary.coverageDetail,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w600,
@@ -475,10 +480,13 @@ class _CareIntelligenceDashboardState
                         height: 68,
                         decoration: BoxDecoration(
                           color: BauhausDesign.secondary.withOpacity(0.22),
-                          borderRadius:
-                              BorderRadius.circular(BauhausDesign.radiusSm),
+                          borderRadius: BorderRadius.circular(
+                            BauhausDesign.radiusSm,
+                          ),
                           border: Border.all(
-                              color: BauhausDesign.neutral, width: 1),
+                            color: BauhausDesign.neutral,
+                            width: 1,
+                          ),
                         ),
                       ),
                     ),
@@ -491,7 +499,9 @@ class _CareIntelligenceDashboardState
                           color: BauhausDesign.accent.withOpacity(0.24),
                           shape: BoxShape.circle,
                           border: Border.all(
-                              color: BauhausDesign.neutral, width: 1),
+                            color: BauhausDesign.neutral,
+                            width: 1,
+                          ),
                         ),
                       ),
                     ),
@@ -502,10 +512,13 @@ class _CareIntelligenceDashboardState
                         height: 42,
                         decoration: BoxDecoration(
                           color: BauhausDesign.primary.withOpacity(0.2),
-                          borderRadius:
-                              BorderRadius.circular(BauhausDesign.radiusSm),
+                          borderRadius: BorderRadius.circular(
+                            BauhausDesign.radiusSm,
+                          ),
                           border: Border.all(
-                              color: BauhausDesign.neutral, width: 1),
+                            color: BauhausDesign.neutral,
+                            width: 1,
+                          ),
                         ),
                         child: const Icon(
                           Icons.favorite_rounded,
@@ -616,31 +629,31 @@ class _CareIntelligenceDashboardState
               children: [
                 Text(
                   title,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style:
-                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w800,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).titleMedium
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w800,
+                      ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   detail,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
               ],
             ),
@@ -682,10 +695,13 @@ class _CareIntelligenceDashboardState
                         (entry) => SizedBox(
                           width: constraints.maxWidth >= 520
                               ? (constraints.maxWidth - BauhausDesign.space3) /
-                                  2
+                                    2
                               : constraints.maxWidth,
                           child: _buildJourneyCard(
-                              context, entry.key, entry.value),
+                            context,
+                            entry.key,
+                            entry.value,
+                          ),
                         ),
                       )
                       .toList(),
@@ -705,7 +721,10 @@ class _CareIntelligenceDashboardState
                                 : BauhausDesign.space3,
                           ),
                           child: _buildJourneyCard(
-                              context, entry.key, entry.value),
+                            context,
+                            entry.key,
+                            entry.value,
+                          ),
                         ),
                       ),
                     )
@@ -718,11 +737,7 @@ class _CareIntelligenceDashboardState
     );
   }
 
-  Widget _buildJourneyCard(
-    BuildContext context,
-    int index,
-    _JourneyStep step,
-  ) {
+  Widget _buildJourneyCard(BuildContext context, int index, _JourneyStep step) {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
@@ -745,9 +760,9 @@ class _CareIntelligenceDashboardState
             child: Text(
               '${index + 1}',
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w800,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
           const SizedBox(width: BauhausDesign.space2),
@@ -761,8 +776,7 @@ class _CareIntelligenceDashboardState
                     const SizedBox(width: BauhausDesign.space1),
                     Text(
                       step.title,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelLarge
+                      style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w700,
@@ -773,11 +787,11 @@ class _CareIntelligenceDashboardState
                 const SizedBox(height: 2),
                 Text(
                   step.detail,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
               ],
             ),
@@ -859,8 +873,11 @@ class _CareIntelligenceDashboardState
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(color: BauhausDesign.neutral),
                 ),
-                child:
-                    Icon(module.icon, size: 20, color: BauhausDesign.textDark),
+                child: Icon(
+                  module.icon,
+                  size: 20,
+                  color: BauhausDesign.textDark,
+                ),
               ),
               const SizedBox(width: BauhausDesign.space3),
               Expanded(
@@ -869,8 +886,7 @@ class _CareIntelligenceDashboardState
                   children: [
                     Text(
                       module.title,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelLarge
+                      style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w700,
@@ -879,8 +895,7 @@ class _CareIntelligenceDashboardState
                     const SizedBox(height: 2),
                     Text(
                       module.description,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
+                      style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w600,
@@ -905,8 +920,7 @@ class _CareIntelligenceDashboardState
                   children: [
                     Text(
                       'Open',
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelSmall
+                      style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w800,
@@ -928,10 +942,7 @@ class _CareIntelligenceDashboardState
     );
   }
 
-  Widget _buildRiskMatrix(
-    BuildContext context,
-    List<_RiskSignal> riskSignals,
-  ) {
+  Widget _buildRiskMatrix(BuildContext context, List<_RiskSignal> riskSignals) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -985,8 +996,7 @@ class _CareIntelligenceDashboardState
                     Expanded(
                       child: Text(
                         signal.title,
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
+                        style: BauhausDesign.getTextTheme(context).labelLarge
                             ?.copyWith(
                               color: BauhausDesign.textDark,
                               fontWeight: FontWeight.w700,
@@ -997,8 +1007,7 @@ class _CareIntelligenceDashboardState
                     Text(
                       '${signal.score.toInt()} / 100',
                       textAlign: TextAlign.right,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelSmall
+                      style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w800,
@@ -1020,8 +1029,9 @@ class _CareIntelligenceDashboardState
                     child: Container(
                       decoration: BoxDecoration(
                         color: signal.accent.withOpacity(0.75),
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusSm),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusSm,
+                        ),
                       ),
                     ),
                   ),
@@ -1032,11 +1042,11 @@ class _CareIntelligenceDashboardState
                   child: Text(
                     signal.trend,
                     textAlign: TextAlign.right,
-                    style:
-                        BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                              color: signal.accent,
-                              fontWeight: FontWeight.w700,
-                            ),
+                    style: BauhausDesign.getTextTheme(context).bodySmall
+                        ?.copyWith(
+                          color: signal.accent,
+                          fontWeight: FontWeight.w700,
+                        ),
                   ),
                 ),
               ],
@@ -1049,11 +1059,11 @@ class _CareIntelligenceDashboardState
                 width: 146,
                 child: Text(
                   signal.title,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelLarge
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
               ),
               const SizedBox(width: BauhausDesign.space3),
@@ -1071,8 +1081,9 @@ class _CareIntelligenceDashboardState
                     child: Container(
                       decoration: BoxDecoration(
                         color: signal.accent.withOpacity(0.75),
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusSm),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusSm,
+                        ),
                       ),
                     ),
                   ),
@@ -1084,11 +1095,11 @@ class _CareIntelligenceDashboardState
                 child: Text(
                   '${signal.score.toInt()} / 100',
                   textAlign: TextAlign.right,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w800,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w800,
+                      ),
                 ),
               ),
               const SizedBox(width: BauhausDesign.space2),
@@ -1097,11 +1108,11 @@ class _CareIntelligenceDashboardState
                 child: Text(
                   signal.trend,
                   textAlign: TextAlign.right,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                            color: signal.accent,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: signal.accent,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
               ),
             ],
@@ -1111,10 +1122,7 @@ class _CareIntelligenceDashboardState
     );
   }
 
-  Widget _buildAlertTimeline(
-    BuildContext context,
-    List<_CareAlert> alerts,
-  ) {
+  Widget _buildAlertTimeline(BuildContext context, List<_CareAlert> alerts) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1169,8 +1177,10 @@ class _CareIntelligenceDashboardState
                   decoration: BoxDecoration(
                     color: alert.accent,
                     shape: BoxShape.circle,
-                    border:
-                        Border.all(color: BauhausDesign.neutral, width: 1.2),
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.2,
+                    ),
                   ),
                 ),
                 if (showConnector)
@@ -1201,12 +1211,16 @@ class _CareIntelligenceDashboardState
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: BauhausDesign.surfaceWhite,
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusSm),
+                      borderRadius: BorderRadius.circular(
+                        BauhausDesign.radiusSm,
+                      ),
                       border: Border.all(color: BauhausDesign.neutral),
                     ),
-                    child: Icon(alert.icon,
-                        size: 18, color: BauhausDesign.textDark),
+                    child: Icon(
+                      alert.icon,
+                      size: 18,
+                      color: BauhausDesign.textDark,
+                    ),
                   ),
                   const SizedBox(width: BauhausDesign.space2),
                   Expanded(
@@ -1215,8 +1229,7 @@ class _CareIntelligenceDashboardState
                       children: [
                         Text(
                           alert.title,
-                          style: BauhausDesign.getTextTheme(context)
-                              .labelLarge
+                          style: BauhausDesign.getTextTheme(context).labelLarge
                               ?.copyWith(
                                 color: BauhausDesign.textDark,
                                 fontWeight: FontWeight.w700,
@@ -1225,8 +1238,7 @@ class _CareIntelligenceDashboardState
                         const SizedBox(height: 2),
                         Text(
                           alert.subtitle,
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodySmall
+                          style: BauhausDesign.getTextTheme(context).bodySmall
                               ?.copyWith(
                                 color: BauhausDesign.textDark,
                                 fontWeight: FontWeight.w600,
@@ -1235,8 +1247,7 @@ class _CareIntelligenceDashboardState
                         const SizedBox(height: BauhausDesign.space1),
                         Text(
                           alert.timestamp,
-                          style: BauhausDesign.getTextTheme(context)
-                              .labelSmall
+                          style: BauhausDesign.getTextTheme(context).labelSmall
                               ?.copyWith(
                                 color: BauhausDesign.textMuted,
                                 fontWeight: FontWeight.w700,
@@ -1253,14 +1264,14 @@ class _CareIntelligenceDashboardState
                     ),
                     decoration: BoxDecoration(
                       color: alert.accent.withOpacity(0.18),
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusSm),
+                      borderRadius: BorderRadius.circular(
+                        BauhausDesign.radiusSm,
+                      ),
                       border: Border.all(color: BauhausDesign.neutral),
                     ),
                     child: Text(
                       alert.severity.toUpperCase(),
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelSmall
+                      style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w800,
@@ -1292,18 +1303,18 @@ class _CareIntelligenceDashboardState
             Text(
               'Organization not available',
               style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
             ),
             const SizedBox(height: BauhausDesign.space1),
             Text(
               'Set organization context to load Care Intelligence data.',
               textAlign: TextAlign.center,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textMuted,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: BauhausDesign.textMuted,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
@@ -1328,18 +1339,18 @@ class _CareIntelligenceDashboardState
             Text(
               'No clients available',
               style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
             ),
             const SizedBox(height: BauhausDesign.space1),
             Text(
               'Care Intelligence requires at least one client profile in this organization.',
               textAlign: TextAlign.center,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textMuted,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: BauhausDesign.textMuted,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             const SizedBox(height: BauhausDesign.space4),
             BauhausActionButton(
@@ -1379,9 +1390,9 @@ class _CareIntelligenceDashboardState
             child: Text(
               error,
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],
@@ -1399,10 +1410,12 @@ class _CareIntelligenceDashboardState
     final report = intelligenceState.report;
     final assessment = riskState.assessment;
 
-    final highAlertCount =
-        alerts.where((alert) => _isHighSeverity(alert.severity)).length;
+    final highAlertCount = alerts
+        .where((alert) => _isHighSeverity(alert.severity))
+        .length;
 
-    final plansDue = report?.nextActions
+    final plansDue =
+        report?.nextActions
             .where((action) => _isDueSoon(action.deadline, days: 14))
             .length ??
         0;
@@ -1610,9 +1623,9 @@ class _CareIntelligenceDashboardState
       child: Text(
         text,
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: BauhausDesign.textDark,
-              fontWeight: FontWeight.w800,
-            ),
+          color: BauhausDesign.textDark,
+          fontWeight: FontWeight.w800,
+        ),
       ),
     );
   }
@@ -1739,17 +1752,17 @@ class _CanvasTag extends StatelessWidget {
           Text(
             label,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: 2),
           Text(
             value,
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w800,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w800,
+            ),
           ),
         ],
       ),

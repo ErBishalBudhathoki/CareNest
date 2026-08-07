@@ -6,11 +6,7 @@ class TodaySummaryWidget extends StatelessWidget {
   final TodaySummary? summary;
   final bool isLoading;
 
-  const TodaySummaryWidget({
-    super.key,
-    this.summary,
-    this.isLoading = false,
-  });
+  const TodaySummaryWidget({super.key, this.summary, this.isLoading = false});
 
   @override
   Widget build(BuildContext context) {
@@ -176,9 +172,7 @@ class TodaySummaryWidget extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: const Padding(
         padding: EdgeInsets.all(32),
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
+        child: Center(child: CircularProgressIndicator()),
       ),
     );
   }
@@ -194,10 +188,7 @@ class TodaySummaryWidget extends StatelessWidget {
             children: [
               Icon(Icons.info_outline, size: 48, color: Colors.grey),
               SizedBox(height: 16),
-              Text(
-                'No data available',
-                style: TextStyle(color: Colors.grey),
-              ),
+              Text('No data available', style: TextStyle(color: Colors.grey)),
             ],
           ),
         ),

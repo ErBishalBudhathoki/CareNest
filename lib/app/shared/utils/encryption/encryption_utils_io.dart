@@ -31,7 +31,8 @@ class EncryptionUtils {
     debugPrint("generateSalt called");
     var random = Random.secure();
     return Uint8List.fromList(
-        List.generate(length, (_) => random.nextInt(256)));
+      List.generate(length, (_) => random.nextInt(256)),
+    );
   }
 
   String encryptPasswordWithArgon2andSalt(String password, Uint8List salt) {

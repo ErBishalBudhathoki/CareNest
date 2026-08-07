@@ -86,10 +86,12 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
         return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
       case WorkerStatus.atAppointment:
         return BitmapDescriptor.defaultMarkerWithHue(
-            BitmapDescriptor.hueYellow);
+          BitmapDescriptor.hueYellow,
+        );
       case WorkerStatus.onBreak:
         return BitmapDescriptor.defaultMarkerWithHue(
-            BitmapDescriptor.hueOrange);
+          BitmapDescriptor.hueOrange,
+        );
       case WorkerStatus.offline:
         return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
     }
@@ -180,7 +182,8 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
   }
 
   Widget _buildMap() {
-    final center = widget.initialCenter ??
+    final center =
+        widget.initialCenter ??
         (widget.workerLocations!.isNotEmpty
             ? LatLng(
                 widget.workerLocations!.first.latitude,
@@ -265,9 +268,7 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
             onTap: () {
               // In production, get user's current location
               _mapController?.animateCamera(
-                CameraUpdate.newLatLng(
-                  const LatLng(-37.8136, 144.9631),
-                ),
+                CameraUpdate.newLatLng(const LatLng(-37.8136, 144.9631)),
               );
             },
             tooltip: 'My Location',
@@ -294,9 +295,7 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
           child: Container(
             width: 40,
             height: 40,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-            ),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
             child: Icon(icon, size: 20, color: BauhausColors.textDark),
           ),
         ),
@@ -561,10 +560,7 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
                       const SizedBox(height: 4),
                       Text(
                         _getStatusLabel(worker.status),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: statusColor,
-                        ),
+                        style: TextStyle(fontSize: 12, color: statusColor),
                       ),
                       if (worker.currentClientName != null) ...[
                         const SizedBox(height: 2),
@@ -579,11 +575,7 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
                     ],
                   ),
                 ),
-                Icon(
-                  Icons.location_on,
-                  color: statusColor,
-                  size: 20,
-                ),
+                Icon(Icons.location_on, color: statusColor, size: 20),
               ],
             ),
           ),
@@ -627,9 +619,7 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
       northeast: LatLng(maxLat, maxLng),
     );
 
-    _mapController?.animateCamera(
-      CameraUpdate.newLatLngBounds(bounds, 50),
-    );
+    _mapController?.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
   }
 
   Widget _buildLoadingState() {
@@ -638,9 +628,7 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: const SizedBox(
         height: 400,
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
+        child: Center(child: CircularProgressIndicator()),
       ),
     );
   }
@@ -667,10 +655,7 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
               SizedBox(height: 4),
               Text(
                 'Worker locations will appear here',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Colors.grey, fontSize: 12),
               ),
             ],
           ),

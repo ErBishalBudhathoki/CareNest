@@ -4,10 +4,7 @@ import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 class AddClientDetailsWidget extends StatefulWidget {
   final List<Widget> myWidgets;
 
-  const AddClientDetailsWidget({
-    super.key,
-    required this.myWidgets,
-  });
+  const AddClientDetailsWidget({super.key, required this.myWidgets});
 
   @override
   _AddClientDetailsWidgetState createState() => _AddClientDetailsWidgetState();

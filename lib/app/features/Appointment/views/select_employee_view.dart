@@ -45,13 +45,9 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
     _animationController.forward();
   }
 
@@ -71,9 +67,11 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
       } else {
         _isSearching = true;
         _filteredUsers = _allUsers
-            .where((user) =>
-                user.name.toLowerCase().contains(query.toLowerCase()) ||
-                user.email.toLowerCase().contains(query.toLowerCase()))
+            .where(
+              (user) =>
+                  user.name.toLowerCase().contains(query.toLowerCase()) ||
+                  user.email.toLowerCase().contains(query.toLowerCase()),
+            )
             .toList();
       }
     });
@@ -106,21 +104,23 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                       PageRouteBuilder(
                         pageBuilder: (context, animation, secondaryAnimation) =>
                             SelectClientForAssignment(
-                          userName: user.name,
-                          userEmail: user.email,
-                        ),
+                              userName: user.name,
+                              userEmail: user.email,
+                            ),
                         transitionsBuilder:
                             (context, animation, secondaryAnimation, child) {
-                          const begin = Offset(1.0, 0.0);
-                          const end = Offset.zero;
-                          const curve = Curves.easeInOut;
-                          var tween = Tween(begin: begin, end: end)
-                              .chain(CurveTween(curve: curve));
-                          return SlideTransition(
-                            position: animation.drive(tween),
-                            child: child,
-                          );
-                        },
+                              const begin = Offset(1.0, 0.0);
+                              const end = Offset.zero;
+                              const curve = Curves.easeInOut;
+                              var tween = Tween(
+                                begin: begin,
+                                end: end,
+                              ).chain(CurveTween(curve: curve));
+                              return SlideTransition(
+                                position: animation.drive(tween),
+                                child: child,
+                              );
+                            },
                       ),
                     );
                   },
@@ -133,8 +133,9 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                           imageUrl: user.profilePic,
                           size: 56,
                           shape: BoxShape.rectangle,
-                          borderRadius:
-                              BorderRadius.circular(BauhausDesign.radiusMd),
+                          borderRadius: BorderRadius.circular(
+                            BauhausDesign.radiusMd,
+                          ),
                           borderWidth: 1.5,
                           borderColor: BauhausDesign.neutral,
                           elevation: 0,
@@ -160,9 +161,7 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                                 user.email,
                                 style: BauhausDesign.getTextTheme(context)
                                     .bodyMedium
-                                    ?.copyWith(
-                                      color: BauhausDesign.textMuted,
-                                    ),
+                                    ?.copyWith(color: BauhausDesign.textMuted),
                               ),
                             ],
                           ),
@@ -172,10 +171,13 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                           padding: const EdgeInsets.all(BauhausDesign.space2),
                           decoration: BoxDecoration(
                             color: BauhausDesign.backgroundLight,
-                            borderRadius:
-                                BorderRadius.circular(BauhausDesign.radiusSm),
+                            borderRadius: BorderRadius.circular(
+                              BauhausDesign.radiusSm,
+                            ),
                             border: Border.all(
-                                color: BauhausDesign.neutral, width: 1),
+                              color: BauhausDesign.neutral,
+                              width: 1,
+                            ),
                           ),
                           child: Icon(
                             Icons.arrow_forward_ios,
@@ -210,21 +212,13 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
         onChanged: _filterUsers,
         decoration: InputDecoration(
           hintText: 'Search employees...',
-          hintStyle: TextStyle(
-            color: BauhausDesign.textMuted.withOpacity(0.5),
-          ),
+          hintStyle: TextStyle(color: BauhausDesign.textMuted.withOpacity(0.5)),
           filled: false,
           fillColor: Colors.transparent,
-          prefixIcon: Icon(
-            Icons.search,
-            color: BauhausDesign.textMuted,
-          ),
+          prefixIcon: Icon(Icons.search, color: BauhausDesign.textMuted),
           suffixIcon: _isSearching
               ? IconButton(
-                  icon: Icon(
-                    Icons.clear,
-                    color: BauhausDesign.textMuted,
-                  ),
+                  icon: Icon(Icons.clear, color: BauhausDesign.textMuted),
                   onPressed: () {
                     _searchController.clear();
                     _filterUsers('');
@@ -260,18 +254,18 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
           Text(
             _isSearching ? 'No employees found' : 'No employees available',
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  color: BauhausDesign.textMuted,
-                  fontWeight: FontWeight.w500,
-                ),
+              color: BauhausDesign.textMuted,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space2),
           Text(
             _isSearching
                 ? 'Try adjusting your search terms'
                 : 'Add employees to get started',
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.neutral,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.neutral),
           ),
         ],
       ),
@@ -284,25 +278,21 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 64,
-            color: BauhausDesign.error,
-          ),
+          Icon(Icons.error_outline, size: 64, color: BauhausDesign.error),
           const SizedBox(height: BauhausDesign.space4),
           Text(
             'Something went wrong',
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w500,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space2),
           Text(
             error,
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textMuted,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: BauhausDesign.space6),
@@ -336,9 +326,9 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
         title: Text(
           'Employee List',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: BauhausDesign.textDark,
-              ),
+            fontWeight: FontWeight.w600,
+            color: BauhausDesign.textDark,
+          ),
         ),
         centerTitle: false,
         bottom: PreferredSize(

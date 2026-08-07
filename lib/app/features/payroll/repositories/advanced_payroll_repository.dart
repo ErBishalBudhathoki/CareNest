@@ -7,7 +7,9 @@ class AdvancedPayrollRepository {
 
   AdvancedPayrollRepository(this.ref);
 
-  Future<Map<String, dynamic>> calculatePayroll({required Map<String, dynamic> payrollData}) async {
+  Future<Map<String, dynamic>> calculatePayroll({
+    required Map<String, dynamic> payrollData,
+  }) async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
       return await apiMethod.calculatePayroll(payrollData: payrollData);
@@ -17,7 +19,10 @@ class AdvancedPayrollRepository {
     }
   }
 
-  Future<Map<String, dynamic>> getPayslip({required String userId, required String period}) async {
+  Future<Map<String, dynamic>> getPayslip({
+    required String userId,
+    required String period,
+  }) async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
       return await apiMethod.getPayslip(userId: userId, period: period);
@@ -27,27 +32,41 @@ class AdvancedPayrollRepository {
     }
   }
 
-  Future<Map<String, dynamic>> generatePayslips({required String organizationId, required String period}) async {
+  Future<Map<String, dynamic>> generatePayslips({
+    required String organizationId,
+    required String period,
+  }) async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
-      return await apiMethod.generatePayslips(organizationId: organizationId, period: period);
+      return await apiMethod.generatePayslips(
+        organizationId: organizationId,
+        period: period,
+      );
     } catch (e) {
       debugPrint('Error generating payslips: $e');
       return {'success': false, 'message': e.toString()};
     }
   }
 
-  Future<Map<String, dynamic>> getPayrollSummary({required String organizationId, required String period}) async {
+  Future<Map<String, dynamic>> getPayrollSummary({
+    required String organizationId,
+    required String period,
+  }) async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
-      return await apiMethod.getPayrollSummary(organizationId: organizationId, period: period);
+      return await apiMethod.getPayrollSummary(
+        organizationId: organizationId,
+        period: period,
+      );
     } catch (e) {
       debugPrint('Error getting payroll summary: $e');
       return {'success': false, 'message': e.toString()};
     }
   }
 
-  Future<Map<String, dynamic>> exportPayrollData({required Map<String, dynamic> exportData}) async {
+  Future<Map<String, dynamic>> exportPayrollData({
+    required Map<String, dynamic> exportData,
+  }) async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
       return await apiMethod.exportPayrollData(exportData: exportData);
@@ -58,6 +77,8 @@ class AdvancedPayrollRepository {
   }
 }
 
-final advancedPayrollRepositoryProvider = Provider<AdvancedPayrollRepository>((ref) {
+final advancedPayrollRepositoryProvider = Provider<AdvancedPayrollRepository>((
+  ref,
+) {
   return AdvancedPayrollRepository(ref);
 });

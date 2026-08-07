@@ -252,8 +252,10 @@ class _EnhancedNdisItemSelectionViewState
       _selectedPricingScope[itemNumber] = scope;
       final controller = _priceControllers[itemNumber];
       if (controller != null) {
-        final scopedPrice =
-            _getSavedCustomPriceForScope(itemNumber, scope: scope);
+        final scopedPrice = _getSavedCustomPriceForScope(
+          itemNumber,
+          scope: scope,
+        );
         final cappedPrice = item != null ? _getCappedPrice(item) : null;
         final nextPrice = scopedPrice ?? cappedPrice;
         if (nextPrice != null) {
@@ -324,19 +326,22 @@ class _EnhancedNdisItemSelectionViewState
     if (pricingLookup == null) return null;
 
     final source = pricingLookup['source']?.toString().toLowerCase().trim();
-    final isCustomSource = source == 'client_specific' ||
+    final isCustomSource =
+        source == 'client_specific' ||
         source == 'client-specific' ||
         source == 'organization' ||
         source == 'organization_specific' ||
         source == 'organization-specific';
     if (!isCustomSource) return null;
 
-    final resolvedPrice = _toPositiveDouble(pricingLookup['customPrice']) ??
+    final resolvedPrice =
+        _toPositiveDouble(pricingLookup['customPrice']) ??
         _toPositiveDouble(pricingLookup['price']) ??
         _toPositiveDouble(pricingLookup['fixedPrice']);
     if (resolvedPrice == null) return null;
 
-    final isClientSpecific = pricingLookup['clientSpecific'] == true ||
+    final isClientSpecific =
+        pricingLookup['clientSpecific'] == true ||
         source == 'client_specific' ||
         source == 'client-specific';
     final pricingClientId = pricingLookup['clientId'];
@@ -359,8 +364,9 @@ class _EnhancedNdisItemSelectionViewState
     Map<String, dynamic>? organizationLookup,
   }) {
     final clientAwareCustom = _buildCustomPricingFromLookup(clientAwareLookup);
-    final organizationCustom =
-        _buildCustomPricingFromLookup(organizationLookup);
+    final organizationCustom = _buildCustomPricingFromLookup(
+      organizationLookup,
+    );
 
     Map<String, dynamic>? clientCustomPricing;
     if (clientAwareCustom != null &&
@@ -383,7 +389,8 @@ class _EnhancedNdisItemSelectionViewState
       orgCustomPricing: orgCustomPricing,
       fallbackCustomPricing: clientAwareCustom ?? organizationCustom,
     );
-    final supportItem = _buildSupportItemFromLookup(item, clientAwareLookup) ??
+    final supportItem =
+        _buildSupportItemFromLookup(item, clientAwareLookup) ??
         _buildSupportItemFromLookup(item, organizationLookup);
 
     final priceCaps = supportItem?['priceCaps'];
@@ -408,7 +415,8 @@ class _EnhancedNdisItemSelectionViewState
       clientState = _sharedPrefs.getString('clientState');
     }
 
-    final state = widget.userState ??
+    final state =
+        widget.userState ??
         clientState ??
         _sharedPrefs.getString('userState') ??
         'NSW';
@@ -430,7 +438,10 @@ class _EnhancedNdisItemSelectionViewState
       unawaited(_loadPricingData());
     } catch (e, s) {
       log.severe(
-          "Failed to load NDIS items in EnhancedNdisItemSelectionView", e, s);
+        "Failed to load NDIS items in EnhancedNdisItemSelectionView",
+        e,
+        s,
+      );
       setState(() {
         _isLoading = false;
       });
@@ -465,8 +476,9 @@ class _EnhancedNdisItemSelectionViewState
     if (!mounted) return;
     setState(() {
       _isLoadingCustomPrices = true;
-      _pricingItemsInFlight
-          .addAll(itemsToLoad.map((item) => item.itemNumber).toList());
+      _pricingItemsInFlight.addAll(
+        itemsToLoad.map((item) => item.itemNumber).toList(),
+      );
     });
 
     final loadedItemNumbers = <String>{};
@@ -480,20 +492,18 @@ class _EnhancedNdisItemSelectionViewState
           clientId: widget.clientId,
         ),
         if (_hasClientScope)
-          _apiMethod.getBulkPricingLookupResponse(
-            organizationId,
-            itemNumbers,
-          ),
+          _apiMethod.getBulkPricingLookupResponse(organizationId, itemNumbers),
       ]);
       final bulkResponse = responses.first;
-      final organizationOnlyResponse =
-          _hasClientScope && responses.length > 1 ? responses[1] : null;
+      final organizationOnlyResponse = _hasClientScope && responses.length > 1
+          ? responses[1]
+          : null;
 
       final bulkPricingData = bulkResponse?['data'] is Map
           ? Map<String, dynamic>.from(bulkResponse!['data'] as Map)
           : <String, dynamic>{};
-      final organizationOnlyPricingData = organizationOnlyResponse?['data']
-              is Map
+      final organizationOnlyPricingData =
+          organizationOnlyResponse?['data'] is Map
           ? Map<String, dynamic>.from(organizationOnlyResponse!['data'] as Map)
           : <String, dynamic>{};
       final metadata = bulkResponse?['metadata'] is Map
@@ -501,17 +511,21 @@ class _EnhancedNdisItemSelectionViewState
           : <String, dynamic>{};
 
       if (_fallbackBaseRate == null) {
-        final fallbackFromMetadata =
-            _toPositiveDouble(metadata['fallbackBaseRate']);
+        final fallbackFromMetadata = _toPositiveDouble(
+          metadata['fallbackBaseRate'],
+        );
         if (fallbackFromMetadata != null) {
-          _fallbackBaseRate =
-              double.parse(fallbackFromMetadata.toStringAsFixed(2));
+          _fallbackBaseRate = double.parse(
+            fallbackFromMetadata.toStringAsFixed(2),
+          );
         } else {
-          final fallbackFromApi =
-              await _apiMethod.getFallbackBaseRate(organizationId);
+          final fallbackFromApi = await _apiMethod.getFallbackBaseRate(
+            organizationId,
+          );
           if (fallbackFromApi != null && fallbackFromApi > 0) {
-            _fallbackBaseRate =
-                double.parse(fallbackFromApi.toStringAsFixed(2));
+            _fallbackBaseRate = double.parse(
+              fallbackFromApi.toStringAsFixed(2),
+            );
           }
         }
       }
@@ -570,7 +584,8 @@ class _EnhancedNdisItemSelectionViewState
       }
     }
 
-    final shouldContinue = _queueAnotherPricingPass ||
+    final shouldContinue =
+        _queueAnotherPricingPass ||
         (widget.highIntensity && _hasPendingPricingItems());
     _queueAnotherPricingPass = false;
     if (shouldContinue) {
@@ -602,20 +617,16 @@ class _EnhancedNdisItemSelectionViewState
       );
 
       final responses = await Future.wait<Map<String, dynamic>?>([
-        _apiMethod.getBulkPricingLookupResponse(
-          organizationId,
-          [itemNumber],
-          clientId: widget.clientId,
-        ),
+        _apiMethod.getBulkPricingLookupResponse(organizationId, [
+          itemNumber,
+        ], clientId: widget.clientId),
         if (_hasClientScope)
-          _apiMethod.getBulkPricingLookupResponse(
-            organizationId,
-            [itemNumber],
-          ),
+          _apiMethod.getBulkPricingLookupResponse(organizationId, [itemNumber]),
       ]);
       final response = responses.first;
-      final organizationOnlyResponse =
-          _hasClientScope && responses.length > 1 ? responses[1] : null;
+      final organizationOnlyResponse = _hasClientScope && responses.length > 1
+          ? responses[1]
+          : null;
 
       final data = response?['data'] is Map
           ? Map<String, dynamic>.from(response!['data'] as Map)
@@ -690,17 +701,18 @@ class _EnhancedNdisItemSelectionViewState
       final priceCaps = supportItem['priceCaps'];
 
       if (priceCaps is Map<String, dynamic>) {
-        final intensityType =
-            widget.highIntensity ? 'highIntensity' : 'standard';
+        final intensityType = widget.highIntensity
+            ? 'highIntensity'
+            : 'standard';
         final statePrices = priceCaps[intensityType];
 
         if (statePrices is Map<String, dynamic>) {
           final direct = resolveStatePrice(statePrices);
           if (direct != null) return direct;
         } else if (statePrices is Map) {
-          final direct = resolveStatePrice(Map<String, dynamic>.from(
-            statePrices,
-          ));
+          final direct = resolveStatePrice(
+            Map<String, dynamic>.from(statePrices),
+          );
           if (direct != null) return direct;
         } else if (widget.highIntensity) {
           final standardPrices = priceCaps['standard'];
@@ -708,8 +720,9 @@ class _EnhancedNdisItemSelectionViewState
             final fallbackStandard = resolveStatePrice(standardPrices);
             if (fallbackStandard != null) return fallbackStandard;
           } else if (standardPrices is Map) {
-            final fallbackStandard =
-                resolveStatePrice(Map<String, dynamic>.from(standardPrices));
+            final fallbackStandard = resolveStatePrice(
+              Map<String, dynamic>.from(standardPrices),
+            );
             if (fallbackStandard != null) return fallbackStandard;
           }
         }
@@ -742,7 +755,8 @@ class _EnhancedNdisItemSelectionViewState
     final customPricing = _getCustomPricingForScope(item.itemNumber);
 
     if (customPricing != null) {
-      final customPrice = customPricing['customPrice'] ??
+      final customPrice =
+          customPricing['customPrice'] ??
           customPricing['price'] ??
           customPricing['fixedPrice'];
 
@@ -759,7 +773,8 @@ class _EnhancedNdisItemSelectionViewState
     final customPricing = _getCustomPricingForScope(item.itemNumber);
 
     if (customPricing != null) {
-      final hasCustomPrice = customPricing['customPrice'] != null ||
+      final hasCustomPrice =
+          customPricing['customPrice'] != null ||
           customPricing['price'] != null ||
           customPricing['fixedPrice'] != null;
 
@@ -792,8 +807,9 @@ class _EnhancedNdisItemSelectionViewState
           !(_showPriceOverride[itemNumber] ?? false);
       if (_showPriceOverride[itemNumber] == true) {
         // Initialize controller with current price
-        final item = _filteredNdisItems
-            .firstWhere((item) => item.itemNumber == itemNumber);
+        final item = _filteredNdisItems.firstWhere(
+          (item) => item.itemNumber == itemNumber,
+        );
         _priceControllers[itemNumber] = TextEditingController(
           text: _getCurrentPrice(item).toStringAsFixed(2),
         );
@@ -851,9 +867,9 @@ class _EnhancedNdisItemSelectionViewState
         elevation: 0,
         title: Text(
           'Select NDIS Item',
-          style: BauhausDesign.getTextTheme(context)
-              .titleLarge
-              ?.copyWith(color: BauhausDesign.textDark),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).titleLarge?.copyWith(color: BauhausDesign.textDark),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
@@ -880,21 +896,22 @@ class _EnhancedNdisItemSelectionViewState
                     color: BauhausDesign.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                     border: Border.all(
-                        color: BauhausDesign.primary.withOpacity(0.2)),
+                      color: BauhausDesign.primary.withOpacity(0.2),
+                    ),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.info_outline,
-                          color: BauhausDesign.primary, size: 20),
+                      Icon(
+                        Icons.info_outline,
+                        color: BauhausDesign.primary,
+                        size: 20,
+                      ),
                       const SizedBox(width: BauhausDesign.space3),
                       Expanded(
                         child: Text(
                           'Pricing shown for ${widget.highIntensity ? "High Intensity" : "Standard"} rates in $_userState. Tap the price icon to set custom pricing.',
-                          style: BauhausDesign.getTextTheme(context)
-                              .labelSmall
-                              ?.copyWith(
-                                color: BauhausDesign.textMuted,
-                              ),
+                          style: BauhausDesign.getTextTheme(context).labelSmall
+                              ?.copyWith(color: BauhausDesign.textMuted),
                         ),
                       ),
                       if (_isLoadingCustomPrices) ...[
@@ -905,17 +922,16 @@ class _EnhancedNdisItemSelectionViewState
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                                BauhausDesign.primary),
+                              BauhausDesign.primary,
+                            ),
                           ),
                         ),
                         const SizedBox(width: BauhausDesign.space2),
                         Text(
                           'Loading...',
-                          style: BauhausDesign.getTextTheme(context)
-                              .labelSmall
-                              ?.copyWith(
-                                color: BauhausDesign.primary,
-                              ),
+                          style: BauhausDesign.getTextTheme(
+                            context,
+                          ).labelSmall?.copyWith(color: BauhausDesign.primary),
                         ),
                       ],
                     ],
@@ -926,11 +942,13 @@ class _EnhancedNdisItemSelectionViewState
           ),
           _isLoading
               ? const Expanded(
-                  child: Center(child: CircularProgressIndicator()))
+                  child: Center(child: CircularProgressIndicator()),
+                )
               : Expanded(
                   child: _filteredNdisItems.isEmpty && _searchQuery.isNotEmpty
                       ? const Center(
-                          child: Text('No matching NDIS items found.'))
+                          child: Text('No matching NDIS items found.'),
+                        )
                       : ListView.builder(
                           controller: _listScrollController,
                           cacheExtent: 1200,
@@ -954,7 +972,9 @@ class _EnhancedNdisItemSelectionViewState
 
     return BauhausCard(
       margin: const EdgeInsets.symmetric(
-          horizontal: BauhausDesign.space4, vertical: BauhausDesign.space2),
+        horizontal: BauhausDesign.space4,
+        vertical: BauhausDesign.space2,
+      ),
       padding: EdgeInsets.zero,
       child: Column(
         children: [
@@ -974,34 +994,32 @@ class _EnhancedNdisItemSelectionViewState
                         children: [
                           Text(
                             item.itemName,
-                            style: BauhausDesign.getTextTheme(context)
-                                .bodyMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
+                            style: BauhausDesign.getTextTheme(
+                              context,
+                            ).bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: BauhausDesign.space1),
                           Text(
                             item.itemNumber,
                             style: BauhausDesign.getTextTheme(context)
                                 .labelSmall
-                                ?.copyWith(
-                                  color: BauhausDesign.textMuted,
-                                ),
+                                ?.copyWith(color: BauhausDesign.textMuted),
                           ),
                           const SizedBox(height: BauhausDesign.space2),
                           Row(
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: BauhausDesign.space2,
-                                    vertical: BauhausDesign.space1),
+                                  horizontal: BauhausDesign.space2,
+                                  vertical: BauhausDesign.space1,
+                                ),
                                 decoration: BoxDecoration(
                                   color: currentPrice != cappedPrice
                                       ? BauhausDesign.warning.withOpacity(0.1)
                                       : BauhausDesign.success.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(
-                                      BauhausDesign.radiusPill),
+                                    BauhausDesign.radiusPill,
+                                  ),
                                 ),
                                 child: Text(
                                   '\$${currentPrice.toStringAsFixed(2)}/hr',
@@ -1052,8 +1070,11 @@ class _EnhancedNdisItemSelectionViewState
                         ),
                         const SizedBox(height: BauhausDesign.space4),
                         IconButton(
-                          icon: Icon(Icons.arrow_forward_ios,
-                              size: 16, color: BauhausDesign.textMuted),
+                          icon: Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                            color: BauhausDesign.textMuted,
+                          ),
                           onPressed: () => _selectItem(item),
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
@@ -1083,17 +1104,21 @@ class _EnhancedNdisItemSelectionViewState
     final hasClientScope = _hasClientScope;
     final isClientScopeSelected = _isClientScopeSelected(item.itemNumber);
     final scopeLabel = isClientScopeSelected ? 'CLIENT-SPECIFIC' : 'ORG-WIDE';
-    final scopeColor =
-        isClientScopeSelected ? BauhausDesign.secondary : BauhausDesign.warning;
+    final scopeColor = isClientScopeSelected
+        ? BauhausDesign.secondary
+        : BauhausDesign.warning;
     final scopeTextColor = isClientScopeSelected
         ? BauhausDesign.surfaceWhite
         : BauhausDesign.textDark;
-    final toggleBackground =
-        isCustomEnabled ? BauhausDesign.textDark : BauhausDesign.surfaceLight;
-    final toggleTextColor =
-        isCustomEnabled ? BauhausDesign.surfaceWhite : BauhausDesign.textDark;
-    final toggleIconColor =
-        isCustomEnabled ? BauhausDesign.surfaceWhite : BauhausDesign.textMuted;
+    final toggleBackground = isCustomEnabled
+        ? BauhausDesign.textDark
+        : BauhausDesign.surfaceLight;
+    final toggleTextColor = isCustomEnabled
+        ? BauhausDesign.surfaceWhite
+        : BauhausDesign.textDark;
+    final toggleIconColor = isCustomEnabled
+        ? BauhausDesign.surfaceWhite
+        : BauhausDesign.textMuted;
     final orgSavedPrice = _getSavedCustomPriceForScope(
       item.itemNumber,
       scope: _scopeOrganization,
@@ -1107,9 +1132,7 @@ class _EnhancedNdisItemSelectionViewState
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
         color: BauhausDesign.surfaceOffWhite,
-        border: Border(
-          top: BorderSide(color: BauhausDesign.neutral, width: 2),
-        ),
+        border: Border(top: BorderSide(color: BauhausDesign.neutral, width: 2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1175,8 +1198,7 @@ class _EnhancedNdisItemSelectionViewState
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
                         '\$${cappedPrice.toStringAsFixed(2)}/hr',
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
+                        style: BauhausDesign.getTextTheme(context).labelLarge
                             ?.copyWith(
                               color: BauhausDesign.primary,
                               fontWeight: FontWeight.w700,
@@ -1209,8 +1231,7 @@ class _EnhancedNdisItemSelectionViewState
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
                         '\$${currentPrice.toStringAsFixed(2)}/hr',
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
+                        style: BauhausDesign.getTextTheme(context).labelLarge
                             ?.copyWith(
                               color: BauhausDesign.secondary,
                               fontWeight: FontWeight.w700,
@@ -1292,10 +1313,7 @@ class _EnhancedNdisItemSelectionViewState
                 padding: const EdgeInsets.all(BauhausDesign.space3),
                 decoration: BoxDecoration(
                   color: toggleBackground,
-                  border: Border.all(
-                    color: BauhausDesign.neutral,
-                    width: 2,
-                  ),
+                  border: Border.all(color: BauhausDesign.neutral, width: 2),
                 ),
                 child: Row(
                   children: [
@@ -1309,8 +1327,7 @@ class _EnhancedNdisItemSelectionViewState
                     Expanded(
                       child: Text(
                         'Enable custom price for this support item',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
                             ?.copyWith(
                               color: toggleTextColor,
                               fontWeight: FontWeight.w600,
@@ -1326,8 +1343,9 @@ class _EnhancedNdisItemSelectionViewState
             const SizedBox(height: BauhausDesign.space3),
             TextFormField(
               controller: controller,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
               ],
@@ -1339,31 +1357,30 @@ class _EnhancedNdisItemSelectionViewState
                 prefixIcon: const Icon(Icons.attach_money),
                 filled: true,
                 fillColor: BauhausDesign.surfaceWhite,
-                labelStyle:
-                    BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                          color: BauhausDesign.textDark,
-                          fontWeight: FontWeight.w600,
-                        ),
-                floatingLabelStyle:
-                    BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                          color: BauhausDesign.primary,
-                          fontWeight: FontWeight.w700,
-                        ),
-                hintStyle:
-                    BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                          color: BauhausDesign.textDark.withOpacity(0.96),
-                        ),
-                helperStyle:
-                    BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-                          color: BauhausDesign.textDark,
-                          fontWeight: FontWeight.w500,
-                        ),
+                labelStyle: BauhausDesign.getTextTheme(context).bodyMedium
+                    ?.copyWith(
+                      color: BauhausDesign.textDark,
+                      fontWeight: FontWeight.w600,
+                    ),
+                floatingLabelStyle: BauhausDesign.getTextTheme(context)
+                    .bodyMedium
+                    ?.copyWith(
+                      color: BauhausDesign.primary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                hintStyle: BauhausDesign.getTextTheme(context).bodyMedium
+                    ?.copyWith(color: BauhausDesign.textDark.withOpacity(0.96)),
+                helperStyle: BauhausDesign.getTextTheme(context).labelMedium
+                    ?.copyWith(
+                      color: BauhausDesign.textDark,
+                      fontWeight: FontWeight.w500,
+                    ),
                 prefixIconColor: BauhausDesign.textDark,
               ),
               style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             const SizedBox(height: BauhausDesign.space2),
             Container(
@@ -1377,11 +1394,11 @@ class _EnhancedNdisItemSelectionViewState
                 isClientScopeSelected
                     ? 'Saved as CLIENT-SPECIFIC pricing for this organization.'
                     : 'Saved as ORGANIZATION-WIDE pricing.',
-                style:
-                    BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-                          color: BauhausDesign.textDark,
-                          fontWeight: FontWeight.w600,
-                        ),
+                style: BauhausDesign.getTextTheme(context).labelMedium
+                    ?.copyWith(
+                      color: BauhausDesign.textDark,
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             ),
             const SizedBox(height: BauhausDesign.space3),
@@ -1405,7 +1422,8 @@ class _EnhancedNdisItemSelectionViewState
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text(
-                                  'Price cannot exceed the max capped price'),
+                                'Price cannot exceed the max capped price',
+                              ),
                             ),
                           );
                           return;
@@ -1428,7 +1446,8 @@ class _EnhancedNdisItemSelectionViewState
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text(
-                                      'Missing organization ID or user email'),
+                                    'Missing organization ID or user email',
+                                  ),
                                 ),
                               );
                             }
@@ -1475,7 +1494,7 @@ class _EnhancedNdisItemSelectionViewState
                                 };
                                 final existingEntry =
                                     _pricingData[item.itemNumber] ??
-                                        <String, dynamic>{};
+                                    <String, dynamic>{};
                                 final existingClientCustom =
                                     existingEntry['clientCustomPricing']
                                         as Map<String, dynamic>?;
@@ -1484,18 +1503,18 @@ class _EnhancedNdisItemSelectionViewState
                                         as Map<String, dynamic>?;
                                 final updatedClientCustom =
                                     isClientScopeSelected
-                                        ? customPricingData
-                                        : existingClientCustom;
+                                    ? customPricingData
+                                    : existingClientCustom;
                                 final updatedOrgCustom = isClientScopeSelected
                                     ? existingOrgCustom
                                     : customPricingData;
                                 final scopedCustom =
                                     _resolveScopedCustomPricingForItem(
-                                  item.itemNumber,
-                                  clientCustomPricing: updatedClientCustom,
-                                  orgCustomPricing: updatedOrgCustom,
-                                  fallbackCustomPricing: customPricingData,
-                                );
+                                      item.itemNumber,
+                                      clientCustomPricing: updatedClientCustom,
+                                      orgCustomPricing: updatedOrgCustom,
+                                      fallbackCustomPricing: customPricingData,
+                                    );
 
                                 _pricingData[item.itemNumber] = {
                                   ...existingEntry,
@@ -1513,9 +1532,12 @@ class _EnhancedNdisItemSelectionViewState
                             if (mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                    content: Text(isClientScopeSelected
+                                  content: Text(
+                                    isClientScopeSelected
                                         ? 'Client-specific custom price saved'
-                                        : 'Organization custom price saved')),
+                                        : 'Organization custom price saved',
+                                  ),
+                                ),
                               );
                             }
                           } else {
@@ -1592,14 +1614,16 @@ class _EnhancedNdisItemSelectionViewState
     required VoidCallback onTap,
   }) {
     final isSelected = scope == selectedScope;
-    final selectedColor =
-        scope == _scopeClient ? BauhausDesign.secondary : BauhausDesign.warning;
-    final backgroundColor =
-        isSelected ? selectedColor : BauhausDesign.surfaceLight;
+    final selectedColor = scope == _scopeClient
+        ? BauhausDesign.secondary
+        : BauhausDesign.warning;
+    final backgroundColor = isSelected
+        ? selectedColor
+        : BauhausDesign.surfaceLight;
     final textColor = isSelected
         ? (scope == _scopeClient
-            ? BauhausDesign.surfaceWhite
-            : BauhausDesign.textDark)
+              ? BauhausDesign.surfaceWhite
+              : BauhausDesign.textDark)
         : BauhausDesign.textDark;
 
     return Material(
@@ -1657,9 +1681,9 @@ class _EnhancedNdisItemSelectionViewState
           Text(
             price != null ? '\$${price.toStringAsFixed(2)}/hr' : 'Not set',
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
       ),

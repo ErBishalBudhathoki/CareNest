@@ -14,9 +14,7 @@ class OfflineRepository {
   }) async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
-      return await apiMethod.queueOfflineData(
-        data: data,
-      );
+      return await apiMethod.queueOfflineData(data: data);
     } catch (e) {
       debugPrint('Error queueing offline data: $e');
       return {'success': false, 'message': e.toString()};
@@ -41,14 +39,10 @@ class OfflineRepository {
   }
 
   /// Get offline-capable data for user
-  Future<Map<String, dynamic>> getOfflineData({
-    required String userId,
-  }) async {
+  Future<Map<String, dynamic>> getOfflineData({required String userId}) async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
-      return await apiMethod.getOfflineCapableData(
-        userId: userId,
-      );
+      return await apiMethod.getOfflineCapableData(userId: userId);
     } catch (e) {
       debugPrint('Error getting offline data: $e');
       return {'success': false, 'message': e.toString()};

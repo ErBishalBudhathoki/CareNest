@@ -23,17 +23,15 @@ class BauhausActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isEnabled = onTap != null;
     final actionColor = isEnabled ? baseColor : BauhausDesign.neutral;
-    final actionTextColor =
-        isEnabled ? BauhausDesign.surfaceWhite : BauhausDesign.surfaceLight;
+    final actionTextColor = isEnabled
+        ? BauhausDesign.surfaceWhite
+        : BauhausDesign.surfaceLight;
 
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         color: BauhausDesign.surfaceLight,
-        border: Border.all(
-          color: BauhausDesign.textDark,
-          width: 3,
-        ),
+        border: Border.all(color: BauhausDesign.textDark, width: 3),
         boxShadow: const [
           BoxShadow(
             color: BauhausDesign.textDark,
@@ -72,8 +70,7 @@ class BauhausActionCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         title.toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context)
-                            .titleLarge
+                        style: BauhausDesign.getTextTheme(context).titleLarge
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: BauhausDesign.textDark,
@@ -85,11 +82,8 @@ class BauhausActionCard extends StatelessWidget {
                 const SizedBox(height: BauhausDesign.space4),
                 Text(
                   description,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: BauhausDesign.textDark,
-                            height: 1.5,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(color: BauhausDesign.textDark, height: 1.5),
                 ),
                 const SizedBox(height: BauhausDesign.space5),
                 Align(
@@ -115,8 +109,7 @@ class BauhausActionCard extends StatelessWidget {
                     ),
                     child: Text(
                       actionLabel.toUpperCase(),
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelMedium
+                      style: BauhausDesign.getTextTheme(context).labelMedium
                           ?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: actionTextColor,

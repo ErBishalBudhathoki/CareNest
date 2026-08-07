@@ -146,7 +146,9 @@ class GeofenceService {
     );
 
     onGeofenceEvent?.call(geofenceEvent);
-    debugPrint('Geofence event: $event (distance: ${distance.toStringAsFixed(1)}m)');
+    debugPrint(
+      'Geofence event: $event (distance: ${distance.toStringAsFixed(1)}m)',
+    );
   }
 
   /// Calculate distance between two coordinates (Haversine formula)
@@ -161,7 +163,8 @@ class GeofenceService {
     final dLat = _toRadians(lat2 - lat1);
     final dLon = _toRadians(lon2 - lon1);
 
-    final a = sin(dLat / 2) * sin(dLat / 2) +
+    final a =
+        sin(dLat / 2) * sin(dLat / 2) +
         cos(_toRadians(lat1)) *
             cos(_toRadians(lat2)) *
             sin(dLon / 2) *

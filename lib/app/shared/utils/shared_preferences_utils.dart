@@ -65,7 +65,8 @@ class SharedPreferencesUtils {
     try {
       _sharedPreferences = await SharedPreferences.getInstance();
       _initCompleter!.complete();
-      _initCompleter = null; // Reset to allow subsequent initializations in testing
+      _initCompleter =
+          null; // Reset to allow subsequent initializations in testing
     } catch (e) {
       debugPrint('Error initializing SharedPreferences: $e');
       _initCompleter!.completeError(e);
@@ -145,8 +146,9 @@ class SharedPreferencesUtils {
 
   Future<Uint8List?> getPhoto(String userEmail) async {
     try {
-      String? photoString =
-          _sharedPreferences?.getString('userPhoto$userEmail');
+      String? photoString = _sharedPreferences?.getString(
+        'userPhoto$userEmail',
+      );
       debugPrint("Photo string in getPhoto: $photoString");
       Uint8List? photo = photoString != null ? base64Decode(photoString) : null;
       if (photo != null) {
@@ -165,24 +167,33 @@ class SharedPreferencesUtils {
     if (_sharedPreferences == null) {
       await init();
     }
-    await _sharedPreferences!
-        .setString(_kRoleKey, role.toString().split('.').last);
+    await _sharedPreferences!.setString(
+      _kRoleKey,
+      role.toString().split('.').last,
+    );
   }
 
   UserRole? getRole() {
     if (_sharedPreferences == null) {
-      debugPrint('⚠️ SharedPreferencesUtils: getRole called before initialization');
+      debugPrint(
+        '⚠️ SharedPreferencesUtils: getRole called before initialization',
+      );
       return null;
     }
     String? roleString = _sharedPreferences?.getString(_kRoleKey);
     if (roleString == null) {
-      debugPrint('⚠️ SharedPreferencesUtils: roleString is null for key $_kRoleKey');
+      debugPrint(
+        '⚠️ SharedPreferencesUtils: roleString is null for key $_kRoleKey',
+      );
       return null;
     }
     return UserRoleResolver.resolve(role: roleString);
   }
 
-  Future<void> setUserData({required String email, required UserRole role}) async {
+  Future<void> setUserData({
+    required String email,
+    required UserRole role,
+  }) async {
     await saveEmailToSharedPreferences(email);
     await setRole(role);
   }
@@ -225,11 +236,14 @@ class SharedPreferencesUtils {
       await _sharedPreferences!.setString(_kUserIdKey, userId);
     }
     if (organizationCode != null) {
-      await _sharedPreferences!
-          .setString(_kOrganizationCodeKey, organizationCode);
+      await _sharedPreferences!.setString(
+        _kOrganizationCodeKey,
+        organizationCode,
+      );
     }
     debugPrint(
-        "✅ User data saved to SharedPreferences: Email: $email, OrgID: $organizationId, Name: $name, OrgCode: $organizationCode");
+      "✅ User data saved to SharedPreferences: Email: $email, OrgID: $organizationId, Name: $name, OrgCode: $organizationCode",
+    );
   }
 
   /// Retrieves the logged-in user's email.
@@ -280,7 +294,8 @@ class SharedPreferencesUtils {
     }
     await _sharedPreferences!.setString(_kAuthTokenKey, normalized);
     debugPrint(
-        "🔐 Auth token saved to SharedPreferences (normalized, length: ${normalized.length})");
+      "🔐 Auth token saved to SharedPreferences (normalized, length: ${normalized.length})",
+    );
   }
 
   String? getAuthToken() {
@@ -334,7 +349,8 @@ class SharedPreferencesUtils {
         normalized != 'dark' &&
         normalized != 'system') {
       debugPrint(
-          '⚠️ Invalid theme preference: $preference, defaulting to system');
+        '⚠️ Invalid theme preference: $preference, defaulting to system',
+      );
       await _sharedPreferences!.setString(kThemePreferenceKey, 'system');
       return;
     }

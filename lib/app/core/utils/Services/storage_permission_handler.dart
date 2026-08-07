@@ -3,9 +3,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 class StoragePermissionHandler {
   Future<bool> checkAndRequestStoragePermission() async {
-    List<Permission> permissions = [
-      Permission.manageExternalStorage,
-    ];
+    List<Permission> permissions = [Permission.manageExternalStorage];
 
     if ((await mediaStorePlugin.getPlatformSDKInt()) >= 33) {
       permissions.add(Permission.manageExternalStorage);

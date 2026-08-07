@@ -17,12 +17,15 @@ class PricingRepository {
   Future<dynamic> _get(String endpoint, Map<String, String> params) async {
     // Construct query string manually as ApiMethod.get() takes a single string endpoint
     final queryString = params.entries
-        .map((e) =>
-            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .map(
+          (e) =>
+              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+        )
         .join('&');
 
-    final fullEndpoint =
-        queryString.isNotEmpty ? '$endpoint?$queryString' : endpoint;
+    final fullEndpoint = queryString.isNotEmpty
+        ? '$endpoint?$queryString'
+        : endpoint;
 
     final response = await _apiMethod.get(fullEndpoint);
 
@@ -40,9 +43,7 @@ class PricingRepository {
     DateTime? endDate,
     String? clientId,
   }) async {
-    final params = <String, String>{
-      'organizationId': organizationId,
-    };
+    final params = <String, String>{'organizationId': organizationId};
 
     if (startDate != null) {
       params['startDate'] = startDate.toIso8601String();
@@ -66,9 +67,7 @@ class PricingRepository {
     DateTime? endDate,
     double threshold = 0.95,
   }) async {
-    final params = <String, String>{
-      'organizationId': organizationId,
-    };
+    final params = <String, String>{'organizationId': organizationId};
 
     if (startDate != null) {
       params['startDate'] = startDate.toIso8601String();
@@ -78,8 +77,10 @@ class PricingRepository {
     }
     params['threshold'] = threshold.toString();
 
-    final data =
-        await _get('analytics/pricing/compliance/$organizationId', params);
+    final data = await _get(
+      'analytics/pricing/compliance/$organizationId',
+      params,
+    );
 
     return PricingComplianceReport.fromBackend(data);
   }

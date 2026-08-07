@@ -5,7 +5,8 @@ import 'package:carenest/app/core/providers/app_providers.dart'
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import '../models/notification_preferences.dart';
 
-class NotificationPreferencesViewModel extends AsyncNotifier<NotificationPreferences> {
+class NotificationPreferencesViewModel
+    extends AsyncNotifier<NotificationPreferences> {
   late final ApiMethod _apiMethod;
   late final SharedPreferencesUtils _sharedPrefs;
   bool _hasUnsavedChanges = false;
@@ -73,8 +74,9 @@ class NotificationPreferencesViewModel extends AsyncNotifier<NotificationPrefere
     try {
       final candidates = await _resolveUserIdentifierCandidates();
       if (candidates.isEmpty) {
-        final localFallback =
-            NotificationPreferences.defaultPreferences('local-user');
+        final localFallback = NotificationPreferences.defaultPreferences(
+          'local-user',
+        );
         state = AsyncData(localFallback);
         _hasUnsavedChanges = false;
         _saveError = 'User session not found. Please log in again.';
@@ -94,19 +96,22 @@ class NotificationPreferencesViewModel extends AsyncNotifier<NotificationPrefere
       }
 
       if (successfulResponse != null) {
-        final parsedPreferences =
-            NotificationPreferences.fromJson(successfulResponse['data']);
+        final parsedPreferences = NotificationPreferences.fromJson(
+          successfulResponse['data'],
+        );
         final canonicalIdentifier = candidates.first;
-        final preferences =
-            parsedPreferences.copyWith(userId: canonicalIdentifier);
+        final preferences = parsedPreferences.copyWith(
+          userId: canonicalIdentifier,
+        );
         state = AsyncData(preferences);
         _hasUnsavedChanges = false;
         _saveError = null;
         return state.value!;
       }
 
-      final defaultPrefs =
-          NotificationPreferences.defaultPreferences(candidates.first);
+      final defaultPrefs = NotificationPreferences.defaultPreferences(
+        candidates.first,
+      );
       state = AsyncData(defaultPrefs);
       _hasUnsavedChanges = true;
       _saveError = 'No saved notification preferences found yet.';
@@ -117,7 +122,9 @@ class NotificationPreferencesViewModel extends AsyncNotifier<NotificationPrefere
   }
 
   Future<void> toggleCategory(
-      NotificationCategory category, bool enabled) async {
+    NotificationCategory category,
+    bool enabled,
+  ) async {
     final currentPrefs = state.value;
     if (currentPrefs == null) return;
 
@@ -146,8 +153,8 @@ class NotificationPreferencesViewModel extends AsyncNotifier<NotificationPrefere
 
     final updatedChannels =
         Map<NotificationCategory, List<NotificationChannel>>.from(
-      currentPrefs.categoryChannels,
-    );
+          currentPrefs.categoryChannels,
+        );
 
     final currentCategoryChannels = List<NotificationChannel>.from(
       updatedChannels[category] ?? [],
@@ -286,8 +293,9 @@ class NotificationPreferencesViewModel extends AsyncNotifier<NotificationPrefere
 
     try {
       final candidates = await _resolveUserIdentifierCandidates();
-      final resolvedIdentifier =
-          candidates.isNotEmpty ? candidates.first : preferences.userId.trim();
+      final resolvedIdentifier = candidates.isNotEmpty
+          ? candidates.first
+          : preferences.userId.trim();
       if (resolvedIdentifier.isEmpty) {
         _saveError = 'User session not found. Please log in again.';
         _isSaving = false;
@@ -298,10 +306,7 @@ class NotificationPreferencesViewModel extends AsyncNotifier<NotificationPrefere
       final payload = preferences.copyWith(userId: resolvedIdentifier).toJson();
       final endpoint =
           'notifications/preferences/${Uri.encodeComponent(resolvedIdentifier)}';
-      final response = await _apiMethod.put(
-        endpoint,
-        body: payload,
-      );
+      final response = await _apiMethod.put(endpoint, body: payload);
 
       if (response['success'] != true) {
         _saveError =
@@ -311,9 +316,7 @@ class NotificationPreferencesViewModel extends AsyncNotifier<NotificationPrefere
         return false;
       }
 
-      state = AsyncData(
-        preferences.copyWith(userId: resolvedIdentifier),
-      );
+      state = AsyncData(preferences.copyWith(userId: resolvedIdentifier));
       _hasUnsavedChanges = false;
       _lastSavedAt = DateTime.now();
       _saveError = null;
@@ -330,5 +333,7 @@ class NotificationPreferencesViewModel extends AsyncNotifier<NotificationPrefere
 }
 
 final notificationPreferencesViewModelProvider =
-    AsyncNotifierProvider<NotificationPreferencesViewModel, NotificationPreferences>(
-        NotificationPreferencesViewModel.new);
+    AsyncNotifierProvider<
+      NotificationPreferencesViewModel,
+      NotificationPreferences
+    >(NotificationPreferencesViewModel.new);

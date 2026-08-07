@@ -47,8 +47,9 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('Displays formatted quantity (seconds included) and tooltip',
-      (tester) async {
+  testWidgets('Displays formatted quantity (seconds included) and tooltip', (
+    tester,
+  ) async {
     Map<String, dynamic> promptData = {
       'ndisItemNumber': '01_011_0107_1_1',
       'itemDescription': 'Assistance with self-care activities',
@@ -81,8 +82,9 @@ void main() {
     );
   });
 
-  testWidgets('Falls back to 1.00 hours when quantity is invalid/missing',
-      (tester) async {
+  testWidgets('Falls back to 1.00 hours when quantity is invalid/missing', (
+    tester,
+  ) async {
     Map<String, dynamic> promptData = {
       'ndisItemNumber': '01_011_0107_1_1',
       'itemDescription': 'Assistance with self-care activities',
@@ -91,11 +93,7 @@ void main() {
       'suggestedPrice': 55.0,
     };
 
-    await pumpDialog(
-      tester,
-      promptData: promptData,
-      onProvided: (_) {},
-    );
+    await pumpDialog(tester, promptData: promptData, onProvided: (_) {});
 
     // Expect fallback formatting to 1.00 hours
     expect(find.text('1.00 hours'), findsOneWidget);

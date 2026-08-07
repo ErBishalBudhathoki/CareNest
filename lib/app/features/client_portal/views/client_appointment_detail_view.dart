@@ -65,8 +65,11 @@ class ClientAppointmentDetailView extends ConsumerWidget {
     );
   }
 
-  Widget _buildContent(BuildContext context, WidgetRef ref,
-      ClientAppointmentDetail appointment) {
+  Widget _buildContent(
+    BuildContext context,
+    WidgetRef ref,
+    ClientAppointmentDetail appointment,
+  ) {
     return Stack(
       children: [
         SingleChildScrollView(
@@ -100,7 +103,9 @@ class ClientAppointmentDetailView extends ConsumerWidget {
   }
 
   Widget _buildDateHeader(
-      BuildContext context, ClientAppointmentDetail appointment) {
+    BuildContext context,
+    ClientAppointmentDetail appointment,
+  ) {
     DateTime? date;
     try {
       date = DateTime.parse(appointment.date);
@@ -110,8 +115,9 @@ class ClientAppointmentDetailView extends ConsumerWidget {
     final formattedDate = date != null
         ? DateFormat('MMMM d, yyyy').format(date)
         : appointment.date;
-    final status =
-        appointment.status.isNotEmpty ? appointment.status : 'Scheduled';
+    final status = appointment.status.isNotEmpty
+        ? appointment.status
+        : 'Scheduled';
 
     return Container(
       width: double.infinity,
@@ -169,8 +175,11 @@ class ClientAppointmentDetailView extends ConsumerWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.access_time,
-                    color: BauhausDesign.secondary, size: 18),
+                Icon(
+                  Icons.access_time,
+                  color: BauhausDesign.secondary,
+                  size: 18,
+                ),
                 const SizedBox(width: BauhausDesign.space2),
                 Text(
                   '${appointment.startTime} - ${appointment.endTime}',
@@ -220,19 +229,23 @@ class ClientAppointmentDetailView extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: BauhausDesign.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border:
-                      Border.all(color: BauhausDesign.primary.withOpacity(0.3)),
+                  border: Border.all(
+                    color: BauhausDesign.primary.withOpacity(0.3),
+                  ),
                 ),
-                child: Icon(Icons.person_outline,
-                    color: BauhausDesign.primary, size: 18),
+                child: Icon(
+                  Icons.person_outline,
+                  color: BauhausDesign.primary,
+                  size: 18,
+                ),
               ),
               const SizedBox(width: BauhausDesign.space3),
               Text(
                 'SUPPORT WORKER',
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                      color: BauhausDesign.textMuted,
-                      letterSpacing: 1,
-                    ),
+                  color: BauhausDesign.textMuted,
+                  letterSpacing: 1,
+                ),
               ),
             ],
           ),
@@ -254,8 +267,11 @@ class ClientAppointmentDetailView extends ConsumerWidget {
                       : null,
                 ),
                 child: employee.photo == null
-                    ? Icon(Icons.person,
-                        color: BauhausDesign.textMuted, size: 30)
+                    ? Icon(
+                        Icons.person,
+                        color: BauhausDesign.textMuted,
+                        size: 30,
+                      )
                     : null,
               ),
               const SizedBox(width: BauhausDesign.space4),
@@ -265,26 +281,25 @@ class ClientAppointmentDetailView extends ConsumerWidget {
                   children: [
                     Text(
                       '${employee.firstName} ${employee.lastName}',
-                      style: BauhausDesign.getTextTheme(context)
-                          .titleMedium
-                          ?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).titleMedium?.copyWith(fontWeight: FontWeight.w600),
                     ),
                     if (employee.phone != null) ...[
                       const SizedBox(height: BauhausDesign.space1),
                       Row(
                         children: [
-                          Icon(Icons.phone_outlined,
-                              color: BauhausDesign.textMuted, size: 14),
+                          Icon(
+                            Icons.phone_outlined,
+                            color: BauhausDesign.textMuted,
+                            size: 14,
+                          ),
                           const SizedBox(width: BauhausDesign.space1),
                           Text(
                             employee.phone!,
                             style: BauhausDesign.getTextTheme(context)
                                 .bodyMedium
-                                ?.copyWith(
-                                  color: BauhausDesign.textMuted,
-                                ),
+                                ?.copyWith(color: BauhausDesign.textMuted),
                           ),
                         ],
                       ),
@@ -307,7 +322,9 @@ class ClientAppointmentDetailView extends ConsumerWidget {
   }
 
   Widget _buildServiceCard(
-      BuildContext context, ClientAppointmentDetail appointment) {
+    BuildContext context,
+    ClientAppointmentDetail appointment,
+  ) {
     return BauhausCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -319,19 +336,23 @@ class ClientAppointmentDetailView extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: BauhausDesign.warning.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border:
-                      Border.all(color: BauhausDesign.warning.withOpacity(0.3)),
+                  border: Border.all(
+                    color: BauhausDesign.warning.withOpacity(0.3),
+                  ),
                 ),
-                child: Icon(Icons.medical_services_outlined,
-                    color: BauhausDesign.warning, size: 18),
+                child: Icon(
+                  Icons.medical_services_outlined,
+                  color: BauhausDesign.warning,
+                  size: 18,
+                ),
               ),
               const SizedBox(width: BauhausDesign.space3),
               Text(
                 'SERVICE DETAILS',
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                      color: BauhausDesign.textMuted,
-                      letterSpacing: 1,
-                    ),
+                  color: BauhausDesign.textMuted,
+                  letterSpacing: 1,
+                ),
               ),
             ],
           ),
@@ -358,7 +379,9 @@ class ClientAppointmentDetailView extends ConsumerWidget {
   }
 
   Widget _buildLocationCard(
-      BuildContext context, ClientAppointmentDetail appointment) {
+    BuildContext context,
+    ClientAppointmentDetail appointment,
+  ) {
     return BauhausCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -371,18 +394,22 @@ class ClientAppointmentDetailView extends ConsumerWidget {
                   color: BauhausDesign.secondary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(
-                      color: BauhausDesign.secondary.withOpacity(0.3)),
+                    color: BauhausDesign.secondary.withOpacity(0.3),
+                  ),
                 ),
-                child: Icon(Icons.location_on_outlined,
-                    color: BauhausDesign.secondary, size: 18),
+                child: Icon(
+                  Icons.location_on_outlined,
+                  color: BauhausDesign.secondary,
+                  size: 18,
+                ),
               ),
               const SizedBox(width: BauhausDesign.space3),
               Text(
                 'LOCATION',
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                      color: BauhausDesign.textMuted,
-                      letterSpacing: 1,
-                    ),
+                  color: BauhausDesign.textMuted,
+                  letterSpacing: 1,
+                ),
               ),
             ],
           ),
@@ -397,17 +424,18 @@ class ClientAppointmentDetailView extends ConsumerWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.home_outlined,
-                    color: BauhausDesign.textMuted, size: 20),
+                Icon(
+                  Icons.home_outlined,
+                  color: BauhausDesign.textMuted,
+                  size: 20,
+                ),
                 const SizedBox(width: BauhausDesign.space3),
                 Expanded(
                   child: Text(
                     appointment.location ?? 'Client Home',
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
-                        ?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodyMedium?.copyWith(fontWeight: FontWeight.w500),
                   ),
                 ),
               ],
@@ -419,7 +447,9 @@ class ClientAppointmentDetailView extends ConsumerWidget {
   }
 
   Widget _buildNotesCard(
-      BuildContext context, ClientAppointmentDetail appointment) {
+    BuildContext context,
+    ClientAppointmentDetail appointment,
+  ) {
     if (appointment.notes == null || appointment.notes!.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -435,19 +465,23 @@ class ClientAppointmentDetailView extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: BauhausDesign.neutral.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border:
-                      Border.all(color: BauhausDesign.neutral.withOpacity(0.3)),
+                  border: Border.all(
+                    color: BauhausDesign.neutral.withOpacity(0.3),
+                  ),
                 ),
-                child: Icon(Icons.notes_outlined,
-                    color: BauhausDesign.textMuted, size: 18),
+                child: Icon(
+                  Icons.notes_outlined,
+                  color: BauhausDesign.textMuted,
+                  size: 18,
+                ),
               ),
               const SizedBox(width: BauhausDesign.space3),
               Text(
                 'NOTES',
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                      color: BauhausDesign.textMuted,
-                      letterSpacing: 1,
-                    ),
+                  color: BauhausDesign.textMuted,
+                  letterSpacing: 1,
+                ),
               ),
             ],
           ),
@@ -471,7 +505,11 @@ class ClientAppointmentDetailView extends ConsumerWidget {
   }
 
   Widget _buildDetailRow(
-      BuildContext context, String label, String value, IconData icon) {
+    BuildContext context,
+    String label,
+    String value,
+    IconData icon,
+  ) {
     return Row(
       children: [
         Icon(icon, color: BauhausDesign.textMuted, size: 18),
@@ -482,15 +520,15 @@ class ClientAppointmentDetailView extends ConsumerWidget {
             children: [
               Text(
                 label,
-                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                      color: BauhausDesign.textMuted,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
               ),
               Text(
                 value,
-                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyMedium?.copyWith(fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -499,15 +537,16 @@ class ClientAppointmentDetailView extends ConsumerWidget {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, WidgetRef ref,
-      ClientAppointmentDetail appointment) {
+  Widget _buildActionButtons(
+    BuildContext context,
+    WidgetRef ref,
+    ClientAppointmentDetail appointment,
+  ) {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: const BoxDecoration(
         color: BauhausDesign.surfaceWhite,
-        border: Border(
-          top: BorderSide(color: BauhausDesign.neutral, width: 2),
-        ),
+        border: Border(top: BorderSide(color: BauhausDesign.neutral, width: 2)),
         boxShadow: [
           BoxShadow(
             color: Color(0x1A000000),
@@ -568,8 +607,12 @@ class ClientAppointmentDetailView extends ConsumerWidget {
     }
   }
 
-  void _showRequestDialog(BuildContext context, WidgetRef ref, String type,
-      ClientAppointmentDetail appointment) {
+  void _showRequestDialog(
+    BuildContext context,
+    WidgetRef ref,
+    String type,
+    ClientAppointmentDetail appointment,
+  ) {
     final noteController = TextEditingController();
 
     showDialog(
@@ -609,16 +652,17 @@ class ClientAppointmentDetailView extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: BauhausDesign.backgroundLight,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                border:
-                    Border.all(color: BauhausDesign.neutral.withOpacity(0.3)),
+                border: Border.all(
+                  color: BauhausDesign.neutral.withOpacity(0.3),
+                ),
               ),
               child: Text(
                 type == 'change'
                     ? 'Describe the changes you need for this appointment.'
                     : 'Describe the issue or concern regarding this appointment.',
-                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.textMuted,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
               ),
             ),
             const SizedBox(height: BauhausDesign.space4),
@@ -654,22 +698,24 @@ class ClientAppointmentDetailView extends ConsumerWidget {
                 await ref
                     .read(clientPortalRepositoryProvider)
                     .requestAppointment({
-                  'type': type,
-                  'assignmentId': appointment.assignmentId,
-                  'scheduleId': appointment.scheduleId,
-                  'date': appointment.date,
-                  'notes': noteController.text,
-                });
+                      'type': type,
+                      'assignmentId': appointment.assignmentId,
+                      'scheduleId': appointment.scheduleId,
+                      'date': appointment.date,
+                      'notes': noteController.text,
+                    });
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: const Text(
-                          'Request submitted successfully. We will contact you shortly.'),
+                        'Request submitted successfully. We will contact you shortly.',
+                      ),
                       backgroundColor: BauhausDesign.success,
                       behavior: SnackBarBehavior.floating,
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusSm),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusSm,
+                        ),
                       ),
                     ),
                   );

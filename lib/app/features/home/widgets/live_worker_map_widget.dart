@@ -67,11 +67,7 @@ class LiveWorkerMapWidget extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      const Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: Colors.white,
-                      ),
+                      const Icon(Icons.circle, size: 8, color: Colors.white),
                       const SizedBox(width: 4),
                       Text(
                         '${workerLocations!.length} active',
@@ -191,18 +187,12 @@ class LiveWorkerMapWidget extends StatelessWidget {
           Container(
             width: 12,
             height: 12,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
           const SizedBox(width: 6),
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 10,
-              color: BauhausColors.textDark,
-            ),
+            style: const TextStyle(fontSize: 10, color: BauhausColors.textDark),
           ),
         ],
       ),
@@ -253,10 +243,7 @@ class LiveWorkerMapWidget extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         statusLabel,
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: statusColor,
-                        ),
+                        style: TextStyle(fontSize: 11, color: statusColor),
                       ),
                       if (worker.currentClientName != null) ...[
                         const SizedBox(height: 2),
@@ -290,9 +277,7 @@ class LiveWorkerMapWidget extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: const Padding(
         padding: EdgeInsets.all(32),
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
+        child: Center(child: CircularProgressIndicator()),
       ),
     );
   }
@@ -318,10 +303,7 @@ class LiveWorkerMapWidget extends StatelessWidget {
               SizedBox(height: 4),
               Text(
                 'Worker locations will appear here',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Colors.grey, fontSize: 12),
               ),
             ],
           ),

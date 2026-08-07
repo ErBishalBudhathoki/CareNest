@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/features/care_intelligence/models/care_intelligence_models.dart' hide Provider;
+import 'package:carenest/app/features/care_intelligence/models/care_intelligence_models.dart'
+    hide Provider;
 import 'package:carenest/app/features/care_intelligence/repositories/care_intelligence_repository.dart';
 import 'package:carenest/app/features/care_intelligence/viewmodels/intelligence_viewmodel.dart';
 
@@ -52,11 +53,10 @@ class MedicationState {
 class MedicationViewModel extends Notifier<MedicationState> {
   late final CareIntelligenceRepository _repository;
 
-  
   @override
   MedicationState build() {
     final repository = ref.watch(careIntelligenceRepositoryProvider);
-    
+
     return MedicationState();
   }
 
@@ -88,10 +88,7 @@ class MedicationViewModel extends Notifier<MedicationState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -124,10 +121,7 @@ class MedicationViewModel extends Notifier<MedicationState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -156,10 +150,7 @@ class MedicationViewModel extends Notifier<MedicationState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -188,10 +179,7 @@ class MedicationViewModel extends Notifier<MedicationState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -222,10 +210,7 @@ class MedicationViewModel extends Notifier<MedicationState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -241,4 +226,7 @@ class MedicationViewModel extends Notifier<MedicationState> {
 }
 
 // Provider for MedicationViewModel
-final medicationViewModelProvider = NotifierProvider<MedicationViewModel, MedicationState>(MedicationViewModel.new);
+final medicationViewModelProvider =
+    NotifierProvider<MedicationViewModel, MedicationState>(
+      MedicationViewModel.new,
+    );

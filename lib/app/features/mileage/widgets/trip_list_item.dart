@@ -7,11 +7,7 @@ class TripListItem extends StatelessWidget {
   final Trip trip;
   final String? clientName;
 
-  const TripListItem({
-    super.key,
-    required this.trip,
-    this.clientName,
-  });
+  const TripListItem({super.key, required this.trip, this.clientName});
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +27,7 @@ class TripListItem extends StatelessWidget {
                 children: [
                   Text(
                     _getClientName(),
-                    style: BauhausDesign.getTextTheme(context)
-                        .titleMedium
+                    style: BauhausDesign.getTextTheme(context).titleMedium
                         ?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: BauhausDesign.textDark,
@@ -41,10 +36,9 @@ class TripListItem extends StatelessWidget {
                   const SizedBox(height: BauhausDesign.space1),
                   Text(
                     trip.date.toString().split(' ')[0], // Or use DateFormat
-                    style:
-                        BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                              color: BauhausDesign.textMuted,
-                            ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                   ),
                 ],
               ),
@@ -63,9 +57,9 @@ class TripListItem extends StatelessWidget {
               child: Text(
                 '${trip.distance.toStringAsFixed(1)} km',
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: BauhausDesign.textDark,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: BauhausDesign.textDark,
+                ),
               ),
             ),
           ],
@@ -122,11 +116,7 @@ class TripListItem extends StatelessWidget {
         color: color.withOpacity(0.2),
         border: Border.all(color: color, width: 1.5),
       ),
-      child: Icon(
-        icon,
-        size: 16,
-        color: BauhausDesign.textDark,
-      ),
+      child: Icon(icon, size: 16, color: BauhausDesign.textDark),
     );
   }
 }

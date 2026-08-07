@@ -55,15 +55,9 @@ class OrganizationNotifier extends Notifier<OrganizationState> {
     state = state.copyWith(isLoading: true);
     try {
       final orgs = await _repository.getUserOrganizations();
-      state = state.copyWith(
-        userOrganizations: orgs,
-        isLoading: false,
-      );
+      state = state.copyWith(userOrganizations: orgs, isLoading: false);
     } catch (e) {
-      state = state.copyWith(
-        error: e.toString(),
-        isLoading: false,
-      );
+      state = state.copyWith(error: e.toString(), isLoading: false);
     }
   }
 
@@ -71,19 +65,13 @@ class OrganizationNotifier extends Notifier<OrganizationState> {
     state = state.copyWith(isLoading: true);
     try {
       final org = await _repository.getOrganization(orgId);
-      state = state.copyWith(
-        currentOrganization: org,
-        isLoading: false,
-      );
+      state = state.copyWith(currentOrganization: org, isLoading: false);
       // Also load branding if organization is loaded successfully
       if (org != null) {
         loadBranding(orgId);
       }
     } catch (e) {
-      state = state.copyWith(
-        error: e.toString(),
-        isLoading: false,
-      );
+      state = state.copyWith(error: e.toString(), isLoading: false);
     }
   }
 
@@ -99,10 +87,7 @@ class OrganizationNotifier extends Notifier<OrganizationState> {
       }
       state = state.copyWith(isLoading: false);
     } catch (e) {
-      state = state.copyWith(
-        error: e.toString(),
-        isLoading: false,
-      );
+      state = state.copyWith(error: e.toString(), isLoading: false);
     }
   }
 
@@ -119,7 +104,10 @@ class OrganizationNotifier extends Notifier<OrganizationState> {
     }
   }
 
-  Future<bool> updateBranding(String orgId, Map<String, dynamic> brandingData) async {
+  Future<bool> updateBranding(
+    String orgId,
+    Map<String, dynamic> brandingData,
+  ) async {
     try {
       await _repository.updateBranding(orgId, brandingData);
       // Reload branding to update state
@@ -134,4 +122,6 @@ class OrganizationNotifier extends Notifier<OrganizationState> {
 
 // Provider
 final organizationProvider =
-    NotifierProvider<OrganizationNotifier, OrganizationState>(OrganizationNotifier.new);
+    NotifierProvider<OrganizationNotifier, OrganizationState>(
+      OrganizationNotifier.new,
+    );

@@ -50,13 +50,21 @@ class AppointmentCard extends StatelessWidget {
     return Container(
       height: screenSize.height * 0.42,
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [Color(0xFFFFFFFF), Color(0xFFF5F5F5)]),
+        gradient: LinearGradient(
+          colors: [Color(0xFFFFFFFF), Color(0xFFF5F5F5)],
+        ),
         borderRadius: BorderRadius.circular(20.0),
         border: Border.all(
           color: const Color(0xFF667EEA).withOpacity(0.1),
           width: 1,
         ),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 16, offset: Offset(0, 8))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 16,
+            offset: Offset(0, 8),
+          ),
+        ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -80,8 +88,7 @@ class AppointmentCard extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
                       color: const Color(0xFF667EEA),
-                      borderRadius:
-                          BorderRadius.circular(4.0),
+                      borderRadius: BorderRadius.circular(4.0),
                     ),
                     child: Icon(
                       Icons.calendar_today,
@@ -92,13 +99,20 @@ class AppointmentCard extends StatelessWidget {
                   const SizedBox(width: 8.0),
                   Text(
                     title,
-                    style: (isSmallScreen
-                            ? const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)
-                            : const TextStyle(fontSize: 20, fontWeight: FontWeight.w600))
-                        .copyWith(
-                      color: const Color(0xFF667EEA),
-                      letterSpacing: 0.5,
-                    ),
+                    style:
+                        (isSmallScreen
+                                ? const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                  )
+                                : const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                  ))
+                            .copyWith(
+                              color: const Color(0xFF667EEA),
+                              letterSpacing: 0.5,
+                            ),
                   ),
                 ],
               ),
@@ -112,69 +126,82 @@ class AppointmentCard extends StatelessWidget {
             const SizedBox(height: 8.0),
             _buildModernCardItem(iconData3, label3, text3, isSmallScreen),
             const SizedBox(height: 12.0),
-            Consumer(builder: (context, ref, _) {
-              return Container(
-                height: isSmallScreen ? 48 : 56,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [Color(0xFF667EEA), Color(0xFF5A69F1)]),
-                  borderRadius:
-                      BorderRadius.circular(12.0),
-                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius:
-                        BorderRadius.circular(12.0),
-                    onTap: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ClientAndAppointmentDetails(
-                            userEmail: currentUserEmail,
-                            clientEmail: currentClientEmail,
-                          ),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12.0,
+            Consumer(
+              builder: (context, ref, _) {
+                return Container(
+                  height: isSmallScreen ? 48 : 56,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFF667EEA), Color(0xFF5A69F1)],
+                    ),
+                    borderRadius: BorderRadius.circular(12.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 8,
+                        offset: Offset(0, 4),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.visibility_outlined,
-                            color: Colors.white,
-                            size: isSmallScreen ? 18 : 20,
-                          ),
-                          const SizedBox(width: 8.0),
-                          Text(
-                            'View Details',
-                            style: (isSmallScreen
-                                    ? const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)
-                                    : const TextStyle(fontSize: 18, fontWeight: FontWeight.w600))
-                                .copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.5,
+                    ],
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12.0),
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ClientAndAppointmentDetails(
+                              userEmail: currentUserEmail,
+                              clientEmail: currentClientEmail,
                             ),
                           ),
-                          const SizedBox(width: 8.0),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.white,
-                            size: isSmallScreen ? 16 : 18,
-                          ),
-                        ],
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.visibility_outlined,
+                              color: Colors.white,
+                              size: isSmallScreen ? 18 : 20,
+                            ),
+                            const SizedBox(width: 8.0),
+                            Text(
+                              'View Details',
+                              style:
+                                  (isSmallScreen
+                                          ? const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            )
+                                          : const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w600,
+                                            ))
+                                      .copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0.5,
+                                      ),
+                            ),
+                            const SizedBox(width: 8.0),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.white,
+                              size: isSmallScreen ? 16 : 18,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              );
-            }),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -183,7 +210,11 @@ class AppointmentCard extends StatelessWidget {
 
   // Modern card item with improved design
   Widget _buildModernCardItem(
-      IconData icon, String label, String text, bool isSmallScreen) {
+    IconData icon,
+    String label,
+    String text,
+    bool isSmallScreen,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
@@ -216,26 +247,34 @@ class AppointmentCard extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: (isSmallScreen
-                          ? const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)
-                          : const TextStyle(fontSize: 14, fontWeight: FontWeight.w500))
-                      .copyWith(
-                    color: const Color(0xFF667EEA),
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.3,
-                  ),
+                  style:
+                      (isSmallScreen
+                              ? const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                )
+                              : const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ))
+                          .copyWith(
+                            color: const Color(0xFF667EEA),
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.3,
+                          ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   text,
-                  style: (isSmallScreen
-                          ? const TextStyle(fontSize: 14)
-                          : const TextStyle(fontSize: 16))
-                      .copyWith(
-                    color: const Color(0xFF1F2937),
-                    fontWeight: FontWeight.w500,
-                    height: 1.3,
-                  ),
+                  style:
+                      (isSmallScreen
+                              ? const TextStyle(fontSize: 14)
+                              : const TextStyle(fontSize: 16))
+                          .copyWith(
+                            color: const Color(0xFF1F2937),
+                            fontWeight: FontWeight.w500,
+                            height: 1.3,
+                          ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),

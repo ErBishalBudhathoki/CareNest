@@ -1,19 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/compliance_repository.dart';
 
-final complianceDashboardViewModelProvider = NotifierProvider.autoDispose<
-    ComplianceDashboardViewModel, ComplianceState>(ComplianceDashboardViewModel.new);
+final complianceDashboardViewModelProvider =
+    NotifierProvider.autoDispose<ComplianceDashboardViewModel, ComplianceState>(
+      ComplianceDashboardViewModel.new,
+    );
 
 class ComplianceState {
   final bool isLoading;
   final String? error;
   final Map<String, dynamic>? data;
 
-  const ComplianceState({
-    this.isLoading = false,
-    this.error,
-    this.data,
-  });
+  const ComplianceState({this.isLoading = false, this.error, this.data});
 
   ComplianceState copyWith({
     bool? isLoading,

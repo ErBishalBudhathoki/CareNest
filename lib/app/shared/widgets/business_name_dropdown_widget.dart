@@ -43,8 +43,9 @@ class _BusinessNameDropdownState extends ConsumerState<BusinessNameDropdown> {
       _businessNameList.insert(0, {'businessName': 'Select Business Name'});
 
       if (initial.isNotEmpty) {
-        final hasInitial = _businessNameList
-            .any((item) => item['businessName']?.toString() == initial);
+        final hasInitial = _businessNameList.any(
+          (item) => item['businessName']?.toString() == initial,
+        );
         if (!hasInitial) {
           _businessNameList.insert(1, {'businessName': initial});
         }
@@ -77,20 +78,22 @@ class _BusinessNameDropdownState extends ConsumerState<BusinessNameDropdown> {
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
             dropdownColor: BauhausDesign.surfaceWhite,
-            value: _businessNameList
-                    .any((e) => e['businessName'] == _selectedBusinessName)
+            value:
+                _businessNameList.any(
+                  (e) => e['businessName'] == _selectedBusinessName,
+                )
                 ? _selectedBusinessName
                 : _businessNameList.isNotEmpty
-                    ? _businessNameList[0]['businessName']
-                    : null,
+                ? _businessNameList[0]['businessName']
+                : null,
             isExpanded: true,
             itemHeight: 56,
             icon: Icon(Icons.arrow_drop_down, color: BauhausDesign.textDark),
             iconSize: 24,
             elevation: 4,
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
             onChanged: (String? selectedValue) {
               if (selectedValue != null) {
                 setState(() {
@@ -105,11 +108,9 @@ class _BusinessNameDropdownState extends ConsumerState<BusinessNameDropdown> {
                     value: businessName['businessName'],
                     child: Text(
                       businessName['businessName'],
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
-                          ?.copyWith(
-                            color: BauhausDesign.textDark,
-                          ),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
                     ),
                   ),
                 )

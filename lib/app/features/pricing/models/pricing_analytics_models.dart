@@ -34,8 +34,8 @@ class PricingAnalyticsMetrics {
       customPricedItems: json['customPricedItems'] ?? 0,
       standardPricedItems: json['standardPricedItems'] ?? 0,
       ndisPricedItems: json['ndisPricedItems'] ?? 0,
-      customPricingPercentage:
-          (json['customPricingPercentage'] ?? 0).toDouble(),
+      customPricingPercentage: (json['customPricingPercentage'] ?? 0)
+          .toDouble(),
       totalRevenue: (json['totalRevenue'] ?? 0).toDouble(),
       customRevenue: (json['customRevenue'] ?? 0).toDouble(),
       standardRevenue: (json['standardRevenue'] ?? 0).toDouble(),
@@ -88,10 +88,7 @@ class PricingAnalytics {
   final PricingAnalyticsMetrics metrics;
   final PricingAnalyticsSummary summary;
 
-  PricingAnalytics({
-    required this.metrics,
-    required this.summary,
-  });
+  PricingAnalytics({required this.metrics, required this.summary});
 
   factory PricingAnalytics.fromBackend(Map<String, dynamic> json) {
     return PricingAnalytics(
@@ -159,8 +156,9 @@ class PricingViolation {
       violationType: json['violationType'] ?? 'unknown',
       severity: json['severity'] ?? 'medium',
       amount: (json['amount'] ?? 0).toDouble(),
-      date:
-          json['date'] != null ? DateTime.parse(json['date']) : DateTime.now(),
+      date: json['date'] != null
+          ? DateTime.parse(json['date'])
+          : DateTime.now(),
     );
   }
 }

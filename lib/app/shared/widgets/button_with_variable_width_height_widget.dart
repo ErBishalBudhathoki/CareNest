@@ -23,14 +23,10 @@ class ButtonWithVariableWH extends StatelessWidget {
         height: height,
         width: width,
         decoration: BoxDecoration(
-          color:
-              hasBorder ? Colors.white : const Color(0xFF667EEA),
+          color: hasBorder ? Colors.white : const Color(0xFF667EEA),
           borderRadius: BorderRadius.circular(10),
           border: hasBorder
-              ? Border.all(
-                  color: const Color(0xFF667EEA),
-                  width: 1.0,
-                )
+              ? Border.all(color: const Color(0xFF667EEA), width: 1.0)
               : const Border.fromBorderSide(BorderSide.none),
         ),
         child: InkWell(
@@ -41,11 +37,13 @@ class ButtonWithVariableWH extends StatelessWidget {
             child: Center(
               child: Text(
                 title,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500).copyWith(
-                  color: hasBorder
-                      ? const Color(0xFF667EEA)
-                      : Colors.white,
-                ),
+                style:
+                    const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ).copyWith(
+                      color: hasBorder ? const Color(0xFF667EEA) : Colors.white,
+                    ),
               ),
             ),
           ),

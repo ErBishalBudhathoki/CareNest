@@ -12,7 +12,7 @@ enum PriceRegion {
   wa,
   remote,
   veryRemote,
-  national
+  national,
 }
 
 class NDISItem {
@@ -24,7 +24,7 @@ class NDISItem {
   final String registrationGroupName;
   final String unit;
   final String
-      type; // "Price Limited Supports", "Quotable Supports", "Unit Price = 0.1"
+  type; // "Price Limited Supports", "Quotable Supports", "Unit Price = 0.1"
   final bool isQuotable;
   final DateTime? startDate;
   final DateTime? endDate;
@@ -93,17 +93,18 @@ class NDISItem {
     this.irregularSILSupports,
   });
 
-  factory NDISItem.fromJson(Map<String, dynamic> json,
-      {PriceRegion defaultRegion =
-          PriceRegion.nsw /* Or your most common region */}) {
+  factory NDISItem.fromJson(
+    Map<String, dynamic> json, {
+    PriceRegion defaultRegion =
+        PriceRegion.nsw /* Or your most common region */,
+  }) {
     double? parsePrice(dynamic priceValue) {
       if (priceValue == null) return null;
       String priceStr = priceValue.toString().trim(); // Trim spaces
       if (priceStr.isEmpty || priceStr.toLowerCase() == 'nan') return null;
-      return double.tryParse(priceStr
-          .replaceAll(r'$', '')
-          .replaceAll(',', '')
-          .trim()); // Handle commas too
+      return double.tryParse(
+        priceStr.replaceAll(r'$', '').replaceAll(',', '').trim(),
+      ); // Handle commas too
     }
 
     DateTime? parseNDISDate(dynamic dateValue) {
@@ -113,7 +114,8 @@ class NDISItem {
         // YYYYMMDD
         try {
           return DateTime.parse(
-              "${dateStr.substring(0, 4)}-${dateStr.substring(4, 6)}-${dateStr.substring(6, 8)}");
+            "${dateStr.substring(0, 4)}-${dateStr.substring(4, 6)}-${dateStr.substring(6, 8)}",
+          );
         } catch (e) {
           // log.warning("Could not parse NDIS date '$dateStr': $e");
           return null;
@@ -123,7 +125,8 @@ class NDISItem {
     }
 
     Map<PriceRegion, double?> extractRegionalPrices(
-        Map<String, dynamic> jsonMap) {
+      Map<String, dynamic> jsonMap,
+    ) {
       final normalizedLookup = <String, dynamic>{};
       jsonMap.forEach((key, value) {
         normalizedLookup[key.toString().trim().toUpperCase()] = value;
@@ -259,22 +262,24 @@ class NDISItem {
       regionalPrices: extractRegionalPrices(json),
       supportPurposeId: extractedPurposeId,
       generalCategory: genCat,
-      supportCategoryNumberPACE:
-          json['Support Category Number (PACE)']?.toString(),
+      supportCategoryNumberPACE: json['Support Category Number (PACE)']
+          ?.toString(),
       supportCategoryNamePACE: json['Support Category Name (PACE)']?.toString(),
-      nonFaceToFaceSupport:
-          json['Non-Face-to-Face Support Provision']?.toString(),
+      nonFaceToFaceSupport: json['Non-Face-to-Face Support Provision']
+          ?.toString(),
       providerTravel: json['Provider Travel']?.toString(),
-      shortNoticeCancellations:
-          json['Short Notice Cancellations.']?.toString(), // Note the dot
+      shortNoticeCancellations: json['Short Notice Cancellations.']
+          ?.toString(), // Note the dot
       ndiaRequestedReports: json['NDIA Requested Reports']?.toString(),
       irregularSILSupports: json['Irregular SIL Supports']?.toString(),
     );
   }
 
   // Get price based on a specific region or fallback.
-  double getPriceForRegion(PriceRegion region,
-      {PriceRegion fallbackRegion = PriceRegion.nsw}) {
+  double getPriceForRegion(
+    PriceRegion region, {
+    PriceRegion fallbackRegion = PriceRegion.nsw,
+  }) {
     if (type == "Quotable Supports" || isQuotable) return 0.0;
     if (type == "Unit Price = 0.1") return 1.0;
 
@@ -297,7 +302,8 @@ class NDISItem {
       return date.isAfter(startDate!) || date.isAtSameMomentAs(startDate!);
     }
     return (date.isAfter(startDate!) || date.isAtSameMomentAs(startDate!)) &&
-        date.isBefore(endDate!
-            .add(const Duration(days: 1) /* make end date inclusive */));
+        date.isBefore(
+          endDate!.add(const Duration(days: 1) /* make end date inclusive */),
+        );
   }
 }

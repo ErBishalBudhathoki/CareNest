@@ -63,8 +63,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         } else if (role == UserRole.family || role == UserRole.client) {
           final clientId = sharedPrefs.getString('clientId') ?? '';
           if (clientId.isEmpty) {
-            debugPrint(
-                '⚠️ Missing clientId for session, forcing re-login');
+            debugPrint('⚠️ Missing clientId for session, forcing re-login');
             await _sessionTimeoutService.logoutAndClearSession(
               reason: 'missing_client_id_on_splash',
             );

@@ -61,7 +61,11 @@ class _DynamicLineItemEntryState extends State<DynamicLineItemEntry> {
   void _addItem() {
     setState(() {
       final newItem = InvoiceLineItem(
-          description: '', quantity: 1.0, unitPrice: 0.0, type: 'service');
+        description: '',
+        quantity: 1.0,
+        unitPrice: 0.0,
+        type: 'service',
+      );
       _items.add(newItem);
       widget.onChanged(_items);
     });
@@ -125,9 +129,10 @@ class _DynamicLineItemEntryState extends State<DynamicLineItemEntry> {
                       child: TextFormField(
                         initialValue: item.description,
                         decoration: const InputDecoration(
-                            labelText: 'Description',
-                            isDense: true,
-                            border: InputBorder.none),
+                          labelText: 'Description',
+                          isDense: true,
+                          border: InputBorder.none,
+                        ),
                         onChanged: (val) =>
                             _updateItem(idx, item.copyWith(description: val)),
                       ),
@@ -158,11 +163,12 @@ class _DynamicLineItemEntryState extends State<DynamicLineItemEntry> {
                         ),
                         textAlign: TextAlign.center,
                         keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
+                          decimal: true,
+                        ),
                         onChanged: (val) => _updateItem(
-                            idx,
-                            item.copyWith(
-                                quantity: double.tryParse(val) ?? 1.0)),
+                          idx,
+                          item.copyWith(quantity: double.tryParse(val) ?? 1.0),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -177,26 +183,32 @@ class _DynamicLineItemEntryState extends State<DynamicLineItemEntry> {
                               labelText: 'Price',
                               isDense: true,
                               border: InputBorder.none,
-                              suffixIcon: item.complianceStatus !=
+                              suffixIcon:
+                                  item.complianceStatus !=
                                       PriceComplianceStatus.unknown
                                   ? Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 8.0),
+                                      padding: const EdgeInsets.only(
+                                        right: 8.0,
+                                      ),
                                       child: _buildComplianceIndicator(item),
                                     )
                                   : null,
                             ),
                             textAlign: TextAlign.center,
                             keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
+                              decimal: true,
+                            ),
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d*\.?\d{0,2}')),
+                                RegExp(r'^\d*\.?\d{0,2}'),
+                              ),
                             ],
                             onChanged: (val) => _updateItem(
-                                idx,
-                                item.copyWith(
-                                    unitPrice: double.tryParse(val) ?? 0.0)),
+                              idx,
+                              item.copyWith(
+                                unitPrice: double.tryParse(val) ?? 0.0,
+                              ),
+                            ),
                           ),
                           if (item.complianceStatus ==
                                   PriceComplianceStatus.nonCompliant &&
@@ -207,19 +219,22 @@ class _DynamicLineItemEntryState extends State<DynamicLineItemEntry> {
                               child: GestureDetector(
                                 onTap: () {
                                   _updateItem(
-                                      idx,
-                                      item.copyWith(
-                                        unitPrice: item.recommendedPrice,
-                                        complianceStatus:
-                                            PriceComplianceStatus.compliant,
-                                        validationMessage:
-                                            'Price updated to recommended value',
-                                        excessAmount: 0.0,
-                                      ));
+                                    idx,
+                                    item.copyWith(
+                                      unitPrice: item.recommendedPrice,
+                                      complianceStatus:
+                                          PriceComplianceStatus.compliant,
+                                      validationMessage:
+                                          'Price updated to recommended value',
+                                      excessAmount: 0.0,
+                                    ),
+                                  );
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(
-                                      right: 8.0, bottom: 4.0),
+                                    right: 8.0,
+                                    bottom: 4.0,
+                                  ),
                                   child: Text(
                                     'Use ${item.recommendedPrice?.toStringAsFixed(2)}',
                                     style: TextStyle(

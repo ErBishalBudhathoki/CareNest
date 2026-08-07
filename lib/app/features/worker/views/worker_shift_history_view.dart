@@ -68,7 +68,7 @@ class _WorkerShiftHistoryViewState
           IconButton(
             onPressed: _loadHistory,
             icon: const Icon(Icons.refresh, color: BauhausTheme.black),
-          )
+          ),
         ],
       ),
       body: Column(
@@ -100,15 +100,16 @@ class _WorkerShiftHistoryViewState
                     children: [
                       Text(
                         'Failed to load history: $error',
-                        style: BauhausTheme.bodyStyle
-                            .copyWith(color: BauhausTheme.red),
+                        style: BauhausTheme.bodyStyle.copyWith(
+                          color: BauhausTheme.red,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 12),
                       OutlinedButton(
                         onPressed: _loadHistory,
                         child: const Text('Retry'),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -124,8 +125,9 @@ class _WorkerShiftHistoryViewState
                         decoration: BauhausTheme.blockDecoration,
                         child: Text(
                           l10n.noHistorySubtitle,
-                          style: BauhausTheme.bodyStyle
-                              .copyWith(color: BauhausTheme.black),
+                          style: BauhausTheme.bodyStyle.copyWith(
+                            color: BauhausTheme.black,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -142,7 +144,7 @@ class _WorkerShiftHistoryViewState
                 );
               },
             ),
-          )
+          ),
         ],
       ),
     );

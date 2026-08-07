@@ -32,7 +32,8 @@ class _PlatformMapWidgetState extends State<PlatformMapWidget> {
   @override
   void didUpdateWidget(covariant PlatformMapWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final centerChanged = oldWidget.center.latitude != widget.center.latitude ||
+    final centerChanged =
+        oldWidget.center.latitude != widget.center.latitude ||
         oldWidget.center.longitude != widget.center.longitude;
 
     if (_googleController == null) return;
@@ -123,7 +124,9 @@ class _PlatformMapWidgetState extends State<PlatformMapWidget> {
       return apple_maps.AppleMap(
         initialCameraPosition: apple_maps.CameraPosition(
           target: apple_maps.LatLng(
-              widget.center.latitude, widget.center.longitude),
+            widget.center.latitude,
+            widget.center.longitude,
+          ),
           zoom: widget.zoom,
         ),
         myLocationEnabled: widget.showMyLocation,
@@ -190,7 +193,9 @@ class _PlatformMapWidgetState extends State<PlatformMapWidget> {
         },
         initialCameraPosition: google_maps.CameraPosition(
           target: google_maps.LatLng(
-              widget.center.latitude, widget.center.longitude),
+            widget.center.latitude,
+            widget.center.longitude,
+          ),
           zoom: widget.zoom,
         ),
         markers: markers,

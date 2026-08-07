@@ -39,15 +39,13 @@ class FinancialAnalyticsState {
   }
 }
 
-class FinancialAnalyticsViewModel
-    extends Notifier<FinancialAnalyticsState> {
+class FinancialAnalyticsViewModel extends Notifier<FinancialAnalyticsState> {
   late final FinancialIntelligenceRepository _repository;
 
-  
   @override
   FinancialAnalyticsState build() {
     final apiMethod = ref.read(app_providers.apiMethodProvider);
-    
+
     return FinancialAnalyticsState();
   }
 
@@ -63,8 +61,10 @@ class FinancialAnalyticsViewModel
       );
 
       if (result['success'] == true) {
-        state =
-            state.copyWith(isLoading: false, dashboard: result['dashboard']);
+        state = state.copyWith(
+          isLoading: false,
+          dashboard: result['dashboard'],
+        );
       } else {
         state = state.copyWith(isLoading: false, error: result['message']);
       }
@@ -85,8 +85,10 @@ class FinancialAnalyticsViewModel
       );
 
       if (result['success'] == true) {
-        state =
-            state.copyWith(isLoading: false, profitability: result['analysis']);
+        state = state.copyWith(
+          isLoading: false,
+          profitability: result['analysis'],
+        );
       } else {
         state = state.copyWith(isLoading: false, error: result['message']);
       }
@@ -98,8 +100,9 @@ class FinancialAnalyticsViewModel
   Future<void> getKPIs(String organizationId) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final result =
-          await _repository.getFinancialKPIs(organizationId: organizationId);
+      final result = await _repository.getFinancialKPIs(
+        organizationId: organizationId,
+      );
       if (result['success'] == true) {
         state = state.copyWith(isLoading: false, kpis: result['kpis']);
       } else {
@@ -138,4 +141,7 @@ class FinancialAnalyticsViewModel
   }
 }
 
-final financialAnalyticsViewModelProvider = NotifierProvider<FinancialAnalyticsViewModel, FinancialAnalyticsState>(FinancialAnalyticsViewModel.new);
+final financialAnalyticsViewModelProvider =
+    NotifierProvider<FinancialAnalyticsViewModel, FinancialAnalyticsState>(
+      FinancialAnalyticsViewModel.new,
+    );

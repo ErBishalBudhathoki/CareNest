@@ -2,7 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/client_portal/repositories/client_portal_repository.dart';
 import 'package:carenest/app/features/client_portal/models/client_portal_models.dart';
 
-final clientPortalViewModelProvider = NotifierProvider<ClientPortalViewModel, ClientPortalState>(ClientPortalViewModel.new);
+final clientPortalViewModelProvider =
+    NotifierProvider<ClientPortalViewModel, ClientPortalState>(
+      ClientPortalViewModel.new,
+    );
 
 const Object _stateUnset = Object();
 
@@ -49,11 +52,10 @@ class ClientPortalState {
 class ClientPortalViewModel extends Notifier<ClientPortalState> {
   late final ClientPortalRepository _repository;
 
-  
   @override
   ClientPortalState build() {
     final repository = ref.watch(clientPortalRepositoryProvider);
-    
+
     return ClientPortalState();
   }
 
@@ -79,8 +81,9 @@ class ClientPortalViewModel extends Notifier<ClientPortalState> {
   /// Get real-time worker location
   Future<void> getWorkerLocation(String appointmentId) async {
     try {
-      final response =
-          await _repository.getWorkerLocation(appointmentId: appointmentId);
+      final response = await _repository.getWorkerLocation(
+        appointmentId: appointmentId,
+      );
       if (response['success'] == true && response['data'] != null) {
         try {
           final location = WorkerLocation.fromJson(response['data']);
@@ -105,8 +108,9 @@ class ClientPortalViewModel extends Notifier<ClientPortalState> {
   /// Get appointment status with ETA
   Future<void> getAppointmentStatus(String appointmentId) async {
     try {
-      final response =
-          await _repository.getAppointmentStatus(appointmentId: appointmentId);
+      final response = await _repository.getAppointmentStatus(
+        appointmentId: appointmentId,
+      );
       if (response['success'] == true && response['data'] != null) {
         final status = AppointmentStatus.fromJson(response['data']);
         state = state.copyWith(appointmentStatus: status, error: null);
@@ -139,8 +143,9 @@ class ClientPortalViewModel extends Notifier<ClientPortalState> {
   /// Submit service feedback
   Future<bool> submitFeedback(Map<String, dynamic> feedbackData) async {
     try {
-      final response =
-          await _repository.submitFeedback(feedbackData: feedbackData);
+      final response = await _repository.submitFeedback(
+        feedbackData: feedbackData,
+      );
       final success = response['success'] == true;
       state = state.copyWith(
         error: success

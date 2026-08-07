@@ -24,10 +24,17 @@ class NotificationSettingsModel {
   factory NotificationSettingsModel.fromJson(Map<String, dynamic> json) {
     return NotificationSettingsModel(
       shiftRemindersEnabled: json['shiftReminders']?['enabled'] ?? true,
-      shiftReminderTimings: (json['shiftReminders']?['timings'] as List?)?.map((e) => (e as num).toDouble()).toList() ?? [24, 1, 0.5],
-      quietHours: json['shiftReminders']?['quietHours'] != null ? QuietHours.fromJson(json['shiftReminders']['quietHours']) : null,
+      shiftReminderTimings:
+          (json['shiftReminders']?['timings'] as List?)
+              ?.map((e) => (e as num).toDouble())
+              .toList() ??
+          [24, 1, 0.5],
+      quietHours: json['shiftReminders']?['quietHours'] != null
+          ? QuietHours.fromJson(json['shiftReminders']['quietHours'])
+          : null,
       geofenceEnabled: json['geofenceReminders']?['enabled'] ?? true,
-      geofenceRadius: (json['geofenceReminders']?['radius'] as num?)?.toDouble() ?? 100,
+      geofenceRadius:
+          (json['geofenceReminders']?['radius'] as num?)?.toDouble() ?? 100,
       expenseRemindersEnabled: json['expenseReminders']?['enabled'] ?? true,
       expenseDeadlineHours: json['expenseReminders']?['deadlineHours'] ?? 48,
       timesheetRemindersEnabled: json['timesheetReminders']?['enabled'] ?? true,
@@ -69,15 +76,19 @@ class NotificationSettingsModel {
     String? timesheetReminderTime,
   }) {
     return NotificationSettingsModel(
-      shiftRemindersEnabled: shiftRemindersEnabled ?? this.shiftRemindersEnabled,
+      shiftRemindersEnabled:
+          shiftRemindersEnabled ?? this.shiftRemindersEnabled,
       shiftReminderTimings: shiftReminderTimings ?? this.shiftReminderTimings,
       quietHours: quietHours ?? this.quietHours,
       geofenceEnabled: geofenceEnabled ?? this.geofenceEnabled,
       geofenceRadius: geofenceRadius ?? this.geofenceRadius,
-      expenseRemindersEnabled: expenseRemindersEnabled ?? this.expenseRemindersEnabled,
+      expenseRemindersEnabled:
+          expenseRemindersEnabled ?? this.expenseRemindersEnabled,
       expenseDeadlineHours: expenseDeadlineHours ?? this.expenseDeadlineHours,
-      timesheetRemindersEnabled: timesheetRemindersEnabled ?? this.timesheetRemindersEnabled,
-      timesheetReminderTime: timesheetReminderTime ?? this.timesheetReminderTime,
+      timesheetRemindersEnabled:
+          timesheetRemindersEnabled ?? this.timesheetRemindersEnabled,
+      timesheetReminderTime:
+          timesheetReminderTime ?? this.timesheetReminderTime,
     );
   }
 }
@@ -102,10 +113,6 @@ class QuietHours {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'start': start,
-      'end': end,
-      'timezone': timezone,
-    };
+    return {'start': start, 'end': end, 'timezone': timezone};
   }
 }

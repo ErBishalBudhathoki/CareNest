@@ -102,23 +102,20 @@ class _OnboardingAppCarouselState extends State<OnboardingAppCarousel>
                     height: 8,
                     child: Row(
                       children: List.generate(carouselSlideCount, (i) {
-                        final segStart =
-                            i > 0 ? _segEnd(i - 1) : 0.0;
+                        final segStart = i > 0 ? _segEnd(i - 1) : 0.0;
                         final segLen = _segEnd(i) - segStart;
                         final raw = segLen > 0
-                            ? ((p - segStart) / segLen)
-                                .clamp(0.0, 1.0)
+                            ? ((p - segStart) / segLen).clamp(0.0, 1.0)
                             : 0.0;
-                        final fill =
-                            i < _currentPage ? 1.0 : raw;
+                        final fill = i < _currentPage ? 1.0 : raw;
                         return Expanded(
                           child: Container(
-                            margin: EdgeInsets.only(
-                                left: i > 0 ? 6 : 0),
+                            margin: EdgeInsets.only(left: i > 0 ? 6 : 0),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                  color: BauhausDesign.neoInk,
-                                  width: 1.5),
+                                color: BauhausDesign.neoInk,
+                                width: 1.5,
+                              ),
                               color: fill > 0.0
                                   ? Color.lerp(
                                       BauhausDesign.surfaceWhite,
@@ -205,15 +202,13 @@ class _CarouselSlideState extends State<_CarouselSlide>
         curve: const Interval(0.2, 1.0, curve: Curves.easeOut),
       ),
     );
-    _bodySlide = Tween<Offset>(
-      begin: const Offset(0, 0.12),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _ctrl,
-        curve: const Interval(0.2, 1.0, curve: Curves.easeOutCubic),
-      ),
-    );
+    _bodySlide = Tween<Offset>(begin: const Offset(0, 0.12), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _ctrl,
+            curve: const Interval(0.2, 1.0, curve: Curves.easeOutCubic),
+          ),
+        );
     _ctrl.forward();
   }
 
@@ -228,8 +223,7 @@ class _CarouselSlideState extends State<_CarouselSlide>
     final theme = BauhausDesign.getTextTheme(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: BauhausDesign.space4),
+      padding: const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -241,12 +235,10 @@ class _CarouselSlideState extends State<_CarouselSlide>
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: BauhausDesign.surfaceWhite,
-                border: Border.all(
-                    color: BauhausDesign.neoInk, width: 2.5),
+                border: Border.all(color: BauhausDesign.neoInk, width: 2.5),
                 boxShadow: const [BauhausDesign.shadowHard],
               ),
-              child: Icon(widget.icon,
-                  size: 36, color: BauhausDesign.neoInk),
+              child: Icon(widget.icon, size: 36, color: BauhausDesign.neoInk),
             ),
           ),
           const SizedBox(height: BauhausDesign.space10),
@@ -307,11 +299,13 @@ class _BrutalistButtonState extends State<_BrutalistButton>
       vsync: this,
       duration: OnboardingDurations.buttonPress,
     );
-    _scale = Tween<double>(
-      begin: 1.0,
-      end: OnboardingButtonPress.scaleTarget,
-    ).animate(CurvedAnimation(
-        parent: _ctrl, curve: OnboardingCurves.buttonPressEase));
+    _scale = Tween<double>(begin: 1.0, end: OnboardingButtonPress.scaleTarget)
+        .animate(
+          CurvedAnimation(
+            parent: _ctrl,
+            curve: OnboardingCurves.buttonPressEase,
+          ),
+        );
   }
 
   @override
@@ -357,8 +351,7 @@ class _BrutalistButtonState extends State<_BrutalistButton>
           ),
           decoration: BoxDecoration(
             color: BauhausDesign.neoInk,
-            border: Border.all(
-                color: BauhausDesign.neoInk, width: 2.5),
+            border: Border.all(color: BauhausDesign.neoInk, width: 2.5),
             boxShadow: [
               BoxShadow(
                 color: const Color(0xFF000000),
@@ -370,13 +363,11 @@ class _BrutalistButtonState extends State<_BrutalistButton>
           alignment: Alignment.center,
           child: Text(
             widget.label,
-            style: BauhausDesign.getTextTheme(context)
-                .labelLarge
-                ?.copyWith(
-                  color: BauhausDesign.surfaceWhite,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.5,
-                ),
+            style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+              color: BauhausDesign.surfaceWhite,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+            ),
           ),
         ),
       ),

@@ -44,11 +44,10 @@ class ResourceAllocationState {
 class ResourceAllocationViewModel extends Notifier<ResourceAllocationState> {
   late final WorkforceRepository _repository;
 
-  
   @override
   ResourceAllocationState build() {
     final repository = ref.watch(workforceRepositoryProvider);
-    
+
     return ResourceAllocationState();
   }
 
@@ -82,10 +81,7 @@ class ResourceAllocationViewModel extends Notifier<ResourceAllocationState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -114,10 +110,7 @@ class ResourceAllocationViewModel extends Notifier<ResourceAllocationState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -137,7 +130,8 @@ class ResourceAllocationViewModel extends Notifier<ResourceAllocationState> {
       if (result['success'] == true) {
         state = state.copyWith(
           isLoading: false,
-          recommendations: result['recommendations'] as List<WorkerRecommendation>,
+          recommendations:
+              result['recommendations'] as List<WorkerRecommendation>,
         );
       } else {
         state = state.copyWith(
@@ -146,10 +140,7 @@ class ResourceAllocationViewModel extends Notifier<ResourceAllocationState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -180,10 +171,7 @@ class ResourceAllocationViewModel extends Notifier<ResourceAllocationState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -199,4 +187,7 @@ class ResourceAllocationViewModel extends Notifier<ResourceAllocationState> {
 }
 
 // Provider for ResourceAllocationViewModel
-final resourceAllocationViewModelProvider = NotifierProvider<ResourceAllocationViewModel, ResourceAllocationState>(ResourceAllocationViewModel.new);
+final resourceAllocationViewModelProvider =
+    NotifierProvider<ResourceAllocationViewModel, ResourceAllocationState>(
+      ResourceAllocationViewModel.new,
+    );

@@ -29,10 +29,7 @@ class _BehaviorSupportViewState extends ConsumerState<BehaviorSupportView> {
     if (orgId != null) {
       ref
           .read(behaviorSupportViewModelProvider.notifier)
-          .analyzeBehaviorPatterns(
-            clientId: clientId,
-            organizationId: orgId,
-          );
+          .analyzeBehaviorPatterns(clientId: clientId, organizationId: orgId);
     }
   }
 
@@ -48,60 +45,60 @@ class _BehaviorSupportViewState extends ConsumerState<BehaviorSupportView> {
         title: Text(
           'BEHAVIOR SUPPORT',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-                fontWeight: FontWeight.bold,
-              ),
+            color: BauhausDesign.surfaceWhite,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         elevation: 0,
       ),
       body: state.isLoading
           ? const Center(child: BauhausLoadingState())
           : state.error != null
-              ? Center(
-                  child: BauhausEmptyState(
-                    title: 'Error',
-                    message: state.error!,
-                    icon: Icons.error_outline,
-                    onAction: _loadData,
-                    actionLabel: 'RETRY',
+          ? Center(
+              child: BauhausEmptyState(
+                title: 'Error',
+                message: state.error!,
+                icon: Icons.error_outline,
+                onAction: _loadData,
+                actionLabel: 'RETRY',
+              ),
+            )
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  BauhausSectionHeader(title: 'BEHAVIORAL INSIGHTS'),
+                  const SizedBox(height: 16),
+                  _buildInsightsCard(state),
+                  const SizedBox(height: 32),
+                  BauhausSectionHeader(title: 'RECENT PATTERNS'),
+                  const SizedBox(height: 16),
+                  if (state.behaviorAnalysis?['patterns'] != null &&
+                      (state.behaviorAnalysis!['patterns'] as List).isNotEmpty)
+                    _buildPatternsList(
+                      state.behaviorAnalysis!['patterns'] as List,
+                    )
+                  else
+                    const BauhausEmptyState(
+                      title: 'No Patterns Detected',
+                      message:
+                          'No behavioral triggers or escalations identified recently.',
+                      icon: Icons.psychology_outlined,
+                    ),
+                  const SizedBox(height: 32),
+                  SizedBox(
+                    width: double.infinity,
+                    child: BauhausActionButton(
+                      onPressed: () {},
+                      text: 'LOG NEW BEHAVIOR',
+                      variant: BauhausActionVariant.primary,
+                      isFullWidth: true,
+                    ),
                   ),
-                )
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BauhausSectionHeader(title: 'BEHAVIORAL INSIGHTS'),
-                      const SizedBox(height: 16),
-                      _buildInsightsCard(state),
-                      const SizedBox(height: 32),
-                      BauhausSectionHeader(title: 'RECENT PATTERNS'),
-                      const SizedBox(height: 16),
-                      if (state.behaviorAnalysis?['patterns'] != null &&
-                          (state.behaviorAnalysis!['patterns'] as List)
-                              .isNotEmpty)
-                        _buildPatternsList(
-                            state.behaviorAnalysis!['patterns'] as List)
-                      else
-                        const BauhausEmptyState(
-                          title: 'No Patterns Detected',
-                          message:
-                              'No behavioral triggers or escalations identified recently.',
-                          icon: Icons.psychology_outlined,
-                        ),
-                      const SizedBox(height: 32),
-                      SizedBox(
-                        width: double.infinity,
-                        child: BauhausActionButton(
-                          onPressed: () {},
-                          text: 'LOG NEW BEHAVIOR',
-                          variant: BauhausActionVariant.primary,
-                          isFullWidth: true,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                ],
+              ),
+            ),
     );
   }
 
@@ -114,15 +111,17 @@ class _BehaviorSupportViewState extends ConsumerState<BehaviorSupportView> {
           children: [
             Row(
               children: [
-                const Icon(Icons.lightbulb_outline,
-                    color: BauhausDesign.warning, size: 28),
+                const Icon(
+                  Icons.lightbulb_outline,
+                  color: BauhausDesign.warning,
+                  size: 28,
+                ),
                 const SizedBox(width: 12),
                 Text(
                   'AI RECOMMENDATION',
-                  style:
-                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                            fontWeight: FontWeight.w900,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).titleMedium?.copyWith(fontWeight: FontWeight.w900),
                 ),
               ],
             ),
@@ -142,13 +141,19 @@ class _BehaviorSupportViewState extends ConsumerState<BehaviorSupportView> {
       children: [
         BauhausCard(
           child: ListTile(
-            leading: const Icon(Icons.warning_amber_outlined,
-                color: BauhausDesign.error),
-            title: const Text('Anxiety Trigger',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            leading: const Icon(
+              Icons.warning_amber_outlined,
+              color: BauhausDesign.error,
+            ),
+            title: const Text(
+              'Anxiety Trigger',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             subtitle: const Text('Identified 3 times this week.'),
-            trailing:
-                const Icon(Icons.chevron_right, color: BauhausDesign.neutral),
+            trailing: const Icon(
+              Icons.chevron_right,
+              color: BauhausDesign.neutral,
+            ),
           ),
         ),
       ],

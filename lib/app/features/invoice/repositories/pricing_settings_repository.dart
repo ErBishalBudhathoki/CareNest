@@ -44,7 +44,8 @@ class PricingSettingsRepository {
 
       final success = (result['success'] as bool?) ?? false;
       if (!success) {
-        final message = (result['message'] as String?) ?? 'Failed to update settings';
+        final message =
+            (result['message'] as String?) ?? 'Failed to update settings';
         debugPrint('PricingSettingsRepository: update failed: $message');
         throw PricingSettingsException(message, details: result);
       }

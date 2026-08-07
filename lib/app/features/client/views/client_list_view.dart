@@ -40,8 +40,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
 
     final providerOrganizationId = ref.read(organizationIdProvider);
     final storedOrganizationId = prefs.getOrganizationId();
-    final organizationId =
-        (providerOrganizationId ?? storedOrganizationId)?.trim();
+    final organizationId = (providerOrganizationId ?? storedOrganizationId)
+        ?.trim();
 
     if (organizationId != null && organizationId.isNotEmpty) {
       final targetMode = mode ?? _selectedListMode;
@@ -84,10 +84,7 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
       return null;
     }
 
-    return {
-      'userEmail': userEmail,
-      'organizationId': organizationId,
-    };
+    return {'userEmail': userEmail, 'organizationId': organizationId};
   }
 
   double _dialogWidth(
@@ -110,8 +107,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
   }) async {
     final headerForeground =
         ThemeData.estimateBrightnessForColor(headerColor) == Brightness.dark
-            ? BauhausDesign.surfaceWhite
-            : BauhausDesign.textDark;
+        ? BauhausDesign.surfaceWhite
+        : BauhausDesign.textDark;
 
     final result = await showDialog<bool>(
       context: context,
@@ -119,8 +116,10 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
       builder: (dialogContext) {
         return Dialog(
           backgroundColor: Colors.transparent,
-          insetPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 24,
+          ),
           child: Container(
             width: _dialogWidth(dialogContext, maxWidth: 520),
             decoration: BoxDecoration(
@@ -140,17 +139,15 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                   decoration: BoxDecoration(
                     color: headerColor,
                     border: Border(
-                      bottom:
-                          BorderSide(color: BauhausDesign.neutral, width: 3),
+                      bottom: BorderSide(
+                        color: BauhausDesign.neutral,
+                        width: 3,
+                      ),
                     ),
                   ),
                   child: Row(
                     children: [
-                      Icon(
-                        icon,
-                        color: headerForeground,
-                        size: 22,
-                      ),
+                      Icon(icon, color: headerForeground, size: 22),
                       const SizedBox(width: BauhausDesign.space2),
                       Expanded(
                         child: Text(
@@ -171,11 +168,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                   padding: const EdgeInsets.all(BauhausDesign.space4),
                   child: Text(
                     message,
-                    style: BauhausDesign.getTextTheme(dialogContext)
-                        .bodyMedium
-                        ?.copyWith(
-                          color: BauhausDesign.textDark,
-                        ),
+                    style: BauhausDesign.getTextTheme(
+                      dialogContext,
+                    ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
                   ),
                 ),
                 Padding(
@@ -224,8 +219,10 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
       builder: (dialogContext) {
         return Dialog(
           backgroundColor: Colors.transparent,
-          insetPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 24,
+          ),
           child: Container(
             width: _dialogWidth(dialogContext, maxWidth: 560),
             decoration: BoxDecoration(
@@ -245,8 +242,10 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                   decoration: const BoxDecoration(
                     color: BauhausDesign.error,
                     border: Border(
-                      bottom:
-                          BorderSide(color: BauhausDesign.neutral, width: 3),
+                      bottom: BorderSide(
+                        color: BauhausDesign.neutral,
+                        width: 3,
+                      ),
                     ),
                   ),
                   child: Row(
@@ -294,8 +293,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                             child: BauhausActionButton(
                               text: 'Cancel',
                               variant: BauhausActionVariant.secondary,
-                              onPressed: () => Navigator.of(dialogContext)
-                                  .pop(_ClientDeleteMode.cancel),
+                              onPressed: () => Navigator.of(
+                                dialogContext,
+                              ).pop(_ClientDeleteMode.cancel),
                             ),
                           ),
                           const SizedBox(width: BauhausDesign.space3),
@@ -303,8 +303,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                             child: BauhausActionButton(
                               text: 'Delete (90 Days)',
                               variant: BauhausActionVariant.warning,
-                              onPressed: () => Navigator.of(dialogContext)
-                                  .pop(_ClientDeleteMode.soft),
+                              onPressed: () => Navigator.of(
+                                dialogContext,
+                              ).pop(_ClientDeleteMode.soft),
                             ),
                           ),
                         ],
@@ -315,8 +316,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                         child: BauhausActionButton(
                           text: 'Force Delete',
                           variant: BauhausActionVariant.error,
-                          onPressed: () => Navigator.of(dialogContext)
-                              .pop(_ClientDeleteMode.force),
+                          onPressed: () => Navigator.of(
+                            dialogContext,
+                          ).pop(_ClientDeleteMode.force),
                         ),
                       ),
                     ],
@@ -339,34 +341,43 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     if (client.id == null || client.id!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(restoreAfterSave
-              ? 'Cannot update this deleted client because ID is missing.'
-              : 'Cannot edit this client because ID is missing.'),
+          content: Text(
+            restoreAfterSave
+                ? 'Cannot update this deleted client because ID is missing.'
+                : 'Cannot edit this client because ID is missing.',
+          ),
           backgroundColor: BauhausDesign.error,
         ),
       );
       return;
     }
 
-    final firstNameController =
-        TextEditingController(text: client.clientFirstName ?? '');
-    final lastNameController =
-        TextEditingController(text: client.clientLastName ?? '');
-    final phoneController =
-        TextEditingController(text: client.clientPhone ?? '');
-    final addressController =
-        TextEditingController(text: client.clientAddress ?? '');
+    final firstNameController = TextEditingController(
+      text: client.clientFirstName ?? '',
+    );
+    final lastNameController = TextEditingController(
+      text: client.clientLastName ?? '',
+    );
+    final phoneController = TextEditingController(
+      text: client.clientPhone ?? '',
+    );
+    final addressController = TextEditingController(
+      text: client.clientAddress ?? '',
+    );
     final cityController = TextEditingController(text: client.clientCity ?? '');
-    final stateController =
-        TextEditingController(text: client.clientState ?? '');
+    final stateController = TextEditingController(
+      text: client.clientState ?? '',
+    );
     final zipController = TextEditingController(text: client.clientZip ?? '');
     String selectedBusinessName = client.businessName?.trim() ?? '';
     final formKey = GlobalKey<FormState>();
     bool isSaving = false;
-    final dialogTitle =
-        restoreAfterSave ? 'UPDATE & RESTORE CLIENT' : 'EDIT CLIENT';
-    final dialogColor =
-        restoreAfterSave ? BauhausDesign.warning : BauhausDesign.secondary;
+    final dialogTitle = restoreAfterSave
+        ? 'UPDATE & RESTORE CLIENT'
+        : 'EDIT CLIENT';
+    final dialogColor = restoreAfterSave
+        ? BauhausDesign.warning
+        : BauhausDesign.secondary;
     final saveButtonText = restoreAfterSave ? 'Update & Restore' : 'Save';
     final saveButtonVariant = restoreAfterSave
         ? BauhausActionVariant.warning
@@ -383,8 +394,10 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
           builder: (context, setDialogState) {
             return Dialog(
               backgroundColor: Colors.transparent,
-              insetPadding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+              insetPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 20,
+              ),
               child: Container(
                 width: _dialogWidth(dialogContext, maxWidth: 760),
                 decoration: BoxDecoration(
@@ -405,7 +418,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                         color: dialogColor,
                         border: const Border(
                           bottom: BorderSide(
-                              color: BauhausDesign.neutral, width: 3),
+                            color: BauhausDesign.neutral,
+                            width: 3,
+                          ),
                         ),
                       ),
                       child: Row(
@@ -453,8 +468,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                       label: 'First name',
                                       validator: (v) =>
                                           (v == null || v.trim().isEmpty)
-                                              ? 'Required'
-                                              : null,
+                                          ? 'Required'
+                                          : null,
                                     ),
                                   ),
                                   const SizedBox(width: BauhausDesign.space3),
@@ -464,8 +479,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                       label: 'Last name',
                                       validator: (v) =>
                                           (v == null || v.trim().isEmpty)
-                                              ? 'Required'
-                                              : null,
+                                          ? 'Required'
+                                          : null,
                                     ),
                                   ),
                                 ],
@@ -506,19 +521,20 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                 child: Text(
                                   'BUSINESS INFORMATION',
                                   style:
-                                      BauhausDesign.getTextTheme(dialogContext)
-                                          .labelMedium
-                                          ?.copyWith(
-                                            color: BauhausDesign.textDark,
-                                            fontWeight: FontWeight.w800,
-                                            letterSpacing: 0.7,
-                                          ),
+                                      BauhausDesign.getTextTheme(
+                                        dialogContext,
+                                      ).labelMedium?.copyWith(
+                                        color: BauhausDesign.textDark,
+                                        fontWeight: FontWeight.w800,
+                                        letterSpacing: 0.7,
+                                      ),
                                 ),
                               ),
                               const SizedBox(height: BauhausDesign.space1),
                               BusinessNameDropdown(
-                                organizationId:
-                                    ref.read(organizationIdProvider),
+                                organizationId: ref.read(
+                                  organizationIdProvider,
+                                ),
                                 initialValue: selectedBusinessName.isEmpty
                                     ? null
                                     : selectedBusinessName,
@@ -578,8 +594,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
 
                                       setDialogState(() => isSaving = true);
                                       try {
-                                        final notifier =
-                                            ref.read(clientProvider.notifier);
+                                        final notifier = ref.read(
+                                          clientProvider.notifier,
+                                        );
                                         final response = restoreAfterSave
                                             ? await notifier.restoreClient(
                                                 clientId: client.id!,
@@ -589,23 +606,25 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                                 clientLastName:
                                                     lastNameController.text
                                                         .trim(),
-                                                clientPhone:
-                                                    phoneController.text.trim(),
+                                                clientPhone: phoneController
+                                                    .text
+                                                    .trim(),
                                                 clientAddress: addressController
                                                     .text
                                                     .trim(),
-                                                clientCity:
-                                                    cityController.text.trim(),
-                                                clientState:
-                                                    stateController.text.trim(),
-                                                clientZip:
-                                                    zipController.text.trim(),
+                                                clientCity: cityController.text
+                                                    .trim(),
+                                                clientState: stateController
+                                                    .text
+                                                    .trim(),
+                                                clientZip: zipController.text
+                                                    .trim(),
                                                 businessName:
                                                     selectedBusinessName.trim(),
                                                 userEmail:
                                                     userContext['userEmail']!,
-                                                organizationId: userContext[
-                                                    'organizationId']!,
+                                                organizationId:
+                                                    userContext['organizationId']!,
                                               )
                                             : await notifier.updateClient(
                                                 clientId: client.id!,
@@ -615,36 +634,39 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                                 clientLastName:
                                                     lastNameController.text
                                                         .trim(),
-                                                clientPhone:
-                                                    phoneController.text.trim(),
+                                                clientPhone: phoneController
+                                                    .text
+                                                    .trim(),
                                                 clientAddress: addressController
                                                     .text
                                                     .trim(),
-                                                clientCity:
-                                                    cityController.text.trim(),
-                                                clientState:
-                                                    stateController.text.trim(),
-                                                clientZip:
-                                                    zipController.text.trim(),
+                                                clientCity: cityController.text
+                                                    .trim(),
+                                                clientState: stateController
+                                                    .text
+                                                    .trim(),
+                                                clientZip: zipController.text
+                                                    .trim(),
                                                 businessName:
                                                     selectedBusinessName.trim(),
                                                 userEmail:
                                                     userContext['userEmail']!,
-                                                organizationId: userContext[
-                                                    'organizationId']!,
+                                                organizationId:
+                                                    userContext['organizationId']!,
                                               );
 
                                         if (!mounted) return;
                                         if (dialogContext.mounted) {
                                           Navigator.of(dialogContext).pop();
                                         }
-                                        final message = response['message']
-                                                ?.toString() ??
+                                        final message =
+                                            response['message']?.toString() ??
                                             (restoreAfterSave
                                                 ? 'Client restored successfully. Activate account again to allow login.'
                                                 : 'Client updated successfully');
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           SnackBar(
                                             content: Text(message),
                                             backgroundColor:
@@ -652,20 +674,25 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                           ),
                                         );
                                         if (restoreAfterSave) {
-                                          setState(() => _selectedListMode =
-                                              _ClientListMode.active);
+                                          setState(
+                                            () => _selectedListMode =
+                                                _ClientListMode.active,
+                                          );
                                           await _loadClients(
-                                              mode: _ClientListMode.active);
+                                            mode: _ClientListMode.active,
+                                          );
                                         } else {
                                           await _loadClients();
                                         }
                                       } catch (e) {
                                         if (!mounted) return;
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           SnackBar(
-                                            content:
-                                                Text('$saveErrorPrefix: $e'),
+                                            content: Text(
+                                              '$saveErrorPrefix: $e',
+                                            ),
                                             backgroundColor:
                                                 BauhausDesign.error,
                                           ),
@@ -673,7 +700,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                       } finally {
                                         if (mounted && dialogContext.mounted) {
                                           setDialogState(
-                                              () => isSaving = false);
+                                            () => isSaving = false,
+                                          );
                                         }
                                       }
                                     },
@@ -719,7 +747,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     if (userContext == null) return;
 
     try {
-      final response = await ref.read(clientProvider.notifier).deleteClient(
+      final response = await ref
+          .read(clientProvider.notifier)
+          .deleteClient(
             clientId: client.id!,
             userEmail: userContext['userEmail']!,
             organizationId: userContext['organizationId']!,
@@ -781,13 +811,16 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     if (userContext == null) return;
 
     try {
-      final response = await ref.read(clientProvider.notifier).restoreClient(
+      final response = await ref
+          .read(clientProvider.notifier)
+          .restoreClient(
             clientId: client.id!,
             userEmail: userContext['userEmail']!,
             organizationId: userContext['organizationId']!,
           );
       if (!mounted) return;
-      final message = response['message']?.toString() ??
+      final message =
+          response['message']?.toString() ??
           'Client restored successfully. Activate account again to allow login.';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -845,9 +878,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
               Expanded(
                 child: Text(
                   'Sending activation email to $email...',
-                  style: BauhausDesign.getTextTheme(context)
-                      .bodyMedium
-                      ?.copyWith(color: BauhausDesign.surfaceWhite),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
                 ),
               ),
             ],
@@ -862,8 +895,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
   }) {
     if (!mounted) return;
     final messenger = ScaffoldMessenger.of(context);
-    final backgroundColor =
-        isError ? BauhausDesign.error : BauhausDesign.success;
+    final backgroundColor = isError
+        ? BauhausDesign.error
+        : BauhausDesign.success;
     final icon = isError ? Icons.error_outline : Icons.check_circle_outline;
 
     messenger
@@ -882,9 +916,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
               Expanded(
                 child: Text(
                   message,
-                  style: BauhausDesign.getTextTheme(context)
-                      .bodyMedium
-                      ?.copyWith(color: BauhausDesign.surfaceWhite),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
                 ),
               ),
             ],
@@ -931,9 +965,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
           Text(
             label,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: foregroundColor,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: foregroundColor,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
       ),
@@ -965,12 +999,10 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
       final response = await ref
           .read(clientProvider.notifier)
           .activateClient(client.clientEmail);
-      final message = response['message']?.toString() ??
+      final message =
+          response['message']?.toString() ??
           'Activation email sent. Status will remain Pending until setup is completed.';
-      _showClientActionSnackBar(
-        message: message,
-        isError: false,
-      );
+      _showClientActionSnackBar(message: message, isError: false);
       await _loadClients();
     } catch (e) {
       _showClientActionSnackBar(
@@ -1015,18 +1047,17 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     setState(() => _adminActivatingClientKeys.add(key));
 
     try {
-      final response =
-          await ref.read(clientProvider.notifier).markClientActivatedByAdmin(
-                clientId: clientId,
-                userEmail: userContext['userEmail']!,
-                organizationId: userContext['organizationId']!,
-              );
-      final message = response['message']?.toString() ??
+      final response = await ref
+          .read(clientProvider.notifier)
+          .markClientActivatedByAdmin(
+            clientId: clientId,
+            userEmail: userContext['userEmail']!,
+            organizationId: userContext['organizationId']!,
+          );
+      final message =
+          response['message']?.toString() ??
           'Client marked as activated by admin.';
-      _showClientActionSnackBar(
-        message: message,
-        isError: false,
-      );
+      _showClientActionSnackBar(message: message, isError: false);
       await _loadClients();
     } catch (e) {
       _showClientActionSnackBar(
@@ -1091,9 +1122,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
         title: Text(
           l10n.clients,
           style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: BauhausDesign.textDark,
-              ),
+            fontWeight: FontWeight.bold,
+            color: BauhausDesign.textDark,
+          ),
         ),
         actions: [
           Padding(
@@ -1125,8 +1156,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
 
     if (state.isLoading) {
       return BauhausLoadingState(
-        message:
-            isHistoryMode ? 'Loading client history...' : l10n.loadingClients,
+        message: isHistoryMode
+            ? 'Loading client history...'
+            : l10n.loadingClients,
       );
     }
 
@@ -1150,8 +1182,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
               ? 'Soft-deleted clients will appear here for restoration.'
               : l10n.noClientsFoundSubtitle,
           icon: Icons.people_outline,
-          actionLabel:
-              isHistoryMode ? 'View Active Clients' : l10n.addClientButton,
+          actionLabel: isHistoryMode
+              ? 'View Active Clients'
+              : l10n.addClientButton,
           onAction: () async {
             if (isHistoryMode) {
               await _switchListMode(_ClientListMode.active);
@@ -1176,10 +1209,12 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
 
   Widget _buildClientCard(BuildContext context, Patient client) {
     final isHistoryMode = _selectedListMode == _ClientListMode.history;
-    final isActivating =
-        _activatingClientKeys.contains(_activationKeyForClient(client));
-    final isAdminActivating =
-        _adminActivatingClientKeys.contains(_activationKeyForClient(client));
+    final isActivating = _activatingClientKeys.contains(
+      _activationKeyForClient(client),
+    );
+    final isAdminActivating = _adminActivatingClientKeys.contains(
+      _activationKeyForClient(client),
+    );
 
     return Padding(
       padding: EdgeInsets.only(bottom: BauhausDesign.space4),
@@ -1228,11 +1263,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                       SizedBox(height: BauhausDesign.space1),
                       Text(
                         client.clientEmail,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium
-                            ?.copyWith(
-                              color: BauhausDesign.textMuted,
-                            ),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                       ),
                     ],
                   ),
@@ -1252,13 +1285,19 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
               SizedBox(height: BauhausDesign.space2),
             if (client.clientAddress != null &&
                 client.clientAddress!.isNotEmpty)
-              _buildInfoRow(context, Icons.location_on_outlined,
-                  '${client.clientAddress}, ${client.clientCity ?? ''}'),
+              _buildInfoRow(
+                context,
+                Icons.location_on_outlined,
+                '${client.clientAddress}, ${client.clientCity ?? ''}',
+              ),
             if (client.businessName != null && client.businessName!.isNotEmpty)
               SizedBox(height: BauhausDesign.space2),
             if (client.businessName != null && client.businessName!.isNotEmpty)
               _buildInfoRow(
-                  context, Icons.business_outlined, client.businessName!),
+                context,
+                Icons.business_outlined,
+                client.businessName!,
+              ),
             if (isHistoryMode) ...[
               SizedBox(height: BauhausDesign.space2),
               _buildInfoRow(
@@ -1289,10 +1328,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                       icon: Icons.edit_note_rounded,
                       variant: BauhausActionVariant.secondary,
                       isSmall: true,
-                      onPressed: () => _showEditClientDialog(
-                        client,
-                        restoreAfterSave: true,
-                      ),
+                      onPressed: () =>
+                          _showEditClientDialog(client, restoreAfterSave: true),
                     ),
                   ),
                 ],
@@ -1342,8 +1379,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                       text: isActivating
                           ? 'Sending Activation...'
                           : (client.activationPending == true
-                              ? 'Resend Activation Email'
-                              : 'Activate Client Account'),
+                                ? 'Resend Activation Email'
+                                : 'Activate Client Account'),
                       icon: isActivating ? null : Icons.lock_open,
                       variant: BauhausActionVariant.secondary,
                       isSmall: true,
@@ -1382,18 +1419,14 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
   Widget _buildInfoRow(BuildContext context, IconData icon, String text) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 16,
-          color: BauhausDesign.textMuted,
-        ),
+        Icon(icon, size: 16, color: BauhausDesign.textMuted),
         SizedBox(width: BauhausDesign.space2),
         Expanded(
           child: Text(
             text,
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

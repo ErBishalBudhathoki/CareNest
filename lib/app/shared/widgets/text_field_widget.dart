@@ -47,20 +47,29 @@ class TextFieldWidget extends ConsumerWidget {
           validator: validator,
           style: BauhausDesign.getTextTheme(context).bodyLarge,
           decoration: BauhausDesign.inputDecoration(hintText).copyWith(
-            prefixIcon: prefixIcon ?? (prefixIconData != null ? Icon(prefixIconData, color: BauhausDesign.textMuted) : null),
+            prefixIcon:
+                prefixIcon ??
+                (prefixIconData != null
+                    ? Icon(prefixIconData, color: BauhausDesign.textMuted)
+                    : null),
             suffixIcon: suffixIconClickable
                 ? IconButton(
                     icon: Icon(
-                      getSuffixIcon != null 
-                          ? getSuffixIcon!(isObscure) 
-                          : (isObscure ? Icons.visibility_off : Icons.visibility),
+                      getSuffixIcon != null
+                          ? getSuffixIcon!(isObscure)
+                          : (isObscure
+                                ? Icons.visibility_off
+                                : Icons.visibility),
                       color: BauhausDesign.textMuted,
                     ),
                     onPressed: () {
                       obscureTextNotifier.value = !obscureTextNotifier.value;
                     },
                   )
-                : (suffixIcon ?? (suffixIconData != null ? Icon(suffixIconData, color: BauhausDesign.textMuted) : null)),
+                : (suffixIcon ??
+                      (suffixIconData != null
+                          ? Icon(suffixIconData, color: BauhausDesign.textMuted)
+                          : null)),
           ),
         );
       },

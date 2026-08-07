@@ -16,7 +16,8 @@ class PaymentInfo {
       status: json['status'] ?? 'pending',
       paidAmount: (json['paidAmount'] ?? 0.0).toDouble(),
       balanceDue: (json['balanceDue'] ?? 0.0).toDouble(),
-      transactions: (json['transactions'] as List<dynamic>?)
+      transactions:
+          (json['transactions'] as List<dynamic>?)
               ?.map((e) => PaymentTransaction.fromJson(e))
               .toList() ??
           [],

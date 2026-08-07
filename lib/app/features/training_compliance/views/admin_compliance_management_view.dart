@@ -30,8 +30,10 @@ class _AdminComplianceManagementViewState
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.manageChecklistsTitle,
-            style: BauhausDesign.getTextTheme(context).headlineLarge),
+        title: Text(
+          AppLocalizations.of(context)!.manageChecklistsTitle,
+          style: BauhausDesign.getTextTheme(context).headlineLarge,
+        ),
         backgroundColor: BauhausDesign.surfaceLight,
         iconTheme: const IconThemeData(color: BauhausDesign.textDark),
         elevation: 0,
@@ -43,32 +45,35 @@ class _AdminComplianceManagementViewState
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddChecklistDialog(context),
         backgroundColor: BauhausDesign.primary,
-        label: Text(AppLocalizations.of(context)!.addChecklistButton,
-            style: BauhausDesign.getTextTheme(context)
-                .labelLarge
-                ?.copyWith(color: Colors.white)),
+        label: Text(
+          AppLocalizations.of(context)!.addChecklistButton,
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).labelLarge?.copyWith(color: Colors.white),
+        ),
         icon: const Icon(Icons.add, color: Colors.white),
       ),
       body: state.isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: BauhausDesign.primary))
+              child: CircularProgressIndicator(color: BauhausDesign.primary),
+            )
           : state.checklists.isEmpty
-              ? Center(
-                  child: Text(
-                    AppLocalizations.of(context)!.noChecklistsFound,
-                    style: BauhausDesign.getTextTheme(context).bodyLarge,
-                  ),
-                )
-              : ListView.separated(
-                  padding: const EdgeInsets.all(BauhausDesign.space4),
-                  itemCount: state.checklists.length,
-                  separatorBuilder: (_, __) =>
-                      const SizedBox(height: BauhausDesign.space3),
-                  itemBuilder: (context, index) {
-                    final list = state.checklists[index];
-                    return _buildChecklistCard(context, list);
-                  },
-                ),
+          ? Center(
+              child: Text(
+                AppLocalizations.of(context)!.noChecklistsFound,
+                style: BauhausDesign.getTextTheme(context).bodyLarge,
+              ),
+            )
+          : ListView.separated(
+              padding: const EdgeInsets.all(BauhausDesign.space4),
+              itemCount: state.checklists.length,
+              separatorBuilder: (_, __) =>
+                  const SizedBox(height: BauhausDesign.space3),
+              itemBuilder: (context, index) {
+                final list = state.checklists[index];
+                return _buildChecklistCard(context, list);
+              },
+            ),
     );
   }
 
@@ -84,14 +89,16 @@ class _AdminComplianceManagementViewState
             style: BauhausDesign.getTextTheme(context).headlineLarge,
           ),
           const SizedBox(height: BauhausDesign.space2),
-          Text(list.description,
-              style: BauhausDesign.getTextTheme(context).bodyMedium),
+          Text(
+            list.description,
+            style: BauhausDesign.getTextTheme(context).bodyMedium,
+          ),
           const SizedBox(height: BauhausDesign.space3),
           Text(
             '${list.items.length} items',
-            style: BauhausDesign.getTextTheme(context)
-                .labelLarge
-                ?.copyWith(color: BauhausDesign.neutral),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).labelLarge?.copyWith(color: BauhausDesign.neutral),
           ),
           const SizedBox(height: BauhausDesign.space3),
           Row(
@@ -126,7 +133,9 @@ class _AdminComplianceManagementViewState
   }
 
   void _showEditChecklistDialog(
-      BuildContext context, ComplianceChecklist checklist) {
+    BuildContext context,
+    ComplianceChecklist checklist,
+  ) {
     showDialog(
       context: context,
       builder: (context) => EditChecklistDialog(checklist: checklist),
@@ -134,7 +143,9 @@ class _AdminComplianceManagementViewState
   }
 
   Future<void> _confirmDelete(
-      BuildContext context, ComplianceChecklist checklist) async {
+    BuildContext context,
+    ComplianceChecklist checklist,
+  ) async {
     final shouldDelete = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -173,7 +184,7 @@ class _AddChecklistDialogState extends ConsumerState<AddChecklistDialog> {
   final _titleController = TextEditingController();
   final _descController = TextEditingController();
   final List<TextEditingController> _itemControllers = [
-    TextEditingController()
+    TextEditingController(),
   ];
 
   void _addItem() {
@@ -196,8 +207,10 @@ class _AddChecklistDialogState extends ConsumerState<AddChecklistDialog> {
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         side: const BorderSide(color: BauhausDesign.neutral, width: 2),
       ),
-      title: Text(AppLocalizations.of(context)!.addChecklistTitle,
-          style: BauhausDesign.getTextTheme(context).headlineLarge),
+      title: Text(
+        AppLocalizations.of(context)!.addChecklistTitle,
+        style: BauhausDesign.getTextTheme(context).headlineLarge,
+      ),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -206,8 +219,9 @@ class _AddChecklistDialogState extends ConsumerState<AddChecklistDialog> {
             children: [
               TextFormField(
                 controller: _titleController,
-                decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(context)!.titleLabel),
+                decoration: BauhausDesign.inputDecoration(
+                  '',
+                ).copyWith(labelText: AppLocalizations.of(context)!.titleLabel),
                 validator: (v) => v?.isEmpty == true
                     ? AppLocalizations.of(context)!.requiredValidation
                     : null,
@@ -216,14 +230,17 @@ class _AddChecklistDialogState extends ConsumerState<AddChecklistDialog> {
               TextFormField(
                 controller: _descController,
                 decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(context)!.descriptionLabel),
+                  labelText: AppLocalizations.of(context)!.descriptionLabel,
+                ),
                 validator: (v) => v?.isEmpty == true
                     ? AppLocalizations.of(context)!.requiredValidation
                     : null,
               ),
               const SizedBox(height: BauhausDesign.space4),
-              Text(AppLocalizations.of(context)!.itemsLabel,
-                  style: BauhausDesign.getTextTheme(context).labelLarge),
+              Text(
+                AppLocalizations.of(context)!.itemsLabel,
+                style: BauhausDesign.getTextTheme(context).labelLarge,
+              ),
               const SizedBox(height: BauhausDesign.space2),
               ..._itemControllers.asMap().entries.map((entry) {
                 final index = entry.key;
@@ -237,8 +254,10 @@ class _AddChecklistDialogState extends ConsumerState<AddChecklistDialog> {
                           controller: controller,
                           decoration: BauhausDesign.inputDecoration('')
                               .copyWith(
-                                  labelText: AppLocalizations.of(context)!
-                                      .itemNumberLabel(index + 1)),
+                                labelText: AppLocalizations.of(
+                                  context,
+                                )!.itemNumberLabel(index + 1),
+                              ),
                           validator: (v) => v?.isEmpty == true
                               ? AppLocalizations.of(context)!.requiredValidation
                               : null,
@@ -246,8 +265,10 @@ class _AddChecklistDialogState extends ConsumerState<AddChecklistDialog> {
                       ),
                       if (_itemControllers.length > 1)
                         IconButton(
-                          icon: const Icon(Icons.delete,
-                              color: BauhausDesign.error),
+                          icon: const Icon(
+                            Icons.delete,
+                            color: BauhausDesign.error,
+                          ),
                           onPressed: () => _removeItem(index),
                         ),
                     ],
@@ -266,10 +287,12 @@ class _AddChecklistDialogState extends ConsumerState<AddChecklistDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(AppLocalizations.of(context)!.cancelButton,
-              style: BauhausDesign.getTextTheme(context)
-                  .labelLarge
-                  ?.copyWith(color: BauhausDesign.textDark)),
+          child: Text(
+            AppLocalizations.of(context)!.cancelButton,
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).labelLarge?.copyWith(color: BauhausDesign.textDark),
+          ),
         ),
         BauhausButton(
           text: AppLocalizations.of(context)!.createButton,
@@ -343,8 +366,10 @@ class _EditChecklistDialogState extends ConsumerState<EditChecklistDialog> {
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         side: const BorderSide(color: BauhausDesign.neutral, width: 2),
       ),
-      title: Text(AppLocalizations.of(context)!.editButton,
-          style: BauhausDesign.getTextTheme(context).headlineLarge),
+      title: Text(
+        AppLocalizations.of(context)!.editButton,
+        style: BauhausDesign.getTextTheme(context).headlineLarge,
+      ),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -353,8 +378,9 @@ class _EditChecklistDialogState extends ConsumerState<EditChecklistDialog> {
             children: [
               TextFormField(
                 controller: _titleController,
-                decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(context)!.titleLabel),
+                decoration: BauhausDesign.inputDecoration(
+                  '',
+                ).copyWith(labelText: AppLocalizations.of(context)!.titleLabel),
                 validator: (v) => v?.isEmpty == true
                     ? AppLocalizations.of(context)!.requiredValidation
                     : null,
@@ -363,14 +389,17 @@ class _EditChecklistDialogState extends ConsumerState<EditChecklistDialog> {
               TextFormField(
                 controller: _descController,
                 decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(context)!.descriptionLabel),
+                  labelText: AppLocalizations.of(context)!.descriptionLabel,
+                ),
                 validator: (v) => v?.isEmpty == true
                     ? AppLocalizations.of(context)!.requiredValidation
                     : null,
               ),
               const SizedBox(height: BauhausDesign.space4),
-              Text(AppLocalizations.of(context)!.itemsLabel,
-                  style: BauhausDesign.getTextTheme(context).labelLarge),
+              Text(
+                AppLocalizations.of(context)!.itemsLabel,
+                style: BauhausDesign.getTextTheme(context).labelLarge,
+              ),
               const SizedBox(height: BauhausDesign.space2),
               ..._itemControllers.asMap().entries.map((entry) {
                 final index = entry.key;
@@ -384,8 +413,10 @@ class _EditChecklistDialogState extends ConsumerState<EditChecklistDialog> {
                           controller: controller,
                           decoration: BauhausDesign.inputDecoration('')
                               .copyWith(
-                                  labelText: AppLocalizations.of(context)!
-                                      .itemNumberLabel(index + 1)),
+                                labelText: AppLocalizations.of(
+                                  context,
+                                )!.itemNumberLabel(index + 1),
+                              ),
                           validator: (v) => v?.isEmpty == true
                               ? AppLocalizations.of(context)!.requiredValidation
                               : null,
@@ -393,8 +424,10 @@ class _EditChecklistDialogState extends ConsumerState<EditChecklistDialog> {
                       ),
                       if (_itemControllers.length > 1)
                         IconButton(
-                          icon: const Icon(Icons.delete,
-                              color: BauhausDesign.error),
+                          icon: const Icon(
+                            Icons.delete,
+                            color: BauhausDesign.error,
+                          ),
                           onPressed: () => _removeItem(index),
                         ),
                     ],
@@ -413,10 +446,12 @@ class _EditChecklistDialogState extends ConsumerState<EditChecklistDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(AppLocalizations.of(context)!.cancelButton,
-              style: BauhausDesign.getTextTheme(context)
-                  .labelLarge
-                  ?.copyWith(color: BauhausDesign.textDark)),
+          child: Text(
+            AppLocalizations.of(context)!.cancelButton,
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).labelLarge?.copyWith(color: BauhausDesign.textDark),
+          ),
         ),
         BauhausButton(
           text: AppLocalizations.of(context)!.saveProgressButton,

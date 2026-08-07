@@ -18,12 +18,13 @@ class ReliabilityTable extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('RELIABILITY METRICS',
-              style:
-                  BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w900,
-                        color: BauhausDesign.textDark,
-                      )),
+          Text(
+            'RELIABILITY METRICS',
+            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+              fontWeight: FontWeight.w900,
+              color: BauhausDesign.textDark,
+            ),
+          ),
           const SizedBox(height: 16),
           if (metrics.isEmpty)
             const Padding(
@@ -39,8 +40,10 @@ class ReliabilityTable extends StatelessWidget {
                 3: FlexColumnWidth(0.9),
               },
               border: TableBorder(
-                horizontalInside:
-                    BorderSide(color: BauhausDesign.neutral, width: 1),
+                horizontalInside: BorderSide(
+                  color: BauhausDesign.neutral,
+                  width: 1,
+                ),
                 bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
               ),
               children: [
@@ -53,19 +56,29 @@ class ReliabilityTable extends StatelessWidget {
                     _HeaderCell('RATE'),
                   ],
                 ),
-                ...sortedMetrics.take(10).map((m) => TableRow(
-                      children: [
-                        _DataCell(
+                ...sortedMetrics
+                    .take(10)
+                    .map(
+                      (m) => TableRow(
+                        children: [
+                          _DataCell(
                             m.employeeEmail.contains('@')
                                 ? m.employeeEmail.split('@')[0]
                                 : m.employeeEmail,
-                            align: TextAlign.left), // Safe name extraction
-                        _DataCell(m.totalScheduled.toString()),
-                        _DataCell(m.noShows.toString(), isAlert: m.noShows > 0),
-                        _DataCell('${m.noShowRate.toStringAsFixed(1)}%',
-                            isAlert: m.noShowRate > 5),
-                      ],
-                    )),
+                            align: TextAlign.left,
+                          ), // Safe name extraction
+                          _DataCell(m.totalScheduled.toString()),
+                          _DataCell(
+                            m.noShows.toString(),
+                            isAlert: m.noShows > 0,
+                          ),
+                          _DataCell(
+                            '${m.noShowRate.toStringAsFixed(1)}%',
+                            isAlert: m.noShowRate > 5,
+                          ),
+                        ],
+                      ),
+                    ),
               ],
             ),
         ],
@@ -90,7 +103,9 @@ class _HeaderCell extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         textAlign: align,
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-            color: BauhausDesign.surfaceWhite, fontWeight: FontWeight.bold),
+          color: BauhausDesign.surfaceWhite,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
@@ -101,7 +116,11 @@ class _DataCell extends StatelessWidget {
   final bool isAlert;
   final TextAlign align;
 
-  const _DataCell(this.text, {this.isAlert = false, this.align = TextAlign.center});
+  const _DataCell(
+    this.text, {
+    this.isAlert = false,
+    this.align = TextAlign.center,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -112,9 +131,9 @@ class _DataCell extends StatelessWidget {
         maxLines: 1,
         textAlign: align,
         style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-              color: isAlert ? BauhausDesign.error : BauhausDesign.textDark,
-              fontWeight: isAlert ? FontWeight.bold : FontWeight.normal,
-            ),
+          color: isAlert ? BauhausDesign.error : BauhausDesign.textDark,
+          fontWeight: isAlert ? FontWeight.bold : FontWeight.normal,
+        ),
       ),
     );
   }

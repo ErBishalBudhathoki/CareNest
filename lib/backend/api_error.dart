@@ -4,9 +4,7 @@ class ApiError {
   ApiError({this.error = ''});
 
   factory ApiError.fromJson(Map<String, dynamic> json) {
-    return ApiError(
-      error: json['error'] ?? '',
-    );
+    return ApiError(error: json['error'] ?? '');
   }
 
   Map<String, dynamic> toJson() {

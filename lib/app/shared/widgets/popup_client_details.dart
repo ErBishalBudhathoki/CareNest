@@ -14,18 +14,18 @@ void popUpClientDetails(
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: BauhausDesign.surfaceWhite,
-          title: Text(message,
-              style:
-                  BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: BauhausDesign.textDark,
-                      )),
+          title: Text(
+            message,
+            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: BauhausDesign.textDark,
+            ),
+          ),
           content: Text(
             detailMessage ?? '$title details added successfully',
-            style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                  color: BauhausDesign.textDark,
-                  height: 1.5,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyLarge?.copyWith(color: BauhausDesign.textDark, height: 1.5),
           ),
           actions: [
             BauhausActionButton(
@@ -34,7 +34,7 @@ void popUpClientDetails(
               },
               text: 'OK',
               variant: BauhausActionVariant.primary,
-            )
+            ),
           ],
         );
       },
@@ -45,18 +45,18 @@ void popUpClientDetails(
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: BauhausDesign.surfaceWhite,
-          title: Text(message,
-              style:
-                  BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: BauhausDesign.error,
-                      )),
+          title: Text(
+            message,
+            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: BauhausDesign.error,
+            ),
+          ),
           content: Text(
             detailMessage ?? 'Failed or data already added for $title',
-            style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                  color: BauhausDesign.textDark,
-                  height: 1.5,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyLarge?.copyWith(color: BauhausDesign.textDark, height: 1.5),
           ),
           actions: [
             BauhausActionButton(
@@ -65,7 +65,7 @@ void popUpClientDetails(
               },
               text: 'OK',
               variant: BauhausActionVariant.primary,
-            )
+            ),
           ],
         );
       },

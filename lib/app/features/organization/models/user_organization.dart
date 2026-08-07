@@ -14,7 +14,7 @@ abstract class UserOrganization with _$UserOrganization {
     @Default(true) bool isActive,
     required DateTime joinedAt,
     DateTime? lastAccessedAt,
-    
+
     // Flattened organization details for UI convenience
     String? organizationName,
     String? organizationCode,

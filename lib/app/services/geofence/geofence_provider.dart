@@ -4,7 +4,6 @@ import 'package:carenest/app/services/geofence/geofence_service.dart';
 import 'package:carenest/app/features/notifications/models/notification_model.dart';
 import 'package:carenest/app/services/notificationservice/local_notification_service.dart';
 
-
 /// Provider for the GeofenceService singleton
 final geofenceServiceProvider = Provider<GeofenceService>((ref) {
   return GeofenceService();
@@ -19,7 +18,8 @@ final geofenceEnabledProvider = FutureProvider<bool>((ref) async {
 /// Handler for geofence events - sends clock-in reminder notifications
 class GeofenceNotificationHandler {
   final LocalNotificationService _notificationService;
-  final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _plugin =
+      FlutterLocalNotificationsPlugin();
 
   GeofenceNotificationHandler(this._notificationService);
 
@@ -43,16 +43,13 @@ class GeofenceNotificationHandler {
     );
 
     // Display local notification
-    await _notificationService.createAndDisplayNotification(
-      notification,
-      {
-        'type': 'geofence_arrival',
-        'clientId': location.clientId,
-        'clientName': location.clientName,
-        'appointmentId': location.appointmentId ?? '',
-        'channelId': 'shift_reminders',
-      },
-    );
+    await _notificationService.createAndDisplayNotification(notification, {
+      'type': 'geofence_arrival',
+      'clientId': location.clientId,
+      'clientName': location.clientName,
+      'appointmentId': location.appointmentId ?? '',
+      'channelId': 'shift_reminders',
+    });
   }
 
   /// Handle when user exits a client's geofence (optional feature)
@@ -63,22 +60,23 @@ class GeofenceNotificationHandler {
 }
 
 /// Provider for the notification handler
-final geofenceNotificationHandlerProvider = Provider<GeofenceNotificationHandler>((ref) {
-  return GeofenceNotificationHandler(LocalNotificationService());
-});
+final geofenceNotificationHandlerProvider =
+    Provider<GeofenceNotificationHandler>((ref) {
+      return GeofenceNotificationHandler(LocalNotificationService());
+    });
 
 /// Initialize geofence monitoring with notification handling
 Future<void> initializeGeofenceMonitoring(WidgetRef ref) async {
   final geofenceService = ref.read(geofenceServiceProvider);
   final notificationHandler = ref.read(geofenceNotificationHandlerProvider);
-  
+
   // Load any saved geofences
   await geofenceService.loadSavedGeofences();
-  
+
   // Check if geofencing is enabled
   final isEnabled = await geofenceService.isGeofencingEnabled();
   if (!isEnabled) return;
-  
+
   // Start monitoring with notification callback
   await geofenceService.startMonitoring(
     onEvent: (location, isEntry) async {

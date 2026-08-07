@@ -35,10 +35,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/revenue/drivers',
-      body: {
-        'organizationId': organizationId,
-        'period': period,
-      },
+      body: {'organizationId': organizationId, 'period': period},
     );
   }
 
@@ -49,10 +46,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/revenue/scenarios',
-      body: {
-        'organizationId': organizationId,
-        'horizon': horizon,
-      },
+      body: {'organizationId': organizationId, 'horizon': horizon},
     );
   }
 
@@ -64,10 +58,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/revenue/what-if',
-      body: {
-        'organizationId': organizationId,
-        'changes': changes,
-      },
+      body: {'organizationId': organizationId, 'changes': changes},
     );
   }
 
@@ -131,10 +122,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/pricing/test',
-      body: {
-        'organizationId': organizationId,
-        'testConfig': testConfig,
-      },
+      body: {'organizationId': organizationId, 'testConfig': testConfig},
     );
   }
 
@@ -145,9 +133,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/pricing/recommendations/$serviceId',
-      body: {
-        'marketData': marketData ?? {},
-      },
+      body: {'marketData': marketData ?? {}},
     );
   }
 
@@ -158,10 +144,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/pricing/margin-analysis',
-      body: {
-        'organizationId': organizationId,
-        'services': services,
-      },
+      body: {'organizationId': organizationId, 'services': services},
     );
   }
 
@@ -186,9 +169,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/pricing/elasticity/$serviceId',
-      body: {
-        'historicalData': historicalData ?? [],
-      },
+      body: {'historicalData': historicalData ?? []},
     );
   }
 
@@ -199,10 +180,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/pricing/bundle-optimization',
-      body: {
-        'organizationId': organizationId,
-        'services': services,
-      },
+      body: {'organizationId': organizationId, 'services': services},
     );
   }
 
@@ -232,9 +210,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/billing/validate',
-      body: {
-        'billingData': billingData,
-      },
+      body: {'billingData': billingData},
     );
   }
 
@@ -244,9 +220,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/billing/anomaly-detection',
-      body: {
-        'invoiceData': invoiceData,
-      },
+      body: {'invoiceData': invoiceData},
     );
   }
 
@@ -274,11 +248,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/billing/credit-note',
-      body: {
-        'invoiceId': invoiceId,
-        'reason': reason,
-        'amount': amount,
-      },
+      body: {'invoiceId': invoiceId, 'reason': reason, 'amount': amount},
     );
   }
 
@@ -319,10 +289,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/billing/reconcile',
-      body: {
-        'organizationId': organizationId,
-        'period': period,
-      },
+      body: {'organizationId': organizationId, 'period': period},
     );
   }
 
@@ -337,10 +304,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/cashflow/forecast',
-      body: {
-        'organizationId': organizationId,
-        'horizon': horizon,
-      },
+      body: {'organizationId': organizationId, 'horizon': horizon},
     );
   }
 
@@ -351,10 +315,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/cashflow/payment-prediction',
-      body: {
-        'organizationId': organizationId,
-        'invoices': invoices,
-      },
+      body: {'organizationId': organizationId, 'invoices': invoices},
     );
   }
 
@@ -388,10 +349,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/cashflow/scenario',
-      body: {
-        'organizationId': organizationId,
-        'scenario': scenario,
-      },
+      body: {'organizationId': organizationId, 'scenario': scenario},
     );
   }
 
@@ -511,10 +469,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/budget/create',
-      body: {
-        'organizationId': organizationId,
-        'budgetData': budgetData,
-      },
+      body: {'organizationId': organizationId, 'budgetData': budgetData},
     );
   }
 
@@ -525,10 +480,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/budget/monitor',
-      body: {
-        'organizationId': organizationId,
-        'budgetId': budgetId,
-      },
+      body: {'organizationId': organizationId, 'budgetId': budgetId},
     );
   }
 
@@ -539,10 +491,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/budget/variance',
-      body: {
-        'budgetId': budgetId,
-        'period': period,
-      },
+      body: {'budgetId': budgetId, 'period': period},
     );
   }
 
@@ -553,10 +502,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/budget/forecast',
-      body: {
-        'organizationId': organizationId,
-        'budgetId': budgetId,
-      },
+      body: {'organizationId': organizationId, 'budgetId': budgetId},
     );
   }
 
@@ -606,10 +552,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/payment/reconcile',
-      body: {
-        'organizationId': organizationId,
-        'period': period,
-      },
+      body: {'organizationId': organizationId, 'period': period},
     );
   }
 
@@ -689,10 +632,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/client/credit-limit',
-      body: {
-        'clientId': clientId,
-        'organizationId': organizationId,
-      },
+      body: {'clientId': clientId, 'organizationId': organizationId},
     );
   }
 
@@ -703,10 +643,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/client/lifetime-value',
-      body: {
-        'clientId': clientId,
-        'organizationId': organizationId,
-      },
+      body: {'clientId': clientId, 'organizationId': organizationId},
     );
   }
 
@@ -717,10 +654,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/client/financial-health',
-      body: {
-        'clientId': clientId,
-        'organizationId': organizationId,
-      },
+      body: {'clientId': clientId, 'organizationId': organizationId},
     );
   }
 
@@ -735,10 +669,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/reporting/executive',
-      body: {
-        'organizationId': organizationId,
-        'period': period,
-      },
+      body: {'organizationId': organizationId, 'period': period},
     );
   }
 
@@ -749,10 +680,7 @@ class FinancialIntelligenceRepository {
   }) async {
     return await _apiMethod.post(
       '/financial-intelligence/reporting/custom',
-      body: {
-        'organizationId': organizationId,
-        'config': config,
-      },
+      body: {'organizationId': organizationId, 'config': config},
     );
   }
 

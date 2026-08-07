@@ -16,8 +16,9 @@ class EncryptDecrypt {
   static Future<String?> generateEncryptionKey({int length = 32}) async {
     final random = Random.secure(); // Use secure random generator
     final values = List<int>.generate(length, (i) => random.nextInt(256));
-    final encodedKey =
-        base64UrlEncode(values); // Encode as Base64 for readability
+    final encodedKey = base64UrlEncode(
+      values,
+    ); // Encode as Base64 for readability
     final key = await setSecureEncryptionKey(encodedKey);
     debugPrint('Encryption key generated and stored securely');
     return key;

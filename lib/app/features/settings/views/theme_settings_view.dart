@@ -49,10 +49,7 @@ class ThemeSettingsView extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: BauhausDesign.neutral, width: 2),
                 boxShadow: const [
-                  BoxShadow(
-                    color: BauhausDesign.neutral,
-                    offset: Offset(4, 4),
-                  ),
+                  BoxShadow(color: BauhausDesign.neutral, offset: Offset(4, 4)),
                 ],
               ),
               child: Row(
@@ -64,15 +61,16 @@ class ThemeSettingsView extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: BauhausDesign.accent),
                     ),
-                    child: const Icon(Icons.palette_outlined,
-                        color: BauhausDesign.accent),
+                    child: const Icon(
+                      Icons.palette_outlined,
+                      color: BauhausDesign.accent,
+                    ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
                       AppLocalizations.of(context)!.themeInfoMessage,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
                             fontWeight: FontWeight.w500,
                             color: BauhausDesign.textDark,
@@ -87,10 +85,10 @@ class ThemeSettingsView extends ConsumerWidget {
             Text(
               AppLocalizations.of(context)!.appearance,
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.neutral,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.0,
-                  ),
+                color: BauhausDesign.neutral,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.0,
+              ),
             ),
             const SizedBox(height: 16),
 
@@ -150,10 +148,7 @@ class ThemeSettingsView extends ConsumerWidget {
           ),
           boxShadow: isSelected
               ? const [
-                  BoxShadow(
-                    color: BauhausDesign.neutral,
-                    offset: Offset(4, 4),
-                  ),
+                  BoxShadow(color: BauhausDesign.neutral, offset: Offset(4, 4)),
                 ]
               : [],
         ),
@@ -169,8 +164,9 @@ class ThemeSettingsView extends ConsumerWidget {
               ),
               child: Icon(
                 icon,
-                color:
-                    isSelected ? BauhausDesign.primary : BauhausDesign.neutral,
+                color: isSelected
+                    ? BauhausDesign.primary
+                    : BauhausDesign.neutral,
                 size: 24,
               ),
             ),
@@ -179,12 +175,12 @@ class ThemeSettingsView extends ConsumerWidget {
               child: Text(
                 title,
                 style: BauhausDesign.getTextTheme(context).titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: isSelected
-                          ? BauhausDesign.textDark
-                          : BauhausDesign.neutral,
-                      fontSize: 16,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: isSelected
+                      ? BauhausDesign.textDark
+                      : BauhausDesign.neutral,
+                  fontSize: 16,
+                ),
               ),
             ),
             if (isSelected)
@@ -196,8 +192,11 @@ class ThemeSettingsView extends ConsumerWidget {
                   color: BauhausDesign.primary,
                   border: Border.all(color: BauhausDesign.primary),
                 ),
-                child: const Icon(Icons.check,
-                    size: 16, color: BauhausDesign.textLight),
+                child: const Icon(
+                  Icons.check,
+                  size: 16,
+                  color: BauhausDesign.textLight,
+                ),
               ),
           ],
         ),

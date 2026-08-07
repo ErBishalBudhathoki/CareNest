@@ -48,14 +48,18 @@ class StubApiMethod extends Mock implements ApiMethod {
 
   @override
   Future<Map<String, dynamic>?> getBulkPricingLookup(
-      String organizationId, List<String> supportItemNumbers,
-      {String? clientId}) async {
+    String organizationId,
+    List<String> supportItemNumbers, {
+    String? clientId,
+  }) async {
     return bulkReturn;
   }
 
   @override
   Future<List<Map<String, dynamic>>?> getPriceHistory(
-      String ndisItemNumber, String clientId) async {
+    String ndisItemNumber,
+    String clientId,
+  ) async {
     return priceHistoryReturn ?? <Map<String, dynamic>>[];
   }
 
@@ -75,7 +79,7 @@ class StubApiMethod extends Mock implements ApiMethod {
       'data': {
         'validationResults': <dynamic>[],
         'summary': <String, dynamic>{},
-      }
+      },
     };
   }
 }
@@ -87,7 +91,7 @@ void main() {
 
   setUp(() {
     mockApiMethod = MockApiMethod();
-    
+
     final container = ProviderContainer(
       overrides: [
         app_providers.apiMethodProvider.overrideWith((ref) => mockApiMethod),
@@ -110,8 +114,10 @@ void main() {
         // Call the private method using reflection or a test-only public method
         // This is a simplified version that just tests our fix
         final processedData = {'clients': null};
-        return invoiceService.testCheckForMissingPrices(processedData,
-            l10n: MockAppLocalizations());
+        return invoiceService.testCheckForMissingPrices(
+          processedData,
+          l10n: MockAppLocalizations(),
+        );
       }
 
       // The test should not throw an error
@@ -125,8 +131,11 @@ void main() {
         // This is a simplified version that just tests our fix
         final processedData = {'clients': null};
         final resolutions = <Map<String, dynamic>>[];
-        invoiceService.testApplyPriceResolutions(processedData, resolutions,
-            l10n: MockAppLocalizations());
+        invoiceService.testApplyPriceResolutions(
+          processedData,
+          resolutions,
+          l10n: MockAppLocalizations(),
+        );
       }
 
       // The test should not throw an error
@@ -134,27 +143,29 @@ void main() {
     });
 
     test(
-        '_processSelectedEmployeesAndClients handles null selectedClients list',
-        () {
-      // Create a test method that exposes the private method
-      Future<Map<String, dynamic>>
-          testProcessSelectedEmployeesAndClients() async {
-        // Call the private method using reflection or a test-only public method
-        // This is a simplified version that just tests our fix
-        final selectedEmployeesAndClients = [
-          {
-            'email': 'test@example.com',
-            'name': 'Test User',
-            'selectedClients': null
-          }
-        ];
-        return invoiceService.testProcessSelectedEmployeesAndClients(
-            selectedEmployeesAndClients);
-      }
+      '_processSelectedEmployeesAndClients handles null selectedClients list',
+      () {
+        // Create a test method that exposes the private method
+        Future<Map<String, dynamic>>
+        testProcessSelectedEmployeesAndClients() async {
+          // Call the private method using reflection or a test-only public method
+          // This is a simplified version that just tests our fix
+          final selectedEmployeesAndClients = [
+            {
+              'email': 'test@example.com',
+              'name': 'Test User',
+              'selectedClients': null,
+            },
+          ];
+          return invoiceService.testProcessSelectedEmployeesAndClients(
+            selectedEmployeesAndClients,
+          );
+        }
 
-      // The test should not throw an error
-      expect(testProcessSelectedEmployeesAndClients(), completes);
-    });
+        // The test should not throw an error
+        expect(testProcessSelectedEmployeesAndClients(), completes);
+      },
+    );
 
     test('sendInvoiceEmails handles null _invoices list', () {
       // We can't directly mock the email service since it's created internally
@@ -165,7 +176,9 @@ void main() {
 
       // The test should not throw an error
       expect(
-          invoiceService.sendInvoiceEmails('path', 'email', 'key'), completes);
+        invoiceService.sendInvoiceEmails('path', 'email', 'key'),
+        completes,
+      );
     });
   });
 
@@ -247,10 +260,7 @@ void main() {
       };
 
       // taxRate omitted in args -> should use client['taxRate']
-      invoiceService.testRecalculateInvoiceTotal(
-        clientTaxable,
-        applyTax: null,
-      );
+      invoiceService.testRecalculateInvoiceTotal(clientTaxable, applyTax: null);
 
       expect(clientTaxable['subtotal'], 150.0);
       expect(clientTaxable['taxAmount'], closeTo(30.0, 0.0001));
@@ -328,8 +338,9 @@ void main() {
   });
 
   group('Top-level validation error cases', () {
-    testWidgets('Negative tax rate triggers error state and empty result',
-        (tester) async {
+    testWidgets('Negative tax rate triggers error state and empty result', (
+      tester,
+    ) async {
       // Minimal widget to obtain BuildContext
       BuildContext? capturedContext;
       await tester.pumpWidget(
@@ -369,99 +380,94 @@ void main() {
     /// Verifies that when bulk pricing provides a fallback base rate above a cap,
     /// the service clamps to the cap and rounds price and total to 2 decimals,
     /// and does not generate a missing-price prompt for that item.
-    test('Applies bulk fallback base rate with cap clamping and rounding',
-        () async {
-      // Stub bulk pricing to include price above cap for one item,
-      // and standard price info for another (to trigger prompt).
-      final stubApi = StubApiMethod()
-        ..bulkReturn = {
-          '01_020_0120_1_1': {
-            'price': 70.0,
-            'priceCap': 65.17,
-          },
-          '03_000_0000_0_0': {
-            'standardPrice': 60.0,
-            'priceCap': 65.17,
-          },
-        }
-        ..priceHistoryReturn = <Map<String, dynamic>>[];
-      final container = ProviderContainer(
-        overrides: [
-          app_providers.apiMethodProvider.overrideWith((ref) => stubApi),
-        ],
-      );
-      addTearDown(container.dispose);
-      final testRef = container.read(Provider<Ref>((ref) => ref));
-      invoiceService = EnhancedInvoiceService(testRef, stubApi);
-
-      final processedData = {
-        'clients': [
-          {
-            'clientId': 'CID-1',
-            'clientName': 'Client A',
-            'state': 'NSW',
-            'providerType': 'standard',
-            // Items used for bulk lookup collection
-            'items': [
-              {
-                'ndisItemNumber': '01_020_0120_1_1',
-                'quantity': 2.5,
-                'description': 'Transport (per km)'
-              },
-              {
-                'ndisItemNumber': '03_000_0000_0_0',
-                'quantity': 1.0,
-                'description': 'Unknown Item'
-              },
-            ],
-            // Line items are the ones that get updated
-            'lineItems': [
-              {
-                'ndisItemNumber': '01_020_0120_1_1',
-                'quantity': 2.5,
-                'description': 'Transport (per km)'
-              },
-              {
-                'ndisItemNumber': '03_000_0000_0_0',
-                'quantity': 1.0,
-                'description': 'Unknown Item'
-              },
-            ],
+    test(
+      'Applies bulk fallback base rate with cap clamping and rounding',
+      () async {
+        // Stub bulk pricing to include price above cap for one item,
+        // and standard price info for another (to trigger prompt).
+        final stubApi = StubApiMethod()
+          ..bulkReturn = {
+            '01_020_0120_1_1': {'price': 70.0, 'priceCap': 65.17},
+            '03_000_0000_0_0': {'standardPrice': 60.0, 'priceCap': 65.17},
           }
-        ]
-      };
+          ..priceHistoryReturn = <Map<String, dynamic>>[];
+        final container = ProviderContainer(
+          overrides: [
+            app_providers.apiMethodProvider.overrideWith((ref) => stubApi),
+          ],
+        );
+        addTearDown(container.dispose);
+        final testRef = container.read(Provider<Ref>((ref) => ref));
+        invoiceService = EnhancedInvoiceService(testRef, stubApi);
 
-      final prompts = await invoiceService.testCheckForMissingPrices(
-        processedData,
-        organizationId: 'ORG-TEST',
-        l10n: MockAppLocalizations(),
-      );
+        final processedData = {
+          'clients': [
+            {
+              'clientId': 'CID-1',
+              'clientName': 'Client A',
+              'state': 'NSW',
+              'providerType': 'standard',
+              // Items used for bulk lookup collection
+              'items': [
+                {
+                  'ndisItemNumber': '01_020_0120_1_1',
+                  'quantity': 2.5,
+                  'description': 'Transport (per km)',
+                },
+                {
+                  'ndisItemNumber': '03_000_0000_0_0',
+                  'quantity': 1.0,
+                  'description': 'Unknown Item',
+                },
+              ],
+              // Line items are the ones that get updated
+              'lineItems': [
+                {
+                  'ndisItemNumber': '01_020_0120_1_1',
+                  'quantity': 2.5,
+                  'description': 'Transport (per km)',
+                },
+                {
+                  'ndisItemNumber': '03_000_0000_0_0',
+                  'quantity': 1.0,
+                  'description': 'Unknown Item',
+                },
+              ],
+            },
+          ],
+        };
 
-      // Item 1 should have organization-level price applied from bulk,
-      // clamped and rounded.
-      final li0 = (processedData['clients'] as List).first['lineItems'][0]
-          as Map<String, dynamic>;
-      expect(li0['price'], 65.17);
-      expect(li0['pricingSource'], 'Organization-wide custom price');
-      expect(li0['exceedsPriceCap'], isFalse);
-      expect(li0['total'], 162.93); // 65.17 * 2.5 rounded to 2 decimals
+        final prompts = await invoiceService.testCheckForMissingPrices(
+          processedData,
+          organizationId: 'ORG-TEST',
+          l10n: MockAppLocalizations(),
+        );
 
-      // Item 2 still needs pricing -> prompt generated with suggested price and cap.
-      expect(prompts.length, 1);
-      final prompt = prompts.first;
-      expect(prompt['ndisItemNumber'], '03_000_0000_0_0');
-      expect(prompt['suggestedPrice'], 60.0);
-      expect(prompt['priceCap'], 65.17);
-    });
+        // Item 1 should have organization-level price applied from bulk,
+        // clamped and rounded.
+        final li0 =
+            (processedData['clients'] as List).first['lineItems'][0]
+                as Map<String, dynamic>;
+        expect(li0['price'], 65.17);
+        expect(li0['pricingSource'], 'Organization-wide custom price');
+        expect(li0['exceedsPriceCap'], isFalse);
+        expect(li0['total'], 162.93); // 65.17 * 2.5 rounded to 2 decimals
+
+        // Item 2 still needs pricing -> prompt generated with suggested price and cap.
+        expect(prompts.length, 1);
+        final prompt = prompts.first;
+        expect(prompt['ndisItemNumber'], '03_000_0000_0_0');
+        expect(prompt['suggestedPrice'], 60.0);
+        expect(prompt['priceCap'], 65.17);
+      },
+    );
 
     /// Verifies that organization-wide custom pricing from bulk data is
     /// applied immediately even if the line item already has a price.
     test('Prefers custom pricing from bulk over existing item price', () async {
       final stubApi2 = StubApiMethod()
         ..bulkReturn = {
-          '04_101_0104_1_1': {
-            'customPrice': 45.0,
-          },
+          '04_101_0104_1_1': {'customPrice': 45.0},
         }
         ..priceHistoryReturn = <Map<String, dynamic>>[];
       final container = ProviderContainer(
@@ -484,7 +490,7 @@ void main() {
               {
                 'ndisItemNumber': '04_101_0104_1_1',
                 'quantity': 2.0,
-                'description': 'Assistance'
+                'description': 'Assistance',
               },
             ],
             'lineItems': [
@@ -492,11 +498,11 @@ void main() {
                 'ndisItemNumber': '04_101_0104_1_1',
                 'quantity': 2.0,
                 'price': 40.0, // existing price should be overridden
-                'description': 'Assistance'
+                'description': 'Assistance',
               },
             ],
-          }
-        ]
+          },
+        ],
       };
 
       final prompts = await invoiceService.testCheckForMissingPrices(
@@ -508,8 +514,9 @@ void main() {
       // No prompt expected; custom pricing applied.
       expect(prompts, isEmpty);
 
-      final li0 = (processedData['clients'] as List).first['lineItems'][0]
-          as Map<String, dynamic>;
+      final li0 =
+          (processedData['clients'] as List).first['lineItems'][0]
+              as Map<String, dynamic>;
       expect(li0['price'], 45.0);
       expect(li0['pricingSource'], 'Organization-wide custom price');
       expect(li0['total'], 90.0);

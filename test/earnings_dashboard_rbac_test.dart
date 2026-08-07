@@ -105,7 +105,9 @@ class _FakeEarningsRepository extends EarningsRepository {
 }
 
 void main() {
-  testWidgets('admin sees Business Overview in earnings dashboard', (tester) async {
+  testWidgets('admin sees Business Overview in earnings dashboard', (
+    tester,
+  ) async {
     final user = User(
       id: '1',
       organizationId: 'org-1',
@@ -120,9 +122,13 @@ void main() {
       ProviderScope(
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
-          userRoleProvider.overrideWith(() => _ImmediateUserRoleNotifier(UserRole.admin)),
+          userRoleProvider.overrideWith(
+            () => _ImmediateUserRoleNotifier(UserRole.admin),
+          ),
           currentUserProvider.overrideWith((ref) async => user),
-          earningsRepositoryProvider.overrideWithValue(_FakeEarningsRepository()),
+          earningsRepositoryProvider.overrideWithValue(
+            _FakeEarningsRepository(),
+          ),
           businessStatsProvider.overrideWith((ref, orgId) async {
             return const {
               'activeBusinesses': 1,
@@ -152,8 +158,9 @@ void main() {
     await tester.pump();
   });
 
-  testWidgets('employee does not see Business Overview in earnings dashboard',
-      (tester) async {
+  testWidgets('employee does not see Business Overview in earnings dashboard', (
+    tester,
+  ) async {
     final user = User(
       id: '1',
       organizationId: 'org-1',
@@ -168,9 +175,13 @@ void main() {
       ProviderScope(
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
-          userRoleProvider.overrideWith(() => _ImmediateUserRoleNotifier(UserRole.employee)),
+          userRoleProvider.overrideWith(
+            () => _ImmediateUserRoleNotifier(UserRole.employee),
+          ),
           currentUserProvider.overrideWith((ref) async => user),
-          earningsRepositoryProvider.overrideWithValue(_FakeEarningsRepository()),
+          earningsRepositoryProvider.overrideWithValue(
+            _FakeEarningsRepository(),
+          ),
         ],
         child: MediaQuery(
           data: const MediaQueryData(disableAnimations: true),

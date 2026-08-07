@@ -14,8 +14,12 @@ class InvoicingEmailView extends ConsumerStatefulWidget {
   final String email;
   final String genKey;
   final String? organisationName;
-  const InvoicingEmailView(this.email, this.genKey, this.organisationName,
-      {super.key});
+  const InvoicingEmailView(
+    this.email,
+    this.genKey,
+    this.organisationName, {
+    super.key,
+  });
 
   @override
   ConsumerState<InvoicingEmailView> createState() => _InvoicingEmailViewState();
@@ -23,8 +27,9 @@ class InvoicingEmailView extends ConsumerStatefulWidget {
 
 class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
   final _formKey = GlobalKey<FormState>(debugLabel: 'invoice_email_form_key');
-  final _scaffoldKey =
-      GlobalKey<ScaffoldState>(debugLabel: 'invoice_email_scaffold_key');
+  final _scaffoldKey = GlobalKey<ScaffoldState>(
+    debugLabel: 'invoice_email_scaffold_key',
+  );
   var initialData = {};
   final bool _isLoading = true;
   final _passwordController = TextEditingController();
@@ -39,8 +44,10 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
 
   Future<Object> getInvoicingEmailDetails(String email) async {
     try {
-      var response =
-          await apiMethod.getInvoicingEmailDetails(email, widget.genKey);
+      var response = await apiMethod.getInvoicingEmailDetails(
+        email,
+        widget.genKey,
+      );
       debugPrint('getInvoicingEmailDetails Response: $response');
       if (response is String) {
         initialData = jsonDecode(response as String);
@@ -86,9 +93,9 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
         title: Text(
           'INVOICING EMAIL',
           style: BauhausDesign.getTextTheme(context).headlineLarge!.copyWith(
-                color: BauhausDesign.textDark,
-                fontWeight: FontWeight.w700,
-              ),
+            color: BauhausDesign.textDark,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         centerTitle: true,
         bottom: PreferredSize(
@@ -205,10 +212,9 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
             const SizedBox(height: BauhausDesign.space4),
             Text(
               'ERROR',
-              style:
-                  BauhausDesign.getTextTheme(context).headlineLarge!.copyWith(
-                        color: BauhausDesign.error,
-                      ),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).headlineLarge!.copyWith(color: BauhausDesign.error),
             ),
             const SizedBox(height: BauhausDesign.space2),
             Text(
@@ -271,10 +277,15 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
       textColor: BauhausDesign.surfaceLight,
       onPressed: () {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => AddUpdateInvoicingEmailView(
-                    widget.email, widget.genKey, organisationName)));
+          context,
+          MaterialPageRoute(
+            builder: (context) => AddUpdateInvoicingEmailView(
+              widget.email,
+              widget.genKey,
+              organisationName,
+            ),
+          ),
+        );
       },
     );
   }
@@ -312,10 +323,10 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
               'ADD EMAIL DETAILS',
               textAlign: TextAlign.center,
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                    color: BauhausDesign.surfaceWhite,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.4,
-                  ),
+                color: BauhausDesign.surfaceWhite,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.4,
+              ),
             ),
           ),
         ),
@@ -327,11 +338,12 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
     final details = (data['data'] is Map<String, dynamic>)
         ? data['data'] as Map<String, dynamic>
         : <String, dynamic>{};
-    final businessName =
-        (details['invoicingBusinessName'] ?? '').toString().trim();
+    final businessName = (details['invoicingBusinessName'] ?? '')
+        .toString()
+        .trim();
     final email = (details['email'] ?? data['email'] ?? '').toString().trim();
-    final password =
-        (details['password'] ?? initialData['password'] ?? '').toString();
+    final password = (details['password'] ?? initialData['password'] ?? '')
+        .toString();
 
     return SingleChildScrollView(
       child: Column(
@@ -348,8 +360,10 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
                   decoration: BoxDecoration(
                     color: BauhausDesign.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.zero,
-                    border:
-                        Border.all(color: BauhausDesign.neutral, width: 1.5),
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.5,
+                    ),
                   ),
                   child: Image.asset(
                     'assets/icons/3D Icons/3dicons-mail-dynamic-color.png',
@@ -364,8 +378,7 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
                     children: [
                       Text(
                         'CONFIGURATION',
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge!
+                        style: BauhausDesign.getTextTheme(context).labelLarge!
                             .copyWith(
                               color: BauhausDesign.neutral,
                               fontWeight: FontWeight.w700,
@@ -374,11 +387,9 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
                         'Email settings ready',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium!
-                            .copyWith(
-                              color: BauhausDesign.textDark,
-                            ),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodyMedium!.copyWith(color: BauhausDesign.textDark),
                       ),
                     ],
                   ),
@@ -392,14 +403,15 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
                     color:
                         BauhausDesign.success, // Use success green for Active
                     borderRadius: BorderRadius.zero,
-                    border:
-                        Border.all(color: BauhausDesign.neutral, width: 1.5),
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.5,
+                    ),
                     boxShadow: const [BauhausDesign.shadowHardXs],
                   ),
                   child: Text(
                     'ACTIVE',
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelLarge!
+                    style: BauhausDesign.getTextTheme(context).labelLarge!
                         .copyWith(
                           color: BauhausDesign.surfaceLight,
                           fontSize: 12,
@@ -420,11 +432,9 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
               children: [
                 Text(
                   'DETAILS',
-                  style: BauhausDesign.getTextTheme(context)
-                      .headlineLarge!
-                      .copyWith(
-                        color: BauhausDesign.textDark,
-                      ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).headlineLarge!.copyWith(color: BauhausDesign.textDark),
                 ),
                 const SizedBox(height: BauhausDesign.space4),
 
@@ -436,8 +446,9 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
                     height: 24,
                   ),
                   label: 'BUSINESS NAME',
-                  value:
-                      businessName.isNotEmpty ? businessName : 'No name found',
+                  value: businessName.isNotEmpty
+                      ? businessName
+                      : 'No name found',
                 ),
                 const SizedBox(height: BauhausDesign.space4),
 
@@ -471,7 +482,8 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
 
           // Action Button
           _buildModernAddButton(
-              businessName.isNotEmpty ? businessName : 'Organization'),
+            businessName.isNotEmpty ? businessName : 'Organization',
+          ),
         ],
       ),
     );
@@ -504,7 +516,8 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
               borderRadius: BorderRadius.zero,
               border: Border.all(color: BauhausDesign.textDark, width: 1.5),
             ),
-            child: iconWidget ??
+            child:
+                iconWidget ??
                 Icon(
                   icon ?? Icons.help,
                   color: BauhausDesign.secondary,
@@ -518,22 +531,22 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
               children: [
                 Text(
                   label.toUpperCase(),
-                  style:
-                      BauhausDesign.getTextTheme(context).labelLarge!.copyWith(
-                            color: BauhausDesign.textDark, // Darker text
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.5,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelLarge!
+                      .copyWith(
+                        color: BauhausDesign.textDark, // Darker text
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
+                      ),
                 ),
                 const SizedBox(height: BauhausDesign.space1),
                 Text(
                   value,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyLarge!.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodyLarge!
+                      .copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
               ],
             ),

@@ -47,10 +47,7 @@ class VoiceViewModel extends Notifier<VoiceState> {
     state = state.copyWith(isProcessing: true, errorMessage: null);
 
     try {
-      final command = await _repository.processCommand(
-        text,
-        context: context,
-      );
+      final command = await _repository.processCommand(text, context: context);
       state = state.copyWith(
         lastCommand: command,
         history: [command, ...state.history],

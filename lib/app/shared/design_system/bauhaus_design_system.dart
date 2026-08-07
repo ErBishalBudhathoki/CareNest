@@ -11,24 +11,25 @@ class BauhausDesign {
   static const Color accent = Color(0xFFF4B513); // Tangerine/Yellow tone
   static const Color neutral = Color(0xFF1A1A1A); // Charcoal Black
   static const Color success = Color(0xFF0DA85E); // Emerald Bliss
-  static const Color warning = Color(0xFFF4B513); // Using Accent/Yellow for warning
+  static const Color warning = Color(
+    0xFFF4B513,
+  ); // Using Accent/Yellow for warning
   static const Color error = Color(0xFFD32F2F); // Standard Error Red
 
-  
   // Surface & Background
   static const Color backgroundLight = Color(0xFFF7F5F0); // Cream Vest
   static const Color backgroundDark = Color(0xFF121212);
   static const Color surfaceLight = Color(0xFFFFFFFF);
   static const Color surfaceDark = Color(0xFF1E1E1E);
-  
+
   // Text
   static const Color textDark = Color(0xFF1A1A1A);
   static const Color textLight = Color(0xFFF7F5F0);
 
   // ==================== SPACING ====================
   // 4pt Grid System
-  static const double space1 = 4.0;  // xs
-  static const double space2 = 8.0;  // sm
+  static const double space1 = 4.0; // xs
+  static const double space2 = 8.0; // sm
   static const double space3 = 12.0;
   static const double space4 = 16.0; // md
   static const double space5 = 20.0;
@@ -70,18 +71,12 @@ class BauhausDesign {
   );
 
   static const List<BoxShadow> shadowSm = [
-    BoxShadow(
-      color: Color(0x0D000000),
-      blurRadius: 2,
-      offset: Offset(0, 1),
-    )
+    BoxShadow(color: Color(0x0D000000), blurRadius: 2, offset: Offset(0, 1)),
   ];
 
   // ==================== TYPOGRAPHY ====================
   static TextTheme getTextTheme(BuildContext context) {
-    return GoogleFonts.interTextTheme(
-      Theme.of(context).textTheme,
-    ).copyWith(
+    return GoogleFonts.interTextTheme(Theme.of(context).textTheme).copyWith(
       displayLarge: GoogleFonts.oswald(
         fontSize: 32,
         fontWeight: FontWeight.w700,
@@ -121,7 +116,6 @@ class BauhausDesign {
   }
 
   // ==================== COMPONENT STYLES ====================
-  
 
   static ButtonStyle get primaryButtonStyle => ElevatedButton.styleFrom(
     backgroundColor: primary,
@@ -154,7 +148,10 @@ class BauhausDesign {
   static InputDecoration inputDecoration = InputDecoration(
     filled: true,
     fillColor: backgroundLight,
-    contentPadding: const EdgeInsets.symmetric(horizontal: space4, vertical: space3),
+    contentPadding: const EdgeInsets.symmetric(
+      horizontal: space4,
+      vertical: space3,
+    ),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(radiusMd),
       borderSide: const BorderSide(color: neutral, width: 1),
@@ -169,18 +166,56 @@ class BauhausDesign {
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(radiusMd),
-      borderSide: const BorderSide(color: primary, width: 2), // Red border for error
+      borderSide: const BorderSide(
+        color: primary,
+        width: 2,
+      ), // Red border for error
     ),
   );
   static TextTheme getTextThemeBuilder(TextTheme base) {
     return base.copyWith(
-      displayLarge: GoogleFonts.oswald(fontSize: 32, fontWeight: FontWeight.w700, height: 1.2, color: textLight),
-      displayMedium: GoogleFonts.oswald(fontSize: 28, fontWeight: FontWeight.w600, height: 1.3, color: textLight),
-      displaySmall: GoogleFonts.oswald(fontSize: 24, fontWeight: FontWeight.w600, height: 1.3, color: textLight),
-      headlineLarge: GoogleFonts.oswald(fontSize: 20, fontWeight: FontWeight.w600, height: 1.4, color: textLight),
-      bodyLarge: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w400, height: 1.5, color: textLight),
-      bodyMedium: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w400, height: 1.5, color: textLight),
-      labelLarge: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, height: 1.4, color: textLight),
+      displayLarge: GoogleFonts.oswald(
+        fontSize: 32,
+        fontWeight: FontWeight.w700,
+        height: 1.2,
+        color: textLight,
+      ),
+      displayMedium: GoogleFonts.oswald(
+        fontSize: 28,
+        fontWeight: FontWeight.w600,
+        height: 1.3,
+        color: textLight,
+      ),
+      displaySmall: GoogleFonts.oswald(
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        height: 1.3,
+        color: textLight,
+      ),
+      headlineLarge: GoogleFonts.oswald(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        height: 1.4,
+        color: textLight,
+      ),
+      bodyLarge: GoogleFonts.inter(
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        height: 1.5,
+        color: textLight,
+      ),
+      bodyMedium: GoogleFonts.inter(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        height: 1.5,
+        color: textLight,
+      ),
+      labelLarge: GoogleFonts.inter(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        height: 1.4,
+        color: textLight,
+      ),
     );
   }
 }
@@ -194,8 +229,8 @@ class BauhausButton extends StatelessWidget {
   final IconData? icon;
 
   const BauhausButton({
-    super.key, 
-    required this.text, 
+    super.key,
+    required this.text,
     this.onPressed,
     this.backgroundColor = BauhausDesign.primary,
     this.textColor = Colors.white,
@@ -218,8 +253,8 @@ class BauhausButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: BauhausDesign.space6, 
-              vertical: BauhausDesign.space3
+              horizontal: BauhausDesign.space6,
+              vertical: BauhausDesign.space3,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,

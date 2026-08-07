@@ -88,10 +88,10 @@ class _AdminRequestsDashboardViewState
         title: Text(
           AppLocalizations.of(context)!.requestsDashboardTitle,
           style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.5,
-              ),
+            color: BauhausDesign.surfaceWhite,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
+          ),
         ),
         actions: [
           Padding(
@@ -118,8 +118,9 @@ class _AdminRequestsDashboardViewState
           preferredSize: const Size.fromHeight(60),
           child: Padding(
             padding: const EdgeInsets.symmetric(
-                horizontal: BauhausDesign.space4,
-                vertical: BauhausDesign.space2),
+              horizontal: BauhausDesign.space4,
+              vertical: BauhausDesign.space2,
+            ),
             child: Container(
               decoration: BoxDecoration(
                 color: BauhausDesign.surfaceWhite,
@@ -139,16 +140,11 @@ class _AdminRequestsDashboardViewState
                   border: Border.all(color: BauhausDesign.neutral, width: 1.5),
                 ),
                 indicatorPadding: const EdgeInsets.all(4),
-                labelStyle:
-                    BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
-                unselectedLabelStyle:
-                    BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
+                labelStyle: BauhausDesign.getTextTheme(context).labelMedium
+                    ?.copyWith(fontWeight: FontWeight.bold, letterSpacing: 0.5),
+                unselectedLabelStyle: BauhausDesign.getTextTheme(context)
+                    .labelMedium
+                    ?.copyWith(fontWeight: FontWeight.bold, letterSpacing: 0.5),
                 tabs: [
                   Tab(text: AppLocalizations.of(context)!.pendingTab),
                   Tab(text: AppLocalizations.of(context)!.approvedTab),
@@ -162,9 +158,11 @@ class _AdminRequestsDashboardViewState
       body: requestsState.when(
         data: (requests) {
           final pending = requests
-              .where((r) =>
-                  r.status == RequestStatus.pending ||
-                  r.status == RequestStatus.claimed)
+              .where(
+                (r) =>
+                    r.status == RequestStatus.pending ||
+                    r.status == RequestStatus.claimed,
+              )
               .toList();
           final approved = requests
               .where((r) => r.status == RequestStatus.approved)
@@ -183,12 +181,16 @@ class _AdminRequestsDashboardViewState
           );
         },
         loading: () => const Center(
-            child: CircularProgressIndicator(color: BauhausDesign.primary)),
+          child: CircularProgressIndicator(color: BauhausDesign.primary),
+        ),
         error: (e, st) => Center(
-            child: Text('Error: $e',
-                style: BauhausDesign.getTextTheme(context)
-                    .bodyMedium
-                    ?.copyWith(color: BauhausDesign.error))),
+          child: Text(
+            'Error: $e',
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.error),
+          ),
+        ),
       ),
     );
   }
@@ -251,8 +253,7 @@ class _AdminRequestsDashboardViewState
                         request.createdAt != null
                             ? DateFormat('MMM d, y').format(request.createdAt!)
                             : '',
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
+                        style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
                               color: BauhausDesign.textMuted,
                               fontWeight: FontWeight.bold,
@@ -269,8 +270,11 @@ class _AdminRequestsDashboardViewState
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.person,
-                              size: 16, color: BauhausDesign.textMuted),
+                          Icon(
+                            Icons.person,
+                            size: 16,
+                            color: BauhausDesign.textMuted,
+                          ),
                           const SizedBox(width: BauhausDesign.space2),
                           Text(
                             '${AppLocalizations.of(context)!.userLabelCaps} ${request.createdBy ?? request.userId}',
@@ -287,20 +291,25 @@ class _AdminRequestsDashboardViewState
                       _buildDetails(request),
                       if (request.note != null && request.note!.isNotEmpty)
                         Padding(
-                          padding:
-                              const EdgeInsets.only(top: BauhausDesign.space3),
+                          padding: const EdgeInsets.only(
+                            top: BauhausDesign.space3,
+                          ),
                           child: Container(
                             padding: const EdgeInsets.all(BauhausDesign.space2),
                             decoration: BoxDecoration(
                               color: BauhausDesign.neutral.withOpacity(0.05),
-                              borderRadius:
-                                  BorderRadius.circular(BauhausDesign.radiusSm),
+                              borderRadius: BorderRadius.circular(
+                                BauhausDesign.radiusSm,
+                              ),
                             ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Icon(Icons.note_outlined,
-                                    size: 14, color: BauhausDesign.textMuted),
+                                const Icon(
+                                  Icons.note_outlined,
+                                  size: 14,
+                                  color: BauhausDesign.textMuted,
+                                ),
                                 const SizedBox(width: 6),
                                 Expanded(
                                   child: Text(
@@ -343,8 +352,9 @@ class _AdminRequestsDashboardViewState
                               )
                             else
                               BauhausActionButton(
-                                text:
-                                    AppLocalizations.of(context)!.approveButton,
+                                text: AppLocalizations.of(
+                                  context,
+                                )!.approveButton,
                                 onPressed: () =>
                                     _handleAction(request, 'Approved'),
                                 variant: BauhausActionVariant.success,
@@ -445,7 +455,9 @@ class _AdminRequestsDashboardViewState
           if (timeRange.isNotEmpty) ...[
             const SizedBox(height: 4),
             _buildDetailRow(
-                AppLocalizations.of(context)!.timeLabelCaps, timeRange),
+              AppLocalizations.of(context)!.timeLabelCaps,
+              timeRange,
+            ),
           ],
         ],
       );
@@ -460,8 +472,9 @@ class _AdminRequestsDashboardViewState
       String formattedDate = '';
       if (dateStr != null) {
         try {
-          formattedDate =
-              DateFormat('MMM d, y').format(DateTime.parse(dateStr));
+          formattedDate = DateFormat(
+            'MMM d, y',
+          ).format(DateTime.parse(dateStr));
         } catch (e) {
           formattedDate = dateStr;
         }
@@ -481,19 +494,26 @@ class _AdminRequestsDashboardViewState
           if (formattedDate.isNotEmpty) ...[
             const SizedBox(height: 4),
             _buildDetailRow(
-                AppLocalizations.of(context)!.dateLabelCaps, formattedDate),
+              AppLocalizations.of(context)!.dateLabelCaps,
+              formattedDate,
+            ),
           ],
           if (start != null && end != null) ...[
             const SizedBox(height: 4),
             _buildDetailRow(
-                AppLocalizations.of(context)!.timeLabelCaps, '$start - $end'),
+              AppLocalizations.of(context)!.timeLabelCaps,
+              '$start - $end',
+            ),
           ],
           if (claimantName != null || claimantEmail != null) ...[
             const SizedBox(height: 8),
             Row(
               children: [
-                const Icon(Icons.person_pin,
-                    size: 16, color: BauhausDesign.accent),
+                const Icon(
+                  Icons.person_pin,
+                  size: 16,
+                  color: BauhausDesign.accent,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(
@@ -501,24 +521,24 @@ class _AdminRequestsDashboardViewState
                     children: [
                       Text(
                         "CLAIMED BY",
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
+                        style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
-                                color: BauhausDesign.textMuted,
-                                fontWeight: FontWeight.bold),
+                              color: BauhausDesign.textMuted,
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
                       Text(
                         displayClaimant,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium
-                            ?.copyWith(color: BauhausDesign.textDark),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
                       ),
                     ],
                   ),
                 ),
               ],
             ),
-          ]
+          ],
         ],
       );
     }
@@ -537,9 +557,9 @@ class _AdminRequestsDashboardViewState
           child: Text(
             label,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textMuted,
-                  fontWeight: FontWeight.bold,
-                ),
+              color: BauhausDesign.textMuted,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         const SizedBox(width: BauhausDesign.space2),
@@ -547,9 +567,9 @@ class _AdminRequestsDashboardViewState
           child: Text(
             value,
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: BauhausDesign.textDark,
-                ),
+              fontWeight: FontWeight.w600,
+              color: BauhausDesign.textDark,
+            ),
           ),
         ),
       ],
@@ -570,8 +590,7 @@ class _AdminRequestsDashboardViewState
                 Center(
                   child: Text(
                     "Decline Request",
-                    style: BauhausDesign.getTextTheme(context)
-                        .titleMedium
+                    style: BauhausDesign.getTextTheme(context).titleMedium
                         ?.copyWith(
                           color: BauhausDesign.error,
                           fontWeight: FontWeight.bold,
@@ -614,8 +633,11 @@ class _AdminRequestsDashboardViewState
       try {
         await ref
             .read(adminRequestsViewModelProvider.notifier)
-            .updateRequestStatus(request.id!, 'rejected',
-                reason: reasonController.text);
+            .updateRequestStatus(
+              request.id!,
+              'rejected',
+              reason: reasonController.text,
+            );
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -626,9 +648,9 @@ class _AdminRequestsDashboardViewState
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Error: $e')));
         }
       }
     } else {
@@ -646,9 +668,9 @@ class _AdminRequestsDashboardViewState
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Error: $e')));
         }
       }
     }

@@ -77,7 +77,8 @@ class ShiftAssignmentSuccessViewModel extends ChangeNotifier {
 
   /// Get formatted employee name (full name > email-derived > default)
   String getEmployeeName({String defaultName = 'Unknown Employee'}) {
-    if (_userFullName != null && _userFullName!.trim().isNotEmpty) return _userFullName!;
+    if (_userFullName != null && _userFullName!.trim().isNotEmpty)
+      return _userFullName!;
     if (_assignment?.userEmail.isEmpty ?? true) return defaultName;
     final email = _assignment!.userEmail;
     final atIndex = email.indexOf('@');
@@ -86,8 +87,11 @@ class ShiftAssignmentSuccessViewModel extends ChangeNotifier {
           .substring(0, atIndex)
           .replaceAll('.', ' ')
           .split(' ')
-          .map((word) =>
-              word.isNotEmpty ? word[0].toUpperCase() + word.substring(1) : '')
+          .map(
+            (word) => word.isNotEmpty
+                ? word[0].toUpperCase() + word.substring(1)
+                : '',
+          )
           .join(' ');
     }
     return email;
@@ -95,7 +99,8 @@ class ShiftAssignmentSuccessViewModel extends ChangeNotifier {
 
   /// Get formatted client name (full name > email-derived > default)
   String getClientName({String defaultName = 'Unknown Client'}) {
-    if (_clientFullName != null && _clientFullName!.trim().isNotEmpty) return _clientFullName!;
+    if (_clientFullName != null && _clientFullName!.trim().isNotEmpty)
+      return _clientFullName!;
     if (_assignment?.clientEmail.isEmpty ?? true) return defaultName;
     final email = _assignment!.clientEmail;
     final atIndex = email.indexOf('@');
@@ -104,8 +109,11 @@ class ShiftAssignmentSuccessViewModel extends ChangeNotifier {
           .substring(0, atIndex)
           .replaceAll('.', ' ')
           .split(' ')
-          .map((word) =>
-              word.isNotEmpty ? word[0].toUpperCase() + word.substring(1) : '')
+          .map(
+            (word) => word.isNotEmpty
+                ? word[0].toUpperCase() + word.substring(1)
+                : '',
+          )
           .join(' ');
     }
     return email;
@@ -179,15 +187,17 @@ class ShiftAssignmentSuccessViewModel extends ChangeNotifier {
 
       // Remove AM/PM and extra spaces
       cleanTimeStr = cleanTimeStr.replaceAll(
-          RegExp(r'\s*(am|pm)\s*', caseSensitive: false), '');
+        RegExp(r'\s*(am|pm)\s*', caseSensitive: false),
+        '',
+      );
 
       final parts = cleanTimeStr.split(':');
       if (parts.length >= 2) {
         int hour = int.parse(parts[0]);
         final minuteParts = parts[1].split(' ');
-        final minute = int.parse(minuteParts.isNotEmpty
-            ? minuteParts[0]
-            : parts[1]); // Handle any trailing spaces
+        final minute = int.parse(
+          minuteParts.isNotEmpty ? minuteParts[0] : parts[1],
+        ); // Handle any trailing spaces
 
         // Convert 12-hour to 24-hour format
         if (isPM && hour != 12) {
@@ -220,8 +230,10 @@ class ShiftAssignmentSuccessViewModel extends ChangeNotifier {
       }
 
       // Handle different break formats: "30 min", "1 hour", "1.5", etc.
-      final cleanStr =
-          breakStr.toLowerCase().replaceAll(RegExp(r'[^0-9.]'), '');
+      final cleanStr = breakStr.toLowerCase().replaceAll(
+        RegExp(r'[^0-9.]'),
+        '',
+      );
       if (cleanStr.isNotEmpty) {
         final breakValue = double.parse(cleanStr);
         // If break contains "min", convert to hours

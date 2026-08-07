@@ -11,10 +11,12 @@ class NotificationSettingsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final preferencesState =
-        ref.watch(notificationPreferencesViewModelProvider);
-    final preferencesNotifier =
-        ref.read(notificationPreferencesViewModelProvider.notifier);
+    final preferencesState = ref.watch(
+      notificationPreferencesViewModelProvider,
+    );
+    final preferencesNotifier = ref.read(
+      notificationPreferencesViewModelProvider.notifier,
+    );
 
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
@@ -25,9 +27,9 @@ class NotificationSettingsView extends ConsumerWidget {
         title: Text(
           'Notification Settings',
           style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: BauhausDesign.textDark,
-              ),
+            fontWeight: FontWeight.w700,
+            color: BauhausDesign.textDark,
+          ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),
@@ -72,14 +74,15 @@ class NotificationSettingsView extends ConsumerWidget {
               text: preferencesNotifier.isSaving
                   ? 'SAVING...'
                   : preferencesNotifier.hasUnsavedChanges
-                      ? 'SAVE / UPDATE SETTINGS'
-                      : 'ALL CHANGES SAVED',
-              onPressed: (!preferencesNotifier.hasUnsavedChanges ||
+                  ? 'SAVE / UPDATE SETTINGS'
+                  : 'ALL CHANGES SAVED',
+              onPressed:
+                  (!preferencesNotifier.hasUnsavedChanges ||
                       preferencesNotifier.isSaving)
                   ? null
                   : () async {
-                      final success =
-                          await preferencesNotifier.savePreferences();
+                      final success = await preferencesNotifier
+                          .savePreferences();
                       if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -87,7 +90,7 @@ class NotificationSettingsView extends ConsumerWidget {
                             success
                                 ? 'Notification settings saved.'
                                 : (preferencesNotifier.saveError ??
-                                    'Failed to save notification settings.'),
+                                      'Failed to save notification settings.'),
                           ),
                           backgroundColor: success
                               ? BauhausDesign.success
@@ -139,9 +142,9 @@ class NotificationSettingsView extends ConsumerWidget {
       child: Text(
         title,
         style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-              fontWeight: FontWeight.w700,
-              color: BauhausDesign.textDark,
-            ),
+          fontWeight: FontWeight.w700,
+          color: BauhausDesign.textDark,
+        ),
       ),
     );
   }
@@ -195,11 +198,8 @@ class NotificationSettingsView extends ConsumerWidget {
                             isEnabled
                                 ? '${channels.length} channel(s) enabled'
                                 : 'Disabled',
-                            style: BauhausDesign.getTextTheme(context)
-                                .bodySmall
-                                ?.copyWith(
-                                  color: BauhausDesign.textMuted,
-                                ),
+                            style: BauhausDesign.getTextTheme(context).bodySmall
+                                ?.copyWith(color: BauhausDesign.textMuted),
                           ),
                         ],
                       ),
@@ -209,8 +209,9 @@ class NotificationSettingsView extends ConsumerWidget {
                       variant: BauhausSwitchVariant.secondary,
                       onChanged: (value) {
                         ref
-                            .read(notificationPreferencesViewModelProvider
-                                .notifier)
+                            .read(
+                              notificationPreferencesViewModelProvider.notifier,
+                            )
                             .toggleCategory(category, value);
                       },
                     ),
@@ -226,8 +227,7 @@ class NotificationSettingsView extends ConsumerWidget {
                   const SizedBox(height: BauhausDesign.space3),
                   Text(
                     'Delivery Channels',
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelLarge
+                    style: BauhausDesign.getTextTheme(context).labelLarge
                         ?.copyWith(
                           color: BauhausDesign.textDark,
                           fontWeight: FontWeight.w700,
@@ -242,8 +242,9 @@ class NotificationSettingsView extends ConsumerWidget {
                       value: isChannelEnabled,
                       onChanged: (value) {
                         ref
-                            .read(notificationPreferencesViewModelProvider
-                                .notifier)
+                            .read(
+                              notificationPreferencesViewModelProvider.notifier,
+                            )
                             .toggleChannel(category, channel, value ?? false);
                       },
                     );
@@ -362,8 +363,7 @@ class NotificationSettingsView extends ConsumerWidget {
                       Expanded(
                         child: Text(
                           'Geofence Radius',
-                          style: BauhausDesign.getTextTheme(context)
-                              .labelLarge
+                          style: BauhausDesign.getTextTheme(context).labelLarge
                               ?.copyWith(
                                 fontWeight: FontWeight.w700,
                                 color: BauhausDesign.textDark,
@@ -372,11 +372,9 @@ class NotificationSettingsView extends ConsumerWidget {
                       ),
                       Text(
                         '${preferences.geofenceRadiusKm.toStringAsFixed(1)} km',
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
-                            ?.copyWith(
-                              color: BauhausDesign.textDark,
-                            ),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).labelLarge?.copyWith(color: BauhausDesign.textDark),
                       ),
                     ],
                   ),
@@ -384,11 +382,13 @@ class NotificationSettingsView extends ConsumerWidget {
                   SliderTheme(
                     data: SliderTheme.of(context).copyWith(
                       trackHeight: 8,
-                      thumbShape:
-                          const RoundSliderThumbShape(enabledThumbRadius: 10),
+                      thumbShape: const RoundSliderThumbShape(
+                        enabledThumbRadius: 10,
+                      ),
                       activeTrackColor: BauhausDesign.secondary,
-                      inactiveTrackColor:
-                          BauhausDesign.neutral.withOpacity(0.2),
+                      inactiveTrackColor: BauhausDesign.neutral.withOpacity(
+                        0.2,
+                      ),
                       thumbColor: BauhausDesign.accent,
                       overlayShape: SliderComponentShape.noOverlay,
                     ),
@@ -399,8 +399,9 @@ class NotificationSettingsView extends ConsumerWidget {
                       divisions: 99,
                       onChanged: (value) {
                         ref
-                            .read(notificationPreferencesViewModelProvider
-                                .notifier)
+                            .read(
+                              notificationPreferencesViewModelProvider.notifier,
+                            )
                             .updateGeofenceRadius(value);
                       },
                     ),
@@ -528,30 +529,26 @@ class NotificationSettingsView extends ConsumerWidget {
               children: [
                 Text(
                   title,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: BauhausDesign.textDark,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelLarge
+                      ?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: BauhausDesign.textDark,
+                      ),
                 ),
                 if (subtitle != null) ...[
                   const SizedBox(height: BauhausDesign.space1),
                   Text(
                     subtitle,
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodySmall
-                        ?.copyWith(color: BauhausDesign.textMuted),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                   ),
                 ],
               ],
             ),
           ),
           const SizedBox(width: BauhausDesign.space2),
-          BauhausSwitch(
-            value: value,
-            variant: variant,
-            onChanged: onChanged,
-          ),
+          BauhausSwitch(value: value, variant: variant, onChanged: onChanged),
         ],
       ),
     );
@@ -580,17 +577,17 @@ class NotificationSettingsView extends ConsumerWidget {
               child: Text(
                 label,
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                      color: BauhausDesign.textDark,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
             Text(
               value,
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
             ),
             const SizedBox(width: BauhausDesign.space2),
             const Icon(Icons.chevron_right, color: BauhausDesign.textDark),
@@ -615,9 +612,9 @@ class NotificationSettingsView extends ConsumerWidget {
           Expanded(
             child: Text(
               label,
-              style: BauhausDesign.getTextTheme(context)
-                  .bodyMedium
-                  ?.copyWith(color: BauhausDesign.textDark),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
             ),
           ),
         ],

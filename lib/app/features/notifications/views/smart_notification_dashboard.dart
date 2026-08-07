@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/ai_providers.dart';
@@ -8,10 +7,13 @@ class SmartNotificationDashboard extends ConsumerStatefulWidget {
   const SmartNotificationDashboard({super.key});
 
   @override
-  ConsumerState<SmartNotificationDashboard> createState() => _SmartNotificationDashboardState();
+  ConsumerState<SmartNotificationDashboard> createState() =>
+      _SmartNotificationDashboardState();
 }
 
-class _SmartNotificationDashboardState extends ConsumerState<SmartNotificationDashboard> with SingleTickerProviderStateMixin {
+class _SmartNotificationDashboardState
+    extends ConsumerState<SmartNotificationDashboard>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -85,7 +87,9 @@ class AiPredictionsTab extends ConsumerWidget {
             title: Text('Optimal Time for ${prediction.notificationType}'),
             subtitle: Text('Predicted Hour: ${prediction.predictedHour}:00'),
             trailing: Chip(
-              label: Text('${(prediction.confidenceScore * 100).toInt()}% Conf'),
+              label: Text(
+                '${(prediction.confidenceScore * 100).toInt()}% Conf',
+              ),
               backgroundColor: Colors.blue.withOpacity(0.1),
             ),
           ),
@@ -110,21 +114,24 @@ class CalendarEventsTab extends ConsumerWidget {
           child: Row(
             children: [
               ElevatedButton.icon(
-                onPressed: () => ref.read(aiViewModelProvider.notifier).syncCalendar('google'),
+                onPressed: () => ref
+                    .read(aiViewModelProvider.notifier)
+                    .syncCalendar('google'),
                 icon: const Icon(Icons.sync),
                 label: const Text('Sync Google'),
               ),
               const SizedBox(width: 12),
               ElevatedButton.icon(
-                onPressed: () => ref.read(aiViewModelProvider.notifier).syncCalendar('outlook'),
+                onPressed: () => ref
+                    .read(aiViewModelProvider.notifier)
+                    .syncCalendar('outlook'),
                 icon: const Icon(Icons.sync),
                 label: const Text('Sync Outlook'),
               ),
             ],
           ),
         ),
-        if (state.isLoading)
-          const LinearProgressIndicator(),
+        if (state.isLoading) const LinearProgressIndicator(),
         Expanded(
           child: ListView.builder(
             itemCount: state.calendarEvents.length,
@@ -173,13 +180,17 @@ class SnoozeRulesTab extends ConsumerWidget {
                 return Card(
                   child: ListTile(
                     title: Text(rule.keyword ?? 'Sender: ${rule.sender}'),
-                    subtitle: Text('Snooze: ${rule.snoozeDurationMinutes} mins'),
+                    subtitle: Text(
+                      'Snooze: ${rule.snoozeDurationMinutes} mins',
+                    ),
                     trailing: IconButton(
                       icon: const Icon(Icons.delete, color: Colors.red),
                       onPressed: () {
-                         if (rule.id != null) {
-                            ref.read(aiViewModelProvider.notifier).deleteSnoozeRule(rule.id!);
-                         }
+                        if (rule.id != null) {
+                          ref
+                              .read(aiViewModelProvider.notifier)
+                              .deleteSnoozeRule(rule.id!);
+                        }
                       },
                     ),
                   ),
@@ -206,7 +217,9 @@ class SnoozeRulesTab extends ConsumerWidget {
             ),
             TextField(
               controller: durationController,
-              decoration: const InputDecoration(labelText: 'Duration (minutes)'),
+              decoration: const InputDecoration(
+                labelText: 'Duration (minutes)',
+              ),
               keyboardType: TextInputType.number,
             ),
           ],
@@ -221,7 +234,8 @@ class SnoozeRulesTab extends ConsumerWidget {
               final rule = SnoozeRule(
                 userId: 'current-user', // In real app, get from auth provider
                 keyword: keywordController.text,
-                snoozeDurationMinutes: int.tryParse(durationController.text) ?? 60,
+                snoozeDurationMinutes:
+                    int.tryParse(durationController.text) ?? 60,
               );
               ref.read(aiViewModelProvider.notifier).createSnoozeRule(rule);
               Navigator.pop(context);

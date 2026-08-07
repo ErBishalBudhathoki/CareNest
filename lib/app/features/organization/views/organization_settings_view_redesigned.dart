@@ -13,10 +13,12 @@ class OrganizationSettingsRedesigned extends ConsumerStatefulWidget {
   const OrganizationSettingsRedesigned({super.key});
 
   @override
-  ConsumerState<OrganizationSettingsRedesigned> createState() => _OrganizationSettingsRedesignedState();
+  ConsumerState<OrganizationSettingsRedesigned> createState() =>
+      _OrganizationSettingsRedesignedState();
 }
 
-class _OrganizationSettingsRedesignedState extends ConsumerState<OrganizationSettingsRedesigned>
+class _OrganizationSettingsRedesignedState
+    extends ConsumerState<OrganizationSettingsRedesigned>
     with TickerProviderStateMixin {
   late TabController _tabController;
   late PageController _pageController;
@@ -27,12 +29,14 @@ class _OrganizationSettingsRedesignedState extends ConsumerState<OrganizationSet
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _pageController = PageController();
-    
+
     // Load organization data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final orgId = ref.read(organizationIdProvider);
       if (orgId != null) {
-        ref.read(organizationViewModelProvider.notifier).loadOrganization(orgId);
+        ref
+            .read(organizationViewModelProvider.notifier)
+            .loadOrganization(orgId);
       }
     });
   }
@@ -59,7 +63,7 @@ class _OrganizationSettingsRedesignedState extends ConsumerState<OrganizationSet
   Widget build(BuildContext context) {
     final orgId = ref.watch(organizationIdProvider);
     final theme = Theme.of(context);
-    
+
     // Handle the case where no organization is selected
     if (orgId == null) {
       return Scaffold(
@@ -96,7 +100,11 @@ class _OrganizationSettingsRedesignedState extends ConsumerState<OrganizationSet
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.business_outlined, size: 48, color: BauhausDesign.textMuted),
+                const Icon(
+                  Icons.business_outlined,
+                  size: 48,
+                  color: BauhausDesign.textMuted,
+                ),
                 const SizedBox(height: BauhausDesign.space4),
                 Text(
                   'No Organization Selected',
@@ -145,7 +153,7 @@ class _OrganizationSettingsRedesignedState extends ConsumerState<OrganizationSet
     }
 
     final organizationAsync = ref.watch(organizationViewModelProvider);
-    
+
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       body: organizationAsync.when(
@@ -154,7 +162,9 @@ class _OrganizationSettingsRedesignedState extends ConsumerState<OrganizationSet
           error: error,
           onRetry: () {
             if (orgId != null) {
-              ref.read(organizationViewModelProvider.notifier).loadOrganization(orgId);
+              ref
+                  .read(organizationViewModelProvider.notifier)
+                  .loadOrganization(orgId);
             }
           },
         ),
@@ -166,7 +176,7 @@ class _OrganizationSettingsRedesignedState extends ConsumerState<OrganizationSet
           return LayoutBuilder(
             builder: (context, constraints) {
               final isDesktop = constraints.maxWidth >= 800;
-              
+
               if (isDesktop) {
                 return _buildDesktopLayout(organization);
               } else {
@@ -183,10 +193,7 @@ class _OrganizationSettingsRedesignedState extends ConsumerState<OrganizationSet
     return Row(
       children: [
         // Left Navigation Sidebar
-        _BauhausSidebar(
-          currentStep: _currentStep,
-          onStepTapped: _onStepTapped,
-        ),
+        _BauhausSidebar(currentStep: _currentStep, onStepTapped: _onStepTapped),
 
         // Main Content Area
         Expanded(
@@ -227,7 +234,9 @@ class _OrganizationSettingsRedesignedState extends ConsumerState<OrganizationSet
       ),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: BauhausDesign.neutral, width: 2)),
+          border: Border(
+            top: BorderSide(color: BauhausDesign.neutral, width: 2),
+          ),
         ),
         child: BottomNavigationBar(
           currentIndex: _currentStep,
@@ -236,8 +245,14 @@ class _OrganizationSettingsRedesignedState extends ConsumerState<OrganizationSet
           backgroundColor: BauhausDesign.surfaceWhite,
           selectedItemColor: Theme.of(context).primaryColor,
           unselectedItemColor: BauhausDesign.textMuted,
-          selectedLabelStyle: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 12),
-          unselectedLabelStyle: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 12),
+          selectedLabelStyle: GoogleFonts.inter(
+            fontWeight: FontWeight.w600,
+            fontSize: 12,
+          ),
+          unselectedLabelStyle: GoogleFonts.inter(
+            fontWeight: FontWeight.w500,
+            fontSize: 12,
+          ),
           elevation: 0,
           items: const [
             BottomNavigationBarItem(
@@ -277,7 +292,11 @@ class _OrganizationSettingsRedesignedState extends ConsumerState<OrganizationSet
               borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
               boxShadow: const [BauhausDesign.shadowHardSm],
             ),
-            child: const Icon(Icons.arrow_back, color: BauhausDesign.textDark, size: 20),
+            child: const Icon(
+              Icons.arrow_back,
+              color: BauhausDesign.textDark,
+              size: 20,
+            ),
           ),
         ),
       ),
@@ -286,10 +305,7 @@ class _OrganizationSettingsRedesignedState extends ConsumerState<OrganizationSet
           decoration: BoxDecoration(
             color: theme.primaryColor,
             border: const Border(
-              bottom: BorderSide(
-                color: BauhausDesign.neutral,
-                width: 2,
-              ),
+              bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
             ),
           ),
           child: Stack(
@@ -375,9 +391,7 @@ class _OrganizationSettingsRedesignedState extends ConsumerState<OrganizationSet
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSystemSettings(organization),
-          ],
+          children: [_buildSystemSettings(organization)],
         ),
       ),
     ];
@@ -402,7 +416,11 @@ class _OrganizationSettingsRedesignedState extends ConsumerState<OrganizationSet
             ),
             child: Row(
               children: [
-                const Icon(Icons.settings_system_daydream_outlined, size: 24, color: BauhausDesign.textDark),
+                const Icon(
+                  Icons.settings_system_daydream_outlined,
+                  size: 24,
+                  color: BauhausDesign.textDark,
+                ),
                 const SizedBox(width: BauhausDesign.space3),
                 Text(
                   'System Preferences',
@@ -597,8 +615,12 @@ class _SidebarItem extends StatelessWidget {
                     title,
                     style: GoogleFonts.inter(
                       fontSize: BauhausDesign.fontSm,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                      color: isSelected ? BauhausDesign.textDark : BauhausDesign.textMuted,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w500,
+                      color: isSelected
+                          ? BauhausDesign.textDark
+                          : BauhausDesign.textMuted,
                     ),
                   ),
                   Text(
@@ -686,7 +708,9 @@ class _BauhausLoadingScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              Theme.of(context).primaryColor,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space4),
           Text(
@@ -724,7 +748,11 @@ class _BauhausErrorScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.error_outline, size: 48, color: BauhausDesign.error),
+            const Icon(
+              Icons.error_outline,
+              size: 48,
+              color: BauhausDesign.error,
+            ),
             const SizedBox(height: BauhausDesign.space4),
             Text(
               'Configuration Error',

@@ -36,10 +36,14 @@ class FallbackPricingViewModel extends Notifier<FallbackPricingState> {
     state = state.copyWith(fallbackRate: rate, errorMessage: null);
   }
 
-  Future<void> loadOrganizationFallbackRate({required String organizationId}) async {
+  Future<void> loadOrganizationFallbackRate({
+    required String organizationId,
+  }) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
-      final rate = await _repository.getFallbackBaseRate(organizationId: organizationId);
+      final rate = await _repository.getFallbackBaseRate(
+        organizationId: organizationId,
+      );
       state = state.copyWith(fallbackRate: rate);
     } catch (e) {
       state = state.copyWith(errorMessage: e.toString());
@@ -57,9 +61,13 @@ class FallbackPricingViewModel extends Notifier<FallbackPricingState> {
       state = state.copyWith(errorMessage: 'Rate must be greater than zero.');
       return;
     }
-    
-    state = state.copyWith(isLoading: true, errorMessage: null, saveSucceeded: false);
-    
+
+    state = state.copyWith(
+      isLoading: true,
+      errorMessage: null,
+      saveSucceeded: false,
+    );
+
     try {
       final persisted = await _repository.setFallbackBaseRate(
         organizationId: organizationId,

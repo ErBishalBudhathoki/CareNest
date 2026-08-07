@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 class InvoiceEmailViewWidget extends StatefulWidget {
   //final List<Widget> myWidgets;
 
-  const InvoiceEmailViewWidget({
-    super.key,
-  });
+  const InvoiceEmailViewWidget({super.key});
 
   @override
   _InvoiceEmailViewWidgetState createState() => _InvoiceEmailViewWidgetState();

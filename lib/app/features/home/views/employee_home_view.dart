@@ -545,12 +545,11 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                         // Secure Messaging — only visible when on shift
                         homeState.when(
                           data: (data) {
-                            final hasActiveShift = data.upcomingAppointments.any(
-                              (appt) {
-                                final s = appt['_shiftStatus']?.toString();
-                                return s == 'in_progress' || s == 'overtime';
-                              },
-                            );
+                            final hasActiveShift = data.upcomingAppointments
+                                .any((appt) {
+                                  final s = appt['_shiftStatus']?.toString();
+                                  return s == 'in_progress' || s == 'overtime';
+                                });
                             if (!hasActiveShift) {
                               return const SizedBox.shrink();
                             }
@@ -567,11 +566,10 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          SecureMessagingView(
-                                            userId: widget.email,
-                                            userType: 'employee',
-                                          ),
+                                      builder: (context) => SecureMessagingView(
+                                        userId: widget.email,
+                                        userType: 'employee',
+                                      ),
                                     ),
                                   );
                                 },

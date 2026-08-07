@@ -27,12 +27,10 @@ class SuperannuationForm extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<SuperannuationForm> createState() =>
-      _SuperannuationFormState();
+  ConsumerState<SuperannuationForm> createState() => _SuperannuationFormState();
 }
 
-class _SuperannuationFormState
-    extends ConsumerState<SuperannuationForm> {
+class _SuperannuationFormState extends ConsumerState<SuperannuationForm> {
   final _formKey = GlobalKey<FormState>();
   _FundType _fundType = _FundType.apra;
 
@@ -48,12 +46,10 @@ class _SuperannuationFormState
   @override
   void initState() {
     super.initState();
-    _fundNameCtrl =
-        TextEditingController(text: widget.fundName ?? '');
+    _fundNameCtrl = TextEditingController(text: widget.fundName ?? '');
     _fundAbnCtrl = TextEditingController();
     _usiCtrl = TextEditingController(text: widget.usi ?? '');
-    _memberNumberCtrl =
-        TextEditingController(text: widget.memberNumber ?? '');
+    _memberNumberCtrl = TextEditingController(text: widget.memberNumber ?? '');
     _employeeNameCtrl = TextEditingController();
     _smsfEsaCtrl = TextEditingController();
     _smsfBsbCtrl = TextEditingController();
@@ -89,10 +85,7 @@ class _SuperannuationFormState
           const SizedBox(height: 20),
           if (isApra) ..._apraFields() else ..._smsfFields(),
           const SizedBox(height: 24),
-          ButtonWidget(
-            buttonText: 'Save & Continue',
-            onPressed: _submit,
-          ),
+          ButtonWidget(buttonText: 'Save & Continue', onPressed: _submit),
           const SizedBox(height: 12),
           GestureDetector(
             onTap: _skip,
@@ -102,8 +95,9 @@ class _SuperannuationFormState
               decoration: BoxDecoration(
                 color: BauhausDesign.surfaceWhite,
                 border: Border.all(
-                    color: BauhausDesign.neoInk.withOpacity(0.3),
-                    width: 2),
+                  color: BauhausDesign.neoInk.withOpacity(0.3),
+                  width: 2,
+                ),
               ),
               child: Text(
                 'Skip for now',
@@ -278,15 +272,16 @@ class _SuperannuationFormState
   }
 
   Future<void> _skip() async {
-    await ref
-        .read(onboardingViewModelProvider.notifier)
-        .updateStep('superannuation', {
-      'fundType': 'apra',
-      'fundName': '',
-      'fundAbn': '',
-      'currentStep': 4,
-      'skipped': true,
-    });
+    await ref.read(onboardingViewModelProvider.notifier).updateStep(
+      'superannuation',
+      {
+        'fundType': 'apra',
+        'fundName': '',
+        'fundAbn': '',
+        'currentStep': 4,
+        'skipped': true,
+      },
+    );
     widget.onComplete();
   }
 
@@ -297,8 +292,7 @@ class _SuperannuationFormState
     final data = <String, dynamic>{
       'fundType': isApra ? 'apra' : 'smsf',
       'fundName': _fundNameCtrl.text.trim(),
-      'fundAbn':
-          _fundAbnCtrl.text.replaceAll(RegExp(r'[^0-9]'), ''),
+      'fundAbn': _fundAbnCtrl.text.replaceAll(RegExp(r'[^0-9]'), ''),
       'currentStep': 4,
     };
 
@@ -309,8 +303,7 @@ class _SuperannuationFormState
     } else {
       data['smsfEsa'] = _smsfEsaCtrl.text.trim();
       data['smsfBsb'] = _smsfBsbCtrl.text.trim();
-      data['smsfAccountNumber'] =
-          _smsfAccountCtrl.text.trim();
+      data['smsfAccountNumber'] = _smsfAccountCtrl.text.trim();
     }
 
     await ref
@@ -325,8 +318,7 @@ class _FundTypeToggle extends StatelessWidget {
   final _FundType selected;
   final ValueChanged<_FundType> onChanged;
 
-  const _FundTypeToggle(
-      {required this.selected, required this.onChanged});
+  const _FundTypeToggle({required this.selected, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -372,18 +364,14 @@ class _Option extends StatelessWidget {
         height: 64,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isSelected
-              ? BauhausDesign.neoInk
-              : BauhausDesign.surfaceWhite,
+          color: isSelected ? BauhausDesign.neoInk : BauhausDesign.surfaceWhite,
           border: Border.all(
             color: isSelected
                 ? BauhausDesign.neoInk
                 : BauhausDesign.neoInk.withOpacity(0.5),
             width: isSelected ? 2.5 : 2,
           ),
-          boxShadow: isSelected
-              ? const [BauhausDesign.shadowHardSm]
-              : const [],
+          boxShadow: isSelected ? const [BauhausDesign.shadowHardSm] : const [],
         ),
         child: Text(
           label,

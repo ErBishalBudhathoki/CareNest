@@ -18,7 +18,7 @@ class AddExpenseView extends ConsumerStatefulWidget {
   final String? organizationName;
   final String? initialCategory;
   final ExpenseModel?
-      expenseToEdit; // If provided, we're editing an existing expense
+  expenseToEdit; // If provided, we're editing an existing expense
   final List<String>? initialReceiptFilePaths;
   final String? initialTitle;
   final double? initialAmount;
@@ -74,12 +74,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
     'Other',
   ];
 
-  final List<String> _frequencies = [
-    'daily',
-    'weekly',
-    'monthly',
-    'yearly',
-  ];
+  final List<String> _frequencies = ['daily', 'weekly', 'monthly', 'yearly'];
 
   @override
   void initState() {
@@ -112,7 +107,9 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
         _descriptionController.text = widget.initialDescription!;
       }
       if (widget.initialReceiptFilePaths != null) {
-        _receiptFiles = widget.initialReceiptFilePaths!.map((path) => File(path)).toList();
+        _receiptFiles = widget.initialReceiptFilePaths!
+            .map((path) => File(path))
+            .toList();
       }
     }
 
@@ -142,7 +139,8 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
         // Backward compatibility for single receiptUrl
         _receiptFiles = [File(widget.expenseToEdit!.receiptUrl!)];
       }
-      _fileDescription = widget.expenseToEdit!.fileDescription ??
+      _fileDescription =
+          widget.expenseToEdit!.fileDescription ??
           widget.expenseToEdit!.photoDescription ??
           '';
       // Note: Client selection for existing expense would need clientId to email mapping
@@ -213,7 +211,8 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                            BauhausDesign.surfaceWhite),
+                          BauhausDesign.surfaceWhite,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -221,8 +220,9 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                   ],
                 ),
                 backgroundColor: BauhausDesign.info,
-                duration:
-                    const Duration(seconds: 30), // Longer duration for uploads
+                duration: const Duration(
+                  seconds: 30,
+                ), // Longer duration for uploads
               ),
             );
           }
@@ -252,8 +252,8 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
           receiptFiles: receiptFiles,
           photoDescription:
               receiptPhotos?.isNotEmpty == true && _fileDescription.isNotEmpty
-                  ? _fileDescription
-                  : null, // Backward compatibility
+              ? _fileDescription
+              : null, // Backward compatibility
           fileDescription: _fileDescription.isEmpty ? null : _fileDescription,
           status: widget.expenseToEdit?.status ?? 'pending',
           submittedBy: widget.adminEmail,
@@ -370,9 +370,9 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
           widget.expenseToEdit != null
               ? l10n.editExpenseTitle
               : l10n.addExpenseTitle,
-          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-              ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).headlineMedium?.copyWith(color: BauhausDesign.surfaceWhite),
         ),
         backgroundColor: BauhausDesign.primary,
         iconTheme: IconThemeData(color: BauhausDesign.surfaceWhite),
@@ -390,8 +390,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                 children: [
                   Text(
                     l10n.expenseDetailsTitle,
-                    style: BauhausDesign.getTextTheme(context)
-                        .headlineMedium
+                    style: BauhausDesign.getTextTheme(context).headlineMedium
                         ?.copyWith(
                           color: BauhausDesign.primary,
                           fontWeight: FontWeight.bold,
@@ -417,9 +416,10 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                     keyboardType: TextInputType.number,
                     prefixIcon: Padding(
                       padding: const EdgeInsets.all(12.0),
-                      child: Text('\$ ',
-                          style:
-                              BauhausDesign.getTextTheme(context).bodyMedium),
+                      child: Text(
+                        '\$ ',
+                        style: BauhausDesign.getTextTheme(context).bodyMedium,
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -437,12 +437,15 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                     style: BauhausDesign.getTextTheme(context).bodyMedium,
                     dropdownColor: BauhausDesign.surfaceWhite,
                     decoration:
-                        BauhausDesign.inputDecoration(l10n.expenseCategoryLabel)
-                            .copyWith(
-                      labelText: l10n.expenseCategoryLabel,
-                      prefixIcon: const Icon(Icons.category,
-                          color: BauhausDesign.textMuted),
-                    ),
+                        BauhausDesign.inputDecoration(
+                          l10n.expenseCategoryLabel,
+                        ).copyWith(
+                          labelText: l10n.expenseCategoryLabel,
+                          prefixIcon: const Icon(
+                            Icons.category,
+                            color: BauhausDesign.textMuted,
+                          ),
+                        ),
                     items: _categories.map((category) {
                       return DropdownMenuItem<String>(
                         value: category,
@@ -467,10 +470,12 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                           padding: const EdgeInsets.all(12.0),
                           decoration: BoxDecoration(
                             color: BauhausDesign.error.withOpacity(0.1),
-                            borderRadius:
-                                BorderRadius.circular(BauhausDesign.radiusMd),
+                            borderRadius: BorderRadius.circular(
+                              BauhausDesign.radiusMd,
+                            ),
                             border: Border.all(
-                                color: BauhausDesign.error.withOpacity(0.2)),
+                              color: BauhausDesign.error.withOpacity(0.2),
+                            ),
                           ),
                           child: Row(
                             children: [
@@ -481,9 +486,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                                   l10n.expenseClientError(error.toString()),
                                   style: BauhausDesign.getTextTheme(context)
                                       .bodyMedium
-                                      ?.copyWith(
-                                        color: BauhausDesign.error,
-                                      ),
+                                      ?.copyWith(color: BauhausDesign.error),
                                 ),
                               ),
                             ],
@@ -495,30 +498,30 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                         value: _selectedClient,
                         style: BauhausDesign.getTextTheme(context).bodyMedium,
                         dropdownColor: BauhausDesign.surfaceWhite,
-                        decoration: BauhausDesign.inputDecoration(
-                                l10n.expenseClientLabel)
-                            .copyWith(
-                          labelText: l10n.expenseClientLabel,
-                          prefixIcon: const Icon(Icons.person,
-                              color: BauhausDesign.textMuted),
-                          suffixIcon: isLoading
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: BauhausDesign.primary,
-                                  ),
-                                )
-                              : null,
-                        ),
-                        hint: Text(
-                          l10n.expenseClientHint,
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodyMedium
-                              ?.copyWith(
+                        decoration:
+                            BauhausDesign.inputDecoration(
+                              l10n.expenseClientLabel,
+                            ).copyWith(
+                              labelText: l10n.expenseClientLabel,
+                              prefixIcon: const Icon(
+                                Icons.person,
                                 color: BauhausDesign.textMuted,
                               ),
+                              suffixIcon: isLoading
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: BauhausDesign.primary,
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                        hint: Text(
+                          l10n.expenseClientHint,
+                          style: BauhausDesign.getTextTheme(context).bodyMedium
+                              ?.copyWith(color: BauhausDesign.textMuted),
                         ),
                         items: clients.map((client) {
                           return DropdownMenuItem<Patient>(
@@ -545,12 +548,15 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                     child: AbsorbPointer(
                       child: BauhausTextField(
                         controller: TextEditingController(
-                          text:
-                              DateFormat('MMM dd, yyyy').format(_selectedDate),
+                          text: DateFormat(
+                            'MMM dd, yyyy',
+                          ).format(_selectedDate),
                         ),
                         label: l10n.expenseDateLabel,
-                        prefixIcon: const Icon(Icons.calendar_today,
-                            color: BauhausDesign.textMuted),
+                        prefixIcon: const Icon(
+                          Icons.calendar_today,
+                          color: BauhausDesign.textMuted,
+                        ),
                       ),
                     ),
                   ),
@@ -559,8 +565,10 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                     controller: _descriptionController,
                     label: l10n.expenseDescriptionLabel,
                     hintText: l10n.expenseDescriptionHint,
-                    prefixIcon: const Icon(Icons.description,
-                        color: BauhausDesign.textMuted),
+                    prefixIcon: const Icon(
+                      Icons.description,
+                      color: BauhausDesign.textMuted,
+                    ),
                     maxLines: 3,
                   ),
                   const SizedBox(height: 16.0),
@@ -587,13 +595,16 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                       value: _recurringFrequency,
                       style: BauhausDesign.getTextTheme(context).bodyMedium,
                       dropdownColor: BauhausDesign.surfaceWhite,
-                      decoration: BauhausDesign.inputDecoration(
-                              l10n.expenseFrequencyLabel)
-                          .copyWith(
-                        labelText: l10n.expenseFrequencyLabel,
-                        prefixIcon: const Icon(Icons.repeat,
-                            color: BauhausDesign.textMuted),
-                      ),
+                      decoration:
+                          BauhausDesign.inputDecoration(
+                            l10n.expenseFrequencyLabel,
+                          ).copyWith(
+                            labelText: l10n.expenseFrequencyLabel,
+                            prefixIcon: const Icon(
+                              Icons.repeat,
+                              color: BauhausDesign.textMuted,
+                            ),
+                          ),
                       items: _frequencies.map((frequency) {
                         return DropdownMenuItem<String>(
                           value: frequency,
@@ -630,11 +641,11 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                     onPressed: _isSubmitting ? null : _submitExpense,
                     text: _isSubmitting
                         ? (_receiptFiles.isNotEmpty
-                            ? l10n.expenseButtonUploading
-                            : l10n.expenseButtonSubmitting)
+                              ? l10n.expenseButtonUploading
+                              : l10n.expenseButtonSubmitting)
                         : (widget.expenseToEdit != null
-                            ? l10n.expenseButtonUpdate
-                            : l10n.expenseButtonSubmit),
+                              ? l10n.expenseButtonUpdate
+                              : l10n.expenseButtonSubmit),
                     variant: BauhausActionVariant.primary,
                     icon: _isSubmitting ? null : Icons.save,
                   ),

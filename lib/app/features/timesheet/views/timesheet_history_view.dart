@@ -430,7 +430,9 @@ class TimesheetHistoryView extends ConsumerWidget {
                           debugPrint(
                             'TIMESHEET_DEBUG: View Details tapped for week starting $start',
                           );
-                          ref.read(timesheetDateProvider.notifier).setDate(start);
+                          ref
+                              .read(timesheetDateProvider.notifier)
+                              .setDate(start);
                           Navigator.pop(context);
                         },
                         text: AppLocalizations.of(

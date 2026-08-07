@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final appointmentViewModelProvider =
     NotifierProvider.autoDispose<AppointmentViewModel, AppointmentState>(
-        AppointmentViewModel.new);
+      AppointmentViewModel.new,
+    );
 
 class AppointmentState {
   final bool isLoading;
@@ -50,7 +51,10 @@ class AppointmentViewModel extends Notifier<AppointmentState> {
     List<Map<String, dynamic>>? scheduleWithNdisItems,
   }) async {
     state = state.copyWith(
-        isLoading: true, errorMessage: null, assignmentResult: null);
+      isLoading: true,
+      errorMessage: null,
+      assignmentResult: null,
+    );
     try {
       final result = await _repository.assignClientToUser(
         userEmail: userEmail,
@@ -72,4 +76,3 @@ class AppointmentViewModel extends Notifier<AppointmentState> {
     }
   }
 }
-

@@ -10,16 +10,20 @@ class InvoiceRepository {
     return await _apiMethod.getAssignedClients();
   }
 
-  Future<List<Map<String, dynamic>>> getLineItems(
-      {bool includeExpenses = false}) async {
-    final result =
-        await _apiMethod.getLineItems(includeExpenses: includeExpenses);
+  Future<List<Map<String, dynamic>>> getLineItems({
+    bool includeExpenses = false,
+  }) async {
+    final result = await _apiMethod.getLineItems(
+      includeExpenses: includeExpenses,
+    );
     debugPrint('Invoice Repository: API returned ${result.length} line items');
     debugPrint(
-        'Invoice Repository: includeExpenses parameter was: $includeExpenses');
+      'Invoice Repository: includeExpenses parameter was: $includeExpenses',
+    );
     if (result.isNotEmpty) {
       debugPrint(
-          'Invoice Repository: First line item from API: ${result.first}');
+        'Invoice Repository: First line item from API: ${result.first}',
+      );
     }
     return result;
   }
@@ -42,13 +46,16 @@ class InvoiceRepository {
     );
 
     debugPrint(
-        'Invoice Repository: getInvoiceData called with includeExpenses: $includeExpenses');
+      'Invoice Repository: getInvoiceData called with includeExpenses: $includeExpenses',
+    );
     debugPrint(
-        'Invoice Repository: API response keys: ${result.keys.toList()}');
+      'Invoice Repository: API response keys: ${result.keys.toList()}',
+    );
     if (result['expenses'] != null) {
       final expenses = result['expenses'] as List<dynamic>? ?? [];
       debugPrint(
-          'Invoice Repository: Found ${expenses.length} expenses in response');
+        'Invoice Repository: Found ${expenses.length} expenses in response',
+      );
       if (expenses.isNotEmpty) {
         debugPrint('Invoice Repository: First expense: ${expenses.first}');
       }

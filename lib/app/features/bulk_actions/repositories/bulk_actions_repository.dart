@@ -121,10 +121,7 @@ class BulkActionsRepository {
   }) async {
     final assignmentMaps = assignments
         .where((a) => a.workerId != null)
-        .map((a) => {
-              'shiftId': a.shiftId,
-              'workerId': a.workerId!,
-            })
+        .map((a) => {'shiftId': a.shiftId, 'workerId': a.workerId!})
         .toList();
 
     final response = await _apiMethod.bulkAssignShifts(

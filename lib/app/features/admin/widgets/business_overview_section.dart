@@ -21,9 +21,7 @@ class BusinessOverviewSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final child = Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-      ),
+      decoration: const BoxDecoration(color: Colors.white),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(24, 40, 24, 10),
         child: Column(
@@ -32,19 +30,19 @@ class BusinessOverviewSection extends StatelessWidget {
             Text(
               'Business Overview',
               style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: BauhausDesign.neutral,
-                    letterSpacing: -0.5,
-                  ),
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+                color: BauhausDesign.neutral,
+                letterSpacing: -0.5,
+              ),
             ),
             const SizedBox(height: BauhausDesign.space1),
             Text(
               'Track your business performance at a glance',
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.neutral,
-                    fontWeight: FontWeight.w500,
-                  ),
+                color: BauhausDesign.neutral,
+                fontWeight: FontWeight.w500,
+              ),
             ),
             const SizedBox(height: BauhausDesign.space6),
             SizedBox(
@@ -84,7 +82,8 @@ class BusinessOverviewSection extends StatelessWidget {
                   _buildEnhancedStatsCard(
                     context: context,
                     icon: Icons.trending_up_rounded,
-                    value: businessStats['totalRevenue']?.toString() ?? '\$0.00',
+                    value:
+                        businessStats['totalRevenue']?.toString() ?? '\$0.00',
                     title: 'Total Revenue',
                     color: BauhausDesign.warning,
                     index: 3,
@@ -140,9 +139,7 @@ class BusinessOverviewSection extends StatelessWidget {
             color: BauhausDesign.surfaceLight,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
             border: Border.all(color: BauhausDesign.neutral, width: 2),
-            boxShadow: const [
-              BauhausDesign.shadowHard,
-            ],
+            boxShadow: const [BauhausDesign.shadowHard],
           ),
           child: Padding(
             padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -155,12 +152,17 @@ class BusinessOverviewSection extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: color,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                    border: Border.all(color: BauhausDesign.neutral, width: 1.5),
-                    boxShadow: const [
-                      BauhausDesign.shadowHardSm,
-                    ],
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.5,
+                    ),
+                    boxShadow: const [BauhausDesign.shadowHardSm],
                   ),
-                  child: Icon(icon, color: BauhausDesign.surfaceLight, size: 18),
+                  child: Icon(
+                    icon,
+                    color: BauhausDesign.surfaceLight,
+                    size: 18,
+                  ),
                 ),
                 const SizedBox(height: BauhausDesign.space2),
                 Expanded(
@@ -173,8 +175,7 @@ class BusinessOverviewSection extends StatelessWidget {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           value,
-                          style: BauhausDesign.getTextTheme(context)
-                              .titleMedium
+                          style: BauhausDesign.getTextTheme(context).titleMedium
                               ?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: BauhausDesign.neutral,
@@ -186,8 +187,7 @@ class BusinessOverviewSection extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         title,
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
+                        style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
                               color: BauhausDesign.neutral,
                               height: 1.1,
@@ -206,7 +206,8 @@ class BusinessOverviewSection extends StatelessWidget {
       ),
     );
 
-    final disableAnimations = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    final disableAnimations =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
     if (disableAnimations) {
       return card;
     }

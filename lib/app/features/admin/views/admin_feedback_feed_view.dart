@@ -8,20 +8,23 @@ import 'package:intl/intl.dart';
 
 final adminFeedbackFeedProvider =
     FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
-  final api = ref.read(apiMethodProvider);
-  final response = await api.getFeedbackFeed(limit: 50);
-  if (response['success'] == true && response['data'] is List) {
-    final rawList = response['data'] as List;
-    return rawList
-        .whereType<Map>()
-        .map((item) => Map<String, dynamic>.from(item))
-        .toList();
-  }
+      final api = ref.read(apiMethodProvider);
+      final response = await api.getFeedbackFeed(limit: 50);
+      if (response['success'] == true && response['data'] is List) {
+        final rawList = response['data'] as List;
+        return rawList
+            .whereType<Map>()
+            .map((item) => Map<String, dynamic>.from(item))
+            .toList();
+      }
 
-  final message = response['message']?.toString().trim();
-  throw Exception(
-      message?.isNotEmpty == true ? message : 'Failed to load client feedback');
-});
+      final message = response['message']?.toString().trim();
+      throw Exception(
+        message?.isNotEmpty == true
+            ? message
+            : 'Failed to load client feedback',
+      );
+    });
 
 class AdminFeedbackFeedView extends ConsumerWidget {
   const AdminFeedbackFeedView({super.key});
@@ -145,16 +148,16 @@ class _FeedbackCard extends StatelessWidget {
                   children: [
                     Text(
                       serviceName,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelLarge
-                          ?.copyWith(fontWeight: FontWeight.w700),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).labelLarge?.copyWith(fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: BauhausDesign.space1),
                     Text(
                       'Client: $clientName',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
-                          ?.copyWith(color: BauhausDesign.textMuted),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                     ),
                   ],
                 ),
@@ -165,9 +168,9 @@ class _FeedbackCard extends StatelessWidget {
           const SizedBox(height: BauhausDesign.space3),
           Text(
             'Worker: $workerName',
-            style: BauhausDesign.getTextTheme(context)
-                .bodySmall
-                ?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
           ),
           const SizedBox(height: BauhausDesign.space2),
           if (comments.isNotEmpty)
@@ -178,16 +181,16 @@ class _FeedbackCard extends StatelessWidget {
           else
             Text(
               'No additional comments provided.',
-              style: BauhausDesign.getTextTheme(context)
-                  .bodySmall
-                  ?.copyWith(color: BauhausDesign.textMuted),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
             ),
           const SizedBox(height: BauhausDesign.space3),
           Text(
             submittedAt,
-            style: BauhausDesign.getTextTheme(context)
-                .labelSmall
-                ?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
           ),
         ],
       ),
@@ -206,8 +209,8 @@ class _RatingPill extends StatelessWidget {
     final color = safeRating >= 4
         ? BauhausDesign.success
         : safeRating >= 3
-            ? BauhausDesign.warning
-            : BauhausDesign.error;
+        ? BauhausDesign.warning
+        : BauhausDesign.error;
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -220,18 +223,14 @@ class _RatingPill extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(
-            Icons.star,
-            size: 14,
-            color: BauhausDesign.surfaceWhite,
-          ),
+          const Icon(Icons.star, size: 14, color: BauhausDesign.surfaceWhite),
           const SizedBox(width: BauhausDesign.space1),
           Text(
             safeRating.toString(),
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.surfaceWhite,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: BauhausDesign.surfaceWhite,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
       ),

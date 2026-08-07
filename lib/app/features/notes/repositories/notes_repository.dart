@@ -52,14 +52,8 @@ class NotesRepository {
   }
 
   /// Update a note
-  Future<Note> updateNote({
-    required String id,
-    required String notes,
-  }) async {
-    final response = await _apiMethod.put(
-      'notes/$id',
-      body: {'notes': notes},
-    );
+  Future<Note> updateNote({required String id, required String notes}) async {
+    final response = await _apiMethod.put('notes/$id', body: {'notes': notes});
 
     if (response['success'] == true) {
       return Note.fromJson(response['data']);

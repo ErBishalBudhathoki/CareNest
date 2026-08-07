@@ -31,13 +31,9 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
       duration: const Duration(seconds: 2),
       vsync: this,
     );
-    _pulseAnimation = Tween<double>(
-      begin: 0.95,
-      end: 1.05,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
+    _pulseAnimation = Tween<double>(begin: 0.95, end: 1.05).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
     _pulseController.repeat(reverse: true);
   }
 
@@ -52,12 +48,14 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
     final size = MediaQuery.of(context).size;
     final isSmallScreen = size.width < 400;
 
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: BauhausDesign.backgroundLight,
-      systemNavigationBarIconBrightness: Brightness.dark,
-    ));
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: BauhausDesign.backgroundLight,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+    );
 
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
@@ -80,7 +78,9 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
           child: Consumer(
             builder: (context, ref, child) {
               final isLoading = ref.watch(forgotPasswordViewModelProvider);
-              final viewModel = ref.read(forgotPasswordViewModelProvider.notifier);
+              final viewModel = ref.read(
+                forgotPasswordViewModelProvider.notifier,
+              );
               return Form(
                 key: _formKey,
                 child: Column(
@@ -148,9 +148,9 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
             AppLocalizations.of(context)!.forgotPasswordHeader,
             textAlign: TextAlign.center,
             style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.bold,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 12),
 
@@ -158,18 +158,20 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
           Text(
             AppLocalizations.of(context)!.forgotPasswordSubtitle,
             textAlign: TextAlign.center,
-            style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                  color: BauhausDesign.textMuted,
-                  height: 1.5,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyLarge?.copyWith(color: BauhausDesign.textMuted, height: 1.5),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildForm(BuildContext context, ForgotPasswordViewModel viewModel,
-      bool isSmallScreen) {
+  Widget _buildForm(
+    BuildContext context,
+    ForgotPasswordViewModel viewModel,
+    bool isSmallScreen,
+  ) {
     return BauhausCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -185,8 +187,9 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
               if (value == null || value.isEmpty) {
                 return AppLocalizations.of(context)!.emailRequired;
               }
-              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                  .hasMatch(value)) {
+              if (!RegExp(
+                r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+              ).hasMatch(value)) {
                 return AppLocalizations.of(context)!.emailInvalid;
               }
               return null;
@@ -221,16 +224,16 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
         child: RichText(
           text: TextSpan(
             text: '${AppLocalizations.of(context)!.rememberPassword} ',
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textMuted,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
             children: [
               TextSpan(
                 text: AppLocalizations.of(context)!.loginLink,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  color: BauhausDesign.primary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),
@@ -240,7 +243,9 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
   }
 
   Future<void> _sendVerificationCode(
-      BuildContext context, ForgotPasswordViewModel viewModel) async {
+    BuildContext context,
+    ForgotPasswordViewModel viewModel,
+  ) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -248,7 +253,8 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
     await viewModel.resetPassword(context, (response) async {
       if (!mounted) return;
 
-      final message = response['message']?.toString() ??
+      final message =
+          response['message']?.toString() ??
           'If an account with this email exists, a password reset code has been sent.';
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -260,9 +266,8 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
 
       await Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (_) => VerifyOTPView(
-            email: viewModel.model.emailController.text.trim(),
-          ),
+          builder: (_) =>
+              VerifyOTPView(email: viewModel.model.emailController.text.trim()),
         ),
       );
     });

@@ -21,7 +21,9 @@ class OrganizationCard extends ConsumerWidget {
     return GestureDetector(
       onTap: onTap,
       child: BauhausContainer(
-        color: isSelected ? BauhausDesign.primaryRed.withOpacity(0.1) : BauhausDesign.surfaceWhite,
+        color: isSelected
+            ? BauhausDesign.primaryRed.withOpacity(0.1)
+            : BauhausDesign.surfaceWhite,
         padding: const EdgeInsets.all(BauhausDesign.space3),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,7 +39,8 @@ class OrganizationCard extends ConsumerWidget {
                   ),
                   child: Center(
                     child: Text(
-                      organization['name']?.substring(0, 1).toUpperCase() ?? 'O',
+                      organization['name']?.substring(0, 1).toUpperCase() ??
+                          'O',
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

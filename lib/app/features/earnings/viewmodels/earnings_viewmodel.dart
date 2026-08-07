@@ -53,14 +53,14 @@ class EarningsState {
   }
 }
 
-final earningsViewModelProvider = NotifierProvider<EarningsViewModel, EarningsState>(EarningsViewModel.new);
+final earningsViewModelProvider =
+    NotifierProvider<EarningsViewModel, EarningsState>(EarningsViewModel.new);
 
 class EarningsViewModel extends Notifier<EarningsState> {
   late EarningsRepository _repository;
   late String _userEmail;
   Map<String, dynamic>? _taxConfig;
 
-  
   @override
   EarningsState build() {
     _repository = ref.watch(earningsRepositoryProvider);
@@ -160,8 +160,9 @@ class EarningsViewModel extends Notifier<EarningsState> {
     final normalized = DateTime(anchor.year, anchor.month, anchor.day);
     switch (period) {
       case EarningsPeriod.weekly:
-        final start =
-            normalized.subtract(Duration(days: normalized.weekday - 1));
+        final start = normalized.subtract(
+          Duration(days: normalized.weekday - 1),
+        );
         final end = start.add(const Duration(days: 6));
         return _Range(start: start, end: end);
       case EarningsPeriod.monthly:
@@ -201,11 +202,12 @@ class EarningsViewModel extends Notifier<EarningsState> {
 
     // Use dynamic config if available
     if (_taxConfig != null && _taxConfig!['brackets'] != null) {
-      final brackets =
-          (_taxConfig!['brackets'] as List).cast<Map<String, dynamic>>();
+      final brackets = (_taxConfig!['brackets'] as List)
+          .cast<Map<String, dynamic>>();
       for (final bracket in brackets) {
-        final double? max =
-            bracket['max'] != null ? (bracket['max'] as num).toDouble() : null;
+        final double? max = bracket['max'] != null
+            ? (bracket['max'] as num).toDouble()
+            : null;
         final double rate = (bracket['rate'] as num).toDouble();
         final double base = (bracket['base'] as num).toDouble();
         final double min = (bracket['min'] as num).toDouble();

@@ -40,12 +40,7 @@ abstract class MatchFactor with _$MatchFactor {
       _$MatchFactorFromJson(json);
 }
 
-enum MatchLevel {
-  excellent,
-  good,
-  fair,
-  poor,
-}
+enum MatchLevel { excellent, good, fair, poor }
 
 // ============================================================================
 // Shift Recommendation Models

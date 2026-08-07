@@ -11,7 +11,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final requestsViewModelProvider =
     AsyncNotifierProvider<RequestsViewModel, List<RequestModel>>(
-        RequestsViewModel.new);
+      RequestsViewModel.new,
+    );
 
 class RequestsViewModel extends AsyncNotifier<List<RequestModel>> {
   late final RequestRepository _repository;
@@ -56,7 +57,10 @@ class RequestsViewModel extends AsyncNotifier<List<RequestModel>> {
   }
 
   Future<bool> createRequest(
-      String type, Map<String, dynamic> details, String? note) async {
+    String type,
+    Map<String, dynamic> details,
+    String? note,
+  ) async {
     final user = _user;
     if (user == null) return false;
 
@@ -84,7 +88,9 @@ class RequestsViewModel extends AsyncNotifier<List<RequestModel>> {
   }
 
   Map<String, String> _loadCachedStatuses(
-      SharedPreferences prefs, String cacheKey) {
+    SharedPreferences prefs,
+    String cacheKey,
+  ) {
     final raw = prefs.getString(cacheKey);
     if (raw == null || raw.isEmpty) return {};
     try {
@@ -99,7 +105,10 @@ class RequestsViewModel extends AsyncNotifier<List<RequestModel>> {
   }
 
   Future<void> _saveCachedStatuses(
-      SharedPreferences prefs, String cacheKey, List<RequestModel> requests) {
+    SharedPreferences prefs,
+    String cacheKey,
+    List<RequestModel> requests,
+  ) {
     final next = <String, String>{};
     for (final request in requests) {
       final id = request.id;
@@ -139,9 +148,9 @@ class RequestsViewModel extends AsyncNotifier<List<RequestModel>> {
         },
       );
 
-      await ref.read(notificationProvider.notifier).addNotification(
-            notification,
-          );
+      await ref
+          .read(notificationProvider.notifier)
+          .addNotification(notification);
     }
   }
 }

@@ -15,8 +15,12 @@ class EarningsRepository {
 
   EarningsRepository(this._apiMethod);
 
-  Future<EarningsSummary> getEarningsSummary(String userEmail,
-      {String? startDate, String? endDate, bool forceRefresh = false}) async {
+  Future<EarningsSummary> getEarningsSummary(
+    String userEmail, {
+    String? startDate,
+    String? endDate,
+    bool forceRefresh = false,
+  }) async {
     String query = '';
     if (startDate != null && endDate != null) {
       query = '?startDate=$startDate&endDate=$endDate';
@@ -45,25 +49,30 @@ class EarningsRepository {
       return EarningsSummary.fromJson(response['data']);
     } else {
       throw Exception(
-          response['message'] ?? 'Failed to fetch earnings summary');
+        response['message'] ?? 'Failed to fetch earnings summary',
+      );
     }
   }
 
-  Future<ProjectedEarnings> getProjectedEarnings(String userEmail,
-      {String? startDate}) async {
+  Future<ProjectedEarnings> getProjectedEarnings(
+    String userEmail, {
+    String? startDate,
+  }) async {
     String query = '';
     if (startDate != null) {
       query = '?startDate=$startDate';
     }
 
-    final response =
-        await _apiMethod.get('earnings/projected/$userEmail$query');
+    final response = await _apiMethod.get(
+      'earnings/projected/$userEmail$query',
+    );
 
     if (response['success'] == true) {
       return ProjectedEarnings.fromJson(response['data']);
     } else {
       throw Exception(
-          response['message'] ?? 'Failed to fetch projected earnings');
+        response['message'] ?? 'Failed to fetch projected earnings',
+      );
     }
   }
 
@@ -80,7 +89,8 @@ class EarningsRepository {
       return EarningsPeriodHistory.fromJson(response['data']);
     } else {
       throw Exception(
-          response['message'] ?? 'Failed to fetch earnings history');
+        response['message'] ?? 'Failed to fetch earnings history',
+      );
     }
   }
 
@@ -97,15 +107,19 @@ class EarningsRepository {
     throw Exception('Failed to fetch tax settings');
   }
 
-  Future<void> setPayRate(String userEmail, double rate, String type,
-      [dynamic rates,
-      String? classificationLevel,
-      String? payPoint,
-      String? stream,
-      String? employmentType,
-      List<String>? activeAllowances,
-      String? organizationId,
-      String? adminEmail]) async {
+  Future<void> setPayRate(
+    String userEmail,
+    double rate,
+    String type, [
+    dynamic rates,
+    String? classificationLevel,
+    String? payPoint,
+    String? stream,
+    String? employmentType,
+    List<String>? activeAllowances,
+    String? organizationId,
+    String? adminEmail,
+  ]) async {
     final body = {'rate': rate, 'type': type};
 
     if (classificationLevel != null)

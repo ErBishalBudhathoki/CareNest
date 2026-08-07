@@ -6,10 +6,13 @@ import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 
 // Provider for CareIntelligenceRepository
-final careIntelligenceRepositoryProvider =
-    Provider<CareIntelligenceRepository>((ref) {
-  return CareIntelligenceRepository(ref.read(app_providers.apiMethodProvider));
-});
+final careIntelligenceRepositoryProvider = Provider<CareIntelligenceRepository>(
+  (ref) {
+    return CareIntelligenceRepository(
+      ref.read(app_providers.apiMethodProvider),
+    );
+  },
+);
 
 // State class for Care Intelligence
 class IntelligenceState {
@@ -56,11 +59,10 @@ class IntelligenceState {
 class IntelligenceViewModel extends Notifier<IntelligenceState> {
   late final CareIntelligenceRepository _repository;
 
-  
   @override
   IntelligenceState build() {
     final repository = ref.watch(careIntelligenceRepositoryProvider);
-    
+
     return IntelligenceState();
   }
 
@@ -89,10 +91,7 @@ class IntelligenceViewModel extends Notifier<IntelligenceState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -125,10 +124,7 @@ class IntelligenceViewModel extends Notifier<IntelligenceState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -159,10 +155,7 @@ class IntelligenceViewModel extends Notifier<IntelligenceState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -191,10 +184,7 @@ class IntelligenceViewModel extends Notifier<IntelligenceState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -223,10 +213,7 @@ class IntelligenceViewModel extends Notifier<IntelligenceState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -242,4 +229,7 @@ class IntelligenceViewModel extends Notifier<IntelligenceState> {
 }
 
 // Provider for IntelligenceViewModel
-final intelligenceViewModelProvider = NotifierProvider<IntelligenceViewModel, IntelligenceState>(IntelligenceViewModel.new);
+final intelligenceViewModelProvider =
+    NotifierProvider<IntelligenceViewModel, IntelligenceState>(
+      IntelligenceViewModel.new,
+    );

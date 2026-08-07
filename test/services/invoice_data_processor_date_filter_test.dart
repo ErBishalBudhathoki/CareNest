@@ -27,7 +27,7 @@ void main() {
   setUp(() {
     mockApiMethod = MockApiMethod();
     // Use a test-specific viewmodel to avoid complex mocking
-    
+
     final container = ProviderContainer(
       overrides: [
         lineItemViewModelProvider.overrideWith(TestLineItemViewModel.new),
@@ -56,9 +56,12 @@ void main() {
                     'startTime': '6:00 AM',
                     'endTime': '7:00 AM',
                     'clientState': 'NSW',
-                    'ndisItem': {'itemNumber': '04_101_0104_1_1', 'itemName': 'Assistance'}
+                    'ndisItem': {
+                      'itemNumber': '04_101_0104_1_1',
+                      'itemName': 'Assistance',
+                    },
                   },
-                  'actualWorkedTime': 1.0
+                  'actualWorkedTime': 1.0,
                 },
                 {
                   'correspondingSchedule': {
@@ -66,11 +69,14 @@ void main() {
                     'startTime': '8:00 AM',
                     'endTime': '9:00 AM',
                     'clientState': 'NSW',
-                    'ndisItem': {'itemNumber': '04_101_0104_1_1', 'itemName': 'Assistance'}
+                    'ndisItem': {
+                      'itemNumber': '04_101_0104_1_1',
+                      'itemName': 'Assistance',
+                    },
                   },
-                  'actualWorkedTime': 1.0
-                }
-              ]
+                  'actualWorkedTime': 1.0,
+                },
+              ],
             },
             'assignments': [
               {
@@ -80,36 +86,42 @@ void main() {
                     'startTime': '6:00 AM',
                     'endTime': '7:00 AM',
                     'clientState': 'NSW',
-                    'ndisItem': {'itemNumber': '04_101_0104_1_1', 'itemName': 'Assistance'}
+                    'ndisItem': {
+                      'itemNumber': '04_101_0104_1_1',
+                      'itemName': 'Assistance',
+                    },
                   },
                   {
                     'date': '2025-07-30',
                     'startTime': '8:00 AM',
                     'endTime': '9:00 AM',
                     'clientState': 'NSW',
-                    'ndisItem': {'itemNumber': '04_101_0104_1_1', 'itemName': 'Assistance'}
-                  }
+                    'ndisItem': {
+                      'itemNumber': '04_101_0104_1_1',
+                      'itemName': 'Assistance',
+                    },
+                  },
                 ],
-              }
-            ]
-          }
+              },
+            ],
+          },
         ],
         'clientDetail': <dynamic>[
           {
             'clientEmail': 'client@example.com',
             'clientFirstName': 'John',
             'clientLastName': 'Doe',
-            'clientState': 'NSW'
-          }
-        ]
+            'clientState': 'NSW',
+          },
+        ],
       };
 
       final supportItems = [
         {
           'itemNumber': '04_101_0104_1_1',
           'itemDescription': 'Assistance',
-          'price': 50.0
-        }
+          'price': 50.0,
+        },
       ];
 
       final result = await processor.processInvoiceData(
@@ -125,52 +137,55 @@ void main() {
       expect(items.first['date'], '2025-07-11');
     });
 
-    test('filters calculated schedule entries outside selected range', () async {
-      final Map<String, dynamic> assignedClients = {
-        'userDocs': [
+    test(
+      'filters calculated schedule entries outside selected range',
+      () async {
+        final Map<String, dynamic> assignedClients = {
+          'userDocs': [
+            {
+              'docs': [
+                {
+                  'clientEmail': 'client2@example.com',
+                  'userEmail': 'employee@example.com',
+                  'dateList': ['2025-07-12', '2025-08-02'],
+                  'startTimeList': ['12:00 PM', '9:00 PM'],
+                  'endTimeList': ['2:00 PM', '10:00 PM'],
+                  'Time': ['00:00', '00:00'],
+                },
+              ],
+            },
+          ],
+          'clientDetail': <dynamic>[
+            {
+              'clientEmail': 'client2@example.com',
+              'clientFirstName': 'Alex',
+              'clientLastName': 'Smith',
+              'clientState': 'NSW',
+            },
+          ],
+        };
+
+        final supportItems = [
           {
-            'docs': [
-              {
-                'clientEmail': 'client2@example.com',
-                'userEmail': 'employee@example.com',
-                'dateList': ['2025-07-12', '2025-08-02'],
-                'startTimeList': ['12:00 PM', '9:00 PM'],
-                'endTimeList': ['2:00 PM', '10:00 PM'],
-                'Time': ['00:00', '00:00'],
-              }
-            ]
-          }
-        ],
-        'clientDetail': <dynamic>[
-          {
-            'clientEmail': 'client2@example.com',
-            'clientFirstName': 'Alex',
-            'clientLastName': 'Smith',
-            'clientState': 'NSW'
-          }
-        ]
-      };
+            'itemNumber': '04_101_0104_1_1',
+            'itemDescription': 'Assistance',
+            'price': 50.0,
+          },
+        ];
 
-      final supportItems = [
-        {
-          'itemNumber': '04_101_0104_1_1',
-          'itemDescription': 'Assistance',
-          'price': 50.0
-        }
-      ];
+        final result = await processor.processInvoiceData(
+          assignedClients: assignedClients,
+          lineItems: supportItems,
+          startDate: DateTime(2025, 7, 7),
+          endDate: DateTime(2025, 7, 14),
+        );
 
-      final result = await processor.processInvoiceData(
-        assignedClients: assignedClients,
-        lineItems: supportItems,
-        startDate: DateTime(2025, 7, 7),
-        endDate: DateTime(2025, 7, 14),
-      );
-
-      final clients = result['clients'] as List<dynamic>;
-      final items = clients.first['items'] as List<dynamic>;
-      // Only 2025-07-12 is in-range, 2025-08-02 should be filtered out
-      expect(items.length, 1);
-      expect(items.first['date'], '2025-07-12');
-    });
+        final clients = result['clients'] as List<dynamic>;
+        final items = clients.first['items'] as List<dynamic>;
+        // Only 2025-07-12 is in-range, 2025-08-02 should be filtered out
+        expect(items.length, 1);
+        expect(items.first['date'], '2025-07-12');
+      },
+    );
   });
 }

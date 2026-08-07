@@ -81,23 +81,24 @@ class _EnhancedPredictiveInsightsViewState
           Expanded(
             child: state.isLoading
                 ? const BauhausLoadingState(
-                    message: 'Generating predictions...')
+                    message: 'Generating predictions...',
+                  )
                 : state.error != null
-                    ? BauhausErrorState(
-                        description: state.error!,
-                        onRetry: () => ref
-                            .read(predictiveInsightsViewModelProvider.notifier)
-                            .fetchAllPredictions(),
-                      )
-                    : TabBarView(
-                        controller: _tabController,
-                        children: [
-                          _buildRevenueForecastTab(state),
-                          _buildChurnPredictionTab(state),
-                          _buildDemandForecastTab(state),
-                          _buildComplianceRiskTab(state),
-                        ],
-                      ),
+                ? BauhausErrorState(
+                    description: state.error!,
+                    onRetry: () => ref
+                        .read(predictiveInsightsViewModelProvider.notifier)
+                        .fetchAllPredictions(),
+                  )
+                : TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildRevenueForecastTab(state),
+                      _buildChurnPredictionTab(state),
+                      _buildDemandForecastTab(state),
+                      _buildComplianceRiskTab(state),
+                    ],
+                  ),
           ),
         ],
       ),
@@ -117,7 +118,7 @@ class _EnhancedPredictiveInsightsViewState
     final trendIcon = isUp ? Icons.trending_up : Icons.trending_down;
     final growthRate = firstMetric.predictedRevenue > 0
         ? (lastMetric.predictedRevenue - firstMetric.predictedRevenue) /
-            firstMetric.predictedRevenue
+              firstMetric.predictedRevenue
         : 0.0;
 
     return SingleChildScrollView(
@@ -169,8 +170,10 @@ class _EnhancedPredictiveInsightsViewState
                     ),
                     decoration: BoxDecoration(
                       color: trendColor,
-                      border:
-                          Border.all(color: BauhausDesign.neutral, width: 2),
+                      border: Border.all(
+                        color: BauhausDesign.neutral,
+                        width: 2,
+                      ),
                     ),
                     child: Text(
                       '${(growthRate * 100).abs().toStringAsFixed(1)}%',
@@ -197,8 +200,9 @@ class _EnhancedPredictiveInsightsViewState
           const SizedBox(height: BauhausDesign.space3),
           ...state.revenueForecast.map((item) {
             final date = DateTime.tryParse(item.date);
-            final dateStr =
-                date != null ? DateFormat('MMM yyyy').format(date) : item.date;
+            final dateStr = date != null
+                ? DateFormat('MMM yyyy').format(date)
+                : item.date;
 
             return Padding(
               padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
@@ -244,8 +248,9 @@ class _EnhancedPredictiveInsightsViewState
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: _getConfidenceColor(item.confidence)
-                                .withOpacity(0.1),
+                            color: _getConfidenceColor(
+                              item.confidence,
+                            ).withOpacity(0.1),
                             border: Border.all(
                               color: _getConfidenceColor(item.confidence),
                               width: 1,
@@ -321,8 +326,11 @@ class _EnhancedPredictiveInsightsViewState
                     color: BauhausDesign.warning.withOpacity(0.1),
                     border: Border.all(color: BauhausDesign.warning, width: 2),
                   ),
-                  child: const Icon(Icons.warning_amber,
-                      color: BauhausDesign.warning, size: 32),
+                  child: const Icon(
+                    Icons.warning_amber,
+                    color: BauhausDesign.warning,
+                    size: 32,
+                  ),
                 ),
                 const SizedBox(width: BauhausDesign.space4),
                 Expanded(
@@ -424,7 +432,9 @@ class _EnhancedPredictiveInsightsViewState
                           decoration: BoxDecoration(
                             color: riskColor,
                             border: Border.all(
-                                color: BauhausDesign.neutral, width: 2),
+                              color: BauhausDesign.neutral,
+                              width: 2,
+                            ),
                           ),
                           child: Text(
                             '${prediction.churnScore.toStringAsFixed(0)}%',
@@ -444,7 +454,9 @@ class _EnhancedPredictiveInsightsViewState
                         decoration: BoxDecoration(
                           color: BauhausDesign.surfaceOffWhite,
                           border: Border.all(
-                              color: BauhausDesign.neutral, width: 1),
+                            color: BauhausDesign.neutral,
+                            width: 1,
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -460,31 +472,33 @@ class _EnhancedPredictiveInsightsViewState
                             const SizedBox(height: BauhausDesign.space1),
                             ...prediction.factors
                                 .take(3)
-                                .map((factor) => Padding(
-                                      padding: const EdgeInsets.only(top: 4),
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            width: 4,
-                                            height: 4,
-                                            decoration: BoxDecoration(
-                                              color: riskColor,
-                                              shape: BoxShape.circle,
+                                .map(
+                                  (factor) => Padding(
+                                    padding: const EdgeInsets.only(top: 4),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 4,
+                                          height: 4,
+                                          decoration: BoxDecoration(
+                                            color: riskColor,
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            factor.description,
+                                            style: GoogleFonts.inter(
+                                              fontSize: 11,
+                                              color: BauhausDesign.textDark,
                                             ),
                                           ),
-                                          const SizedBox(width: 8),
-                                          Expanded(
-                                            child: Text(
-                                              factor.description,
-                                              style: GoogleFonts.inter(
-                                                fontSize: 11,
-                                                color: BauhausDesign.textDark,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                           ],
                         ),
                       ),
@@ -495,13 +509,18 @@ class _EnhancedPredictiveInsightsViewState
                         padding: const EdgeInsets.all(BauhausDesign.space2),
                         decoration: BoxDecoration(
                           color: BauhausDesign.info.withOpacity(0.1),
-                          border:
-                              Border.all(color: BauhausDesign.info, width: 1),
+                          border: Border.all(
+                            color: BauhausDesign.info,
+                            width: 1,
+                          ),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.lightbulb_outline,
-                                size: 16, color: BauhausDesign.info),
+                            const Icon(
+                              Icons.lightbulb_outline,
+                              size: 16,
+                              color: BauhausDesign.info,
+                            ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
@@ -634,13 +653,18 @@ class _EnhancedPredictiveInsightsViewState
                         padding: const EdgeInsets.all(BauhausDesign.space2),
                         decoration: BoxDecoration(
                           color: BauhausDesign.info.withOpacity(0.1),
-                          border:
-                              Border.all(color: BauhausDesign.info, width: 1),
+                          border: Border.all(
+                            color: BauhausDesign.info,
+                            width: 1,
+                          ),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.info_outline,
-                                size: 16, color: BauhausDesign.info),
+                            const Icon(
+                              Icons.info_outline,
+                              size: 16,
+                              color: BauhausDesign.info,
+                            ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
@@ -731,8 +755,10 @@ class _EnhancedPredictiveInsightsViewState
                       ),
                       decoration: BoxDecoration(
                         color: riskColor,
-                        border:
-                            Border.all(color: BauhausDesign.neutral, width: 2),
+                        border: Border.all(
+                          color: BauhausDesign.neutral,
+                          width: 2,
+                        ),
                       ),
                       child: Text(
                         risk.riskLevel.toUpperCase(),
@@ -751,7 +777,9 @@ class _EnhancedPredictiveInsightsViewState
                   builder: (context, constraints) {
                     final stats = [
                       _buildComplianceStat(
-                          'Issues', risk.issues.length.toString()),
+                        'Issues',
+                        risk.issues.length.toString(),
+                      ),
                       _buildComplianceStat(
                         'At-Risk Workers',
                         risk.workerRisks.length.toString(),
@@ -853,7 +881,9 @@ class _EnhancedPredictiveInsightsViewState
                         decoration: BoxDecoration(
                           color: severityColor,
                           border: Border.all(
-                              color: BauhausDesign.neutral, width: 1),
+                            color: BauhausDesign.neutral,
+                            width: 1,
+                          ),
                         ),
                         child: Text(
                           issue.severity.toUpperCase(),

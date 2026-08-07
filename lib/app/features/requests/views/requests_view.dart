@@ -61,10 +61,9 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
             const SizedBox(height: BauhausDesign.space4),
             Text(
               AppLocalizations.of(context)!.createRequest,
-              style:
-                  BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: BauhausDesign.space4),
             Row(
@@ -72,8 +71,9 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                 Expanded(
                   child: BauhausActionCard(
                     title: AppLocalizations.of(context)!.requestTypeShift,
-                    subtitle:
-                        AppLocalizations.of(context)!.shiftRequestSubtitle,
+                    subtitle: AppLocalizations.of(
+                      context,
+                    )!.shiftRequestSubtitle,
                     icon: Icons.calendar_month,
                     color: BauhausDesign.primary,
                     onTap: () {
@@ -96,8 +96,9 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                 Expanded(
                   child: BauhausActionCard(
                     title: AppLocalizations.of(context)!.requestTypeTimeOff,
-                    subtitle:
-                        AppLocalizations.of(context)!.timeOffRequestSubtitle,
+                    subtitle: AppLocalizations.of(
+                      context,
+                    )!.timeOffRequestSubtitle,
                     icon: Icons.beach_access,
                     color: BauhausDesign.secondary,
                     onTap: () {
@@ -165,15 +166,13 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
               ),
               title: Text(
                 AppLocalizations.of(context)!.requestsTitle,
-                style:
-                    BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: BauhausDesign.textDark,
-                        ),
+                style: BauhausDesign.getTextTheme(context).headlineSmall
+                    ?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: BauhausDesign.textDark,
+                    ),
               ),
-              background: Container(
-                color: BauhausDesign.surfaceWhite,
-              ),
+              background: Container(color: BauhausDesign.surfaceWhite),
             ),
             actions: [
               Padding(
@@ -207,8 +206,9 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                       Expanded(
                         child: BauhausSearchBar(
                           controller: _searchController,
-                          hintText:
-                              AppLocalizations.of(context)!.searchRequestsHint,
+                          hintText: AppLocalizations.of(
+                            context,
+                          )!.searchRequestsHint,
                           onChanged: (val) =>
                               setState(() => _searchQuery = val),
                           onClear: () => setState(() => _searchQuery = ''),
@@ -278,16 +278,16 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
       loading: () => const Row(
         children: [
           Expanded(
-              child:
-                  BauhausLoadingSkeleton(height: 120, width: double.infinity)),
+            child: BauhausLoadingSkeleton(height: 120, width: double.infinity),
+          ),
           SizedBox(width: BauhausDesign.space3),
           Expanded(
-              child:
-                  BauhausLoadingSkeleton(height: 120, width: double.infinity)),
+            child: BauhausLoadingSkeleton(height: 120, width: double.infinity),
+          ),
           SizedBox(width: BauhausDesign.space3),
           Expanded(
-              child:
-                  BauhausLoadingSkeleton(height: 120, width: double.infinity)),
+            child: BauhausLoadingSkeleton(height: 120, width: double.infinity),
+          ),
         ],
       ),
       error: (_, __) => const SizedBox.shrink(),
@@ -354,24 +354,30 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
         // Search Filter
         if (_searchQuery.isNotEmpty) {
           filtered = filtered
-              .where((r) =>
-                  r.type.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-                  (r.note?.toLowerCase().contains(_searchQuery.toLowerCase()) ??
-                      false))
+              .where(
+                (r) =>
+                    r.type.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                    (r.note?.toLowerCase().contains(
+                          _searchQuery.toLowerCase(),
+                        ) ??
+                        false),
+              )
               .toList();
         }
 
         // Date Range Filter
         if (_selectedDateRange != null) {
           filtered = filtered.where((r) {
-            final startStr = r.details['starts'] ??
+            final startStr =
+                r.details['starts'] ??
                 r.details['date'] ??
                 r.details['startDate'];
             if (startStr == null) return false;
             final start = DateTime.parse(startStr).toLocal();
             return start.isAfter(_selectedDateRange!.start) &&
                 start.isBefore(
-                    _selectedDateRange!.end.add(const Duration(days: 1)));
+                  _selectedDateRange!.end.add(const Duration(days: 1)),
+                );
           }).toList();
         }
 
@@ -381,8 +387,9 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
               padding: EdgeInsets.symmetric(vertical: 32.0),
               child: BauhausEmptyState(
                 title: AppLocalizations.of(context)!.noMatchingRequests,
-                message:
-                    AppLocalizations.of(context)!.noMatchingRequestsMessage,
+                message: AppLocalizations.of(
+                  context,
+                )!.noMatchingRequestsMessage,
                 icon: Icons.search_off,
               ),
             ),
@@ -390,19 +397,16 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
         }
 
         return SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              final request = filtered[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: BauhausDesign.space4,
-                  vertical: BauhausDesign.space2,
-                ),
-                child: _buildRequestCard(request),
-              );
-            },
-            childCount: filtered.length,
-          ),
+          delegate: SliverChildBuilderDelegate((context, index) {
+            final request = filtered[index];
+            return Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: BauhausDesign.space4,
+                vertical: BauhausDesign.space2,
+              ),
+              child: _buildRequestCard(request),
+            );
+          }, childCount: filtered.length),
         );
       },
       loading: () => SliverToBoxAdapter(
@@ -413,8 +417,10 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
               3,
               (index) => const Padding(
                 padding: EdgeInsets.only(bottom: BauhausDesign.space3),
-                child:
-                    BauhausLoadingSkeleton(height: 100, width: double.infinity),
+                child: BauhausLoadingSkeleton(
+                  height: 100,
+                  width: double.infinity,
+                ),
               ),
             ),
           ),
@@ -452,11 +458,13 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
         statusIcon = Icons.hourglass_empty;
     }
 
-    final startStr = request.details['starts'] ??
+    final startStr =
+        request.details['starts'] ??
         request.details['date'] ??
         request.details['startDate'] ??
         DateTime.now().toIso8601String();
-    final endStr = request.details['ends'] ??
+    final endStr =
+        request.details['ends'] ??
         request.details['endDate'] ??
         request
             .details['endTime']; // endTime might just be time string, careful.
@@ -516,19 +524,15 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                     children: [
                       Text(
                         request.type,
-                        style: BauhausDesign.getTextTheme(context)
-                            .titleMedium
-                            ?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).titleMedium?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       Text(
                         DateFormat('MMM d, yyyy').format(startDate),
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
-                            ?.copyWith(
-                              color: BauhausDesign.textMuted,
-                            ),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                       ),
                     ],
                   ),
@@ -550,8 +554,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                     const SizedBox(width: BauhausDesign.space1),
                     Text(
                       request.status.name.toUpperCase(),
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelSmall
+                      style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
                             color: statusColor,
                             fontWeight: FontWeight.bold,
@@ -565,22 +568,14 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
           const SizedBox(height: BauhausDesign.space4),
           Row(
             children: [
-              Icon(
-                Icons.access_time,
-                size: 16,
-                color: BauhausDesign.textMuted,
-              ),
+              Icon(Icons.access_time, size: 16, color: BauhausDesign.textMuted),
               const SizedBox(width: BauhausDesign.space2),
               Text(
                 '${DateFormat('h:mm a').format(startDate)} - ${DateFormat('h:mm a').format(endDate)}',
                 style: BauhausDesign.getTextTheme(context).bodyMedium,
               ),
               const Spacer(),
-              Icon(
-                Icons.timer,
-                size: 16,
-                color: BauhausDesign.textMuted,
-              ),
+              Icon(Icons.timer, size: 16, color: BauhausDesign.textMuted),
               const SizedBox(width: BauhausDesign.space2),
               Text(
                 '${endDate.difference(startDate).inHours}h ${endDate.difference(startDate).inMinutes.remainder(60)}m',
@@ -600,11 +595,11 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
               child: Text(
                 request.note!,
                 style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                      fontStyle: FontStyle.italic,
-                      color: BauhausDesign.textMuted,
-                    ),
+                  fontStyle: FontStyle.italic,
+                  color: BauhausDesign.textMuted,
+                ),
               ),
-            )
+            ),
           ],
         ],
       ),

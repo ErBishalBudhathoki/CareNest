@@ -105,10 +105,7 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
       // If unauthorized, we just ignore the result and rely on analytics payload.
       futures.add(
         _api
-            .get(
-              'security/rate-limit/status',
-              headers: _organizationHeaders(),
-            )
+            .get('security/rate-limit/status', headers: _organizationHeaders())
             .catchError((_) => <String, dynamic>{'success': false}),
       );
 
@@ -119,10 +116,11 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
       for (int i = 0; i < 3; i++) {
         final r = results[i];
         if (r['success'] == false) {
-          firstError = (r['message'] ??
-                  r['error'] ??
-                  AppLocalizations.of(context)!.requestFailed)
-              .toString();
+          firstError =
+              (r['message'] ??
+                      r['error'] ??
+                      AppLocalizations.of(context)!.requestFailed)
+                  .toString();
           break;
         }
       }
@@ -173,8 +171,9 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
       });
     } catch (e) {
       setState(() {
-        _error =
-            AppLocalizations.of(context)!.failedToLoadApiUsage(e.toString());
+        _error = AppLocalizations.of(
+          context,
+        )!.failedToLoadApiUsage(e.toString());
         _loading = false;
       });
     }
@@ -183,7 +182,8 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
   void _connectSSE() async {
     if (_organizationId == null) {
       debugPrint(
-          '[SSE] Organization ID not available, skipping SSE connection');
+        '[SSE] Organization ID not available, skipping SSE connection',
+      );
       return;
     }
 
@@ -201,58 +201,67 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
       debugPrint('[SSE] Response status: ${resp.statusCode}');
       if (resp.statusCode != 200) {
         if (mounted) {
-          _showErrorSnackbar(AppLocalizations.of(context)!
-              .liveStreamUnavailable('${resp.statusCode}'));
+          _showErrorSnackbar(
+            AppLocalizations.of(
+              context,
+            )!.liveStreamUnavailable('${resp.statusCode}'),
+          );
         }
         return;
       }
 
       // Transform to lines and parse SSE events
-      final stream =
-          resp.stream.transform(utf8.decoder).transform(const LineSplitter());
+      final stream = resp.stream
+          .transform(utf8.decoder)
+          .transform(const LineSplitter());
       String buffer = '';
-      _sseSub = stream.listen((line) {
-        if (line.isEmpty) {
-          // end of event
-          if (buffer.isNotEmpty) {
-            try {
-              final dataIndex = buffer.indexOf('data:');
-              if (dataIndex != -1) {
-                final payload = buffer.substring(dataIndex + 5).trim();
-                final jsonStart = payload.indexOf('{');
-                final jsonStr =
-                    jsonStart == -1 ? payload : payload.substring(jsonStart);
-                final decoded = json.decode(jsonStr);
-                // Only record actual request events; ignore ping/ready and other misc events
-                if (decoded is Map<String, dynamic> &&
-                    decoded['type'] == 'request') {
-                  setState(() {
-                    _liveEvents.insert(0, decoded);
-                    if (_liveEvents.length > 100) {
-                      _liveEvents.removeLast();
-                    }
-                  });
+      _sseSub = stream.listen(
+        (line) {
+          if (line.isEmpty) {
+            // end of event
+            if (buffer.isNotEmpty) {
+              try {
+                final dataIndex = buffer.indexOf('data:');
+                if (dataIndex != -1) {
+                  final payload = buffer.substring(dataIndex + 5).trim();
+                  final jsonStart = payload.indexOf('{');
+                  final jsonStr = jsonStart == -1
+                      ? payload
+                      : payload.substring(jsonStart);
+                  final decoded = json.decode(jsonStr);
+                  // Only record actual request events; ignore ping/ready and other misc events
+                  if (decoded is Map<String, dynamic> &&
+                      decoded['type'] == 'request') {
+                    setState(() {
+                      _liveEvents.insert(0, decoded);
+                      if (_liveEvents.length > 100) {
+                        _liveEvents.removeLast();
+                      }
+                    });
+                  }
                 }
+              } catch (e) {
+                debugPrint('[SSE] Parse error: $e');
               }
-            } catch (e) {
-              debugPrint('[SSE] Parse error: $e');
+              buffer = '';
             }
-            buffer = '';
+          } else if (line.startsWith('data:')) {
+            buffer += (buffer.isEmpty ? '' : '\n') + line;
           }
-        } else if (line.startsWith('data:')) {
-          buffer += (buffer.isEmpty ? '' : '\n') + line;
-        }
-      }, onError: (err) {
-        debugPrint('[SSE] Stream error: $err');
-      }, onDone: () {
-        debugPrint('[SSE] Stream closed by server');
-        // Retry after 5 seconds if still mounted
-        if (mounted) {
-          Future.delayed(const Duration(seconds: 5), () {
-            if (mounted) _connectSSE();
-          });
-        }
-      });
+        },
+        onError: (err) {
+          debugPrint('[SSE] Stream error: $err');
+        },
+        onDone: () {
+          debugPrint('[SSE] Stream closed by server');
+          // Retry after 5 seconds if still mounted
+          if (mounted) {
+            Future.delayed(const Duration(seconds: 5), () {
+              if (mounted) _connectSSE();
+            });
+          }
+        },
+      );
     } catch (e) {
       debugPrint('[SSE] Exception: $e');
       // Retry after 5 seconds if still mounted
@@ -279,16 +288,21 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
 
       if (res['success'] == true) {
         _showSuccessSnackbar(
-            AppLocalizations.of(context)!.ipUnblockedSuccess(ipAddress));
+          AppLocalizations.of(context)!.ipUnblockedSuccess(ipAddress),
+        );
         _loadAll(); // Reload data to reflect changes
       } else {
-        _showErrorSnackbar(AppLocalizations.of(context)!.failedToUnblockIp(
-            res['message'] ?? AppLocalizations.of(context)!.unknown));
+        _showErrorSnackbar(
+          AppLocalizations.of(context)!.failedToUnblockIp(
+            res['message'] ?? AppLocalizations.of(context)!.unknown,
+          ),
+        );
       }
     } catch (e) {
       if (!mounted) return;
       _showErrorSnackbar(
-          AppLocalizations.of(context)!.errorUnblockingIp(e.toString()));
+        AppLocalizations.of(context)!.errorUnblockingIp(e.toString()),
+      );
     }
   }
 
@@ -307,16 +321,21 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
 
       if (res['success'] == true) {
         _showSuccessSnackbar(
-            AppLocalizations.of(context)!.rateLimitResetFor(ip));
+          AppLocalizations.of(context)!.rateLimitResetFor(ip),
+        );
         _loadAll();
       } else {
-        _showErrorSnackbar(AppLocalizations.of(context)!.failedToResetRateLimit(
-            (res['message'] ?? AppLocalizations.of(context)!.unknown)));
+        _showErrorSnackbar(
+          AppLocalizations.of(context)!.failedToResetRateLimit(
+            (res['message'] ?? AppLocalizations.of(context)!.unknown),
+          ),
+        );
       }
     } catch (e) {
       if (!mounted) return;
       _showErrorSnackbar(
-          AppLocalizations.of(context)!.errorResettingRateLimit(e.toString()));
+        AppLocalizations.of(context)!.errorResettingRateLimit(e.toString()),
+      );
     }
   }
 
@@ -362,9 +381,9 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
               child: Text(
                 message,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.textDark,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
@@ -390,9 +409,9 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
               child: Text(
                 message,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.textDark,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
@@ -407,22 +426,17 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
     );
   }
 
-  TextStyle? get _sectionTitleStyle =>
-      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-            color: BauhausDesign.textDark,
-            fontWeight: FontWeight.w700,
-          );
+  TextStyle? get _sectionTitleStyle => BauhausDesign.getTextTheme(context)
+      .titleMedium
+      ?.copyWith(color: BauhausDesign.textDark, fontWeight: FontWeight.w700);
 
-  TextStyle? get _itemTitleStyle =>
-      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-            color: BauhausDesign.textDark,
-            fontWeight: FontWeight.w600,
-          );
+  TextStyle? get _itemTitleStyle => BauhausDesign.getTextTheme(context)
+      .bodyMedium
+      ?.copyWith(color: BauhausDesign.textDark, fontWeight: FontWeight.w600);
 
-  TextStyle? get _itemSubtitleStyle =>
-      BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-            color: BauhausDesign.textMuted,
-          );
+  TextStyle? get _itemSubtitleStyle => BauhausDesign.getTextTheme(
+    context,
+  ).bodySmall?.copyWith(color: BauhausDesign.textMuted);
 
   @override
   Widget build(BuildContext context) {
@@ -431,32 +445,34 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
       appBar: _buildBauhausAppBar(),
       body: _loading
           ? const Center(
-              child: CircularProgressIndicator(color: BauhausDesign.primary))
+              child: CircularProgressIndicator(color: BauhausDesign.primary),
+            )
           : _error != null
-              ? Center(
-                  child: BauhausErrorState(message: _error!, onRetry: _loadAll))
-              : RefreshIndicator(
-                  onRefresh: _loadAll,
-                  color: BauhausDesign.primary,
-                  child: ListView(
-                    padding: const EdgeInsets.all(BauhausDesign.space4),
-                    children: [
-                      _buildStatusStrip(),
-                      const SizedBox(height: BauhausDesign.space4),
-                      _buildOverviewCards(),
-                      const SizedBox(height: BauhausDesign.space4),
-                      _buildSecuritySection(),
-                      const SizedBox(height: BauhausDesign.space4),
-                      _buildMetricsSection(),
-                      const SizedBox(height: BauhausDesign.space4),
-                      _buildRateLimitSection(),
-                      const SizedBox(height: BauhausDesign.space4),
-                      _buildActiveConnections(),
-                      const SizedBox(height: BauhausDesign.space4),
-                      _buildLiveEvents(),
-                    ],
-                  ),
-                ),
+          ? Center(
+              child: BauhausErrorState(message: _error!, onRetry: _loadAll),
+            )
+          : RefreshIndicator(
+              onRefresh: _loadAll,
+              color: BauhausDesign.primary,
+              child: ListView(
+                padding: const EdgeInsets.all(BauhausDesign.space4),
+                children: [
+                  _buildStatusStrip(),
+                  const SizedBox(height: BauhausDesign.space4),
+                  _buildOverviewCards(),
+                  const SizedBox(height: BauhausDesign.space4),
+                  _buildSecuritySection(),
+                  const SizedBox(height: BauhausDesign.space4),
+                  _buildMetricsSection(),
+                  const SizedBox(height: BauhausDesign.space4),
+                  _buildRateLimitSection(),
+                  const SizedBox(height: BauhausDesign.space4),
+                  _buildActiveConnections(),
+                  const SizedBox(height: BauhausDesign.space4),
+                  _buildLiveEvents(),
+                ],
+              ),
+            ),
     );
   }
 
@@ -472,8 +488,9 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
         ),
         child: SafeArea(
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
+            padding: const EdgeInsets.symmetric(
+              horizontal: BauhausDesign.space4,
+            ),
             child: Row(
               children: [
                 BauhausIconButton(
@@ -484,9 +501,9 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
                 const SizedBox(width: BauhausDesign.space2),
                 Text(
                   AppLocalizations.of(context)!.apiSecurity,
-                  style: BauhausDesign.getTextTheme(context)
-                      .displaySmall
-                      ?.copyWith(color: BauhausDesign.textDark),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).displaySmall?.copyWith(color: BauhausDesign.textDark),
                 ),
                 const Spacer(),
                 BauhausIconButton(
@@ -529,9 +546,9 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
           Expanded(
             child: Text(
               AppLocalizations.of(context)!.apiSecurity,
-              style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                    color: BauhausDesign.textDark,
-                  ),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).labelLarge?.copyWith(color: BauhausDesign.textDark),
             ),
           ),
           BauhausChip(
@@ -591,7 +608,8 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
     IconData? icon,
   }) {
     return Container(
-      width: (MediaQuery.of(context).size.width - (BauhausDesign.space4 * 3)) /
+      width:
+          (MediaQuery.of(context).size.width - (BauhausDesign.space4 * 3)) /
           2, // 2 columns
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
@@ -613,8 +631,11 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
                     color: color,
                     border: Border.all(color: BauhausDesign.neutral, width: 1),
                   ),
-                  child:
-                      Icon(icon, size: 13, color: BauhausDesign.surfaceLight),
+                  child: Icon(
+                    icon,
+                    size: 13,
+                    color: BauhausDesign.surfaceLight,
+                  ),
                 ),
                 const SizedBox(width: BauhausDesign.space2),
               ],
@@ -623,11 +644,11 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
               ),
             ],
@@ -636,9 +657,9 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
           Text(
             value,
             style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: BauhausDesign.textDark,
-                ),
+              fontWeight: FontWeight.bold,
+              color: BauhausDesign.textDark,
+            ),
           ),
         ],
       ),
@@ -657,10 +678,7 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: _sectionTitleStyle,
-          ),
+          Text(title, style: _sectionTitleStyle),
           const Divider(
             height: BauhausDesign.space6,
             color: BauhausDesign.neutral,
@@ -679,15 +697,19 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
         children: [
           ListTile(
             contentPadding: EdgeInsets.zero,
-            leading:
-                const Icon(Icons.block, size: 20, color: BauhausDesign.error),
+            leading: const Icon(
+              Icons.block,
+              size: 20,
+              color: BauhausDesign.error,
+            ),
             title: Text(
               AppLocalizations.of(context)!.blockedIpAddresses,
               style: _itemTitleStyle,
             ),
             subtitle: Text(
-              AppLocalizations.of(context)!
-                  .ipsCurrentlyBlocked('${_blockedIPs.length}'),
+              AppLocalizations.of(
+                context,
+              )!.ipsCurrentlyBlocked('${_blockedIPs.length}'),
               style: _itemSubtitleStyle,
             ),
             trailing: BauhausChip(
@@ -698,15 +720,19 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
           ),
           ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.warning,
-                size: 20, color: BauhausDesign.warning),
+            leading: const Icon(
+              Icons.warning,
+              size: 20,
+              color: BauhausDesign.warning,
+            ),
             title: Text(
               AppLocalizations.of(context)!.failedAttempts,
               style: _itemTitleStyle,
             ),
             subtitle: Text(
-              AppLocalizations.of(context)!
-                  .recentFailedAttempts('${_failedAttempts.length}'),
+              AppLocalizations.of(
+                context,
+              )!.recentFailedAttempts('${_failedAttempts.length}'),
               style: _itemSubtitleStyle,
             ),
             trailing: BauhausChip(
@@ -716,27 +742,33 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
             ),
           ),
           if (_blockedIPs.isNotEmpty)
-            ..._blockedIPs.take(3).map((ip) => ListTile(
-                  dense: true,
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.computer, size: 16),
-                  title: Text(
-                    ip['ip'] ?? AppLocalizations.of(context)!.unknown,
-                    style: _itemTitleStyle,
-                  ),
-                  subtitle: Text(
+            ..._blockedIPs
+                .take(3)
+                .map(
+                  (ip) => ListTile(
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.computer, size: 16),
+                    title: Text(
+                      ip['ip'] ?? AppLocalizations.of(context)!.unknown,
+                      style: _itemTitleStyle,
+                    ),
+                    subtitle: Text(
                       AppLocalizations.of(context)!.expiresDetailLabel(
-                          ip['expiresAt']?.split('T').isNotEmpty == true
-                              ? ip['expiresAt']?.split('T')[0] ??
+                        ip['expiresAt']?.split('T').isNotEmpty == true
+                            ? ip['expiresAt']?.split('T')[0] ??
                                   AppLocalizations.of(context)!.unknown
-                              : AppLocalizations.of(context)!.unknown),
-                      style: _itemSubtitleStyle),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.lock_open, size: 16),
-                    onPressed: () => _unblockIpAddress(ip['ip']),
-                    tooltip: AppLocalizations.of(context)!.unblockThisIp,
+                            : AppLocalizations.of(context)!.unknown,
+                      ),
+                      style: _itemSubtitleStyle,
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.lock_open, size: 16),
+                      onPressed: () => _unblockIpAddress(ip['ip']),
+                      tooltip: AppLocalizations.of(context)!.unblockThisIp,
+                    ),
                   ),
-                )),
+                ),
         ],
       ),
     );
@@ -767,8 +799,10 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
                   style: _itemTitleStyle,
                 ),
                 subtitle: Text(
-                  AppLocalizations.of(context)!.calls('${stats['count']}',
-                      stats['avgTime']?.toStringAsFixed(1) ?? '0'),
+                  AppLocalizations.of(context)!.calls(
+                    '${stats['count']}',
+                    stats['avgTime']?.toStringAsFixed(1) ?? '0',
+                  ),
                   style: _itemSubtitleStyle,
                 ),
                 trailing: BauhausChip(
@@ -787,7 +821,8 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
           title: AppLocalizations.of(context)!.topUsers,
           child: Column(
             children: userPatterns.take(5).map<Widget>((user) {
-              final displayName = user['userEmail'] ??
+              final displayName =
+                  user['userEmail'] ??
                   user['userId'] ??
                   AppLocalizations.of(context)!.unknown;
               return ListTile(
@@ -797,11 +832,12 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
                 title: Text(displayName, style: _itemTitleStyle),
                 subtitle: Text(
                   AppLocalizations.of(context)!.callsAndLast(
-                      '${user['totalCalls']}',
-                      user['lastActivity']?.split('T').isNotEmpty == true
-                          ? user['lastActivity']?.split('T')[0] ??
+                    '${user['totalCalls']}',
+                    user['lastActivity']?.split('T').isNotEmpty == true
+                        ? user['lastActivity']?.split('T')[0] ??
                               AppLocalizations.of(context)!.unknown
-                          : AppLocalizations.of(context)!.unknown),
+                        : AppLocalizations.of(context)!.unknown,
+                  ),
                   style: _itemSubtitleStyle,
                 ),
                 trailing: BauhausChip(
@@ -829,54 +865,67 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
           // Show configured limits (if available)
           final data = _rateLimitConfig;
           if (data == null) {
-            items.add(ListTile(
-              dense: true,
-              contentPadding: EdgeInsets.zero,
-              title: Text(AppLocalizations.of(context)!.noRateLimitConfig,
-                  style: _itemTitleStyle),
-              leading: const Icon(Icons.info, size: 16),
-            ));
+            items.add(
+              ListTile(
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  AppLocalizations.of(context)!.noRateLimitConfig,
+                  style: _itemTitleStyle,
+                ),
+                leading: const Icon(Icons.info, size: 16),
+              ),
+            );
           } else {
             final mapData = data as Map;
             mapData.entries
                 .where((entry) => entry.key != 'default')
                 .take(6)
                 .forEach((entry) {
-              final endpoint = entry.key.toString();
-              final cfg = entry.value;
-              final maxVal = _asInt(cfg is Map ? cfg['max'] : null);
-              final windowMsVal =
-                  _asInt(cfg is Map ? cfg['windowMs'] : null, fallback: 60000);
+                  final endpoint = entry.key.toString();
+                  final cfg = entry.value;
+                  final maxVal = _asInt(cfg is Map ? cfg['max'] : null);
+                  final windowMsVal = _asInt(
+                    cfg is Map ? cfg['windowMs'] : null,
+                    fallback: 60000,
+                  );
 
-              items.add(ListTile(
-                dense: true,
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.lock_clock, size: 16),
-                title: Text(endpoint,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: _itemTitleStyle),
-                subtitle: Text(
-                  AppLocalizations.of(context)!
-                      .requestsPerMinutes('$maxVal', '${windowMsVal ~/ 60000}'),
-                  style: _itemSubtitleStyle,
-                ),
-                trailing: BauhausChip(
-                  text: '$maxVal',
-                  color: maxVal <= 5
-                      ? BauhausDesign.error
-                      : maxVal <= 10
-                          ? BauhausDesign.warning
-                          : BauhausDesign.success,
-                  isSmall: true,
-                ),
-              ));
-            });
+                  items.add(
+                    ListTile(
+                      dense: true,
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(Icons.lock_clock, size: 16),
+                      title: Text(
+                        endpoint,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: _itemTitleStyle,
+                      ),
+                      subtitle: Text(
+                        AppLocalizations.of(context)!.requestsPerMinutes(
+                          '$maxVal',
+                          '${windowMsVal ~/ 60000}',
+                        ),
+                        style: _itemSubtitleStyle,
+                      ),
+                      trailing: BauhausChip(
+                        text: '$maxVal',
+                        color: maxVal <= 5
+                            ? BauhausDesign.error
+                            : maxVal <= 10
+                            ? BauhausDesign.warning
+                            : BauhausDesign.success,
+                        isSmall: true,
+                      ),
+                    ),
+                  );
+                });
           }
 
           // Divider between config and current rate-limited users
-          items
-              .add(const Divider(color: BauhausDesign.neutral, thickness: 0.5));
+          items.add(
+            const Divider(color: BauhausDesign.neutral, thickness: 0.5),
+          );
 
           // Aggregate current rate-limited entries by IP (blocked IPs + failed attempts)
           final Map<String, Map<String, dynamic>> rateLimitedByIp = {};
@@ -895,12 +944,9 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
           for (final b in _blockedIPs) {
             final ip = b is Map ? (b['ip']?.toString() ?? '') : '';
             if (ip.isEmpty) continue;
-            final existing = rateLimitedByIp[ip] ??
-                {
-                  'ip': ip,
-                  'attempts': 0,
-                  'lastAttemptAt': '',
-                };
+            final existing =
+                rateLimitedByIp[ip] ??
+                {'ip': ip, 'attempts': 0, 'lastAttemptAt': ''};
             existing['blockedUntil'] = (b['expiresAt'] ?? '').toString();
             rateLimitedByIp[ip] = existing;
           }
@@ -914,107 +960,132 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
             return (_asInt(b['attempts']) - _asInt(a['attempts']));
           });
 
-          items.add(ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.security, size: 18),
-            title: Text(AppLocalizations.of(context)!.rateLimitedUsers,
-                style: _itemTitleStyle),
-            subtitle: Text(
+          items.add(
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.security, size: 18),
+              title: Text(
+                AppLocalizations.of(context)!.rateLimitedUsers,
+                style: _itemTitleStyle,
+              ),
+              subtitle: Text(
                 AppLocalizations.of(context)!.entries('${entries.length}'),
-                style: _itemSubtitleStyle),
-            trailing: TextButton.icon(
-              onPressed: entries.isEmpty
-                  ? null
-                  : () async {
-                      // Reset all - use with caution
-                      try {
-                        final res = await _api.post(
-                          'security/rate-limit/reset',
-                          headers: _organizationHeaders(),
-                          body: {
-                            'resetAll': true,
-                            if (_organizationId != null)
-                              'organizationId': _organizationId,
-                          },
-                        );
-                        if (!mounted) return;
-                        if (res['success'] == true) {
-                          _showSuccessSnackbar(
-                              AppLocalizations.of(context)!.allRateLimitsReset);
-                          _loadAll();
-                        } else {
-                          _showErrorSnackbar(AppLocalizations.of(context)!
-                              .failedToResetAll((res['message'] ??
-                                  AppLocalizations.of(context)!.unknown)));
+                style: _itemSubtitleStyle,
+              ),
+              trailing: TextButton.icon(
+                onPressed: entries.isEmpty
+                    ? null
+                    : () async {
+                        // Reset all - use with caution
+                        try {
+                          final res = await _api.post(
+                            'security/rate-limit/reset',
+                            headers: _organizationHeaders(),
+                            body: {
+                              'resetAll': true,
+                              if (_organizationId != null)
+                                'organizationId': _organizationId,
+                            },
+                          );
+                          if (!mounted) return;
+                          if (res['success'] == true) {
+                            _showSuccessSnackbar(
+                              AppLocalizations.of(context)!.allRateLimitsReset,
+                            );
+                            _loadAll();
+                          } else {
+                            _showErrorSnackbar(
+                              AppLocalizations.of(context)!.failedToResetAll(
+                                (res['message'] ??
+                                    AppLocalizations.of(context)!.unknown),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          if (!mounted) return;
+                          _showErrorSnackbar(
+                            AppLocalizations.of(
+                              context,
+                            )!.errorResettingAll(e.toString()),
+                          );
                         }
-                      } catch (e) {
-                        if (!mounted) return;
-                        _showErrorSnackbar(AppLocalizations.of(context)!
-                            .errorResettingAll(e.toString()));
-                      }
-                    },
-              icon: const Icon(Icons.refresh, size: 16),
-              label: Text(AppLocalizations.of(context)!.resetAll),
-              style: TextButton.styleFrom(
-                foregroundColor: BauhausDesign.primary,
+                      },
+                icon: const Icon(Icons.refresh, size: 16),
+                label: Text(AppLocalizations.of(context)!.resetAll),
+                style: TextButton.styleFrom(
+                  foregroundColor: BauhausDesign.primary,
+                ),
               ),
             ),
-          ));
+          );
 
           if (entries.isEmpty) {
-            items.add(ListTile(
-              dense: true,
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.verified_user,
-                  size: 16, color: BauhausDesign.success),
-              title: Text(AppLocalizations.of(context)!.noRateLimitedUsers,
-                  style: _itemTitleStyle),
-            ));
-          } else {
-            items.addAll(entries.take(10).map((e) {
-              final ip =
-                  (e['ip'] ?? AppLocalizations.of(context)!.unknown).toString();
-              final attempts = _asInt(e['attempts']);
-              final lastAttemptAt = (e['lastAttemptAt'] ?? '').toString();
-              final blockedUntil = (e['blockedUntil'] ?? '').toString();
-              final isBlocked = blockedUntil.isNotEmpty;
-              final subtitleParts = <String>[
-                AppLocalizations.of(context)!.attempts('$attempts'),
-                if (lastAttemptAt.isNotEmpty)
-                  AppLocalizations.of(context)!.last(
-                      (lastAttemptAt.split('T').isNotEmpty
-                          ? lastAttemptAt.split('T').first
-                          : lastAttemptAt)),
-                if (isBlocked)
-                  AppLocalizations.of(context)!.blockedUntil((blockedUntil
-                              .split('T')
-                              .length >
-                          1
-                      ? '${blockedUntil.split('T')[0]} ${blockedUntil.split('T')[1].substring(0, 5)}'
-                      : blockedUntil)),
-              ];
-
-              return ListTile(
+            items.add(
+              ListTile(
                 dense: true,
                 contentPadding: EdgeInsets.zero,
-                leading: Icon(
-                  isBlocked ? Icons.lock : Icons.error_outline,
+                leading: const Icon(
+                  Icons.verified_user,
                   size: 16,
-                  color:
-                      isBlocked ? BauhausDesign.error : BauhausDesign.warning,
+                  color: BauhausDesign.success,
                 ),
-                title: Text(ip, style: _itemTitleStyle),
-                subtitle:
-                    Text(subtitleParts.join(' • '), style: _itemSubtitleStyle),
-                trailing: TextButton.icon(
-                  onPressed: () => _resetRateLimitForIp(ip),
-                  icon: const Icon(Icons.restore_from_trash, size: 16),
-                  label: Text(AppLocalizations.of(context)!.reset),
-                  style: TextButton.styleFrom(
-                      foregroundColor: BauhausDesign.primary),
+                title: Text(
+                  AppLocalizations.of(context)!.noRateLimitedUsers,
+                  style: _itemTitleStyle,
                 ),
-              );
-            }));
+              ),
+            );
+          } else {
+            items.addAll(
+              entries.take(10).map((e) {
+                final ip = (e['ip'] ?? AppLocalizations.of(context)!.unknown)
+                    .toString();
+                final attempts = _asInt(e['attempts']);
+                final lastAttemptAt = (e['lastAttemptAt'] ?? '').toString();
+                final blockedUntil = (e['blockedUntil'] ?? '').toString();
+                final isBlocked = blockedUntil.isNotEmpty;
+                final subtitleParts = <String>[
+                  AppLocalizations.of(context)!.attempts('$attempts'),
+                  if (lastAttemptAt.isNotEmpty)
+                    AppLocalizations.of(context)!.last(
+                      (lastAttemptAt.split('T').isNotEmpty
+                          ? lastAttemptAt.split('T').first
+                          : lastAttemptAt),
+                    ),
+                  if (isBlocked)
+                    AppLocalizations.of(context)!.blockedUntil(
+                      (blockedUntil.split('T').length > 1
+                          ? '${blockedUntil.split('T')[0]} ${blockedUntil.split('T')[1].substring(0, 5)}'
+                          : blockedUntil),
+                    ),
+                ];
+
+                return ListTile(
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(
+                    isBlocked ? Icons.lock : Icons.error_outline,
+                    size: 16,
+                    color: isBlocked
+                        ? BauhausDesign.error
+                        : BauhausDesign.warning,
+                  ),
+                  title: Text(ip, style: _itemTitleStyle),
+                  subtitle: Text(
+                    subtitleParts.join(' • '),
+                    style: _itemSubtitleStyle,
+                  ),
+                  trailing: TextButton.icon(
+                    onPressed: () => _resetRateLimitForIp(ip),
+                    icon: const Icon(Icons.restore_from_trash, size: 16),
+                    label: Text(AppLocalizations.of(context)!.reset),
+                    style: TextButton.styleFrom(
+                      foregroundColor: BauhausDesign.primary,
+                    ),
+                  ),
+                );
+              }),
+            );
           }
 
           return items;
@@ -1038,17 +1109,22 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
                 ListTile(
                   dense: true,
                   contentPadding: EdgeInsets.zero,
-                  title: Text(AppLocalizations.of(context)!.noActiveConnections,
-                      style: _itemTitleStyle),
+                  title: Text(
+                    AppLocalizations.of(context)!.noActiveConnections,
+                    style: _itemTitleStyle,
+                  ),
                   leading: const Icon(Icons.wifi_off, size: 16),
-                )
+                ),
               ]
             : _activeConnections.take(5).map<Widget>((connection) {
                 return ListTile(
                   dense: true,
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.wifi,
-                      size: 16, color: BauhausDesign.success),
+                  leading: const Icon(
+                    Icons.wifi,
+                    size: 16,
+                    color: BauhausDesign.success,
+                  ),
                   title: Text(
                     connection['email'] ??
                         connection['userId'] ??
@@ -1058,12 +1134,13 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
                   ),
                   subtitle: Text(
                     AppLocalizations.of(context)!.connected(
-                        connection['connectedAt']?.split('T').length > 1
-                            ? connection['connectedAt']
+                      connection['connectedAt']?.split('T').length > 1
+                          ? connection['connectedAt']
                                     ?.split('T')[1]
                                     ?.substring(0, 5) ??
                                 AppLocalizations.of(context)!.unknown
-                            : AppLocalizations.of(context)!.unknown),
+                          : AppLocalizations.of(context)!.unknown,
+                    ),
                     style: _itemSubtitleStyle,
                   ),
                   trailing: BauhausChip(
@@ -1099,8 +1176,10 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
               overflow: TextOverflow.ellipsis,
               style: _itemTitleStyle,
             ),
-            subtitle: Text('Status: $status • IP: $ip$userInfo',
-                style: _itemSubtitleStyle),
+            subtitle: Text(
+              'Status: $status • IP: $ip$userInfo',
+              style: _itemSubtitleStyle,
+            ),
           );
         }).toList(),
       ),

@@ -38,19 +38,21 @@ class FirebaseMessagingService {
     }
 
     debugPrint(
-        'DEBUG_FCM: User notification permission status: ${settings.authorizationStatus}');
+      'DEBUG_FCM: User notification permission status: ${settings.authorizationStatus}',
+    );
 
     // Disable automatic foreground notifications to allow manual handling
     // This ensures FirebaseMessaging.onMessage.listen callback is triggered
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
-      alert: false, // Disable automatic alert display
-      badge: false, // Disable automatic badge updates
-      sound: false, // Disable automatic sound
-    );
+          alert: false, // Disable automatic alert display
+          badge: false, // Disable automatic badge updates
+          sound: false, // Disable automatic sound
+        );
 
     debugPrint(
-        'DEBUG_FCM: FirebaseMessagingService initialized with foreground notification options.');
+      'DEBUG_FCM: FirebaseMessagingService initialized with foreground notification options.',
+    );
 
     // Foreground message handling is now done by NotificationHandler widget
     // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -58,7 +60,8 @@ class FirebaseMessagingService {
     //   _handleMessage(message, foreground: true);
     // });
     debugPrint(
-        'DEBUG_FCM: Foreground message handling delegated to NotificationHandler widget');
+      'DEBUG_FCM: Foreground message handling delegated to NotificationHandler widget',
+    );
 
     // Handle when app is opened from a surface state
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
@@ -69,12 +72,13 @@ class FirebaseMessagingService {
     });
 
     // Check if the app was opened from a terminated state via notification
-    FirebaseMessaging.instance
-        .getInitialMessage()
-        .then((RemoteMessage? message) async {
+    FirebaseMessaging.instance.getInitialMessage().then((
+      RemoteMessage? message,
+    ) async {
       if (message != null) {
         debugPrint(
-            'DEBUG_FCM: App opened from terminated state via notification!');
+          'DEBUG_FCM: App opened from terminated state via notification!',
+        );
         await _handleMessage(message, foreground: false);
         // Here you can navigate to specific screen based on the message data
         // For example: navigatorKey.currentState?.pushNamed('/notification_details', arguments: message.data);
@@ -89,7 +93,8 @@ class FirebaseMessagingService {
       final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
       if (apnsToken == null) {
         debugPrint(
-            'DEBUG_FCM: APNS token not available, skipping FCM token retrieval.');
+          'DEBUG_FCM: APNS token not available, skipping FCM token retrieval.',
+        );
         return;
       }
     }
@@ -99,14 +104,17 @@ class FirebaseMessagingService {
     // Add token refresh listener
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
       debugPrint(
-          'DEBUG_FCM: FCM token refreshed: ${newToken.substring(0, 15)}...');
+        'DEBUG_FCM: FCM token refreshed: ${newToken.substring(0, 15)}...',
+      );
     });
 
     debugPrint('DEBUG_FCM: FirebaseMessagingService initialized successfully');
   }
 
-  Future<void> _handleMessage(RemoteMessage message,
-      {bool foreground = false}) async {
+  Future<void> _handleMessage(
+    RemoteMessage message, {
+    bool foreground = false,
+  }) async {
     debugPrint('DEBUG_FCM: Message received! Foreground: $foreground');
     debugPrint('DEBUG_FCM: Message data: ${message.data}');
     debugPrint('DEBUG_FCM: Message notification: ${message.notification}');
@@ -115,9 +123,11 @@ class FirebaseMessagingService {
       // Process notification messages
       if (message.notification != null) {
         debugPrint(
-            'DEBUG_FCM: Notification title: ${message.notification!.title}');
+          'DEBUG_FCM: Notification title: ${message.notification!.title}',
+        );
         debugPrint(
-            'DEBUG_FCM: Notification body: ${message.notification!.body}');
+          'DEBUG_FCM: Notification body: ${message.notification!.body}',
+        );
 
         // For foreground messages, we need to manually show the notification
         // since FCM doesn't automatically display them when app is in foreground
@@ -178,15 +188,14 @@ class FirebaseMessagingService {
           // Process any UI updates or actions based on the notification
           _processNotificationData(message.data);
         }
-
         // For surface and terminated state messages, the system already shows the notification
         // We only need to handle any specific actions when the user taps on them
         else {
           debugPrint(
-              'DEBUG_FCM: Background/terminated notification, system will display it');
+            'DEBUG_FCM: Background/terminated notification, system will display it',
+          );
         }
       }
-
       // Handle data-only messages (no notification payload)
       else if (message.data.isNotEmpty) {
         debugPrint('DEBUG_FCM: Data-only message received: ${message.data}');
@@ -259,7 +268,8 @@ class FirebaseMessagingService {
       if (data.containsKey('type')) {
         final notificationType = data['type'];
         debugPrint(
-            'DEBUG_FCM: Processing notification type: $notificationType');
+          'DEBUG_FCM: Processing notification type: $notificationType',
+        );
 
         // Handle different notification types
         switch (notificationType) {
@@ -267,7 +277,8 @@ class FirebaseMessagingService {
             // Process invoice notification data
             if (data.containsKey('invoiceId')) {
               debugPrint(
-                  'DEBUG_FCM: Processing invoice notification for ID: ${data['invoiceId']}');
+                'DEBUG_FCM: Processing invoice notification for ID: ${data['invoiceId']}',
+              );
               // Update invoice-related UI or data
             }
             break;
@@ -307,7 +318,8 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint('DEBUG_FCM: Background handler triggered!');
   debugPrint('DEBUG_FCM: Background message data: ${message.data}');
   debugPrint(
-      'DEBUG_FCM: Background message notification: ${message.notification}');
+    'DEBUG_FCM: Background message notification: ${message.notification}',
+  );
 
   final String? title =
       message.notification?.title ?? message.data['title']?.toString();
@@ -322,7 +334,8 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   final String resolvedBody = body ?? '';
   final String channelId =
       message.data['channelId']?.toString() ?? 'timer_alerts';
-  final String type = message.data['type']?.toString() ??
+  final String type =
+      message.data['type']?.toString() ??
       message.data['channelId']?.toString() ??
       'general';
 

@@ -159,20 +159,20 @@ class _RealtimePortalDashboardState
 
       if (_userIdentifier != null && _userIdentifier!.isNotEmpty) {
         preloadTasks.add(
-          ref.read(messagingViewModelProvider.notifier).getUserConversations(
-                userId: _userIdentifier!,
-              ),
+          ref
+              .read(messagingViewModelProvider.notifier)
+              .getUserConversations(userId: _userIdentifier!),
         );
       }
 
       if (_activeClientId != null) {
         preloadTasks.addAll([
-          ref.read(familyAccessViewModelProvider.notifier).getFamilyMembers(
-                clientId: _activeClientId!,
-              ),
-          ref.read(familyAccessViewModelProvider.notifier).getAccessLog(
-                clientId: _activeClientId!,
-              ),
+          ref
+              .read(familyAccessViewModelProvider.notifier)
+              .getFamilyMembers(clientId: _activeClientId!),
+          ref
+              .read(familyAccessViewModelProvider.notifier)
+              .getAccessLog(clientId: _activeClientId!),
         ]);
       }
 
@@ -185,14 +185,10 @@ class _RealtimePortalDashboardState
           await Future.wait([
             ref
                 .read(realtimeTrackingViewModelProvider.notifier)
-                .getLiveTracking(
-                  appointmentId: appointmentId,
-                ),
+                .getLiveTracking(appointmentId: appointmentId),
             ref
                 .read(serviceConfirmationViewModelProvider.notifier)
-                .getConfirmation(
-                  appointmentId: appointmentId,
-                ),
+                .getConfirmation(appointmentId: appointmentId),
           ]);
         }
       }
@@ -245,7 +241,8 @@ class _RealtimePortalDashboardState
       familyState: familyState,
     );
 
-    final hasAnyData = trackingState.liveLocation != null ||
+    final hasAnyData =
+        trackingState.liveLocation != null ||
         trackingState.activeSession != null ||
         trackingState.appointmentStatus != null ||
         messagingState.conversations.isNotEmpty ||
@@ -256,7 +253,8 @@ class _RealtimePortalDashboardState
         familyState.auditLogs.isNotEmpty ||
         familyState.pendingInvitation != null;
 
-    final isLoading = (clientState.isLoading ||
+    final isLoading =
+        (clientState.isLoading ||
             trackingState.isLoading ||
             messagingState.isLoading ||
             serviceState.isLoading ||
@@ -278,70 +276,69 @@ class _RealtimePortalDashboardState
       body: organizationId == null || organizationId.isEmpty
           ? _buildMissingOrganizationState(context)
           : isLoading
-              ? const Center(child: BauhausLoadingState())
-              : RefreshIndicator(
-                  color: BauhausDesign.primary,
-                  onRefresh: () async {
-                    await _initializeDashboard(organizationId, force: true);
-                  },
-                  child: CustomScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(
-                            BauhausDesign.space4,
-                            BauhausDesign.space4,
-                            BauhausDesign.space4,
-                            BauhausDesign.space8,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (error != null) ...[
-                                _buildErrorBanner(context, error),
-                                const SizedBox(height: BauhausDesign.space4),
-                              ],
-                              _buildContextStrip(context),
-                              const SizedBox(height: BauhausDesign.space4),
-                              _buildCommandDeck(
-                                context,
-                                metrics: metrics,
-                                hasLiveSignal:
-                                    trackingState.liveLocation != null,
-                              ),
-                              const SizedBox(height: BauhausDesign.space6),
-                              _buildSectionHeader(
-                                context,
-                                title: 'Module Control',
-                                subtitle:
-                                    'Each module reflects real backend state and routes to its workflow.',
-                                accent: BauhausDesign.secondary,
-                              ),
-                              const SizedBox(height: BauhausDesign.space3),
-                              _buildModuleMatrix(context, moduleTiles),
-                              const SizedBox(height: BauhausDesign.space6),
-                              _buildSectionHeader(
-                                context,
-                                title: 'Activity Ledger',
-                                subtitle:
-                                    'Latest platform events across insights, messaging, confirmation, and family access.',
-                                accent: BauhausDesign.primary,
-                              ),
-                              const SizedBox(height: BauhausDesign.space3),
-                              _buildActivityLedger(context, activityEntries),
-                              if (_activeClientId == null &&
-                                  !clientState.isLoading) ...[
-                                const SizedBox(height: BauhausDesign.space4),
-                                _buildClientHint(context, organizationId),
-                              ],
-                            ],
-                          ),
-                        ),
+          ? const Center(child: BauhausLoadingState())
+          : RefreshIndicator(
+              color: BauhausDesign.primary,
+              onRefresh: () async {
+                await _initializeDashboard(organizationId, force: true);
+              },
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        BauhausDesign.space4,
+                        BauhausDesign.space4,
+                        BauhausDesign.space4,
+                        BauhausDesign.space8,
                       ),
-                    ],
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (error != null) ...[
+                            _buildErrorBanner(context, error),
+                            const SizedBox(height: BauhausDesign.space4),
+                          ],
+                          _buildContextStrip(context),
+                          const SizedBox(height: BauhausDesign.space4),
+                          _buildCommandDeck(
+                            context,
+                            metrics: metrics,
+                            hasLiveSignal: trackingState.liveLocation != null,
+                          ),
+                          const SizedBox(height: BauhausDesign.space6),
+                          _buildSectionHeader(
+                            context,
+                            title: 'Module Control',
+                            subtitle:
+                                'Each module reflects real backend state and routes to its workflow.',
+                            accent: BauhausDesign.secondary,
+                          ),
+                          const SizedBox(height: BauhausDesign.space3),
+                          _buildModuleMatrix(context, moduleTiles),
+                          const SizedBox(height: BauhausDesign.space6),
+                          _buildSectionHeader(
+                            context,
+                            title: 'Activity Ledger',
+                            subtitle:
+                                'Latest platform events across insights, messaging, confirmation, and family access.',
+                            accent: BauhausDesign.primary,
+                          ),
+                          const SizedBox(height: BauhausDesign.space3),
+                          _buildActivityLedger(context, activityEntries),
+                          if (_activeClientId == null &&
+                              !clientState.isLoading) ...[
+                            const SizedBox(height: BauhausDesign.space4),
+                            _buildClientHint(context, organizationId),
+                          ],
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                ],
+              ),
+            ),
     );
   }
 
@@ -479,8 +476,9 @@ class _RealtimePortalDashboardState
               _buildContextPill(
                 context,
                 label: 'Role',
-                value:
-                    _userRole != null ? _humanize(_userRole!.name) : 'Unknown',
+                value: _userRole != null
+                    ? _humanize(_userRole!.name)
+                    : 'Unknown',
                 accent: BauhausDesign.success,
               ),
             ],
@@ -516,8 +514,9 @@ class _RealtimePortalDashboardState
       isScrollControlled: true,
       backgroundColor: BauhausDesign.surfaceWhite,
       shape: const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(BauhausDesign.radiusLg)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(BauhausDesign.radiusLg),
+        ),
       ),
       builder: (context) => Consumer(
         builder: (context, ref, _) {
@@ -537,7 +536,8 @@ class _RealtimePortalDashboardState
                   width: 40,
                   height: 4,
                   margin: const EdgeInsets.symmetric(
-                      vertical: BauhausDesign.space3),
+                    vertical: BauhausDesign.space3,
+                  ),
                   decoration: BoxDecoration(
                     color: BauhausDesign.neutral,
                     borderRadius: BorderRadius.circular(2),
@@ -579,8 +579,9 @@ class _RealtimePortalDashboardState
                 if (clientState.isLoading)
                   const Padding(
                     padding: EdgeInsets.all(BauhausDesign.space8),
-                    child:
-                        CircularProgressIndicator(color: BauhausDesign.primary),
+                    child: CircularProgressIndicator(
+                      color: BauhausDesign.primary,
+                    ),
                   )
                 else if (clients.isEmpty)
                   Padding(
@@ -631,13 +632,15 @@ class _RealtimePortalDashboardState
                           ),
                           subtitle: Text(
                             client.clientEmail,
-                            style: BauhausDesign.getTextTheme(context)
-                                .bodySmall
-                                ?.copyWith(fontSize: 11),
+                            style: BauhausDesign.getTextTheme(
+                              context,
+                            ).bodySmall?.copyWith(fontSize: 11),
                           ),
                           trailing: isSelected
-                              ? const Icon(Icons.check_circle,
-                                  color: BauhausDesign.primary)
+                              ? const Icon(
+                                  Icons.check_circle,
+                                  color: BauhausDesign.primary,
+                                )
                               : null,
                           onTap: () {
                             setState(() {
@@ -654,8 +657,10 @@ class _RealtimePortalDashboardState
                     ),
                   ),
                 SizedBox(
-                    height: MediaQuery.of(context).padding.bottom +
-                        BauhausDesign.space4),
+                  height:
+                      MediaQuery.of(context).padding.bottom +
+                      BauhausDesign.space4,
+                ),
               ],
             ),
           );
@@ -736,8 +741,10 @@ class _RealtimePortalDashboardState
                   decoration: BoxDecoration(
                     color: BauhausDesign.accent.withOpacity(0.18),
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                    border:
-                        Border.all(color: BauhausDesign.neutral, width: 1.5),
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.5,
+                    ),
                   ),
                   child: const Icon(
                     Icons.radar_rounded,
@@ -777,8 +784,9 @@ class _RealtimePortalDashboardState
                     color: hasLiveSignal
                         ? BauhausDesign.success.withOpacity(0.18)
                         : BauhausDesign.warning.withOpacity(0.2),
-                    borderRadius:
-                        BorderRadius.circular(BauhausDesign.radiusFull),
+                    borderRadius: BorderRadius.circular(
+                      BauhausDesign.radiusFull,
+                    ),
                     border: Border.all(color: BauhausDesign.neutral, width: 1),
                   ),
                   child: Text(
@@ -798,10 +806,10 @@ class _RealtimePortalDashboardState
                 final columns = constraints.maxWidth >= 1160
                     ? 5
                     : constraints.maxWidth >= 860
-                        ? 3
-                        : constraints.maxWidth >= 560
-                            ? 2
-                            : 1;
+                    ? 3
+                    : constraints.maxWidth >= 560
+                    ? 2
+                    : 1;
                 final spacing = BauhausDesign.space3;
                 final cardWidth =
                     (constraints.maxWidth - (columns - 1) * spacing) / columns;
@@ -951,8 +959,8 @@ class _RealtimePortalDashboardState
         final columns = constraints.maxWidth >= 1180
             ? 3
             : constraints.maxWidth >= 760
-                ? 2
-                : 1;
+            ? 2
+            : 1;
         final spacing = BauhausDesign.space3;
         final cardWidth =
             (constraints.maxWidth - (columns - 1) * spacing) / columns;
@@ -997,10 +1005,13 @@ class _RealtimePortalDashboardState
                     height: 40,
                     decoration: BoxDecoration(
                       color: module.module.accent.withOpacity(0.15),
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusSm),
-                      border:
-                          Border.all(color: BauhausDesign.neutral, width: 1),
+                      borderRadius: BorderRadius.circular(
+                        BauhausDesign.radiusSm,
+                      ),
+                      border: Border.all(
+                        color: BauhausDesign.neutral,
+                        width: 1,
+                      ),
                     ),
                     child: Icon(
                       module.module.icon,
@@ -1109,7 +1120,9 @@ class _RealtimePortalDashboardState
                           color: entries[i].accent.withOpacity(0.16),
                           shape: BoxShape.circle,
                           border: Border.all(
-                              color: BauhausDesign.neutral, width: 1),
+                            color: BauhausDesign.neutral,
+                            width: 1,
+                          ),
                         ),
                         child: Icon(
                           entries[i].icon,
@@ -1241,7 +1254,9 @@ class _RealtimePortalDashboardState
           if (_activeClientId == null || _activeClientId!.isEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Please select a client in the context bar first.'),
+                content: Text(
+                  'Please select a client in the context bar first.',
+                ),
                 backgroundColor: BauhausDesign.neutral,
               ),
             );
@@ -1262,7 +1277,9 @@ class _RealtimePortalDashboardState
           if (_activeClientId == null || _activeClientId!.isEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Please select a client in the context bar first.'),
+                content: Text(
+                  'Please select a client in the context bar first.',
+                ),
                 backgroundColor: BauhausDesign.neutral,
               ),
             );
@@ -1283,9 +1300,8 @@ class _RealtimePortalDashboardState
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => AdminFamilyManagementView(
-                clientId: _activeClientId ?? '',
-              ),
+              builder: (_) =>
+                  AdminFamilyManagementView(clientId: _activeClientId ?? ''),
             ),
           );
           return;
@@ -1294,7 +1310,9 @@ class _RealtimePortalDashboardState
           if (_activeClientId == null || _activeClientId!.isEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Please select a client in the context bar first.'),
+                content: Text(
+                  'Please select a client in the context bar first.',
+                ),
                 backgroundColor: BauhausDesign.neutral,
               ),
             );
@@ -1318,9 +1336,7 @@ class _RealtimePortalDashboardState
         Navigator.pushNamed(
           context,
           route,
-          arguments: {
-            'clientId': _activeClientId,
-          },
+          arguments: {'clientId': _activeClientId},
         );
         return;
       }
@@ -1345,7 +1361,8 @@ class _RealtimePortalDashboardState
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-              'Navigation to ${_humanize(route.replaceAll("/", ""))} failed: $e'),
+            'Navigation to ${_humanize(route.replaceAll("/", ""))} failed: $e',
+          ),
           backgroundColor: BauhausDesign.neutral,
         ),
       );
@@ -1358,16 +1375,19 @@ class _RealtimePortalDashboardState
     required ServiceConfirmationState serviceState,
     required FamilyAccessState familyState,
   }) {
-    final activeMembers =
-        familyState.members.where((member) => member.status == 'active').length;
-    final pendingMembers = familyState.members
+    final activeMembers = familyState.members
+        .where((member) => member.status == 'active')
+        .length;
+    final pendingMembers =
+        familyState.members
             .where((member) => member.status == 'pending')
             .length +
         (familyState.pendingInvitation != null ? 1 : 0);
 
     final checklistTotal = serviceState.checklist.length;
-    final checklistDone =
-        serviceState.checklist.where((item) => item.completed == true).length;
+    final checklistDone = serviceState.checklist
+        .where((item) => item.completed == true)
+        .length;
 
     final status = trackingState.liveLocation?.status;
 
@@ -1376,8 +1396,8 @@ class _RealtimePortalDashboardState
         label: 'Insights State',
         value: trackingState.liveLocation != null
             ? (status != null && status.isNotEmpty
-                ? _humanize(status)
-                : 'Active')
+                  ? _humanize(status)
+                  : 'Active')
             : 'Idle',
         detail: trackingState.liveLocation != null
             ? 'Last ping ${_formatRelative(trackingState.liveLocation?.timestamp)}'
@@ -1429,21 +1449,24 @@ class _RealtimePortalDashboardState
     required ServiceConfirmationState serviceState,
     required FamilyAccessState familyState,
   }) {
-    final activeMembers =
-        familyState.members.where((member) => member.status == 'active').length;
-    final pendingMembers = familyState.members
+    final activeMembers = familyState.members
+        .where((member) => member.status == 'active')
+        .length;
+    final pendingMembers =
+        familyState.members
             .where((member) => member.status == 'pending')
             .length +
         (familyState.pendingInvitation != null ? 1 : 0);
 
     final checklistTotal = serviceState.checklist.length;
-    final checklistDone =
-        serviceState.checklist.where((item) => item.completed == true).length;
+    final checklistDone = serviceState.checklist
+        .where((item) => item.completed == true)
+        .length;
 
     final latestLog = familyState.auditLogs.isNotEmpty
         ? (familyState.auditLogs.toList()
-              ..sort((a, b) => b.timestamp.compareTo(a.timestamp)))
-            .first
+                ..sort((a, b) => b.timestamp.compareTo(a.timestamp)))
+              .first
         : null;
 
     return [
@@ -1501,8 +1524,9 @@ class _RealtimePortalDashboardState
         detail: latestLog != null
             ? 'Last audit: ${_humanize(latestLog.action)} ${_formatRelative(latestLog.timestamp)}'
             : 'No family access audit entries yet.',
-        badgeColor:
-            activeMembers > 0 ? BauhausDesign.secondary : BauhausDesign.warning,
+        badgeColor: activeMembers > 0
+            ? BauhausDesign.secondary
+            : BauhausDesign.warning,
       ),
     ];
   }
@@ -1528,8 +1552,9 @@ class _RealtimePortalDashboardState
       );
     }
 
-    final latestConversation =
-        _latestConversation(messagingState.conversations);
+    final latestConversation = _latestConversation(
+      messagingState.conversations,
+    );
     if (latestConversation != null) {
       entries.add(
         _ActivityEntry(
@@ -1572,9 +1597,10 @@ class _RealtimePortalDashboardState
     }
 
     if (familyState.auditLogs.isNotEmpty) {
-      final latestLog = (familyState.auditLogs.toList()
-            ..sort((a, b) => b.timestamp.compareTo(a.timestamp)))
-          .first;
+      final latestLog =
+          (familyState.auditLogs.toList()
+                ..sort((a, b) => b.timestamp.compareTo(a.timestamp)))
+              .first;
       entries.add(
         _ActivityEntry(
           title: 'Family access audit update',

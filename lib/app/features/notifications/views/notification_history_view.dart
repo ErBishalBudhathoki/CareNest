@@ -9,10 +9,12 @@ class NotificationHistoryView extends ConsumerStatefulWidget {
   const NotificationHistoryView({super.key});
 
   @override
-  ConsumerState<NotificationHistoryView> createState() => _NotificationHistoryViewState();
+  ConsumerState<NotificationHistoryView> createState() =>
+      _NotificationHistoryViewState();
 }
 
-class _NotificationHistoryViewState extends ConsumerState<NotificationHistoryView> {
+class _NotificationHistoryViewState
+    extends ConsumerState<NotificationHistoryView> {
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -26,7 +28,8 @@ class _NotificationHistoryViewState extends ConsumerState<NotificationHistoryVie
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
       ref.read(notificationHistoryViewModelProvider.notifier).loadMore();
     }
   }
@@ -43,28 +46,32 @@ class _NotificationHistoryViewState extends ConsumerState<NotificationHistoryVie
     final notifier = ref.read(notificationHistoryViewModelProvider.notifier);
 
     return Scaffold(
-      appBar: const AppBarWidget(
-        title: 'Notifications',
-        showBackButton: true,
-      ),
+      appBar: const AppBarWidget(title: 'Notifications', showBackButton: true),
       body: state.isLoading && state.notifications.isEmpty
           ? const Center(child: LoadingIndicator())
           : state.notifications.isEmpty
-              ? _buildEmptyState()
-              : RefreshIndicator(
-                  onRefresh: ref.read(notificationHistoryViewModelProvider.notifier).loadHistory,
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    itemCount: state.notifications.length + (state.hasMore ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == state.notifications.length) {
-                        return const Center(child: Padding(padding: EdgeInsets.all(16.0), child: LoadingIndicator()));
-                      }
-                      final notification = state.notifications[index];
-                      return _buildNotificationItem(notification, notifier);
-                    },
-                  ),
-                ),
+          ? _buildEmptyState()
+          : RefreshIndicator(
+              onRefresh: ref
+                  .read(notificationHistoryViewModelProvider.notifier)
+                  .loadHistory,
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: state.notifications.length + (state.hasMore ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == state.notifications.length) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: LoadingIndicator(),
+                      ),
+                    );
+                  }
+                  final notification = state.notifications[index];
+                  return _buildNotificationItem(notification, notifier);
+                },
+              ),
+            ),
     );
   }
 
@@ -84,22 +91,26 @@ class _NotificationHistoryViewState extends ConsumerState<NotificationHistoryVie
     );
   }
 
-  Widget _buildNotificationItem(NotificationModel notification, dynamic notifier) {
+  Widget _buildNotificationItem(
+    NotificationModel notification,
+    dynamic notifier,
+  ) {
     return Card(
       color: notification.isRead ? Colors.white : Colors.blue.shade50,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: notification.isRead ? Colors.grey.shade300 : Colors.blue,
-          child: Icon(
-            _getIconForType(notification.type),
-            color: Colors.white,
-          ),
+          backgroundColor: notification.isRead
+              ? Colors.grey.shade300
+              : Colors.blue,
+          child: Icon(_getIconForType(notification.type), color: Colors.white),
         ),
         title: Text(
           notification.title,
           style: TextStyle(
-            fontWeight: notification.isRead ? FontWeight.normal : FontWeight.bold,
+            fontWeight: notification.isRead
+                ? FontWeight.normal
+                : FontWeight.bold,
           ),
         ),
         subtitle: Column(
@@ -116,7 +127,9 @@ class _NotificationHistoryViewState extends ConsumerState<NotificationHistoryVie
         ),
         onTap: () {
           if (!notification.isRead) {
-            ref.read(notificationHistoryViewModelProvider.notifier).markAsRead(notification.id);
+            ref
+                .read(notificationHistoryViewModelProvider.notifier)
+                .markAsRead(notification.id);
           }
           // Handle navigation if data present
         },

@@ -37,14 +37,16 @@ class NDISMatcher {
 
     Map<String, dynamic> supportCategory = {};
     if (itemData['supportCategory'] is Map) {
-      supportCategory =
-          Map<String, dynamic>.from(itemData['supportCategory'] as Map);
+      supportCategory = Map<String, dynamic>.from(
+        itemData['supportCategory'] as Map,
+      );
     }
 
     Map<String, dynamic> registrationGroup = {};
     if (itemData['registrationGroup'] is Map) {
-      registrationGroup =
-          Map<String, dynamic>.from(itemData['registrationGroup'] as Map);
+      registrationGroup = Map<String, dynamic>.from(
+        itemData['registrationGroup'] as Map,
+      );
     }
 
     Map<String, dynamic> priceCaps = {};
@@ -54,19 +56,20 @@ class NDISMatcher {
 
     Map<String, dynamic> standardPrices = {};
     if (priceCaps['standard'] is Map) {
-      standardPrices =
-          Map<String, dynamic>.from(priceCaps['standard'] as Map).map(
-        (key, value) => MapEntry(key.toString().trim().toUpperCase(), value),
-      );
+      standardPrices = Map<String, dynamic>.from(priceCaps['standard'] as Map)
+          .map(
+            (key, value) =>
+                MapEntry(key.toString().trim().toUpperCase(), value),
+          );
     }
 
     Map<String, dynamic> highIntensityPrices = {};
     if (priceCaps['highIntensity'] is Map) {
-      highIntensityPrices = Map<String, dynamic>.from(
-        priceCaps['highIntensity'] as Map,
-      ).map(
-        (key, value) => MapEntry(key.toString().trim().toUpperCase(), value),
-      );
+      highIntensityPrices =
+          Map<String, dynamic>.from(priceCaps['highIntensity'] as Map).map(
+            (key, value) =>
+                MapEntry(key.toString().trim().toUpperCase(), value),
+          );
     }
 
     dynamic resolveRegionalPrice(String stateCode) {
@@ -75,15 +78,18 @@ class NDISMatcher {
     }
 
     return {
-      'Support Item Number':
-          asString(itemData['supportItemNumber'] ?? itemData['itemNumber']),
-      'Support Item Name':
-          asString(itemData['supportItemName'] ?? itemData['itemName']),
+      'Support Item Number': asString(
+        itemData['supportItemNumber'] ?? itemData['itemNumber'],
+      ),
+      'Support Item Name': asString(
+        itemData['supportItemName'] ?? itemData['itemName'],
+      ),
       'Support Category Number': asString(
         itemData['supportCategoryNumber'] ?? supportCategory['number'],
       ),
-      'Support Category Name':
-          asString(itemData['supportCategoryName'] ?? supportCategory['name']),
+      'Support Category Name': asString(
+        itemData['supportCategoryName'] ?? supportCategory['name'],
+      ),
       'Registration Group Number': asString(
         itemData['registrationGroupNumber'] ?? registrationGroup['number'],
       ),
@@ -103,10 +109,12 @@ class NDISMatcher {
       ),
       'Start date': asString(itemData['startDate']),
       'End Date': asString(itemData['endDate']),
-      'Support Category Number (PACE)':
-          asString(itemData['supportCategoryNumberPACE']),
-      'Support Category Name (PACE)':
-          asString(itemData['supportCategoryNamePACE']),
+      'Support Category Number (PACE)': asString(
+        itemData['supportCategoryNumberPACE'],
+      ),
+      'Support Category Name (PACE)': asString(
+        itemData['supportCategoryNamePACE'],
+      ),
       'Non-Face-to-Face Support Provision': asString(
         itemData['nonFaceToFaceSupport'] ??
             itemData['rules']?['allowNonFaceToFace'],
@@ -144,9 +152,11 @@ class NDISMatcher {
   Future<List<NDISItem>> _loadFromBundledAsset() async {
     try {
       log.warning(
-          "NDISMatcher: Falling back to bundled asset assets/ndis_support_items.json.");
-      final payload =
-          await rootBundle.loadString('assets/ndis_support_items.json');
+        "NDISMatcher: Falling back to bundled asset assets/ndis_support_items.json.",
+      );
+      final payload = await rootBundle.loadString(
+        'assets/ndis_support_items.json',
+      );
       final decoded = jsonDecode(payload);
       if (decoded is! List) {
         log.warning("NDISMatcher: Bundled asset payload is not a list.");
@@ -160,7 +170,8 @@ class NDISMatcher {
           .toList();
 
       log.info(
-          "NDISMatcher: Loaded ${loadedItems.length} NDIS items from bundled asset.");
+        "NDISMatcher: Loaded ${loadedItems.length} NDIS items from bundled asset.",
+      );
       return loadedItems;
     } catch (e, s) {
       log.severe("NDISMatcher: Failed loading bundled NDIS asset.", e, s);
@@ -172,8 +183,8 @@ class NDISMatcher {
     if (_isLoaded && !forceReload) return;
     log.info("NDISMatcher: Loading items from database...");
     try {
-      final List<Map<String, dynamic>> supportItemsData =
-          await _apiMethod.getAllSupportItems();
+      final List<Map<String, dynamic>> supportItemsData = await _apiMethod
+          .getAllSupportItems();
 
       if (supportItemsData.isEmpty) {
         log.warning("NDISMatcher: No support items found in database.");
@@ -190,7 +201,8 @@ class NDISMatcher {
 
       if (items.isEmpty) {
         log.warning(
-            "NDISMatcher: Database returned support items but none could be parsed. Falling back to bundled asset.");
+          "NDISMatcher: Database returned support items but none could be parsed. Falling back to bundled asset.",
+        );
         items = await _loadFromBundledAsset();
       }
 
@@ -215,14 +227,16 @@ class NDISMatcher {
       DateTime(date.year, 12, 25), // Christmas Day
       DateTime(date.year, 12, 26), // Boxing Day
     ];
-    return knownHolidays.any((d) =>
-        d.year == date.year && d.month == date.month && d.day == date.day);
+    return knownHolidays.any(
+      (d) => d.year == date.year && d.month == date.month && d.day == date.day,
+    );
   }
 
   NDISItem? getItemByNumber(String itemNumber) {
     if (!_isLoaded) {
       log.warning(
-          "NDISMatcher: getItemByNumber called before items were loaded.");
+        "NDISMatcher: getItemByNumber called before items were loaded.",
+      );
       return null;
     }
     try {
@@ -237,7 +251,7 @@ class NDISMatcher {
     required DateTime shiftStart,
     // required DateTime shiftEnd, // Duration might be useful for some items (e.g. distinguishing short vs long night shifts)
     required List<String>
-        dynamicHolidays, // List of 'yyyy-MM-dd' holiday strings from API
+    dynamicHolidays, // List of 'yyyy-MM-dd' holiday strings from API
     String? preferredSupportCategoryNumber,
     String? preferredRegistrationGroupNumber,
     bool isHighIntensityShift = false,
@@ -245,17 +259,21 @@ class NDISMatcher {
   }) {
     if (!_isLoaded) {
       log.warning(
-          "NDISMatcher: findBestMatch called before items were loaded.");
+        "NDISMatcher: findBestMatch called before items were loaded.",
+      );
       throw Exception("NDISMatcher: Items not loaded. Call loadItems() first.");
     }
     log.fine(
-        "NDISMatcher: Finding best match for shift: $shiftStart, Holidays: $dynamicHolidays, PrefCat: $preferredSupportCategoryNumber, PrefRegGrp: $preferredRegistrationGroupNumber, HI: $isHighIntensityShift, TTP: $preferTTP");
+      "NDISMatcher: Finding best match for shift: $shiftStart, Holidays: $dynamicHolidays, PrefCat: $preferredSupportCategoryNumber, PrefRegGrp: $preferredRegistrationGroupNumber, HI: $isHighIntensityShift, TTP: $preferTTP",
+    );
 
     final shiftDateOnly = DateUtils.dateOnly(shiftStart);
-    final String shiftDateString =
-        DateFormat('yyyy-MM-dd').format(shiftDateOnly);
+    final String shiftDateString = DateFormat(
+      'yyyy-MM-dd',
+    ).format(shiftDateOnly);
 
-    final bool isActualHoliday = dynamicHolidays.contains(shiftDateString) ||
+    final bool isActualHoliday =
+        dynamicHolidays.contains(shiftDateString) ||
         _isFixedHoliday(shiftDateOnly);
 
     final dayOfWeek =
@@ -294,7 +312,8 @@ class NDISMatcher {
 
     if (filteredItems.isEmpty) {
       log.info(
-          "NDISMatcher: No items passed initial filtering for shift: $shiftStart.");
+        "NDISMatcher: No items passed initial filtering for shift: $shiftStart.",
+      );
       return null;
     }
 
@@ -349,7 +368,8 @@ class NDISMatcher {
       }
 
       // 3. Intensity Matching
-      bool itemIsHI = itemNameLower.contains("high intensity") ||
+      bool itemIsHI =
+          itemNameLower.contains("high intensity") ||
           item.registrationGroupNumber == "0104";
       if (isHighIntensityShift) {
         if (itemIsHI) {
@@ -383,7 +403,8 @@ class NDISMatcher {
       // Add item to scored list if it has a positive score (meaning some relevance)
       if (score > 0) {
         // If an item explicitly states a day (e.g. "Saturday") but the shift is NOT on that day, heavily penalize or exclude
-        bool dayMismatch = (itemNameLower.contains("saturday") &&
+        bool dayMismatch =
+            (itemNameLower.contains("saturday") &&
                 dayOfWeek != DateTime.saturday &&
                 !isActualHoliday) ||
             (itemNameLower.contains("sunday") &&
@@ -407,7 +428,8 @@ class NDISMatcher {
 
     if (scoredCandidates.isEmpty) {
       log.info(
-          "NDISMatcher: No candidates scored positively for shift: $shiftStart.");
+        "NDISMatcher: No candidates scored positively for shift: $shiftStart.",
+      );
       return null;
     }
 
@@ -417,17 +439,20 @@ class NDISMatcher {
     log.fine("NDISMatcher: Top candidates for shift at $shiftStart:");
     scoredCandidates.take(3).forEach((entry) {
       log.fine(
-          "  Score: ${entry.value}, Item: ${entry.key.itemNumber} - ${entry.key.itemName}");
+        "  Score: ${entry.value}, Item: ${entry.key.itemNumber} - ${entry.key.itemName}",
+      );
     });
 
     if (scoredCandidates.first.value > 50) {
       log.info(
-          "NDISMatcher: Best match found: ${scoredCandidates.first.key.itemNumber} (Score: ${scoredCandidates.first.value})");
+        "NDISMatcher: Best match found: ${scoredCandidates.first.key.itemNumber} (Score: ${scoredCandidates.first.value})",
+      );
       return scoredCandidates.first.key;
     }
 
     log.warning(
-        "NDISMatcher: No confident match found (highest score: ${scoredCandidates.first.value}). Shift: $shiftStart, Holiday: $isActualHoliday, Dynamic Holidays: $dynamicHolidays");
+      "NDISMatcher: No confident match found (highest score: ${scoredCandidates.first.value}). Shift: $shiftStart, Holiday: $isActualHoliday, Dynamic Holidays: $dynamicHolidays",
+    );
 
     return null; // No confident match
   }

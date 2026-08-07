@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:carenest/app/features/organization/models/organization_model.dart' as models;
+import 'package:carenest/app/features/organization/models/organization_model.dart'
+    as models;
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/backend/api_method.dart';
 
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 class BauhausIntegrationsSection extends ConsumerStatefulWidget {
   final models.Organization organization;
@@ -18,10 +20,12 @@ class BauhausIntegrationsSection extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<BauhausIntegrationsSection> createState() => _BauhausIntegrationsSectionState();
+  ConsumerState<BauhausIntegrationsSection> createState() =>
+      _BauhausIntegrationsSectionState();
 }
 
-class _BauhausIntegrationsSectionState extends ConsumerState<BauhausIntegrationsSection> {
+class _BauhausIntegrationsSectionState
+    extends ConsumerState<BauhausIntegrationsSection> {
   // Integration states
   bool _xeroConnected = false;
   bool _myobConnected = false;
@@ -29,10 +33,10 @@ class _BauhausIntegrationsSectionState extends ConsumerState<BauhausIntegrations
   bool _outlookCalendarConnected = false;
   bool _slackConnected = false;
   bool _teamsConnected = false;
-  
+
   bool _isLoading = false;
   String? _errorMessage;
-  
+
   late final ApiMethod _apiMethod;
 
   @override
@@ -42,13 +46,18 @@ class _BauhausIntegrationsSectionState extends ConsumerState<BauhausIntegrations
     final integrations = widget.organization.integrations;
     _xeroConnected = integrations?.xero?.isConnected ?? false;
     _myobConnected = integrations?.myob?.isConnected ?? false;
-    _googleCalendarConnected = integrations?.googleCalendar?.isConnected ?? false;
-    _outlookCalendarConnected = integrations?.outlookCalendar?.isConnected ?? false;
+    _googleCalendarConnected =
+        integrations?.googleCalendar?.isConnected ?? false;
+    _outlookCalendarConnected =
+        integrations?.outlookCalendar?.isConnected ?? false;
     _slackConnected = integrations?.slack?.isConnected ?? false;
     _teamsConnected = integrations?.teams?.isConnected ?? false;
   }
 
-  Future<void> _toggleIntegration(String integrationName, bool currentStatus) async {
+  Future<void> _toggleIntegration(
+    String integrationName,
+    bool currentStatus,
+  ) async {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -57,16 +66,20 @@ class _BauhausIntegrationsSectionState extends ConsumerState<BauhausIntegrations
     try {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(currentStatus ? 'Disconnecting $integrationName...' : 'Connecting $integrationName...'),
+          content: Text(
+            currentStatus
+                ? 'Disconnecting $integrationName...'
+                : 'Connecting $integrationName...',
+          ),
           backgroundColor: BauhausDesign.info,
         ),
       );
 
       final newStatus = !currentStatus;
-      
+
       // Map display names to integration keys
       final integrationKey = _getIntegrationKey(integrationName);
-      
+
       if (newStatus) {
         // Connect integration - for now just toggle, OAuth flow will be added later
         await _apiMethod.connectIntegration(
@@ -107,14 +120,16 @@ class _BauhausIntegrationsSectionState extends ConsumerState<BauhausIntegrations
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('$integrationName ${newStatus ? 'connected' : 'disconnected'} successfully!'),
+          content: Text(
+            '$integrationName ${newStatus ? 'connected' : 'disconnected'} successfully!',
+          ),
           backgroundColor: BauhausDesign.success,
         ),
       );
-
     } catch (e) {
       setState(() {
-        _errorMessage = 'Failed to ${currentStatus ? 'disconnect' : 'connect'} $integrationName: ${e.toString()}';
+        _errorMessage =
+            'Failed to ${currentStatus ? 'disconnect' : 'connect'} $integrationName: ${e.toString()}';
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -157,7 +172,7 @@ class _BauhausIntegrationsSectionState extends ConsumerState<BauhausIntegrations
 
     try {
       final integrationKey = _getIntegrationKey(integrationName);
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Syncing $integrationName...'),
@@ -172,7 +187,9 @@ class _BauhausIntegrationsSectionState extends ConsumerState<BauhausIntegrations
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(result['message'] ?? '$integrationName synced successfully!'),
+          content: Text(
+            result['message'] ?? '$integrationName synced successfully!',
+          ),
           backgroundColor: BauhausDesign.success,
         ),
       );
@@ -202,7 +219,7 @@ class _BauhausIntegrationsSectionState extends ConsumerState<BauhausIntegrations
 
     try {
       final integrationKey = _getIntegrationKey(integrationName);
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Testing $integrationName connection...'),
@@ -215,13 +232,20 @@ class _BauhausIntegrationsSectionState extends ConsumerState<BauhausIntegrations
         integrationType: integrationKey,
       );
 
-      final isSuccess = result['connected'] == true || result['success'] == true;
-      
+      final isSuccess =
+          result['connected'] == true || result['success'] == true;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(result['message'] ?? 
-            (isSuccess ? '$integrationName connection successful!' : '$integrationName connection failed')),
-          backgroundColor: isSuccess ? BauhausDesign.success : BauhausDesign.error,
+          content: Text(
+            result['message'] ??
+                (isSuccess
+                    ? '$integrationName connection successful!'
+                    : '$integrationName connection failed'),
+          ),
+          backgroundColor: isSuccess
+              ? BauhausDesign.success
+              : BauhausDesign.error,
         ),
       );
     } catch (e) {
@@ -244,7 +268,7 @@ class _BauhausIntegrationsSectionState extends ConsumerState<BauhausIntegrations
 
   void _showIntegrationSettings(String integrationName) {
     final integrationKey = _getIntegrationKey(integrationName);
-    
+
     showDialog(
       context: context,
       builder: (context) => _IntegrationSettingsDialog(
@@ -255,10 +279,12 @@ class _BauhausIntegrationsSectionState extends ConsumerState<BauhausIntegrations
           // Save custom credentials
           await widget.onSave(widget.organization.id, {
             'integrations.$integrationKey.customClientId': settings['clientId'],
-            'integrations.$integrationKey.customClientSecret': settings['clientSecret'],
-            'integrations.$integrationKey.useCustomCredentials': settings['useCustom'],
+            'integrations.$integrationKey.customClientSecret':
+                settings['clientSecret'],
+            'integrations.$integrationKey.useCustomCredentials':
+                settings['useCustom'],
           });
-          
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('$integrationName settings saved!'),
@@ -281,7 +307,9 @@ class _BauhausIntegrationsSectionState extends ConsumerState<BauhausIntegrations
         // However, we can optimize the Status Summary card to stack on mobile.
 
         return Container(
-          padding: isMobile ? EdgeInsets.zero : const EdgeInsets.all(BauhausDesign.space6),
+          padding: isMobile
+              ? EdgeInsets.zero
+              : const EdgeInsets.all(BauhausDesign.space6),
           decoration: BoxDecoration(
             color: BauhausDesign.surfaceOffWhite,
             border: Border.all(color: BauhausDesign.neutral, width: 2),
@@ -303,7 +331,11 @@ class _BauhausIntegrationsSectionState extends ConsumerState<BauhausIntegrations
                       width: 40,
                       height: 40,
                       color: BauhausDesign.surfaceWhite,
-                      child: Icon(Icons.link, color: BauhausDesign.primary, size: 24),
+                      child: Icon(
+                        Icons.link,
+                        color: BauhausDesign.primary,
+                        size: 24,
+                      ),
                     ),
                     const SizedBox(width: BauhausDesign.space3),
                     Expanded(
@@ -347,8 +379,12 @@ class _BauhausIntegrationsSectionState extends ConsumerState<BauhausIntegrations
                     icon: Icons.account_balance,
                     isConnected: _xeroConnected,
                     onToggle: () => _toggleIntegration('Xero', _xeroConnected),
-                    onSync: _xeroConnected ? () => _syncIntegration('Xero') : null,
-                    onTest: _xeroConnected ? () => _testIntegration('Xero') : null,
+                    onSync: _xeroConnected
+                        ? () => _syncIntegration('Xero')
+                        : null,
+                    onTest: _xeroConnected
+                        ? () => _testIntegration('Xero')
+                        : null,
                     onSettings: () => _showIntegrationSettings('Xero'),
                     isLoading: _isLoading,
                   ),
@@ -358,8 +394,12 @@ class _BauhausIntegrationsSectionState extends ConsumerState<BauhausIntegrations
                     icon: Icons.account_balance_wallet,
                     isConnected: _myobConnected,
                     onToggle: () => _toggleIntegration('MYOB', _myobConnected),
-                    onSync: _myobConnected ? () => _syncIntegration('MYOB') : null,
-                    onTest: _myobConnected ? () => _testIntegration('MYOB') : null,
+                    onSync: _myobConnected
+                        ? () => _syncIntegration('MYOB')
+                        : null,
+                    onTest: _myobConnected
+                        ? () => _testIntegration('MYOB')
+                        : null,
                     onSettings: () => _showIntegrationSettings('MYOB'),
                     isLoading: _isLoading,
                   ),
@@ -377,10 +417,18 @@ class _BauhausIntegrationsSectionState extends ConsumerState<BauhausIntegrations
                     description: 'Sync with Google Calendar',
                     icon: Icons.calendar_today,
                     isConnected: _googleCalendarConnected,
-                    onToggle: () => _toggleIntegration('Google Calendar', _googleCalendarConnected),
-                    onSync: _googleCalendarConnected ? () => _syncIntegration('Google Calendar') : null,
-                    onTest: _googleCalendarConnected ? () => _testIntegration('Google Calendar') : null,
-                    onSettings: () => _showIntegrationSettings('Google Calendar'),
+                    onToggle: () => _toggleIntegration(
+                      'Google Calendar',
+                      _googleCalendarConnected,
+                    ),
+                    onSync: _googleCalendarConnected
+                        ? () => _syncIntegration('Google Calendar')
+                        : null,
+                    onTest: _googleCalendarConnected
+                        ? () => _testIntegration('Google Calendar')
+                        : null,
+                    onSettings: () =>
+                        _showIntegrationSettings('Google Calendar'),
                     isLoading: _isLoading,
                   ),
                   _BauhausIntegrationItem(
@@ -388,10 +436,18 @@ class _BauhausIntegrationsSectionState extends ConsumerState<BauhausIntegrations
                     description: 'Sync with Outlook Calendar',
                     icon: Icons.event,
                     isConnected: _outlookCalendarConnected,
-                    onToggle: () => _toggleIntegration('Outlook Calendar', _outlookCalendarConnected),
-                    onSync: _outlookCalendarConnected ? () => _syncIntegration('Outlook Calendar') : null,
-                    onTest: _outlookCalendarConnected ? () => _testIntegration('Outlook Calendar') : null,
-                    onSettings: () => _showIntegrationSettings('Outlook Calendar'),
+                    onToggle: () => _toggleIntegration(
+                      'Outlook Calendar',
+                      _outlookCalendarConnected,
+                    ),
+                    onSync: _outlookCalendarConnected
+                        ? () => _syncIntegration('Outlook Calendar')
+                        : null,
+                    onTest: _outlookCalendarConnected
+                        ? () => _testIntegration('Outlook Calendar')
+                        : null,
+                    onSettings: () =>
+                        _showIntegrationSettings('Outlook Calendar'),
                     isLoading: _isLoading,
                   ),
                 ],
@@ -408,9 +464,14 @@ class _BauhausIntegrationsSectionState extends ConsumerState<BauhausIntegrations
                     description: 'Send notifications to Slack',
                     icon: Icons.chat_bubble,
                     isConnected: _slackConnected,
-                    onToggle: () => _toggleIntegration('Slack', _slackConnected),
-                    onSync: _slackConnected ? () => _syncIntegration('Slack') : null,
-                    onTest: _slackConnected ? () => _testIntegration('Slack') : null,
+                    onToggle: () =>
+                        _toggleIntegration('Slack', _slackConnected),
+                    onSync: _slackConnected
+                        ? () => _syncIntegration('Slack')
+                        : null,
+                    onTest: _slackConnected
+                        ? () => _testIntegration('Slack')
+                        : null,
                     onSettings: () => _showIntegrationSettings('Slack'),
                     isLoading: _isLoading,
                   ),
@@ -419,10 +480,16 @@ class _BauhausIntegrationsSectionState extends ConsumerState<BauhausIntegrations
                     description: 'Send notifications to Teams',
                     icon: Icons.video_call,
                     isConnected: _teamsConnected,
-                    onToggle: () => _toggleIntegration('Microsoft Teams', _teamsConnected),
-                    onSync: _teamsConnected ? () => _syncIntegration('Microsoft Teams') : null,
-                    onTest: _teamsConnected ? () => _testIntegration('Microsoft Teams') : null,
-                    onSettings: () => _showIntegrationSettings('Microsoft Teams'),
+                    onToggle: () =>
+                        _toggleIntegration('Microsoft Teams', _teamsConnected),
+                    onSync: _teamsConnected
+                        ? () => _syncIntegration('Microsoft Teams')
+                        : null,
+                    onTest: _teamsConnected
+                        ? () => _testIntegration('Microsoft Teams')
+                        : null,
+                    onSettings: () =>
+                        _showIntegrationSettings('Microsoft Teams'),
                     isLoading: _isLoading,
                   ),
                 ],
@@ -520,8 +587,8 @@ class _BauhausIntegrationCategory extends StatelessWidget {
               ],
             ),
           ),
-          ...integrations.map((integration) => 
-            Container(
+          ...integrations.map(
+            (integration) => Container(
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
@@ -575,12 +642,10 @@ class _BauhausIntegrationItem extends StatelessWidget {
                 Container(
                   width: 32,
                   height: 32,
-                  color: isConnected ? BauhausDesign.success : BauhausDesign.neutral,
-                  child: Icon(
-                    icon,
-                    color: BauhausDesign.textDark,
-                    size: 20,
-                  ),
+                  color: isConnected
+                      ? BauhausDesign.success
+                      : BauhausDesign.neutral,
+                  child: Icon(icon, color: BauhausDesign.textDark, size: 20),
                 ),
                 const SizedBox(width: BauhausDesign.space3),
                 Expanded(
@@ -614,10 +679,15 @@ class _BauhausIntegrationItem extends StatelessWidget {
                     child: Container(
                       width: 24,
                       height: 24,
-                      margin: const EdgeInsets.only(right: BauhausDesign.space2),
+                      margin: const EdgeInsets.only(
+                        right: BauhausDesign.space2,
+                      ),
                       decoration: BoxDecoration(
                         color: BauhausDesign.neutral.withOpacity(0.3),
-                        border: Border.all(color: BauhausDesign.neutral, width: 1),
+                        border: Border.all(
+                          color: BauhausDesign.neutral,
+                          width: 1,
+                        ),
                       ),
                       child: Icon(
                         Icons.settings,
@@ -630,7 +700,9 @@ class _BauhausIntegrationItem extends StatelessWidget {
                   width: 60,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: isConnected ? BauhausDesign.success : BauhausDesign.neutral,
+                    color: isConnected
+                        ? BauhausDesign.success
+                        : BauhausDesign.neutral,
                     border: Border.all(color: BauhausDesign.neutral, width: 1),
                   ),
                   child: Center(
@@ -706,7 +778,9 @@ class _IntegrationActionButton extends StatelessWidget {
           vertical: BauhausDesign.space1,
         ),
         decoration: BoxDecoration(
-          color: onPressed != null ? color.withOpacity(0.1) : BauhausDesign.neutral.withOpacity(0.3),
+          color: onPressed != null
+              ? color.withOpacity(0.1)
+              : BauhausDesign.neutral.withOpacity(0.3),
           border: Border.all(
             color: onPressed != null ? color : BauhausDesign.neutral,
             width: 1,
@@ -718,7 +792,9 @@ class _IntegrationActionButton extends StatelessWidget {
             Icon(
               icon,
               size: 12,
-              color: onPressed != null ? color : BauhausDesign.textDark.withOpacity(0.5),
+              color: onPressed != null
+                  ? color
+                  : BauhausDesign.textDark.withOpacity(0.5),
             ),
             const SizedBox(width: 4),
             Text(
@@ -726,7 +802,9 @@ class _IntegrationActionButton extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: BauhausDesign.fontXxs,
                 fontWeight: FontWeight.w700,
-                color: onPressed != null ? color : BauhausDesign.textDark.withOpacity(0.5),
+                color: onPressed != null
+                    ? color
+                    : BauhausDesign.textDark.withOpacity(0.5),
               ),
             ),
           ],
@@ -749,7 +827,8 @@ class _BauhausIntegrationStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final completionPercentage = (connectedIntegrations / totalIntegrations * 100).round();
+    final completionPercentage =
+        (connectedIntegrations / totalIntegrations * 100).round();
     final isFullyConnected = connectedIntegrations == totalIntegrations;
 
     return Container(
@@ -764,7 +843,9 @@ class _BauhausIntegrationStatusCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space4),
             decoration: BoxDecoration(
-              color: isFullyConnected ? BauhausDesign.success : BauhausDesign.warning,
+              color: isFullyConnected
+                  ? BauhausDesign.success
+                  : BauhausDesign.warning,
               border: Border(
                 bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
               ),
@@ -779,8 +860,8 @@ class _BauhausIntegrationStatusCard extends StatelessWidget {
                 const SizedBox(width: BauhausDesign.space2),
                 Expanded(
                   child: Text(
-                    isFullyConnected 
-                        ? 'ALL INTEGRATIONS CONNECTED' 
+                    isFullyConnected
+                        ? 'ALL INTEGRATIONS CONNECTED'
                         : '$connectedIntegrations OF $totalIntegrations CONNECTED',
                     style: GoogleFonts.inter(
                       fontSize: BauhausDesign.fontSm,
@@ -824,7 +905,9 @@ class _BauhausIntegrationStatusCard extends StatelessWidget {
                   _BauhausStatusMetric(
                     label: 'Completion',
                     value: '$completionPercentage%',
-                    color: isFullyConnected ? BauhausDesign.success : BauhausDesign.warning,
+                    color: isFullyConnected
+                        ? BauhausDesign.success
+                        : BauhausDesign.warning,
                   ),
                 ] else ...[
                   // Desktop Layout (Row)
@@ -848,7 +931,9 @@ class _BauhausIntegrationStatusCard extends StatelessWidget {
                         child: _BauhausStatusMetric(
                           label: 'Completion',
                           value: '$completionPercentage%',
-                          color: isFullyConnected ? BauhausDesign.success : BauhausDesign.warning,
+                          color: isFullyConnected
+                              ? BauhausDesign.success
+                              : BauhausDesign.warning,
                         ),
                       ),
                     ],
@@ -909,7 +994,6 @@ class _BauhausStatusMetric extends StatelessWidget {
   }
 }
 
-
 class _IntegrationSettingsDialog extends StatefulWidget {
   final String integrationName;
   final String integrationKey;
@@ -924,10 +1008,12 @@ class _IntegrationSettingsDialog extends StatefulWidget {
   });
 
   @override
-  State<_IntegrationSettingsDialog> createState() => _IntegrationSettingsDialogState();
+  State<_IntegrationSettingsDialog> createState() =>
+      _IntegrationSettingsDialogState();
 }
 
-class _IntegrationSettingsDialogState extends State<_IntegrationSettingsDialog> {
+class _IntegrationSettingsDialogState
+    extends State<_IntegrationSettingsDialog> {
   final _clientIdController = TextEditingController();
   final _clientSecretController = TextEditingController();
   bool _useCustomCredentials = false;
@@ -969,7 +1055,11 @@ class _IntegrationSettingsDialogState extends State<_IntegrationSettingsDialog> 
                     width: 40,
                     height: 40,
                     color: BauhausDesign.surfaceWhite,
-                    child: Icon(Icons.settings, color: BauhausDesign.primary, size: 24),
+                    child: Icon(
+                      Icons.settings,
+                      color: BauhausDesign.primary,
+                      size: 24,
+                    ),
                   ),
                   const SizedBox(width: BauhausDesign.space3),
                   Expanded(
@@ -989,7 +1079,11 @@ class _IntegrationSettingsDialogState extends State<_IntegrationSettingsDialog> 
                       width: 32,
                       height: 32,
                       color: BauhausDesign.surfaceWhite,
-                      child: Icon(Icons.close, color: BauhausDesign.textDark, size: 20),
+                      child: Icon(
+                        Icons.close,
+                        color: BauhausDesign.textDark,
+                        size: 20,
+                      ),
                     ),
                   ),
                 ],
@@ -1011,7 +1105,11 @@ class _IntegrationSettingsDialogState extends State<_IntegrationSettingsDialog> 
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.info_outline, color: BauhausDesign.info, size: 20),
+                        Icon(
+                          Icons.info_outline,
+                          color: BauhausDesign.info,
+                          size: 20,
+                        ),
                         const SizedBox(width: BauhausDesign.space2),
                         Expanded(
                           child: Text(
@@ -1034,7 +1132,10 @@ class _IntegrationSettingsDialogState extends State<_IntegrationSettingsDialog> 
                     padding: const EdgeInsets.all(BauhausDesign.space3),
                     decoration: BoxDecoration(
                       color: BauhausDesign.surfaceOffWhite,
-                      border: Border.all(color: BauhausDesign.neutral, width: 1),
+                      border: Border.all(
+                        color: BauhausDesign.neutral,
+                        width: 1,
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -1058,8 +1159,13 @@ class _IntegrationSettingsDialogState extends State<_IntegrationSettingsDialog> 
                             width: 60,
                             height: 24,
                             decoration: BoxDecoration(
-                              color: _useCustomCredentials ? BauhausDesign.success : BauhausDesign.neutral,
-                              border: Border.all(color: BauhausDesign.neutral, width: 1),
+                              color: _useCustomCredentials
+                                  ? BauhausDesign.success
+                                  : BauhausDesign.neutral,
+                              border: Border.all(
+                                color: BauhausDesign.neutral,
+                                width: 1,
+                              ),
                             ),
                             child: Center(
                               child: Text(
@@ -1094,7 +1200,10 @@ class _IntegrationSettingsDialogState extends State<_IntegrationSettingsDialog> 
                     Container(
                       decoration: BoxDecoration(
                         color: BauhausDesign.surfaceWhite,
-                        border: Border.all(color: BauhausDesign.neutral, width: 2),
+                        border: Border.all(
+                          color: BauhausDesign.neutral,
+                          width: 2,
+                        ),
                       ),
                       child: TextField(
                         controller: _clientIdController,
@@ -1105,7 +1214,9 @@ class _IntegrationSettingsDialogState extends State<_IntegrationSettingsDialog> 
                             color: BauhausDesign.textDark.withOpacity(0.4),
                           ),
                           border: InputBorder.none,
-                          contentPadding: const EdgeInsets.all(BauhausDesign.space3),
+                          contentPadding: const EdgeInsets.all(
+                            BauhausDesign.space3,
+                          ),
                         ),
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontSm,
@@ -1130,7 +1241,10 @@ class _IntegrationSettingsDialogState extends State<_IntegrationSettingsDialog> 
                     Container(
                       decoration: BoxDecoration(
                         color: BauhausDesign.surfaceWhite,
-                        border: Border.all(color: BauhausDesign.neutral, width: 2),
+                        border: Border.all(
+                          color: BauhausDesign.neutral,
+                          width: 2,
+                        ),
                       ),
                       child: TextField(
                         controller: _clientSecretController,
@@ -1142,7 +1256,9 @@ class _IntegrationSettingsDialogState extends State<_IntegrationSettingsDialog> 
                             color: BauhausDesign.textDark.withOpacity(0.4),
                           ),
                           border: InputBorder.none,
-                          contentPadding: const EdgeInsets.all(BauhausDesign.space3),
+                          contentPadding: const EdgeInsets.all(
+                            BauhausDesign.space3,
+                          ),
                           suffixIcon: InkWell(
                             onTap: () {
                               setState(() {
@@ -1150,7 +1266,9 @@ class _IntegrationSettingsDialogState extends State<_IntegrationSettingsDialog> 
                               });
                             },
                             child: Icon(
-                              _showClientSecret ? Icons.visibility_off : Icons.visibility,
+                              _showClientSecret
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
                               color: BauhausDesign.textDark.withOpacity(0.6),
                               size: 20,
                             ),
@@ -1179,7 +1297,10 @@ class _IntegrationSettingsDialogState extends State<_IntegrationSettingsDialog> 
                           ),
                           decoration: BoxDecoration(
                             color: BauhausDesign.neutral,
-                            border: Border.all(color: BauhausDesign.neutral, width: 2),
+                            border: Border.all(
+                              color: BauhausDesign.neutral,
+                              width: 2,
+                            ),
                           ),
                           child: Text(
                             'CANCEL',
@@ -1209,7 +1330,10 @@ class _IntegrationSettingsDialogState extends State<_IntegrationSettingsDialog> 
                           ),
                           decoration: BoxDecoration(
                             color: BauhausDesign.success,
-                            border: Border.all(color: BauhausDesign.neutral, width: 2),
+                            border: Border.all(
+                              color: BauhausDesign.neutral,
+                              width: 2,
+                            ),
                             boxShadow: [BauhausDesign.shadowHardSm],
                           ),
                           child: Text(

@@ -42,29 +42,17 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
       vsync: this,
     );
 
-    _elevationAnimation = Tween<double>(
-      begin: 2.0,
-      end: 12.0,
-    ).animate(CurvedAnimation(
-      parent: _hoverController,
-      curve: Curves.easeOutCubic,
-    ));
+    _elevationAnimation = Tween<double>(begin: 2.0, end: 12.0).animate(
+      CurvedAnimation(parent: _hoverController, curve: Curves.easeOutCubic),
+    );
 
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.02,
-    ).animate(CurvedAnimation(
-      parent: _hoverController,
-      curve: Curves.easeOutCubic,
-    ));
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.02).animate(
+      CurvedAnimation(parent: _hoverController, curve: Curves.easeOutCubic),
+    );
 
-    _pulseAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.05,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
 
     if (widget.isToday) {
       _pulseController.repeat(reverse: true);
@@ -120,8 +108,9 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
 
   String _getDaysUntil(DateTime date) {
     final now = DateTime.now();
-    final difference =
-        date.difference(DateTime(now.year, now.month, now.day)).inDays;
+    final difference = date
+        .difference(DateTime(now.year, now.month, now.day))
+        .inDays;
 
     if (difference == 0) return 'Today';
     if (difference == 1) return 'Tomorrow';
@@ -135,7 +124,8 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
       return const Color(0xFF3B82F6); // Modern SAAS primary blue for today
     } else if (widget.isUpcoming) {
       return const Color(
-          0xFF10B981); // Modern SAAS secondary green for upcoming
+        0xFF10B981,
+      ); // Modern SAAS secondary green for upcoming
     } else {
       return const Color(0xFF64748B); // Modern SAAS neutral for past holidays
     }
@@ -148,8 +138,11 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
     final holidayColor = _getHolidayColor(theme);
 
     return AnimatedBuilder(
-      animation: Listenable.merge(
-          [_scaleAnimation, _elevationAnimation, _pulseAnimation]),
+      animation: Listenable.merge([
+        _scaleAnimation,
+        _elevationAnimation,
+        _pulseAnimation,
+      ]),
       builder: (context, child) {
         return Transform.scale(
           scale: widget.isToday ? _pulseAnimation.value : _scaleAnimation.value,
@@ -192,11 +185,7 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.delete_rounded,
-                      color: Colors.white,
-                      size: 32,
-                    ),
+                    Icon(Icons.delete_rounded, color: Colors.white, size: 32),
                     const SizedBox(height: 4),
                     Text(
                       'Delete',
@@ -223,17 +212,13 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
                           widget.isToday
                               ? const Color(0xFF3B82F6).withValues(alpha: 0.15)
                               : widget.isUpcoming
-                                  ? const Color(0xFF10B981)
-                                      .withValues(alpha: 0.12)
-                                  : const Color(0xFF64748B)
-                                      .withValues(alpha: 0.12),
+                              ? const Color(0xFF10B981).withValues(alpha: 0.12)
+                              : const Color(0xFF64748B).withValues(alpha: 0.12),
                           widget.isToday
                               ? const Color(0xFF3B82F6).withValues(alpha: 0.08)
                               : widget.isUpcoming
-                                  ? const Color(0xFF10B981)
-                                      .withValues(alpha: 0.06)
-                                  : const Color(0xFF64748B)
-                                      .withValues(alpha: 0.06),
+                              ? const Color(0xFF10B981).withValues(alpha: 0.06)
+                              : const Color(0xFF64748B).withValues(alpha: 0.06),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -242,9 +227,8 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
                         color: widget.isToday
                             ? const Color(0xFF3B82F6).withValues(alpha: 0.4)
                             : widget.isUpcoming
-                                ? const Color(0xFF10B981).withValues(alpha: 0.3)
-                                : const Color(0xFF64748B)
-                                    .withValues(alpha: 0.3),
+                            ? const Color(0xFF10B981).withValues(alpha: 0.3)
+                            : const Color(0xFF64748B).withValues(alpha: 0.3),
                         width: widget.isToday ? 2 : 1.5,
                       ),
                     ),
@@ -280,9 +264,7 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
                                 _build3DDateCircle(theme, holidayColor),
                                 const SizedBox(width: 20),
                                 // Holiday Details
-                                Expanded(
-                                  child: _buildHolidayDetails(theme),
-                                ),
+                                Expanded(child: _buildHolidayDetails(theme)),
                                 // Removed meaningless status indicator
                               ],
                             ),
@@ -296,8 +278,9 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
                                   gradient: LinearGradient(
                                     colors: [
                                       Colors.transparent,
-                                      theme.colorScheme.primary
-                                          .withValues(alpha: 0.1),
+                                      theme.colorScheme.primary.withValues(
+                                        alpha: 0.1,
+                                      ),
                                       Colors.transparent,
                                     ],
                                     stops: const [0.0, 0.5, 1.0],
@@ -327,10 +310,7 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: LinearGradient(
-          colors: [
-            holidayColor,
-            Color.lerp(holidayColor, Colors.black, 0.2)!,
-          ],
+          colors: [holidayColor, Color.lerp(holidayColor, Colors.black, 0.2)!],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -352,10 +332,7 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           gradient: LinearGradient(
-            colors: [
-              holidayColor.withValues(alpha: 0.9),
-              holidayColor,
-            ],
+            colors: [holidayColor.withValues(alpha: 0.9), holidayColor],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -382,10 +359,11 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
             Text(
               _getDateMonth(widget.holiday['Date']),
               style: theme.textTheme.bodySmall?.copyWith(
-                color: (widget.isToday || widget.isUpcoming
-                        ? Colors.white
-                        : theme.colorScheme.onSurface)
-                    .withValues(alpha: 0.9),
+                color:
+                    (widget.isToday || widget.isUpcoming
+                            ? Colors.white
+                            : theme.colorScheme.onSurface)
+                        .withValues(alpha: 0.9),
                 fontWeight: FontWeight.w600,
                 fontSize: 11,
                 shadows: [
@@ -424,14 +402,13 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
             ),
             if (widget.isToday)
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [
-                      const Color(0xFF2196F3),
-                      const Color(0xFF42A5F5),
-                    ],
+                    colors: [const Color(0xFF2196F3), const Color(0xFF42A5F5)],
                   ),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
@@ -507,8 +484,8 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
             widget.isToday
                 ? 'Current Holiday'
                 : widget.isUpcoming
-                    ? 'Upcoming'
-                    : 'Past Holiday',
+                ? 'Upcoming'
+                : 'Past Holiday',
             style: theme.textTheme.bodySmall?.copyWith(
               color: _getHolidayColor(theme),
               fontWeight: FontWeight.w600,

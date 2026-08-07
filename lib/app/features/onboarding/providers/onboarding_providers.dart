@@ -19,8 +19,12 @@ final onboardingRepositoryProvider = Provider<OnboardingRepository>((ref) {
 
 // ViewModel Provider (User)
 final onboardingViewModelProvider =
-    NotifierProvider<OnboardingViewModel, OnboardingState>(OnboardingViewModel.new);
+    NotifierProvider<OnboardingViewModel, OnboardingState>(
+      OnboardingViewModel.new,
+    );
 
 // ViewModel Provider (Admin)
 final adminOnboardingViewModelProvider =
-    NotifierProvider<AdminOnboardingViewModel, AdminOnboardingState>(AdminOnboardingViewModel.new);
+    NotifierProvider<AdminOnboardingViewModel, AdminOnboardingState>(
+      AdminOnboardingViewModel.new,
+    );

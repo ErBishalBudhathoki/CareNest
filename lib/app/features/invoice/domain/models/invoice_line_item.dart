@@ -1,21 +1,17 @@
 // invoice_line_item.dart
 
-enum LineItemSource {
-  ndisMatcherAlgorithm,
-  manualPlaceholder,
-  userAdded,
-}
+enum LineItemSource { ndisMatcherAlgorithm, manualPlaceholder, userAdded }
 
 enum PriceComplianceStatus {
-  compliant,        // Price is within NDIS caps
-  nonCompliant,     // Price exceeds NDIS caps
-  unknown,          // Validation not performed or failed
+  compliant, // Price is within NDIS caps
+  nonCompliant, // Price exceeds NDIS caps
+  unknown, // Validation not performed or failed
   manuallyResolved, // Price was manually provided via price prompt
-  validating,       // Price validation is in progress
-  missingItem,      // NDIS item number not found
-  quoteRequired,    // Item requires a quote for approval
-  missingPricing,   // Price information is missing
-  abovePriceCap,    // Price exceeds the maximum allowed cap
+  validating, // Price validation is in progress
+  missingItem, // NDIS item number not found
+  quoteRequired, // Item requires a quote for approval
+  missingPricing, // Price information is missing
+  abovePriceCap, // Price exceeds the maximum allowed cap
 }
 
 class InvoiceLineItem {
@@ -28,7 +24,7 @@ class InvoiceLineItem {
   LineItemSource source; // Ensure this field exists
   // int? matcherScore; // This would be null if NDISMatcher doesn't return score
   DateTime? serviceDate; // Date when the service was provided
-  
+
   // Enhanced price validation fields
   PriceComplianceStatus complianceStatus;
   String? validationMessage;

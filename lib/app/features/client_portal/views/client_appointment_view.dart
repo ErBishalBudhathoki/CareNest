@@ -160,11 +160,7 @@ class _ClientAppointmentViewState extends ConsumerState<ClientAppointmentView> {
             icon: Icons.calendar_today,
           ),
           const SizedBox(width: BauhausDesign.space3),
-          _buildFilterTab(
-            label: 'Past',
-            value: 'past',
-            icon: Icons.history,
-          ),
+          _buildFilterTab(label: 'Past', value: 'past', icon: Icons.history),
         ],
       ),
     );
@@ -182,12 +178,11 @@ class _ClientAppointmentViewState extends ConsumerState<ClientAppointmentView> {
         onTap: () => setState(() => _selectedFilter = value),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(
-            vertical: BauhausDesign.space3,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: BauhausDesign.space3),
           decoration: BoxDecoration(
-            color:
-                isSelected ? BauhausDesign.primary : BauhausDesign.surfaceWhite,
+            color: isSelected
+                ? BauhausDesign.primary
+                : BauhausDesign.surfaceWhite,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
             border: Border.all(
               color: isSelected ? BauhausDesign.primary : BauhausDesign.neutral,
@@ -224,7 +219,8 @@ class _ClientAppointmentViewState extends ConsumerState<ClientAppointmentView> {
   }
 
   List<ClientAppointment> _filterAppointments(
-      List<ClientAppointment> appointments) {
+    List<ClientAppointment> appointments,
+  ) {
     final now = DateTime.now();
     final filtered = appointments.where((appt) {
       final appointmentAt = _parseAppointmentDateTime(
@@ -280,9 +276,12 @@ class _ClientAppointmentViewState extends ConsumerState<ClientAppointmentView> {
   }
 
   Widget _buildAppointmentList(
-      BuildContext context, List<ClientAppointment> appointments) {
-    final serviceHistory =
-        ref.watch(clientPortalViewModelProvider).serviceHistory;
+    BuildContext context,
+    List<ClientAppointment> appointments,
+  ) {
+    final serviceHistory = ref
+        .watch(clientPortalViewModelProvider)
+        .serviceHistory;
 
     return RefreshIndicator(
       color: BauhausDesign.primary,
@@ -342,8 +341,9 @@ class _ClientAppointmentViewState extends ConsumerState<ClientAppointmentView> {
               decoration: BoxDecoration(
                 color: BauhausDesign.secondary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                border:
-                    Border.all(color: BauhausDesign.secondary.withOpacity(0.3)),
+                border: Border.all(
+                  color: BauhausDesign.secondary.withOpacity(0.3),
+                ),
               ),
               child: Row(
                 children: [
@@ -378,10 +378,7 @@ class _AppointmentCard extends StatelessWidget {
   final ClientAppointment appointment;
   final bool isUpcoming;
 
-  const _AppointmentCard({
-    required this.appointment,
-    required this.isUpcoming,
-  });
+  const _AppointmentCard({required this.appointment, required this.isUpcoming});
 
   @override
   Widget build(BuildContext context) {
@@ -408,7 +405,8 @@ class _AppointmentCard extends StatelessWidget {
             child: Column(
               children: [
                 _buildTimeRow(context),
-                if (appointment.workerName != null || appointment.userEmail != null) ...[
+                if (appointment.workerName != null ||
+                    appointment.userEmail != null) ...[
                   const SizedBox(height: BauhausDesign.space3),
                   _buildWorkerRow(context),
                 ],
@@ -529,15 +527,15 @@ class _AppointmentCard extends StatelessWidget {
           children: [
             Text(
               'TIME',
-              style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.textMuted,
-                  ),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
             ),
             Text(
               '${appointment.startTime} - ${appointment.endTime}',
-              style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).labelLarge?.copyWith(fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -568,15 +566,15 @@ class _AppointmentCard extends StatelessWidget {
             children: [
               Text(
                 'SUPPORT WORKER',
-                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                      color: BauhausDesign.textMuted,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
               ),
               Text(
                 appointment.workerName ?? appointment.userEmail ?? '',
-                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyMedium?.copyWith(fontWeight: FontWeight.w500),
                 overflow: TextOverflow.ellipsis,
               ),
             ],
@@ -600,17 +598,13 @@ class _AppointmentCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.open_in_new,
-            color: BauhausDesign.textMuted,
-            size: 14,
-          ),
+          Icon(Icons.open_in_new, color: BauhausDesign.textMuted, size: 14),
           const SizedBox(width: BauhausDesign.space2),
           Text(
             'Tap to view details',
-            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                  color: BauhausDesign.textMuted,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
           ),
         ],
       ),
@@ -622,10 +616,7 @@ class _ServiceHistoryFooter extends ConsumerWidget {
   final List<ServiceHistory> history;
   final String? clientId;
 
-  const _ServiceHistoryFooter({
-    required this.history,
-    required this.clientId,
-  });
+  const _ServiceHistoryFooter({required this.history, required this.clientId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -657,8 +648,9 @@ class _ServiceHistoryFooter extends ConsumerWidget {
               final rating = service.rating;
               final hasFeedback =
                   rating > 0 || (service.feedback ?? '').trim().isNotEmpty;
-              final buttonLabel =
-                  hasFeedback ? 'UPDATE FEEDBACK' : 'SUBMIT FEEDBACK';
+              final buttonLabel = hasFeedback
+                  ? 'UPDATE FEEDBACK'
+                  : 'SUBMIT FEEDBACK';
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
@@ -668,23 +660,23 @@ class _ServiceHistoryFooter extends ConsumerWidget {
                     children: [
                       Text(
                         service.serviceName,
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
-                            ?.copyWith(fontWeight: FontWeight.w700),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).labelLarge?.copyWith(fontWeight: FontWeight.w700),
                       ),
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
                         '${service.date} • ${service.startTime} - ${service.endTime}',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
-                            ?.copyWith(color: BauhausDesign.textMuted),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                       ),
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
                         'Worker: ${service.workerName}',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
-                            ?.copyWith(color: BauhausDesign.textMuted),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                       ),
                       const SizedBox(height: BauhausDesign.space2),
                       if (rating > 0)
@@ -733,9 +725,8 @@ class _ServiceHistoryFooter extends ConsumerWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (_) => ClientServiceHistoryView(
-                      clientId: clientId!,
-                    ),
+                    builder: (_) =>
+                        ClientServiceHistoryView(clientId: clientId!),
                   ),
                 );
               },

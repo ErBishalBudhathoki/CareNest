@@ -4,11 +4,15 @@ import 'package:carenest/app/features/settings/repositories/date_preference_repo
 import 'package:carenest/app/features/settings/viewmodels/date_format_settings_viewmodel.dart';
 
 /// Repository provider for date format preference.
-final datePreferenceRepositoryProvider = Provider<DatePreferenceRepository>((ref) {
+final datePreferenceRepositoryProvider = Provider<DatePreferenceRepository>((
+  ref,
+) {
   final prefs = ref.watch(sharedPreferencesProvider);
   return DatePreferenceRepository(prefs);
 });
 
 /// ViewModel provider for the Date Format Settings screen.
 final dateFormatSettingsViewModelProvider =
-    NotifierProvider<DateFormatSettingsViewModel, DateFormatSettingsState>(DateFormatSettingsViewModel.new);
+    NotifierProvider<DateFormatSettingsViewModel, DateFormatSettingsState>(
+      DateFormatSettingsViewModel.new,
+    );

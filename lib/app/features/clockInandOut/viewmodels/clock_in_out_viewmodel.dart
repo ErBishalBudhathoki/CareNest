@@ -4,7 +4,8 @@ import '../repositories/clock_in_out_repository.dart';
 
 final clockInOutViewModelProvider =
     AsyncNotifierProvider.autoDispose<ClockInOutViewModel, bool>(
-        ClockInOutViewModel.new);
+      ClockInOutViewModel.new,
+    );
 
 class ClockInOutViewModel extends AsyncNotifier<bool> {
   late final ClockInOutRepository _repository;

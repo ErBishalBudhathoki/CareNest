@@ -6,10 +6,7 @@ import 'package:intl/intl.dart';
 class BauhausScheduleList extends StatelessWidget {
   final List<Map<String, dynamic>> schedules;
 
-  const BauhausScheduleList({
-    super.key,
-    required this.schedules,
-  });
+  const BauhausScheduleList({super.key, required this.schedules});
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +45,7 @@ class BauhausScheduleList extends StatelessWidget {
                 color: BauhausDesign.textDark,
                 offset: Offset(4, 4),
                 blurRadius: 0,
-              )
+              ),
             ],
           ),
           child: IntrinsicHeight(
@@ -76,8 +73,9 @@ class BauhausScheduleList extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
-                          color:
-                              BauhausDesign.surfaceLight.withValues(alpha: 0.8),
+                          color: BauhausDesign.surfaceLight.withValues(
+                            alpha: 0.8,
+                          ),
                         ),
                       ),
                     ],
@@ -92,8 +90,11 @@ class BauhausScheduleList extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.access_time_filled,
-                                size: 16, color: BauhausDesign.textDark),
+                            const Icon(
+                              Icons.access_time_filled,
+                              size: 16,
+                              color: BauhausDesign.textDark,
+                            ),
                             const SizedBox(width: 8),
                             Text(
                               "${schedule['startTime'] ?? 'N/A'} - ${schedule['endTime'] ?? 'N/A'}",
@@ -111,8 +112,11 @@ class BauhausScheduleList extends StatelessWidget {
                             schedule['break'].toString().isNotEmpty)
                           Row(
                             children: [
-                              const Icon(Icons.coffee,
-                                  size: 14, color: BauhausDesign.neutral),
+                              const Icon(
+                                Icons.coffee,
+                                size: 14,
+                                color: BauhausDesign.neutral,
+                              ),
                               const SizedBox(width: 8),
                               Text(
                                 "Break: ${schedule['break']}",
@@ -174,7 +178,10 @@ class BauhausScheduleList extends StatelessWidget {
       final parts = dateStr.split('/');
       if (parts.length == 3) {
         return DateTime(
-            int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
+          int.parse(parts[2]),
+          int.parse(parts[1]),
+          int.parse(parts[0]),
+        );
       }
     } catch (_) {}
 

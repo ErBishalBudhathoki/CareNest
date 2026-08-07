@@ -85,10 +85,12 @@ void main() {
   group('EarningsViewModel', () {
     test('monthly range uses first and last day of month', () async {
       final repo = _RecordingEarningsRepository();
-      final container = ProviderContainer(overrides: [
-        earningsRepositoryProvider.overrideWith((ref) => repo),
-        currentUserProvider.overrideWith((ref) async => _testUser()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          earningsRepositoryProvider.overrideWith((ref) => repo),
+          currentUserProvider.overrideWith((ref) async => _testUser()),
+        ],
+      );
       addTearDown(container.dispose);
       await container.read(currentUserProvider.future);
       final vm = container.read(earningsViewModelProvider.notifier);
@@ -109,10 +111,12 @@ void main() {
 
     test('weekly range uses Monday-Sunday week', () async {
       final repo = _RecordingEarningsRepository();
-      final container = ProviderContainer(overrides: [
-        earningsRepositoryProvider.overrideWith((ref) => repo),
-        currentUserProvider.overrideWith((ref) async => _testUser()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          earningsRepositoryProvider.overrideWith((ref) => repo),
+          currentUserProvider.overrideWith((ref) async => _testUser()),
+        ],
+      );
       addTearDown(container.dispose);
       await container.read(currentUserProvider.future);
       final vm = container.read(earningsViewModelProvider.notifier);
@@ -133,10 +137,12 @@ void main() {
 
     test('calculateTax supports frequency scaling', () {
       final repo = _RecordingEarningsRepository();
-      final container = ProviderContainer(overrides: [
-        earningsRepositoryProvider.overrideWith((ref) => repo),
-        currentUserProvider.overrideWith((ref) async => _testUser()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          earningsRepositoryProvider.overrideWith((ref) => repo),
+          currentUserProvider.overrideWith((ref) async => _testUser()),
+        ],
+      );
       addTearDown(container.dispose);
       final vm = container.read(earningsViewModelProvider.notifier);
 

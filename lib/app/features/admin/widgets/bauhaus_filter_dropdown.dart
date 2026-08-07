@@ -39,17 +39,18 @@ class BauhausFilterDropdown extends StatelessWidget {
             child: DropdownButton<String>(
               value: value,
               isExpanded: true,
-              icon: const Icon(Icons.arrow_drop_down_sharp, color: BauhausDesign.neutral, size: 32),
+              icon: const Icon(
+                Icons.arrow_drop_down_sharp,
+                color: BauhausDesign.neutral,
+                size: 32,
+              ),
               dropdownColor: BauhausDesign.surfaceLight,
               style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
                 color: BauhausDesign.textDark,
                 fontWeight: FontWeight.bold,
               ),
               items: items.map((String item) {
-                return DropdownMenuItem<String>(
-                  value: item,
-                  child: Text(item),
-                );
+                return DropdownMenuItem<String>(value: item, child: Text(item));
               }).toList(),
               onChanged: onChanged,
             ),

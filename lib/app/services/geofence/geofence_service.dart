@@ -18,7 +18,7 @@ class LocationPermissionResult {
     this.denialReason,
     this.permanentlyDenied = false,
   });
-  
+
   bool get canUseGeofence => granted && backgroundGranted;
 }
 
@@ -83,7 +83,8 @@ class GeofenceService {
   bool get isMonitoring => _isMonitoring;
 
   /// Get the list of active geofences
-  List<GeofenceLocation> get activeGeofences => List.unmodifiable(_activeGeofences);
+  List<GeofenceLocation> get activeGeofences =>
+      List.unmodifiable(_activeGeofences);
 
   // ============================================================
   // PERMISSION HANDLING - App Store & Play Store Compliant
@@ -97,11 +98,10 @@ class GeofenceService {
   }) async {
     // Step 1: Check current permission status
     LocationPermission currentPermission = await Geolocator.checkPermission();
-    
+
     // Step 2: If denied or not determined, show explanation dialog first
     if (currentPermission == LocationPermission.denied ||
         currentPermission == LocationPermission.deniedForever) {
-      
       if (showExplanationDialog && context.mounted) {
         final shouldProceed = await _showPermissionExplanationDialog(context);
         if (!shouldProceed) {
@@ -123,7 +123,8 @@ class GeofenceService {
       return const LocationPermissionResult(
         granted: false,
         backgroundGranted: false,
-        denialReason: 'Location permission permanently denied. Please enable in Settings.',
+        denialReason:
+            'Location permission permanently denied. Please enable in Settings.',
         permanentlyDenied: true,
       );
     }
@@ -137,8 +138,9 @@ class GeofenceService {
     }
 
     // Step 4: Check if we have when-in-use permission
-    bool hasWhenInUse = currentPermission == LocationPermission.whileInUse ||
-                        currentPermission == LocationPermission.always;
+    bool hasWhenInUse =
+        currentPermission == LocationPermission.whileInUse ||
+        currentPermission == LocationPermission.always;
 
     if (!hasWhenInUse) {
       return const LocationPermissionResult(
@@ -151,11 +153,13 @@ class GeofenceService {
     // Step 5: For geofencing, we need "Always" permission
     // Request background location separately (Android 11+ / iOS)
     bool hasAlways = currentPermission == LocationPermission.always;
-    
+
     if (!hasAlways) {
       // Show specific dialog explaining why background is needed
       if (showExplanationDialog && context.mounted) {
-        final shouldRequestBackground = await _showBackgroundPermissionDialog(context);
+        final shouldRequestBackground = await _showBackgroundPermissionDialog(
+          context,
+        );
         if (!shouldRequestBackground) {
           return LocationPermissionResult(
             granted: true,
@@ -170,7 +174,9 @@ class GeofenceService {
       hasAlways = backgroundStatus.isGranted;
     }
 
-    debugPrint('GeofenceService: Permission result - whenInUse: $hasWhenInUse, always: $hasAlways');
+    debugPrint(
+      'GeofenceService: Permission result - whenInUse: $hasWhenInUse, always: $hasAlways',
+    );
 
     return LocationPermissionResult(
       granted: hasWhenInUse,
@@ -181,124 +187,129 @@ class GeofenceService {
   /// Show a dialog explaining why we need location permission
   Future<bool> _showPermissionExplanationDialog(BuildContext context) async {
     return await showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.location_on, color: Colors.blue, size: 28),
-            SizedBox(width: 12),
-            Expanded(child: Text('Location Access Needed')),
-          ],
-        ),
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'CareNest uses your location to:',
-              style: TextStyle(fontWeight: FontWeight.bold),
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            title: const Row(
+              children: [
+                Icon(Icons.location_on, color: Colors.blue, size: 28),
+                SizedBox(width: 12),
+                Expanded(child: Text('Location Access Needed')),
+              ],
             ),
-            SizedBox(height: 12),
-            _PermissionBullet(
-              icon: Icons.notifications_active,
-              text: 'Remind you to clock in when you arrive at a client\'s location',
+            content: const Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'CareNest uses your location to:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 12),
+                _PermissionBullet(
+                  icon: Icons.notifications_active,
+                  text:
+                      'Remind you to clock in when you arrive at a client\'s location',
+                ),
+                SizedBox(height: 8),
+                _PermissionBullet(
+                  icon: Icons.timer,
+                  text: 'Ensure accurate timesheet records',
+                ),
+                SizedBox(height: 8),
+                _PermissionBullet(
+                  icon: Icons.map,
+                  text: 'Provide navigation to appointments',
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Your location data is never shared and is only used to improve your work experience.',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+              ],
             ),
-            SizedBox(height: 8),
-            _PermissionBullet(
-              icon: Icons.timer,
-              text: 'Ensure accurate timesheet records',
-            ),
-            SizedBox(height: 8),
-            _PermissionBullet(
-              icon: Icons.map,
-              text: 'Provide navigation to appointments',
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Your location data is never shared and is only used to improve your work experience.',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Not Now'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Not Now'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Enable Location'),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Enable Location'),
-          ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
   }
 
   /// Show a dialog explaining why background location is specifically needed
   Future<bool> _showBackgroundPermissionDialog(BuildContext context) async {
     return await showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.location_searching, color: Colors.orange, size: 28),
-            SizedBox(width: 12),
-            Expanded(child: Text('Background Location')),
-          ],
-        ),
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'For automatic clock-in reminders, CareNest needs to access your location even when the app is closed.',
-              style: TextStyle(fontWeight: FontWeight.w500),
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            title: const Row(
+              children: [
+                Icon(Icons.location_searching, color: Colors.orange, size: 28),
+                SizedBox(width: 12),
+                Expanded(child: Text('Background Location')),
+              ],
             ),
-            SizedBox(height: 16),
-            Text(
-              'How we use background location:',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+            content: const Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'For automatic clock-in reminders, CareNest needs to access your location even when the app is closed.',
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'How we use background location:',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+                SizedBox(height: 8),
+                _PermissionBullet(
+                  icon: Icons.circle_notifications,
+                  text:
+                      'We only monitor when you\'re near a scheduled client location',
+                ),
+                SizedBox(height: 6),
+                _PermissionBullet(
+                  icon: Icons.battery_saver,
+                  text:
+                      'Battery-efficient monitoring (uses geofence, not GPS tracking)',
+                ),
+                SizedBox(height: 6),
+                _PermissionBullet(
+                  icon: Icons.toggle_off,
+                  text: 'You can disable this anytime in Settings',
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'On the next screen, please select "Allow all the time" or "Always" for the best experience.',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.blue,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 8),
-            _PermissionBullet(
-              icon: Icons.circle_notifications,
-              text: 'We only monitor when you\'re near a scheduled client location',
-            ),
-            SizedBox(height: 6),
-            _PermissionBullet(
-              icon: Icons.battery_saver,
-              text: 'Battery-efficient monitoring (uses geofence, not GPS tracking)',
-            ),
-            SizedBox(height: 6),
-            _PermissionBullet(
-              icon: Icons.toggle_off,
-              text: 'You can disable this anytime in Settings',
-            ),
-            SizedBox(height: 16),
-            Text(
-              'On the next screen, please select "Allow all the time" or "Always" for the best experience.',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.blue,
-                fontWeight: FontWeight.w500,
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Skip (Limited Features)'),
               ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Skip (Limited Features)'),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Continue'),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Continue'),
-          ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
   }
 
   /// Open app settings for the user to manually grant permissions
@@ -314,21 +325,23 @@ class GeofenceService {
   Future<void> registerGeofence(GeofenceLocation location) async {
     // Remove existing geofence for this client if any
     _activeGeofences.removeWhere((g) => g.clientId == location.clientId);
-    
+
     // Add new geofence
     _activeGeofences.add(location);
-    
+
     // Persist to storage
     await _saveGeofences();
-    
-    debugPrint('GeofenceService: Registered geofence for ${location.clientName} at (${location.latitude}, ${location.longitude})');
+
+    debugPrint(
+      'GeofenceService: Registered geofence for ${location.clientName} at (${location.latitude}, ${location.longitude})',
+    );
   }
 
   /// Remove a geofence for a client
   Future<void> removeGeofence(String clientId) async {
     _activeGeofences.removeWhere((g) => g.clientId == clientId);
     await _saveGeofences();
-    
+
     debugPrint('GeofenceService: Removed geofence for client $clientId');
   }
 
@@ -336,7 +349,7 @@ class GeofenceService {
   Future<void> clearAllGeofences() async {
     _activeGeofences.clear();
     await _saveGeofences();
-    
+
     debugPrint('GeofenceService: Cleared all geofences');
   }
 
@@ -345,16 +358,18 @@ class GeofenceService {
     try {
       final prefs = await SharedPreferences.getInstance();
       final jsonString = prefs.getString(_geofencesKey);
-      
+
       if (jsonString != null) {
         final List<dynamic> jsonList = jsonDecode(jsonString);
         _activeGeofences.clear();
-        
+
         for (final json in jsonList) {
           _activeGeofences.add(GeofenceLocation.fromJson(json));
         }
-        
-        debugPrint('GeofenceService: Loaded ${_activeGeofences.length} geofences from storage');
+
+        debugPrint(
+          'GeofenceService: Loaded ${_activeGeofences.length} geofences from storage',
+        );
       }
     } catch (e) {
       debugPrint('GeofenceService: Error loading geofences: $e');
@@ -405,8 +420,10 @@ class GeofenceService {
     ).listen(_onPositionUpdate);
 
     _isMonitoring = true;
-    debugPrint('GeofenceService: Started monitoring ${_activeGeofences.length} geofences');
-    
+    debugPrint(
+      'GeofenceService: Started monitoring ${_activeGeofences.length} geofences',
+    );
+
     return true;
   }
 
@@ -415,7 +432,7 @@ class GeofenceService {
     _positionSubscription?.cancel();
     _positionSubscription = null;
     _isMonitoring = false;
-    
+
     debugPrint('GeofenceService: Stopped monitoring');
   }
 
@@ -430,11 +447,13 @@ class GeofenceService {
       );
 
       final isInside = distance <= geofence.radiusMeters;
-      
+
       // Check if state changed (you could track previous state for exit events)
       // For now, we trigger on entry
       if (isInside) {
-        debugPrint('GeofenceService: Entered geofence for ${geofence.clientName}');
+        debugPrint(
+          'GeofenceService: Entered geofence for ${geofence.clientName}',
+        );
         _onGeofenceEvent?.call(geofence, true);
       }
     }
@@ -454,12 +473,14 @@ class GeofenceService {
   Future<void> setGeofencingEnabled(bool enabled) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('${_settingsKey}_enabled', enabled);
-    
+
     if (!enabled) {
       stopMonitoring();
     }
-    
-    debugPrint('GeofenceService: Geofencing ${enabled ? "enabled" : "disabled"}');
+
+    debugPrint(
+      'GeofenceService: Geofencing ${enabled ? "enabled" : "disabled"}',
+    );
   }
 
   /// Get the geofence radius setting
@@ -485,10 +506,7 @@ class _PermissionBullet extends StatelessWidget {
   final IconData icon;
   final String text;
 
-  const _PermissionBullet({
-    required this.icon,
-    required this.text,
-  });
+  const _PermissionBullet({required this.icon, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -497,9 +515,7 @@ class _PermissionBullet extends StatelessWidget {
       children: [
         Icon(icon, size: 18, color: Colors.blue),
         const SizedBox(width: 8),
-        Expanded(
-          child: Text(text, style: const TextStyle(fontSize: 13)),
-        ),
+        Expanded(child: Text(text, style: const TextStyle(fontSize: 13))),
       ],
     );
   }

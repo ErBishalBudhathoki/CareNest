@@ -59,21 +59,13 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
       vsync: this,
     );
 
-    _validationAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _validationController,
-      curve: Curves.easeInOut,
-    ));
+    _validationAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _validationController, curve: Curves.easeInOut),
+    );
 
-    _shakeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _shakeController,
-      curve: Curves.elasticIn,
-    ));
+    _shakeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _shakeController, curve: Curves.elasticIn),
+    );
 
     _initializeValidationRules();
     widget.controller.addListener(_onTextChanged);
@@ -197,7 +189,9 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
       builder: (context, child) {
         return Transform.translate(
           offset: Offset(
-              _shakeAnimation.value * 10 * (1 - _shakeAnimation.value), 0),
+            _shakeAnimation.value * 10 * (1 - _shakeAnimation.value),
+            0,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -205,28 +199,22 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(
-                    color: _getBorderColor(),
-                    width: 1,
-                  ),
+                  border: Border.all(color: _getBorderColor(), width: 1),
                   color: BauhausDesign.backgroundLight,
                 ),
                 child: TextField(
                   controller: widget.controller,
                   obscureText: widget.obscureText,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w500,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w500,
+                      ),
                   decoration: InputDecoration(
                     labelText: widget.label,
                     hintText: widget.hint,
                     prefixIcon: widget.prefixIcon != null
-                        ? Icon(
-                            widget.prefixIcon,
-                            color: _getIconColor(),
-                          )
+                        ? Icon(widget.prefixIcon, color: _getIconColor())
                         : null,
                     suffixIcon: _buildSuffixIcon(),
                     border: InputBorder.none,
@@ -351,10 +339,7 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
             children: [
               Text(
                 'Password strength: ',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: BauhausDesign.textMuted,
-                ),
+                style: TextStyle(fontSize: 12, color: BauhausDesign.textMuted),
               ),
               Text(
                 strengthText,
@@ -440,12 +425,7 @@ class ValidationRule {
 }
 
 /// Types of validation rules
-enum ValidationRuleType {
-  required,
-  format,
-  length,
-  strength,
-}
+enum ValidationRuleType { required, format, length, strength }
 
 /// Validation result class
 class ValidationResult {

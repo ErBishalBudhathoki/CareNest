@@ -73,13 +73,17 @@ class DateParserService {
               case 'dd/MM/yyyy':
               case 'd/M/yyyy':
                 if (token1 != d.day || token2 != d.month || token3 != d.year) {
-                  throw FormatException('Rollover detected for ${pat.format}: $dateStr');
+                  throw FormatException(
+                    'Rollover detected for ${pat.format}: $dateStr',
+                  );
                 }
                 break;
               case 'MM/dd/yyyy':
               case 'M/d/yyyy':
                 if (token2 != d.day || token1 != d.month || token3 != d.year) {
-                  throw FormatException('Rollover detected for ${pat.format}: $dateStr');
+                  throw FormatException(
+                    'Rollover detected for ${pat.format}: $dateStr',
+                  );
                 }
                 break;
             }
@@ -92,7 +96,9 @@ class DateParserService {
             final mo = int.parse(m.group(2)!);
             final da = int.parse(m.group(3)!);
             if (y != d.year || mo != d.month || da != d.day) {
-              throw FormatException('Rollover detected for ${pat.format}: $dateStr');
+              throw FormatException(
+                'Rollover detected for ${pat.format}: $dateStr',
+              );
             }
           }
         }

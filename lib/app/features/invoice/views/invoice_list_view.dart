@@ -50,10 +50,9 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
 
   void _loadInvoices() {
     final invoiceType = _tabController.index == 0 ? 'client' : 'employee';
-    ref.read(invoiceListViewModelProvider.notifier).loadInvoices(
-          widget.organizationId,
-          invoiceType: invoiceType,
-        );
+    ref
+        .read(invoiceListViewModelProvider.notifier)
+        .loadInvoices(widget.organizationId, invoiceType: invoiceType);
   }
 
   @override
@@ -76,9 +75,9 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
         title: Text(
           l10n.allInvoices,
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                color: BauhausDesign.textDark,
-                fontWeight: FontWeight.w800,
-              ),
+            color: BauhausDesign.textDark,
+            fontWeight: FontWeight.w800,
+          ),
         ),
         centerTitle: true,
         backgroundColor: BauhausDesign.surfaceWhite,
@@ -97,14 +96,12 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
                 unselectedLabelColor: BauhausDesign.textMuted,
                 indicatorColor: BauhausDesign.primary,
                 indicatorWeight: 4,
-                labelStyle:
-                    BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                          fontWeight: FontWeight.w800,
-                        ),
-                unselectedLabelStyle:
-                    BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                labelStyle: BauhausDesign.getTextTheme(
+                  context,
+                ).labelLarge?.copyWith(fontWeight: FontWeight.w800),
+                unselectedLabelStyle: BauhausDesign.getTextTheme(
+                  context,
+                ).labelLarge?.copyWith(fontWeight: FontWeight.w600),
                 tabs: const [
                   Tab(text: 'Client Invoices'),
                   Tab(text: 'Employee Invoices'),
@@ -123,9 +120,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
       body: Column(
         children: [
           _buildSearchAndFilter(l10n),
-          Expanded(
-            child: _buildInvoiceList(invoiceListState, l10n),
-          ),
+          Expanded(child: _buildInvoiceList(invoiceListState, l10n)),
         ],
       ),
       floatingActionButton: Container(
@@ -186,17 +181,18 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
             children: [
               Text(
                 l10n.statusLabel,
-                style:
-                    BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-                          color: BauhausDesign.textDark,
-                          fontWeight: FontWeight.w700,
-                        ),
+                style: BauhausDesign.getTextTheme(context).labelMedium
+                    ?.copyWith(
+                      color: BauhausDesign.textDark,
+                      fontWeight: FontWeight.w700,
+                    ),
               ),
               const SizedBox(width: BauhausDesign.space2),
               Expanded(
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: BauhausDesign.space3),
+                    horizontal: BauhausDesign.space3,
+                  ),
                   decoration: BoxDecoration(
                     color: BauhausDesign.surfaceWhite,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
@@ -208,22 +204,33 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
                       value: _statusFilter,
                       isExpanded: true,
                       dropdownColor: BauhausDesign.surfaceWhite,
-                      icon: const Icon(Icons.keyboard_arrow_down_rounded,
-                          color: BauhausDesign.textDark),
+                      icon: const Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: BauhausDesign.textDark,
+                      ),
                       items: [
                         DropdownMenuItem(
-                            value: 'all', child: Text(l10n.statusAll)),
+                          value: 'all',
+                          child: Text(l10n.statusAll),
+                        ),
                         DropdownMenuItem(
-                            value: 'draft', child: Text(l10n.statusDraft)),
+                          value: 'draft',
+                          child: Text(l10n.statusDraft),
+                        ),
                         DropdownMenuItem(
-                            value: 'sent', child: Text(l10n.statusSent)),
+                          value: 'sent',
+                          child: Text(l10n.statusSent),
+                        ),
                         DropdownMenuItem(
-                            value: 'paid', child: Text(l10n.statusPaid)),
+                          value: 'paid',
+                          child: Text(l10n.statusPaid),
+                        ),
                         DropdownMenuItem(
-                            value: 'overdue', child: Text(l10n.statusOverdue)),
+                          value: 'overdue',
+                          child: Text(l10n.statusOverdue),
+                        ),
                       ],
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w600,
@@ -247,11 +254,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
 
   Widget _buildInvoiceList(InvoiceListState state, AppLocalizations l10n) {
     if (state.isLoading) {
-      return Center(
-        child: BauhausLoadingState(
-          message: l10n.loadingInvoices,
-        ),
-      );
+      return Center(child: BauhausLoadingState(message: l10n.loadingInvoices));
     }
 
     if (state.error != null) {
@@ -302,11 +305,11 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
               Expanded(
                 child: Text(
                   invoice.invoiceNumber,
-                  style:
-                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: BauhausDesign.textDark,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).titleMedium
+                      ?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: BauhausDesign.textDark,
+                      ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -317,29 +320,31 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
           const SizedBox(height: BauhausDesign.space2),
           Text(
             invoice.clientName,
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
           ),
           const SizedBox(height: BauhausDesign.space1),
           Text(
             '${l10n.dueLabel}: ${DateFormat.yMMMd(l10n.localeName).format(invoice.dueDate)}',
-            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textMuted,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
           ),
           const SizedBox(height: BauhausDesign.space3),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                l10n.priceDisplay(l10n.currencySymbol,
-                    invoice.totalAmount.toStringAsFixed(2)),
-                style:
-                    BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: BauhausDesign.primary,
-                        ),
+                l10n.priceDisplay(
+                  l10n.currencySymbol,
+                  invoice.totalAmount.toStringAsFixed(2),
+                ),
+                style: BauhausDesign.getTextTheme(context).titleMedium
+                    ?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: BauhausDesign.primary,
+                    ),
               ),
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -378,7 +383,9 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
   }
 
   void _markAsPaid(InvoiceListModel invoice) {
-    ref.read(invoiceListViewModelProvider.notifier).markAsPaid(
+    ref
+        .read(invoiceListViewModelProvider.notifier)
+        .markAsPaid(
           invoice.id,
           widget.organizationId,
           invoice.totalAmount,
@@ -425,13 +432,15 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
 
   List<InvoiceListModel> _getFilteredInvoices(List<InvoiceListModel> invoices) {
     return invoices.where((invoice) {
-      final matchesSearch = _searchQuery.isEmpty ||
-          invoice.invoiceNumber
-              .toLowerCase()
-              .contains(_searchQuery.toLowerCase()) ||
+      final matchesSearch =
+          _searchQuery.isEmpty ||
+          invoice.invoiceNumber.toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          ) ||
           invoice.clientName.toLowerCase().contains(_searchQuery.toLowerCase());
 
-      final matchesStatus = _statusFilter == 'all' ||
+      final matchesStatus =
+          _statusFilter == 'all' ||
           invoice.status.toLowerCase() == _statusFilter.toLowerCase();
 
       return matchesSearch && matchesStatus;
@@ -468,24 +477,24 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
           backgroundColor: BauhausDesign.surfaceWhite,
           title: Text(
             l10n.deleteInvoice,
-            style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                  color: BauhausDesign.textDark,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).titleLarge?.copyWith(color: BauhausDesign.textDark),
           ),
           content: Text(
             l10n.deleteInvoiceConfirm(invoice.invoiceNumber),
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
                 l10n.cancel,
-                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                      color: BauhausDesign.textMuted,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).labelLarge?.copyWith(color: BauhausDesign.textMuted),
               ),
             ),
             TextButton(
@@ -498,9 +507,9 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
               child: Text(
                 l10n.delete,
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                      color: BauhausDesign.error,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  color: BauhausDesign.error,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],

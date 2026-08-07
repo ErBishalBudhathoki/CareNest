@@ -59,27 +59,29 @@ class DefaultFirebaseOptions {
   );
 
   static FirebaseOptions get androidProduction => FirebaseOptions(
-        apiKey: _getEnv('FIREBASE_ANDROID_API_KEY'),
-        appId: '1:406509736623:android:73088e652df1e5346a3a5a',
-        messagingSenderId: '406509736623',
-        projectId: 'invoice-660f3',
-        storageBucket: 'invoice-660f3.appspot.com',
-      );
+    apiKey: _getEnv('FIREBASE_ANDROID_API_KEY'),
+    appId: '1:406509736623:android:73088e652df1e5346a3a5a',
+    messagingSenderId: '406509736623',
+    projectId: 'invoice-660f3',
+    storageBucket: 'invoice-660f3.appspot.com',
+  );
 
   static FirebaseOptions get androidDevelopment => FirebaseOptions(
-        apiKey: _getEnv('FIREBASE_ANDROID_DEV_API_KEY'),
-        appId: '1:406509736623:android:a015207404bd0c726a3a5a',
-        messagingSenderId: '406509736623',
-        projectId: 'invoice-660f3',
-        storageBucket: 'invoice-660f3.appspot.com',
-      );
+    apiKey: _getEnv('FIREBASE_ANDROID_DEV_API_KEY'),
+    appId: '1:406509736623:android:a015207404bd0c726a3a5a',
+    messagingSenderId: '406509736623',
+    projectId: 'invoice-660f3',
+    storageBucket: 'invoice-660f3.appspot.com',
+  );
 
   static FirebaseOptions get android {
     final isDevelopment = AppConfig.appFlavor == Flavor.development;
     debugPrint(
-        '🔥 Firebase Options: Using ${isDevelopment ? "DEVELOPMENT" : "PRODUCTION"} Android config');
+      '🔥 Firebase Options: Using ${isDevelopment ? "DEVELOPMENT" : "PRODUCTION"} Android config',
+    );
     debugPrint(
-        '🔥 App ID: ${isDevelopment ? androidDevelopment.appId : androidProduction.appId}');
+      '🔥 App ID: ${isDevelopment ? androidDevelopment.appId : androidProduction.appId}',
+    );
 
     if (isDevelopment) {
       return androidDevelopment;
@@ -88,11 +90,11 @@ class DefaultFirebaseOptions {
   }
 
   static FirebaseOptions get ios => FirebaseOptions(
-        apiKey: _getEnv('FIREBASE_IOS_API_KEY'),
-        appId: '1:406509736623:ios:80ba46b45d8930db6a3a5a',
-        messagingSenderId: '406509736623',
-        projectId: 'invoice-660f3',
-        storageBucket: 'invoice-660f3.appspot.com',
-        iosBundleId: 'com.bishal.invoice',
-      );
+    apiKey: _getEnv('FIREBASE_IOS_API_KEY'),
+    appId: '1:406509736623:ios:80ba46b45d8930db6a3a5a',
+    messagingSenderId: '406509736623',
+    projectId: 'invoice-660f3',
+    storageBucket: 'invoice-660f3.appspot.com',
+    iosBundleId: 'com.bishal.invoice',
+  );
 }

@@ -17,9 +17,8 @@ Future<TimeOfDay?> showBauhausTimePicker({
   return showDialog<TimeOfDay>(
     context: context,
     barrierColor: _ink.withOpacity(0.55),
-    builder: (_) => _BauhausTimePickerDialog(
-      initialTime: initialTime ?? TimeOfDay.now(),
-    ),
+    builder: (_) =>
+        _BauhausTimePickerDialog(initialTime: initialTime ?? TimeOfDay.now()),
   );
 }
 
@@ -32,8 +31,7 @@ class _BauhausTimePickerDialog extends StatefulWidget {
       _BauhausTimePickerDialogState();
 }
 
-class _BauhausTimePickerDialogState
-    extends State<_BauhausTimePickerDialog> {
+class _BauhausTimePickerDialogState extends State<_BauhausTimePickerDialog> {
   late int _hour;
   late int _minute;
   late bool _isAm;
@@ -65,9 +63,9 @@ class _BauhausTimePickerDialogState
   void _togglePeriod() => setState(() => _isAm = !_isAm);
 
   TimeOfDay get _selectedTime => TimeOfDay(
-        hour: _isAm ? _hour : (_hour == 12 ? 12 : _hour + 12),
-        minute: _minute,
-      );
+    hour: _isAm ? _hour : (_hour == 12 ? 12 : _hour + 12),
+    minute: _minute,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +110,9 @@ class _BauhausTimePickerDialogState
             child: Text(
               'SELECT TIME',
               style: GoogleFonts.oswald(
-                color: _paper, fontSize: 18, fontWeight: FontWeight.w700,
+                color: _paper,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
               ),
             ),
@@ -120,7 +120,8 @@ class _BauhausTimePickerDialogState
           GestureDetector(
             onTap: () => Navigator.of(context).pop(null),
             child: Container(
-              width: 30, height: 30,
+              width: 30,
+              height: 30,
               decoration: BoxDecoration(
                 border: Border.all(color: _paper.withOpacity(0.5), width: 1.5),
               ),
@@ -149,7 +150,9 @@ class _BauhausTimePickerDialogState
                 child: Text(
                   ':',
                   style: GoogleFonts.oswald(
-                    color: _ink, fontSize: 36, fontWeight: FontWeight.w700,
+                    color: _ink,
+                    fontSize: 36,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
@@ -173,18 +176,26 @@ class _BauhausTimePickerDialogState
     );
   }
 
-  Widget _buildTimeSegment(TextEditingController ctrl, ValueChanged<String> onChanged) {
+  Widget _buildTimeSegment(
+    TextEditingController ctrl,
+    ValueChanged<String> onChanged,
+  ) {
     return Container(
       width: 70,
       decoration: BoxDecoration(
-        border: Border.all(color: _ink, width: BauhausDesign.neoInnerBorderWidth),
+        border: Border.all(
+          color: _ink,
+          width: BauhausDesign.neoInnerBorderWidth,
+        ),
       ),
       child: TextField(
         controller: ctrl,
         keyboardType: TextInputType.number,
         textAlign: TextAlign.center,
         style: GoogleFonts.oswald(
-          color: _ink, fontSize: 36, fontWeight: FontWeight.w700,
+          color: _ink,
+          fontSize: 36,
+          fontWeight: FontWeight.w700,
         ),
         decoration: const InputDecoration(
           border: InputBorder.none,
@@ -203,9 +214,14 @@ class _BauhausTimePickerDialogState
         padding: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
           color: active ? _signal : _paper,
-          border: Border.all(color: _ink, width: BauhausDesign.neoInnerBorderWidth),
+          border: Border.all(
+            color: _ink,
+            width: BauhausDesign.neoInnerBorderWidth,
+          ),
           boxShadow: active
-              ? const [BoxShadow(color: _ink, offset: Offset(2, 2), blurRadius: 0)]
+              ? const [
+                  BoxShadow(color: _ink, offset: Offset(2, 2), blurRadius: 0),
+                ]
               : null,
         ),
         alignment: Alignment.center,
@@ -234,7 +250,10 @@ class _BauhausTimePickerDialogState
                 height: 44,
                 decoration: BoxDecoration(
                   color: _paper,
-                  border: Border.all(color: _ink, width: BauhausDesign.neoInnerBorderWidth),
+                  border: Border.all(
+                    color: _ink,
+                    width: BauhausDesign.neoInnerBorderWidth,
+                  ),
                   boxShadow: const [
                     BoxShadow(color: _ink, offset: Offset(3, 3), blurRadius: 0),
                   ],
@@ -243,7 +262,9 @@ class _BauhausTimePickerDialogState
                 child: Text(
                   'CANCEL',
                   style: GoogleFonts.oswald(
-                    color: _ink, fontSize: 13, fontWeight: FontWeight.w700,
+                    color: _ink,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -259,7 +280,10 @@ class _BauhausTimePickerDialogState
                 height: 44,
                 decoration: BoxDecoration(
                   color: _danger,
-                  border: Border.all(color: _ink, width: BauhausDesign.neoBorderWidth),
+                  border: Border.all(
+                    color: _ink,
+                    width: BauhausDesign.neoBorderWidth,
+                  ),
                   boxShadow: const [
                     BoxShadow(color: _ink, offset: Offset(4, 4), blurRadius: 0),
                   ],
@@ -273,7 +297,9 @@ class _BauhausTimePickerDialogState
                     Text(
                       'CONFIRM TIME',
                       style: GoogleFonts.oswald(
-                        color: _paper, fontSize: 13, fontWeight: FontWeight.w700,
+                        color: _paper,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                       ),
                     ),

@@ -63,7 +63,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
         gradient: LinearGradient(
           colors: [
             AppColors.colorSecondary,
-            AppColors.colorSecondary.withOpacity(0.8)
+            AppColors.colorSecondary.withOpacity(0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -108,10 +108,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
                 SizedBox(height: 4),
                 Text(
                   'Build and export custom analytics',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.colorWhite,
-                  ),
+                  style: TextStyle(fontSize: 14, color: AppColors.colorWhite),
                 ),
               ],
             ),
@@ -422,10 +419,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
             Text(
               description,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 11,
-                color: Color(0xFF666666),
-              ),
+              style: const TextStyle(fontSize: 11, color: Color(0xFF666666)),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -447,7 +441,8 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                            'Your report is being generated in $_selectedFormat format'),
+                          'Your report is being generated in $_selectedFormat format',
+                        ),
                         backgroundColor: AppColors.colorSuccess,
                       ),
                     );

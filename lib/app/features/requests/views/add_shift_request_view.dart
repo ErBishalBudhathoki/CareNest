@@ -65,18 +65,17 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
               const SizedBox(height: BauhausDesign.space4),
               Text(
                 AppLocalizations.of(context)!.requestSent,
-                style:
-                    BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).headlineSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: BauhausDesign.space2),
               Text(
                 AppLocalizations.of(context)!.requestSentMessage,
                 textAlign: TextAlign.center,
-                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.textMuted,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
               ),
               const SizedBox(height: BauhausDesign.space4),
               SizedBox(
@@ -104,7 +103,8 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(AppLocalizations.of(context)!.pleaseSelectJob)),
+            content: Text(AppLocalizations.of(context)!.pleaseSelectJob),
+          ),
         );
       }
       return;
@@ -112,20 +112,30 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
 
     setState(() => _isSubmitting = true);
 
-    final start = DateTime(selectedDate.year, selectedDate.month,
-        selectedDate.day, startTime.hour, startTime.minute);
+    final start = DateTime(
+      selectedDate.year,
+      selectedDate.month,
+      selectedDate.day,
+      startTime.hour,
+      startTime.minute,
+    );
 
     final endDateTime = endDate ?? selectedDate;
-    final end = DateTime(endDateTime.year, endDateTime.month, endDateTime.day,
-        endTime.hour, endTime.minute);
+    final end = DateTime(
+      endDateTime.year,
+      endDateTime.month,
+      endDateTime.day,
+      endTime.hour,
+      endTime.minute,
+    );
 
     if (end.isBefore(start)) {
       setState(() => _isSubmitting = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content:
-                  Text(AppLocalizations.of(context)!.endTimeBeforeStartTime)),
+            content: Text(AppLocalizations.of(context)!.endTimeBeforeStartTime),
+          ),
         );
       }
       return;
@@ -137,12 +147,13 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
       'ends': end.toIso8601String(),
     };
 
-    final success =
-        await ref.read(requestsViewModelProvider.notifier).createRequest(
-              AppLocalizations.of(context)!.requestTypeShift,
-              details,
-              _noteController.text,
-            );
+    final success = await ref
+        .read(requestsViewModelProvider.notifier)
+        .createRequest(
+          AppLocalizations.of(context)!.requestTypeShift,
+          details,
+          _noteController.text,
+        );
 
     if (mounted) setState(() => _isSubmitting = false);
 
@@ -152,8 +163,8 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content:
-                  Text(AppLocalizations.of(context)!.failedToCreateRequest)),
+            content: Text(AppLocalizations.of(context)!.failedToCreateRequest),
+          ),
         );
       }
     }
@@ -163,12 +174,22 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
   Widget build(BuildContext context) {
     final jobRolesAsync = ref.watch(jobRolesProvider);
 
-    final start = DateTime(selectedDate.year, selectedDate.month,
-        selectedDate.day, startTime.hour, startTime.minute);
+    final start = DateTime(
+      selectedDate.year,
+      selectedDate.month,
+      selectedDate.day,
+      startTime.hour,
+      startTime.minute,
+    );
 
     final endDateTime = endDate ?? selectedDate;
-    var end = DateTime(endDateTime.year, endDateTime.month, endDateTime.day,
-        endTime.hour, endTime.minute);
+    var end = DateTime(
+      endDateTime.year,
+      endDateTime.month,
+      endDateTime.day,
+      endTime.hour,
+      endTime.minute,
+    );
 
     final duration = end.difference(start);
     final hours = duration.inHours;
@@ -181,8 +202,9 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: const BoxDecoration(
         color: BauhausDesign.surfaceWhite,
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(BauhausDesign.radiusLg)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(BauhausDesign.radiusLg),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -204,17 +226,16 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
             children: [
               Text(
                 AppLocalizations.of(context)!.addShift,
-                style:
-                    BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).headlineSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
               BauhausIconButton(
                 icon: Icons.close,
                 onPressed: () => Navigator.pop(context),
                 variant: BauhausActionVariant.neutral,
                 isSmall: true,
-              )
+              ),
             ],
           ),
           const SizedBox(height: BauhausDesign.space4),
@@ -222,9 +243,9 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
           // Job Section
           Text(
             AppLocalizations.of(context)!.jobLabel,
-            style: BauhausDesign.getTextTheme(context)
-                .titleSmall
-                ?.copyWith(fontWeight: FontWeight.bold),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).titleSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: BauhausDesign.space2),
           jobRolesAsync.when(
@@ -240,7 +261,8 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
 
               return Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: BauhausDesign.space3),
+                  horizontal: BauhausDesign.space3,
+                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(color: BauhausDesign.neutral),
@@ -279,9 +301,9 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
             children: [
               Text(
                 AppLocalizations.of(context)!.startsLabel,
-                style: BauhausDesign.getTextTheme(context)
-                    .titleSmall
-                    ?.copyWith(fontWeight: FontWeight.bold),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).titleSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
               Row(
                 children: [
@@ -290,8 +312,9 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                       final date = await showDatePicker(
                         context: context,
                         initialDate: selectedDate,
-                        firstDate:
-                            DateTime.now().subtract(const Duration(days: 30)),
+                        firstDate: DateTime.now().subtract(
+                          const Duration(days: 30),
+                        ),
                         lastDate: DateTime.now().add(const Duration(days: 365)),
                         builder: (context, child) {
                           return Theme(
@@ -317,19 +340,21 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: BauhausDesign.space3,
-                          vertical: BauhausDesign.space2),
+                        horizontal: BauhausDesign.space3,
+                        vertical: BauhausDesign.space2,
+                      ),
                       decoration: BoxDecoration(
                         color: BauhausDesign.primary.withOpacity(0.1),
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusSm),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusSm,
+                        ),
                         border: Border.all(
-                            color: BauhausDesign.primary.withOpacity(0.3)),
+                          color: BauhausDesign.primary.withOpacity(0.3),
+                        ),
                       ),
                       child: Text(
                         DateFormat('MMMM dd yyyy').format(selectedDate),
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
                             ?.copyWith(
                               color: BauhausDesign.primary,
                               fontWeight: FontWeight.bold,
@@ -362,19 +387,21 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: BauhausDesign.space3,
-                          vertical: BauhausDesign.space2),
+                        horizontal: BauhausDesign.space3,
+                        vertical: BauhausDesign.space2,
+                      ),
                       decoration: BoxDecoration(
                         color: BauhausDesign.primary.withOpacity(0.1),
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusSm),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusSm,
+                        ),
                         border: Border.all(
-                            color: BauhausDesign.primary.withOpacity(0.3)),
+                          color: BauhausDesign.primary.withOpacity(0.3),
+                        ),
                       ),
                       child: Text(
                         startTime.format(context),
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
                             ?.copyWith(
                               color: BauhausDesign.primary,
                               fontWeight: FontWeight.bold,
@@ -394,9 +421,9 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
             children: [
               Text(
                 AppLocalizations.of(context)!.endsLabel,
-                style: BauhausDesign.getTextTheme(context)
-                    .titleSmall
-                    ?.copyWith(fontWeight: FontWeight.bold),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).titleSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
               Row(
                 children: [
@@ -426,20 +453,23 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: BauhausDesign.space3,
-                          vertical: BauhausDesign.space2),
+                        horizontal: BauhausDesign.space3,
+                        vertical: BauhausDesign.space2,
+                      ),
                       decoration: BoxDecoration(
                         color: BauhausDesign.primary.withOpacity(0.1),
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusSm),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusSm,
+                        ),
                         border: Border.all(
-                            color: BauhausDesign.primary.withOpacity(0.3)),
+                          color: BauhausDesign.primary.withOpacity(0.3),
+                        ),
                       ),
                       child: Text(
-                        DateFormat('MMMM dd yyyy')
-                            .format(endDate ?? selectedDate),
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium
+                        DateFormat(
+                          'MMMM dd yyyy',
+                        ).format(endDate ?? selectedDate),
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
                             ?.copyWith(
                               color: BauhausDesign.primary,
                               fontWeight: FontWeight.bold,
@@ -472,19 +502,21 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: BauhausDesign.space3,
-                          vertical: BauhausDesign.space2),
+                        horizontal: BauhausDesign.space3,
+                        vertical: BauhausDesign.space2,
+                      ),
                       decoration: BoxDecoration(
                         color: BauhausDesign.primary.withOpacity(0.1),
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusSm),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusSm,
+                        ),
                         border: Border.all(
-                            color: BauhausDesign.primary.withOpacity(0.3)),
+                          color: BauhausDesign.primary.withOpacity(0.3),
+                        ),
                       ),
                       child: Text(
                         endTime.format(context),
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
                             ?.copyWith(
                               color: BauhausDesign.primary,
                               fontWeight: FontWeight.bold,
@@ -510,17 +542,17 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
               children: [
                 Text(
                   AppLocalizations.of(context)!.totalHours,
-                  style: BauhausDesign.getTextTheme(context)
-                      .titleSmall
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).titleSmall?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 Text(
                   totalHoursStr,
-                  style:
-                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: BauhausDesign.primary,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).titleMedium
+                      ?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: BauhausDesign.primary,
+                      ),
                 ),
               ],
             ),
@@ -537,13 +569,15 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                     _showNoteField = true;
                   });
                 },
-                icon: const Icon(Icons.edit_outlined,
-                    color: BauhausDesign.primary),
+                icon: const Icon(
+                  Icons.edit_outlined,
+                  color: BauhausDesign.primary,
+                ),
                 label: Text(
                   AppLocalizations.of(context)!.addNote,
-                  style: BauhausDesign.getTextTheme(context)
-                      .labelLarge
-                      ?.copyWith(color: BauhausDesign.primary),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).labelLarge?.copyWith(color: BauhausDesign.primary),
                 ),
               ),
             ),
@@ -563,7 +597,9 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
           Text(
             AppLocalizations.of(context)!.requestApprovalInfo,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.textMuted, fontStyle: FontStyle.italic),
+              color: BauhausDesign.textMuted,
+              fontStyle: FontStyle.italic,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space4),
 

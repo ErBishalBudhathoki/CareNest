@@ -58,10 +58,7 @@ class TimerService extends ChangeNotifier {
 
   /// Get active timer info
   Map<String, String?> getActiveTimerInfo() {
-    return {
-      'userEmail': _activeUserEmail,
-      'clientEmail': _activeClientEmail,
-    };
+    return {'userEmail': _activeUserEmail, 'clientEmail': _activeClientEmail};
   }
 
   void setTimerClientEmail(String clientEmail) {

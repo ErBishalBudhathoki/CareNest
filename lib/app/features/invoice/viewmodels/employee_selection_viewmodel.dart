@@ -240,4 +240,8 @@ class EmployeeSelectionState {
 
 /// Provider for EmployeeSelectionViewModel
 final employeeSelectionViewModelProvider =
-    NotifierProvider.family<EmployeeSelectionViewModel, EmployeeSelectionState, String>(EmployeeSelectionViewModel.new);
+    NotifierProvider.family<
+      EmployeeSelectionViewModel,
+      EmployeeSelectionState,
+      String
+    >(EmployeeSelectionViewModel.new);

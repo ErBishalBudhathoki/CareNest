@@ -4,7 +4,9 @@ import 'package:carenest/app/features/organization/models/organization_model.dar
 import 'package:carenest/app/features/organization/repositories/organization_repository.dart';
 
 final organizationViewModelProvider =
-    NotifierProvider<OrganizationViewModel, AsyncValue<Organization?>>(OrganizationViewModel.new);
+    NotifierProvider<OrganizationViewModel, AsyncValue<Organization?>>(
+      OrganizationViewModel.new,
+    );
 
 class OrganizationViewModel extends Notifier<AsyncValue<Organization?>> {
   late final OrganizationRepository _repository;
@@ -40,7 +42,10 @@ class OrganizationViewModel extends Notifier<AsyncValue<Organization?>> {
     }
   }
 
-  Future<bool> updateBranding(String id, Map<String, dynamic> brandingData) async {
+  Future<bool> updateBranding(
+    String id,
+    Map<String, dynamic> brandingData,
+  ) async {
     try {
       await _repository.updateBranding(id, brandingData);
       await loadOrganization(id);

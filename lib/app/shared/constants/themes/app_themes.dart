@@ -12,9 +12,10 @@ class AppTheme {
     width: 56,
     height: 56,
     textStyle: const TextStyle(
-        fontSize: AppThemeConfig.fontSizeExtraLarge,
-        color: AppColors.colorGrey700,
-        fontWeight: AppThemeConfig.fontWeightSemiBold),
+      fontSize: AppThemeConfig.fontSizeExtraLarge,
+      color: AppColors.colorGrey700,
+      fontWeight: AppThemeConfig.fontWeightSemiBold,
+    ),
     decoration: BoxDecoration(
       border: Border.all(color: AppColors.colorGrey200),
       borderRadius: BorderRadius.circular(AppThemeConfig.radiusXL),
@@ -27,46 +28,49 @@ class AppTheme {
 
   // Legacy theme data for backward compatibility - now uses centralized config
   static ThemeData themeData = ThemeData(
-      primaryColor: AppColors.colorPrimary,
-      primaryColorDark: AppColors.colorSecondary,
-      brightness: Brightness.light,
-      appBarTheme: const AppBarTheme(
-          iconTheme: IconThemeData(color: AppColors.colorWhite),
-          systemOverlayStyle: SystemUiOverlayStyle.light),
-      textTheme: const TextTheme(
-        titleLarge: TextStyle(
-          color: AppColors.colorFontPrimary,
-          fontSize: AppDimens.fontSizeLarge,
-          fontWeight: FontWeight.w900,
-          fontFamily: 'Lato',
-        ),
-        bodyLarge: TextStyle(
-          color: AppColors.colorFontPrimary,
-          fontSize: AppDimens.fontSizeMedium,
-          fontWeight: FontWeight.w900,
-          fontFamily: 'Lato',
-        ),
-        bodyMedium: TextStyle(
-          color: AppColors.colorFontPrimary,
-          fontSize: AppDimens.fontSizeNormal,
-          fontWeight: FontWeight.w500,
-          fontFamily: 'Lato',
-        ),
-        labelLarge: TextStyle(
-          color: AppColors.colorPrimary,
-          fontSize: AppDimens.fontSizeXXXMedium,
-          fontWeight: FontWeight.w900,
-          fontFamily: 'Lato',
-        ),
-        titleMedium: TextStyle(
-          color: AppColors.colorWhite,
-          fontSize: AppDimens.fontSizeMedium,
-          fontWeight: FontWeight.w900,
-          fontFamily: 'Lato',
-        ),
+    primaryColor: AppColors.colorPrimary,
+    primaryColorDark: AppColors.colorSecondary,
+    brightness: Brightness.light,
+    appBarTheme: const AppBarTheme(
+      iconTheme: IconThemeData(color: AppColors.colorWhite),
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+    ),
+    textTheme: const TextTheme(
+      titleLarge: TextStyle(
+        color: AppColors.colorFontPrimary,
+        fontSize: AppDimens.fontSizeLarge,
+        fontWeight: FontWeight.w900,
+        fontFamily: 'Lato',
       ),
-      colorScheme: ThemeData().colorScheme.copyWith(
-          secondary: AppColors.colorAccent,
-          primary: AppColors.colorPrimary,
-          onPrimary: AppColors.colorPrimary));
+      bodyLarge: TextStyle(
+        color: AppColors.colorFontPrimary,
+        fontSize: AppDimens.fontSizeMedium,
+        fontWeight: FontWeight.w900,
+        fontFamily: 'Lato',
+      ),
+      bodyMedium: TextStyle(
+        color: AppColors.colorFontPrimary,
+        fontSize: AppDimens.fontSizeNormal,
+        fontWeight: FontWeight.w500,
+        fontFamily: 'Lato',
+      ),
+      labelLarge: TextStyle(
+        color: AppColors.colorPrimary,
+        fontSize: AppDimens.fontSizeXXXMedium,
+        fontWeight: FontWeight.w900,
+        fontFamily: 'Lato',
+      ),
+      titleMedium: TextStyle(
+        color: AppColors.colorWhite,
+        fontSize: AppDimens.fontSizeMedium,
+        fontWeight: FontWeight.w900,
+        fontFamily: 'Lato',
+      ),
+    ),
+    colorScheme: ThemeData().colorScheme.copyWith(
+      secondary: AppColors.colorAccent,
+      primary: AppColors.colorPrimary,
+      onPrimary: AppColors.colorPrimary,
+    ),
+  );
 }

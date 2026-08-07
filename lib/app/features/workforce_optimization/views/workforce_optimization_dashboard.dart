@@ -195,9 +195,9 @@ class _WorkforceOptimizationDashboardState
               organizationId: organizationId,
               period: 'month',
             ),
-        ref.read(workforcePlanningViewModelProvider.notifier).predictTurnover(
-              organizationId: organizationId,
-            ),
+        ref
+            .read(workforcePlanningViewModelProvider.notifier)
+            .predictTurnover(organizationId: organizationId),
         ref
             .read(resourceAllocationViewModelProvider.notifier)
             .analyzeWorkloadBalance(
@@ -261,17 +261,20 @@ class _WorkforceOptimizationDashboardState
       qualityState: qualityState,
     );
 
-    final hasAnyData = businessState.dashboard != null ||
+    final hasAnyData =
+        businessState.dashboard != null ||
         planningState.turnoverPredictions.isNotEmpty ||
         allocationState.workloadAnalysis.isNotEmpty ||
         qualityState.incidentPattern != null;
-    final isLoading = (businessState.isLoading ||
+    final isLoading =
+        (businessState.isLoading ||
             planningState.isLoading ||
             allocationState.isLoading ||
             qualityState.isLoading) &&
         !hasAnyData;
 
-    final error = businessState.error ??
+    final error =
+        businessState.error ??
         planningState.error ??
         allocationState.error ??
         qualityState.error;
@@ -282,47 +285,47 @@ class _WorkforceOptimizationDashboardState
       body: organizationId == null || organizationId.isEmpty
           ? _buildMissingOrganizationState(context)
           : isLoading
-              ? const Center(child: BauhausLoadingState())
-              : RefreshIndicator(
-                  color: BauhausDesign.primary,
-                  onRefresh: () async {
-                    if (organizationId.isNotEmpty) {
-                      await _initializeDashboard(organizationId, force: true);
-                    }
-                  },
-                  child: CustomScrollView(
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(
-                            BauhausDesign.space4,
-                            BauhausDesign.space4,
-                            BauhausDesign.space4,
-                            BauhausDesign.space8,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (error != null) ...[
-                                _buildErrorBanner(context, error),
-                                const SizedBox(height: BauhausDesign.space4),
-                              ],
-                              _buildOperationsDeck(context, summary),
-                              const SizedBox(height: BauhausDesign.space6),
-                              _buildCommandStrip(context, commandMetrics),
-                              const SizedBox(height: BauhausDesign.space6),
-                              _buildCapabilityLanes(context),
-                              const SizedBox(height: BauhausDesign.space6),
-                              _buildCoverageHeatmap(context, coverage),
-                              const SizedBox(height: BauhausDesign.space6),
-                              _buildExecutionLedger(context, logs),
-                            ],
-                          ),
-                        ),
+          ? const Center(child: BauhausLoadingState())
+          : RefreshIndicator(
+              color: BauhausDesign.primary,
+              onRefresh: () async {
+                if (organizationId.isNotEmpty) {
+                  await _initializeDashboard(organizationId, force: true);
+                }
+              },
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        BauhausDesign.space4,
+                        BauhausDesign.space4,
+                        BauhausDesign.space4,
+                        BauhausDesign.space8,
                       ),
-                    ],
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (error != null) ...[
+                            _buildErrorBanner(context, error),
+                            const SizedBox(height: BauhausDesign.space4),
+                          ],
+                          _buildOperationsDeck(context, summary),
+                          const SizedBox(height: BauhausDesign.space6),
+                          _buildCommandStrip(context, commandMetrics),
+                          const SizedBox(height: BauhausDesign.space6),
+                          _buildCapabilityLanes(context),
+                          const SizedBox(height: BauhausDesign.space6),
+                          _buildCoverageHeatmap(context, coverage),
+                          const SizedBox(height: BauhausDesign.space6),
+                          _buildExecutionLedger(context, logs),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                ],
+              ),
+            ),
     );
   }
 
@@ -334,10 +337,10 @@ class _WorkforceOptimizationDashboardState
       title: Text(
         'WORKFORCE OPTIMIZATION',
         style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-              color: BauhausDesign.surfaceWhite,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.7,
-            ),
+          color: BauhausDesign.surfaceWhite,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.7,
+        ),
       ),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: BauhausDesign.surfaceWhite),
@@ -440,9 +443,9 @@ class _WorkforceOptimizationDashboardState
           Text(
             summary.primaryMetricLabel,
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space1),
           Row(
@@ -450,22 +453,22 @@ class _WorkforceOptimizationDashboardState
             children: [
               Text(
                 summary.primaryMetricValue,
-                style:
-                    BauhausDesign.getTextTheme(context).displayLarge?.copyWith(
-                          color: BauhausDesign.secondary,
-                          fontWeight: FontWeight.w700,
-                        ),
+                style: BauhausDesign.getTextTheme(context).displayLarge
+                    ?.copyWith(
+                      color: BauhausDesign.secondary,
+                      fontWeight: FontWeight.w700,
+                    ),
               ),
               const SizedBox(width: BauhausDesign.space2),
               Padding(
                 padding: const EdgeInsets.only(bottom: BauhausDesign.space1),
                 child: Text(
                   summary.primaryMetricSuffix,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
               ),
             ],
@@ -474,9 +477,9 @@ class _WorkforceOptimizationDashboardState
           Text(
             summary.primaryDetail,
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space3),
           Wrap(
@@ -567,29 +570,29 @@ class _WorkforceOptimizationDashboardState
               children: [
                 Text(
                   title,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style:
-                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w800,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).titleMedium
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w800,
+                      ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   detail,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
               ],
             ),
@@ -617,8 +620,8 @@ class _WorkforceOptimizationDashboardState
             final columns = constraints.maxWidth >= 1080
                 ? 4
                 : constraints.maxWidth >= 620
-                    ? 2
-                    : 1;
+                ? 2
+                : 1;
             final spacing = BauhausDesign.space3;
             final cardWidth = columns == 1
                 ? constraints.maxWidth
@@ -671,28 +674,28 @@ class _WorkforceOptimizationDashboardState
               children: [
                 Text(
                   metric.label,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   metric.value,
-                  style:
-                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w800,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).titleMedium
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w800,
+                      ),
                 ),
                 Text(
                   metric.delta,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                            color: metric.accent,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: metric.accent,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
               ],
             ),
@@ -779,19 +782,19 @@ class _WorkforceOptimizationDashboardState
               children: [
                 Text(
                   lane.title,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelLarge
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
                 Text(
                   lane.subtitle,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
               ],
             ),
@@ -831,8 +834,11 @@ class _WorkforceOptimizationDashboardState
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(color: BauhausDesign.neutral),
                 ),
-                child:
-                    Icon(module.icon, size: 18, color: BauhausDesign.textDark),
+                child: Icon(
+                  module.icon,
+                  size: 18,
+                  color: BauhausDesign.textDark,
+                ),
               ),
               const SizedBox(width: BauhausDesign.space2),
               Expanded(
@@ -841,8 +847,7 @@ class _WorkforceOptimizationDashboardState
                   children: [
                     Text(
                       module.title,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelLarge
+                      style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w700,
@@ -850,8 +855,7 @@ class _WorkforceOptimizationDashboardState
                     ),
                     Text(
                       module.description,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
+                      style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w600,
@@ -901,17 +905,26 @@ class _WorkforceOptimizationDashboardState
                   const SizedBox(width: 60),
                   Expanded(
                     child: _buildHeatLabel(
-                        context, 'Morning', BauhausDesign.secondary),
+                      context,
+                      'Morning',
+                      BauhausDesign.secondary,
+                    ),
                   ),
                   const SizedBox(width: BauhausDesign.space2),
                   Expanded(
                     child: _buildHeatLabel(
-                        context, 'Afternoon', BauhausDesign.primary),
+                      context,
+                      'Afternoon',
+                      BauhausDesign.primary,
+                    ),
                   ),
                   const SizedBox(width: BauhausDesign.space2),
                   Expanded(
                     child: _buildHeatLabel(
-                        context, 'Evening', BauhausDesign.accent),
+                      context,
+                      'Evening',
+                      BauhausDesign.accent,
+                    ),
                   ),
                 ],
               ),
@@ -940,9 +953,9 @@ class _WorkforceOptimizationDashboardState
       child: Text(
         text,
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: BauhausDesign.textDark,
-              fontWeight: FontWeight.w800,
-            ),
+          color: BauhausDesign.textDark,
+          fontWeight: FontWeight.w800,
+        ),
       ),
     );
   }
@@ -955,22 +968,16 @@ class _WorkforceOptimizationDashboardState
           child: Text(
             day.day,
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
-        Expanded(
-          child: _buildHeatCell(day.morning, BauhausDesign.secondary),
-        ),
+        Expanded(child: _buildHeatCell(day.morning, BauhausDesign.secondary)),
         const SizedBox(width: BauhausDesign.space2),
-        Expanded(
-          child: _buildHeatCell(day.afternoon, BauhausDesign.primary),
-        ),
+        Expanded(child: _buildHeatCell(day.afternoon, BauhausDesign.primary)),
         const SizedBox(width: BauhausDesign.space2),
-        Expanded(
-          child: _buildHeatCell(day.evening, BauhausDesign.accent),
-        ),
+        Expanded(child: _buildHeatCell(day.evening, BauhausDesign.accent)),
       ],
     );
   }
@@ -997,10 +1004,7 @@ class _WorkforceOptimizationDashboardState
     );
   }
 
-  Widget _buildExecutionLedger(
-    BuildContext context,
-    List<_ExecutionLog> logs,
-  ) {
+  Widget _buildExecutionLedger(BuildContext context, List<_ExecutionLog> logs) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1066,18 +1070,18 @@ class _WorkforceOptimizationDashboardState
             child: Text(
               'Area',
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w800,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
           Expanded(
             child: Text(
               'Event',
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w800,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
           const SizedBox(width: BauhausDesign.space2),
@@ -1087,9 +1091,9 @@ class _WorkforceOptimizationDashboardState
               'Time',
               textAlign: TextAlign.right,
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w800,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
           const SizedBox(width: BauhausDesign.space2),
@@ -1099,9 +1103,9 @@ class _WorkforceOptimizationDashboardState
               'Status',
               textAlign: TextAlign.right,
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w800,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
         ],
@@ -1120,18 +1124,18 @@ class _WorkforceOptimizationDashboardState
             child: Text(
               log.area,
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           Expanded(
             child: Text(
               log.event,
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           const SizedBox(width: BauhausDesign.space2),
@@ -1141,9 +1145,9 @@ class _WorkforceOptimizationDashboardState
               log.timestamp,
               textAlign: TextAlign.right,
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.textMuted,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: BauhausDesign.textMuted,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           const SizedBox(width: BauhausDesign.space2),
@@ -1163,11 +1167,11 @@ class _WorkforceOptimizationDashboardState
                 ),
                 child: Text(
                   log.status.toUpperCase(),
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w800,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w800,
+                      ),
                 ),
               ),
             ),
@@ -1188,11 +1192,11 @@ class _WorkforceOptimizationDashboardState
               Expanded(
                 child: Text(
                   log.area,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelLarge
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
               ),
               Container(
@@ -1207,11 +1211,11 @@ class _WorkforceOptimizationDashboardState
                 ),
                 child: Text(
                   log.status.toUpperCase(),
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w800,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w800,
+                      ),
                 ),
               ),
             ],
@@ -1220,17 +1224,17 @@ class _WorkforceOptimizationDashboardState
           Text(
             log.event,
             style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space1),
           Text(
             log.timestamp,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textMuted,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: BauhausDesign.textMuted,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
       ),
@@ -1253,18 +1257,18 @@ class _WorkforceOptimizationDashboardState
             Text(
               'Organization not available',
               style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
             ),
             const SizedBox(height: BauhausDesign.space1),
             Text(
               'Set organization context to load Workforce Optimization data.',
               textAlign: TextAlign.center,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textMuted,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: BauhausDesign.textMuted,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
@@ -1294,9 +1298,9 @@ class _WorkforceOptimizationDashboardState
             child: Text(
               error,
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],
@@ -1314,7 +1318,8 @@ class _WorkforceOptimizationDashboardState
     final totalAppointments = dashboard?.kpis.totalAppointments ?? 0;
     final completedAppointments = dashboard?.kpis.completedAppointments ?? 0;
     final completionRate = dashboard?.kpis.completionRate ?? 0;
-    final utilization = dashboard?.workforce.utilization ??
+    final utilization =
+        dashboard?.workforce.utilization ??
         dashboard?.operations.utilization ??
         0;
     final efficiency = dashboard?.operations.efficiency ?? 0;
@@ -1336,8 +1341,9 @@ class _WorkforceOptimizationDashboardState
     return _WorkforceSummary(
       periodLabel: dashboard != null ? dashboard.period.toUpperCase() : 'LIVE',
       primaryMetricLabel: 'Completed Appointments',
-      primaryMetricValue:
-          completedAppointments > 0 ? '$completedAppointments' : 'N/A',
+      primaryMetricValue: completedAppointments > 0
+          ? '$completedAppointments'
+          : 'N/A',
       primaryMetricSuffix: dashboard != null ? 'this ${dashboard.period}' : '',
       primaryDetail: dashboard != null
           ? 'Completion ${_ratioPercent(completionRate)} across $totalAppointments scheduled appointments.'
@@ -1346,8 +1352,9 @@ class _WorkforceOptimizationDashboardState
       openShiftGapDetail: overloadedWorkers > 0
           ? '$overloadedWorkers workers are above 90% utilization in the active period.'
           : 'No overloaded workers detected in current workload analysis.',
-      openShiftGapAccent:
-          overloadedWorkers > 0 ? BauhausDesign.warning : BauhausDesign.success,
+      openShiftGapAccent: overloadedWorkers > 0
+          ? BauhausDesign.warning
+          : BauhausDesign.success,
       efficiencyValue: dashboard != null ? _ratioPercent(efficiency) : 'N/A',
       efficiencyDetail: dashboard != null
           ? 'Workforce utilization ${_ratioPercent(utilization)} with $underutilizedWorkers underutilized workers.'
@@ -1355,8 +1362,8 @@ class _WorkforceOptimizationDashboardState
       efficiencyAccent: efficiency >= 0.85
           ? BauhausDesign.success
           : (incidentCount > 0 || highRiskTurnover > 0
-              ? BauhausDesign.warning
-              : BauhausDesign.secondary),
+                ? BauhausDesign.warning
+                : BauhausDesign.secondary),
     );
   }
 
@@ -1373,7 +1380,8 @@ class _WorkforceOptimizationDashboardState
     }
 
     final completionRate = dashboard?.kpis.completionRate ?? 0;
-    final utilization = dashboard?.workforce.utilization ??
+    final utilization =
+        dashboard?.workforce.utilization ??
         dashboard?.operations.utilization ??
         0;
 
@@ -1416,21 +1424,24 @@ class _WorkforceOptimizationDashboardState
         label: 'QA Signals',
         value: '$incidentCount',
         delta: '$recurringCount recurring',
-        accent:
-            incidentCount > 0 ? BauhausDesign.warning : BauhausDesign.primary,
+        accent: incidentCount > 0
+            ? BauhausDesign.warning
+            : BauhausDesign.primary,
         icon: Icons.fact_check_rounded,
       ),
     ];
   }
 
   List<_CoverageDay> _buildLiveCoverage(
-      ResourceAllocationState allocationState) {
+    ResourceAllocationState allocationState,
+  ) {
     if (allocationState.workloadAnalysis.isEmpty) {
       return _coverage;
     }
 
     final workloads = allocationState.workloadAnalysis;
-    final avgUtilization = (workloads
+    final avgUtilization =
+        (workloads
             .map((item) => item.utilization.clamp(0.0, 1.0))
             .fold<double>(0.0, (sum, value) => sum + value)) /
         workloads.length;
@@ -1519,8 +1530,9 @@ class _WorkforceOptimizationDashboardState
               '$overloaded overloaded and $underutilized underutilized workers in latest balance analysis.',
           timestamp: 'today',
           status: overloaded > 0 ? 'Watch' : 'Gain',
-          accent:
-              overloaded > 0 ? BauhausDesign.warning : BauhausDesign.secondary,
+          accent: overloaded > 0
+              ? BauhausDesign.warning
+              : BauhausDesign.secondary,
         ),
       );
     }
@@ -1569,9 +1581,9 @@ class _WorkforceOptimizationDashboardState
       child: Text(
         text,
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: BauhausDesign.textDark,
-              fontWeight: FontWeight.w800,
-            ),
+          color: BauhausDesign.textDark,
+          fontWeight: FontWeight.w800,
+        ),
       ),
     );
   }
@@ -1606,9 +1618,9 @@ class _WorkforceOptimizationDashboardState
               Text(
                 label,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                      color: BauhausDesign.textDark,
-                      fontWeight: FontWeight.w800,
-                    ),
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ],
           ),

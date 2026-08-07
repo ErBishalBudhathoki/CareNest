@@ -26,16 +26,23 @@ class DatePeriod {
 
   /// Converts to a JSON map using ISO-8601 strings.
   Map<String, dynamic> toJson() => {
-        'start': start.toIso8601String(),
-        'end': end.toIso8601String(),
-      };
+    'start': start.toIso8601String(),
+    'end': end.toIso8601String(),
+  };
 
   /// Returns a copy with optional new `start` or `end` dates.
   DatePeriod copyWith({DateTime? start, DateTime? end}) => DatePeriod(
-        start: DateTime(
-            (start ?? this.start).year, (start ?? this.start).month, (start ?? this.start).day),
-        end: DateTime((end ?? this.end).year, (end ?? this.end).month, (end ?? this.end).day),
-      );
+    start: DateTime(
+      (start ?? this.start).year,
+      (start ?? this.start).month,
+      (start ?? this.start).day,
+    ),
+    end: DateTime(
+      (end ?? this.end).year,
+      (end ?? this.end).month,
+      (end ?? this.end).day,
+    ),
+  );
 
   @override
   bool operator ==(Object other) {
@@ -51,11 +58,11 @@ class DatePeriod {
 
   @override
   int get hashCode => Object.hash(
-        start.year,
-        start.month,
-        start.day,
-        end.year,
-        end.month,
-        end.day,
-      );
+    start.year,
+    start.month,
+    start.day,
+    end.year,
+    end.month,
+    end.day,
+  );
 }

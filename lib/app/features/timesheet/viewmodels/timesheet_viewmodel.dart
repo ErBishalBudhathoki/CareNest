@@ -18,17 +18,22 @@ class TimesheetDateNotifier extends Notifier<DateTime> {
   }
 }
 
-final timesheetDateProvider = NotifierProvider<TimesheetDateNotifier, DateTime>(() {
-  return TimesheetDateNotifier();
-});
+final timesheetDateProvider = NotifierProvider<TimesheetDateNotifier, DateTime>(
+  () {
+    return TimesheetDateNotifier();
+  },
+);
 
-final timesheetViewModelProvider = AsyncNotifierProvider.family<
-    TimesheetViewModel, List<TimesheetEntry>, String>((email) {
-  return TimesheetViewModel(email);
-});
+final timesheetViewModelProvider =
+    AsyncNotifierProvider.family<
+      TimesheetViewModel,
+      List<TimesheetEntry>,
+      String
+    >((email) {
+      return TimesheetViewModel(email);
+    });
 
-class TimesheetViewModel
-    extends AsyncNotifier<List<TimesheetEntry>> {
+class TimesheetViewModel extends AsyncNotifier<List<TimesheetEntry>> {
   late final TimesheetRepository _repository;
   final String _email;
   late final DateTime _startDate;
@@ -92,11 +97,12 @@ class TimesheetViewModel
           final endDate = _startDate.add(const Duration(days: 6));
           final service = TimesheetPdfService();
           final path = await service.generateTimesheetPdf(
-              entries: entries,
-              startDate: _startDate,
-              endDate: endDate,
-              userEmail: _email,
-              totalHours: weeklyTotal);
+            entries: entries,
+            startDate: _startDate,
+            endDate: endDate,
+            userEmail: _email,
+            totalHours: weeklyTotal,
+          );
           return path;
         } catch (e) {
           return null;

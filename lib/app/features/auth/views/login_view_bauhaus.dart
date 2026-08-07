@@ -48,10 +48,13 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
       }
 
       // 2. Sync with backend
-      final response = await apiMethod.post('firebase-auth/sync', body: {
-        'firebaseUid': credential.user!.uid,
-        'email': credential.user!.email,
-      });
+      final response = await apiMethod.post(
+        'firebase-auth/sync',
+        body: {
+          'firebaseUid': credential.user!.uid,
+          'email': credential.user!.email,
+        },
+      );
 
       if (response['success'] == true) {
         // 3. Save user data locally
@@ -61,7 +64,9 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
         await prefs.setString('userId', userData['_id'] ?? '');
         await prefs.setString('firebaseUid', userData['firebaseUid'] ?? '');
         await prefs.setString(
-            'organizationId', userData['organizationId'] ?? '');
+          'organizationId',
+          userData['organizationId'] ?? '',
+        );
         await prefs.setString('role', userData['role'] ?? 'user');
 
         // 4. Navigate based on role
@@ -184,7 +189,7 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
                               color: colorBlack,
                               offset: Offset(8, 8),
                               blurRadius: 0,
-                            )
+                            ),
                           ],
                         ),
                         child: Form(
@@ -195,9 +200,7 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
                             children: [
                               Text(
                                 'LOGIN',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineLarge
+                                style: Theme.of(context).textTheme.headlineLarge
                                     ?.copyWith(
                                       fontWeight: FontWeight.w900,
                                       color: colorBlack,
@@ -216,8 +219,9 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
                                   child: Text(
                                     _errorMessage!,
                                     style: const TextStyle(
-                                        color: colorRed,
-                                        fontWeight: FontWeight.bold),
+                                      color: colorRed,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               _buildBauhausTextField(
@@ -301,8 +305,10 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
               borderRadius: BorderRadius.zero,
             ),
             enabledBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: BauhausDesign.neutral, width: 1),
+              borderSide: const BorderSide(
+                color: BauhausDesign.neutral,
+                width: 1,
+              ),
               borderRadius: BorderRadius.zero,
             ),
             focusedBorder: const OutlineInputBorder(

@@ -37,7 +37,9 @@ class SyncQueueItem {
       id: json['id'],
       endpoint: json['endpoint'],
       method: json['method'],
-      body: json['body'] != null ? Map<String, dynamic>.from(json['body']) : null,
+      body: json['body'] != null
+          ? Map<String, dynamic>.from(json['body'])
+          : null,
       timestamp: DateTime.parse(json['timestamp']),
       retryCount: json['retryCount'] ?? 0,
     );
@@ -46,10 +48,10 @@ class SyncQueueItem {
 
 class SyncManager {
   static final SyncManager _instance = SyncManager._internal();
-  
+
   // Singleton instance getter
   static SyncManager get instance => _instance;
-  
+
   // Allow dependency injection for testing
   factory SyncManager({Connectivity? connectivity}) {
     if (connectivity != null) {
@@ -57,14 +59,15 @@ class SyncManager {
     }
     return _instance;
   }
-  
+
   SyncManager._internal() : _connectivity = Connectivity();
 
   Box<String>? _queueBox;
   late Connectivity _connectivity;
-  final StreamController<bool> _isSyncingController = StreamController<bool>.broadcast();
+  final StreamController<bool> _isSyncingController =
+      StreamController<bool>.broadcast();
   bool _isSyncing = false;
-  
+
   // Callback for executing requests - allows testing and dependency injection
   Future<bool> Function(SyncQueueItem)? requestPerformer;
 
@@ -79,13 +82,13 @@ class SyncManager {
   Future<void> init() async {
     await Hive.initFlutter();
     _queueBox = await Hive.openBox<String>('sync_queue');
-    
+
     // Listen for connectivity changes
     _connectivity.onConnectivityChanged.listen((results) {
-       // connectivity_plus 6.0 returns List<ConnectivityResult>
-       if (results.any((result) => result != ConnectivityResult.none)) {
-         processQueue();
-       }
+      // connectivity_plus 6.0 returns List<ConnectivityResult>
+      if (results.any((result) => result != ConnectivityResult.none)) {
+        processQueue();
+      }
     });
   }
 
@@ -94,7 +97,11 @@ class SyncManager {
     return results.any((result) => result != ConnectivityResult.none);
   }
 
-  Future<void> queueRequest(String endpoint, String method, {Map<String, dynamic>? body}) async {
+  Future<void> queueRequest(
+    String endpoint,
+    String method, {
+    Map<String, dynamic>? body,
+  }) async {
     final item = SyncQueueItem(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       endpoint: endpoint,
@@ -102,19 +109,21 @@ class SyncManager {
       body: body,
       timestamp: DateTime.now(),
     );
-    
+
     await _queueBox?.put(item.id, jsonEncode(item.toJson()));
     debugPrint('🔌 Offline: Request queued - $method $endpoint');
   }
 
   Future<List<SyncQueueItem>> getQueue() async {
     if (_queueBox == null) return [];
-    return _queueBox!.values.map((e) => SyncQueueItem.fromJson(jsonDecode(e))).toList();
+    return _queueBox!.values
+        .map((e) => SyncQueueItem.fromJson(jsonDecode(e)))
+        .toList();
   }
 
   Future<void> processQueue() async {
     if (_isSyncing || _queueBox == null || _queueBox!.isEmpty) return;
-    
+
     _isSyncing = true;
     _isSyncingController.add(true);
     debugPrint('🔄 SyncManager: Starting sync process...');
@@ -145,19 +154,19 @@ class SyncManager {
   // to avoid recursion if ApiMethod intercepts again.
   // For now, we'll inject a "performer" or just import ApiMethod but bypass the interceptor.
   // However, ApiMethod is the one that has the Base URL and Headers logic.
-  
+
   // Strategy: We will modify ApiMethod to expose a 'performRequest' that takes a 'bypassInterceptor' flag.
   // But since we can't easily change the architecture right now, let's assume we need to
   // manually reconstruct the request here using the stored token.
-  
+
   Future<bool> _replayRequest(SyncQueueItem item) async {
-     if (requestPerformer != null) {
-       return await requestPerformer!(item);
-     }
-     
-     // Default implementation (stub for now, until ApiMethod is integrated)
-     // In a real scenario, this would call ApiMethod.performRequest(..., bypassInterceptor: true)
-     debugPrint('⚠️ SyncManager: No request performer set for ${item.endpoint}');
-     return false; 
+    if (requestPerformer != null) {
+      return await requestPerformer!(item);
+    }
+
+    // Default implementation (stub for now, until ApiMethod is integrated)
+    // In a real scenario, this would call ApiMethod.performRequest(..., bypassInterceptor: true)
+    debugPrint('⚠️ SyncManager: No request performer set for ${item.endpoint}');
+    return false;
   }
 }

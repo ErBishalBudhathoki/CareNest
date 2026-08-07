@@ -27,21 +27,17 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
+    );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     _animationController.forward();
   }
@@ -68,7 +64,9 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
             // Notification List
             Expanded(
               child: _buildNotificationList(
-                  notificationState, notificationNotifier),
+                notificationState,
+                notificationNotifier,
+              ),
             ),
           ],
         ),
@@ -76,8 +74,11 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
     );
   }
 
-  Widget _buildHeader(BuildContext context, NotificationState state,
-      NotificationNotifier notifier) {
+  Widget _buildHeader(
+    BuildContext context,
+    NotificationState state,
+    NotificationNotifier notifier,
+  ) {
     return FadeTransition(
       opacity: _fadeAnimation,
       child: SlideTransition(
@@ -87,7 +88,8 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
           decoration: const BoxDecoration(
             color: BauhausDesign.surfaceLight,
             border: Border(
-                bottom: BorderSide(color: BauhausDesign.neutral, width: 1)),
+              bottom: BorderSide(color: BauhausDesign.neutral, width: 1),
+            ),
           ),
           child: Column(
             children: [
@@ -109,8 +111,9 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
                       children: [
                         Text(
                           'Notifications',
-                          style:
-                              BauhausDesign.getTextTheme(context).headlineSmall,
+                          style: BauhausDesign.getTextTheme(
+                            context,
+                          ).headlineSmall,
                         ),
                         if (state.unreadCount > 0)
                           Text(
@@ -160,7 +163,9 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
   }
 
   Widget _buildNotificationList(
-      NotificationState state, NotificationNotifier notifier) {
+    NotificationState state,
+    NotificationNotifier notifier,
+  ) {
     if (state.isLoading) {
       return Center(
         child: BauhausLoadingState(message: 'Loading notifications...'),
@@ -233,7 +238,9 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
   }
 
   void _showClearAllDialog(
-      BuildContext context, NotificationNotifier notifier) {
+    BuildContext context,
+    NotificationNotifier notifier,
+  ) {
     showDialog(
       context: context,
       barrierDismissible: false,

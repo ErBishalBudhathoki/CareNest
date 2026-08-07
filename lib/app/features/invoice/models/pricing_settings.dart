@@ -92,7 +92,9 @@ class PricingSettings {
     }
 
     return PricingSettings(
-      defaultCurrency: (json['defaultCurrency'] as String? ?? '').trim().toUpperCase(),
+      defaultCurrency: (json['defaultCurrency'] as String? ?? '')
+          .trim()
+          .toUpperCase(),
       pricingModel: (json['pricingModel'] as String? ?? '').trim(),
       roundingMethod: (json['roundingMethod'] as String? ?? '').trim(),
       taxCalculation: (json['taxCalculation'] as String? ?? '').trim(),
@@ -102,7 +104,8 @@ class PricingSettings {
       bulkOperationLimit: (json['bulkOperationLimit'] as int?) ?? 0,
       autoUpdatePricing: (json['autoUpdatePricing'] as bool?) ?? false,
       enablePriceValidation: (json['enablePriceValidation'] as bool?) ?? false,
-      requireApprovalForChanges: (json['requireApprovalForChanges'] as bool?) ?? false,
+      requireApprovalForChanges:
+          (json['requireApprovalForChanges'] as bool?) ?? false,
       enableBulkOperations: (json['enableBulkOperations'] as bool?) ?? false,
       enablePriceHistory: (json['enablePriceHistory'] as bool?) ?? false,
       enableNotifications: (json['enableNotifications'] as bool?) ?? false,
@@ -114,21 +117,21 @@ class PricingSettings {
 
   /// Converts to a JSON map matching the backend update payload.
   Map<String, dynamic> toJson() => {
-        'defaultCurrency': defaultCurrency,
-        'pricingModel': pricingModel,
-        'roundingMethod': roundingMethod,
-        'taxCalculation': taxCalculation,
-        'defaultMarkup': defaultMarkup,
-        'maxPriceVariation': maxPriceVariation,
-        'priceHistoryRetention': priceHistoryRetention,
-        'bulkOperationLimit': bulkOperationLimit,
-        'autoUpdatePricing': autoUpdatePricing,
-        'enablePriceValidation': enablePriceValidation,
-        'requireApprovalForChanges': requireApprovalForChanges,
-        'enableBulkOperations': enableBulkOperations,
-        'enablePriceHistory': enablePriceHistory,
-        'enableNotifications': enableNotifications,
-      };
+    'defaultCurrency': defaultCurrency,
+    'pricingModel': pricingModel,
+    'roundingMethod': roundingMethod,
+    'taxCalculation': taxCalculation,
+    'defaultMarkup': defaultMarkup,
+    'maxPriceVariation': maxPriceVariation,
+    'priceHistoryRetention': priceHistoryRetention,
+    'bulkOperationLimit': bulkOperationLimit,
+    'autoUpdatePricing': autoUpdatePricing,
+    'enablePriceValidation': enablePriceValidation,
+    'requireApprovalForChanges': requireApprovalForChanges,
+    'enableBulkOperations': enableBulkOperations,
+    'enablePriceHistory': enablePriceHistory,
+    'enableNotifications': enableNotifications,
+  };
 
   /// Returns a copy with optional changes to fields.
   PricingSettings copyWith({
@@ -157,10 +160,12 @@ class PricingSettings {
       taxCalculation: taxCalculation ?? this.taxCalculation,
       defaultMarkup: defaultMarkup ?? this.defaultMarkup,
       maxPriceVariation: maxPriceVariation ?? this.maxPriceVariation,
-      priceHistoryRetention: priceHistoryRetention ?? this.priceHistoryRetention,
+      priceHistoryRetention:
+          priceHistoryRetention ?? this.priceHistoryRetention,
       bulkOperationLimit: bulkOperationLimit ?? this.bulkOperationLimit,
       autoUpdatePricing: autoUpdatePricing ?? this.autoUpdatePricing,
-      enablePriceValidation: enablePriceValidation ?? this.enablePriceValidation,
+      enablePriceValidation:
+          enablePriceValidation ?? this.enablePriceValidation,
       requireApprovalForChanges:
           requireApprovalForChanges ?? this.requireApprovalForChanges,
       enableBulkOperations: enableBulkOperations ?? this.enableBulkOperations,
@@ -197,22 +202,22 @@ class PricingSettings {
 
   @override
   int get hashCode => Object.hash(
-        defaultCurrency,
-        pricingModel,
-        roundingMethod,
-        taxCalculation,
-        defaultMarkup,
-        maxPriceVariation,
-        priceHistoryRetention,
-        bulkOperationLimit,
-        autoUpdatePricing,
-        enablePriceValidation,
-        requireApprovalForChanges,
-        enableBulkOperations,
-        enablePriceHistory,
-        enableNotifications,
-        updatedAt,
-        updatedBy,
-        version,
-      );
+    defaultCurrency,
+    pricingModel,
+    roundingMethod,
+    taxCalculation,
+    defaultMarkup,
+    maxPriceVariation,
+    priceHistoryRetention,
+    bulkOperationLimit,
+    autoUpdatePricing,
+    enablePriceValidation,
+    requireApprovalForChanges,
+    enableBulkOperations,
+    enablePriceHistory,
+    enableNotifications,
+    updatedAt,
+    updatedBy,
+    version,
+  );
 }

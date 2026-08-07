@@ -34,9 +34,9 @@ class ExpenseDetailView extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           l10n.expensesDetailsTitle,
-          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-              ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).headlineMedium?.copyWith(color: BauhausDesign.surfaceWhite),
         ),
         backgroundColor: BauhausDesign.primary,
         iconTheme: IconThemeData(color: BauhausDesign.surfaceWhite),
@@ -57,7 +57,9 @@ class ExpenseDetailView extends ConsumerWidget {
               ).then((updated) {
                 if (updated == true) {
                   Navigator.pop(
-                      context, true); // Return to list with refresh flag
+                    context,
+                    true,
+                  ); // Return to list with refresh flag
                 }
               });
             },
@@ -77,13 +79,16 @@ class ExpenseDetailView extends ConsumerWidget {
                       backgroundColor: BauhausDesign.success,
                       behavior: SnackBarBehavior.floating,
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusMd),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusMd,
+                        ),
                       ),
                     ),
                   );
                   Navigator.pop(
-                      context, true); // Return to list with refresh flag
+                    context,
+                    true,
+                  ); // Return to list with refresh flag
                 }
               } else if (value == 'reject') {
                 await ref
@@ -96,13 +101,16 @@ class ExpenseDetailView extends ConsumerWidget {
                       backgroundColor: BauhausDesign.error,
                       behavior: SnackBarBehavior.floating,
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusMd),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusMd,
+                        ),
                       ),
                     ),
                   );
                   Navigator.pop(
-                      context, true); // Return to list with refresh flag
+                    context,
+                    true,
+                  ); // Return to list with refresh flag
                 }
               }
             },
@@ -165,8 +173,9 @@ class ExpenseDetailView extends ConsumerWidget {
                       children: [
                         Text(
                           expense.title,
-                          style: BauhausDesign.getTextTheme(context)
-                              .headlineMedium,
+                          style: BauhausDesign.getTextTheme(
+                            context,
+                          ).headlineMedium,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -177,9 +186,7 @@ class ExpenseDetailView extends ConsumerWidget {
                             currencyFormat.format(expense.amount),
                             style: BauhausDesign.getTextTheme(context)
                                 .headlineMedium
-                                ?.copyWith(
-                                  color: BauhausDesign.primary,
-                                ),
+                                ?.copyWith(color: BauhausDesign.primary),
                           ),
                         ),
                       ],
@@ -205,7 +212,7 @@ class ExpenseDetailView extends ConsumerWidget {
                           BauhausChip(
                             label: expense.recurringFrequency != null
                                 ? expense.recurringFrequency![0].toUpperCase() +
-                                    expense.recurringFrequency!.substring(1)
+                                      expense.recurringFrequency!.substring(1)
                                 : 'Recurring',
                             icon: Icons.repeat,
                             variant: BauhausChipVariant.info,
@@ -249,11 +256,17 @@ class ExpenseDetailView extends ConsumerWidget {
 
                     // Metadata
                     _buildInfoRow(
-                        context, l10n.submittedByLabel, expense.submittedBy),
+                      context,
+                      l10n.submittedByLabel,
+                      expense.submittedBy,
+                    ),
                     const SizedBox(height: 8),
                     if (expense.approvedBy != null) ...[
                       _buildInfoRow(
-                          context, l10n.reviewedByLabel, expense.approvedBy!),
+                        context,
+                        l10n.reviewedByLabel,
+                        expense.approvedBy!,
+                      ),
                       const SizedBox(height: 8),
                     ],
                     _buildInfoRow(
@@ -328,11 +341,7 @@ class ExpenseDetailView extends ConsumerWidget {
         break;
     }
 
-    return BauhausChip(
-      label: text,
-      icon: icon,
-      variant: variant,
-    );
+    return BauhausChip(label: text, icon: icon, variant: variant);
   }
 
   Widget _buildInfoRow(BuildContext context, String label, String value) {
@@ -342,9 +351,9 @@ class ExpenseDetailView extends ConsumerWidget {
         Text(
           '$label: ',
           style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: BauhausDesign.textMuted,
-              ),
+            fontWeight: FontWeight.bold,
+            color: BauhausDesign.textMuted,
+          ),
         ),
         Expanded(
           child: Text(
@@ -363,8 +372,10 @@ class ExpenseDetailView extends ConsumerWidget {
         final l10n = AppLocalizations.of(context)!;
         return AlertDialog(
           backgroundColor: BauhausDesign.surfaceWhite,
-          title: Text(l10n.deleteExpenseTitle,
-              style: BauhausDesign.getTextTheme(context).headlineMedium),
+          title: Text(
+            l10n.deleteExpenseTitle,
+            style: BauhausDesign.getTextTheme(context).headlineMedium,
+          ),
           content: Text(
             l10n.deleteExpenseMessage,
             style: BauhausDesign.getTextTheme(context).bodyMedium,
@@ -388,13 +399,16 @@ class ExpenseDetailView extends ConsumerWidget {
                       backgroundColor: BauhausDesign.error,
                       behavior: SnackBarBehavior.floating,
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusMd),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusMd,
+                        ),
                       ),
                     ),
                   );
                   Navigator.pop(
-                      context, true); // Return to list with refresh flag
+                    context,
+                    true,
+                  ); // Return to list with refresh flag
                 }
               },
               text: l10n.deleteButton,

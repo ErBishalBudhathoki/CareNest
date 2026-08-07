@@ -16,8 +16,8 @@ class PricingDashboardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BauhausPricingDashboardView(
-        adminEmail: adminEmail,
-        organizationId: organizationId,
-        organizationName: organizationName,
-      );
+    adminEmail: adminEmail,
+    organizationId: organizationId,
+    organizationName: organizationName,
+  );
 }

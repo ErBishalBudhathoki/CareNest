@@ -24,7 +24,9 @@ class ClientAppointmentDetailsView extends ConsumerWidget {
       clientEmail: clientEmail,
     );
     ref.watch(clientAppointmentDetailsViewModelProvider);
-    final viewModel = ref.read(clientAppointmentDetailsViewModelProvider.notifier);
+    final viewModel = ref.read(
+      clientAppointmentDetailsViewModelProvider.notifier,
+    );
     viewModel.initialize(params.clientId, params.clientEmail);
 
     return Scaffold(
@@ -33,9 +35,9 @@ class ClientAppointmentDetailsView extends ConsumerWidget {
         title: Text(
           'Client Details',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                color: BauhausDesign.primary,
-                fontWeight: FontWeight.bold,
-              ),
+            color: BauhausDesign.primary,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         backgroundColor: BauhausDesign.surfaceWhite,
         elevation: 0,
@@ -48,8 +50,8 @@ class ClientAppointmentDetailsView extends ConsumerWidget {
       body: viewModel.viewState == ViewState.busy
           ? const Center(child: CircularProgressIndicator())
           : viewModel.viewState == ViewState.error
-              ? Center(child: Text('Error: ${viewModel.errorMessage}'))
-              : _buildContent(context, viewModel, ref),
+          ? Center(child: Text('Error: ${viewModel.errorMessage}'))
+          : _buildContent(context, viewModel, ref),
     );
   }
 
@@ -105,15 +107,15 @@ class ClientAppointmentDetailsView extends ConsumerWidget {
                 children: [
                   Text(
                     client.fullName,
-                    style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).titleMedium?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   Text(
                     client.clientEmail,
-                    style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                          color: BauhausDesign.textMuted,
-                        ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                   ),
                 ],
               ),
@@ -165,7 +167,9 @@ class ClientAppointmentDetailsView extends ConsumerWidget {
   }
 
   Widget _buildCareNotesCard(BuildContext context, dynamic viewModel) {
-    final notesController = TextEditingController(text: viewModel.client?.careNotes);
+    final notesController = TextEditingController(
+      text: viewModel.client?.careNotes,
+    );
 
     return Container(
       decoration: BoxDecoration(
@@ -180,9 +184,9 @@ class ClientAppointmentDetailsView extends ConsumerWidget {
           Text(
             'Care Notes',
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: BauhausDesign.primary,
-                ),
+              fontWeight: FontWeight.bold,
+              color: BauhausDesign.primary,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space2),
           TextField(
@@ -215,11 +219,15 @@ class ClientAppointmentDetailsView extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmergencyAndMedicalCard(BuildContext context, ClientDetailModel client) {
+  Widget _buildEmergencyAndMedicalCard(
+    BuildContext context,
+    ClientDetailModel client,
+  ) {
     final emergencyContact = client.emergencyContact;
     final conditions = client.medicalConditions;
 
-    if (emergencyContact == null && (conditions == null || conditions.isEmpty)) {
+    if (emergencyContact == null &&
+        (conditions == null || conditions.isEmpty)) {
       return const SizedBox.shrink();
     }
 
@@ -236,18 +244,18 @@ class ClientAppointmentDetailsView extends ConsumerWidget {
           Text(
             'Health & Safety',
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: BauhausDesign.warning,
-                ),
+              fontWeight: FontWeight.bold,
+              color: BauhausDesign.warning,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space3),
           if (emergencyContact != null) ...[
             Text(
               'Emergency Contact',
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: BauhausDesign.textMuted,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: BauhausDesign.textMuted,
+              ),
             ),
             Text(
               '${emergencyContact['name'] ?? 'N/A'} (${emergencyContact['relationship'] ?? 'N/A'})',
@@ -255,9 +263,9 @@ class ClientAppointmentDetailsView extends ConsumerWidget {
             ),
             Text(
               emergencyContact['phone'] ?? 'N/A',
-              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.primary,
-                  ),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodyMedium?.copyWith(color: BauhausDesign.primary),
             ),
             const SizedBox(height: BauhausDesign.space3),
           ],
@@ -265,18 +273,20 @@ class ClientAppointmentDetailsView extends ConsumerWidget {
             Text(
               'Medical Conditions',
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: BauhausDesign.textMuted,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: BauhausDesign.textMuted,
+              ),
             ),
             Wrap(
               spacing: 8,
               children: conditions
-                  .map((c) => Chip(
-                        label: Text(c),
-                        backgroundColor: BauhausDesign.warning.withOpacity(0.1),
-                        labelStyle: TextStyle(color: BauhausDesign.warning),
-                      ))
+                  .map(
+                    (c) => Chip(
+                      label: Text(c),
+                      backgroundColor: BauhausDesign.warning.withOpacity(0.1),
+                      labelStyle: TextStyle(color: BauhausDesign.warning),
+                    ),
+                  )
                   .toList(),
             ),
           ],
@@ -301,9 +311,9 @@ class ClientAppointmentDetailsView extends ConsumerWidget {
           Text(
             'Visit History',
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: BauhausDesign.primary,
-                ),
+              fontWeight: FontWeight.bold,
+              color: BauhausDesign.primary,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space2),
           if (visits.isEmpty)
@@ -320,7 +330,9 @@ class ClientAppointmentDetailsView extends ConsumerWidget {
                   contentPadding: EdgeInsets.zero,
                   leading: const Icon(Icons.history, size: 20),
                   title: Text(visit.shiftDate),
-                  subtitle: Text('${visit.shiftStartTime} - ${visit.shiftEndTime}'),
+                  subtitle: Text(
+                    '${visit.shiftStartTime} - ${visit.shiftEndTime}',
+                  ),
                 );
               },
             ),

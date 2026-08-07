@@ -91,7 +91,9 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
       }
       await crashlytics.setCustomKey('feedback_title', _titleController.text);
       await crashlytics.setCustomKey(
-          'feedback_timestamp', DateTime.now().toIso8601String());
+        'feedback_timestamp',
+        DateTime.now().toIso8601String(),
+      );
 
       // Record as non-fatal error so it appears in Crashlytics dashboard
       await crashlytics.recordError(
@@ -110,8 +112,10 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)?.feedbackError ??
-                'Failed to submit feedback. Please try again.'),
+            content: Text(
+              AppLocalizations.of(context)?.feedbackError ??
+                  'Failed to submit feedback. Please try again.',
+            ),
             backgroundColor: BauhausDesign.error,
           ),
         );
@@ -129,9 +133,9 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
         title: Text(
           l10n?.feedbackTitle ?? 'Submit Feedback',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                color: BauhausDesign.primary,
-                fontWeight: FontWeight.bold,
-              ),
+            color: BauhausDesign.primary,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         backgroundColor: BauhausDesign.surfaceWhite,
         elevation: 0,
@@ -172,20 +176,20 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
             const SizedBox(height: BauhausDesign.space5),
             Text(
               l10n?.feedbackSuccess ?? 'Thank you for your feedback!',
-              style:
-                  BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                        color: BauhausDesign.textDark,
-                        fontWeight: FontWeight.bold,
-                      ),
+              style: BauhausDesign.getTextTheme(context).headlineSmall
+                  ?.copyWith(
+                    color: BauhausDesign.textDark,
+                    fontWeight: FontWeight.bold,
+                  ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: BauhausDesign.space3),
             Text(
               l10n?.feedbackSuccessMessage ??
                   'Your feedback helps us improve CareNest.',
-              style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                    color: BauhausDesign.textMuted,
-                  ),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodyLarge?.copyWith(color: BauhausDesign.textMuted),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: BauhausDesign.space6),
@@ -228,9 +232,9 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
             Text(
               l10n?.feedbackSubtitle ??
                   'Describe the issue or share your suggestions',
-              style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                    color: BauhausDesign.textMuted,
-                  ),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodyLarge?.copyWith(color: BauhausDesign.textMuted),
             ),
             const SizedBox(height: BauhausDesign.space5),
 
@@ -238,9 +242,9 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
             Text(
               l10n?.feedbackTitleLabel ?? 'Issue Title',
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             const SizedBox(height: BauhausDesign.space2),
             TextFormField(
@@ -252,18 +256,24 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
                 fillColor: BauhausDesign.surfaceWhite,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  borderSide:
-                      BorderSide(color: BauhausDesign.neutral, width: 2),
+                  borderSide: BorderSide(
+                    color: BauhausDesign.neutral,
+                    width: 2,
+                  ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  borderSide:
-                      BorderSide(color: BauhausDesign.neutral, width: 2),
+                  borderSide: BorderSide(
+                    color: BauhausDesign.neutral,
+                    width: 2,
+                  ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  borderSide:
-                      BorderSide(color: BauhausDesign.primary, width: 2),
+                  borderSide: BorderSide(
+                    color: BauhausDesign.primary,
+                    width: 2,
+                  ),
                 ),
               ),
               validator: (value) {
@@ -279,33 +289,40 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
             Text(
               l10n?.feedbackDescriptionLabel ?? 'Description',
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             const SizedBox(height: BauhausDesign.space2),
             TextFormField(
               controller: _descriptionController,
               maxLines: 6,
               decoration: InputDecoration(
-                hintText: l10n?.feedbackDescriptionHint ??
+                hintText:
+                    l10n?.feedbackDescriptionHint ??
                     'What happened? What did you expect to happen?',
                 filled: true,
                 fillColor: BauhausDesign.surfaceWhite,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  borderSide:
-                      BorderSide(color: BauhausDesign.neutral, width: 2),
+                  borderSide: BorderSide(
+                    color: BauhausDesign.neutral,
+                    width: 2,
+                  ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  borderSide:
-                      BorderSide(color: BauhausDesign.neutral, width: 2),
+                  borderSide: BorderSide(
+                    color: BauhausDesign.neutral,
+                    width: 2,
+                  ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  borderSide:
-                      BorderSide(color: BauhausDesign.primary, width: 2),
+                  borderSide: BorderSide(
+                    color: BauhausDesign.primary,
+                    width: 2,
+                  ),
                 ),
               ),
               validator: (value) {
@@ -328,18 +345,19 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline,
-                      color: BauhausDesign.accent, size: 20),
+                  Icon(
+                    Icons.info_outline,
+                    color: BauhausDesign.accent,
+                    size: 20,
+                  ),
                   const SizedBox(width: BauhausDesign.space2),
                   Expanded(
                     child: Text(
                       l10n?.feedbackInfoNote ??
                           'Device info will be included to help us debug.',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
-                          ?.copyWith(
-                            color: BauhausDesign.accent,
-                          ),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodySmall?.copyWith(color: BauhausDesign.accent),
                     ),
                   ),
                 ],
@@ -359,16 +377,14 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
                     backgroundColor: BauhausDesign.error,
                     foregroundColor: BauhausDesign.surfaceWhite,
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusMd),
+                      borderRadius: BorderRadius.circular(
+                        BauhausDesign.radiusMd,
+                      ),
                     ),
                   ),
                   child: const Text(
                     'FORCE TEST CRASH (DEV)',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

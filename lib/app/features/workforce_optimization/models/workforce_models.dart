@@ -296,10 +296,8 @@ abstract class ComplianceCheck with _$ComplianceCheck {
 
 @freezed
 abstract class ComplianceResult with _$ComplianceResult {
-  const factory ComplianceResult({
-    required bool passed,
-    String? reason,
-  }) = _ComplianceResult;
+  const factory ComplianceResult({required bool passed, String? reason}) =
+      _ComplianceResult;
 
   factory ComplianceResult.fromJson(Map<String, dynamic> json) =>
       _$ComplianceResultFromJson(json);
@@ -490,10 +488,8 @@ abstract class WorkforceMetrics with _$WorkforceMetrics {
 
 @freezed
 abstract class TrendData with _$TrendData {
-  const factory TrendData({
-    required String direction,
-    required double change,
-  }) = _TrendData;
+  const factory TrendData({required String direction, required double change}) =
+      _TrendData;
 
   factory TrendData.fromJson(Map<String, dynamic> json) =>
       _$TrendDataFromJson(json);

@@ -12,15 +12,22 @@ class OvertimeHeatmap extends StatelessWidget {
   Widget build(BuildContext context) {
     // Process metrics for temporal analysis (Day of Week)
     final Map<int, double> dayOfWeekHours = {
-      1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0,
+      5: 0,
+      6: 0,
+      7: 0,
     };
-    
+
     for (var m in metrics) {
       for (var d in m.dailyBreakdown) {
         if (d.date.isNotEmpty) {
           try {
             final date = DateTime.parse(d.date);
-            dayOfWeekHours[date.weekday] = (dayOfWeekHours[date.weekday] ?? 0) + d.hours;
+            dayOfWeekHours[date.weekday] =
+                (dayOfWeekHours[date.weekday] ?? 0) + d.hours;
           } catch (_) {}
         }
       }
@@ -34,23 +41,26 @@ class OvertimeHeatmap extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('OVERTIME HOTSPOTS',
-              style:
-                  BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w900,
-                        color: BauhausDesign.textDark,
-                      )),
+          Text(
+            'OVERTIME HOTSPOTS',
+            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+              fontWeight: FontWeight.w900,
+              color: BauhausDesign.textDark,
+            ),
+          ),
           const SizedBox(height: 16),
-          
+
           if (!hasTemporalData && metrics.isEmpty)
-             const Expanded(child: Center(child: Text('No Overtime Data')))
+            const Expanded(child: Center(child: Text('No Overtime Data')))
           else ...[
             // 1. Temporal Analysis (Bar Chart)
             if (hasTemporalData) ...[
-              Text('WEEKLY DISTRIBUTION',
-                  style: BauhausDesign.getTextTheme(context)
-                      .labelSmall
-                      ?.copyWith(fontWeight: FontWeight.bold)),
+              Text(
+                'WEEKLY DISTRIBUTION',
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).labelSmall?.copyWith(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
               SizedBox(
                 height: 100,
@@ -72,10 +82,12 @@ class OvertimeHeatmap extends StatelessWidget {
             ],
 
             // 2. Employee List (Top Contributors)
-            Text('TOP CONTRIBUTORS',
-                style: BauhausDesign.getTextTheme(context)
-                    .labelSmall
-                    ?.copyWith(fontWeight: FontWeight.bold)),
+            Text(
+              'TOP CONTRIBUTORS',
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).labelSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
             Expanded(
               child: ListView.builder(
@@ -97,7 +109,9 @@ class OvertimeHeatmap extends StatelessWidget {
                             child: Text(
                               _getInitials(metric.employeeName),
                               style: TextStyle(
-                                color: metric.totalHours > 40 ? Colors.white : BauhausDesign.textDark,
+                                color: metric.totalHours > 40
+                                    ? Colors.white
+                                    : BauhausDesign.textDark,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 12,
                               ),
@@ -109,30 +123,40 @@ class OvertimeHeatmap extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(metric.employeeName,
-                                  style: BauhausDesign.getTextTheme(context)
-                                      .bodyMedium
-                                      ?.copyWith(fontWeight: FontWeight.bold)),
-                              Text('${metric.totalHours.toStringAsFixed(1)} hrs total',
-                                  style: BauhausDesign.getTextTheme(context)
-                                      .labelSmall),
+                              Text(
+                                metric.employeeName,
+                                style: BauhausDesign.getTextTheme(context)
+                                    .bodyMedium
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                '${metric.totalHours.toStringAsFixed(1)} hrs total',
+                                style: BauhausDesign.getTextTheme(
+                                  context,
+                                ).labelSmall,
+                              ),
                             ],
                           ),
                         ),
                         if (metric.overtimeHours > 0)
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: BauhausDesign.error.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(color: BauhausDesign.error),
                             ),
-                            child: Text('+${metric.overtimeHours.toStringAsFixed(1)}h OT',
-                                style: TextStyle(
-                                  color: BauhausDesign.error,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                )),
+                            child: Text(
+                              '+${metric.overtimeHours.toStringAsFixed(1)}h OT',
+                              style: TextStyle(
+                                color: BauhausDesign.error,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
                           ),
                       ],
                     ),
@@ -183,13 +207,18 @@ class _DayBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final heightFactor = max > 0 ? (value / max) : 0.0;
-    
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         if (value > 0)
-          Text(value.toStringAsFixed(0),
-              style: const TextStyle(fontSize: 10, color: BauhausDesign.textMuted)),
+          Text(
+            value.toStringAsFixed(0),
+            style: const TextStyle(
+              fontSize: 10,
+              color: BauhausDesign.textMuted,
+            ),
+          ),
         const SizedBox(height: 4),
         Container(
           width: 20,
@@ -200,12 +229,14 @@ class _DayBar extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        Text(day,
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              color: isWeekend ? BauhausDesign.secondary : BauhausDesign.textDark,
-            )),
+        Text(
+          day,
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+            color: isWeekend ? BauhausDesign.secondary : BauhausDesign.textDark,
+          ),
+        ),
       ],
     );
   }

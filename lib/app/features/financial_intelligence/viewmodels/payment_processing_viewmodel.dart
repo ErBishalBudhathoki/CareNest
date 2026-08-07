@@ -38,11 +38,10 @@ class PaymentProcessingState {
 class PaymentProcessingViewModel extends Notifier<PaymentProcessingState> {
   late final FinancialIntelligenceRepository _repository;
 
-  
   @override
   PaymentProcessingState build() {
     final apiMethod = ref.read(app_providers.apiMethodProvider);
-    
+
     return PaymentProcessingState();
   }
 
@@ -72,8 +71,10 @@ class PaymentProcessingViewModel extends Notifier<PaymentProcessingState> {
       );
 
       if (result['success'] == true) {
-        state =
-            state.copyWith(isLoading: false, analytics: result['analytics']);
+        state = state.copyWith(
+          isLoading: false,
+          analytics: result['analytics'],
+        );
       } else {
         state = state.copyWith(isLoading: false, error: result['message']);
       }
@@ -85,8 +86,9 @@ class PaymentProcessingViewModel extends Notifier<PaymentProcessingState> {
   Future<void> checkFraud(Map<String, dynamic> paymentData) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final result =
-          await _repository.checkPaymentFraud(paymentData: paymentData);
+      final result = await _repository.checkPaymentFraud(
+        paymentData: paymentData,
+      );
       if (result['success'] == true) {
         state = state.copyWith(isLoading: false, fraudCheck: result['check']);
       } else {
@@ -102,4 +104,7 @@ class PaymentProcessingViewModel extends Notifier<PaymentProcessingState> {
   }
 }
 
-final paymentProcessingViewModelProvider = NotifierProvider<PaymentProcessingViewModel, PaymentProcessingState>(PaymentProcessingViewModel.new);
+final paymentProcessingViewModelProvider =
+    NotifierProvider<PaymentProcessingViewModel, PaymentProcessingState>(
+      PaymentProcessingViewModel.new,
+    );

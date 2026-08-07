@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:carenest/app/features/organization/models/organization_model.dart' as models;
+import 'package:carenest/app/features/organization/models/organization_model.dart'
+    as models;
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class BauhausBankingSection extends ConsumerStatefulWidget {
@@ -15,7 +16,8 @@ class BauhausBankingSection extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<BauhausBankingSection> createState() => _BauhausBankingSectionState();
+  ConsumerState<BauhausBankingSection> createState() =>
+      _BauhausBankingSectionState();
 }
 
 class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
@@ -24,17 +26,25 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
   late TextEditingController _accountNameController;
   late TextEditingController _bsbController;
   late TextEditingController _accountNumberController;
-  
+
   bool _isSaving = false;
   String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    _bankNameController = TextEditingController(text: widget.organization.bankDetails?.bankName ?? '');
-    _accountNameController = TextEditingController(text: widget.organization.bankDetails?.accountName ?? '');
-    _bsbController = TextEditingController(text: widget.organization.bankDetails?.bsb ?? '');
-    _accountNumberController = TextEditingController(text: widget.organization.bankDetails?.accountNumber ?? '');
+    _bankNameController = TextEditingController(
+      text: widget.organization.bankDetails?.bankName ?? '',
+    );
+    _accountNameController = TextEditingController(
+      text: widget.organization.bankDetails?.accountName ?? '',
+    );
+    _bsbController = TextEditingController(
+      text: widget.organization.bankDetails?.bsb ?? '',
+    );
+    _accountNumberController = TextEditingController(
+      text: widget.organization.bankDetails?.accountNumber ?? '',
+    );
   }
 
   @override
@@ -88,11 +98,19 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
 
       final updates = {
         'bankDetails': {
-          'bankName': _bankNameController.text.trim().isEmpty ? null : _bankNameController.text.trim(),
-          'accountName': _accountNameController.text.trim().isEmpty ? null : _accountNameController.text.trim(),
-          'bsb': _bsbController.text.trim().isEmpty ? null : _bsbController.text.trim(),
-          'accountNumber': _accountNumberController.text.trim().isEmpty ? null : _accountNumberController.text.trim(),
-        }
+          'bankName': _bankNameController.text.trim().isEmpty
+              ? null
+              : _bankNameController.text.trim(),
+          'accountName': _accountNameController.text.trim().isEmpty
+              ? null
+              : _accountNameController.text.trim(),
+          'bsb': _bsbController.text.trim().isEmpty
+              ? null
+              : _bsbController.text.trim(),
+          'accountNumber': _accountNumberController.text.trim().isEmpty
+              ? null
+              : _accountNumberController.text.trim(),
+        },
       };
 
       await widget.onSave(widget.organization.id, updates);
@@ -134,7 +152,9 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
         final isMobile = constraints.maxWidth < 600;
 
         return Container(
-          padding: isMobile ? EdgeInsets.zero : const EdgeInsets.all(BauhausDesign.space6),
+          padding: isMobile
+              ? EdgeInsets.zero
+              : const EdgeInsets.all(BauhausDesign.space6),
           decoration: BoxDecoration(
             color: BauhausDesign.surfaceOffWhite,
             border: Border.all(color: BauhausDesign.neutral, width: 2),
@@ -158,7 +178,11 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
                         width: 40,
                         height: 40,
                         color: BauhausDesign.surfaceWhite,
-                        child: Icon(Icons.account_balance, color: BauhausDesign.primary, size: 24),
+                        child: Icon(
+                          Icons.account_balance,
+                          color: BauhausDesign.primary,
+                          size: 24,
+                        ),
                       ),
                       const SizedBox(width: BauhausDesign.space3),
                       Expanded(
@@ -199,14 +223,18 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
                     controller: _bankNameController,
                     label: 'BANK NAME',
                     hint: 'Enter bank name',
-                    validator: (value) => value == null || value.isEmpty ? 'Bank name is required' : null,
+                    validator: (value) => value == null || value.isEmpty
+                        ? 'Bank name is required'
+                        : null,
                   ),
                   const SizedBox(height: BauhausDesign.space4),
                   _BauhausTextField(
                     controller: _accountNameController,
                     label: 'ACCOUNT NAME',
                     hint: 'Enter account holder name',
-                    validator: (value) => value == null || value.isEmpty ? 'Account name is required' : null,
+                    validator: (value) => value == null || value.isEmpty
+                        ? 'Account name is required'
+                        : null,
                   ),
                   const SizedBox(height: BauhausDesign.space4),
                   _BauhausTextField(
@@ -237,14 +265,20 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
                               controller: _bankNameController,
                               label: 'BANK NAME',
                               hint: 'Enter bank name',
-                              validator: (value) => value == null || value.isEmpty ? 'Bank name is required' : null,
+                              validator: (value) =>
+                                  value == null || value.isEmpty
+                                  ? 'Bank name is required'
+                                  : null,
                             ),
                             const SizedBox(height: BauhausDesign.space4),
                             _BauhausTextField(
                               controller: _accountNameController,
                               label: 'ACCOUNT NAME',
                               hint: 'Enter account holder name',
-                              validator: (value) => value == null || value.isEmpty ? 'Account name is required' : null,
+                              validator: (value) =>
+                                  value == null || value.isEmpty
+                                  ? 'Account name is required'
+                                  : null,
                             ),
                           ],
                         ),
@@ -298,17 +332,30 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
                       const SizedBox(height: BauhausDesign.space3),
                       _BauhausSecondaryButton(
                         text: 'RESET',
-                        onPressed: _isSaving 
-                            ? null 
+                        onPressed: _isSaving
+                            ? null
                             : () {
                                 setState(() {
                                   _errorMessage = null;
                                 });
                                 // Reset controllers to original values
-                                _bankNameController.text = widget.organization.bankDetails?.bankName ?? '';
-                                _accountNameController.text = widget.organization.bankDetails?.accountName ?? '';
-                                _bsbController.text = widget.organization.bankDetails?.bsb ?? '';
-                                _accountNumberController.text = widget.organization.bankDetails?.accountNumber ?? '';
+                                _bankNameController.text =
+                                    widget.organization.bankDetails?.bankName ??
+                                    '';
+                                _accountNameController.text =
+                                    widget
+                                        .organization
+                                        .bankDetails
+                                        ?.accountName ??
+                                    '';
+                                _bsbController.text =
+                                    widget.organization.bankDetails?.bsb ?? '';
+                                _accountNumberController.text =
+                                    widget
+                                        .organization
+                                        .bankDetails
+                                        ?.accountNumber ??
+                                    '';
                               },
                       ),
                     ],
@@ -324,17 +371,30 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
                       const SizedBox(width: BauhausDesign.space3),
                       _BauhausSecondaryButton(
                         text: 'RESET',
-                        onPressed: _isSaving 
-                            ? null 
+                        onPressed: _isSaving
+                            ? null
                             : () {
                                 setState(() {
                                   _errorMessage = null;
                                 });
                                 // Reset controllers to original values
-                                _bankNameController.text = widget.organization.bankDetails?.bankName ?? '';
-                                _accountNameController.text = widget.organization.bankDetails?.accountName ?? '';
-                                _bsbController.text = widget.organization.bankDetails?.bsb ?? '';
-                                _accountNumberController.text = widget.organization.bankDetails?.accountNumber ?? '';
+                                _bankNameController.text =
+                                    widget.organization.bankDetails?.bankName ??
+                                    '';
+                                _accountNameController.text =
+                                    widget
+                                        .organization
+                                        .bankDetails
+                                        ?.accountName ??
+                                    '';
+                                _bsbController.text =
+                                    widget.organization.bankDetails?.bsb ?? '';
+                                _accountNumberController.text =
+                                    widget
+                                        .organization
+                                        .bankDetails
+                                        ?.accountNumber ??
+                                    '';
                               },
                       ),
                     ],
@@ -458,10 +518,14 @@ class _BauhausPrimaryButton extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: isEnabled ? BauhausDesign.primary : BauhausDesign.neutral.withOpacity(0.1),
+        color: isEnabled
+            ? BauhausDesign.primary
+            : BauhausDesign.neutral.withOpacity(0.1),
         border: Border.all(
-          color: isEnabled ? BauhausDesign.neutral : BauhausDesign.neutral.withOpacity(0.3), 
-          width: 2
+          color: isEnabled
+              ? BauhausDesign.neutral
+              : BauhausDesign.neutral.withOpacity(0.3),
+          width: 2,
         ),
         boxShadow: isEnabled ? [BauhausDesign.shadowHard] : [],
       ),
@@ -475,23 +539,25 @@ class _BauhausPrimaryButton extends StatelessWidget {
               vertical: BauhausDesign.space3,
             ),
             child: isLoading
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        strokeWidth: 2,
-                      ),
-                    )
-                  : Text(
-                      text,
-                      style: GoogleFonts.inter(
-                        fontSize: BauhausDesign.fontMd,
-                        fontWeight: FontWeight.w600,
-                        color: isEnabled ? Colors.white : BauhausDesign.textDark.withOpacity(0.3),
-                      ),
-                      textAlign: TextAlign.center,
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      strokeWidth: 2,
                     ),
+                  )
+                : Text(
+                    text,
+                    style: GoogleFonts.inter(
+                      fontSize: BauhausDesign.fontMd,
+                      fontWeight: FontWeight.w600,
+                      color: isEnabled
+                          ? Colors.white
+                          : BauhausDesign.textDark.withOpacity(0.3),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
           ),
         ),
       ),
@@ -503,10 +569,7 @@ class _BauhausSecondaryButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
 
-  const _BauhausSecondaryButton({
-    required this.text,
-    this.onPressed,
-  });
+  const _BauhausSecondaryButton({required this.text, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -516,8 +579,10 @@ class _BauhausSecondaryButton extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.transparent,
         border: Border.all(
-          color: isEnabled ? BauhausDesign.neutral : BauhausDesign.neutral.withOpacity(0.3), 
-          width: 2
+          color: isEnabled
+              ? BauhausDesign.neutral
+              : BauhausDesign.neutral.withOpacity(0.3),
+          width: 2,
         ),
         boxShadow: isEnabled ? [BauhausDesign.shadowHardSm] : [],
       ),
@@ -535,7 +600,9 @@ class _BauhausSecondaryButton extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: BauhausDesign.fontMd,
                 fontWeight: FontWeight.w600,
-                color: isEnabled ? BauhausDesign.textDark : BauhausDesign.textDark.withOpacity(0.3),
+                color: isEnabled
+                    ? BauhausDesign.textDark
+                    : BauhausDesign.textDark.withOpacity(0.3),
               ),
               textAlign: TextAlign.center,
             ),
@@ -554,11 +621,18 @@ class _BauhausBankingStatusCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasBankName = organization.bankDetails?.bankName?.isNotEmpty ?? false;
-    final hasAccountName = organization.bankDetails?.accountName?.isNotEmpty ?? false;
+    final hasAccountName =
+        organization.bankDetails?.accountName?.isNotEmpty ?? false;
     final hasBSB = organization.bankDetails?.bsb?.isNotEmpty ?? false;
-    final hasAccountNumber = organization.bankDetails?.accountNumber?.isNotEmpty ?? false;
-    
-    final completedFields = [hasBankName, hasAccountName, hasBSB, hasAccountNumber].where((e) => e).length;
+    final hasAccountNumber =
+        organization.bankDetails?.accountNumber?.isNotEmpty ?? false;
+
+    final completedFields = [
+      hasBankName,
+      hasAccountName,
+      hasBSB,
+      hasAccountNumber,
+    ].where((e) => e).length;
     final totalFields = 4;
     final completionPercentage = (completedFields / totalFields * 100).round();
 
@@ -574,7 +648,9 @@ class _BauhausBankingStatusCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space4),
             decoration: BoxDecoration(
-              color: completionPercentage == 100 ? BauhausDesign.success : BauhausDesign.warning,
+              color: completionPercentage == 100
+                  ? BauhausDesign.success
+                  : BauhausDesign.warning,
               border: Border(
                 bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
               ),
@@ -589,8 +665,8 @@ class _BauhausBankingStatusCard extends StatelessWidget {
                 const SizedBox(width: BauhausDesign.space2),
                 Expanded(
                   child: Text(
-                    completionPercentage == 100 
-                        ? 'BANKING DETAILS COMPLETE' 
+                    completionPercentage == 100
+                        ? 'BANKING DETAILS COMPLETE'
                         : 'BANKING DETAILS $completionPercentage% COMPLETE',
                     style: GoogleFonts.inter(
                       fontSize: BauhausDesign.fontSm,
@@ -626,7 +702,8 @@ class _BauhausBankingStatusCard extends StatelessWidget {
                 _BauhausStatusItem(
                   label: 'Account Name',
                   isComplete: hasAccountName,
-                  value: organization.bankDetails?.accountName ?? 'Not provided',
+                  value:
+                      organization.bankDetails?.accountName ?? 'Not provided',
                 ),
                 const SizedBox(height: BauhausDesign.space2),
                 _BauhausStatusItem(
@@ -638,7 +715,8 @@ class _BauhausBankingStatusCard extends StatelessWidget {
                 _BauhausStatusItem(
                   label: 'Account Number',
                   isComplete: hasAccountNumber,
-                  value: organization.bankDetails?.accountNumber ?? 'Not provided',
+                  value:
+                      organization.bankDetails?.accountNumber ?? 'Not provided',
                 ),
               ],
             ),

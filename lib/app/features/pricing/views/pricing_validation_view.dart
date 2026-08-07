@@ -129,8 +129,10 @@ class _PricingValidationViewState extends State<PricingValidationView>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.pricingValidationTitle,
-            style: const TextStyle(color: Colors.white)),
+        title: Text(
+          AppLocalizations.of(context)!.pricingValidationTitle,
+          style: const TextStyle(color: Colors.white),
+        ),
         bottom: TabBar(
           controller: _tabController,
           labelColor: Colors.white,
@@ -318,10 +320,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
           const SizedBox(height: 4),
           Text(
             subtitle,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
           ),
         ],
       ),
@@ -358,11 +357,11 @@ class _PricingValidationViewState extends State<PricingValidationView>
 
   Widget _buildValidationResultsTab() {
     final filteredResults = _validationResults.where((result) {
-      final matchesSearch = result['message']
-          .toString()
-          .toLowerCase()
-          .contains(_searchQuery.toLowerCase());
-      final matchesType = _selectedValidationType == 'All' ||
+      final matchesSearch = result['message'].toString().toLowerCase().contains(
+        _searchQuery.toLowerCase(),
+      );
+      final matchesType =
+          _selectedValidationType == 'All' ||
           result['type'] == _selectedValidationType;
       final matchesSeverity =
           _selectedSeverity == 'All' || result['severity'] == _selectedSeverity;
@@ -379,8 +378,10 @@ class _PricingValidationViewState extends State<PricingValidationView>
               color: Colors.blue[100],
               child: Text(
                 AppLocalizations.of(context)!.validationResultsTabTitle,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
               ),
             ),
             _buildValidationFilters(),
@@ -434,33 +435,44 @@ class _PricingValidationViewState extends State<PricingValidationView>
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  items: [
-                    {
-                      'value': 'All',
-                      'label': AppLocalizations.of(context)!.allValidationTypes
-                    },
-                    {
-                      'value': 'Price Range',
-                      'label': AppLocalizations.of(context)!.priceRange
-                    },
-                    {
-                      'value': 'Duplicate Entry',
-                      'label': AppLocalizations.of(context)!.duplicateEntry
-                    },
-                    {
-                      'value': 'Missing Data',
-                      'label': AppLocalizations.of(context)!.missingData
-                    },
-                    {
-                      'value': 'Rate Consistency',
-                      'label': AppLocalizations.of(context)!.rateConsistency
-                    }
-                  ]
-                      .map((item) => DropdownMenuItem(
-                            value: item['value'] as String,
-                            child: Text(item['label'] as String),
-                          ))
-                      .toList(),
+                  items:
+                      [
+                            {
+                              'value': 'All',
+                              'label': AppLocalizations.of(
+                                context,
+                              )!.allValidationTypes,
+                            },
+                            {
+                              'value': 'Price Range',
+                              'label': AppLocalizations.of(context)!.priceRange,
+                            },
+                            {
+                              'value': 'Duplicate Entry',
+                              'label': AppLocalizations.of(
+                                context,
+                              )!.duplicateEntry,
+                            },
+                            {
+                              'value': 'Missing Data',
+                              'label': AppLocalizations.of(
+                                context,
+                              )!.missingData,
+                            },
+                            {
+                              'value': 'Rate Consistency',
+                              'label': AppLocalizations.of(
+                                context,
+                              )!.rateConsistency,
+                            },
+                          ]
+                          .map(
+                            (item) => DropdownMenuItem(
+                              value: item['value'] as String,
+                              child: Text(item['label'] as String),
+                            ),
+                          )
+                          .toList(),
                   onChanged: (value) {
                     setState(() {
                       _selectedValidationType = value!;
@@ -478,29 +490,40 @@ class _PricingValidationViewState extends State<PricingValidationView>
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  items: [
-                    {
-                      'value': 'All',
-                      'label': AppLocalizations.of(context)!.allValidationTypes
-                    },
-                    {
-                      'value': 'Error',
-                      'label': AppLocalizations.of(context)!.severityError
-                    },
-                    {
-                      'value': 'Warning',
-                      'label': AppLocalizations.of(context)!.severityWarning
-                    },
-                    {
-                      'value': 'Info',
-                      'label': AppLocalizations.of(context)!.severityInfo
-                    }
-                  ]
-                      .map((item) => DropdownMenuItem(
-                            value: item['value'] as String,
-                            child: Text(item['label'] as String),
-                          ))
-                      .toList(),
+                  items:
+                      [
+                            {
+                              'value': 'All',
+                              'label': AppLocalizations.of(
+                                context,
+                              )!.allValidationTypes,
+                            },
+                            {
+                              'value': 'Error',
+                              'label': AppLocalizations.of(
+                                context,
+                              )!.severityError,
+                            },
+                            {
+                              'value': 'Warning',
+                              'label': AppLocalizations.of(
+                                context,
+                              )!.severityWarning,
+                            },
+                            {
+                              'value': 'Info',
+                              'label': AppLocalizations.of(
+                                context,
+                              )!.severityInfo,
+                            },
+                          ]
+                          .map(
+                            (item) => DropdownMenuItem(
+                              value: item['value'] as String,
+                              child: Text(item['label'] as String),
+                            ),
+                          )
+                          .toList(),
                   onChanged: (value) {
                     setState(() {
                       _selectedSeverity = value!;
@@ -519,8 +542,8 @@ class _PricingValidationViewState extends State<PricingValidationView>
     final severityColor = result['severity'] == 'Error'
         ? Colors.red
         : result['severity'] == 'Warning'
-            ? Colors.orange
-            : Colors.blue;
+        ? Colors.orange
+        : Colors.blue;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -549,17 +572,14 @@ class _PricingValidationViewState extends State<PricingValidationView>
             result['severity'] == 'Error'
                 ? Icons.error
                 : result['severity'] == 'Warning'
-                    ? Icons.warning
-                    : Icons.info,
+                ? Icons.warning
+                : Icons.info,
             color: severityColor,
           ),
         ),
         title: Text(
           result['message'],
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -568,8 +588,10 @@ class _PricingValidationViewState extends State<PricingValidationView>
             Row(
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: severityColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -586,10 +608,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
                 const SizedBox(width: 8),
                 Text(
                   result['type'],
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
                 ),
               ],
             ),
@@ -599,10 +618,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
                 result['itemCode'].toString(),
                 result['timestamp'].toString(),
               ),
-              style: TextStyle(
-                color: Colors.grey[500],
-                fontSize: 11,
-              ),
+              style: TextStyle(color: Colors.grey[500], fontSize: 11),
             ),
           ],
         ),
@@ -622,9 +638,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
                 const SizedBox(height: 8),
                 Text(
                   result['details'],
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 16),
                 LayoutBuilder(
@@ -638,13 +652,15 @@ class _PricingValidationViewState extends State<PricingValidationView>
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 6),
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
                                 decoration: BoxDecoration(
                                   color: result['status'] == 'Resolved'
                                       ? Colors.green.withOpacity(0.1)
                                       : result['status'] == 'Under Review'
-                                          ? Colors.orange.withOpacity(0.1)
-                                          : Colors.red.withOpacity(0.1),
+                                      ? Colors.orange.withOpacity(0.1)
+                                      : Colors.red.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Text(
@@ -653,8 +669,8 @@ class _PricingValidationViewState extends State<PricingValidationView>
                                     color: result['status'] == 'Resolved'
                                         ? Colors.green
                                         : result['status'] == 'Under Review'
-                                            ? Colors.orange
-                                            : Colors.red,
+                                        ? Colors.orange
+                                        : Colors.red,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -668,22 +684,30 @@ class _PricingValidationViewState extends State<PricingValidationView>
                                         _resolveValidationIssue(result['id']),
                                     style: TextButton.styleFrom(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 8),
+                                        horizontal: 8,
+                                      ),
                                       minimumSize: const Size(60, 36),
                                     ),
-                                    child: Text(AppLocalizations.of(context)!
-                                        .resolveAction),
+                                    child: Text(
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.resolveAction,
+                                    ),
                                   ),
                                   TextButton(
                                     onPressed: () =>
                                         _viewValidationDetails(result),
                                     style: TextButton.styleFrom(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 8),
+                                        horizontal: 8,
+                                      ),
                                       minimumSize: const Size(60, 36),
                                     ),
-                                    child: Text(AppLocalizations.of(context)!
-                                        .viewDetailsAction),
+                                    child: Text(
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.viewDetailsAction,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -694,13 +718,15 @@ class _PricingValidationViewState extends State<PricingValidationView>
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 6),
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
                                 decoration: BoxDecoration(
                                   color: result['status'] == 'Resolved'
                                       ? Colors.green.withOpacity(0.1)
                                       : result['status'] == 'Under Review'
-                                          ? Colors.orange.withOpacity(0.1)
-                                          : Colors.red.withOpacity(0.1),
+                                      ? Colors.orange.withOpacity(0.1)
+                                      : Colors.red.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Text(
@@ -709,8 +735,8 @@ class _PricingValidationViewState extends State<PricingValidationView>
                                     color: result['status'] == 'Resolved'
                                         ? Colors.green
                                         : result['status'] == 'Under Review'
-                                            ? Colors.orange
-                                            : Colors.red,
+                                        ? Colors.orange
+                                        : Colors.red,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -724,13 +750,14 @@ class _PricingValidationViewState extends State<PricingValidationView>
                                       _resolveValidationIssue(result['id']),
                                   style: TextButton.styleFrom(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 4),
+                                      horizontal: 4,
+                                    ),
                                     minimumSize: const Size(40, 36),
                                   ),
                                   child: Text(
-                                      AppLocalizations.of(context)!
-                                          .resolveAction,
-                                      style: const TextStyle(fontSize: 12)),
+                                    AppLocalizations.of(context)!.resolveAction,
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
                                 ),
                               ),
                               SizedBox(
@@ -740,13 +767,16 @@ class _PricingValidationViewState extends State<PricingValidationView>
                                       _viewValidationDetails(result),
                                   style: TextButton.styleFrom(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 4),
+                                      horizontal: 4,
+                                    ),
                                     minimumSize: const Size(40, 36),
                                   ),
                                   child: Text(
-                                      AppLocalizations.of(context)!
-                                          .viewDetailsAction,
-                                      style: const TextStyle(fontSize: 12)),
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.viewDetailsAction,
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
                                 ),
                               ),
                             ],
@@ -772,8 +802,10 @@ class _PricingValidationViewState extends State<PricingValidationView>
               color: Colors.green[100],
               child: Text(
                 AppLocalizations.of(context)!.validationRulesTabTitle,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
               ),
             ),
             Expanded(
@@ -830,8 +862,10 @@ class _PricingValidationViewState extends State<PricingValidationView>
                 ),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: isActive
                       ? Colors.green.withOpacity(0.1)
@@ -852,19 +886,12 @@ class _PricingValidationViewState extends State<PricingValidationView>
           const SizedBox(height: 8),
           Text(
             rule['description'],
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 14,
-            ),
+            style: TextStyle(color: Colors.grey[600], fontSize: 14),
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Icon(
-                Icons.error_outline,
-                size: 16,
-                color: Colors.red[400],
-              ),
+              Icon(Icons.error_outline, size: 16, color: Colors.red[400]),
               const SizedBox(width: 4),
               Text(
                 '${rule['violations']} ${AppLocalizations.of(context)!.violationsLabel}',
@@ -877,10 +904,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
               const Spacer(),
               Text(
                 '${AppLocalizations.of(context)!.lastUpdatedLabel}: ${rule['lastUpdated']}',
-                style: TextStyle(
-                  color: Colors.grey[500],
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Colors.grey[500], fontSize: 12),
               ),
             ],
           ),
@@ -894,13 +918,12 @@ class _PricingValidationViewState extends State<PricingValidationView>
               ),
               TextButton.icon(
                 onPressed: () => _toggleValidationRule(rule['id']),
-                icon: Icon(
-                  isActive ? Icons.pause : Icons.play_arrow,
-                  size: 16,
+                icon: Icon(isActive ? Icons.pause : Icons.play_arrow, size: 16),
+                label: Text(
+                  isActive
+                      ? AppLocalizations.of(context)!.disableAction
+                      : AppLocalizations.of(context)!.enableAction,
                 ),
-                label: Text(isActive
-                    ? AppLocalizations.of(context)!.disableAction
-                    : AppLocalizations.of(context)!.enableAction),
               ),
               const Spacer(),
               TextButton(
@@ -925,8 +948,10 @@ class _PricingValidationViewState extends State<PricingValidationView>
               color: Colors.purple[100],
               child: Text(
                 AppLocalizations.of(context)!.reportsTabTitle,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
               ),
             ),
             Expanded(
@@ -1014,11 +1039,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
               color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 24,
-            ),
+            child: Icon(icon, color: color, size: 24),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -1035,10 +1056,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
                 ),
               ],
             ),
@@ -1068,28 +1086,35 @@ class _PricingValidationViewState extends State<PricingValidationView>
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
-            AppLocalizations.of(context)!.validationDetailsTitle(result['id'])),
+          AppLocalizations.of(context)!.validationDetailsTitle(result['id']),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-                '${AppLocalizations.of(context)!.typeLabel}: ${result['type']}'),
+              '${AppLocalizations.of(context)!.typeLabel}: ${result['type']}',
+            ),
             const SizedBox(height: 8),
             Text(
-                '${AppLocalizations.of(context)!.severityLabel}: ${result['severity']}'),
+              '${AppLocalizations.of(context)!.severityLabel}: ${result['severity']}',
+            ),
             const SizedBox(height: 8),
             Text(
-                '${AppLocalizations.of(context)!.itemLabel}: ${result['itemCode']}'),
+              '${AppLocalizations.of(context)!.itemLabel}: ${result['itemCode']}',
+            ),
             const SizedBox(height: 8),
             Text(
-                '${AppLocalizations.of(context)!.messageLabel}: ${result['message']}'),
+              '${AppLocalizations.of(context)!.messageLabel}: ${result['message']}',
+            ),
             const SizedBox(height: 8),
             Text(
-                '${AppLocalizations.of(context)!.detailsLabel}: ${result['details']}'),
+              '${AppLocalizations.of(context)!.detailsLabel}: ${result['details']}',
+            ),
             const SizedBox(height: 8),
             Text(
-                '${AppLocalizations.of(context)!.timestampLabel}: ${result['timestamp']}'),
+              '${AppLocalizations.of(context)!.timestampLabel}: ${result['timestamp']}',
+            ),
           ],
         ),
         actions: [
@@ -1104,7 +1129,8 @@ class _PricingValidationViewState extends State<PricingValidationView>
 
   void _editValidationRule(Map<String, dynamic> rule) {
     _showSnackBar(
-        AppLocalizations.of(context)!.editValidationRuleMsg(rule['name']));
+      AppLocalizations.of(context)!.editValidationRuleMsg(rule['name']),
+    );
   }
 
   void _toggleValidationRule(String ruleId) {
@@ -1113,8 +1139,8 @@ class _PricingValidationViewState extends State<PricingValidationView>
       if (index != -1) {
         _validationRules[index]['status'] =
             _validationRules[index]['status'] == 'Active'
-                ? 'Inactive'
-                : 'Active';
+            ? 'Inactive'
+            : 'Active';
       }
     });
     _showSnackBar(AppLocalizations.of(context)!.validationRuleStatusUpdated);
@@ -1133,10 +1159,8 @@ class _PricingValidationViewState extends State<PricingValidationView>
   }
 
   void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 }

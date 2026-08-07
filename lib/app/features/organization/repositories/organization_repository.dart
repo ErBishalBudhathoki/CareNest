@@ -48,7 +48,9 @@ class OrganizationRepository {
 
   /// Updates organization details
   Future<void> updateOrganization(
-      String id, Map<String, dynamic> updates) async {
+    String id,
+    Map<String, dynamic> updates,
+  ) async {
     try {
       final response = await _api.put('organization/$id', body: updates);
 
@@ -78,7 +80,8 @@ class OrganizationRepository {
 
   /// Switch organization context
   Future<Map<String, dynamic>?> switchOrganization(
-      String organizationId) async {
+    String organizationId,
+  ) async {
     try {
       final response = await _api.post('organization/switch/$organizationId');
       if (response['success'] == false && response['statusCode'] != 200) {
@@ -117,10 +120,14 @@ class OrganizationRepository {
 
   /// Update branding
   Future<OrganizationBranding?> updateBranding(
-      String organizationId, Map<String, dynamic> brandingData) async {
+    String organizationId,
+    Map<String, dynamic> brandingData,
+  ) async {
     try {
-      final response = await _api.put('organization/$organizationId/branding',
-          body: brandingData);
+      final response = await _api.put(
+        'organization/$organizationId/branding',
+        body: brandingData,
+      );
       if (response['success'] == false && response['statusCode'] != 200) {
         throw Exception(response['message'] ?? 'Failed to update branding');
       }

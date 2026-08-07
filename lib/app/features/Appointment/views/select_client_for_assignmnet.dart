@@ -15,8 +15,11 @@ class SelectClientForAssignment extends ConsumerStatefulWidget {
   final String userName;
   final String userEmail;
 
-  const SelectClientForAssignment(
-      {super.key, required this.userName, required this.userEmail});
+  const SelectClientForAssignment({
+    super.key,
+    required this.userName,
+    required this.userEmail,
+  });
 
   @override
   ConsumerState<SelectClientForAssignment> createState() =>
@@ -46,13 +49,9 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
     _animationController.forward();
   }
 
@@ -72,8 +71,11 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
       } else {
         _isSearching = true;
         _filteredClients = _allClients
-            .where((client) =>
-                client.displayName.toLowerCase().contains(query.toLowerCase()))
+            .where(
+              (client) => client.displayName.toLowerCase().contains(
+                query.toLowerCase(),
+              ),
+            )
             .toList();
       }
     });
@@ -138,8 +140,9 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
                         _filteredClients = _allClients;
                       }
 
-                      List<Patient> clientsToShow =
-                          _isSearching ? _filteredClients : _allClients;
+                      List<Patient> clientsToShow = _isSearching
+                          ? _filteredClients
+                          : _allClients;
 
                       if (clientsToShow.isEmpty && _isSearching) {
                         return _buildNoSearchResultsState();
@@ -169,15 +172,15 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
           Text(
             'Select Client',
             style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                  color: BauhausDesign.surfaceWhite,
-                  fontWeight: FontWeight.bold,
-                ),
+              color: BauhausDesign.surfaceWhite,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           Text(
             'for ${widget.userName}',
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.surfaceWhite.withOpacity(0.7),
-                ),
+              color: BauhausDesign.surfaceWhite.withOpacity(0.7),
+            ),
           ),
         ],
       ),
@@ -195,10 +198,7 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
       decoration: BoxDecoration(
         color: BauhausDesign.surfaceWhite,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(
-          color: BauhausDesign.neutral,
-          width: 1.5,
-        ),
+        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
         boxShadow: const [BauhausDesign.shadowSoft],
       ),
       child: TextField(
@@ -206,15 +206,12 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
         onChanged: _filterClients,
         decoration: InputDecoration(
           hintText: 'Search clients...',
-          hintStyle: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                color: BauhausDesign.textMuted,
-              ),
+          hintStyle: BauhausDesign.getTextTheme(
+            context,
+          ).bodyLarge?.copyWith(color: BauhausDesign.textMuted),
           filled: false,
           fillColor: Colors.transparent,
-          prefixIcon: Icon(
-            Icons.search,
-            color: BauhausDesign.textMuted,
-          ),
+          prefixIcon: Icon(Icons.search, color: BauhausDesign.textMuted),
           suffixIcon: _isSearching
               ? IconButton(
                   icon: Icon(Icons.clear, color: BauhausDesign.textMuted),
@@ -266,10 +263,7 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
                 color: BauhausDesign.surfaceWhite,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 boxShadow: const [BauhausDesign.shadowSoft],
-                border: Border.all(
-                  color: BauhausDesign.neutral,
-                  width: 1,
-                ),
+                border: Border.all(color: BauhausDesign.neutral, width: 1),
               ),
               child: Material(
                 color: Colors.transparent,
@@ -288,7 +282,9 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
                             color: BauhausDesign.primary.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(25),
                             border: Border.all(
-                                color: BauhausDesign.primary, width: 1),
+                              color: BauhausDesign.primary,
+                              width: 1,
+                            ),
                           ),
                           child: Center(
                             child: Text(
@@ -322,9 +318,7 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
                                 client.clientEmail,
                                 style: BauhausDesign.getTextTheme(context)
                                     .bodyMedium
-                                    ?.copyWith(
-                                      color: BauhausDesign.textMuted,
-                                    ),
+                                    ?.copyWith(color: BauhausDesign.textMuted),
                               ),
                             ],
                           ),
@@ -371,8 +365,8 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
                     clientFullName: client.displayName,
                     clientId:
                         (client.id != null && client.id!.trim().isNotEmpty)
-                            ? client.id
-                            : client.clientEmail,
+                        ? client.id
+                        : client.clientEmail,
                   ),
                 ),
               );
@@ -396,9 +390,9 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
           const SizedBox(height: BauhausDesign.space4),
           Text(
             'Loading clients...',
-            style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                  color: BauhausDesign.textMuted,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyLarge?.copyWith(color: BauhausDesign.textMuted),
           ),
         ],
       ),
@@ -411,24 +405,20 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 64,
-            color: BauhausDesign.error,
-          ),
+          Icon(Icons.error_outline, size: 64, color: BauhausDesign.error),
           const SizedBox(height: BauhausDesign.space4),
           Text(
             'Error loading clients',
-            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                  color: BauhausDesign.textDark,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).headlineSmall?.copyWith(color: BauhausDesign.textDark),
           ),
           const SizedBox(height: BauhausDesign.space2),
           Text(
             error,
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textMuted,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
             textAlign: TextAlign.center,
           ),
         ],
@@ -442,24 +432,20 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.people_outline,
-            size: 64,
-            color: BauhausDesign.neutral,
-          ),
+          Icon(Icons.people_outline, size: 64, color: BauhausDesign.neutral),
           const SizedBox(height: BauhausDesign.space4),
           Text(
             'No clients found',
-            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                  color: BauhausDesign.textDark,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).headlineSmall?.copyWith(color: BauhausDesign.textDark),
           ),
           const SizedBox(height: BauhausDesign.space2),
           Text(
             'There are no clients available to assign.',
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textMuted,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
           ),
         ],
       ),
@@ -472,24 +458,20 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.search_off,
-            size: 64,
-            color: BauhausDesign.neutral,
-          ),
+          Icon(Icons.search_off, size: 64, color: BauhausDesign.neutral),
           const SizedBox(height: BauhausDesign.space4),
           Text(
             'No results found',
-            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                  color: BauhausDesign.textDark,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).headlineSmall?.copyWith(color: BauhausDesign.textDark),
           ),
           const SizedBox(height: BauhausDesign.space2),
           Text(
             'Try adjusting your search terms.',
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textMuted,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
           ),
         ],
       ),

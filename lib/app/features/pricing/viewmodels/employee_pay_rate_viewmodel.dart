@@ -29,30 +29,31 @@ class EmployeePayRateViewModel extends Notifier<EmployeePayRateState> {
 
   Future<void> fetchEmployees({bool showLoading = true}) async {
     if (showLoading) {
-      state = EmployeePayRateState(
-        isLoading: true,
-        employees: state.employees,
-      );
+      state = EmployeePayRateState(isLoading: true, employees: state.employees);
     }
     try {
-      final response =
-          await _apiMethod.getOrganizationEmployees(organizationId);
+      final response = await _apiMethod.getOrganizationEmployees(
+        organizationId,
+      );
       if (response['success'] == true) {
         final List<dynamic> data =
             response['employees'] as List<dynamic>? ?? [];
-        final employees = data
-            .whereType<Map>()
-            .map((e) => Map<String, dynamic>.from(e))
-            .where(_isEmployeeRecord)
-            .map((e) => User.fromJson(e))
-            .toList()
-          ..sort(
-              (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+        final employees =
+            data
+                .whereType<Map>()
+                .map((e) => Map<String, dynamic>.from(e))
+                .where(_isEmployeeRecord)
+                .map((e) => User.fromJson(e))
+                .toList()
+              ..sort(
+                (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+              );
         state = EmployeePayRateState(employees: employees, isLoading: false);
       } else {
         state = EmployeePayRateState(
-            isLoading: false,
-            error: response['message'] ?? 'Failed to load employees');
+          isLoading: false,
+          error: response['message'] ?? 'Failed to load employees',
+        );
       }
     } catch (e) {
       state = EmployeePayRateState(isLoading: false, error: e.toString());
@@ -89,4 +90,9 @@ class EmployeePayRateViewModel extends Notifier<EmployeePayRateState> {
   }
 }
 
-final employeePayRateViewModelProvider = NotifierProvider.family<EmployeePayRateViewModel, EmployeePayRateState, String>(EmployeePayRateViewModel.new);
+final employeePayRateViewModelProvider =
+    NotifierProvider.family<
+      EmployeePayRateViewModel,
+      EmployeePayRateState,
+      String
+    >(EmployeePayRateViewModel.new);

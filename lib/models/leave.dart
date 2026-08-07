@@ -12,7 +12,8 @@ abstract class LeaveBalance with _$LeaveBalance {
     required double longServiceLeave,
   }) = _LeaveBalance;
 
-  factory LeaveBalance.fromJson(Map<String, dynamic> json) => _$LeaveBalanceFromJson(json);
+  factory LeaveBalance.fromJson(Map<String, dynamic> json) =>
+      _$LeaveBalanceFromJson(json);
 }
 
 @freezed
@@ -37,7 +38,8 @@ abstract class LeaveRequest with _$LeaveRequest {
     DateTime? updatedAt,
   }) = _LeaveRequest;
 
-  factory LeaveRequest.fromJson(Map<String, dynamic> json) => _$LeaveRequestFromJson(json);
+  factory LeaveRequest.fromJson(Map<String, dynamic> json) =>
+      _$LeaveRequestFromJson(json);
 }
 
 @freezed
@@ -48,7 +50,8 @@ abstract class LeaveAttachment with _$LeaveAttachment {
     required DateTime uploadedAt,
   }) = _LeaveAttachment;
 
-  factory LeaveAttachment.fromJson(Map<String, dynamic> json) => _$LeaveAttachmentFromJson(json);
+  factory LeaveAttachment.fromJson(Map<String, dynamic> json) =>
+      _$LeaveAttachmentFromJson(json);
 }
 
 @freezed
@@ -61,7 +64,8 @@ abstract class LeaveHistory with _$LeaveHistory {
     String? reason,
   }) = _LeaveHistory;
 
-  factory LeaveHistory.fromJson(Map<String, dynamic> json) => _$LeaveHistoryFromJson(json);
+  factory LeaveHistory.fromJson(Map<String, dynamic> json) =>
+      _$LeaveHistoryFromJson(json);
 }
 
 @freezed
@@ -76,7 +80,8 @@ abstract class PublicHoliday with _$PublicHoliday {
     String? state,
   }) = _PublicHoliday;
 
-  factory PublicHoliday.fromJson(Map<String, dynamic> json) => _$PublicHolidayFromJson(json);
+  factory PublicHoliday.fromJson(Map<String, dynamic> json) =>
+      _$PublicHolidayFromJson(json);
 }
 
 @freezed
@@ -86,5 +91,6 @@ abstract class LeaveForecast with _$LeaveForecast {
     required Map<String, double> accrualRate,
   }) = _LeaveForecast;
 
-  factory LeaveForecast.fromJson(Map<String, dynamic> json) => _$LeaveForecastFromJson(json);
+  factory LeaveForecast.fromJson(Map<String, dynamic> json) =>
+      _$LeaveForecastFromJson(json);
 }

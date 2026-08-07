@@ -47,12 +47,12 @@ class _EnhancedFileAttachmentWidgetState
     '.png',
     '.gif',
     '.bmp',
-    '.webp'
+    '.webp',
   ];
   static const List<String> _supportedDocumentExtensions = [
     '.pdf',
     '.doc',
-    '.docx'
+    '.docx',
   ];
   static const List<String> _allSupportedExtensions = [
     ..._supportedImageExtensions,
@@ -63,8 +63,9 @@ class _EnhancedFileAttachmentWidgetState
   void initState() {
     super.initState();
     _selectedFiles = widget.initialFiles ?? [];
-    _descriptionController =
-        TextEditingController(text: widget.description ?? '');
+    _descriptionController = TextEditingController(
+      text: widget.description ?? '',
+    );
   }
 
   @override
@@ -118,8 +119,9 @@ class _EnhancedFileAttachmentWidgetState
       context: context,
       backgroundColor: BauhausDesign.surfaceWhite,
       shape: const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(BauhausDesign.radiusLg)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(BauhausDesign.radiusLg),
+        ),
       ),
       builder: (context) => Container(
         padding: const EdgeInsets.all(24.0),
@@ -184,17 +186,10 @@ class _EnhancedFileAttachmentWidgetState
               borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
               border: Border.all(color: BauhausDesign.primary),
             ),
-            child: Icon(
-              icon,
-              size: 32,
-              color: BauhausDesign.primary,
-            ),
+            child: Icon(icon, size: 32, color: BauhausDesign.primary),
           ),
           const SizedBox(height: 8.0),
-          Text(
-            label,
-            style: BauhausDesign.getTextTheme(context).labelLarge,
-          ),
+          Text(label, style: BauhausDesign.getTextTheme(context).labelLarge),
         ],
       ),
     );
@@ -238,11 +233,11 @@ class _EnhancedFileAttachmentWidgetState
   /// Pick files using file picker
   Future<void> _pickFiles() async {
     try {
-      picker.FilePickerResult? result =
-          await picker.FilePicker.pickFiles(
+      picker.FilePickerResult? result = await picker.FilePicker.pickFiles(
         type: picker.FileType.custom,
-        allowedExtensions:
-            _allSupportedExtensions.map((e) => e.substring(1)).toList(),
+        allowedExtensions: _allSupportedExtensions
+            .map((e) => e.substring(1))
+            .toList(),
         allowMultiple: true,
       );
 
@@ -283,14 +278,13 @@ class _EnhancedFileAttachmentWidgetState
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false,
           ),
-          IOSUiSettings(
-            title: 'Crop Receipt',
-          ),
+          IOSUiSettings(title: 'Crop Receipt'),
         ],
       );
 
-      final fileToAdd =
-          croppedFile != null ? File(croppedFile.path) : imageFile;
+      final fileToAdd = croppedFile != null
+          ? File(croppedFile.path)
+          : imageFile;
       await _addFileToList(fileToAdd);
     } catch (e) {
       // If cropping fails, add original image
@@ -352,8 +346,10 @@ class _EnhancedFileAttachmentWidgetState
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         ),
-        content:
-            Text(message, style: TextStyle(color: BauhausDesign.surfaceWhite)),
+        content: Text(
+          message,
+          style: TextStyle(color: BauhausDesign.surfaceWhite),
+        ),
       ),
     );
   }
@@ -374,26 +370,19 @@ class _EnhancedFileAttachmentWidgetState
         // Header
         Row(
           children: [
-            Icon(
-              Icons.attach_file,
-              color: BauhausDesign.primary,
-              size: 20,
-            ),
+            Icon(Icons.attach_file, color: BauhausDesign.primary, size: 20),
             const SizedBox(width: 8.0),
             Text(
               'Receipt Attachments',
-              style:
-                  BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                        color: BauhausDesign.primary,
-                        fontSize: 18,
-                      ),
+              style: BauhausDesign.getTextTheme(context).headlineSmall
+                  ?.copyWith(color: BauhausDesign.primary, fontSize: 18),
             ),
             const Spacer(),
             Text(
               '${_selectedFiles.length}/${widget.maxFiles}',
-              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textMuted,
-                  ),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
             ),
           ],
         ),
@@ -414,10 +403,9 @@ class _EnhancedFileAttachmentWidgetState
               Expanded(
                 child: Text(
                   'Supported: Images, PDF, Word docs. Max ${widget.maxFileSizeMB}MB per file.',
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.info,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).labelSmall?.copyWith(color: BauhausDesign.info),
                 ),
               ),
             ],
@@ -453,8 +441,9 @@ class _EnhancedFileAttachmentWidgetState
                     return Container(
                       decoration: BoxDecoration(
                         color: BauhausDesign.surfaceWhite,
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusMd),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusMd,
+                        ),
                         border: Border.all(color: BauhausDesign.neutral),
                       ),
                       child: Stack(
@@ -462,16 +451,17 @@ class _EnhancedFileAttachmentWidgetState
                           // File content
                           Positioned.fill(
                             child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(BauhausDesign.radiusMd),
+                              borderRadius: BorderRadius.circular(
+                                BauhausDesign.radiusMd,
+                              ),
                               child: fileType == ExpenseFileType.image
                                   ? Image.file(
                                       file,
                                       fit: BoxFit.cover,
                                       errorBuilder:
                                           (context, error, stackTrace) {
-                                        return _buildFileIcon(file);
-                                      },
+                                            return _buildFileIcon(file);
+                                          },
                                     )
                                   : _buildFileIcon(file),
                             ),
@@ -508,10 +498,12 @@ class _EnhancedFileAttachmentWidgetState
                               decoration: BoxDecoration(
                                 color: BauhausDesign.textDark.withOpacity(0.6),
                                 borderRadius: const BorderRadius.only(
-                                  bottomLeft:
-                                      Radius.circular(BauhausDesign.radiusMd),
-                                  bottomRight:
-                                      Radius.circular(BauhausDesign.radiusMd),
+                                  bottomLeft: Radius.circular(
+                                    BauhausDesign.radiusMd,
+                                  ),
+                                  bottomRight: Radius.circular(
+                                    BauhausDesign.radiusMd,
+                                  ),
                                 ),
                               ),
                               child: Column(
@@ -574,8 +566,10 @@ class _EnhancedFileAttachmentWidgetState
             controller: _descriptionController,
             label: 'File Description (Optional)',
             hintText: 'Add a description for your attachments...',
-            prefixIcon:
-                const Icon(Icons.description, color: BauhausDesign.textMuted),
+            prefixIcon: const Icon(
+              Icons.description,
+              color: BauhausDesign.textMuted,
+            ),
             maxLines: 2,
             onChanged: widget.onDescriptionChanged,
             // onChanged is not directly exposed in BauhausTextField constructor from previous step,
@@ -600,18 +594,14 @@ class _EnhancedFileAttachmentWidgetState
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            _getFileIcon(file.path),
-            size: 32,
-            color: BauhausDesign.primary,
-          ),
+          Icon(_getFileIcon(file.path), size: 32, color: BauhausDesign.primary),
           const SizedBox(height: 4.0),
           Text(
             path.extension(file.path).toUpperCase(),
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: BauhausDesign.primary,
-                ),
+              fontWeight: FontWeight.bold,
+              color: BauhausDesign.primary,
+            ),
           ),
         ],
       ),

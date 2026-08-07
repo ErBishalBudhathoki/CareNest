@@ -5,12 +5,14 @@ import 'package:carenest/app/features/auth/models/forgotPassword_model.dart';
 import 'package:carenest/app/features/auth/widgets/enhanced_auth_dialog.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 class ForgotPasswordViewModel extends Notifier<bool> {
   final ForgotPasswordModel model = ForgotPasswordModel();
-  final GlobalKey<FormState> formKey =
-      GlobalKey<FormState>(debugLabel: 'forgot_password_form_key');
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>(
+    debugLabel: 'forgot_password_form_key',
+  );
   final TextEditingController emailController = TextEditingController();
   late final ApiMethod apiMethod;
   late final SharedPreferencesUtils _sharedPrefs;
@@ -34,12 +36,15 @@ class ForgotPasswordViewModel extends Notifier<bool> {
     state = loading;
   }
 
-  Future<void> resetPassword(BuildContext context,
-      Future<void> Function(Map<String, dynamic>) onSuccess) async {
+  Future<void> resetPassword(
+    BuildContext context,
+    Future<void> Function(Map<String, dynamic>) onSuccess,
+  ) async {
     _setLoading(true); // Set loading to true when starting the request
     try {
-      await _sharedPrefs
-          .saveEmailToSharedPreferences(model.emailController.text.trim());
+      await _sharedPrefs.saveEmailToSharedPreferences(
+        model.emailController.text.trim(),
+      );
 
       // Send password reset OTP email
       final msg = await apiMethod.sendOTP(model.emailController.text.trim());
@@ -56,11 +61,9 @@ class ForgotPasswordViewModel extends Notifier<bool> {
       }
     } catch (e) {
       debugPrint(e.toString());
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text((e).toString()),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text((e).toString())));
     } finally {
       _setLoading(false); // Set loading to false when request completes
     }
@@ -74,6 +77,4 @@ class ForgotPasswordViewModel extends Notifier<bool> {
       actionLabel: 'OK',
     );
   }
-
-
 }

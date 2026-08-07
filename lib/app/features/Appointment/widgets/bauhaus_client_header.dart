@@ -33,11 +33,15 @@ class BauhausClientHeader extends StatelessWidget {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: BauhausDesign.textDark,
                           border: Border.all(
-                              color: BauhausDesign.textDark, width: 2),
+                            color: BauhausDesign.textDark,
+                            width: 2,
+                          ),
                         ),
                         child: Text(
                           status.toUpperCase(),
@@ -72,13 +76,15 @@ class BauhausClientHeader extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: BauhausDesign.surfaceLight,
                           border: Border.all(
-                              color: BauhausDesign.textDark, width: 3),
+                            color: BauhausDesign.textDark,
+                            width: 3,
+                          ),
                           boxShadow: const [
                             BoxShadow(
                               color: BauhausDesign.textDark,
                               offset: Offset(4, 4),
                               blurRadius: 0,
-                            )
+                            ),
                           ],
                         ),
                         child: const Icon(

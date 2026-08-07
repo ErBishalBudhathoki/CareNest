@@ -8,10 +8,12 @@ class ResourceAllocationView extends ConsumerStatefulWidget {
   const ResourceAllocationView({super.key});
 
   @override
-  ConsumerState<ResourceAllocationView> createState() => _ResourceAllocationViewState();
+  ConsumerState<ResourceAllocationView> createState() =>
+      _ResourceAllocationViewState();
 }
 
-class _ResourceAllocationViewState extends ConsumerState<ResourceAllocationView> {
+class _ResourceAllocationViewState
+    extends ConsumerState<ResourceAllocationView> {
   @override
   void initState() {
     super.initState();
@@ -24,10 +26,12 @@ class _ResourceAllocationViewState extends ConsumerState<ResourceAllocationView>
     final orgState = ref.read(organizationProvider);
     final orgId = orgState.currentOrganization?.id;
     if (orgId != null) {
-      ref.read(resourceAllocationViewModelProvider.notifier).optimizeAllocation(
-        organizationId: orgId,
-        date: DateTime.now().toIso8601String(),
-      );
+      ref
+          .read(resourceAllocationViewModelProvider.notifier)
+          .optimizeAllocation(
+            organizationId: orgId,
+            date: DateTime.now().toIso8601String(),
+          );
     }
   }
 
@@ -62,22 +66,22 @@ class _ResourceAllocationViewState extends ConsumerState<ResourceAllocationView>
       body: state.isLoading
           ? const Center(child: CircularProgressIndicator())
           : state.error != null
-              ? _buildError(state.error!)
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildHeader(),
-                      const SizedBox(height: 24),
-                      _buildWorkloadAnalysis(state),
-                      const SizedBox(height: 24),
-                      _buildRecommendations(state),
-                      const SizedBox(height: 24),
-                      _buildActionButtons(),
-                    ],
-                  ),
-                ),
+          ? _buildError(state.error!)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(),
+                  const SizedBox(height: 24),
+                  _buildWorkloadAnalysis(state),
+                  const SizedBox(height: 24),
+                  _buildRecommendations(state),
+                  const SizedBox(height: 24),
+                  _buildActionButtons(),
+                ],
+              ),
+            ),
     );
   }
 
@@ -100,10 +104,7 @@ class _ResourceAllocationViewState extends ConsumerState<ResourceAllocationView>
           Text(
             error,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFF666666),
-            ),
+            style: const TextStyle(fontSize: 14, color: Color(0xFF666666)),
           ),
         ],
       ),
@@ -115,7 +116,10 @@ class _ResourceAllocationViewState extends ConsumerState<ResourceAllocationView>
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.colorPurple, AppColors.colorPurple.withOpacity(0.8)],
+          colors: [
+            AppColors.colorPurple,
+            AppColors.colorPurple.withOpacity(0.8),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -159,10 +163,7 @@ class _ResourceAllocationViewState extends ConsumerState<ResourceAllocationView>
                 SizedBox(height: 4),
                 Text(
                   'Optimize worker assignments',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.colorWhite,
-                  ),
+                  style: TextStyle(fontSize: 14, color: AppColors.colorWhite),
                 ),
               ],
             ),
@@ -223,7 +224,12 @@ class _ResourceAllocationViewState extends ConsumerState<ResourceAllocationView>
     );
   }
 
-  Widget _buildWorkloadMetric(String label, String value, Color color, IconData icon) {
+  Widget _buildWorkloadMetric(
+    String label,
+    String value,
+    Color color,
+    IconData icon,
+  ) {
     return Row(
       children: [
         Container(
@@ -299,9 +305,7 @@ class _ResourceAllocationViewState extends ConsumerState<ResourceAllocationView>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Color(0xFF1A1A1A), width: 1),
-        ),
+        border: Border(bottom: BorderSide(color: Color(0xFF1A1A1A), width: 1)),
       ),
       child: Row(
         children: [
@@ -342,7 +346,11 @@ class _ResourceAllocationViewState extends ConsumerState<ResourceAllocationView>
               ],
             ),
           ),
-          const Icon(Icons.arrow_forward, color: AppColors.colorPurple, size: 20),
+          const Icon(
+            Icons.arrow_forward,
+            color: AppColors.colorPurple,
+            size: 20,
+          ),
         ],
       ),
     );
@@ -359,14 +367,15 @@ class _ResourceAllocationViewState extends ConsumerState<ResourceAllocationView>
       child: Center(
         child: Column(
           children: [
-            const Icon(Icons.inbox_outlined, size: 48, color: Color(0xFF666666)),
+            const Icon(
+              Icons.inbox_outlined,
+              size: 48,
+              color: Color(0xFF666666),
+            ),
             const SizedBox(height: 12),
             Text(
               message,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Color(0xFF666666),
-              ),
+              style: const TextStyle(fontSize: 14, color: Color(0xFF666666)),
             ),
           ],
         ),

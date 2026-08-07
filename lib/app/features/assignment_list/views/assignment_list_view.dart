@@ -67,21 +67,26 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
   }
 
   List<Map<String, dynamic>> _getFilteredAssignments(
-      List<Map<String, dynamic>> assignments) {
+    List<Map<String, dynamic>> assignments,
+  ) {
     if (_searchQuery.isEmpty) return assignments;
 
     final query = _searchQuery.toLowerCase();
     return assignments.where((assignment) {
-      final userEmail =
-          (assignment['userEmail'] ?? '').toString().toLowerCase();
-      final clientEmail =
-          (assignment['clientEmail'] ?? '').toString().toLowerCase();
+      final userEmail = (assignment['userEmail'] ?? '')
+          .toString()
+          .toLowerCase();
+      final clientEmail = (assignment['clientEmail'] ?? '')
+          .toString()
+          .toLowerCase();
       final assignmentId = (assignment['_id'] ?? '').toString().toLowerCase();
 
       final scheduleArray = assignment['schedule'] as List<dynamic>? ?? [];
       final scheduleText = scheduleArray
-          .map((item) =>
-              '${item['date'] ?? ''} ${item['startTime'] ?? ''} ${item['endTime'] ?? ''}')
+          .map(
+            (item) =>
+                '${item['date'] ?? ''} ${item['startTime'] ?? ''} ${item['endTime'] ?? ''}',
+          )
           .join(' ')
           .toLowerCase();
 
@@ -119,12 +124,10 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
         ),
         title: Text(
           AppLocalizations.of(context)!.assignmentList.toUpperCase(),
-          style: BauhausDesign.getTextTheme(context)
-              .headlineMedium
-              ?.copyWith(
-                color: BauhausDesign.textDark,
-                fontWeight: FontWeight.w700,
-              ),
+          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+            color: BauhausDesign.textDark,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         actions: [
           Padding(
@@ -135,7 +138,10 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
               icon: const Icon(Icons.refresh, size: 20),
               style: IconButton.styleFrom(
                 backgroundColor: BauhausDesign.surfaceOffWhite,
-                side: const BorderSide(color: BauhausDesign.neutral, width: 1.5),
+                side: const BorderSide(
+                  color: BauhausDesign.neutral,
+                  width: 1.5,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                 ),
@@ -151,16 +157,16 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
       body: Column(
         children: [
           _buildHeaderStats(state, viewModel),
-          Expanded(
-            child: _buildBody(state, viewModel, filteredAssignments),
-          ),
+          Expanded(child: _buildBody(state, viewModel, filteredAssignments)),
         ],
       ),
     );
   }
 
   Widget _buildHeaderStats(
-      AssignmentListState state, AssignmentListViewModel viewModel) {
+    AssignmentListState state,
+    AssignmentListViewModel viewModel,
+  ) {
     final filteredAssignments = _getFilteredAssignments(state.assignments);
 
     return Container(
@@ -220,8 +226,9 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
           const SizedBox(height: BauhausDesign.space3),
           Container(
             decoration: _panelDecoration(),
-            padding:
-                const EdgeInsets.symmetric(horizontal: BauhausDesign.space3),
+            padding: const EdgeInsets.symmetric(
+              horizontal: BauhausDesign.space3,
+            ),
             child: Row(
               children: [
                 const Icon(
@@ -233,15 +240,15 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
                 Expanded(
                   child: TextField(
                     controller: _searchController,
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
-                        ?.copyWith(color: BauhausDesign.textDark),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Search by employee, client, date, or ID',
-                      hintStyle: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
-                          ?.copyWith(color: BauhausDesign.textMuted),
+                      hintStyle: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                     ),
                   ),
                 ),
@@ -287,9 +294,9 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: BauhausDesign.getTextTheme(context)
-                      .labelSmall
-                      ?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
                 ),
               ),
             ],
@@ -298,9 +305,9 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
           Text(
             value,
             style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
       ),
@@ -371,7 +378,9 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
   }
 
   Widget _buildAssignmentCard(
-      Map<String, dynamic> assignment, BuildContext context) {
+    Map<String, dynamic> assignment,
+    BuildContext context,
+  ) {
     try {
       return EnhancedAssignmentCard(
         assignment: assignment,
@@ -393,16 +402,16 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
             Text(
               'Error displaying assignment',
               style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                    color: BauhausDesign.error,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: BauhausDesign.error,
+                fontWeight: FontWeight.w700,
+              ),
             ),
             const SizedBox(height: BauhausDesign.space1),
             Text(
               e.toString(),
-              style: BauhausDesign.getTextTheme(context)
-                  .labelSmall
-                  ?.copyWith(color: BauhausDesign.textMuted),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
             ),
           ],
         ),
@@ -515,12 +524,13 @@ class _EnhancedAssignmentCardState
         : widget.assignment['breakList'] ?? [];
     final List<dynamic> highIntensityList = scheduleArray.isNotEmpty
         ? scheduleArray
-            .map((item) => item['highIntensity'] as bool? ?? false)
-            .toList()
+              .map((item) => item['highIntensity'] as bool? ?? false)
+              .toList()
         : List<bool>.filled(dateList.length, false);
 
-    final shiftCount =
-        scheduleArray.isNotEmpty ? scheduleArray.length : dateList.length;
+    final shiftCount = scheduleArray.isNotEmpty
+        ? scheduleArray.length
+        : dateList.length;
     final String createdAt = widget.assignment['createdAt'] ?? '';
 
     final employeeFullName =
@@ -566,7 +576,12 @@ class _EnhancedAssignmentCardState
                   children: [
                     _buildHeader(employeeName, clientName, shiftCount),
                     const SizedBox(height: BauhausDesign.space3),
-                    _buildMetaRow(createdAt, startTimeList, endTimeList, breakList),
+                    _buildMetaRow(
+                      createdAt,
+                      startTimeList,
+                      endTimeList,
+                      breakList,
+                    ),
                     const SizedBox(height: BauhausDesign.space3),
                     _buildShiftPreview(
                       dateList,
@@ -631,10 +646,10 @@ class _EnhancedAssignmentCardState
               child: Text(
                 '$shiftCount Shift${shiftCount == 1 ? '' : 's'}',
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                      fontSize: BauhausDesign.fontMd,
-                      color: BauhausDesign.primary,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  fontSize: BauhausDesign.fontMd,
+                  color: BauhausDesign.primary,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
             const SizedBox(height: BauhausDesign.space2),
@@ -647,13 +662,15 @@ class _EnhancedAssignmentCardState
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.edit,
-                          size: 16, color: BauhausDesign.primary),
+                      const Icon(
+                        Icons.edit,
+                        size: 16,
+                        color: BauhausDesign.primary,
+                      ),
                       const SizedBox(width: BauhausDesign.space1),
                       Text(
                         AppLocalizations.of(context)!.edit,
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
+                        style: BauhausDesign.getTextTheme(context).labelLarge
                             ?.copyWith(
                               fontSize: BauhausDesign.fontSm,
                               color: BauhausDesign.primary,
@@ -671,8 +688,11 @@ class _EnhancedAssignmentCardState
     );
   }
 
-  Widget _buildLabeledValue(String label, String value,
-      {required IconData icon}) {
+  Widget _buildLabeledValue(
+    String label,
+    String value, {
+    required IconData icon,
+  }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -684,18 +704,18 @@ class _EnhancedAssignmentCardState
             children: [
               Text(
                 label.toUpperCase(),
-                style: BauhausDesign.getTextTheme(context)
-                    .labelSmall
-                    ?.copyWith(color: BauhausDesign.textMuted),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
               ),
               const SizedBox(height: 2),
               Text(
                 value,
-                style:
-                    BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                          color: BauhausDesign.textDark,
-                          fontWeight: FontWeight.w700,
-                        ),
+                style: BauhausDesign.getTextTheme(context).titleMedium
+                    ?.copyWith(
+                      color: BauhausDesign.textDark,
+                      fontWeight: FontWeight.w700,
+                    ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -706,8 +726,12 @@ class _EnhancedAssignmentCardState
     );
   }
 
-  Widget _buildMetaRow(String createdAt, List<dynamic> startTimeList,
-      List<dynamic> endTimeList, List<dynamic> breakList) {
+  Widget _buildMetaRow(
+    String createdAt,
+    List<dynamic> startTimeList,
+    List<dynamic> endTimeList,
+    List<dynamic> breakList,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: BauhausDesign.space3,
@@ -726,16 +750,18 @@ class _EnhancedAssignmentCardState
           Expanded(
             child: Row(
               children: [
-                Icon(Icons.calendar_today,
-                    size: 14, color: BauhausDesign.secondary),
+                Icon(
+                  Icons.calendar_today,
+                  size: 14,
+                  color: BauhausDesign.secondary,
+                ),
                 const SizedBox(width: BauhausDesign.space1),
                 Expanded(
                   child: Text(
                     '${AppLocalizations.of(context)!.createdLabel}: ${_formatDate(createdAt)}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelSmall
+                    style: BauhausDesign.getTextTheme(context).labelSmall
                         ?.copyWith(
                           color: BauhausDesign.textDark,
                           fontWeight: FontWeight.w600,
@@ -761,9 +787,9 @@ class _EnhancedAssignmentCardState
             child: Text(
               '${AppLocalizations.of(context)!.totalHours}: ${_calculateTotalHours(startTimeList, endTimeList, breakList)}',
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.primary,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: BauhausDesign.primary,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],
@@ -782,9 +808,9 @@ class _EnhancedAssignmentCardState
     if (dateList.isEmpty) {
       return Text(
         AppLocalizations.of(context)!.noAssignmentData,
-        style: BauhausDesign.getTextTheme(context)
-            .bodyMedium
-            ?.copyWith(color: BauhausDesign.textMuted),
+        style: BauhausDesign.getTextTheme(
+          context,
+        ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
       );
     }
 
@@ -795,15 +821,18 @@ class _EnhancedAssignmentCardState
       children: [
         Row(
           children: [
-            const Icon(Icons.schedule,
-                size: 16, color: BauhausDesign.secondary),
+            const Icon(
+              Icons.schedule,
+              size: 16,
+              color: BauhausDesign.secondary,
+            ),
             const SizedBox(width: BauhausDesign.space1),
             Text(
               AppLocalizations.of(context)!.shiftDetails,
               style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ],
         ),
@@ -835,9 +864,9 @@ class _EnhancedAssignmentCardState
           const SizedBox(height: BauhausDesign.space2),
           Text(
             'and ${shiftCount - 3} more shift${shiftCount - 3 == 1 ? '' : 's'}',
-            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textMuted,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
           ),
         ],
       ],
@@ -850,8 +879,9 @@ class _EnhancedAssignmentCardState
         color: showFullDetails
             ? BauhausDesign.primary
             : BauhausDesign.surfaceLight,
-        borderColor:
-            showFullDetails ? BauhausDesign.neutral : BauhausDesign.neutral,
+        borderColor: showFullDetails
+            ? BauhausDesign.neutral
+            : BauhausDesign.neutral,
       ),
       child: InkWell(
         onTap: () {
@@ -878,11 +908,11 @@ class _EnhancedAssignmentCardState
               Text(
                 showFullDetails ? 'Hide Details' : 'Show Details',
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                      color: showFullDetails
-                          ? BauhausDesign.surfaceLight
-                          : BauhausDesign.textDark,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  color: showFullDetails
+                      ? BauhausDesign.surfaceLight
+                      : BauhausDesign.textDark,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ],
           ),
@@ -899,47 +929,42 @@ class _EnhancedAssignmentCardState
           child: BauhausLoadingState(showMessage: false),
         )
       else ...[
-        _buildInfoSection(
-          AppLocalizations.of(context)!.clientInformationTitle,
-          [
-            if (clientDetails != null) ...[
-              _buildInfoRow(
-                'Name',
-                '${clientDetails!.clientFirstName} ${clientDetails!.clientLastName}',
-              ),
-              _buildInfoRow('Email', clientDetails!.clientEmail),
-              _buildInfoRow(
-                'Phone',
-                clientDetails!.clientPhone ?? 'Phone Number Not Provided',
-              ),
-              _buildInfoRow(
-                'Address',
-                '${clientDetails!.clientAddress}, ${clientDetails!.clientCity}, ${clientDetails!.clientState} ${clientDetails!.clientZip}',
-              ),
-            ] else ...[
-              _buildInfoRow('Email', widget.assignment['clientEmail'] ?? ''),
-              _buildInfoRow(
-                  'Details', 'Additional client details not available'),
-            ],
+        _buildInfoSection(AppLocalizations.of(context)!.clientInformationTitle, [
+          if (clientDetails != null) ...[
+            _buildInfoRow(
+              'Name',
+              '${clientDetails!.clientFirstName} ${clientDetails!.clientLastName}',
+            ),
+            _buildInfoRow('Email', clientDetails!.clientEmail),
+            _buildInfoRow(
+              'Phone',
+              clientDetails!.clientPhone ?? 'Phone Number Not Provided',
+            ),
+            _buildInfoRow(
+              'Address',
+              '${clientDetails!.clientAddress}, ${clientDetails!.clientCity}, ${clientDetails!.clientState} ${clientDetails!.clientZip}',
+            ),
+          ] else ...[
+            _buildInfoRow('Email', widget.assignment['clientEmail'] ?? ''),
+            _buildInfoRow('Details', 'Additional client details not available'),
           ],
-        ),
+        ]),
         const SizedBox(height: BauhausDesign.space3),
-        _buildInfoSection(
-          'Employee Information',
-          [
-            if (employeeDetails != null) ...[
-              _buildInfoRow('Email', employeeDetails!['email'] ?? ''),
-              _buildInfoRow(
-                'Details',
-                'Additional employee details available via user management',
-              ),
-            ] else ...[
-              _buildInfoRow('Email', widget.assignment['userEmail'] ?? ''),
-              _buildInfoRow(
-                  'Details', 'Additional employee details not available'),
-            ],
+        _buildInfoSection('Employee Information', [
+          if (employeeDetails != null) ...[
+            _buildInfoRow('Email', employeeDetails!['email'] ?? ''),
+            _buildInfoRow(
+              'Details',
+              'Additional employee details available via user management',
+            ),
+          ] else ...[
+            _buildInfoRow('Email', widget.assignment['userEmail'] ?? ''),
+            _buildInfoRow(
+              'Details',
+              'Additional employee details not available',
+            ),
           ],
-        ),
+        ]),
       ],
     ];
   }
@@ -958,9 +983,9 @@ class _EnhancedAssignmentCardState
           Text(
             title,
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space2),
           ...children,
@@ -982,20 +1007,20 @@ class _EnhancedAssignmentCardState
             child: Text(
               '$label:',
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.textMuted,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: BauhausDesign.textMuted,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           Expanded(
             child: Text(
               hasValue ? value : 'Not provided',
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: hasValue
-                        ? BauhausDesign.textDark
-                        : BauhausDesign.textMuted,
-                    fontStyle: hasValue ? FontStyle.normal : FontStyle.italic,
-                  ),
+                color: hasValue
+                    ? BauhausDesign.textDark
+                    : BauhausDesign.textMuted,
+                fontStyle: hasValue ? FontStyle.normal : FontStyle.italic,
+              ),
             ),
           ),
         ],
@@ -1003,8 +1028,13 @@ class _EnhancedAssignmentCardState
     );
   }
 
-  Widget _buildShiftRow(String date, String startTime, String endTime,
-      String breakTime, bool isHighIntensity) {
+  Widget _buildShiftRow(
+    String date,
+    String startTime,
+    String endTime,
+    String breakTime,
+    bool isHighIntensity,
+  ) {
     final dateValue = _formatShiftDate(date);
     final timeValue =
         '${_toInlineValue(startTime)} - ${_toInlineValue(endTime)}';
@@ -1037,19 +1067,19 @@ class _EnhancedAssignmentCardState
               Text(
                 '${AppLocalizations.of(context)!.dateLabel}: ',
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                      color: BauhausDesign.textMuted,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  color: BauhausDesign.textMuted,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               Expanded(
                 child: Text(
                   dateValue,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                            fontSize: BauhausDesign.fontMd,
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelLarge
+                      ?.copyWith(
+                        fontSize: BauhausDesign.fontMd,
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
               ),
             ],
@@ -1067,19 +1097,19 @@ class _EnhancedAssignmentCardState
               Text(
                 '${AppLocalizations.of(context)!.startLabel} - ${AppLocalizations.of(context)!.endLabel}: ',
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                      color: BauhausDesign.textMuted,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  color: BauhausDesign.textMuted,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               Expanded(
                 child: Text(
                   timeValue,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                            fontSize: BauhausDesign.fontMd,
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelLarge
+                      ?.copyWith(
+                        fontSize: BauhausDesign.fontMd,
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
               ),
             ],
@@ -1097,19 +1127,19 @@ class _EnhancedAssignmentCardState
               Text(
                 '${AppLocalizations.of(context)!.breakLabel}: ',
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                      color: BauhausDesign.textMuted,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  color: BauhausDesign.textMuted,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               Expanded(
                 child: Text(
                   breakValue,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                            fontSize: BauhausDesign.fontMd,
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelLarge
+                      ?.copyWith(
+                        fontSize: BauhausDesign.fontMd,
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
               ),
               if (isHighIntensity)
@@ -1171,7 +1201,10 @@ class _EnhancedAssignmentCardState
   }
 
   String _calculateTotalHours(
-      List<dynamic> startTimes, List<dynamic> endTimes, List<dynamic> breaks) {
+    List<dynamic> startTimes,
+    List<dynamic> endTimes,
+    List<dynamic> breaks,
+  ) {
     if (startTimes.isEmpty || endTimes.isEmpty) return '0.0';
 
     double totalHours = 0.0;
@@ -1185,7 +1218,10 @@ class _EnhancedAssignmentCardState
   }
 
   double _calculateShiftHours(
-      String startTime, String endTime, String breakTime) {
+    String startTime,
+    String endTime,
+    String breakTime,
+  ) {
     try {
       final start = _parseTime(startTime);
       final end = _parseTime(endTime);

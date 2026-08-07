@@ -48,11 +48,10 @@ class FamilyAccessState {
 class FamilyAccessViewModel extends Notifier<FamilyAccessState> {
   late final RealtimePortalRepository _repository;
 
-  
   @override
   FamilyAccessState build() {
     final apiMethod = ref.watch(apiMethodProvider);
-    
+
     return FamilyAccessState();
   }
 
@@ -87,40 +86,24 @@ class FamilyAccessViewModel extends Notifier<FamilyAccessState> {
         permissions: permissions,
       );
 
-      state = state.copyWith(
-        isInviting: false,
-        pendingInvitation: invitation,
-      );
+      state = state.copyWith(isInviting: false, pendingInvitation: invitation);
     } catch (e) {
       debugPrint('Error inviting family member: $e');
-      state = state.copyWith(
-        isInviting: false,
-        error: _cleanErrorMessage(e),
-      );
+      state = state.copyWith(isInviting: false, error: _cleanErrorMessage(e));
     }
   }
 
   /// Get family members
-  Future<void> getFamilyMembers({
-    required String clientId,
-  }) async {
+  Future<void> getFamilyMembers({required String clientId}) async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      final members = await _repository.getFamilyMembers(
-        clientId: clientId,
-      );
+      final members = await _repository.getFamilyMembers(clientId: clientId);
 
-      state = state.copyWith(
-        isLoading: false,
-        members: members,
-      );
+      state = state.copyWith(isLoading: false, members: members);
     } catch (e) {
       debugPrint('Error getting family members: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -156,10 +139,7 @@ class FamilyAccessViewModel extends Notifier<FamilyAccessState> {
       );
     } catch (e) {
       debugPrint('Error updating permissions: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -193,10 +173,7 @@ class FamilyAccessViewModel extends Notifier<FamilyAccessState> {
       );
     } catch (e) {
       debugPrint('Error updating family member status: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -215,16 +192,10 @@ class FamilyAccessViewModel extends Notifier<FamilyAccessState> {
         endDate: endDate,
       );
 
-      state = state.copyWith(
-        isLoading: false,
-        auditLogs: logs,
-      );
+      state = state.copyWith(isLoading: false, auditLogs: logs);
     } catch (e) {
       debugPrint('Error getting access log: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -234,8 +205,12 @@ class FamilyAccessViewModel extends Notifier<FamilyAccessState> {
   }
 
   /// Toggle permission
-  void togglePermission(String memberId, String clientId, String updatedBy,
-      String permissionName) {
+  void togglePermission(
+    String memberId,
+    String clientId,
+    String updatedBy,
+    String permissionName,
+  ) {
     final member = state.members.firstWhere((m) => m.id == memberId);
     final currentPermissions = member.permissions;
 
@@ -362,4 +337,7 @@ class FamilyAccessViewModel extends Notifier<FamilyAccessState> {
 }
 
 /// Provider for family access viewmodel
-final familyAccessViewModelProvider = NotifierProvider<FamilyAccessViewModel, FamilyAccessState>(FamilyAccessViewModel.new);
+final familyAccessViewModelProvider =
+    NotifierProvider<FamilyAccessViewModel, FamilyAccessState>(
+      FamilyAccessViewModel.new,
+    );

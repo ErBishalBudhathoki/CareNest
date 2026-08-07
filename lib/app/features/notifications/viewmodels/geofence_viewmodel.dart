@@ -6,7 +6,7 @@ class GeofenceState {
   final List<GeofenceModel> geofences;
   final bool isLoading;
   final String? errorMessage;
-  
+
   const GeofenceState({
     this.geofences = const [],
     this.isLoading = false,

@@ -1586,6 +1586,7 @@ Your Invoice Team
       },
     );
   }
+
   /// Recalculates tax and total so that expenses/reimbursements are NOT taxed.
   ///
   /// Expenses are pass-through costs — the business recovers money it already
@@ -1601,16 +1602,18 @@ Your Invoice Team
       //    they'll be taxed.
       if (clientData['items'] is List) {
         final List<dynamic> items = clientData['items'];
-        final List<dynamic> expenses =
-            (clientData['expenses'] is List) ? clientData['expenses'] : [];
+        final List<dynamic> expenses = (clientData['expenses'] is List)
+            ? clientData['expenses']
+            : [];
         final List<dynamic> newItems = [];
         double migratedItemsSubtotal = 0.0;
         double migratedExpensesTotal = _safeDouble(clientData['expensesTotal']);
 
         for (final item in items) {
           if (item is Map) {
-            final String itemName =
-                (item['itemName'] ?? '').toString().toLowerCase();
+            final String itemName = (item['itemName'] ?? '')
+                .toString()
+                .toLowerCase();
             if (itemName.contains('reimburse')) {
               // Move to expenses
               expenses.add({
@@ -1642,7 +1645,8 @@ Your Invoice Team
       if (expensesTotal == 0.0) return;
 
       final double taxRate = _safeDouble(clientData['taxRate']);
-      final bool applyTax = clientData['applyTax'] == true ||
+      final bool applyTax =
+          clientData['applyTax'] == true ||
           clientData['showTax'] == true ||
           _safeDouble(clientData['taxAmount']) > 0;
 
@@ -1653,8 +1657,7 @@ Your Invoice Team
 
       clientData['taxAmount'] = double.parse(correctTax.toStringAsFixed(2));
       clientData['tax'] = clientData['taxAmount'];
-      clientData['subtotal'] =
-          double.parse(correctSubtotal.toStringAsFixed(2));
+      clientData['subtotal'] = double.parse(correctSubtotal.toStringAsFixed(2));
       clientData['total'] = double.parse(correctTotal.toStringAsFixed(2));
 
       debugPrint(

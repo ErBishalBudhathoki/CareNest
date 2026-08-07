@@ -9,8 +9,8 @@ import 'package:share_plus/share_plus.dart';
 
 final payrollExportViewModelProvider =
     AsyncNotifierProvider<PayrollExportViewModel, void>(() {
-  return PayrollExportViewModel();
-});
+      return PayrollExportViewModel();
+    });
 
 class PayrollExportViewModel extends AsyncNotifier<void> {
   late final ApiMethod _apiMethod;
@@ -44,12 +44,16 @@ class PayrollExportViewModel extends AsyncNotifier<void> {
           await _saveAndShareFile(csvContent, filename);
           state = const AsyncValue.data(null);
         } else {
-          state =
-              AsyncValue.error('No CSV content received', StackTrace.current);
+          state = AsyncValue.error(
+            'No CSV content received',
+            StackTrace.current,
+          );
         }
       } else {
         state = AsyncValue.error(
-            response['message'] ?? 'Export failed', StackTrace.current);
+          response['message'] ?? 'Export failed',
+          StackTrace.current,
+        );
       }
     } catch (e, st) {
       state = AsyncValue.error(e, st);

@@ -12,30 +12,30 @@ class BauhausTheme {
 
   // Text Styles
   static TextStyle get headerStyle => GoogleFonts.inter(
-        fontSize: 24,
-        fontWeight: FontWeight.w900,
-        color: textDark,
-        height: 1.2,
-      );
+    fontSize: 24,
+    fontWeight: FontWeight.w900,
+    color: textDark,
+    height: 1.2,
+  );
 
   static TextStyle get subHeaderStyle => GoogleFonts.inter(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: textDark,
-      );
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    color: textDark,
+  );
 
   static TextStyle get bodyStyle => GoogleFonts.inter(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: textDark,
-      );
+    fontSize: 14,
+    fontWeight: FontWeight.w600,
+    color: textDark,
+  );
 
   static TextStyle get labelStyle => GoogleFonts.inter(
-        fontSize: 12,
-        fontWeight: FontWeight.bold,
-        color: textDark,
-        letterSpacing: 0.5,
-      );
+    fontSize: 12,
+    fontWeight: FontWeight.bold,
+    color: textDark,
+    letterSpacing: 0.5,
+  );
 
   // Layout Constants
   static const double borderWidth = 2.0;

@@ -101,11 +101,15 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen> {
                       padding: const EdgeInsets.all(BauhausDesign.space3),
                       decoration: BoxDecoration(
                         color: BauhausDesign.secondary.withOpacity(0.1),
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusMd),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusMd,
+                        ),
                       ),
-                      child: Icon(Icons.add_circle,
-                          color: BauhausDesign.secondary, size: 32),
+                      child: Icon(
+                        Icons.add_circle,
+                        color: BauhausDesign.secondary,
+                        size: 32,
+                      ),
                     ),
                     const SizedBox(width: BauhausDesign.space4),
                     Expanded(
@@ -114,16 +118,15 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen> {
                         children: [
                           Text(
                             'New Entry',
-                            style: BauhausDesign.getTextTheme(context)
-                                .headlineSmall,
+                            style: BauhausDesign.getTextTheme(
+                              context,
+                            ).headlineSmall,
                           ),
                           Text(
                             'Create a new holiday entry',
                             style: BauhausDesign.getTextTheme(context)
                                 .bodyMedium
-                                ?.copyWith(
-                                  color: BauhausDesign.textMuted,
-                                ),
+                                ?.copyWith(color: BauhausDesign.textMuted),
                           ),
                         ],
                       ),
@@ -161,8 +164,11 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen> {
                     controller: _dateController,
                     label: 'Date',
                     hintText: 'Select Date',
-                    prefixIcon: Icon(Icons.calendar_today,
-                        size: 18, color: BauhausDesign.textMuted),
+                    prefixIcon: Icon(
+                      Icons.calendar_today,
+                      size: 18,
+                      color: BauhausDesign.textMuted,
+                    ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Please select a date';
@@ -237,9 +243,9 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen> {
             SnackBar(
               content: Text(
                 'Holiday created successfully',
-                style: BauhausDesign.getTextTheme(context)
-                    .labelLarge
-                    ?.copyWith(color: BauhausDesign.surfaceWhite),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).labelLarge?.copyWith(color: BauhausDesign.surfaceWhite),
               ),
               backgroundColor: BauhausDesign.success,
               behavior: SnackBarBehavior.floating,
@@ -260,9 +266,9 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen> {
           SnackBar(
             content: Text(
               'Failed to add holiday',
-              style: BauhausDesign.getTextTheme(context)
-                  .labelLarge
-                  ?.copyWith(color: BauhausDesign.surfaceWhite),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).labelLarge?.copyWith(color: BauhausDesign.surfaceWhite),
             ),
             backgroundColor: BauhausDesign.error,
             behavior: SnackBarBehavior.floating,

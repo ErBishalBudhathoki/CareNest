@@ -11,11 +11,7 @@ class AdvancedPayrollDashboard extends ConsumerStatefulWidget {
   final String? organizationId;
   final String? userId;
 
-  const AdvancedPayrollDashboard({
-    super.key,
-    this.organizationId,
-    this.userId,
-  });
+  const AdvancedPayrollDashboard({super.key, this.organizationId, this.userId});
 
   @override
   ConsumerState<AdvancedPayrollDashboard> createState() =>
@@ -78,9 +74,7 @@ class _AdvancedPayrollDashboardState
     return null;
   }
 
-  Future<void> _initializeDashboard({
-    bool force = false,
-  }) async {
+  Future<void> _initializeDashboard({bool force = false}) async {
     final orgId = _resolveOrganizationId();
 
     if (_isBootstrapping && !force) return;
@@ -154,89 +148,88 @@ class _AdvancedPayrollDashboardState
       body: _activeOrganizationId == null
           ? _buildMissingOrganizationState(context)
           : isLoading
-              ? const Center(child: BauhausLoadingState())
-              : RefreshIndicator(
-                  color: BauhausDesign.success,
-                  onRefresh: () => _initializeDashboard(force: true),
-                  child: CustomScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(
-                            BauhausDesign.space4,
-                            BauhausDesign.space4,
-                            BauhausDesign.space4,
-                            BauhausDesign.space8,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (error != null) ...[
-                                _buildErrorBanner(context, error),
-                                const SizedBox(height: BauhausDesign.space4),
-                              ],
-                              _buildRunControlPanel(context, summary),
-                              const SizedBox(height: BauhausDesign.space6),
-                              _buildSectionHeader(
-                                context,
-                                title: 'Payroll Snapshot',
-                                subtitle:
-                                    'Live payroll totals for period $_selectedPeriod.',
-                                accent: BauhausDesign.success,
-                              ),
-                              const SizedBox(height: BauhausDesign.space3),
-                              _buildSnapshotGrid(context, summary),
-                              const SizedBox(height: BauhausDesign.space6),
-                              _buildSectionHeader(
-                                context,
-                                title: 'Cost Composition',
-                                subtitle:
-                                    'Gross payroll split into net pay, tax, and super.',
-                                accent: BauhausDesign.primary,
-                              ),
-                              const SizedBox(height: BauhausDesign.space3),
-                              _buildCompositionTrack(context, summary),
-                              const SizedBox(height: BauhausDesign.space6),
-                              _buildSectionHeader(
-                                context,
-                                title: 'Execution Actions',
-                                subtitle:
-                                    'Run calculations, generate payslips, and export accounting payloads.',
-                                accent: BauhausDesign.secondary,
-                              ),
-                              const SizedBox(height: BauhausDesign.space3),
-                              _buildActionDeck(context, state),
-                              const SizedBox(height: BauhausDesign.space6),
-                              if (state.calculation != null) ...[
-                                _buildSectionHeader(
-                                  context,
-                                  title: 'Latest Simulation',
-                                  subtitle:
-                                      'Most recent payroll calculation response.',
-                                  accent: BauhausDesign.accent,
-                                ),
-                                const SizedBox(height: BauhausDesign.space3),
-                                _buildLatestSimulation(
-                                    context, state.calculation!),
-                                const SizedBox(height: BauhausDesign.space6),
-                              ],
-                              _buildSectionHeader(
-                                context,
-                                title: 'Employee Settlement Ledger',
-                                subtitle:
-                                    'Per-employee gross to net conversion for the selected period.',
-                                accent: BauhausDesign.warning,
-                              ),
-                              const SizedBox(height: BauhausDesign.space3),
-                              _buildEmployeeLedger(context, summary),
-                            ],
-                          ),
-                        ),
+          ? const Center(child: BauhausLoadingState())
+          : RefreshIndicator(
+              color: BauhausDesign.success,
+              onRefresh: () => _initializeDashboard(force: true),
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        BauhausDesign.space4,
+                        BauhausDesign.space4,
+                        BauhausDesign.space4,
+                        BauhausDesign.space8,
                       ),
-                    ],
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (error != null) ...[
+                            _buildErrorBanner(context, error),
+                            const SizedBox(height: BauhausDesign.space4),
+                          ],
+                          _buildRunControlPanel(context, summary),
+                          const SizedBox(height: BauhausDesign.space6),
+                          _buildSectionHeader(
+                            context,
+                            title: 'Payroll Snapshot',
+                            subtitle:
+                                'Live payroll totals for period $_selectedPeriod.',
+                            accent: BauhausDesign.success,
+                          ),
+                          const SizedBox(height: BauhausDesign.space3),
+                          _buildSnapshotGrid(context, summary),
+                          const SizedBox(height: BauhausDesign.space6),
+                          _buildSectionHeader(
+                            context,
+                            title: 'Cost Composition',
+                            subtitle:
+                                'Gross payroll split into net pay, tax, and super.',
+                            accent: BauhausDesign.primary,
+                          ),
+                          const SizedBox(height: BauhausDesign.space3),
+                          _buildCompositionTrack(context, summary),
+                          const SizedBox(height: BauhausDesign.space6),
+                          _buildSectionHeader(
+                            context,
+                            title: 'Execution Actions',
+                            subtitle:
+                                'Run calculations, generate payslips, and export accounting payloads.',
+                            accent: BauhausDesign.secondary,
+                          ),
+                          const SizedBox(height: BauhausDesign.space3),
+                          _buildActionDeck(context, state),
+                          const SizedBox(height: BauhausDesign.space6),
+                          if (state.calculation != null) ...[
+                            _buildSectionHeader(
+                              context,
+                              title: 'Latest Simulation',
+                              subtitle:
+                                  'Most recent payroll calculation response.',
+                              accent: BauhausDesign.accent,
+                            ),
+                            const SizedBox(height: BauhausDesign.space3),
+                            _buildLatestSimulation(context, state.calculation!),
+                            const SizedBox(height: BauhausDesign.space6),
+                          ],
+                          _buildSectionHeader(
+                            context,
+                            title: 'Employee Settlement Ledger',
+                            subtitle:
+                                'Per-employee gross to net conversion for the selected period.',
+                            accent: BauhausDesign.warning,
+                          ),
+                          const SizedBox(height: BauhausDesign.space3),
+                          _buildEmployeeLedger(context, summary),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                ],
+              ),
+            ),
     );
   }
 
@@ -356,8 +349,10 @@ class _AdvancedPayrollDashboardState
                   decoration: BoxDecoration(
                     color: BauhausDesign.success.withOpacity(0.16),
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                    border:
-                        Border.all(color: BauhausDesign.neutral, width: 1.4),
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.4,
+                    ),
                   ),
                   child: const Icon(
                     Icons.payments_rounded,
@@ -406,8 +401,10 @@ class _AdvancedPayrollDashboardState
                   decoration: BoxDecoration(
                     color: BauhausDesign.surfaceOffWhite,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                    border:
-                        Border.all(color: BauhausDesign.neutral, width: 1.2),
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.2,
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -435,8 +432,10 @@ class _AdvancedPayrollDashboardState
                   decoration: BoxDecoration(
                     color: BauhausDesign.surfaceOffWhite,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                    border:
-                        Border.all(color: BauhausDesign.neutral, width: 1.2),
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.2,
+                    ),
                   ),
                   child: Text(
                     summary == null
@@ -489,10 +488,7 @@ class _AdvancedPayrollDashboardState
                       ],
                     ),
                     const SizedBox(height: BauhausDesign.space2),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: actions,
-                    ),
+                    Align(alignment: Alignment.centerLeft, child: actions),
                   ],
                 );
               },
@@ -664,8 +660,8 @@ class _AdvancedPayrollDashboardState
         final columns = constraints.maxWidth >= 1100
             ? 3
             : constraints.maxWidth >= 680
-                ? 2
-                : 1;
+            ? 2
+            : 1;
         final spacing = BauhausDesign.space3;
         final cardWidth =
             (constraints.maxWidth - (columns - 1) * spacing) / columns;
@@ -784,11 +780,7 @@ class _AdvancedPayrollDashboardState
         value: net,
         color: BauhausDesign.success,
       ),
-      _CostComponent(
-        label: 'Tax',
-        value: tax,
-        color: BauhausDesign.primary,
-      ),
+      _CostComponent(label: 'Tax', value: tax, color: BauhausDesign.primary),
       _CostComponent(
         label: 'Super',
         value: superAmount,
@@ -819,21 +811,24 @@ class _AdvancedPayrollDashboardState
           LayoutBuilder(
             builder: (context, constraints) {
               final barWidth = constraints.maxWidth;
-              final total =
-                  components.fold<double>(0, (sum, item) => sum + item.value);
+              final total = components.fold<double>(
+                0,
+                (sum, item) => sum + item.value,
+              );
 
               final segments = components
                   .where((component) => component.value > 0)
                   .map((component) {
-                final ratio = total > 0 ? component.value / total : 0.0;
-                final width = (barWidth * ratio).clamp(1.0, barWidth);
-                return _SegmentData(
-                  label: component.label,
-                  value: component.value,
-                  color: component.color,
-                  width: width,
-                );
-              }).toList();
+                    final ratio = total > 0 ? component.value / total : 0.0;
+                    final width = (barWidth * ratio).clamp(1.0, barWidth);
+                    return _SegmentData(
+                      label: component.label,
+                      value: component.value,
+                      color: component.color,
+                      width: width,
+                    );
+                  })
+                  .toList();
 
               return ClipRRect(
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
@@ -936,8 +931,8 @@ class _AdvancedPayrollDashboardState
         final columns = constraints.maxWidth >= 1080
             ? 3
             : constraints.maxWidth >= 700
-                ? 2
-                : 1;
+            ? 2
+            : 1;
         final spacing = BauhausDesign.space3;
         final cardWidth =
             (constraints.maxWidth - (columns - 1) * spacing) / columns;
@@ -1146,8 +1141,9 @@ class _AdvancedPayrollDashboardState
     EmployeePayrollSummary employee,
   ) {
     final textTheme = BauhausDesign.getTextTheme(context);
-    final conversion =
-        employee.grossPay > 0 ? employee.netPay / employee.grossPay : 0.0;
+    final conversion = employee.grossPay > 0
+        ? employee.netPay / employee.grossPay
+        : 0.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1229,8 +1225,10 @@ class _AdvancedPayrollDashboardState
                   decoration: BoxDecoration(
                     color: BauhausDesign.surfaceOffWhite,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                    border:
-                        Border.all(color: BauhausDesign.neutral, width: 0.8),
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 0.8,
+                    ),
                   ),
                 ),
                 Container(
@@ -1317,8 +1315,10 @@ class _AdvancedPayrollDashboardState
   Future<void> _calculatePayroll() async {
     final orgId = _activeOrganizationId ?? _resolveOrganizationId();
     if (orgId == null || orgId.isEmpty) {
-      _showSnack('Organization is required to calculate payroll.',
-          isError: true);
+      _showSnack(
+        'Organization is required to calculate payroll.',
+        isError: true,
+      );
       return;
     }
 
@@ -1327,22 +1327,22 @@ class _AdvancedPayrollDashboardState
     final success = await ref
         .read(advancedPayrollViewModelProvider.notifier)
         .calculatePayroll({
-      'organizationId': orgId,
-      'userId': userId,
-      'period': _selectedPeriod,
-      'awardLevel': 'SCHADS-2',
-      'hours': {
-        'regular': 76,
-        'overtime': 4,
-        'saturday': 4,
-        'sunday': 0,
-        'publicHoliday': 0,
-      },
-      'travelKm': 0,
-      'mealAllowance': 0,
-      'sleepovers': 0,
-      'hasFirstAid': false,
-    });
+          'organizationId': orgId,
+          'userId': userId,
+          'period': _selectedPeriod,
+          'awardLevel': 'SCHADS-2',
+          'hours': {
+            'regular': 76,
+            'overtime': 4,
+            'saturday': 4,
+            'sunday': 0,
+            'publicHoliday': 0,
+          },
+          'travelKm': 0,
+          'mealAllowance': 0,
+          'sleepovers': 0,
+          'hasFirstAid': false,
+        });
 
     if (success) {
       _showSnack('Payroll calculation completed.');
@@ -1357,8 +1357,10 @@ class _AdvancedPayrollDashboardState
   Future<void> _generatePayslips() async {
     final orgId = _activeOrganizationId ?? _resolveOrganizationId();
     if (orgId == null || orgId.isEmpty) {
-      _showSnack('Organization is required to generate payslips.',
-          isError: true);
+      _showSnack(
+        'Organization is required to generate payslips.',
+        isError: true,
+      );
       return;
     }
 
@@ -1386,10 +1388,10 @@ class _AdvancedPayrollDashboardState
     final success = await ref
         .read(advancedPayrollViewModelProvider.notifier)
         .exportPayrollData({
-      'organizationId': orgId,
-      'period': _selectedPeriod,
-      'format': 'xero',
-    });
+          'organizationId': orgId,
+          'period': _selectedPeriod,
+          'format': 'xero',
+        });
 
     if (success) {
       _showSnack('Payroll export initiated successfully.');

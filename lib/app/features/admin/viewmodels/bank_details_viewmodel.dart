@@ -5,10 +5,7 @@ import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/core/providers/core_providers.dart';
 import '../models/bank_details_state.dart';
 
-enum BankDetailsScope {
-  personal,
-  organization,
-}
+enum BankDetailsScope { personal, organization }
 
 class BankDetailsViewModel extends Notifier<BankDetailsState> {
   final BankDetailsScope scope;
@@ -51,7 +48,8 @@ class BankDetailsViewModel extends Notifier<BankDetailsState> {
     final inputsValid = _validateInputs(bsb, accountNumber);
     if (!inputsValid) {
       state = state.copyWith(
-        errorMessage: 'Please check BSB (XXX-XXX) and account number (6-10 digits).',
+        errorMessage:
+            'Please check BSB (XXX-XXX) and account number (6-10 digits).',
       );
       return;
     }
@@ -72,17 +70,14 @@ class BankDetailsViewModel extends Notifier<BankDetailsState> {
           return;
         }
 
-        response = await _apiMethod.updateOrganizationDetails(
-          organizationId,
-          {
-            'bankDetails': {
-              'bankName': bankName.trim(),
-              'accountName': accountName.trim(),
-              'bsb': bsb.trim(),
-              'accountNumber': accountNumber.trim(),
-            },
+        response = await _apiMethod.updateOrganizationDetails(organizationId, {
+          'bankDetails': {
+            'bankName': bankName.trim(),
+            'accountName': accountName.trim(),
+            'bsb': bsb.trim(),
+            'accountNumber': accountNumber.trim(),
           },
-        );
+        });
       } else {
         response = await _apiMethod.saveBankDetails(
           bankName: bankName,
@@ -94,7 +89,9 @@ class BankDetailsViewModel extends Notifier<BankDetailsState> {
 
       if (response['success'] != true) {
         state = state.copyWith(
-          errorMessage: response['message']?.toString() ?? 'Failed to save bank details to server',
+          errorMessage:
+              response['message']?.toString() ??
+              'Failed to save bank details to server',
           isLoading: false,
         );
       } else {
@@ -151,8 +148,9 @@ class BankDetailsViewModel extends Notifier<BankDetailsState> {
             forceRefresh: true,
           );
           final organization = response['organization'];
-          final bankDetails =
-              organization is Map ? organization['bankDetails'] : null;
+          final bankDetails = organization is Map
+              ? organization['bankDetails']
+              : null;
 
           if (organization is Map) {
             resolvedSuccess = true;
@@ -160,7 +158,8 @@ class BankDetailsViewModel extends Notifier<BankDetailsState> {
               bankDetails is Map ? bankDetails : const {},
             );
           } else {
-            resolvedError = response['message']?.toString() ??
+            resolvedError =
+                response['message']?.toString() ??
                 response['error']?.toString() ??
                 'Failed to fetch organization bank details';
           }
@@ -177,9 +176,11 @@ class BankDetailsViewModel extends Notifier<BankDetailsState> {
 
       if (resolvedSuccess) {
         final serverBankName = (resolvedData['bankName'] ?? '').toString();
-        final serverAccountName = (resolvedData['accountName'] ?? '').toString();
+        final serverAccountName = (resolvedData['accountName'] ?? '')
+            .toString();
         final serverBsb = (resolvedData['bsb'] ?? '').toString();
-        final serverAccountNumber = (resolvedData['accountNumber'] ?? '').toString();
+        final serverAccountNumber = (resolvedData['accountNumber'] ?? '')
+            .toString();
 
         // Persist server values locally
         await prefs.setString(_bankNameStorageKey, serverBankName);
@@ -220,6 +221,8 @@ class BankDetailsViewModel extends Notifier<BankDetailsState> {
 }
 
 final bankDetailsViewModelProvider =
-    NotifierProvider.family<BankDetailsViewModel, BankDetailsState, BankDetailsScope>(
-  (scope) => BankDetailsViewModel(scope),
-);
+    NotifierProvider.family<
+      BankDetailsViewModel,
+      BankDetailsState,
+      BankDetailsScope
+    >((scope) => BankDetailsViewModel(scope));

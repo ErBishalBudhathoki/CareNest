@@ -31,7 +31,8 @@ class CrashlyticsService {
       FlutterError.onError = (errorDetails) {
         debugPrint('----------------FIREBASE CRASHLYTICS----------------');
         debugPrint(
-            'The following exception was thrown ${errorDetails.exception}:');
+          'The following exception was thrown ${errorDetails.exception}:',
+        );
         debugPrint('${errorDetails.exception}');
         debugPrint('');
         debugPrint('${errorDetails.stack}');
@@ -42,11 +43,13 @@ class CrashlyticsService {
       // Handle errors outside of Flutter framework
       PlatformDispatcher.instance.onError = (error, stack) {
         debugPrint(
-            '----------------FIREBASE CRASHLYTICS (Platform)----------------');
+          '----------------FIREBASE CRASHLYTICS (Platform)----------------',
+        );
         debugPrint('Error: $error');
         debugPrint('Stack: $stack');
         debugPrint(
-            '---------------------------------------------------------------');
+          '---------------------------------------------------------------',
+        );
         _crashlytics.recordError(error, stack, fatal: true);
         return true;
       };
@@ -86,7 +89,9 @@ class CrashlyticsService {
     );
     if (kDebugMode) {
       final isFeedback = error.toString().contains('User Feedback');
-      debugPrint('[Crashlytics] ${isFeedback ? 'Feedback' : 'Error'} recorded: $error');
+      debugPrint(
+        '[Crashlytics] ${isFeedback ? 'Feedback' : 'Error'} recorded: $error',
+      );
       if (stackTrace != null && !isFeedback) debugPrint('Stack: $stackTrace');
     }
   }
@@ -96,7 +101,9 @@ class CrashlyticsService {
   /// Call this after user login to associate crashes with users.
   Future<void> setUserIdentifier(String userId) async {
     await _crashlytics.setUserIdentifier(userId);
-    log('User identified: ${userId.length > 10 ? '${userId.substring(0, 10)}...' : userId}');
+    log(
+      'User identified: ${userId.length > 10 ? '${userId.substring(0, 10)}...' : userId}',
+    );
   }
 
   /// Clear user identifier on logout.

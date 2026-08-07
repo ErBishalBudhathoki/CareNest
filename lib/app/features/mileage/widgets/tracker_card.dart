@@ -23,16 +23,14 @@ class TrackerCard extends StatelessWidget {
           Text(
             'Active Tracker',
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: BauhausDesign.textDark,
-                ),
+              fontWeight: FontWeight.bold,
+              color: BauhausDesign.textDark,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space4),
           Row(
             children: [
-              Expanded(
-                child: _buildStatusDisplay(context),
-              ),
+              Expanded(child: _buildStatusDisplay(context)),
               const SizedBox(width: BauhausDesign.space4),
               _buildActionButton(),
             ],
@@ -56,9 +54,9 @@ class TrackerCard extends StatelessWidget {
       return Text(
         value,
         style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: BauhausDesign.textDark,
-            ),
+          fontWeight: FontWeight.bold,
+          color: BauhausDesign.textDark,
+        ),
       );
     }
 
@@ -68,11 +66,9 @@ class TrackerCard extends StatelessWidget {
         Text(
           isTracking ? 'INSIGHTS...' : 'READY',
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: isTracking
-                    ? BauhausDesign.primary
-                    : BauhausDesign.textMuted,
-              ),
+            fontWeight: FontWeight.bold,
+            color: isTracking ? BauhausDesign.primary : BauhausDesign.textMuted,
+          ),
         ),
         const SizedBox(height: BauhausDesign.space1),
         if (!isTracking || start == null)

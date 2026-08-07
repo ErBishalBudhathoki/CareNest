@@ -12,21 +12,30 @@ class InvoiceEmailService {
 
   InvoiceEmailService({required ApiMethod apiMethod}) : _apiMethod = apiMethod;
 
-  Future<dynamic> sendInvoiceEmail(String pdfPath, List<String> invoiceName,
-      String endDate, String invoiceNumber, String email, String genKey) async {
+  Future<dynamic> sendInvoiceEmail(
+    String pdfPath,
+    List<String> invoiceName,
+    String endDate,
+    String invoiceNumber,
+    String email,
+    String genKey,
+  ) async {
     final apiMethod = _apiMethod;
     final sendingEmailDetail = await apiMethod.getEmailDetailToSendEmail(email);
 
-    final emailAddress =
-        dotenv.isInitialized ? dotenv.env['EMAIL_ADDRESS'] : null;
-    final emailPassword =
-        dotenv.isInitialized ? dotenv.env['EMAIL_PASSWORD'] : null;
+    final emailAddress = dotenv.isInitialized
+        ? dotenv.env['EMAIL_ADDRESS']
+        : null;
+    final emailPassword = dotenv.isInitialized
+        ? dotenv.env['EMAIL_PASSWORD']
+        : null;
     if (emailAddress == null ||
         emailAddress.trim().isEmpty ||
         emailPassword == null ||
         emailPassword.trim().isEmpty) {
       debugPrint(
-          'Missing EMAIL_ADDRESS or EMAIL_PASSWORD in environment config');
+        'Missing EMAIL_ADDRESS or EMAIL_PASSWORD in environment config',
+      );
       return 'Error';
     }
 

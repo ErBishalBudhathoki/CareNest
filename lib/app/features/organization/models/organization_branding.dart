@@ -24,7 +24,8 @@ abstract class OrganizationBranding with _$OrganizationBranding {
       logoUrl: json['logoUrl']?.toString(),
       invoiceTemplate: json['invoiceTemplate'] != null
           ? InvoiceTemplate.fromJson(
-              json['invoiceTemplate'] as Map<String, dynamic>)
+              json['invoiceTemplate'] as Map<String, dynamic>,
+            )
           : null,
     );
   }

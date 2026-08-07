@@ -28,14 +28,12 @@ class _RiskAssessmentViewState extends ConsumerState<RiskAssessmentView> {
     const clientId = 'placeholder_client_id';
 
     if (orgId != null) {
-      ref.read(riskPredictionViewModelProvider.notifier).predictAllRisks(
-            clientId: clientId,
-            organizationId: orgId,
-          );
-      ref.read(riskPredictionViewModelProvider.notifier).predictFallsRisk(
-            clientId: clientId,
-            organizationId: orgId,
-          );
+      ref
+          .read(riskPredictionViewModelProvider.notifier)
+          .predictAllRisks(clientId: clientId, organizationId: orgId);
+      ref
+          .read(riskPredictionViewModelProvider.notifier)
+          .predictFallsRisk(clientId: clientId, organizationId: orgId);
     }
   }
 
@@ -51,54 +49,54 @@ class _RiskAssessmentViewState extends ConsumerState<RiskAssessmentView> {
         title: Text(
           'RISK ASSESSMENT',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-                fontWeight: FontWeight.bold,
-              ),
+            color: BauhausDesign.surfaceWhite,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         elevation: 0,
       ),
       body: state.isLoading
           ? const Center(child: BauhausLoadingState())
           : state.error != null
-              ? Center(
-                  child: BauhausEmptyState(
-                    title: 'Error',
-                    message: state.error!,
-                    icon: Icons.error_outline,
-                    onAction: _loadData,
-                    actionLabel: 'RETRY',
+          ? Center(
+              child: BauhausEmptyState(
+                title: 'Error',
+                message: state.error!,
+                icon: Icons.error_outline,
+                onAction: _loadData,
+                actionLabel: 'RETRY',
+              ),
+            )
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  BauhausSectionHeader(title: 'OVERALL RISK STATUS'),
+                  const SizedBox(height: 16),
+                  _buildOverallRiskCard(state),
+                  const SizedBox(height: 32),
+                  BauhausSectionHeader(title: 'SPECIFIC RISK FACTORS'),
+                  const SizedBox(height: 16),
+                  if (state.fallsRisk != null)
+                    _buildFallsRiskCard(state.fallsRisk!),
+                  const SizedBox(height: 16),
+                  _buildPlaceHolderRiskCard(
+                    title: 'BEHAVIOR ESCALATION',
+                    subtitle: 'No imminent escalation predicted',
+                    color: BauhausDesign.success,
+                    icon: Icons.psychology_alt,
                   ),
-                )
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BauhausSectionHeader(title: 'OVERALL RISK STATUS'),
-                      const SizedBox(height: 16),
-                      _buildOverallRiskCard(state),
-                      const SizedBox(height: 32),
-                      BauhausSectionHeader(title: 'SPECIFIC RISK FACTORS'),
-                      const SizedBox(height: 16),
-                      if (state.fallsRisk != null)
-                        _buildFallsRiskCard(state.fallsRisk!),
-                      const SizedBox(height: 16),
-                      _buildPlaceHolderRiskCard(
-                        title: 'BEHAVIOR ESCALATION',
-                        subtitle: 'No imminent escalation predicted',
-                        color: BauhausDesign.success,
-                        icon: Icons.psychology_alt,
-                      ),
-                      const SizedBox(height: 16),
-                      _buildPlaceHolderRiskCard(
-                        title: 'MEDICATION ADHERENCE',
-                        subtitle: '95% adherence rate - Low risk',
-                        color: BauhausDesign.secondary,
-                        icon: Icons.medication,
-                      ),
-                    ],
+                  const SizedBox(height: 16),
+                  _buildPlaceHolderRiskCard(
+                    title: 'MEDICATION ADHERENCE',
+                    subtitle: '95% adherence rate - Low risk',
+                    color: BauhausDesign.secondary,
+                    icon: Icons.medication,
                   ),
-                ),
+                ],
+              ),
+            ),
     );
   }
 
@@ -129,12 +127,8 @@ class _RiskAssessmentViewState extends ConsumerState<RiskAssessmentView> {
               child: Center(
                 child: Text(
                   '$score',
-                  style: BauhausDesign.getTextTheme(context)
-                      .headlineMedium
-                      ?.copyWith(
-                        color: riskColor,
-                        fontWeight: FontWeight.w900,
-                      ),
+                  style: BauhausDesign.getTextTheme(context).headlineMedium
+                      ?.copyWith(color: riskColor, fontWeight: FontWeight.w900),
                 ),
               ),
             ),
@@ -145,8 +139,7 @@ class _RiskAssessmentViewState extends ConsumerState<RiskAssessmentView> {
                 children: [
                   Text(
                     '${level.toUpperCase()} RISK LEVEL',
-                    style: BauhausDesign.getTextTheme(context)
-                        .titleSmall
+                    style: BauhausDesign.getTextTheme(context).titleSmall
                         ?.copyWith(
                           color: riskColor,
                           fontWeight: FontWeight.bold,
@@ -156,10 +149,10 @@ class _RiskAssessmentViewState extends ConsumerState<RiskAssessmentView> {
                   const SizedBox(height: 4),
                   Text(
                     'Based on recent incident patterns and health indicators.',
-                    style:
-                        BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                              color: BauhausDesign.textDark.withOpacity(0.7),
-                            ),
+                    style: BauhausDesign.getTextTheme(context).bodySmall
+                        ?.copyWith(
+                          color: BauhausDesign.textDark.withOpacity(0.7),
+                        ),
                   ),
                 ],
               ),
@@ -179,15 +172,17 @@ class _RiskAssessmentViewState extends ConsumerState<RiskAssessmentView> {
           children: [
             Row(
               children: [
-                const Icon(Icons.info_outline,
-                    color: BauhausDesign.warning, size: 24),
+                const Icon(
+                  Icons.info_outline,
+                  color: BauhausDesign.warning,
+                  size: 24,
+                ),
                 const SizedBox(width: 12),
                 Text(
                   'FALLS RISK',
-                  style:
-                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                            fontWeight: FontWeight.w900,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).titleMedium?.copyWith(fontWeight: FontWeight.w900),
                 ),
               ],
             ),
@@ -229,9 +224,9 @@ class _RiskAssessmentViewState extends ConsumerState<RiskAssessmentView> {
         ),
         title: Text(
           title,
-          style: BauhausDesign.getTextTheme(context).titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).titleSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
           subtitle,

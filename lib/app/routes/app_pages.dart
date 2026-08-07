@@ -65,10 +65,7 @@ class AppPages {
     const BusinessListView(),
     const ClientListView(),
     const AssignC2E(),
-    const ClientAndAppointmentDetails(
-      userEmail: '',
-      clientEmail: '',
-    ),
+    const ClientAndAppointmentDetails(userEmail: '', clientEmail: ''),
     const AddNotesView(userEmail: '', clientEmail: ''),
     ClockInAndOutView(
       email: '',
@@ -76,13 +73,8 @@ class AppPages {
     ),
     PhotoUploadScreen(email: ''),
     const ChangePasswordView(),
-    const RequestsView(
-      email: '',
-    ),
-    const InvoiceListView(
-      organizationId: '',
-      userEmail: '',
-    ),
+    const RequestsView(email: ''),
+    const InvoiceListView(organizationId: '', userEmail: ''),
     const ClientDashboardView(),
     // Phase 1 Views
     const EnhancedPredictiveInsightsView(),
@@ -128,11 +120,16 @@ class AppPages {
   ];
 
   // Function-based route for NavBarWidget
-  static Widget navBar(BuildContext context, String email, String firstName,
-      String lastName, UserRole role,
-      {String? organizationId,
-      String? organizationName,
-      String? organizationCode}) {
+  static Widget navBar(
+    BuildContext context,
+    String email,
+    String firstName,
+    String lastName,
+    UserRole role, {
+    String? organizationId,
+    String? organizationName,
+    String? organizationCode,
+  }) {
     return NavBarWidget(
       context: context,
       email: email,

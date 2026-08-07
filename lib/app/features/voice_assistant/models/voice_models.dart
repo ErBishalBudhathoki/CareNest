@@ -59,7 +59,8 @@ class VoiceCommand {
       userId: _stringOrNull(json['userId']) ?? '',
       organizationId: _stringOrNull(json['organizationId']),
       commandText: _stringOrNull(json['commandText'] ?? json['text']) ?? '',
-      detectedIntent: _stringOrNull(
+      detectedIntent:
+          _stringOrNull(
             json['detectedIntent'] ??
                 json['intent'] ??
                 nestedEntities['intent'],
@@ -70,9 +71,11 @@ class VoiceCommand {
         json['confidence'] ?? nestedEntities['confidence'],
       ),
       executed: _boolOrFalse(json['executed'] ?? json['success']),
-      createdAt: DateTime.tryParse(_stringOrNull(createdAtValue) ?? '') ??
+      createdAt:
+          DateTime.tryParse(_stringOrNull(createdAtValue) ?? '') ??
           DateTime.now(),
-      responseText: _stringOrNull(
+      responseText:
+          _stringOrNull(
             json['responseText'] ?? json['message'] ?? json['summary'],
           ) ??
           '',
@@ -119,9 +122,7 @@ class VoiceCommand {
       return value;
     }
     if (value is Map) {
-      return value.map(
-        (key, dynamic val) => MapEntry(key.toString(), val),
-      );
+      return value.map((key, dynamic val) => MapEntry(key.toString(), val));
     }
     return <String, dynamic>{};
   }

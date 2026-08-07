@@ -68,7 +68,9 @@ class FallbackPriceDialog extends StatelessWidget {
                   final parsed = double.tryParse(input);
                   if (parsed == null || parsed <= 0) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Enter a valid positive amount.')),
+                      const SnackBar(
+                        content: Text('Enter a valid positive amount.'),
+                      ),
                     );
                     return;
                   }
@@ -78,7 +80,10 @@ class FallbackPriceDialog extends StatelessWidget {
               ? const SizedBox(
                   width: 16,
                   height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
                 )
               : const Text('Save'),
         ),

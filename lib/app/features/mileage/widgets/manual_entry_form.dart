@@ -24,9 +24,9 @@ class ManualEntryForm extends StatelessWidget {
           Text(
             'Manual Entry',
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: BauhausDesign.textDark,
-                ),
+              fontWeight: FontWeight.bold,
+              color: BauhausDesign.textDark,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space6),
           BauhausTextField(
@@ -69,9 +69,9 @@ class ManualEntryForm extends StatelessWidget {
       children: [
         Text(
           'With Client?',
-          style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).bodyLarge?.copyWith(fontWeight: FontWeight.w600),
         ),
         const Spacer(),
         BauhausSwitch(
@@ -92,17 +92,16 @@ class ManualEntryForm extends StatelessWidget {
         if (clients.isEmpty)
           Text(
             'No assigned clients found for this account.',
-            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                  color: BauhausDesign.textMuted,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
           )
         else
           DropdownButtonFormField<String>(
             value: state.selectedClientId,
-            decoration: BauhausDesign.inputDecoration('Select Client').copyWith(
-              filled: true,
-              fillColor: BauhausDesign.surfaceLight,
-            ),
+            decoration: BauhausDesign.inputDecoration(
+              'Select Client',
+            ).copyWith(filled: true, fillColor: BauhausDesign.surfaceLight),
             dropdownColor: BauhausDesign.surfaceWhite,
             items: clients.map((client) {
               return DropdownMenuItem<String>(
