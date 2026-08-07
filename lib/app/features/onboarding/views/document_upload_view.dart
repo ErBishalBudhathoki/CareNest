@@ -193,7 +193,7 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
   }
 
   Future<void> _pickAndUpload(String docType) async {
-    final result = await FilePicker.platform.pickFiles();
+    final result = await FilePicker.pickFiles();
     if (result != null && result.files.single.path != null) {
       final file = File(result.files.single.path!);
 
