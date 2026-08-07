@@ -1,0 +1,23 @@
+# Release Notes - v4.2.9
+
+🚀 What's New:
+- **Communication Hub**: Broadcasts to all devices with channel selection, plus SMS/Email dispatch.
+- **Employee Home Dashboard**: New onboarding app flow and dedicated employee dashboard (legacy worker view deprecated).
+- **Real-time Refresh**: Dashboard auto-updates instantly on emergency broadcast.
+- **Clock In/Out Redesign**: Hero hours display, day navigation, shift cards, and Bauhaus action buttons.
+- **Quick Invoice from Text**: Generate invoices directly from text input.
+- **Smarter Invoicing**: Expenses/reimbursements are now correctly excluded from the GST tax base.
+
+🛠 Improvements:
+- Android 16 (API 36) compliance for Play Store requirements.
+- Migrated to Riverpod 3 Notifier APIs (faster, more reliable state management).
+- Fixed emergency push notifications not reaching devices.
+- App Check debug token stability across reinstalls and logouts.
+- Upgraded core dependencies (Flutter, Fastlane, and 20+ packages) for security and performance.
+
+🐛 Bug Fixes:
+- Fixed invoice PDF tax calculation for old reimbursements.
+- Fixed invoice AI date picker and date bounds.
+- Various UI and routing fixes.
+
+Enjoy the update!

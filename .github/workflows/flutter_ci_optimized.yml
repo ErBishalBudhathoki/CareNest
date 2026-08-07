@@ -361,7 +361,12 @@ jobs:
               ;;
           esac
           echo "Deploying via Fastlane lane: $TARGET_LANE"
-          
+
+          # Pass version info to Fastlane (local.properties is gitignored and absent in CI)
+          export VERSION_CODE="${{ github.run_number }}"
+          export VERSION_NAME="$(grep -m1 '^version:' ../pubspec.yaml | awk -F: '{gsub(/[[:space:]]/,"",$2); split($2,v,"+"); print v[1]}')"
+          echo "VERSION_NAME=$VERSION_NAME VERSION_CODE=$VERSION_CODE"
+
           fastlane $TARGET_LANE
 
       - name: Cleanup sensitive files

@@ -34,9 +34,12 @@ platform :android do
   end
 
   def load_flutter_properties
-    properties_file = File.join(project_root, "android", "local.properties")
     properties = {}
 
+    properties["flutter.versionName"] = ENV["VERSION_NAME"] if ENV["VERSION_NAME"] && !ENV["VERSION_NAME"].empty?
+    properties["flutter.versionCode"] = ENV["VERSION_CODE"] if ENV["VERSION_CODE"] && !ENV["VERSION_CODE"].empty?
+
+    properties_file = File.join(project_root, "android", "local.properties")
     if File.exist?(properties_file)
       File.readlines(properties_file).each do |line|
         key, value = line.strip.split('=', 2)
