@@ -210,7 +210,7 @@ platform :android do
     upload_to_play_store(
       track: 'production',
       package_name: 'com.bishal.invoice',
-      aab: aab_path,
+      aab: production_aab_relative_path,
       skip_upload_metadata: true,
       skip_upload_images: true,
       skip_upload_screenshots: true
