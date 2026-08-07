@@ -38,6 +38,9 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Generate .env from example
+        run: cp .env.example .env
+
       - name: Run Flutter analyze
         run: flutter analyze --fatal-infos
 
