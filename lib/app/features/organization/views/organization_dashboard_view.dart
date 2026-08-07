@@ -79,7 +79,7 @@ class _OrganizationDashboardViewState
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: orgState.userOrganizations.length,
-                        separatorBuilder: (_, __) =>
+                        separatorBuilder: (_, _) =>
                             const SizedBox(height: BauhausDesign.space3),
                         itemBuilder: (context, index) {
                           final org = orgState.userOrganizations[index];

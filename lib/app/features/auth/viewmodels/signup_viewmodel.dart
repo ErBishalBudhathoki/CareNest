@@ -14,7 +14,7 @@ class SignupViewModel extends Notifier<int> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
-  var ins;
+  dynamic ins;
   dynamic result;
   late final ApiMethod apiMethod;
   late final FirebaseAuthService _firebaseAuthService;

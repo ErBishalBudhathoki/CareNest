@@ -290,7 +290,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
           ),
         ],
       ),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
     );
   }
 

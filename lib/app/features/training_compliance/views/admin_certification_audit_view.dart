@@ -61,7 +61,7 @@ class _AdminCertificationAuditViewState
           : ListView.separated(
               padding: const EdgeInsets.all(BauhausDesign.space4),
               itemCount: state.certifications.length,
-              separatorBuilder: (_, __) =>
+              separatorBuilder: (_, _) =>
                   const SizedBox(height: BauhausDesign.space3),
               itemBuilder: (context, index) {
                 final cert = state.certifications[index];

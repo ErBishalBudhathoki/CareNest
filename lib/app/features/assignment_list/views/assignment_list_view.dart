@@ -367,7 +367,7 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
       child: ListView.separated(
         padding: const EdgeInsets.all(BauhausDesign.space4),
         itemCount: filteredAssignments.length,
-        separatorBuilder: (_, __) =>
+        separatorBuilder: (_, _) =>
             const SizedBox(height: BauhausDesign.space3),
         itemBuilder: (context, index) {
           final assignment = filteredAssignments[index];

@@ -86,7 +86,7 @@ class _BauhausBrandingSectionState
       final brandingData = {
         'primaryColor': primaryHex,
         'secondaryColor': secondaryHex,
-        if (finalLogoUrl != null) 'logoUrl': finalLogoUrl,
+        'logoUrl': ?finalLogoUrl,
       };
 
       // Call parent onSave

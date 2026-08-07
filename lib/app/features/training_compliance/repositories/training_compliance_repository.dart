@@ -316,7 +316,7 @@ class TrainingComplianceRepository {
       body: {
         'status': status,
         'progressPercentage': percentage,
-        if (orgId != null) 'organizationId': orgId,
+        'organizationId': ?orgId,
       },
     );
 
@@ -433,7 +433,7 @@ class TrainingComplianceRepository {
         'completedItems': completedItems,
         'itemsStatus': itemsStatus,
         'isCompleted': isCompleted,
-        if (orgId != null) 'organizationId': orgId,
+        'organizationId': ?orgId,
       },
     );
 

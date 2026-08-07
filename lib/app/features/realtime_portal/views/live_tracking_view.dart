@@ -299,7 +299,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
     );
   }
 
-  Widget _buildLocationInfo(state) {
+  Widget _buildLocationInfo(RealtimeTrackingState state) {
     final location = state.liveLocation!;
 
     return SingleChildScrollView(

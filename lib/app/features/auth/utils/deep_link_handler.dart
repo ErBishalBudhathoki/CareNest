@@ -39,7 +39,7 @@ class DeepLinkHandler {
       'bishalbudhathoki.tech',
       'bishalbudhathoki.com',
       'careservices.page.link',
-      if (configuredHost != null) configuredHost,
+      ?configuredHost,
     }.toList();
   }
 

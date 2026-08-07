@@ -38,7 +38,7 @@ class _ClientAndAppointmentDetailsState
     with TickerProviderStateMixin {
   late final PersistentTabController controller;
   late final ApiMethod apiMethod;
-  var setClientAndAppointmentData;
+  dynamic setClientAndAppointmentData;
   var clientAndAppointmentData = {};
   late Future<List<Patient>> futureClientsData;
   late final TimerService timerModel;

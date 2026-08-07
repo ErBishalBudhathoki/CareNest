@@ -902,7 +902,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                         physics: const AlwaysScrollableScrollPhysics(),
                         padding: const EdgeInsets.all(BauhausDesign.space4),
                         itemCount: employeeState.employees.length,
-                        separatorBuilder: (_, __) =>
+                        separatorBuilder: (_, _) =>
                             const SizedBox(height: BauhausDesign.space4),
                         itemBuilder: (context, index) {
                           final user = employeeState.employees[index];

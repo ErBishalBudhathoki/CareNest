@@ -17,7 +17,7 @@ class DebugLog {
       'event': 'flow_start',
       'flow': name,
       'flowId': id,
-      if (details != null) 'details': details,
+      'details': ?details,
     };
     _write(entry);
     _currentFlowId = id;
@@ -36,8 +36,8 @@ class DebugLog {
       'level': success ? 'INFO' : 'ERROR',
       'event': 'flow_end',
       'flowId': flowId,
-      if (message != null) 'message': message,
-      if (summary != null) 'summary': summary,
+      'message': ?message,
+      'summary': ?summary,
     };
     _write(entry);
     if (_currentFlowId == flowId) _currentFlowId = null;
@@ -84,7 +84,7 @@ class DebugLog {
       'flowId': flowId ?? _currentFlowId,
       'method': method,
       'url': url,
-      if (payload != null) 'payload': payload,
+      'payload': ?payload,
     };
     _write(entry);
   }
@@ -104,8 +104,8 @@ class DebugLog {
       'flowId': flowId ?? _currentFlowId,
       'url': url,
       'statusCode': statusCode,
-      if (durationMs != null) 'durationMs': durationMs,
-      if (body != null) 'body': body,
+      'durationMs': ?durationMs,
+      'body': ?body,
     };
     _write(entry);
   }
@@ -122,7 +122,7 @@ class DebugLog {
       'event': 'error',
       'flowId': flowId ?? _currentFlowId,
       'message': message,
-      if (details != null) 'details': details,
+      'details': ?details,
     };
     _write(entry);
   }

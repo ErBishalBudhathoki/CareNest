@@ -136,7 +136,7 @@ class _ClientInvoiceListViewState extends ConsumerState<ClientInvoiceListView> {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: _statusFilters.length,
-              separatorBuilder: (_, __) =>
+              separatorBuilder: (_, _) =>
                   const SizedBox(width: BauhausDesign.space2),
               itemBuilder: (context, index) {
                 final filter = _statusFilters[index];
@@ -221,7 +221,7 @@ class _ClientInvoiceListViewState extends ConsumerState<ClientInvoiceListView> {
       child: ListView.separated(
         padding: const EdgeInsets.all(BauhausDesign.space4),
         itemCount: invoices.length,
-        separatorBuilder: (_, __) =>
+        separatorBuilder: (_, _) =>
             const SizedBox(height: BauhausDesign.space3),
         itemBuilder: (context, index) {
           final invoice = invoices[index];

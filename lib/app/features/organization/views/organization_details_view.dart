@@ -14,12 +14,11 @@ import 'package:share_plus/share_plus.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/auth/utils/deep_link_handler.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
 import 'package:google_maps_flutter/google_maps_flutter.dart' as google_maps;
 import 'package:apple_maps_flutter/apple_maps_flutter.dart' as apple_maps;
-import 'package:geocoding/geocoding.dart';
+import 'package:geocoding/geocoding.dart' hide Location;
 import 'package:map_launcher/map_launcher.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
@@ -696,7 +695,7 @@ $appLink
     if (fullAddress.isEmpty) return;
 
     try {
-      final locations = await locationFromAddress(fullAddress);
+      final locations = await Geocoding().locationFromAddress(fullAddress);
       if (locations.isNotEmpty) {
         if (mounted) {
           setState(() {
@@ -729,7 +728,16 @@ $appLink
     }
 
     try {
-      final availableMaps = await MapLauncher.installedMaps;
+      final markerRequest = MapLauncher.marker(
+        Location.coords(
+          _organizationLocation!.latitude,
+          _organizationLocation!.longitude,
+          title:
+              _organization?['name'] ??
+              AppLocalizations.of(context)!.organization,
+        ),
+      );
+      final availableMaps = await markerRequest.getSupportedMaps(MapApp.all);
 
       if (!mounted) return;
 
@@ -767,28 +775,20 @@ $appLink
                       (map) => ListTile(
                         onTap: () {
                           Navigator.pop(context);
-                          map.showMarker(
-                            coords: Coords(
-                              _organizationLocation!.latitude,
-                              _organizationLocation!.longitude,
-                            ),
-                            title:
-                                _organization?['name'] ??
-                                AppLocalizations.of(context)!.organization,
-                          );
+                          map.show();
                         },
                         leading: ClipRRect(
                           borderRadius: BorderRadius.circular(
                             BauhausDesign.radiusSm,
                           ),
-                          child: SvgPicture.asset(
-                            map.icon,
+                          child: Image.memory(
+                            map.iconBytes,
                             width: 32,
                             height: 32,
                           ),
                         ),
                         title: Text(
-                          map.mapName,
+                          map.name,
                           style: BauhausDesign.getTextTheme(context).bodyLarge,
                         ),
                       ),
@@ -1976,7 +1976,7 @@ $appLink
                             ),
                       ),
                     ),
-                    if (trailing != null) trailing,
+                    ?trailing,
                   ],
                 ),
                 const SizedBox(height: BauhausDesign.space4),

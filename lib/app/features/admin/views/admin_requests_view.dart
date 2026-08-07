@@ -51,7 +51,7 @@ class AdminRequestsView extends ConsumerWidget {
                 child: ListView.separated(
                   padding: const EdgeInsets.all(BauhausDesign.space4),
                   itemCount: loadedRequests.length,
-                  separatorBuilder: (_, __) =>
+                  separatorBuilder: (_, _) =>
                       const SizedBox(height: BauhausDesign.space3),
                   itemBuilder: (context, index) {
                     return _RequestCard(request: loadedRequests[index]);

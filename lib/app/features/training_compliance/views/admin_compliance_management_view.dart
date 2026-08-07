@@ -67,7 +67,7 @@ class _AdminComplianceManagementViewState
           : ListView.separated(
               padding: const EdgeInsets.all(BauhausDesign.space4),
               itemCount: state.checklists.length,
-              separatorBuilder: (_, __) =>
+              separatorBuilder: (_, _) =>
                   const SizedBox(height: BauhausDesign.space3),
               itemBuilder: (context, index) {
                 final list = state.checklists[index];

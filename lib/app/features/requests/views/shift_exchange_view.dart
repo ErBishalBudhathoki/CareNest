@@ -267,7 +267,7 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
     return ListView.separated(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       itemCount: shifts.length,
-      separatorBuilder: (_, __) => const SizedBox(height: BauhausDesign.space4),
+      separatorBuilder: (_, _) => const SizedBox(height: BauhausDesign.space4),
       itemBuilder: (context, index) {
         final shift = shifts[index];
         final details = shift['details'] ?? {};
