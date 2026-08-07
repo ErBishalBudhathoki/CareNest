@@ -313,6 +313,7 @@ jobs:
 
       - name: Place AAB for Fastlane
         run: |
+          mkdir -p build/app/outputs/bundle/productionRelease
           find . -name 'app-production-release.aab' -type f | head -n1 | xargs -I{} cp {} build/app/outputs/bundle/productionRelease/app-production-release.aab
           ls -la build/app/outputs/bundle/productionRelease/
 
