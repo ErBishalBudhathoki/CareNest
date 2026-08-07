@@ -201,25 +201,33 @@ jobs:
           echo "${{ secrets.GOOGLE_SERVICES_JSON_DEV }}" | base64 -d > android/app/src/development/google-services.json
 
       - name: Decode keystore (Release only)
-        if: matrix.build-type == 'release' && secrets.ANDROID_KEYSTORE_BASE64 != ''
+        if: matrix.build-type == 'release'
         env:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
-          echo "$KEYSTORE_BASE64" | base64 -d > android/app/keystore.jks
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > android/app/keystore.jks
+            echo "Keystore decoded."
+          else
+            echo "::warning::No Android keystore secret configured"
+          fi
 
       - name: Create key.properties (Release only)
-        if: matrix.build-type == 'release' && secrets.ANDROID_KEYSTORE_BASE64 != ''
+        if: matrix.build-type == 'release'
         env:
           KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          cat > android/key.properties <<EOF
-          storePassword=${KEYSTORE_PASSWORD}
-          keyPassword=${KEY_PASSWORD}
-          keyAlias=${KEY_ALIAS}
-          storeFile=keystore.jks
-          EOF
+          if [ -f android/app/keystore.jks ]; then
+            cat > android/key.properties <<EOF
+            storePassword=${KEYSTORE_PASSWORD}
+            keyPassword=${KEY_PASSWORD}
+            keyAlias=${KEY_ALIAS}
+            storeFile=keystore.jks
+            EOF
+            echo "key.properties created."
+          fi
 
       - name: Build Android ${{ matrix.build-type }}
         env:
