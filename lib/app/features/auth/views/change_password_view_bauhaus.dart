@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
- // StateProvider
+// StateProvider
 import 'package:carenest/app/features/auth/providers/auth_provider.dart';
 
 class BauhausChangePasswordView extends ConsumerStatefulWidget {
@@ -39,13 +39,16 @@ class _BauhausChangePasswordViewState
       if (!(_hasMinLength && _hasUppercase && _hasNumber && _hasSpecial)) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text('Please meet all password requirements')),
+            content: Text('Please meet all password requirements'),
+          ),
         );
         return;
       }
 
       try {
-        await ref.read(authStateProvider.notifier).changePassword(
+        await ref
+            .read(authStateProvider.notifier)
+            .changePassword(
               _currentPasswordController.text.trim(),
               _newPasswordController.text.trim(),
             );
@@ -64,9 +67,9 @@ class _BauhausChangePasswordViewState
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed: $e')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Failed: $e')));
         }
       }
     }
@@ -80,8 +83,10 @@ class _BauhausChangePasswordViewState
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('CHANGE PASSWORD',
-            style: TextStyle(color: colorBlack, fontWeight: FontWeight.bold)),
+        title: const Text(
+          'CHANGE PASSWORD',
+          style: TextStyle(color: colorBlack, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.white,
         elevation: 0,
         automaticallyImplyLeading: !widget.isForced,
@@ -112,7 +117,9 @@ class _BauhausChangePasswordViewState
                     child: const Text(
                       'Security Alert: Your password is weak or compromised. You must change it to continue.',
                       style: TextStyle(
-                          color: colorRed, fontWeight: FontWeight.bold),
+                        color: colorRed,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 _buildBauhausTextField(
@@ -133,15 +140,16 @@ class _BauhausChangePasswordViewState
                 _buildPasswordValidationIndicators(),
                 const SizedBox(height: 16),
                 _buildBauhausTextField(
-                    controller: _confirmPasswordController,
-                    label: 'CONFIRM NEW PASSWORD',
-                    icon: Icons.lock_reset,
-                    isObscure: true,
-                    validator: (val) {
-                      if (val != _newPasswordController.text)
-                        return 'Passwords do not match';
-                      return null;
-                    }),
+                  controller: _confirmPasswordController,
+                  label: 'CONFIRM NEW PASSWORD',
+                  icon: Icons.lock_reset,
+                  isObscure: true,
+                  validator: (val) {
+                    if (val != _newPasswordController.text)
+                      return 'Passwords do not match';
+                    return null;
+                  },
+                ),
                 const SizedBox(height: 32),
                 SizedBox(
                   width: double.infinity,
@@ -152,11 +160,16 @@ class _BauhausChangePasswordViewState
                       backgroundColor: colorBlack,
                       foregroundColor: Colors.white,
                       shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero),
+                        borderRadius: BorderRadius.zero,
+                      ),
                     ),
-                    child: const Text('UPDATE PASSWORD',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+                    child: const Text(
+                      'UPDATE PASSWORD',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -184,11 +197,16 @@ class _BauhausChangePasswordViewState
     const colorRed = Color(0xFFD62D24);
     return Row(
       children: [
-        Icon(met ? Icons.check_circle : Icons.cancel_outlined,
-            color: met ? colorGreen : colorRed, size: 16),
+        Icon(
+          met ? Icons.check_circle : Icons.cancel_outlined,
+          color: met ? colorGreen : colorRed,
+          size: 16,
+        ),
         const SizedBox(width: 8),
-        Text(text,
-            style: TextStyle(color: met ? colorGreen : colorRed, fontSize: 12)),
+        Text(
+          text,
+          style: TextStyle(color: met ? colorGreen : colorRed, fontSize: 12),
+        ),
       ],
     );
   }
@@ -204,9 +222,14 @@ class _BauhausChangePasswordViewState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label,
-            style: const TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 12, letterSpacing: 1.2)),
+        Text(
+          label,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+            letterSpacing: 1.2,
+          ),
+        ),
         const SizedBox(height: 8),
         TextFormField(
           controller: controller,
@@ -217,12 +240,16 @@ class _BauhausChangePasswordViewState
             filled: true,
             fillColor: Colors.grey[100],
             border: const OutlineInputBorder(
-                borderSide: BorderSide.none, borderRadius: BorderRadius.zero),
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.zero,
+            ),
             focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black, width: 2),
-                borderRadius: BorderRadius.zero),
+              borderSide: BorderSide(color: Colors.black, width: 2),
+              borderRadius: BorderRadius.zero,
+            ),
           ),
-          validator: validator ??
+          validator:
+              validator ??
               (value) => value!.isEmpty ? '$label is required' : null,
         ),
       ],

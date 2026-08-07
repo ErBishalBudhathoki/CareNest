@@ -28,26 +28,26 @@ abstract class OrganizationIntegrations with _$OrganizationIntegrations {
     IntegrationConfig? xero,
     IntegrationConfig? myob,
     IntegrationConfig? quickbooks,
-    
+
     // Calendar
     IntegrationConfig? googleCalendar,
     IntegrationConfig? outlookCalendar,
     IntegrationConfig? appleCalendar,
-    
+
     // Communication
     IntegrationConfig? slack,
     IntegrationConfig? teams,
     IntegrationConfig? discord,
-    
+
     // Payment
     IntegrationConfig? stripe,
     IntegrationConfig? paypal,
     IntegrationConfig? square,
-    
+
     // CRM
     IntegrationConfig? salesforce,
     IntegrationConfig? hubspot,
-    
+
     // Other
     IntegrationConfig? zapier,
     IntegrationConfig? webhooks,
@@ -55,11 +55,11 @@ abstract class OrganizationIntegrations with _$OrganizationIntegrations {
 
   factory OrganizationIntegrations.fromJson(Map<String, dynamic> json) =>
       _$OrganizationIntegrationsFromJson(json);
-  
+
   /// Helper to convert from generic Map (for backward compatibility)
   static OrganizationIntegrations fromMap(Map<String, dynamic>? map) {
     if (map == null) return const OrganizationIntegrations();
-    
+
     IntegrationConfig? parseConfig(dynamic value) {
       if (value == null) return null;
       if (value is Map<String, dynamic>) {
@@ -71,7 +71,7 @@ abstract class OrganizationIntegrations with _$OrganizationIntegrations {
       }
       return null;
     }
-    
+
     return OrganizationIntegrations(
       xero: parseConfig(map['xero']),
       myob: parseConfig(map['myob']),
@@ -108,7 +108,7 @@ abstract class OrganizationBrandingConfig with _$OrganizationBrandingConfig {
 
   factory OrganizationBrandingConfig.fromJson(Map<String, dynamic> json) =>
       _$OrganizationBrandingConfigFromJson(json);
-  
+
   /// Helper to convert from generic Map (for backward compatibility)
   static OrganizationBrandingConfig fromMap(Map<String, dynamic>? map) {
     if (map == null) return const OrganizationBrandingConfig();

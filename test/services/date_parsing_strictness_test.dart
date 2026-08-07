@@ -16,15 +16,18 @@ class _FakePrefs extends SharedPreferencesUtils {
   Future<void> init() async {
     _inited = true;
   }
+
   @override
   Future<void> setString(String key, String value) async {
     if (!_inited) await init();
     _store[key] = value;
   }
+
   @override
   String? getString(String key) {
     return _store[key];
   }
+
   @override
   Future<void> remove(String key) async {
     if (!_inited) await init();
@@ -52,13 +55,16 @@ void main() {
       );
     });
 
-    test('Non-existent date - 31/02/2025 throws PeriodCalculationException', () {
-      final svc = DatePeriodService(PeriodConfigRepository(_FakePrefs()));
-      expect(
-        () => svc.derivePeriodFromItems(['31/02/2025']),
-        throwsA(isA<PeriodCalculationException>()),
-      );
-    });
+    test(
+      'Non-existent date - 31/02/2025 throws PeriodCalculationException',
+      () {
+        final svc = DatePeriodService(PeriodConfigRepository(_FakePrefs()));
+        expect(
+          () => svc.derivePeriodFromItems(['31/02/2025']),
+          throwsA(isA<PeriodCalculationException>()),
+        );
+      },
+    );
 
     test('Invalid ISO-like - 2025-02-30 throws PeriodCalculationException', () {
       final svc = DatePeriodService(PeriodConfigRepository(_FakePrefs()));
@@ -68,13 +74,16 @@ void main() {
       );
     });
 
-    test('Non-leap year Feb 29 - 02/29/2021 throws PeriodCalculationException', () {
-      final svc = DatePeriodService(PeriodConfigRepository(_FakePrefs()));
-      expect(
-        () => svc.derivePeriodFromItems(['02/29/2021']),
-        throwsA(isA<PeriodCalculationException>()),
-      );
-    });
+    test(
+      'Non-leap year Feb 29 - 02/29/2021 throws PeriodCalculationException',
+      () {
+        final svc = DatePeriodService(PeriodConfigRepository(_FakePrefs()));
+        expect(
+          () => svc.derivePeriodFromItems(['02/29/2021']),
+          throwsA(isA<PeriodCalculationException>()),
+        );
+      },
+    );
 
     test('Non-date string - abc throws PeriodCalculationException', () {
       final svc = DatePeriodService(PeriodConfigRepository(_FakePrefs()));
@@ -118,12 +127,19 @@ void main() {
         if (message != null) captured.add(message);
       };
       try {
-        final p = svc.derivePeriodFromItems(['2025-11-08', '31/02/2025', 'abc']);
+        final p = svc.derivePeriodFromItems([
+          '2025-11-08',
+          '31/02/2025',
+          'abc',
+        ]);
         expect(p.start, DateTime(2025, 11, 3));
         expect(p.end, DateTime(2025, 11, 9));
         expect(
-          captured.any((m) => m.contains(
-              'DatePeriodService.derivePeriodFromItems: Ignoring invalid dates: [31/02/2025, abc]')),
+          captured.any(
+            (m) => m.contains(
+              'DatePeriodService.derivePeriodFromItems: Ignoring invalid dates: [31/02/2025, abc]',
+            ),
+          ),
           isTrue,
         );
       } finally {
@@ -164,7 +180,10 @@ void main() {
   group('Locale preference for ambiguous numeric dates', () {
     test('Ambiguous 1/2/2025 respects US preference (M/d => Jan 2, 2025)', () {
       final parser = DateParserService(preferUsFormat: true);
-      final svc = DatePeriodService(PeriodConfigRepository(_FakePrefs()), parser);
+      final svc = DatePeriodService(
+        PeriodConfigRepository(_FakePrefs()),
+        parser,
+      );
       final p = svc.derivePeriodFromItems(['1/2/2025']);
       expect(p.start, DateTime(2024, 12, 30)); // week of Jan 2, 2025
       expect(p.end, DateTime(2025, 1, 5));

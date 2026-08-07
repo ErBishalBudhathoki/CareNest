@@ -28,14 +28,12 @@ class _MedicationManagementViewState
     const clientId = 'placeholder_client_id';
 
     if (orgId != null) {
-      ref.read(medicationViewModelProvider.notifier).getMedicationAlerts(
-            clientId: clientId,
-            organizationId: orgId,
-          );
-      ref.read(medicationViewModelProvider.notifier).trackMedicationCompliance(
-            clientId: clientId,
-            organizationId: orgId,
-          );
+      ref
+          .read(medicationViewModelProvider.notifier)
+          .getMedicationAlerts(clientId: clientId, organizationId: orgId);
+      ref
+          .read(medicationViewModelProvider.notifier)
+          .trackMedicationCompliance(clientId: clientId, organizationId: orgId);
     }
   }
 
@@ -51,52 +49,51 @@ class _MedicationManagementViewState
         title: Text(
           'MEDICATION MGMT',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-                fontWeight: FontWeight.bold,
-              ),
+            color: BauhausDesign.surfaceWhite,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         elevation: 0,
       ),
       body: state.isLoading
           ? const Center(child: BauhausLoadingState())
           : state.error != null
-              ? Center(
-                  child: BauhausEmptyState(
-                    title: 'No Medication Data',
-                    message:
-                        'No medication information available for this client.',
-                    icon: Icons.medication_outlined,
-                    onAction: _loadData,
-                    actionLabel: 'RETRY',
-                  ),
-                )
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BauhausSectionHeader(title: 'MEDICATION SAFETY'),
-                      const SizedBox(height: 16),
-                      _buildSafetyScoreCard(state),
-                      const SizedBox(height: 32),
-                      BauhausSectionHeader(title: 'ADVERSE ALERTS'),
-                      const SizedBox(height: 16),
-                      if (state.alerts.isEmpty)
-                        const BauhausEmptyState(
-                          title: 'No Active Alerts',
-                          message:
-                              'No drug interactions or safety concerns detected.',
-                          icon: Icons.shield_outlined,
-                        )
-                      else
-                        ...state.alerts.map((alert) => _buildAlertCard(alert)),
-                      const SizedBox(height: 32),
-                      BauhausSectionHeader(title: 'COMPLIANCE INSIGHTS'),
-                      const SizedBox(height: 16),
-                      _buildComplianceCard(state),
-                    ],
-                  ),
-                ),
+          ? Center(
+              child: BauhausEmptyState(
+                title: 'No Medication Data',
+                message: 'No medication information available for this client.',
+                icon: Icons.medication_outlined,
+                onAction: _loadData,
+                actionLabel: 'RETRY',
+              ),
+            )
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  BauhausSectionHeader(title: 'MEDICATION SAFETY'),
+                  const SizedBox(height: 16),
+                  _buildSafetyScoreCard(state),
+                  const SizedBox(height: 32),
+                  BauhausSectionHeader(title: 'ADVERSE ALERTS'),
+                  const SizedBox(height: 16),
+                  if (state.alerts.isEmpty)
+                    const BauhausEmptyState(
+                      title: 'No Active Alerts',
+                      message:
+                          'No drug interactions or safety concerns detected.',
+                      icon: Icons.shield_outlined,
+                    )
+                  else
+                    ...state.alerts.map((alert) => _buildAlertCard(alert)),
+                  const SizedBox(height: 32),
+                  BauhausSectionHeader(title: 'COMPLIANCE INSIGHTS'),
+                  const SizedBox(height: 16),
+                  _buildComplianceCard(state),
+                ],
+              ),
+            ),
     );
   }
 
@@ -106,8 +103,11 @@ class _MedicationManagementViewState
         padding: const EdgeInsets.all(20),
         child: Row(
           children: [
-            const Icon(Icons.health_and_safety_outlined,
-                color: BauhausDesign.primary, size: 48),
+            const Icon(
+              Icons.health_and_safety_outlined,
+              color: BauhausDesign.primary,
+              size: 48,
+            ),
             const SizedBox(width: 20),
             Expanded(
               child: Column(
@@ -115,8 +115,7 @@ class _MedicationManagementViewState
                 children: [
                   Text(
                     '92% SAFETY SCORE',
-                    style: BauhausDesign.getTextTheme(context)
-                        .titleMedium
+                    style: BauhausDesign.getTextTheme(context).titleMedium
                         ?.copyWith(
                           color: BauhausDesign.primary,
                           fontWeight: FontWeight.w900,
@@ -125,8 +124,10 @@ class _MedicationManagementViewState
                   const SizedBox(height: 4),
                   const Text(
                     'Overall medication regimen is well-balanced and safe.',
-                    style:
-                        TextStyle(fontSize: 12, color: BauhausDesign.textDark),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: BauhausDesign.textDark,
+                    ),
                   ),
                 ],
               ),
@@ -142,8 +143,10 @@ class _MedicationManagementViewState
       padding: const EdgeInsets.only(bottom: 12),
       child: BauhausCard(
         child: ListTile(
-          leading: const Icon(Icons.medication_outlined,
-              color: BauhausDesign.warning),
+          leading: const Icon(
+            Icons.medication_outlined,
+            color: BauhausDesign.warning,
+          ),
           title: Text(
             alert.title ?? 'Medication Alert',
             style: const TextStyle(fontWeight: FontWeight.bold),
@@ -169,13 +172,16 @@ class _MedicationManagementViewState
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Adherence Rate',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  'Adherence Rate',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 Text(
                   '${(state.compliance!.overallCompliance * 100).toStringAsFixed(0)}%',
                   style: const TextStyle(
-                      color: BauhausDesign.success,
-                      fontWeight: FontWeight.w900),
+                    color: BauhausDesign.success,
+                    fontWeight: FontWeight.w900,
+                  ),
                 ),
               ],
             ),

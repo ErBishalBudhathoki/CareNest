@@ -7,7 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/services/sync/sync_manager.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 // ==================== SHARED PREFERENCES ====================
 
@@ -26,7 +27,9 @@ final sharedPreferencesUtilsProvider = Provider<SharedPreferencesUtils>((ref) {
 // ==================== API SERVICE ====================
 
 // API method provider - single instance for all API calls
-final apiMethodProvider = Provider<ApiMethod>((ref) => ref.read(app_providers.apiMethodProvider));
+final apiMethodProvider = Provider<ApiMethod>(
+  (ref) => ref.read(app_providers.apiMethodProvider),
+);
 
 // ==================== NAVIGATION ====================
 

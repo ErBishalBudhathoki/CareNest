@@ -61,10 +61,7 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
   }
 
   void _primeFromInitialPayload(List<dynamic> source) {
-    final seeded = source
-        .map(_toHoliday)
-        .whereType<Holiday>()
-        .toList()
+    final seeded = source.map(_toHoliday).whereType<Holiday>().toList()
       ..sort((a, b) => a.date.compareTo(b.date));
 
     if (seeded.isEmpty) return;
@@ -85,7 +82,8 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
     }
 
     final itemOrgId = map['organizationId'] ?? map['OrganizationId'];
-    final isCustom = map['isCustom'] == true ||
+    final isCustom =
+        map['isCustom'] == true ||
         (itemOrgId != null && itemOrgId.toString().isNotEmpty);
 
     String jurisdiction = 'national';
@@ -99,10 +97,11 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
     }
 
     return Holiday(
-      id: (map['_id'] ??
-              map['id'] ??
-              'local_${date.millisecondsSinceEpoch}_${title.hashCode}')
-          .toString(),
+      id:
+          (map['_id'] ??
+                  map['id'] ??
+                  'local_${date.millisecondsSinceEpoch}_${title.hashCode}')
+              .toString(),
       title: title,
       date: date,
       jurisdiction: jurisdiction,
@@ -200,9 +199,9 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
       setState(() {
         _allHolidays = backup;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to delete holiday: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to delete holiday: $e')));
     }
   }
 
@@ -242,9 +241,7 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
 
   Widget _buildFilterDropdown() {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: BauhausDesign.space3,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: BauhausDesign.space3),
       decoration: BoxDecoration(
         color: BauhausDesign.surfaceOffWhite,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
@@ -256,9 +253,9 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
           isExpanded: true,
           icon: const Icon(Icons.keyboard_arrow_down),
           style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                color: BauhausDesign.textDark,
-                fontWeight: FontWeight.w600,
-              ),
+            color: BauhausDesign.textDark,
+            fontWeight: FontWeight.w600,
+          ),
           items: _stateFilters
               .map(
                 (state) => DropdownMenuItem<String>(
@@ -332,8 +329,9 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
                         padding: const EdgeInsets.all(BauhausDesign.space3),
                         decoration: BoxDecoration(
                           color: BauhausDesign.primary.withOpacity(0.1),
-                          borderRadius:
-                              BorderRadius.circular(BauhausDesign.radiusMd),
+                          borderRadius: BorderRadius.circular(
+                            BauhausDesign.radiusMd,
+                          ),
                         ),
                         child: Icon(
                           Icons.calendar_month,
@@ -348,8 +346,9 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
                           children: [
                             Text(
                               l10n.holidayList,
-                              style: BauhausDesign.getTextTheme(context)
-                                  .headlineSmall,
+                              style: BauhausDesign.getTextTheme(
+                                context,
+                              ).headlineSmall,
                             ),
                             Text(
                               l10n.holidayListDesc,
@@ -372,8 +371,9 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
                     ),
                     decoration: BoxDecoration(
                       color: BauhausDesign.surfaceOffWhite,
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusMd),
+                      borderRadius: BorderRadius.circular(
+                        BauhausDesign.radiusMd,
+                      ),
                       border: Border.all(color: BauhausDesign.neutral),
                     ),
                     child: Row(
@@ -395,9 +395,7 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
               ),
             ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1),
           ),
-          Expanded(
-            child: _buildBody(visibleHolidays, l10n),
-          ),
+          Expanded(child: _buildBody(visibleHolidays, l10n)),
         ],
       ),
       floatingActionButton: widget.readonly
@@ -451,8 +449,11 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
 
         final now = DateTime.now();
         final today = DateTime(now.year, now.month, now.day);
-        final itemDate =
-            DateTime(holidayDate.year, holidayDate.month, holidayDate.day);
+        final itemDate = DateTime(
+          holidayDate.year,
+          holidayDate.month,
+          holidayDate.day,
+        );
 
         final isUpcoming = !itemDate.isBefore(today);
         final isToday = itemDate == today;
@@ -460,10 +461,11 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
         final Color dateCircleColor = isToday
             ? BauhausDesign.primary
             : (isUpcoming
-                ? BauhausDesign.secondary.withOpacity(0.9)
-                : BauhausDesign.surfaceOffWhite);
-        final Color dateTextColor =
-            (isToday || isUpcoming) ? BauhausDesign.surfaceWhite : BauhausDesign.textDark;
+                  ? BauhausDesign.secondary.withOpacity(0.9)
+                  : BauhausDesign.surfaceOffWhite);
+        final Color dateTextColor = (isToday || isUpcoming)
+            ? BauhausDesign.surfaceWhite
+            : BauhausDesign.textDark;
 
         return Padding(
           padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
@@ -487,17 +489,12 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
                     children: [
                       Text(
                         DateFormat('dd').format(holidayDate),
-                        style: BauhausDesign.getTextTheme(context)
-                            .headlineSmall
-                            ?.copyWith(
-                              color: dateTextColor,
-                              height: 1,
-                            ),
+                        style: BauhausDesign.getTextTheme(context).headlineSmall
+                            ?.copyWith(color: dateTextColor, height: 1),
                       ),
                       Text(
                         DateFormat('MMM').format(holidayDate).toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
+                        style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
                               color: dateTextColor,
                               fontWeight: FontWeight.bold,
@@ -513,8 +510,7 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
                     children: [
                       Text(
                         holiday.title,
-                        style: BauhausDesign.getTextTheme(context)
-                            .titleMedium
+                        style: BauhausDesign.getTextTheme(context).titleMedium
                             ?.copyWith(
                               color: BauhausDesign.textDark,
                               fontWeight: FontWeight.w700,
@@ -523,9 +519,9 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
                       const SizedBox(height: 4),
                       Text(
                         '${DateFormat('dd-MM-yyyy').format(holidayDate)} • ${DateFormat('EEEE').format(holidayDate)}',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
-                            ?.copyWith(color: BauhausDesign.textMuted),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                       ),
                       const SizedBox(height: 8),
                       Wrap(
@@ -568,8 +564,9 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
                     if (!widget.readonly && holiday.isCustom)
                       InkWell(
                         onTap: () => _deleteHoliday(holiday),
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusFull),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusFull,
+                        ),
                         child: const Padding(
                           padding: EdgeInsets.all(4),
                           child: Icon(

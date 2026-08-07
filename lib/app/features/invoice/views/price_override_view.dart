@@ -7,7 +7,8 @@ import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/debug_log.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Price Override View
@@ -57,17 +58,21 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
     _originalClientSpecific.clear(); // Clear original client-specific states
     for (final item in _lineItems) {
       final ndisItemNumber = item['ndisItemNumber'] as String;
-      _controllers[ndisItemNumber] =
-          TextEditingController(text: item['unitPrice'].toStringAsFixed(2));
+      _controllers[ndisItemNumber] = TextEditingController(
+        text: item['unitPrice'].toStringAsFixed(2),
+      );
 
       // Also initialize the legacy controllers for compatibility
       final id = item['id'] as String;
-      _descriptionControllers[id] =
-          TextEditingController(text: item['description']);
-      _priceControllers[id] =
-          TextEditingController(text: item['unitPrice'].toString());
-      _quantityControllers[id] =
-          TextEditingController(text: item['quantity'].toString());
+      _descriptionControllers[id] = TextEditingController(
+        text: item['description'],
+      );
+      _priceControllers[id] = TextEditingController(
+        text: item['unitPrice'].toString(),
+      );
+      _quantityControllers[id] = TextEditingController(
+        text: item['quantity'].toString(),
+      );
       _originalPrices[id] = item['unitPrice'] as double;
       _isOverridden[id] = false;
 
@@ -110,7 +115,8 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
     final originalClientSpecific = _originalClientSpecific[id] ?? false;
 
     // Check if price has changed
-    final priceChanged = (currentPrice - originalPrice).abs() >
+    final priceChanged =
+        (currentPrice - originalPrice).abs() >
         0.01; // Allow for small floating point differences
 
     // Check if client-specific toggle has changed
@@ -122,7 +128,8 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
     // Debug logging
     if (priceChanged || clientSpecificChanged) {
       print(
-          'Item $id modification check: price=$currentPrice (was $originalPrice, changed=$priceChanged), clientSpecific=$currentClientSpecific (was $originalClientSpecific, changed=$clientSpecificChanged) -> modified=$isModified');
+        'Item $id modification check: price=$currentPrice (was $originalPrice, changed=$priceChanged), clientSpecific=$currentClientSpecific (was $originalClientSpecific, changed=$clientSpecificChanged) -> modified=$isModified',
+      );
     }
 
     return isModified;
@@ -166,10 +173,13 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
           });
         }
       } catch (e) {
-        DebugLog.error('fallback_base_rate_fetch_error', details: {
-          'organizationId': widget.organizationId,
-          'error': e.toString(),
-        });
+        DebugLog.error(
+          'fallback_base_rate_fetch_error',
+          details: {
+            'organizationId': widget.organizationId,
+            'error': e.toString(),
+          },
+        );
       }
 
       final List<Map<String, dynamic>> items = [];
@@ -190,14 +200,16 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
             clientEmail.isNotEmpty &&
             clientEmail != 'Unknown Client') {
           try {
-            final clientDetails =
-                await _apiMethod.getClientDetails(clientEmail);
+            final clientDetails = await _apiMethod.getClientDetails(
+              clientEmail,
+            );
             if (clientDetails != null && clientDetails['success'] == true) {
               clientState = clientDetails['clientState'] as String? ?? '';
             }
           } catch (e) {
             debugPrint(
-                'PriceOverrideView: Error fetching client details for state: $e');
+              'PriceOverrideView: Error fetching client details for state: $e',
+            );
           }
         }
         // Default to NSW if no state found
@@ -205,7 +217,8 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
           clientState = 'NSW';
         }
         debugPrint(
-            'PriceOverrideView: Using client state: $clientState for $clientEmail');
+          'PriceOverrideView: Using client state: $clientState for $clientEmail',
+        );
 
         final schedule = assignment['schedule'] as List<dynamic>? ?? [];
 
@@ -221,13 +234,17 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
             if (itemNumber != null && itemName != null) {
               // Get pricing information
               final pricingData = await _apiMethod.getPricingLookup(
-                  widget.organizationId, itemNumber,
-                  clientId: widget.clientId);
+                widget.organizationId,
+                itemNumber,
+                clientId: widget.clientId,
+              );
 
-              final supportItemDetails =
-                  await _apiMethod.getSupportItemDetails(itemNumber);
+              final supportItemDetails = await _apiMethod.getSupportItemDetails(
+                itemNumber,
+              );
 
-              double currentPrice = _fallbackBaseRate ??
+              double currentPrice =
+                  _fallbackBaseRate ??
                   30.00; // Default fallback to org base rate
               double maxPrice = 0.0; // Will be set from actual NDIS price caps
 
@@ -260,10 +277,11 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                   // Use client's state to get the correct price cap
                   if (standardCaps[clientState] != null &&
                       standardCaps[clientState] is num) {
-                    extractedCap =
-                        (standardCaps[clientState] as num).toDouble();
+                    extractedCap = (standardCaps[clientState] as num)
+                        .toDouble();
                     debugPrint(
-                        'PriceOverrideView: Found standard cap for $clientState: $extractedCap');
+                      'PriceOverrideView: Found standard cap for $clientState: $extractedCap',
+                    );
                   }
                 }
 
@@ -275,17 +293,19 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                       priceCaps['highIntensity'] as Map<String, dynamic>;
                   if (highIntensityCaps[clientState] != null &&
                       highIntensityCaps[clientState] is num) {
-                    extractedCap =
-                        (highIntensityCaps[clientState] as num).toDouble();
+                    extractedCap = (highIntensityCaps[clientState] as num)
+                        .toDouble();
                     debugPrint(
-                        'PriceOverrideView: Found highIntensity cap for $clientState: $extractedCap');
+                      'PriceOverrideView: Found highIntensity cap for $clientState: $extractedCap',
+                    );
                   }
                 }
 
                 if (extractedCap != null && extractedCap > 0) {
                   maxPrice = extractedCap;
                   debugPrint(
-                      'PriceOverrideView: Using NDIS cap for $itemNumber ($clientState): $maxPrice');
+                    'PriceOverrideView: Using NDIS cap for $itemNumber ($clientState): $maxPrice',
+                  );
                 }
               }
 
@@ -295,14 +315,16 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                 if (apiCap != null && apiCap > 0) {
                   maxPrice = apiCap;
                   debugPrint(
-                      'PriceOverrideView: Using API-provided cap for $itemNumber: $maxPrice');
+                    'PriceOverrideView: Using API-provided cap for $itemNumber: $maxPrice',
+                  );
                 }
               }
 
               // If still no cap found, log a warning (no fallback to arbitrary value)
               if (maxPrice <= 0) {
                 debugPrint(
-                    'PriceOverrideView: WARNING - No NDIS price cap found for $itemNumber in state $clientState');
+                  'PriceOverrideView: WARNING - No NDIS price cap found for $itemNumber in state $clientState',
+                );
               }
 
               // Capture pricing source where available
@@ -349,21 +371,15 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.errorLoadingLineItems(e.toString())),
-          ),
+          SnackBar(content: Text(l10n.errorLoadingLineItems(e.toString()))),
         );
       }
-      DebugLog.error('load_line_items_error', details: {
-        'error': e.toString(),
-      });
+      DebugLog.error('load_line_items_error', details: {'error': e.toString()});
     } finally {
       setState(() {
         _isLoading = false;
       });
-      DebugLog.uiState('load_line_items_end', {
-        'isLoading': _isLoading,
-      });
+      DebugLog.uiState('load_line_items_end', {'isLoading': _isLoading});
     }
   }
 
@@ -410,16 +426,13 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
       });
       return;
     }
-    final flowId = DebugLog.startFlow('apply_overrides', details: {
-      'itemsCount': _lineItems.length,
-    });
-    DebugLog.uiState(
-        'apply_overrides_button_pressed',
-        {
-          'pendingOverrides':
-              _isOverridden.values.where((v) => v == true).length,
-        },
-        flowId: flowId);
+    final flowId = DebugLog.startFlow(
+      'apply_overrides',
+      details: {'itemsCount': _lineItems.length},
+    );
+    DebugLog.uiState('apply_overrides_button_pressed', {
+      'pendingOverrides': _isOverridden.values.where((v) => v == true).length,
+    }, flowId: flowId);
     setState(() {
       _isLoading = true;
     });
@@ -433,8 +446,9 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
     await shared.init();
     final String? userEmail = shared.getString('userEmail');
     final String orgId = widget.organizationId;
-    final String? clientId =
-        widget.clientId.isNotEmpty ? widget.clientId : null;
+    final String? clientId = widget.clientId.isNotEmpty
+        ? widget.clientId
+        : null;
 
     if (userEmail == null || userEmail.isEmpty) {
       setState(() {
@@ -442,11 +456,9 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
       });
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.missingUserContext),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.missingUserContext)));
       }
       return;
     }
@@ -469,26 +481,22 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
         if (newPrice <= 0) {
           final l10n = AppLocalizations.of(context)!;
           failures[id] = l10n.invalidPriceEntered;
-          DebugLog.error('invalid_price_entered',
-              details: {
-                'id': id,
-                'enteredPrice': newPrice,
-              },
-              flowId: flowId);
+          DebugLog.error(
+            'invalid_price_entered',
+            details: {'id': id, 'enteredPrice': newPrice},
+            flowId: flowId,
+          );
           continue;
         }
 
         try {
           // Check existing pricing
-          DebugLog.uiState(
-              'lookup_existing_pricing',
-              {
-                'organizationId': orgId,
-                'itemNumber': itemNumber,
-                'clientId': clientIdForSave,
-                'isClientSpecific': shouldBeClientSpecific,
-              },
-              flowId: flowId);
+          DebugLog.uiState('lookup_existing_pricing', {
+            'organizationId': orgId,
+            'itemNumber': itemNumber,
+            'clientId': clientIdForSave,
+            'isClientSpecific': shouldBeClientSpecific,
+          }, flowId: flowId);
           final lookup = await _apiMethod.getPricingLookup(
             orgId,
             itemNumber,
@@ -504,20 +512,18 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
 
           // Decide update vs create based on scope match
           final lookupIsClientSpecific = (lookup?['clientSpecific'] == true);
-          final scopeMatches = pricingId != null &&
+          final scopeMatches =
+              pricingId != null &&
               lookupIsClientSpecific == shouldBeClientSpecific;
 
           if (scopeMatches && pricingId.isNotEmpty) {
             // Update existing pricing only when scope matches
-            DebugLog.uiState(
-                'update_custom_pricing',
-                {
-                  'pricingId': pricingId,
-                  'newPrice': newPrice,
-                  'pricingType': 'fixed',
-                  'clientSpecific': shouldBeClientSpecific,
-                },
-                flowId: flowId);
+            DebugLog.uiState('update_custom_pricing', {
+              'pricingId': pricingId,
+              'newPrice': newPrice,
+              'pricingType': 'fixed',
+              'clientSpecific': shouldBeClientSpecific,
+            }, flowId: flowId);
             result = await _apiMethod.updateCustomPricing(
               pricingId: pricingId,
               price: newPrice,
@@ -530,16 +536,13 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
           } else {
             // Create new pricing for the intended scope; do not convert existing org/client record
             if (shouldBeClientSpecific) {
-              DebugLog.uiState(
-                  'create_client_specific_pricing',
-                  {
-                    'organizationId': orgId,
-                    'clientId': clientIdForSave,
-                    'itemNumber': itemNumber,
-                    'newPrice': newPrice,
-                    'pricingType': 'fixed',
-                  },
-                  flowId: flowId);
+              DebugLog.uiState('create_client_specific_pricing', {
+                'organizationId': orgId,
+                'clientId': clientIdForSave,
+                'itemNumber': itemNumber,
+                'newPrice': newPrice,
+                'pricingType': 'fixed',
+              }, flowId: flowId);
               result = await _apiMethod.saveClientCustomPricing(
                 orgId,
                 clientIdForSave!,
@@ -551,20 +554,16 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
               );
               // Fallback: if record already exists for intended scope, perform update instead
               if (result['success'] != true &&
-                  (result['message']
-                          ?.toString()
-                          .toLowerCase()
-                          .contains('already exists') ??
+                  (result['message']?.toString().toLowerCase().contains(
+                        'already exists',
+                      ) ??
                       false)) {
-                DebugLog.uiState(
-                    'create_conflict_fallback_update',
-                    {
-                      'organizationId': orgId,
-                      'clientId': clientIdForSave,
-                      'itemNumber': itemNumber,
-                      'newPrice': newPrice,
-                    },
-                    flowId: flowId);
+                DebugLog.uiState('create_conflict_fallback_update', {
+                  'organizationId': orgId,
+                  'clientId': clientIdForSave,
+                  'itemNumber': itemNumber,
+                  'newPrice': newPrice,
+                }, flowId: flowId);
                 final existing = await _apiMethod.getPricingLookup(
                   orgId,
                   itemNumber,
@@ -584,15 +583,12 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                 }
               }
             } else {
-              DebugLog.uiState(
-                  'create_org_pricing',
-                  {
-                    'organizationId': orgId,
-                    'itemNumber': itemNumber,
-                    'newPrice': newPrice,
-                    'pricingType': 'fixed',
-                  },
-                  flowId: flowId);
+              DebugLog.uiState('create_org_pricing', {
+                'organizationId': orgId,
+                'itemNumber': itemNumber,
+                'newPrice': newPrice,
+                'pricingType': 'fixed',
+              }, flowId: flowId);
               result = await _apiMethod.saveAsCustomPricing(
                 orgId,
                 itemNumber,
@@ -603,19 +599,15 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
               );
               // Fallback: if record already exists for intended scope, perform update instead
               if (result['success'] != true &&
-                  (result['message']
-                          ?.toString()
-                          .toLowerCase()
-                          .contains('already exists') ??
+                  (result['message']?.toString().toLowerCase().contains(
+                        'already exists',
+                      ) ??
                       false)) {
-                DebugLog.uiState(
-                    'create_conflict_fallback_update',
-                    {
-                      'organizationId': orgId,
-                      'itemNumber': itemNumber,
-                      'newPrice': newPrice,
-                    },
-                    flowId: flowId);
+                DebugLog.uiState('create_conflict_fallback_update', {
+                  'organizationId': orgId,
+                  'itemNumber': itemNumber,
+                  'newPrice': newPrice,
+                }, flowId: flowId);
                 final existing = await _apiMethod.getPricingLookup(
                   orgId,
                   itemNumber,
@@ -638,25 +630,20 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
           if (result['success'] != true) {
             final l10n = AppLocalizations.of(context)!;
             failures[id] = (result['message']?.toString() ?? l10n.saveFailed);
-            DebugLog.error('persist_override_failed',
-                details: {
-                  'id': id,
-                  'itemNumber': itemNumber,
-                  'result': result,
-                },
-                flowId: flowId);
+            DebugLog.error(
+              'persist_override_failed',
+              details: {'id': id, 'itemNumber': itemNumber, 'result': result},
+              flowId: flowId,
+            );
             continue;
           }
 
           // Confirm persistence by re-fetching lookup
-          DebugLog.uiState(
-              'confirm_persistence_lookup',
-              {
-                'organizationId': orgId,
-                'itemNumber': itemNumber,
-                'clientId': clientIdForSave,
-              },
-              flowId: flowId);
+          DebugLog.uiState('confirm_persistence_lookup', {
+            'organizationId': orgId,
+            'itemNumber': itemNumber,
+            'clientId': clientIdForSave,
+          }, flowId: flowId);
           final confirm = await _apiMethod.getPricingLookup(
             orgId,
             itemNumber,
@@ -666,8 +653,8 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
           // Prefer `price`, but fall back to `customPrice` when `price` is absent.
           final dynamic confirmPriceField =
               (confirm != null && confirm.containsKey('price'))
-                  ? confirm['price']
-                  : confirm?['customPrice'];
+              ? confirm['price']
+              : confirm?['customPrice'];
           final confirmedPrice = (confirmPriceField is num)
               ? confirmPriceField.toDouble()
               : double.tryParse('${confirmPriceField ?? ''}');
@@ -675,14 +662,16 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
               (confirmedPrice - newPrice).abs() > 0.001) {
             final l10n = AppLocalizations.of(context)!;
             failures[id] = l10n.persistenceConfirmationFailed;
-            DebugLog.error('persistence_confirmation_failed',
-                details: {
-                  'id': id,
-                  'itemNumber': itemNumber,
-                  'expectedPrice': newPrice,
-                  'confirmedPrice': confirmedPrice,
-                },
-                flowId: flowId);
+            DebugLog.error(
+              'persistence_confirmation_failed',
+              details: {
+                'id': id,
+                'itemNumber': itemNumber,
+                'expectedPrice': newPrice,
+                'confirmedPrice': confirmedPrice,
+              },
+              flowId: flowId,
+            );
             continue;
           }
 
@@ -696,17 +685,15 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                 confirm?['source'] ?? _lineItems[itemIndex]['source'];
           }
           _originalPrices[id] = newPrice;
-          _originalClientSpecific[id] = _isClientSpecific[id] ??
+          _originalClientSpecific[id] =
+              _isClientSpecific[id] ??
               false; // Update original client-specific state
           _isOverridden[id] = false;
-          DebugLog.uiState(
-              'override_applied_locally',
-              {
-                'id': id,
-                'itemNumber': itemNumber,
-                'newPrice': newPrice,
-              },
-              flowId: flowId);
+          DebugLog.uiState('override_applied_locally', {
+            'id': id,
+            'itemNumber': itemNumber,
+            'newPrice': newPrice,
+          }, flowId: flowId);
 
           overrides[id] = {
             'unitPrice': newPrice,
@@ -716,12 +703,11 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
         } catch (e) {
           debugPrint('Error persisting override for $id: $e');
           failures[id] = e.toString();
-          DebugLog.error('exception_persisting_override',
-              details: {
-                'id': id,
-                'error': e.toString(),
-              },
-              flowId: flowId);
+          DebugLog.error(
+            'exception_persisting_override',
+            details: {'id': id, 'error': e.toString()},
+            flowId: flowId,
+          );
         }
       }
     }
@@ -741,13 +727,15 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
           ),
         );
       }
-      DebugLog.endFlow(flowId,
-          success: false,
-          message: 'apply_overrides_failed',
-          summary: {
-            'failedCount': failures.length,
-            'successCount': overrides.length,
-          });
+      DebugLog.endFlow(
+        flowId,
+        success: false,
+        message: 'apply_overrides_failed',
+        summary: {
+          'failedCount': failures.length,
+          'successCount': overrides.length,
+        },
+      );
       return; // Do not pop on partial failure
     }
 
@@ -761,12 +749,12 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
         ),
       );
     }
-    DebugLog.endFlow(flowId,
-        success: true,
-        message: 'apply_overrides_success',
-        summary: {
-          'appliedCount': overrides.length,
-        });
+    DebugLog.endFlow(
+      flowId,
+      success: true,
+      message: 'apply_overrides_success',
+      summary: {'appliedCount': overrides.length},
+    );
 
     Navigator.pop(context, overrides);
   }
@@ -779,9 +767,9 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
       appBar: AppBar(
         title: Text(
           l10n.priceOverrideTitle,
-          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         backgroundColor: BauhausDesign.surfaceWhite,
         surfaceTintColor: Colors.transparent,
@@ -792,10 +780,7 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(
-            color: BauhausDesign.neutral,
-            height: 1,
-          ),
+          child: Container(color: BauhausDesign.neutral, height: 1),
         ),
       ),
       body: Stack(
@@ -813,21 +798,17 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                       const SizedBox(height: BauhausDesign.space3),
                       Text(
                         l10n.noNdisItemsFound,
-                        style: BauhausDesign.getTextTheme(context)
-                            .titleLarge
-                            ?.copyWith(
-                              color: BauhausDesign.textDark,
-                            ),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).titleLarge?.copyWith(color: BauhausDesign.textDark),
                       ),
                       const SizedBox(height: BauhausDesign.space2),
                       Text(
                         l10n.noClientAssignmentsForOverride,
                         textAlign: TextAlign.center,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium
-                            ?.copyWith(
-                              color: BauhausDesign.textMuted,
-                            ),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                       ),
                     ],
                   ),
@@ -835,9 +816,7 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
               : Column(
                   children: [
                     _buildHeader(),
-                    Expanded(
-                      child: _buildLineItemsList(),
-                    ),
+                    Expanded(child: _buildLineItemsList()),
                     _buildActionButtons(),
                   ],
                 ),
@@ -848,8 +827,9 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                 child: Container(
                   color: Colors.black.withOpacity(0.1),
                   child: const Center(
-                    child:
-                        CircularProgressIndicator(color: BauhausDesign.primary),
+                    child: CircularProgressIndicator(
+                      color: BauhausDesign.primary,
+                    ),
                   ),
                 ),
               ),
@@ -874,16 +854,16 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
           Text(
             l10n.reviewAndOverridePrices,
             style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: BauhausDesign.primary,
-                ),
+              fontWeight: FontWeight.bold,
+              color: BauhausDesign.primary,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space2),
           Text(
             l10n.ndisItemsCount(_lineItems.length),
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textMuted,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
           ),
         ],
       ),
@@ -934,11 +914,14 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: BauhausDesign.space2, vertical: 2),
+                              horizontal: BauhausDesign.space2,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: BauhausDesign.primary.withOpacity(0.1),
-                              borderRadius:
-                                  BorderRadius.circular(BauhausDesign.radiusSm),
+                              borderRadius: BorderRadius.circular(
+                                BauhausDesign.radiusSm,
+                              ),
                               border: Border.all(color: BauhausDesign.primary),
                             ),
                             child: Text(
@@ -953,41 +936,45 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                           ),
                           const SizedBox(width: BauhausDesign.space2),
                           SourceBadge(
-                              source: (item['source'] as String?) ?? 'fallback',
-                              isSmall: true),
+                            source: (item['source'] as String?) ?? 'fallback',
+                            isSmall: true,
+                          ),
                           if (isOverridden) ...[
                             const SizedBox(width: BauhausDesign.space2),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: BauhausDesign.space2,
-                                  vertical: 2),
+                                horizontal: BauhausDesign.space2,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: BauhausDesign.warning.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(
-                                    BauhausDesign.radiusSm),
-                                border:
-                                    Border.all(color: BauhausDesign.warning),
+                                  BauhausDesign.radiusSm,
+                                ),
+                                border: Border.all(
+                                  color: BauhausDesign.warning,
+                                ),
                               ),
-                              child: Text(l10n.modifiedLabel,
-                                  style: BauhausDesign.getTextTheme(context)
-                                      .labelSmall
-                                      ?.copyWith(
-                                        color: BauhausDesign.warning,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 9,
-                                      )),
+                              child: Text(
+                                l10n.modifiedLabel,
+                                style: BauhausDesign.getTextTheme(context)
+                                    .labelSmall
+                                    ?.copyWith(
+                                      color: BauhausDesign.warning,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 9,
+                                    ),
+                              ),
                             ),
-                          ]
+                          ],
                         ],
                       ),
                       const SizedBox(height: BauhausDesign.space2),
                       Text(
                         item['description'] ?? l10n.noDescriptionAvailable,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium
-                            ?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -996,8 +983,10 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                 ),
                 if (isOverridden)
                   IconButton(
-                    icon: const Icon(Icons.refresh_rounded,
-                        color: BauhausDesign.textMuted),
+                    icon: const Icon(
+                      Icons.refresh_rounded,
+                      color: BauhausDesign.textMuted,
+                    ),
                     onPressed: () => _resetPrice(id),
                     tooltip: l10n.resetPriceTooltip,
                   ),
@@ -1014,15 +1003,22 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
               child: Column(
                 children: [
                   _buildInfoRow(
-                      Icons.badge_outlined, l10n.employeeLabel, employeeName),
-                  const SizedBox(height: BauhausDesign.space2),
-                  _buildInfoRow(Icons.person_outline_rounded, l10n.clientLabel,
-                      clientName),
+                    Icons.badge_outlined,
+                    l10n.employeeLabel,
+                    employeeName,
+                  ),
                   const SizedBox(height: BauhausDesign.space2),
                   _buildInfoRow(
-                      Icons.calendar_today_rounded,
-                      l10n.scheduleLabel,
-                      '$scheduleDate ${startTime.isNotEmpty && endTime.isNotEmpty ? '($startTime - $endTime)' : ''}'),
+                    Icons.person_outline_rounded,
+                    l10n.clientLabel,
+                    clientName,
+                  ),
+                  const SizedBox(height: BauhausDesign.space2),
+                  _buildInfoRow(
+                    Icons.calendar_today_rounded,
+                    l10n.scheduleLabel,
+                    '$scheduleDate ${startTime.isNotEmpty && endTime.isNotEmpty ? '($startTime - $endTime)' : ''}',
+                  ),
                 ],
               ),
             ),
@@ -1031,32 +1027,39 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
               children: [
                 Expanded(
                   child: _buildPriceCard(
-                      label: l10n.currentRateLabel,
-                      value: l10n.priceDisplay(
-                          l10n.currencySymbol, currentPrice.toStringAsFixed(2)),
-                      icon: Icons.payments_outlined,
-                      color: BauhausDesign.primary,
-                      subtitle: 'Qty: ${quantity.toStringAsFixed(1)}'),
+                    label: l10n.currentRateLabel,
+                    value: l10n.priceDisplay(
+                      l10n.currencySymbol,
+                      currentPrice.toStringAsFixed(2),
+                    ),
+                    icon: Icons.payments_outlined,
+                    color: BauhausDesign.primary,
+                    subtitle: 'Qty: ${quantity.toStringAsFixed(1)}',
+                  ),
                 ),
                 const SizedBox(width: BauhausDesign.space3),
                 Expanded(
                   child: _buildPriceCard(
                     label: l10n.ndisCapLabel,
-                    value: (item['maxPrice'] != null &&
+                    value:
+                        (item['maxPrice'] != null &&
                             (item['maxPrice'] as num).toDouble() > 0)
                         ? l10n.priceDisplay(
                             l10n.currencySymbol,
                             (item['maxPrice'] as num)
                                 .toDouble()
-                                .toStringAsFixed(2))
+                                .toStringAsFixed(2),
+                          )
                         : l10n.naLabel,
                     icon: Icons.shield_outlined,
-                    color: (item['maxPrice'] != null &&
+                    color:
+                        (item['maxPrice'] != null &&
                             (item['maxPrice'] as num).toDouble() > 0)
                         ? BauhausDesign.success
                         : BauhausDesign.textMuted,
                     subtitle: item['clientState'] as String? ?? '',
-                    isWarning: item['maxPrice'] != null &&
+                    isWarning:
+                        item['maxPrice'] != null &&
                         (item['maxPrice'] as num).toDouble() > 0 &&
                         currentPrice > (item['maxPrice'] as num).toDouble(),
                   ),
@@ -1073,36 +1076,41 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                       : BauhausDesign.backgroundLight,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                   border: Border.all(
-                      color: (_isClientSpecific[id] == true)
-                          ? BauhausDesign.success
-                          : BauhausDesign.neutral),
+                    color: (_isClientSpecific[id] == true)
+                        ? BauhausDesign.success
+                        : BauhausDesign.neutral,
+                  ),
                 ),
                 child: Row(
                   children: [
                     Icon(
-                        (_isClientSpecific[id] == true)
-                            ? Icons.person_rounded
-                            : Icons.business_rounded,
-                        size: 20,
-                        color: (_isClientSpecific[id] == true)
-                            ? BauhausDesign.success
-                            : BauhausDesign.textMuted),
+                      (_isClientSpecific[id] == true)
+                          ? Icons.person_rounded
+                          : Icons.business_rounded,
+                      size: 20,
+                      color: (_isClientSpecific[id] == true)
+                          ? BauhausDesign.success
+                          : BauhausDesign.textMuted,
+                    ),
                     const SizedBox(width: BauhausDesign.space3),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(l10n.pricingScopeLabel,
-                              style: BauhausDesign.getTextTheme(context)
-                                  .labelSmall
-                                  ?.copyWith(color: BauhausDesign.textMuted)),
                           Text(
-                              (_isClientSpecific[id] == true)
-                                  ? l10n.clientSpecificRateLabel
-                                  : l10n.orgWideRateLabel,
-                              style: BauhausDesign.getTextTheme(context)
-                                  .bodySmall
-                                  ?.copyWith(fontWeight: FontWeight.bold)),
+                            l10n.pricingScopeLabel,
+                            style: BauhausDesign.getTextTheme(context)
+                                .labelSmall
+                                ?.copyWith(color: BauhausDesign.textMuted),
+                          ),
+                          Text(
+                            (_isClientSpecific[id] == true)
+                                ? l10n.clientSpecificRateLabel
+                                : l10n.orgWideRateLabel,
+                            style: BauhausDesign.getTextTheme(
+                              context,
+                            ).bodySmall?.copyWith(fontWeight: FontWeight.bold),
+                          ),
                         ],
                       ),
                     ),
@@ -1124,24 +1132,33 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.overridePriceLabel,
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelLarge
-                        ?.copyWith(fontWeight: FontWeight.bold)),
+                Text(
+                  l10n.overridePriceLabel,
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).labelLarge?.copyWith(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: BauhausDesign.space2),
                 BauhausTextField(
                   controller: _priceControllers[id],
                   hintText: l10n.enterNewPriceHint,
                   prefixIcon: const Padding(
                     padding: EdgeInsets.all(12),
-                    child: Text('\$',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold)),
+                    child: Text(
+                      '\$',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}'))
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^\d*\.?\d{0,2}'),
+                    ),
                   ],
                   onChanged: (value) => _onPriceChanged(id, value),
                 ),
@@ -1149,38 +1166,45 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(l10n.lineTotalLabel,
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
-                            ?.copyWith(color: BauhausDesign.textMuted)),
+                    Text(
+                      l10n.lineTotalLabel,
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                            l10n.priceDisplay(
-                                l10n.currencySymbol,
-                                (quantity *
-                                        (double.tryParse(
-                                                _priceControllers[id]?.text ??
-                                                    '0') ??
-                                            0))
-                                    .toStringAsFixed(2)),
-                            style: BauhausDesign.getTextTheme(context)
-                                .bodyLarge
-                                ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: BauhausDesign.primary)),
+                          l10n.priceDisplay(
+                            l10n.currencySymbol,
+                            (quantity *
+                                    (double.tryParse(
+                                          _priceControllers[id]?.text ?? '0',
+                                        ) ??
+                                        0))
+                                .toStringAsFixed(2),
+                          ),
+                          style: BauhausDesign.getTextTheme(context).bodyLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: BauhausDesign.primary,
+                              ),
+                        ),
                         if (isOverridden)
                           Text(
-                              l10n.wasPriceLabel(l10n.priceDisplay(
-                                  l10n.currencySymbol,
-                                  (quantity * originalPrice)
-                                      .toStringAsFixed(2))),
-                              style: BauhausDesign.getTextTheme(context)
-                                  .bodySmall
-                                  ?.copyWith(
-                                      color: BauhausDesign.textMuted,
-                                      decoration: TextDecoration.lineThrough)),
+                            l10n.wasPriceLabel(
+                              l10n.priceDisplay(
+                                l10n.currencySymbol,
+                                (quantity * originalPrice).toStringAsFixed(2),
+                              ),
+                            ),
+                            style: BauhausDesign.getTextTheme(context).bodySmall
+                                ?.copyWith(
+                                  color: BauhausDesign.textMuted,
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                          ),
                       ],
                     ),
                   ],
@@ -1200,33 +1224,45 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                     border: Border.all(color: BauhausDesign.error),
                   ),
-                  child: Row(children: [
-                    const Icon(Icons.warning_amber_rounded,
-                        color: BauhausDesign.error, size: 20),
-                    const SizedBox(width: BauhausDesign.space3),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(l10n.priceExceedsCap,
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.warning_amber_rounded,
+                        color: BauhausDesign.error,
+                        size: 20,
+                      ),
+                      const SizedBox(width: BauhausDesign.space3),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.priceExceedsCap,
                               style: BauhausDesign.getTextTheme(context)
                                   .labelSmall
                                   ?.copyWith(
-                                      color: BauhausDesign.error,
-                                      fontWeight: FontWeight.bold)),
-                          Text(
-                              l10n.maximumPriceLabel(l10n.priceDisplay(
+                                    color: BauhausDesign.error,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                            Text(
+                              l10n.maximumPriceLabel(
+                                l10n.priceDisplay(
                                   l10n.currencySymbol,
                                   (item['maxPrice'] as num)
                                       .toDouble()
-                                      .toStringAsFixed(2))),
-                              style: BauhausDesign.getTextTheme(context)
-                                  .bodySmall
-                                  ?.copyWith(color: BauhausDesign.error)),
-                        ],
+                                      .toStringAsFixed(2),
+                                ),
+                              ),
+                              style: BauhausDesign.getTextTheme(
+                                context,
+                              ).bodySmall?.copyWith(color: BauhausDesign.error),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ]),
+                    ],
+                  ),
                 ),
               ),
           ],
@@ -1236,79 +1272,106 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
   }
 
   Widget _buildInfoRow(IconData icon, String label, String value) {
-    return Row(children: [
-      Icon(icon, size: 16, color: BauhausDesign.textMuted),
-      const SizedBox(width: BauhausDesign.space2),
-      Text('$label: ',
-          style: BauhausDesign.getTextTheme(context)
-              .labelSmall
-              ?.copyWith(color: BauhausDesign.textMuted)),
-      Expanded(
-          child: Text(value,
-              style: BauhausDesign.getTextTheme(context)
-                  .labelSmall
-                  ?.copyWith(fontWeight: FontWeight.bold),
-              overflow: TextOverflow.ellipsis)),
-    ]);
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: BauhausDesign.textMuted),
+        const SizedBox(width: BauhausDesign.space2),
+        Text(
+          '$label: ',
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).labelSmall?.copyWith(fontWeight: FontWeight.bold),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
   }
 
-  Widget _buildPriceCard(
-      {required String label,
-      required String value,
-      required IconData icon,
-      required Color color,
-      String? subtitle,
-      bool isWarning = false}) {
+  Widget _buildPriceCard({
+    required String label,
+    required String value,
+    required IconData icon,
+    required Color color,
+    String? subtitle,
+    bool isWarning = false,
+  }) {
     final l10n = AppLocalizations.of(context)!;
     final displayColor = isWarning ? BauhausDesign.error : color;
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-          color: displayColor.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          border: Border.all(color: displayColor.withOpacity(0.1))),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          Icon(icon, size: 16, color: displayColor),
-          const SizedBox(width: BauhausDesign.space2),
-          Expanded(
-            child: Text(label,
-                style: BauhausDesign.getTextTheme(context)
-                    .labelSmall
-                    ?.copyWith(color: BauhausDesign.textMuted),
-                overflow: TextOverflow.ellipsis),
-          ),
-          if (subtitle != null && subtitle.isNotEmpty)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm)),
-              child: Text(subtitle,
-                  style: BauhausDesign.getTextTheme(context)
-                      .labelSmall
-                      ?.copyWith(
+        color: displayColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+        border: Border.all(color: displayColor.withOpacity(0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 16, color: displayColor),
+              const SizedBox(width: BauhausDesign.space2),
+              Expanded(
+                child: Text(
+                  label,
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (subtitle != null && subtitle.isNotEmpty)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                  ),
+                  child: Text(
+                    subtitle,
+                    style: BauhausDesign.getTextTheme(context).labelSmall
+                        ?.copyWith(
                           color: color,
                           fontWeight: FontWeight.bold,
-                          fontSize: 9),
-                  overflow: TextOverflow.ellipsis),
-            ),
-        ]),
-        const SizedBox(height: BauhausDesign.space1),
-        Text(value,
+                          fontSize: 9,
+                        ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: BauhausDesign.space1),
+          Text(
+            value,
             style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: isWarning ? displayColor : BauhausDesign.textDark)),
-        if (isWarning)
-          Padding(
+              fontWeight: FontWeight.bold,
+              color: isWarning ? displayColor : BauhausDesign.textDark,
+            ),
+          ),
+          if (isWarning)
+            Padding(
               padding: const EdgeInsets.only(top: 4),
-              child: Text(l10n.exceedsCapWarning,
-                  style: BauhausDesign.getTextTheme(context)
-                      .labelSmall
-                      ?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: BauhausDesign.error))),
-      ]),
+              child: Text(
+                l10n.exceedsCapWarning,
+                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: BauhausDesign.error,
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 
@@ -1351,11 +1414,7 @@ class SourceBadge extends StatelessWidget {
   final String source;
   final bool isSmall;
 
-  const SourceBadge({
-    super.key,
-    required this.source,
-    this.isSmall = false,
-  });
+  const SourceBadge({super.key, required this.source, this.isSmall = false});
 
   @override
   Widget build(BuildContext context) {
@@ -1383,10 +1442,6 @@ class SourceBadge extends StatelessWidget {
         label = l10n.sourceNdisCap;
     }
 
-    return BauhausChip(
-      label: label,
-      variant: variant,
-      isSmall: isSmall,
-    );
+    return BauhausChip(label: label, variant: variant, isSmall: isSmall);
   }
 }

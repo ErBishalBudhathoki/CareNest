@@ -3,7 +3,11 @@ import 'package:carenest/app/shared/constants/values/dimens/app_dimens.dart';
 
 // Helper method to build info rows
 Widget buildInfoRow(
-    IconData icon, String label, String text, bool isSmallScreen) {
+  IconData icon,
+  String label,
+  String text,
+  bool isSmallScreen,
+) {
   return Row(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [

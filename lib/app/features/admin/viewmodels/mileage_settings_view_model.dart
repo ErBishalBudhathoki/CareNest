@@ -42,7 +42,9 @@ class MileageSettingsViewModel extends Notifier<MileageSettingsState> {
       final prefs = await SharedPreferencesUtils.getInstance();
       final orgId = prefs.getOrganizationId();
       if (orgId != null) {
-        await _repository.updateOrganization(orgId, {'reimbursementRate': newRate});
+        await _repository.updateOrganization(orgId, {
+          'reimbursementRate': newRate,
+        });
         state = state.copyWith(reimbursementRate: newRate, isLoading: false);
       } else {
         state = state.copyWith(isLoading: false);
@@ -55,5 +57,5 @@ class MileageSettingsViewModel extends Notifier<MileageSettingsState> {
 
 final mileageSettingsViewModelProvider =
     NotifierProvider<MileageSettingsViewModel, MileageSettingsState>(
-  MileageSettingsViewModel.new,
-);
+      MileageSettingsViewModel.new,
+    );

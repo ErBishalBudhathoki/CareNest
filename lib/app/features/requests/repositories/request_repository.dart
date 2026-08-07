@@ -19,12 +19,14 @@ class RequestRepository {
   RequestRepository(this._apiMethod);
 
   Future<RequestModel> createRequest(
-      RequestModel request, String userEmail) async {
+    RequestModel request,
+    String userEmail,
+  ) async {
     try {
-      final response = await _apiMethod.post('api/requests/create', body: {
-        ...request.toJson(),
-        'userEmail': userEmail,
-      });
+      final response = await _apiMethod.post(
+        'api/requests/create',
+        body: {...request.toJson(), 'userEmail': userEmail},
+      );
 
       if (response['success'] == true) {
         final data = response['data'];
@@ -38,11 +40,13 @@ class RequestRepository {
             message.contains('500') ||
             message.contains('502')) {
           debugPrint(
-              'RequestRepository: Backend unavailable ($message), saving locally.');
+            'RequestRepository: Backend unavailable ($message), saving locally.',
+          );
           return await _createLocalRequest(request, userEmail);
         }
         throw Exception(
-            message.isNotEmpty ? message : 'Failed to create request');
+          message.isNotEmpty ? message : 'Failed to create request',
+        );
       }
     } catch (e) {
       // If network error, fallback to local storage
@@ -52,7 +56,9 @@ class RequestRepository {
   }
 
   Future<RequestModel> _createLocalRequest(
-      RequestModel request, String userEmail) async {
+    RequestModel request,
+    String userEmail,
+  ) async {
     final newRequest = request.copyWith(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       status: RequestStatus.pendingLocal,
@@ -100,16 +106,19 @@ class RequestRepository {
         if (message.contains('404')) {
           // Endpoint not found, treat as empty list or local list
           debugPrint(
-              'RequestRepository: Endpoint 404, returning local requests.');
+            'RequestRepository: Endpoint 404, returning local requests.',
+          );
           return await _getLocalRequests(organizationId, userEmail);
         }
         throw Exception(
-            message.isNotEmpty ? message : 'Failed to fetch requests');
+          message.isNotEmpty ? message : 'Failed to fetch requests',
+        );
       }
     } catch (e) {
       // Fallback to local
       debugPrint(
-          'RequestRepository: Error fetching requests ($e), returning local.');
+        'RequestRepository: Error fetching requests ($e), returning local.',
+      );
 
       // If admin (userEmail is null), rethrow because we don't have local cache for admins yet
       if (userEmail == null) rethrow;
@@ -119,15 +128,20 @@ class RequestRepository {
   }
 
   Future<bool> updateRequestStatus(
-      String requestId, String status, String userEmail,
-      {String? reason}) async {
+    String requestId,
+    String status,
+    String userEmail, {
+    String? reason,
+  }) async {
     try {
-      final response =
-          await _apiMethod.patch('api/requests/$requestId/status', body: {
-        'status': status,
-        'userEmail': userEmail,
-        if (reason != null) 'reason': reason,
-      });
+      final response = await _apiMethod.patch(
+        'api/requests/$requestId/status',
+        body: {
+          'status': status,
+          'userEmail': userEmail,
+          if (reason != null) 'reason': reason,
+        },
+      );
 
       return response['success'] == true;
     } catch (e) {
@@ -137,7 +151,9 @@ class RequestRepository {
   }
 
   Future<List<RequestModel>> _getLocalRequests(
-      String organizationId, String? userEmail) async {
+    String organizationId,
+    String? userEmail,
+  ) async {
     if (userEmail == null) return []; // No local storage for admin view yet
     final prefs = await SharedPreferences.getInstance();
     final key = _getStorageKey(userEmail);

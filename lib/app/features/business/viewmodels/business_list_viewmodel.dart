@@ -9,13 +9,12 @@ enum BusinessListStatus { initial, loading, loaded, error, empty }
 class BusinessListViewModel extends Notifier<int> {
   late final ApiMethod _apiMethod;
 
-
   @override
   int build() {
     _apiMethod = ref.watch(apiMethodProvider);
     return 0;
   }
-  
+
   void notifyListeners() {
     state = state + 1;
   }
@@ -50,8 +49,9 @@ class BusinessListViewModel extends Notifier<int> {
 
       final rawBusinesses = await _apiMethod.getBusinesses(organizationId);
 
-      _businesses =
-          rawBusinesses.map((json) => BusinessModel.fromJson(json)).toList();
+      _businesses = rawBusinesses
+          .map((json) => BusinessModel.fromJson(json))
+          .toList();
 
       if (_businesses.isEmpty) {
         _status = BusinessListStatus.empty;

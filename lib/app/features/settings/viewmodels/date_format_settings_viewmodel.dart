@@ -1,4 +1,3 @@
-
 import 'package:carenest/app/features/settings/repositories/date_preference_repository.dart';
 
 /// ViewModel for managing the date format preference UI state and lifecycle.
@@ -49,13 +48,16 @@ class DateFormatSettingsViewModel extends Notifier<DateFormatSettingsState> {
     return DateFormatSettingsState();
   }
 
-
   /// Load the stored preference. Defaults to 'dmy' when not set.
   Future<void> load() async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       final pref = await _repository.getPreference();
-      state = state.copyWith(selected: (pref == 'mdy' || pref == 'dmy') ? pref! : 'dmy', saveSucceeded: false, isLoaded: true);
+      state = state.copyWith(
+        selected: (pref == 'mdy' || pref == 'dmy') ? pref! : 'dmy',
+        saveSucceeded: false,
+        isLoaded: true,
+      );
     } catch (e) {
       state = state.copyWith(errorMessage: 'Failed to load preference: $e');
     } finally {
@@ -75,7 +77,11 @@ class DateFormatSettingsViewModel extends Notifier<DateFormatSettingsState> {
 
   /// Persist the selected preference via the repository.
   Future<void> save() async {
-    state = state.copyWith(isLoading: true, saveSucceeded: false, errorMessage: null);
+    state = state.copyWith(
+      isLoading: true,
+      saveSucceeded: false,
+      errorMessage: null,
+    );
     try {
       await _repository.savePreference(state.selected);
       state = state.copyWith(saveSucceeded: true);

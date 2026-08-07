@@ -21,24 +21,30 @@ class CrossOrgDashboardView extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh, color: BauhausDesign.primary),
-            onPressed: () => ref.read(crossOrgViewModelProvider.notifier).fetchMetrics(),
+            onPressed: () =>
+                ref.read(crossOrgViewModelProvider.notifier).fetchMetrics(),
           ),
         ],
       ),
       body: state.when(
         data: (data) => _buildContent(context, data),
-        loading: () => const BauhausLoadingState(message: 'Aggregating data...'),
+        loading: () =>
+            const BauhausLoadingState(message: 'Aggregating data...'),
         error: (e, _) => BauhausErrorState(
           description: e.toString(),
-          onRetry: () => ref.read(crossOrgViewModelProvider.notifier).fetchMetrics(),
+          onRetry: () =>
+              ref.read(crossOrgViewModelProvider.notifier).fetchMetrics(),
         ),
       ),
     );
   }
 
   Widget _buildContent(BuildContext context, List<CrossOrgMetric> data) {
-    final totalRevenue = data.fold<double>(0, (sum, metric) => sum + metric.revenue);
-    
+    final totalRevenue = data.fold<double>(
+      0,
+      (sum, metric) => sum + metric.revenue,
+    );
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       child: Column(
@@ -50,16 +56,16 @@ class CrossOrgDashboardView extends ConsumerWidget {
               children: [
                 Text(
                   'Total Consolidated Revenue',
-                  style: BauhausDesign.getTextTheme(context)
-                      .titleMedium
-                      ?.copyWith(color: BauhausDesign.surfaceWhite),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).titleMedium?.copyWith(color: BauhausDesign.surfaceWhite),
                 ),
                 const SizedBox(height: BauhausDesign.space2),
                 Text(
                   '\$${totalRevenue.toStringAsFixed(2)}',
-                  style: BauhausDesign.getTextTheme(context)
-                      .displayLarge
-                      ?.copyWith(color: BauhausDesign.surfaceWhite),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).displayLarge?.copyWith(color: BauhausDesign.surfaceWhite),
                 ),
               ],
             ),
@@ -71,45 +77,54 @@ class CrossOrgDashboardView extends ConsumerWidget {
           ),
           const SizedBox(height: BauhausDesign.space3),
           if (data.isEmpty)
-             const BauhausEmptyState(title: 'No Data', message: 'No revenue data found for this period.'),
-          ...data.map((org) => Padding(
-                padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
-                child: BauhausCard(
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              org.organizationName,
-                              style: BauhausDesign.getTextTheme(context).titleMedium,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+            const BauhausEmptyState(
+              title: 'No Data',
+              message: 'No revenue data found for this period.',
+            ),
+          ...data.map(
+            (org) => Padding(
+              padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
+              child: BauhausCard(
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            org.organizationName,
+                            style: BauhausDesign.getTextTheme(
+                              context,
+                            ).titleMedium,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          Text(
-                            '\$${org.revenue.toStringAsFixed(2)}',
-                            style: BauhausDesign.getTextTheme(context)
-                                .titleMedium
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ],
+                        ),
+                        Text(
+                          '\$${org.revenue.toStringAsFixed(2)}',
+                          style: BauhausDesign.getTextTheme(
+                            context,
+                          ).titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: BauhausDesign.space2),
+                    LinearProgressIndicator(
+                      value: totalRevenue > 0 ? org.revenue / totalRevenue : 0,
+                      backgroundColor: BauhausDesign.surfaceOffWhite,
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        BauhausDesign.primary,
                       ),
-                      const SizedBox(height: BauhausDesign.space2),
-                      LinearProgressIndicator(
-                        value: totalRevenue > 0 ? org.revenue / totalRevenue : 0,
-                        backgroundColor: BauhausDesign.surfaceOffWhite,
-                        valueColor: const AlwaysStoppedAnimation<Color>(BauhausDesign.primary),
-                      ),
-                      const SizedBox(height: BauhausDesign.space1),
-                      Text(
-                        '${totalRevenue > 0 ? ((org.revenue / totalRevenue) * 100).toStringAsFixed(1) : "0.0"}% Contribution',
-                        style: BauhausDesign.getTextTheme(context).bodySmall,
-                      ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: BauhausDesign.space1),
+                    Text(
+                      '${totalRevenue > 0 ? ((org.revenue / totalRevenue) * 100).toStringAsFixed(1) : "0.0"}% Contribution',
+                      style: BauhausDesign.getTextTheme(context).bodySmall,
+                    ),
+                  ],
                 ),
-              )),
+              ),
+            ),
+          ),
         ],
       ),
     );

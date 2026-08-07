@@ -15,15 +15,18 @@ class FakePrefs extends SharedPreferencesUtils {
   Future<void> init() async {
     _inited = true;
   }
+
   @override
   Future<void> setString(String key, String value) async {
     if (!_inited) await init();
     _store[key] = value;
   }
+
   @override
   String? getString(String key) {
     return _store[key];
   }
+
   @override
   Future<void> remove(String key) async {
     if (!_inited) await init();
@@ -33,25 +36,31 @@ class FakePrefs extends SharedPreferencesUtils {
 
 void main() {
   group('DatePeriodService.weekPeriodFor', () {
-    test('Monday-Sunday period for 08/11/2025 (Saturday) is 03/11 to 09/11', () {
-      final prefs = FakePrefs();
-      final repo = PeriodConfigRepository(prefs);
-      final svc = DatePeriodService(repo);
-      final date = DateTime(2025, 11, 8);
-      final p = svc.weekPeriodFor(date, weekStartDay: DateTime.monday);
-      expect(p.start, DateTime(2025, 11, 3));
-      expect(p.end, DateTime(2025, 11, 9));
-    });
+    test(
+      'Monday-Sunday period for 08/11/2025 (Saturday) is 03/11 to 09/11',
+      () {
+        final prefs = FakePrefs();
+        final repo = PeriodConfigRepository(prefs);
+        final svc = DatePeriodService(repo);
+        final date = DateTime(2025, 11, 8);
+        final p = svc.weekPeriodFor(date, weekStartDay: DateTime.monday);
+        expect(p.start, DateTime(2025, 11, 3));
+        expect(p.end, DateTime(2025, 11, 9));
+      },
+    );
 
-    test('Sunday-start convention: week containing 2025-11-08 starts 2025-11-02', () {
-      final prefs = FakePrefs();
-      final repo = PeriodConfigRepository(prefs);
-      final svc = DatePeriodService(repo);
-      final date = DateTime(2025, 11, 8);
-      final p = svc.weekPeriodFor(date, weekStartDay: DateTime.sunday);
-      expect(p.start, DateTime(2025, 11, 2));
-      expect(p.end, DateTime(2025, 11, 8));
-    });
+    test(
+      'Sunday-start convention: week containing 2025-11-08 starts 2025-11-02',
+      () {
+        final prefs = FakePrefs();
+        final repo = PeriodConfigRepository(prefs);
+        final svc = DatePeriodService(repo);
+        final date = DateTime(2025, 11, 8);
+        final p = svc.weekPeriodFor(date, weekStartDay: DateTime.sunday);
+        expect(p.start, DateTime(2025, 11, 2));
+        expect(p.end, DateTime(2025, 11, 8));
+      },
+    );
   });
 
   group('DatePeriodService.derivePeriodFromItems', () {
@@ -86,8 +95,10 @@ void main() {
 
     test('Empty items list throws PeriodCalculationException', () {
       final svc = DatePeriodService(PeriodConfigRepository(FakePrefs()));
-      expect(() => svc.derivePeriodFromItems([]),
-          throwsA(isA<PeriodCalculationException>()));
+      expect(
+        () => svc.derivePeriodFromItems([]),
+        throwsA(isA<PeriodCalculationException>()),
+      );
     });
   });
 

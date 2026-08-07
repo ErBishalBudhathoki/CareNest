@@ -103,10 +103,7 @@ class _GeneratedPdfResult {
   final String pdfPath;
   final List<String> receiptUrls;
 
-  const _GeneratedPdfResult({
-    required this.pdfPath,
-    required this.receiptUrls,
-  });
+  const _GeneratedPdfResult({required this.pdfPath, required this.receiptUrls});
 }
 
 class _EmployeeInvoiceGenerationViewState
@@ -138,8 +135,11 @@ class _EmployeeInvoiceGenerationViewState
     _api = ref.read(app_providers.apiMethodProvider);
     final now = DateTime.now();
     _dateRange = DateTimeRange(
-      start: DateTime(now.year, now.month, now.day)
-          .subtract(const Duration(days: 30)),
+      start: DateTime(
+        now.year,
+        now.month,
+        now.day,
+      ).subtract(const Duration(days: 30)),
       end: DateTime(now.year, now.month, now.day),
     );
     _fetchEmployees();
@@ -179,7 +179,7 @@ class _EmployeeInvoiceGenerationViewState
   void _updateSelectedEmployee(
     String email,
     _EmployeeInvoiceEmployeeState Function(_EmployeeInvoiceEmployeeState)
-        update,
+    update,
   ) {
     final current = _selectedEmployeesByEmail[email];
     if (current == null) return;
@@ -241,8 +241,10 @@ class _EmployeeInvoiceGenerationViewState
 
   Future<void> _fetchClientsForEmployee(String employeeEmail) async {
     if (!_selectedEmployeesByEmail.containsKey(employeeEmail)) return;
-    _updateSelectedEmployee(employeeEmail,
-        (e) => e.copyWith(isLoadingClients: true, clients: const []));
+    _updateSelectedEmployee(
+      employeeEmail,
+      (e) => e.copyWith(isLoadingClients: true, clients: const []),
+    );
 
     try {
       final resp = await _api.getUserAssignments(employeeEmail);
@@ -251,22 +253,27 @@ class _EmployeeInvoiceGenerationViewState
       if (resp['success'] == true && resp['assignments'] is List) {
         final list = (resp['assignments'] as List)
             .whereType<Map<String, dynamic>>()
-            .map((a) => {
-                  'clientId': a['clientId']?.toString() ?? '',
-                  'clientEmail': a['clientEmail']?.toString() ?? '',
-                  'clientName': (a['clientName']?.toString() ??
-                          a['clientEmail']?.toString() ??
-                          '')
-                      .trim(),
-                })
+            .map(
+              (a) => {
+                'clientId': a['clientId']?.toString() ?? '',
+                'clientEmail': a['clientEmail']?.toString() ?? '',
+                'clientName':
+                    (a['clientName']?.toString() ??
+                            a['clientEmail']?.toString() ??
+                            '')
+                        .trim(),
+              },
+            )
             .where((c) => (c['clientEmail'] ?? '').toString().isNotEmpty)
             .toList();
 
         _updateSelectedEmployee(employeeEmail, (e) {
           final selectedEmail = e.selectedClientEmail;
-          final validSelected = selectedEmail.isEmpty ||
+          final validSelected =
+              selectedEmail.isEmpty ||
               list.any(
-                  (c) => (c['clientEmail']?.toString() ?? '') == selectedEmail);
+                (c) => (c['clientEmail']?.toString() ?? '') == selectedEmail,
+              );
           return e.copyWith(
             clients: list,
             isLoadingClients: false,
@@ -276,28 +283,35 @@ class _EmployeeInvoiceGenerationViewState
         return;
       }
 
-      _updateSelectedEmployee(employeeEmail,
-          (e) => e.copyWith(isLoadingClients: false, clients: const []));
+      _updateSelectedEmployee(
+        employeeEmail,
+        (e) => e.copyWith(isLoadingClients: false, clients: const []),
+      );
     } catch (_) {
       if (!_selectedEmployeesByEmail.containsKey(employeeEmail)) return;
-      _updateSelectedEmployee(employeeEmail,
-          (e) => e.copyWith(isLoadingClients: false, clients: const []));
+      _updateSelectedEmployee(
+        employeeEmail,
+        (e) => e.copyWith(isLoadingClients: false, clients: const []),
+      );
     }
   }
 
   Future<void> _fetchEmployeeBankDetails(String employeeEmail) async {
     if (!_selectedEmployeesByEmail.containsKey(employeeEmail)) return;
     _updateSelectedEmployee(
-        employeeEmail,
-        (e) => e.copyWith(
-              isLoadingBankDetails: true,
-              bankDetails: null,
-              bankDetailsError: '',
-            ));
+      employeeEmail,
+      (e) => e.copyWith(
+        isLoadingBankDetails: true,
+        bankDetails: null,
+        bankDetailsError: '',
+      ),
+    );
 
     try {
       final resp = await _api.getBankDetailsForUserEmail(
-          employeeEmail, widget.organizationId);
+        employeeEmail,
+        widget.organizationId,
+      );
       if (!_selectedEmployeesByEmail.containsKey(employeeEmail)) return;
 
       if (resp['success'] == true && resp['data'] is Map<String, dynamic>) {
@@ -307,7 +321,8 @@ class _EmployeeInvoiceGenerationViewState
         final bsb = data['bsb']?.toString() ?? '';
         final accountNumber = data['accountNumber']?.toString() ?? '';
 
-        final error = (bankName.isEmpty ||
+        final error =
+            (bankName.isEmpty ||
                 accountName.isEmpty ||
                 bsb.isEmpty ||
                 accountNumber.isEmpty)
@@ -315,35 +330,38 @@ class _EmployeeInvoiceGenerationViewState
             : '';
 
         _updateSelectedEmployee(
-            employeeEmail,
-            (e) => e.copyWith(
-                  bankDetails: data,
-                  bankDetailsError: error,
-                  isLoadingBankDetails: false,
-                ));
+          employeeEmail,
+          (e) => e.copyWith(
+            bankDetails: data,
+            bankDetailsError: error,
+            isLoadingBankDetails: false,
+          ),
+        );
         return;
       }
 
       _updateSelectedEmployee(
-          employeeEmail,
-          (e) => e.copyWith(
-                isLoadingBankDetails: false,
-                bankDetailsError: _friendlyBankDetailsError(
-                  resp['message']?.toString(),
-                  employeeName: e.name.isNotEmpty ? e.name : e.email,
-                ),
-              ));
+        employeeEmail,
+        (e) => e.copyWith(
+          isLoadingBankDetails: false,
+          bankDetailsError: _friendlyBankDetailsError(
+            resp['message']?.toString(),
+            employeeName: e.name.isNotEmpty ? e.name : e.email,
+          ),
+        ),
+      );
     } catch (e) {
       if (!_selectedEmployeesByEmail.containsKey(employeeEmail)) return;
       _updateSelectedEmployee(
-          employeeEmail,
-          (s) => s.copyWith(
-                isLoadingBankDetails: false,
-                bankDetailsError: _friendlyBankDetailsError(
-                  e.toString(),
-                  employeeName: s.name.isNotEmpty ? s.name : s.email,
-                ),
-              ));
+        employeeEmail,
+        (s) => s.copyWith(
+          isLoadingBankDetails: false,
+          bankDetailsError: _friendlyBankDetailsError(
+            e.toString(),
+            employeeName: s.name.isNotEmpty ? s.name : s.email,
+          ),
+        ),
+      );
     }
   }
 
@@ -372,7 +390,8 @@ class _EmployeeInvoiceGenerationViewState
   bool get _canGenerate => _validationResult.isValid;
 
   Future<void> _pickDateRange() async {
-    final initial = _dateRange ??
+    final initial =
+        _dateRange ??
         DateTimeRange(
           start: DateTime.now().subtract(const Duration(days: 30)),
           end: DateTime.now(),
@@ -499,10 +518,7 @@ class _EmployeeInvoiceGenerationViewState
             ? _extractReceiptUrlsFromInvoice(invoice)
             : const <String>[];
         results.add(
-          _GeneratedPdfResult(
-            pdfPath: uniquePaths[i],
-            receiptUrls: receipts,
-          ),
+          _GeneratedPdfResult(pdfPath: uniquePaths[i], receiptUrls: receipts),
         );
       }
 
@@ -536,8 +552,10 @@ class _EmployeeInvoiceGenerationViewState
         (lower.contains('route not found') && lower.contains('getbankdetails'));
   }
 
-  String _friendlyBankDetailsError(String? raw,
-      {required String employeeName}) {
+  String _friendlyBankDetailsError(
+    String? raw, {
+    required String employeeName,
+  }) {
     final original = (raw ?? '').trim();
     final fallback =
         '$employeeName bank details are not set yet. Set now to continue, or choose later.';
@@ -576,9 +594,7 @@ class _EmployeeInvoiceGenerationViewState
     if (!mounted) return;
     await Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
-        builder: (_) => const BankDetailsView(
-          scope: BankDetailsScope.personal,
-        ),
+        builder: (_) => const BankDetailsView(scope: BankDetailsScope.personal),
       ),
     );
     if (!mounted) return;
@@ -602,9 +618,9 @@ class _EmployeeInvoiceGenerationViewState
         content: Text(
           message,
           style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.surfaceLight,
-                fontWeight: FontWeight.w600,
-              ),
+            color: BauhausDesign.surfaceLight,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         backgroundColor: isError ? BauhausDesign.error : BauhausDesign.success,
         behavior: SnackBarBehavior.floating,
@@ -658,18 +674,18 @@ class _EmployeeInvoiceGenerationViewState
           children: [
             Text(
               'Employee Invoice',
-              style:
-                  BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
-                        color: BauhausDesign.textDark,
-                        fontWeight: FontWeight.w800,
-                      ),
+              style: BauhausDesign.getTextTheme(context).headlineLarge
+                  ?.copyWith(
+                    color: BauhausDesign.textDark,
+                    fontWeight: FontWeight.w800,
+                  ),
             ),
             Text(
               widget.organizationName ?? '',
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.neutral,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: BauhausDesign.neutral,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
@@ -681,8 +697,8 @@ class _EmployeeInvoiceGenerationViewState
       body: _isLoadingEmployees
           ? _buildCenteredLoader('Loading employees...')
           : (_loadError != null && _employees.isEmpty)
-              ? _buildErrorState(_loadError!)
-              : _buildContent(),
+          ? _buildErrorState(_loadError!)
+          : _buildContent(),
     );
   }
 
@@ -719,9 +735,9 @@ class _EmployeeInvoiceGenerationViewState
             Text(
               label,
               style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ],
         ),
@@ -762,9 +778,9 @@ class _EmployeeInvoiceGenerationViewState
                 message,
                 textAlign: TextAlign.center,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.textDark,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               const SizedBox(height: BauhausDesign.space4),
               ElevatedButton(
@@ -775,7 +791,9 @@ class _EmployeeInvoiceGenerationViewState
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                     side: const BorderSide(
-                        color: BauhausDesign.neutral, width: 2),
+                      color: BauhausDesign.neutral,
+                      width: 2,
+                    ),
                   ),
                 ),
                 child: const Text('Retry'),
@@ -796,9 +814,7 @@ class _EmployeeInvoiceGenerationViewState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: SingleChildScrollView(
-                    child: _buildSelectionPanel(),
-                  ),
+                  child: SingleChildScrollView(child: _buildSelectionPanel()),
                 ),
                 const SizedBox(width: BauhausDesign.space4),
                 Expanded(
@@ -836,11 +852,7 @@ class _EmployeeInvoiceGenerationViewState
         borderRadius: BorderRadius.circular(0), // Sharp corners
         border: Border.all(color: _neoBlack, width: _neoBorderWidth),
         boxShadow: const [
-          BoxShadow(
-            color: _neoBlack,
-            offset: Offset(8, 8),
-            blurRadius: 0,
-          ),
+          BoxShadow(color: _neoBlack, offset: Offset(8, 8), blurRadius: 0),
         ],
       ),
       padding: const EdgeInsets.all(24),
@@ -892,11 +904,7 @@ class _EmployeeInvoiceGenerationViewState
   Widget _buildSectionHeader(String title) {
     return Row(
       children: [
-        Container(
-          width: 8,
-          height: 24,
-          color: _neoRed,
-        ),
+        Container(width: 8, height: 24, color: _neoRed),
         const SizedBox(width: 12),
         Text(
           title,
@@ -988,11 +996,7 @@ class _EmployeeInvoiceGenerationViewState
       child: isSelected
           ? Container(
               color: _neoRed,
-              child: const Icon(
-                Icons.check,
-                size: 14,
-                color: _neoWhite,
-              ),
+              child: const Icon(Icons.check, size: 14, color: _neoWhite),
             )
           : null,
     );
@@ -1006,9 +1010,7 @@ class _EmployeeInvoiceGenerationViewState
       return _hintBox('Select one or more employees to configure clients.');
     }
 
-    return Column(
-      children: selected.map(_buildEmployeeConfigCard).toList(),
-    );
+    return Column(children: selected.map(_buildEmployeeConfigCard).toList());
   }
 
   Widget _buildEmployeeConfigCard(_EmployeeInvoiceEmployeeState employee) {
@@ -1023,11 +1025,7 @@ class _EmployeeInvoiceGenerationViewState
         color: _neoWhite,
         border: Border.all(color: _neoBlack, width: _neoBorderWidth),
         boxShadow: const [
-          BoxShadow(
-            color: _neoBlack,
-            offset: Offset(4, 4),
-            blurRadius: 0,
-          ),
+          BoxShadow(color: _neoBlack, offset: Offset(4, 4), blurRadius: 0),
         ],
       ),
       child: Stack(
@@ -1035,8 +1033,9 @@ class _EmployeeInvoiceGenerationViewState
           Padding(
             padding: const EdgeInsets.only(left: 6),
             child: Theme(
-              data:
-                  Theme.of(context).copyWith(dividerColor: Colors.transparent),
+              data: Theme.of(
+                context,
+              ).copyWith(dividerColor: Colors.transparent),
               child: ExpansionTile(
                 tilePadding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -1075,8 +1074,11 @@ class _EmployeeInvoiceGenerationViewState
                         ),
                       )
                     else if (!isValid)
-                      const Icon(Icons.error_outline_rounded,
-                          color: _neoRed, size: 24)
+                      const Icon(
+                        Icons.error_outline_rounded,
+                        color: _neoRed,
+                        size: 24,
+                      )
                     else
                       Container(
                         width: 24,
@@ -1086,8 +1088,11 @@ class _EmployeeInvoiceGenerationViewState
                           shape: BoxShape.circle,
                           border: Border.all(color: _neoBlack, width: 1.5),
                         ),
-                        child:
-                            const Icon(Icons.check, color: _neoWhite, size: 16),
+                        child: const Icon(
+                          Icons.check,
+                          color: _neoWhite,
+                          size: 16,
+                        ),
                       ),
                     const SizedBox(width: 12),
                     const Icon(Icons.expand_more, color: _neoBlack),
@@ -1107,7 +1112,8 @@ class _EmployeeInvoiceGenerationViewState
                         if (hasClientSelectionError) ...[
                           const SizedBox(height: 16),
                           _buildNeoErrorBox(
-                              'Select a client for ${employee.name} (specific-client mode).'),
+                            'Select a client for ${employee.name} (specific-client mode).',
+                          ),
                         ],
                         if (hasBankError) ...[
                           const SizedBox(height: 16),
@@ -1125,9 +1131,7 @@ class _EmployeeInvoiceGenerationViewState
             top: 0,
             bottom: 0,
             width: 6,
-            child: Container(
-              color: _neoRed,
-            ),
+            child: Container(color: _neoRed),
           ),
         ],
       ),
@@ -1135,7 +1139,8 @@ class _EmployeeInvoiceGenerationViewState
   }
 
   Widget _buildEmployeeClientModeToggle(
-      _EmployeeInvoiceEmployeeState employee) {
+    _EmployeeInvoiceEmployeeState employee,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -1261,9 +1266,9 @@ class _EmployeeInvoiceGenerationViewState
             onTap: isDisabled
                 ? null
                 : () => _updateSelectedEmployee(
-                      employee.email,
-                      (e) => e.copyWith(selectedClientEmail: email),
-                    ),
+                    employee.email,
+                    (e) => e.copyWith(selectedClientEmail: email),
+                  ),
             child: Container(
               color: isSelected ? _neoBlack.withOpacity(0.05) : null,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -1280,8 +1285,9 @@ class _EmployeeInvoiceGenerationViewState
                                 ? _neoBlack.withOpacity(0.4)
                                 : _neoBlack,
                             fontSize: 14,
-                            fontWeight:
-                                isSelected ? FontWeight.w700 : FontWeight.w500,
+                            fontWeight: isSelected
+                                ? FontWeight.w700
+                                : FontWeight.w500,
                           ),
                         ),
                         Text(
@@ -1304,8 +1310,11 @@ class _EmployeeInvoiceGenerationViewState
                         shape: BoxShape.circle,
                         border: Border.all(color: _neoBlack, width: 1.5),
                       ),
-                      child:
-                          const Icon(Icons.check, color: _neoWhite, size: 12),
+                      child: const Icon(
+                        Icons.check,
+                        color: _neoWhite,
+                        size: 12,
+                      ),
                     ),
                 ],
               ),
@@ -1461,11 +1470,7 @@ class _EmployeeInvoiceGenerationViewState
         color: _neoWhite,
         border: Border.all(color: _neoBlack, width: _neoBorderWidth),
         boxShadow: const [
-          BoxShadow(
-            color: _neoBlack,
-            offset: Offset(8, 8),
-            blurRadius: 0,
-          ),
+          BoxShadow(color: _neoBlack, offset: Offset(8, 8), blurRadius: 0),
         ],
       ),
       child: Column(
@@ -1587,8 +1592,8 @@ class _EmployeeInvoiceGenerationViewState
               final clientLabel = e.allClientsMode
                   ? 'All clients'
                   : (e.selectedClientEmail.isNotEmpty
-                      ? e.selectedClientEmail
-                      : 'No client selected');
+                        ? e.selectedClientEmail
+                        : 'No client selected');
 
               final bulletColor = index % 2 == 0 ? _neoBlue : _neoRed;
 
@@ -1608,13 +1613,15 @@ class _EmployeeInvoiceGenerationViewState
                           children: [
                             TextSpan(
                               text: e.name,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w700),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                             TextSpan(
                               text: ': $clientLabel',
-                              style:
-                                  TextStyle(color: _neoBlack.withOpacity(0.7)),
+                              style: TextStyle(
+                                color: _neoBlack.withOpacity(0.7),
+                              ),
                             ),
                           ],
                         ),
@@ -1677,25 +1684,34 @@ class _EmployeeInvoiceGenerationViewState
                   width: 100,
                   child: TextFormField(
                     initialValue: (_taxRate * 100).toStringAsFixed(1),
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                     style: GoogleFonts.robotoMono(
-                        fontSize: 14, fontWeight: FontWeight.w700),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
                     decoration: InputDecoration(
                       suffixText: '%',
                       filled: true,
                       fillColor: _neoWhite,
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.zero,
-                        borderSide:
-                            const BorderSide(color: _neoBlack, width: 1.5),
+                        borderSide: const BorderSide(
+                          color: _neoBlack,
+                          width: 1.5,
+                        ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.zero,
-                        borderSide:
-                            const BorderSide(color: _neoBlack, width: 1.5),
+                        borderSide: const BorderSide(
+                          color: _neoBlack,
+                          width: 1.5,
+                        ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.zero,
@@ -1767,8 +1783,9 @@ class _EmployeeInvoiceGenerationViewState
                 children: [
                   AnimatedAlign(
                     duration: const Duration(milliseconds: 200),
-                    alignment:
-                        value ? Alignment.centerRight : Alignment.centerLeft,
+                    alignment: value
+                        ? Alignment.centerRight
+                        : Alignment.centerLeft,
                     child: Container(
                       width: 24,
                       height: 24,
@@ -1927,7 +1944,9 @@ class _EmployeeInvoiceGenerationViewState
                     'No bank details found',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.robotoMono(
-                        color: _neoRed, fontWeight: FontWeight.w500),
+                      color: _neoRed,
+                      fontWeight: FontWeight.w500,
+                    ),
                   )
                 else ...[
                   Text(
@@ -2062,11 +2081,7 @@ class _EmployeeInvoiceGenerationViewState
         color: _neoWhite,
         border: Border.all(color: _neoBlack, width: _neoBorderWidth),
         boxShadow: const [
-          BoxShadow(
-            color: _neoBlack,
-            offset: Offset(8, 8),
-            blurRadius: 0,
-          ),
+          BoxShadow(color: _neoBlack, offset: Offset(8, 8), blurRadius: 0),
         ],
       ),
       padding: const EdgeInsets.all(24),
@@ -2087,11 +2102,7 @@ class _EmployeeInvoiceGenerationViewState
                 ),
               ),
               const SizedBox(height: 8),
-              Container(
-                width: 60,
-                height: 4,
-                color: _neoRed,
-              ),
+              Container(width: 60, height: 4, color: _neoRed),
             ],
           ),
           const SizedBox(height: 32),
@@ -2165,7 +2176,9 @@ class _EmployeeInvoiceGenerationViewState
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                         decoration: BoxDecoration(
                           color: _neoRed,
                           border: Border.all(color: _neoBlack, width: 1.5),
@@ -2227,10 +2240,10 @@ class _EmployeeInvoiceGenerationViewState
             child: Text(
               title.toUpperCase(),
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 0.8,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 0.8,
+              ),
             ),
           ),
           const SizedBox(height: BauhausDesign.space4),
@@ -2252,9 +2265,9 @@ class _EmployeeInvoiceGenerationViewState
       child: Text(
         text,
         style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-              color: BauhausDesign.neutral,
-              fontWeight: FontWeight.w700,
-            ),
+          color: BauhausDesign.neutral,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }
@@ -2272,9 +2285,9 @@ class _EmployeeInvoiceGenerationViewState
       child: Text(
         text,
         style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-              color: BauhausDesign.surfaceLight,
-              fontWeight: FontWeight.w800,
-            ),
+          color: BauhausDesign.surfaceLight,
+          fontWeight: FontWeight.w800,
+        ),
       ),
     );
   }

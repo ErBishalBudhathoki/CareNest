@@ -77,7 +77,9 @@ class LeaveViewModel extends Notifier<LeaveViewModelState> {
         await refresh();
         return true;
       } else {
-        state = state.copyWith(errorMessage: result['message'] ?? 'Failed to submit request');
+        state = state.copyWith(
+          errorMessage: result['message'] ?? 'Failed to submit request',
+        );
         return false;
       }
     } catch (e) {
@@ -89,16 +91,21 @@ class LeaveViewModel extends Notifier<LeaveViewModelState> {
   }
 
   Future<void> loadForecast(DateTime targetDate) async {
-    await ref.read(leaveForecastProvider.notifier).fetchForecast(_userEmail, targetDate);
+    await ref
+        .read(leaveForecastProvider.notifier)
+        .fetchForecast(_userEmail, targetDate);
   }
 
-  Future<double> calculateLeaveHours(DateTime startDate, DateTime endDate) async {
+  Future<double> calculateLeaveHours(
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
     try {
       final result = await _repository.calculateLeaveHours(
         startDate: startDate,
         endDate: endDate,
       );
-      
+
       if (result['success'] == true && result['data'] != null) {
         final data = result['data'];
         return (data['totalHours'] as num).toDouble();
@@ -112,7 +119,9 @@ class LeaveViewModel extends Notifier<LeaveViewModelState> {
 
   Future<void> fetchHolidays({String? organizationId}) async {
     try {
-      final holidays = await _repository.getHolidays(organizationId: organizationId);
+      final holidays = await _repository.getHolidays(
+        organizationId: organizationId,
+      );
       state = state.copyWith(holidays: holidays);
     } catch (e) {
       debugPrint('Error fetching holidays: $e');
@@ -120,4 +129,7 @@ class LeaveViewModel extends Notifier<LeaveViewModelState> {
   }
 }
 
-final leaveViewModelProvider = NotifierProvider.family<LeaveViewModel, LeaveViewModelState, String>(LeaveViewModel.new);
+final leaveViewModelProvider =
+    NotifierProvider.family<LeaveViewModel, LeaveViewModelState, String>(
+      LeaveViewModel.new,
+    );

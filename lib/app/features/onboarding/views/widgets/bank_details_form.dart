@@ -41,8 +41,9 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
     _bankNameController = TextEditingController(text: widget.bankName);
     _accountNameController = TextEditingController(text: widget.accountName);
     _bsbController = TextEditingController(text: widget.bsb);
-    _accountNumberController =
-        TextEditingController(text: widget.accountNumber);
+    _accountNumberController = TextEditingController(
+      text: widget.accountNumber,
+    );
   }
 
   @override
@@ -101,10 +102,7 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
             ],
           ),
           const SizedBox(height: 24),
-          ButtonWidget(
-            buttonText: 'Save & Continue',
-            onPressed: _submit,
-          ),
+          ButtonWidget(buttonText: 'Save & Continue', onPressed: _submit),
         ],
       ),
     );
@@ -136,16 +134,15 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
       return;
     }
 
-    await ref.read(onboardingViewModelProvider.notifier).updateStep(
-      'bankDetails',
-      {
-        'bankName': _bankNameController.text.trim(),
-        'accountName': _accountNameController.text.trim(),
-        'bsb': _bsbController.text.trim(),
-        'accountNumber': _accountNumberController.text.trim(),
-        'currentStep': 3,
-      },
-    );
+    await ref
+        .read(onboardingViewModelProvider.notifier)
+        .updateStep('bankDetails', {
+          'bankName': _bankNameController.text.trim(),
+          'accountName': _accountNameController.text.trim(),
+          'bsb': _bsbController.text.trim(),
+          'accountNumber': _accountNumberController.text.trim(),
+          'currentStep': 3,
+        });
 
     widget.onComplete();
   }

@@ -21,14 +21,13 @@ class OcrService {
       sourcePath: file.path,
       uiSettings: [
         AndroidUiSettings(
-            toolbarTitle: 'Crop Receipt',
-            toolbarColor: const Color(0xFF1D3557), // Bauhaus Blue
-            toolbarWidgetColor: Colors.white,
-            initAspectRatio: CropAspectRatioPreset.original,
-            lockAspectRatio: false),
-        IOSUiSettings(
-          title: 'Crop Receipt',
+          toolbarTitle: 'Crop Receipt',
+          toolbarColor: const Color(0xFF1D3557), // Bauhaus Blue
+          toolbarWidgetColor: Colors.white,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: false,
         ),
+        IOSUiSettings(title: 'Crop Receipt'),
       ],
     );
     if (croppedFile == null) return null;

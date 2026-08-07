@@ -30,8 +30,7 @@ class _OnboardingAppSplashState extends State<OnboardingAppSplash>
     _logoScale = Tween<double>(begin: 0.7, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.7,
-            curve: OnboardingCurves.splashLogoEase),
+        curve: const Interval(0.0, 0.7, curve: OnboardingCurves.splashLogoEase),
       ),
     );
 
@@ -42,15 +41,13 @@ class _OnboardingAppSplashState extends State<OnboardingAppSplash>
       ),
     );
 
-    _taglineSlide = Tween<Offset>(
-      begin: const Offset(0, 0.15),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.55, 1.0, curve: Curves.easeOutCubic),
-      ),
-    );
+    _taglineSlide =
+        Tween<Offset>(begin: const Offset(0, 0.15), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.55, 1.0, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _controller.forward();
     Future.delayed(OnboardingDurations.splashAutoAdvance, () {
@@ -118,10 +115,10 @@ class _LogoMark extends StatelessWidget {
       child: Text(
         OnboardingContent.appName[0],
         style: BauhausDesign.getTextTheme(context).displayLarge?.copyWith(
-              color: BauhausDesign.surfaceWhite,
-              fontWeight: FontWeight.w900,
-              fontSize: 48,
-            ),
+          color: BauhausDesign.surfaceWhite,
+          fontWeight: FontWeight.w900,
+          fontSize: 48,
+        ),
       ),
     );
   }

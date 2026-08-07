@@ -78,16 +78,10 @@ class ServiceConfirmationViewModel extends Notifier<ServiceConfirmationState> {
         signatureData: signatureData,
       );
 
-      state = state.copyWith(
-        isLoading: false,
-        signature: signature,
-      );
+      state = state.copyWith(isLoading: false, signature: signature);
     } catch (e) {
       debugPrint('Error saving signature: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -128,17 +122,12 @@ class ServiceConfirmationViewModel extends Notifier<ServiceConfirmationState> {
       );
     } catch (e) {
       debugPrint('Error submitting confirmation: $e');
-      state = state.copyWith(
-        isSubmitting: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isSubmitting: false, error: e.toString());
     }
   }
 
   /// Get service confirmation
-  Future<void> getConfirmation({
-    required String appointmentId,
-  }) async {
+  Future<void> getConfirmation({required String appointmentId}) async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
@@ -161,17 +150,12 @@ class ServiceConfirmationViewModel extends Notifier<ServiceConfirmationState> {
       }
     } catch (e) {
       debugPrint('Error getting confirmation: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
   /// Get checklist template
-  Future<void> getChecklistTemplate({
-    required String serviceType,
-  }) async {
+  Future<void> getChecklistTemplate({required String serviceType}) async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
@@ -179,16 +163,10 @@ class ServiceConfirmationViewModel extends Notifier<ServiceConfirmationState> {
         serviceType: serviceType,
       );
 
-      state = state.copyWith(
-        isLoading: false,
-        checklist: checklist,
-      );
+      state = state.copyWith(isLoading: false, checklist: checklist);
     } catch (e) {
       debugPrint('Error getting checklist template: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -208,11 +186,7 @@ class ServiceConfirmationViewModel extends Notifier<ServiceConfirmationState> {
   }
 
   /// Set rating
-  void setRating({
-    required int stars,
-    String? feedback,
-    List<String>? tags,
-  }) {
+  void setRating({required int stars, String? feedback, List<String>? tags}) {
     final rating = ClientRating(
       stars: stars,
       feedback: feedback,
@@ -270,5 +244,7 @@ class ServiceConfirmationViewModel extends Notifier<ServiceConfirmationState> {
 }
 
 /// Provider for service confirmation viewmodel
-final serviceConfirmationViewModelProvider = NotifierProvider<
-    ServiceConfirmationViewModel, ServiceConfirmationState>(ServiceConfirmationViewModel.new);
+final serviceConfirmationViewModelProvider =
+    NotifierProvider<ServiceConfirmationViewModel, ServiceConfirmationState>(
+      ServiceConfirmationViewModel.new,
+    );

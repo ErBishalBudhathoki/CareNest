@@ -67,36 +67,60 @@ class PricingSettingsViewModel extends Notifier<PricingSettingsState> {
   bool _validate() {
     final cur = state.settings.defaultCurrency.trim();
     if (cur.length != 3 || !RegExp(r'^[A-Z]{3}$').hasMatch(cur)) {
-      state = state.copyWith(errorMessage: 'Currency must be a 3-letter code (e.g., AUD).');
+      state = state.copyWith(
+        errorMessage: 'Currency must be a 3-letter code (e.g., AUD).',
+      );
       return false;
     }
-    if (state.settings.pricingModel.isEmpty || state.settings.pricingModel.length > 100) {
-      state = state.copyWith(errorMessage: 'Pricing model is required and must be <= 100 characters.');
+    if (state.settings.pricingModel.isEmpty ||
+        state.settings.pricingModel.length > 100) {
+      state = state.copyWith(
+        errorMessage:
+            'Pricing model is required and must be <= 100 characters.',
+      );
       return false;
     }
-    if (state.settings.roundingMethod.isEmpty || state.settings.roundingMethod.length > 100) {
-      state = state.copyWith(errorMessage: 'Rounding method is required and must be <= 100 characters.');
+    if (state.settings.roundingMethod.isEmpty ||
+        state.settings.roundingMethod.length > 100) {
+      state = state.copyWith(
+        errorMessage:
+            'Rounding method is required and must be <= 100 characters.',
+      );
       return false;
     }
     const allowedTax = {'GST Inclusive', 'GST Exclusive'};
     if (!allowedTax.contains(state.settings.taxCalculation)) {
-      state = state.copyWith(errorMessage: 'Tax calculation must be GST Inclusive or GST Exclusive.');
+      state = state.copyWith(
+        errorMessage: 'Tax calculation must be GST Inclusive or GST Exclusive.',
+      );
       return false;
     }
-    if (state.settings.defaultMarkup < 0 || state.settings.defaultMarkup > 100) {
-      state = state.copyWith(errorMessage: 'Default markup must be between 0 and 100.');
+    if (state.settings.defaultMarkup < 0 ||
+        state.settings.defaultMarkup > 100) {
+      state = state.copyWith(
+        errorMessage: 'Default markup must be between 0 and 100.',
+      );
       return false;
     }
-    if (state.settings.maxPriceVariation < 0 || state.settings.maxPriceVariation > 100) {
-      state = state.copyWith(errorMessage: 'Max price variation must be between 0 and 100.');
+    if (state.settings.maxPriceVariation < 0 ||
+        state.settings.maxPriceVariation > 100) {
+      state = state.copyWith(
+        errorMessage: 'Max price variation must be between 0 and 100.',
+      );
       return false;
     }
-    if (state.settings.priceHistoryRetention < 1 || state.settings.priceHistoryRetention > 3650) {
-      state = state.copyWith(errorMessage: 'Price history retention must be 1–3650 days.');
+    if (state.settings.priceHistoryRetention < 1 ||
+        state.settings.priceHistoryRetention > 3650) {
+      state = state.copyWith(
+        errorMessage: 'Price history retention must be 1–3650 days.',
+      );
       return false;
     }
-    if (state.settings.bulkOperationLimit < 1 || state.settings.bulkOperationLimit > 10000) {
-      state = state.copyWith(errorMessage: 'Bulk operation limit must be 1–10000.');
+    if (state.settings.bulkOperationLimit < 1 ||
+        state.settings.bulkOperationLimit > 10000) {
+      state = state.copyWith(
+        errorMessage: 'Bulk operation limit must be 1–10000.',
+      );
       return false;
     }
     state = state.copyWith(errorMessage: null);
@@ -105,9 +129,13 @@ class PricingSettingsViewModel extends Notifier<PricingSettingsState> {
 
   Future<void> save(String organizationId) async {
     if (!_validate()) return;
-    
-    state = state.copyWith(isLoading: true, errorMessage: null, saveSucceeded: false);
-    
+
+    state = state.copyWith(
+      isLoading: true,
+      errorMessage: null,
+      saveSucceeded: false,
+    );
+
     try {
       final persisted = await _repository.updateGeneralSettings(
         organizationId: organizationId,

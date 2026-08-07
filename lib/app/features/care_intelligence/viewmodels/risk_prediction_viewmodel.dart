@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/features/care_intelligence/models/care_intelligence_models.dart' hide Provider;
+import 'package:carenest/app/features/care_intelligence/models/care_intelligence_models.dart'
+    hide Provider;
 import 'package:carenest/app/features/care_intelligence/repositories/care_intelligence_repository.dart';
 import 'package:carenest/app/features/care_intelligence/viewmodels/intelligence_viewmodel.dart';
 
@@ -52,11 +53,10 @@ class RiskPredictionState {
 class RiskPredictionViewModel extends Notifier<RiskPredictionState> {
   late final CareIntelligenceRepository _repository;
 
-  
   @override
   RiskPredictionState build() {
     final repository = ref.watch(careIntelligenceRepositoryProvider);
-    
+
     return RiskPredictionState();
   }
 
@@ -85,10 +85,7 @@ class RiskPredictionViewModel extends Notifier<RiskPredictionState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -117,10 +114,7 @@ class RiskPredictionViewModel extends Notifier<RiskPredictionState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -140,7 +134,8 @@ class RiskPredictionViewModel extends Notifier<RiskPredictionState> {
       if (result['success'] == true) {
         state = state.copyWith(
           isLoading: false,
-          behaviorPrediction: result['behaviorPrediction'] as BehaviorEscalationPrediction?,
+          behaviorPrediction:
+              result['behaviorPrediction'] as BehaviorEscalationPrediction?,
         );
       } else {
         state = state.copyWith(
@@ -149,10 +144,7 @@ class RiskPredictionViewModel extends Notifier<RiskPredictionState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -181,10 +173,7 @@ class RiskPredictionViewModel extends Notifier<RiskPredictionState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -213,10 +202,7 @@ class RiskPredictionViewModel extends Notifier<RiskPredictionState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -249,10 +235,7 @@ class RiskPredictionViewModel extends Notifier<RiskPredictionState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -268,4 +251,7 @@ class RiskPredictionViewModel extends Notifier<RiskPredictionState> {
 }
 
 // Provider for RiskPredictionViewModel
-final riskPredictionViewModelProvider = NotifierProvider<RiskPredictionViewModel, RiskPredictionState>(RiskPredictionViewModel.new);
+final riskPredictionViewModelProvider =
+    NotifierProvider<RiskPredictionViewModel, RiskPredictionState>(
+      RiskPredictionViewModel.new,
+    );

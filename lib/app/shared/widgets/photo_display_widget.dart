@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
@@ -24,10 +22,7 @@ class PhotoDisplayWidget extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         image: photoData != null
-            ? DecorationImage(
-                image: MemoryImage(photoData!),
-                fit: BoxFit.cover,
-              )
+            ? DecorationImage(image: MemoryImage(photoData!), fit: BoxFit.cover)
             : const DecorationImage(
                 image: AssetImage('assets/icons/profile_placeholder.png'),
                 fit: BoxFit.cover,

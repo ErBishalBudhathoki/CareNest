@@ -38,8 +38,11 @@ class InvoiceNumberGeneratorService {
       final orgCode = _generateCode(organizationCode, 3);
 
       // Generate sequential number
-      final sequence =
-          await _getNextSequenceNumber(organizationId, year, month);
+      final sequence = await _getNextSequenceNumber(
+        organizationId,
+        year,
+        month,
+      );
       final sequenceStr = sequence.toString().padLeft(4, '0');
 
       // Generate client code (3 chars from client name/ID)
@@ -51,12 +54,17 @@ class InvoiceNumberGeneratorService {
       // Construct the invoice number with INV prefix (clean format)
       // Format: INV + ORGYMNNCC (INV + ORG + Y + M + NN + CC) - Ultra compact with prefix
       final shortYear = year.substring(3); // Use 1-digit year (last digit)
-      final shortMonth =
-          month.length == 2 ? month.substring(1) : month; // Use 1-digit month
-      final shortSequence =
-          sequence.toString().padLeft(2, '0'); // Use 2-digit sequence
-      final shortClientCode =
-          _generateCode('$clientName$clientId', 2); // Use 2 chars for client
+      final shortMonth = month.length == 2
+          ? month.substring(1)
+          : month; // Use 1-digit month
+      final shortSequence = sequence.toString().padLeft(
+        2,
+        '0',
+      ); // Use 2-digit sequence
+      final shortClientCode = _generateCode(
+        '$clientName$clientId',
+        2,
+      ); // Use 2 chars for client
       final invoiceNumber =
           'INV$orgCode$shortYear$shortMonth$shortSequence$shortClientCode';
 
@@ -99,7 +107,10 @@ class InvoiceNumberGeneratorService {
 
   /// Get the next sequence number for the given organization, year, and month
   static Future<int> _getNextSequenceNumber(
-      String organizationId, String year, String month) async {
+    String organizationId,
+    String year,
+    String month,
+  ) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final key = '${_sequenceKey}_${organizationId}_${year}_$month';
@@ -117,7 +128,9 @@ class InvoiceNumberGeneratorService {
 
   /// Store invoice number history for tracking and duplicate prevention
   static Future<void> _storeInvoiceNumberHistory(
-      String invoiceNumber, Map<String, dynamic> metadata) async {
+    String invoiceNumber,
+    Map<String, dynamic> metadata,
+  ) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final historyJson = prefs.getString(_invoiceHistoryKey) ?? '{}';
@@ -128,11 +141,15 @@ class InvoiceNumberGeneratorService {
       // Keep only last 1000 entries to prevent storage bloat
       if (history.length > 1000) {
         final sortedEntries = history.entries.toList()
-          ..sort((a, b) => (b.value['timestamp'] as String)
-              .compareTo(a.value['timestamp'] as String));
+          ..sort(
+            (a, b) => (b.value['timestamp'] as String).compareTo(
+              a.value['timestamp'] as String,
+            ),
+          );
 
-        final trimmedHistory =
-            Map<String, dynamic>.fromEntries(sortedEntries.take(1000));
+        final trimmedHistory = Map<String, dynamic>.fromEntries(
+          sortedEntries.take(1000),
+        );
 
         await prefs.setString(_invoiceHistoryKey, json.encode(trimmedHistory));
       } else {
@@ -170,7 +187,8 @@ class InvoiceNumberGeneratorService {
 
   /// Get invoice metadata by invoice number
   static Future<Map<String, dynamic>?> getInvoiceMetadata(
-      String invoiceNumber) async {
+    String invoiceNumber,
+  ) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final historyJson = prefs.getString(_invoiceHistoryKey) ?? '{}';
@@ -214,7 +232,9 @@ class InvoiceNumberGeneratorService {
 
   /// Verify watermark authenticity
   static Future<bool> verifyWatermark(
-      String invoiceNumber, String watermark) async {
+    String invoiceNumber,
+    String watermark,
+  ) async {
     try {
       final expectedWatermark = await generateWatermark(invoiceNumber);
       return watermark == expectedWatermark;
@@ -226,7 +246,8 @@ class InvoiceNumberGeneratorService {
 
   /// Extract invoice number from watermark (if possible)
   static Future<String?> extractInvoiceNumberFromWatermark(
-      String watermark) async {
+    String watermark,
+  ) async {
     try {
       // This would require reverse engineering the watermark
       // For now, we'll check against known watermarks in history
@@ -305,11 +326,15 @@ class InvoiceNumberGeneratorService {
   }
 
   /// Generate filename using invoice number
-  static String generateFileName(String invoiceNumber,
-      {String extension = 'pdf'}) {
+  static String generateFileName(
+    String invoiceNumber, {
+    String extension = 'pdf',
+  }) {
     // Replace special characters with underscores for filename safety
-    final safeInvoiceNumber =
-        invoiceNumber.replaceAll(RegExp(r'[^a-zA-Z0-9\-_]'), '_');
+    final safeInvoiceNumber = invoiceNumber.replaceAll(
+      RegExp(r'[^a-zA-Z0-9\-_]'),
+      '_',
+    );
     return 'Invoice_$safeInvoiceNumber.$extension';
   }
 
@@ -348,7 +373,10 @@ class InvoiceNumberGeneratorService {
 
   /// Reset sequence counter (for testing or year rollover)
   static Future<void> resetSequenceCounter(
-      String organizationId, String year, String month) async {
+    String organizationId,
+    String year,
+    String month,
+  ) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final key = '${_sequenceKey}_${organizationId}_${year}_$month';
@@ -361,7 +389,8 @@ class InvoiceNumberGeneratorService {
 
   /// Get invoice statistics
   static Future<Map<String, dynamic>> getInvoiceStats(
-      String organizationId) async {
+    String organizationId,
+  ) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final historyJson = prefs.getString(_invoiceHistoryKey) ?? '{}';
@@ -386,8 +415,9 @@ class InvoiceNumberGeneratorService {
         'totalInvoices': orgInvoices.length,
         'thisYearInvoices': thisYearInvoices,
         'thisMonthInvoices': thisMonthInvoices,
-        'lastInvoiceNumber':
-            orgInvoices.isNotEmpty ? orgInvoices.last.key : null,
+        'lastInvoiceNumber': orgInvoices.isNotEmpty
+            ? orgInvoices.last.key
+            : null,
       };
     } catch (e) {
       debugPrint('Error getting invoice stats: $e');

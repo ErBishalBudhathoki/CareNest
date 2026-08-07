@@ -8,15 +8,16 @@ import 'package:carenest/app/features/organization/models/organization_model.dar
 class BauhausDetailsSection extends ConsumerStatefulWidget {
   final Organization organization;
   final Function(String, Map<String, dynamic>) onSave;
-  
+
   const BauhausDetailsSection({
-    super.key, 
+    super.key,
     required this.organization,
     required this.onSave,
   });
 
   @override
-  ConsumerState<BauhausDetailsSection> createState() => _BauhausDetailsSectionState();
+  ConsumerState<BauhausDetailsSection> createState() =>
+      _BauhausDetailsSectionState();
 }
 
 class _BauhausDetailsSectionState extends ConsumerState<BauhausDetailsSection> {
@@ -28,7 +29,7 @@ class _BauhausDetailsSectionState extends ConsumerState<BauhausDetailsSection> {
   late TextEditingController _stateController;
   late TextEditingController _postcodeController;
   late TextEditingController _countryController;
-  
+
   final _formKey = GlobalKey<FormState>();
   bool _isSaving = false;
   String? _errorMessage;
@@ -39,11 +40,21 @@ class _BauhausDetailsSectionState extends ConsumerState<BauhausDetailsSection> {
     _nameController = TextEditingController(text: widget.organization.name);
     _codeController = TextEditingController(text: widget.organization.code);
     _abnController = TextEditingController(text: widget.organization.abn ?? '');
-    _streetController = TextEditingController(text: widget.organization.address?.street ?? '');
-    _cityController = TextEditingController(text: widget.organization.address?.city ?? '');
-    _stateController = TextEditingController(text: widget.organization.address?.state ?? '');
-    _postcodeController = TextEditingController(text: widget.organization.address?.postcode ?? '');
-    _countryController = TextEditingController(text: widget.organization.address?.country ?? '');
+    _streetController = TextEditingController(
+      text: widget.organization.address?.street ?? '',
+    );
+    _cityController = TextEditingController(
+      text: widget.organization.address?.city ?? '',
+    );
+    _stateController = TextEditingController(
+      text: widget.organization.address?.state ?? '',
+    );
+    _postcodeController = TextEditingController(
+      text: widget.organization.address?.postcode ?? '',
+    );
+    _countryController = TextEditingController(
+      text: widget.organization.address?.country ?? '',
+    );
   }
 
   @override
@@ -173,7 +184,9 @@ class _BauhausDetailsSectionState extends ConsumerState<BauhausDetailsSection> {
       final updates = {
         'name': _nameController.text.trim(),
         'code': _codeController.text.trim(),
-        'abn': _abnController.text.trim().isEmpty ? null : _abnController.text.trim(),
+        'abn': _abnController.text.trim().isEmpty
+            ? null
+            : _abnController.text.trim(),
         'address': {
           'street': _streetController.text.trim(),
           'city': _cityController.text.trim(),
@@ -197,9 +210,10 @@ class _BauhausDetailsSectionState extends ConsumerState<BauhausDetailsSection> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _errorMessage = 'Failed to save organization details: ${e.toString()}';
+          _errorMessage =
+              'Failed to save organization details: ${e.toString()}';
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(_errorMessage!),
@@ -225,14 +239,14 @@ class _BauhausDetailsSectionState extends ConsumerState<BauhausDetailsSection> {
         return Form(
           key: _formKey,
           child: Container(
-            padding: isMobile ? EdgeInsets.zero : const EdgeInsets.all(BauhausDesign.space8),
+            padding: isMobile
+                ? EdgeInsets.zero
+                : const EdgeInsets.all(BauhausDesign.space8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                
-                
                 const SizedBox(height: BauhausDesign.space8),
-                
+
                 if (isMobile) ...[
                   // Mobile Layout (Stacked)
                   Column(
@@ -268,13 +282,15 @@ class _BauhausDetailsSectionState extends ConsumerState<BauhausDetailsSection> {
                           ),
                         ],
                       ),
-                      
+
                       const SizedBox(height: BauhausDesign.space6),
-                      
-                      _BauhausLegalStatusCard(organization: widget.organization),
-                      
+
+                      _BauhausLegalStatusCard(
+                        organization: widget.organization,
+                      ),
+
                       const SizedBox(height: BauhausDesign.space6),
-                      
+
                       _BauhausAddressCard(
                         streetController: _streetController,
                         cityController: _cityController,
@@ -283,9 +299,9 @@ class _BauhausDetailsSectionState extends ConsumerState<BauhausDetailsSection> {
                         countryController: _countryController,
                         isMobile: isMobile,
                       ),
-                      
+
                       const SizedBox(height: BauhausDesign.space6),
-                      
+
                       _BauhausLocationCard(
                         organization: widget.organization,
                         isMobile: isMobile,
@@ -333,17 +349,19 @@ class _BauhausDetailsSectionState extends ConsumerState<BauhausDetailsSection> {
                                 ),
                               ],
                             ),
-                            
+
                             const SizedBox(height: BauhausDesign.space6),
-                            
+
                             // Legal Status Visualization
-                            _BauhausLegalStatusCard(organization: widget.organization),
+                            _BauhausLegalStatusCard(
+                              organization: widget.organization,
+                            ),
                           ],
                         ),
                       ),
-                      
+
                       const SizedBox(width: BauhausDesign.space6),
-                      
+
                       // Right Column - Address Information
                       Expanded(
                         flex: 2,
@@ -357,9 +375,9 @@ class _BauhausDetailsSectionState extends ConsumerState<BauhausDetailsSection> {
                               countryController: _countryController,
                               isMobile: isMobile,
                             ),
-                            
+
                             const SizedBox(height: BauhausDesign.space6),
-                            
+
                             // Geographic Visualization
                             _BauhausLocationCard(
                               organization: widget.organization,
@@ -371,64 +389,80 @@ class _BauhausDetailsSectionState extends ConsumerState<BauhausDetailsSection> {
                     ],
                   ),
                 ],
-                
+
                 const SizedBox(height: BauhausDesign.space8),
-                
+
                 // Data Completeness Visualization
                 _BauhausDataCompletenessCard(organization: widget.organization),
-                
+
                 const SizedBox(height: BauhausDesign.space8),
-                
+
                 // Action Buttons
-                isMobile 
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _BauhausSecondaryButton(
-                          text: 'Cancel Changes',
-                          onPressed: () {
-                            // Reset controllers to original values
-                            _nameController.text = widget.organization.name;
-                            _codeController.text = widget.organization.code;
-                            _abnController.text = widget.organization.abn ?? '';
-                            _streetController.text = widget.organization.address?.street ?? '';
-                            _cityController.text = widget.organization.address?.city ?? '';
-                            _stateController.text = widget.organization.address?.state ?? '';
-                            _postcodeController.text = widget.organization.address?.postcode ?? '';
-                            _countryController.text = widget.organization.address?.country ?? '';
-                          },
-                        ),
-                        const SizedBox(height: BauhausDesign.space4),
-                        _BauhausPrimaryButton(
-                          text: 'Save Details',
-                          onPressed: _isSaving ? null : _saveOrganizationDetails,
-                        ),
-                      ],
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        _BauhausSecondaryButton(
-                          text: 'Cancel Changes',
-                          onPressed: () {
-                            // Reset controllers to original values
-                            _nameController.text = widget.organization.name;
-                            _codeController.text = widget.organization.code;
-                            _abnController.text = widget.organization.abn ?? '';
-                            _streetController.text = widget.organization.address?.street ?? '';
-                            _cityController.text = widget.organization.address?.city ?? '';
-                            _stateController.text = widget.organization.address?.state ?? '';
-                            _postcodeController.text = widget.organization.address?.postcode ?? '';
-                            _countryController.text = widget.organization.address?.country ?? '';
-                          },
-                        ),
-                        const SizedBox(width: BauhausDesign.space4),
-                        _BauhausPrimaryButton(
-                          text: 'Save Details',
-                          onPressed: _isSaving ? null : _saveOrganizationDetails,
-                        ),
-                      ],
-                    ),
+                isMobile
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _BauhausSecondaryButton(
+                            text: 'Cancel Changes',
+                            onPressed: () {
+                              // Reset controllers to original values
+                              _nameController.text = widget.organization.name;
+                              _codeController.text = widget.organization.code;
+                              _abnController.text =
+                                  widget.organization.abn ?? '';
+                              _streetController.text =
+                                  widget.organization.address?.street ?? '';
+                              _cityController.text =
+                                  widget.organization.address?.city ?? '';
+                              _stateController.text =
+                                  widget.organization.address?.state ?? '';
+                              _postcodeController.text =
+                                  widget.organization.address?.postcode ?? '';
+                              _countryController.text =
+                                  widget.organization.address?.country ?? '';
+                            },
+                          ),
+                          const SizedBox(height: BauhausDesign.space4),
+                          _BauhausPrimaryButton(
+                            text: 'Save Details',
+                            onPressed: _isSaving
+                                ? null
+                                : _saveOrganizationDetails,
+                          ),
+                        ],
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          _BauhausSecondaryButton(
+                            text: 'Cancel Changes',
+                            onPressed: () {
+                              // Reset controllers to original values
+                              _nameController.text = widget.organization.name;
+                              _codeController.text = widget.organization.code;
+                              _abnController.text =
+                                  widget.organization.abn ?? '';
+                              _streetController.text =
+                                  widget.organization.address?.street ?? '';
+                              _cityController.text =
+                                  widget.organization.address?.city ?? '';
+                              _stateController.text =
+                                  widget.organization.address?.state ?? '';
+                              _postcodeController.text =
+                                  widget.organization.address?.postcode ?? '';
+                              _countryController.text =
+                                  widget.organization.address?.country ?? '';
+                            },
+                          ),
+                          const SizedBox(width: BauhausDesign.space4),
+                          _BauhausPrimaryButton(
+                            text: 'Save Details',
+                            onPressed: _isSaving
+                                ? null
+                                : _saveOrganizationDetails,
+                          ),
+                        ],
+                      ),
               ],
             ),
           ),
@@ -534,10 +568,7 @@ class _BauhausInfoCard extends StatelessWidget {
   final String title;
   final List<Widget> children;
 
-  const _BauhausInfoCard({
-    required this.title,
-    required this.children,
-  });
+  const _BauhausInfoCard({required this.title, required this.children});
 
   @override
   Widget build(BuildContext context) {
@@ -584,9 +615,7 @@ class _BauhausInfoCard extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(BauhausDesign.space4),
-            child: Column(
-              children: children,
-            ),
+            child: Column(children: children),
           ),
         ],
       ),
@@ -826,10 +855,11 @@ class _BauhausLegalStatusCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool hasAbn = organization.abn != null && organization.abn!.isNotEmpty;
-    bool isComplete = organization.name.isNotEmpty && 
-                     organization.code.isNotEmpty && 
-                     organization.address != null;
-    
+    bool isComplete =
+        organization.name.isNotEmpty &&
+        organization.code.isNotEmpty &&
+        organization.address != null;
+
     return Container(
       decoration: BoxDecoration(
         color: BauhausDesign.surfaceWhite,
@@ -854,7 +884,9 @@ class _BauhausLegalStatusCard extends StatelessWidget {
                   height: 32,
                   color: Colors.white.withOpacity(0.2),
                   child: Icon(
-                    hasAbn ? Icons.verified_outlined : Icons.warning_amber_outlined,
+                    hasAbn
+                        ? Icons.verified_outlined
+                        : Icons.warning_amber_outlined,
                     color: Colors.white,
                     size: 20,
                   ),
@@ -873,7 +905,9 @@ class _BauhausLegalStatusCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        hasAbn ? 'Valid Australian Business Number' : 'Required for invoicing',
+                        hasAbn
+                            ? 'Valid Australian Business Number'
+                            : 'Required for invoicing',
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontSm,
                           color: Colors.white.withOpacity(0.9),
@@ -885,7 +919,7 @@ class _BauhausLegalStatusCard extends StatelessWidget {
               ],
             ),
           ),
-          
+
           Padding(
             padding: const EdgeInsets.all(BauhausDesign.space4),
             child: Column(
@@ -907,7 +941,9 @@ class _BauhausLegalStatusCard extends StatelessWidget {
                 _BauhausStatusRow(
                   icon: Icons.confirmation_number_outlined,
                   label: 'ABN Status',
-                  value: hasAbn ? (organization.abn ?? 'Not provided') : 'Not provided',
+                  value: hasAbn
+                      ? (organization.abn ?? 'Not provided')
+                      : 'Not provided',
                   isComplete: hasAbn,
                 ),
               ],
@@ -931,12 +967,13 @@ class _BauhausLocationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool hasAddress = organization.address != null;
-    bool isComplete = hasAddress &&
-                      organization.address!.street!.isNotEmpty &&
-                      organization.address!.city!.isNotEmpty &&
-                      organization.address!.state!.isNotEmpty &&
-                      organization.address!.postcode!.isNotEmpty;
-    
+    bool isComplete =
+        hasAddress &&
+        organization.address!.street!.isNotEmpty &&
+        organization.address!.city!.isNotEmpty &&
+        organization.address!.state!.isNotEmpty &&
+        organization.address!.postcode!.isNotEmpty;
+
     return Container(
       decoration: BoxDecoration(
         color: BauhausDesign.surfaceWhite,
@@ -961,7 +998,9 @@ class _BauhausLocationCard extends StatelessWidget {
                   height: 32,
                   color: Colors.white.withOpacity(0.2),
                   child: Icon(
-                    isComplete ? Icons.location_on_outlined : Icons.map_outlined,
+                    isComplete
+                        ? Icons.location_on_outlined
+                        : Icons.map_outlined,
                     color: Colors.white,
                     size: 20,
                   ),
@@ -992,7 +1031,7 @@ class _BauhausLocationCard extends StatelessWidget {
               ],
             ),
           ),
-          
+
           Padding(
             padding: const EdgeInsets.all(BauhausDesign.space4),
             child: Column(
@@ -1074,7 +1113,10 @@ class _BauhausLocationCard extends StatelessWidget {
                     padding: const EdgeInsets.all(BauhausDesign.space6),
                     decoration: BoxDecoration(
                       color: BauhausDesign.surfaceOffWhite,
-                      border: Border.all(color: BauhausDesign.neutral, width: 1),
+                      border: Border.all(
+                        color: BauhausDesign.neutral,
+                        width: 1,
+                      ),
                     ),
                     child: Column(
                       children: [
@@ -1130,7 +1172,7 @@ class _BauhausStatusRow extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: isComplete 
+        color: isComplete
             ? BauhausDesign.success.withOpacity(0.1)
             : BauhausDesign.warning.withOpacity(0.1),
         border: Border.all(
@@ -1145,7 +1187,9 @@ class _BauhausStatusRow extends StatelessWidget {
             height: 24,
             color: isComplete ? BauhausDesign.success : BauhausDesign.warning,
             child: Icon(
-              isComplete ? Icons.check_circle_outline : Icons.radio_button_unchecked,
+              isComplete
+                  ? Icons.check_circle_outline
+                  : Icons.radio_button_unchecked,
               color: Colors.white,
               size: 16,
             ),
@@ -1168,8 +1212,12 @@ class _BauhausStatusRow extends StatelessWidget {
                   value.isNotEmpty ? value : 'Not provided',
                   style: GoogleFonts.inter(
                     fontSize: BauhausDesign.fontSm,
-                    color: value.isNotEmpty ? BauhausDesign.textDark : BauhausDesign.textMuted,
-                    fontStyle: value.isEmpty ? FontStyle.italic : FontStyle.normal,
+                    color: value.isNotEmpty
+                        ? BauhausDesign.textDark
+                        : BauhausDesign.textMuted,
+                    fontStyle: value.isEmpty
+                        ? FontStyle.italic
+                        : FontStyle.normal,
                   ),
                 ),
               ],
@@ -1241,16 +1289,17 @@ class _BauhausDataCompletenessCard extends StatelessWidget {
   Widget build(BuildContext context) {
     int totalFields = 6; // name, code, abn, street, city, state
     int completedFields = 0;
-    
+
     if (organization.name.isNotEmpty) completedFields++;
     if (organization.code.isNotEmpty) completedFields++;
-    if (organization.abn != null && organization.abn!.isNotEmpty) completedFields++;
+    if (organization.abn != null && organization.abn!.isNotEmpty)
+      completedFields++;
     if (organization.address?.street?.isNotEmpty == true) completedFields++;
     if (organization.address?.city?.isNotEmpty == true) completedFields++;
     if (organization.address?.state?.isNotEmpty == true) completedFields++;
-    
+
     double completenessPercentage = (completedFields / totalFields) * 100;
-    
+
     return Container(
       decoration: BoxDecoration(
         color: BauhausDesign.surfaceWhite,
@@ -1263,11 +1312,11 @@ class _BauhausDataCompletenessCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space4),
             decoration: BoxDecoration(
-              color: completenessPercentage >= 80 
-                  ? BauhausDesign.success 
-                  : completenessPercentage >= 50 
-                      ? BauhausDesign.warning 
-                      : BauhausDesign.error,
+              color: completenessPercentage >= 80
+                  ? BauhausDesign.success
+                  : completenessPercentage >= 50
+                  ? BauhausDesign.warning
+                  : BauhausDesign.error,
               border: Border(
                 bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
               ),
@@ -1279,11 +1328,11 @@ class _BauhausDataCompletenessCard extends StatelessWidget {
                   height: 32,
                   color: Colors.white.withOpacity(0.2),
                   child: Icon(
-                    completenessPercentage >= 80 
+                    completenessPercentage >= 80
                         ? Icons.check_circle_outline
                         : completenessPercentage >= 50
-                            ? Icons.warning_amber_outlined
-                            : Icons.error_outline,
+                        ? Icons.warning_amber_outlined
+                        : Icons.error_outline,
                     color: Colors.white,
                     size: 20,
                   ),
@@ -1314,7 +1363,7 @@ class _BauhausDataCompletenessCard extends StatelessWidget {
               ],
             ),
           ),
-          
+
           Padding(
             padding: const EdgeInsets.all(BauhausDesign.space4),
             child: Column(
@@ -1331,32 +1380,30 @@ class _BauhausDataCompletenessCard extends StatelessWidget {
                       Expanded(
                         flex: completedFields,
                         child: Container(
-                          color: completenessPercentage >= 80 
-                              ? BauhausDesign.success 
-                              : completenessPercentage >= 50 
-                                  ? BauhausDesign.warning 
-                                  : BauhausDesign.error,
+                          color: completenessPercentage >= 80
+                              ? BauhausDesign.success
+                              : completenessPercentage >= 50
+                              ? BauhausDesign.warning
+                              : BauhausDesign.error,
                         ),
                       ),
                       Expanded(
                         flex: totalFields - completedFields,
-                        child: Container(
-                          color: BauhausDesign.surfaceOffWhite,
-                        ),
+                        child: Container(color: BauhausDesign.surfaceOffWhite),
                       ),
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: BauhausDesign.space4),
-                
+
                 // Status Message
                 Text(
-                  completenessPercentage >= 80 
+                  completenessPercentage >= 80
                       ? 'Excellent! Your profile is complete.'
                       : completenessPercentage >= 50
-                          ? 'Good progress. Complete remaining fields for full functionality.'
-                          : 'Complete your profile to unlock all features.',
+                      ? 'Good progress. Complete remaining fields for full functionality.'
+                      : 'Complete your profile to unlock all features.',
                   style: GoogleFonts.inter(
                     fontSize: BauhausDesign.fontSm,
                     color: BauhausDesign.textDark,
@@ -1378,10 +1425,7 @@ class _BauhausPrimaryButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
 
-  const _BauhausPrimaryButton({
-    required this.text,
-    required this.onPressed,
-  });
+  const _BauhausPrimaryButton({required this.text, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -1389,10 +1433,14 @@ class _BauhausPrimaryButton extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: isEnabled ? BauhausDesign.primary : BauhausDesign.neutral.withOpacity(0.1),
+        color: isEnabled
+            ? BauhausDesign.primary
+            : BauhausDesign.neutral.withOpacity(0.1),
         border: Border.all(
-          color: isEnabled ? BauhausDesign.neutral : BauhausDesign.neutral.withOpacity(0.3), 
-          width: 2
+          color: isEnabled
+              ? BauhausDesign.neutral
+              : BauhausDesign.neutral.withOpacity(0.3),
+          width: 2,
         ),
         boxShadow: isEnabled ? [BauhausDesign.shadowHard] : [],
       ),
@@ -1410,7 +1458,9 @@ class _BauhausPrimaryButton extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: BauhausDesign.fontMd,
                 fontWeight: FontWeight.w600,
-                color: isEnabled ? Colors.white : BauhausDesign.textDark.withOpacity(0.3),
+                color: isEnabled
+                    ? Colors.white
+                    : BauhausDesign.textDark.withOpacity(0.3),
               ),
               textAlign: TextAlign.center,
             ),
@@ -1425,10 +1475,7 @@ class _BauhausSecondaryButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
 
-  const _BauhausSecondaryButton({
-    required this.text,
-    this.onPressed,
-  });
+  const _BauhausSecondaryButton({required this.text, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -1438,17 +1485,21 @@ class _BauhausSecondaryButton extends StatelessWidget {
       decoration: BoxDecoration(
         color: BauhausDesign.surfaceWhite,
         border: Border.all(
-          color: isEnabled ? BauhausDesign.neutral : BauhausDesign.neutral.withOpacity(0.3), 
-          width: 2
+          color: isEnabled
+              ? BauhausDesign.neutral
+              : BauhausDesign.neutral.withOpacity(0.3),
+          width: 2,
         ),
-        boxShadow: isEnabled ? [
-          BoxShadow(
-            color: BauhausDesign.secondary,
-            offset: const Offset(2, 2),
-            blurRadius: 0,
-            spreadRadius: 0,
-          )
-        ] : [],
+        boxShadow: isEnabled
+            ? [
+                BoxShadow(
+                  color: BauhausDesign.secondary,
+                  offset: const Offset(2, 2),
+                  blurRadius: 0,
+                  spreadRadius: 0,
+                ),
+              ]
+            : [],
       ),
       child: Material(
         color: Colors.transparent,
@@ -1464,7 +1515,9 @@ class _BauhausSecondaryButton extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: BauhausDesign.fontMd,
                 fontWeight: FontWeight.w600,
-                color: isEnabled ? BauhausDesign.textDark : BauhausDesign.textDark.withOpacity(0.3),
+                color: isEnabled
+                    ? BauhausDesign.textDark
+                    : BauhausDesign.textDark.withOpacity(0.3),
               ),
               textAlign: TextAlign.center,
             ),

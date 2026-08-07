@@ -64,8 +64,12 @@ class _OnboardingStepperViewState extends ConsumerState<OnboardingStepperView> {
         child: Text('Failed to load onboarding status'),
       );
     } else if (!_isReviewing &&
-        const {'submitted', 'review_pending', 'completed', 'rejected'}
-            .contains(record.status)) {
+        const {
+          'submitted',
+          'review_pending',
+          'completed',
+          'rejected',
+        }.contains(record.status)) {
       content = OnboardingSuccessView(
         key: const ValueKey('success'),
         status: record.status,
@@ -84,55 +88,55 @@ class _OnboardingStepperViewState extends ConsumerState<OnboardingStepperView> {
       int currentStep = _currentStep!;
 
       final stepConfigs = [
-      const _OnboardingStageConfig(
-        label: 'Personal details',
-        title: 'Tell us about you',
-        subtitle:
-            'Add your address and emergency contact so CareNest can keep your profile complete and ready for rostering.',
-        assetPath: 'assets/ui_assets_svg/onboarding_personal.svg',
-        accentColor: Color(0xFFEFF4FF),
-      ),
-      const _OnboardingStageConfig(
-        label: 'Bank details',
-        title: 'Set up payroll details',
-        subtitle:
-            'Add the bank account your wages should be paid into. This only needs to be done once.',
-        assetPath: 'assets/ui_assets_svg/onboarding_bank.svg',
-        accentColor: Color(0xFFF2F0FF),
-      ),
-      const _OnboardingStageConfig(
-        label: 'Tax details',
-        title: 'Add your tax information',
-        subtitle:
-            'Enter your TFN and choose the tax scale that applies to you for payroll setup.',
-        assetPath: 'assets/ui_assets_svg/onboarding_tax.svg',
-        accentColor: Color(0xFFEFFBF8),
-      ),
-      const _OnboardingStageConfig(
-        label: 'Superannuation',
-        title: 'Add your super fund details',
-        subtitle:
-            'Enter the super fund information CareNest needs to process your super contributions correctly.',
-        assetPath: 'assets/ui_assets_svg/onboarding_super.svg',
-        accentColor: Color(0xFFF7F3FF),
-      ),
-      const _OnboardingStageConfig(
-        label: 'Identity documents',
-        title: 'Upload identity and verification documents',
-        subtitle:
-            'Start with your core identity and background-check documents so your profile can be reviewed.',
-        assetPath: 'assets/ui_assets_svg/onboarding_identity_docs.svg',
-        accentColor: Color(0xFFFFF7ED),
-      ),
-      const _OnboardingStageConfig(
-        label: 'Documents',
-        title: 'Upload training and compliance documents',
-        subtitle:
-            'Finish by uploading the certificates and compliance documents needed before onboarding can be submitted.',
-        assetPath: 'assets/ui_assets_svg/onboarding_final_docs.svg',
-        accentColor: Color(0xFFF4F8FF),
-      ),
-    ];
+        const _OnboardingStageConfig(
+          label: 'Personal details',
+          title: 'Tell us about you',
+          subtitle:
+              'Add your address and emergency contact so CareNest can keep your profile complete and ready for rostering.',
+          assetPath: 'assets/ui_assets_svg/onboarding_personal.svg',
+          accentColor: Color(0xFFEFF4FF),
+        ),
+        const _OnboardingStageConfig(
+          label: 'Bank details',
+          title: 'Set up payroll details',
+          subtitle:
+              'Add the bank account your wages should be paid into. This only needs to be done once.',
+          assetPath: 'assets/ui_assets_svg/onboarding_bank.svg',
+          accentColor: Color(0xFFF2F0FF),
+        ),
+        const _OnboardingStageConfig(
+          label: 'Tax details',
+          title: 'Add your tax information',
+          subtitle:
+              'Enter your TFN and choose the tax scale that applies to you for payroll setup.',
+          assetPath: 'assets/ui_assets_svg/onboarding_tax.svg',
+          accentColor: Color(0xFFEFFBF8),
+        ),
+        const _OnboardingStageConfig(
+          label: 'Superannuation',
+          title: 'Add your super fund details',
+          subtitle:
+              'Enter the super fund information CareNest needs to process your super contributions correctly.',
+          assetPath: 'assets/ui_assets_svg/onboarding_super.svg',
+          accentColor: Color(0xFFF7F3FF),
+        ),
+        const _OnboardingStageConfig(
+          label: 'Identity documents',
+          title: 'Upload identity and verification documents',
+          subtitle:
+              'Start with your core identity and background-check documents so your profile can be reviewed.',
+          assetPath: 'assets/ui_assets_svg/onboarding_identity_docs.svg',
+          accentColor: Color(0xFFFFF7ED),
+        ),
+        const _OnboardingStageConfig(
+          label: 'Documents',
+          title: 'Upload training and compliance documents',
+          subtitle:
+              'Finish by uploading the certificates and compliance documents needed before onboarding can be submitted.',
+          assetPath: 'assets/ui_assets_svg/onboarding_final_docs.svg',
+          accentColor: Color(0xFFF4F8FF),
+        ),
+      ];
       final config = stepConfigs[currentStep];
 
       content = _OnboardingStageFrame(
@@ -151,10 +155,7 @@ class _OnboardingStepperViewState extends ConsumerState<OnboardingStepperView> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFF6FAFF),
-              Color(0xFFF8FAFF),
-            ],
+            colors: [Color(0xFFF6FAFF), Color(0xFFF8FAFF)],
           ),
         ),
         child: SafeArea(
@@ -189,7 +190,7 @@ class _OnboardingStepperViewState extends ConsumerState<OnboardingStepperView> {
     if (_restartFromBeginning) {
       _restartFromBeginning = false;
     }
-    
+
     if (_currentStep != null && _currentStep! < 5) {
       setState(() {
         _currentStep = _currentStep! + 1;
@@ -200,7 +201,10 @@ class _OnboardingStepperViewState extends ConsumerState<OnboardingStepperView> {
   }
 
   Widget _buildStageBody(
-      int currentStep, dynamic record, BuildContext context) {
+    int currentStep,
+    dynamic record,
+    BuildContext context,
+  ) {
     switch (currentStep) {
       case 0:
         return PersonalDetailsForm(
@@ -293,18 +297,16 @@ class _OnboardingStepperViewState extends ConsumerState<OnboardingStepperView> {
 
     final uploadedTypes = record.steps.documents.count > 0
         ? ref
-            .read(onboardingViewModelProvider)
-            .documents
-            .map((doc) => doc.type)
-            .toSet()
+              .read(onboardingViewModelProvider)
+              .documents
+              .map((doc) => doc.type)
+              .toSet()
         : <String>{};
 
-    const firstDocumentGroup = {
-      'Passport / ID',
-      'Police Check',
-    };
-    final firstGroupComplete =
-        firstDocumentGroup.every((doc) => uploadedTypes.contains(doc));
+    const firstDocumentGroup = {'Passport / ID', 'Police Check'};
+    final firstGroupComplete = firstDocumentGroup.every(
+      (doc) => uploadedTypes.contains(doc),
+    );
 
     return firstGroupComplete ? 5 : 4;
   }
@@ -402,10 +404,7 @@ class _OnboardingStageFrame extends StatelessWidget {
                   color: config.accentColor,
                   borderRadius: BorderRadius.circular(24),
                 ),
-                child: SvgPicture.asset(
-                  config.assetPath,
-                  fit: BoxFit.contain,
-                ),
+                child: SvgPicture.asset(config.assetPath, fit: BoxFit.contain),
               ),
               const SizedBox(height: 18),
               Text(
@@ -440,10 +439,7 @@ class _OnboardingStageFrame extends StatelessWidget {
 }
 
 class _StageBodyViewport extends StatelessWidget {
-  const _StageBodyViewport({
-    required this.scrollable,
-    required this.child,
-  });
+  const _StageBodyViewport({required this.scrollable, required this.child});
 
   final bool scrollable;
   final Widget child;

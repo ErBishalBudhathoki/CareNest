@@ -210,8 +210,9 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final pageTitle =
-        widget.isResetFlow ? l10n.resetPassword : l10n.changePassword;
+    final pageTitle = widget.isResetFlow
+        ? l10n.resetPassword
+        : l10n.changePassword;
     final pageSubtitle = widget.isResetFlow
         ? l10n.resetPasswordDesc
         : l10n.changePasswordSubtitle;
@@ -233,18 +234,15 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
         title: Text(
           pageTitle.toUpperCase(),
           style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-                letterSpacing: 1.0,
-                fontWeight: FontWeight.w900,
-              ),
+            color: BauhausDesign.surfaceWhite,
+            letterSpacing: 1.0,
+            fontWeight: FontWeight.w900,
+          ),
         ),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(
-            height: 1,
-            color: BauhausDesign.neutral,
-          ),
+          child: Container(height: 1, color: BauhausDesign.neutral),
         ),
       ),
       body: GestureDetector(
@@ -263,10 +261,7 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildHeaderCard(
-                    title: pageTitle,
-                    subtitle: pageSubtitle,
-                  ),
+                  _buildHeaderCard(title: pageTitle, subtitle: pageSubtitle),
                   const SizedBox(height: BauhausDesign.space4),
                   _buildSectionCard(
                     title: 'PASSWORD DETAILS',
@@ -279,8 +274,10 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
                           hintText: 'Enter current password',
                           obscureText: !_showCurrentPassword,
                           validator: _validateCurrentPassword,
-                          prefixIcon:
-                              const Icon(Icons.lock_outline_rounded, size: 20),
+                          prefixIcon: const Icon(
+                            Icons.lock_outline_rounded,
+                            size: 20,
+                          ),
                           suffixIcon: IconButton(
                             onPressed: () {
                               setState(() {
@@ -325,8 +322,10 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
                         hintText: 'Re-enter new password',
                         obscureText: !_showConfirmPassword,
                         validator: _validateConfirmPassword,
-                        prefixIcon:
-                            const Icon(Icons.verified_user_outlined, size: 20),
+                        prefixIcon: const Icon(
+                          Icons.verified_user_outlined,
+                          size: 20,
+                        ),
                         suffixIcon: IconButton(
                           onPressed: () {
                             setState(() {
@@ -409,10 +408,7 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
     );
   }
 
-  Widget _buildHeaderCard({
-    required String title,
-    required String subtitle,
-  }) {
+  Widget _buildHeaderCard({required String title, required String subtitle}) {
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
@@ -435,8 +431,10 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
                   decoration: BoxDecoration(
                     color: BauhausDesign.surfaceWhite,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                    border:
-                        Border.all(color: BauhausDesign.neutral, width: 1.5),
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.5,
+                    ),
                   ),
                   alignment: Alignment.center,
                   child: const Icon(
@@ -452,8 +450,7 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
                     children: [
                       Text(
                         title.toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context)
-                            .titleLarge
+                        style: BauhausDesign.getTextTheme(context).titleLarge
                             ?.copyWith(
                               color: BauhausDesign.surfaceWhite,
                               fontWeight: FontWeight.w900,
@@ -463,11 +460,11 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
                         subtitle,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
+                        style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
-                              color:
-                                  BauhausDesign.surfaceWhite.withOpacity(0.92),
+                              color: BauhausDesign.surfaceWhite.withOpacity(
+                                0.92,
+                              ),
                             ),
                       ),
                     ],
@@ -491,10 +488,10 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
             child: Text(
               'SECURE PASSWORD UPDATE',
               style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-                    color: BauhausDesign.secondary,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1.0,
-                  ),
+                color: BauhausDesign.secondary,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.0,
+              ),
             ),
           ),
         ],
@@ -533,11 +530,11 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
               children: [
                 Text(
                   title,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                            letterSpacing: 1.0,
-                            fontWeight: FontWeight.w900,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelLarge
+                      ?.copyWith(
+                        letterSpacing: 1.0,
+                        fontWeight: FontWeight.w900,
+                      ),
                 ),
                 const SizedBox(height: BauhausDesign.space4),
                 ...children,
@@ -549,10 +546,7 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
     );
   }
 
-  Widget _buildRuleRow({
-    required String text,
-    required bool isMet,
-  }) {
+  Widget _buildRuleRow({required String text, required bool isMet}) {
     final color = isMet ? BauhausDesign.success : BauhausDesign.textMuted;
     return Container(
       width: double.infinity,
@@ -576,10 +570,9 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
           Expanded(
             child: Text(
               text,
-              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.w700,
-                  ),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodyMedium?.copyWith(color: color, fontWeight: FontWeight.w700),
             ),
           ),
         ],

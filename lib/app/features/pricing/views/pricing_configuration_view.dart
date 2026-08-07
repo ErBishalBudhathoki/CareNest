@@ -161,9 +161,7 @@ class _PricingConfigurationViewState
       body: CustomScrollView(
         slivers: [
           _buildSliverAppBar(),
-          SliverFillRemaining(
-            child: _buildTabContent(),
-          ),
+          SliverFillRemaining(child: _buildTabContent()),
         ],
       ),
     );
@@ -191,7 +189,9 @@ class _PricingConfigurationViewState
             decoration: BoxDecoration(
               color: _panelWhite,
               border: Border.all(
-                  color: _inkBlack, width: BauhausDesign.borderThick),
+                color: _inkBlack,
+                width: BauhausDesign.borderThick,
+              ),
             ),
             child: const Icon(
               Icons.arrow_back,
@@ -204,10 +204,10 @@ class _PricingConfigurationViewState
       title: Text(
         l10n.pricingConfigurationTitle.toUpperCase(),
         style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-              color: _inkBlack,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 0.4,
-            ),
+          color: _inkBlack,
+          fontWeight: FontWeight.w900,
+          letterSpacing: 0.4,
+        ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
@@ -246,8 +246,7 @@ class _PricingConfigurationViewState
                 children: [
                   Text(
                     l10n.pricingConfigurationTitle.toUpperCase(),
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelLarge
+                    style: BauhausDesign.getTextTheme(context).labelLarge
                         ?.copyWith(
                           color: _inkBlack,
                           fontWeight: FontWeight.w800,
@@ -269,8 +268,7 @@ class _PricingConfigurationViewState
                     ),
                     child: Text(
                       l10n.systemActive.toUpperCase(),
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelSmall
+                      style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
                             color: BauhausDesign.surfaceWhite,
                             fontWeight: FontWeight.w800,
@@ -285,9 +283,13 @@ class _PricingConfigurationViewState
               decoration: const BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                      color: _inkBlack, width: BauhausDesign.borderThin),
+                    color: _inkBlack,
+                    width: BauhausDesign.borderThin,
+                  ),
                   bottom: BorderSide(
-                      color: _inkBlack, width: BauhausDesign.borderThin),
+                    color: _inkBlack,
+                    width: BauhausDesign.borderThin,
+                  ),
                 ),
               ),
               child: TabBar(
@@ -296,8 +298,7 @@ class _PricingConfigurationViewState
                 indicatorWeight: 3,
                 labelColor: _inkBlack,
                 unselectedLabelColor: BauhausDesign.textMuted,
-                labelStyle: BauhausDesign.getTextTheme(context)
-                    .labelLarge
+                labelStyle: BauhausDesign.getTextTheme(context).labelLarge
                     ?.copyWith(fontWeight: FontWeight.w800, letterSpacing: 0.4),
                 isScrollable: true,
                 tabs: [
@@ -361,7 +362,9 @@ class _PricingConfigurationViewState
             decoration: BoxDecoration(
               color: onTap == null ? BauhausDesign.surfaceOffWhite : color,
               border: Border.all(
-                  color: _inkBlack, width: BauhausDesign.borderThick),
+                color: _inkBlack,
+                width: BauhausDesign.borderThick,
+              ),
             ),
             child: Icon(
               icon,
@@ -380,10 +383,10 @@ class _PricingConfigurationViewState
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
       style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-            color: _inkBlack,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 0.6,
-          ),
+        color: _inkBlack,
+        fontWeight: FontWeight.w900,
+        letterSpacing: 0.6,
+      ),
     );
   }
 
@@ -408,17 +411,19 @@ class _PricingConfigurationViewState
         ),
         decoration: BoxDecoration(
           color: bg,
-          border:
-              Border.all(color: _inkBlack, width: BauhausDesign.borderThick),
+          border: Border.all(
+            color: _inkBlack,
+            width: BauhausDesign.borderThick,
+          ),
         ),
         child: Text(
           label,
           textAlign: TextAlign.center,
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: textColor,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 0.5,
-              ),
+            color: textColor,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.5,
+          ),
         ),
       ),
     );
@@ -431,7 +436,8 @@ class _PricingConfigurationViewState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildPanelTitle(
-              AppLocalizations.of(context)!.generalPricingSettings),
+            AppLocalizations.of(context)!.generalPricingSettings,
+          ),
           const SizedBox(height: BauhausDesign.space3),
           _buildSettingsSection(
             AppLocalizations.of(context)!.basicConfiguration,
@@ -449,7 +455,7 @@ class _PricingConfigurationViewState
                 [
                   AppLocalizations.of(context)!.optionNdisStandard,
                   AppLocalizations.of(context)!.optionCustom,
-                  AppLocalizations.of(context)!.optionHybrid
+                  AppLocalizations.of(context)!.optionHybrid,
                 ],
                 (value) => setState(() => _pricingModel = value!),
                 bottomSpacing: BauhausDesign.space2,
@@ -461,7 +467,7 @@ class _PricingConfigurationViewState
                   AppLocalizations.of(context)!.optionNearestCent,
                   AppLocalizations.of(context)!.optionRoundUp,
                   AppLocalizations.of(context)!.optionRoundDown,
-                  AppLocalizations.of(context)!.optionNoRounding
+                  AppLocalizations.of(context)!.optionNoRounding,
                 ],
                 (value) => setState(() => _roundingMethod = value!),
                 bottomSpacing: BauhausDesign.space2,
@@ -472,7 +478,7 @@ class _PricingConfigurationViewState
                 _taxCalculation,
                 [
                   AppLocalizations.of(context)!.optionGstInclusive,
-                  AppLocalizations.of(context)!.optionGstExclusive
+                  AppLocalizations.of(context)!.optionGstExclusive,
                 ],
                 (value) => setState(() => _taxCalculation = value!),
                 bottomSpacing: BauhausDesign.space2,
@@ -509,29 +515,28 @@ class _PricingConfigurationViewState
                 children: [
                   Text(
                     AppLocalizations.of(context)!.organizationFallbackBaseRate,
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelLarge
-                        ?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).labelLarge?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: BauhausDesign.space1),
                   Text(
                     AppLocalizations.of(context)!.organizationFallbackDesc,
-                    style:
-                        BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                              color: BauhausDesign.textMuted,
-                            ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                   ),
                   const SizedBox(height: BauhausDesign.space3),
                   TextFormField(
                     controller: _fallbackRateController,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    style: BauhausDesign.getTextTheme(context).bodyMedium
                         ?.copyWith(
-                            color: _inkBlack, fontWeight: FontWeight.w700),
+                          color: _inkBlack,
+                          fontWeight: FontWeight.w700,
+                        ),
                     decoration: InputDecoration(
                       hintText: _fallbackBaseRate != null
                           ? _fallbackBaseRate!.toStringAsFixed(2)
@@ -563,8 +568,9 @@ class _PricingConfigurationViewState
                         horizontal: BauhausDesign.space3,
                         vertical: BauhausDesign.space2,
                       ),
-                      suffixText:
-                          AppLocalizations.of(context)!.fallbackCurrencyHint,
+                      suffixText: AppLocalizations.of(
+                        context,
+                      )!.fallbackCurrencyHint,
                       suffixStyle: BauhausDesign.getTextTheme(context)
                           .bodyMedium
                           ?.copyWith(
@@ -580,8 +586,9 @@ class _PricingConfigurationViewState
                       label: _isSavingFallbackRate
                           ? '${AppLocalizations.of(context)!.save.toUpperCase()}...'
                           : AppLocalizations.of(context)!.save.toUpperCase(),
-                      onTap:
-                          _isSavingFallbackRate ? null : _saveFallbackBaseRate,
+                      onTap: _isSavingFallbackRate
+                          ? null
+                          : _saveFallbackBaseRate,
                       isPrimary: true,
                     ),
                   ),
@@ -592,44 +599,40 @@ class _PricingConfigurationViewState
                   padding: const EdgeInsets.only(top: BauhausDesign.space2),
                   child: Text(
                     _fallbackError!,
-                    style:
-                        BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                              color: BauhausDesign.error,
-                            ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodySmall?.copyWith(color: BauhausDesign.error),
                   ),
                 ),
             ],
           ),
           const SizedBox(height: BauhausDesign.space3),
-          _buildSettingsSection(
-            AppLocalizations.of(context)!.systemBehavior,
-            [
-              _buildSwitchSetting(
-                AppLocalizations.of(context)!.autoUpdatePricing,
-                AppLocalizations.of(context)!.autoUpdatePricingDesc,
-                _autoUpdatePricing,
-                (value) => setState(() => _autoUpdatePricing = value),
-              ),
-              _buildSwitchSetting(
-                AppLocalizations.of(context)!.enablePriceValidation,
-                AppLocalizations.of(context)!.enablePriceValidationDesc,
-                _enablePriceValidation,
-                (value) => setState(() => _enablePriceValidation = value),
-              ),
-              _buildSwitchSetting(
-                AppLocalizations.of(context)!.requireApproval,
-                AppLocalizations.of(context)!.requireApprovalDesc,
-                _requireApprovalForChanges,
-                (value) => setState(() => _requireApprovalForChanges = value),
-              ),
-              _buildSwitchSetting(
-                AppLocalizations.of(context)!.enableBulkOperations,
-                AppLocalizations.of(context)!.enableBulkOperationsDesc,
-                _enableBulkOperations,
-                (value) => setState(() => _enableBulkOperations = value),
-              ),
-            ],
-          ),
+          _buildSettingsSection(AppLocalizations.of(context)!.systemBehavior, [
+            _buildSwitchSetting(
+              AppLocalizations.of(context)!.autoUpdatePricing,
+              AppLocalizations.of(context)!.autoUpdatePricingDesc,
+              _autoUpdatePricing,
+              (value) => setState(() => _autoUpdatePricing = value),
+            ),
+            _buildSwitchSetting(
+              AppLocalizations.of(context)!.enablePriceValidation,
+              AppLocalizations.of(context)!.enablePriceValidationDesc,
+              _enablePriceValidation,
+              (value) => setState(() => _enablePriceValidation = value),
+            ),
+            _buildSwitchSetting(
+              AppLocalizations.of(context)!.requireApproval,
+              AppLocalizations.of(context)!.requireApprovalDesc,
+              _requireApprovalForChanges,
+              (value) => setState(() => _requireApprovalForChanges = value),
+            ),
+            _buildSwitchSetting(
+              AppLocalizations.of(context)!.enableBulkOperations,
+              AppLocalizations.of(context)!.enableBulkOperationsDesc,
+              _enableBulkOperations,
+              (value) => setState(() => _enableBulkOperations = value),
+            ),
+          ]),
         ],
       ),
     );
@@ -645,7 +648,8 @@ class _PricingConfigurationViewState
             children: [
               Expanded(
                 child: _buildPanelTitle(
-                    AppLocalizations.of(context)!.pricingRulesTitle),
+                  AppLocalizations.of(context)!.pricingRulesTitle,
+                ),
               ),
               _buildHeaderActionIcon(
                 icon: Icons.add,
@@ -675,8 +679,8 @@ class _PricingConfigurationViewState
     final priorityColor = rule['priority'] == l10n.rulePriorityHigh
         ? BauhausDesign.error
         : rule['priority'] == l10n.rulePriorityMedium
-            ? BauhausDesign.warning
-            : BauhausDesign.success;
+        ? BauhausDesign.warning
+        : BauhausDesign.success;
 
     return Container(
       margin: const EdgeInsets.only(bottom: BauhausDesign.space2),
@@ -697,10 +701,10 @@ class _PricingConfigurationViewState
             child: Text(
               rule['id'],
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.surfaceWhite,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.6,
-                  ),
+                color: BauhausDesign.surfaceWhite,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.6,
+              ),
             ),
           ),
           Padding(
@@ -713,8 +717,7 @@ class _PricingConfigurationViewState
                     Expanded(
                       child: Text(
                         rule['name'],
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyLarge
+                        style: BauhausDesign.getTextTheme(context).bodyLarge
                             ?.copyWith(
                               fontWeight: FontWeight.w800,
                               color: _inkBlack,
@@ -735,8 +738,7 @@ class _PricingConfigurationViewState
                       ),
                       child: Text(
                         rule['priority'].toString().toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
+                        style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
                               color: BauhausDesign.surfaceWhite,
                               fontWeight: FontWeight.w800,
@@ -757,19 +759,20 @@ class _PricingConfigurationViewState
                 const SizedBox(height: BauhausDesign.space2),
                 Text(
                   rule['description'],
-                  style: BauhausDesign.getTextTheme(context)
-                      .bodyMedium
-                      ?.copyWith(color: BauhausDesign.textDark),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
                 ),
                 const SizedBox(height: BauhausDesign.space2),
                 Text(
-                  AppLocalizations.of(context)!
-                      .lastModified(rule['lastModified']),
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.textMuted,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  AppLocalizations.of(
+                    context,
+                  )!.lastModified(rule['lastModified']),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: BauhausDesign.textMuted,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
                 const SizedBox(height: BauhausDesign.space2),
                 Row(
@@ -783,8 +786,9 @@ class _PricingConfigurationViewState
                     const SizedBox(width: BauhausDesign.space2),
                     Expanded(
                       child: _buildInlineActionButton(
-                        label:
-                            AppLocalizations.of(context)!.delete.toUpperCase(),
+                        label: AppLocalizations.of(
+                          context,
+                        )!.delete.toUpperCase(),
                         onTap: () => _deleteRule(rule['id']),
                         isPrimary: true,
                       ),
@@ -824,8 +828,9 @@ class _PricingConfigurationViewState
   Widget _buildIntegrationCard(Map<String, dynamic> integration, int index) {
     final l10n = AppLocalizations.of(context)!;
     final isConnected = integration['status'] == l10n.ruleStatusConnected;
-    final statusColor =
-        isConnected ? BauhausDesign.success : BauhausDesign.error;
+    final statusColor = isConnected
+        ? BauhausDesign.success
+        : BauhausDesign.error;
 
     return Container(
       margin: const EdgeInsets.only(bottom: BauhausDesign.space2),
@@ -846,10 +851,10 @@ class _PricingConfigurationViewState
             child: Text(
               AppLocalizations.of(context)!.systemIntegrations.toUpperCase(),
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.surfaceWhite,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.6,
-                  ),
+                color: BauhausDesign.surfaceWhite,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.6,
+              ),
             ),
           ),
           Padding(
@@ -862,8 +867,7 @@ class _PricingConfigurationViewState
                     Expanded(
                       child: Text(
                         integration['name'],
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyLarge
+                        style: BauhausDesign.getTextTheme(context).bodyLarge
                             ?.copyWith(
                               fontWeight: FontWeight.w800,
                               color: _inkBlack,
@@ -884,8 +888,7 @@ class _PricingConfigurationViewState
                       ),
                       child: Text(
                         integration['status'].toString().toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
+                        style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
                               color: BauhausDesign.surfaceWhite,
                               fontWeight: FontWeight.w800,
@@ -906,19 +909,20 @@ class _PricingConfigurationViewState
                 const SizedBox(height: BauhausDesign.space2),
                 Text(
                   integration['description'],
-                  style: BauhausDesign.getTextTheme(context)
-                      .bodyMedium
-                      ?.copyWith(color: BauhausDesign.textDark),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
                 ),
                 const SizedBox(height: BauhausDesign.space2),
                 Text(
-                  AppLocalizations.of(context)!
-                      .lastSynced(integration['lastSync']),
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.textMuted,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  AppLocalizations.of(
+                    context,
+                  )!.lastSynced(integration['lastSync']),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: BauhausDesign.textMuted,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
                 const SizedBox(height: BauhausDesign.space2),
                 Row(
@@ -926,8 +930,9 @@ class _PricingConfigurationViewState
                     if (isConnected)
                       Expanded(
                         child: _buildInlineActionButton(
-                          label:
-                              AppLocalizations.of(context)!.sync.toUpperCase(),
+                          label: AppLocalizations.of(
+                            context,
+                          )!.sync.toUpperCase(),
                           onTap: () => _syncIntegration(integration['name']),
                         ),
                       ),
@@ -935,9 +940,9 @@ class _PricingConfigurationViewState
                       const SizedBox(width: BauhausDesign.space2),
                     Expanded(
                       child: _buildInlineActionButton(
-                        label: AppLocalizations.of(context)!
-                            .configure
-                            .toUpperCase(),
+                        label: AppLocalizations.of(
+                          context,
+                        )!.configure.toUpperCase(),
                         onTap: () => _configureIntegration(integration['name']),
                         isPrimary: true,
                       ),
@@ -960,25 +965,22 @@ class _PricingConfigurationViewState
         children: [
           _buildPanelTitle(AppLocalizations.of(context)!.advancedConfiguration),
           const SizedBox(height: BauhausDesign.space3),
-          _buildSettingsSection(
-            AppLocalizations.of(context)!.dataManagement,
-            [
-              _buildNumberSetting(
-                AppLocalizations.of(context)!.priceHistoryRetention,
-                _priceHistoryRetention,
-                30,
-                1095,
-                (value) => setState(() => _priceHistoryRetention = value),
-              ),
-              _buildNumberSetting(
-                AppLocalizations.of(context)!.bulkOperationLimit,
-                _bulkOperationLimit,
-                100,
-                10000,
-                (value) => setState(() => _bulkOperationLimit = value),
-              ),
-            ],
-          ),
+          _buildSettingsSection(AppLocalizations.of(context)!.dataManagement, [
+            _buildNumberSetting(
+              AppLocalizations.of(context)!.priceHistoryRetention,
+              _priceHistoryRetention,
+              30,
+              1095,
+              (value) => setState(() => _priceHistoryRetention = value),
+            ),
+            _buildNumberSetting(
+              AppLocalizations.of(context)!.bulkOperationLimit,
+              _bulkOperationLimit,
+              100,
+              10000,
+              (value) => setState(() => _bulkOperationLimit = value),
+            ),
+          ]),
           const SizedBox(height: BauhausDesign.space3),
           _buildSettingsSection(
             AppLocalizations.of(context)!.notificationsAndAlerts,
@@ -1036,16 +1038,21 @@ class _PricingConfigurationViewState
     );
   }
 
-  Widget _buildSettingsSection(String title, List<Widget> children,
-      {double innerPadding = BauhausDesign.space3}) {
+  Widget _buildSettingsSection(
+    String title,
+    List<Widget> children, {
+    double innerPadding = BauhausDesign.space3,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            border:
-                Border.all(color: _inkBlack, width: BauhausDesign.borderThick),
+            border: Border.all(
+              color: _inkBlack,
+              width: BauhausDesign.borderThick,
+            ),
             color: _panelWhite,
           ),
           child: Column(
@@ -1060,19 +1067,17 @@ class _PricingConfigurationViewState
                 ),
                 child: Text(
                   title.toUpperCase(),
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.surfaceWhite,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 0.6,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: BauhausDesign.surfaceWhite,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.6,
+                      ),
                 ),
               ),
               Padding(
                 padding: EdgeInsets.all(innerPadding),
-                child: Column(
-                  children: children,
-                ),
+                child: Column(children: children),
               ),
             ],
           ),
@@ -1081,10 +1086,14 @@ class _PricingConfigurationViewState
     );
   }
 
-  Widget _buildDropdownSetting(String label, String value, List<String> options,
-      ValueChanged<String?> onChanged,
-      {double bottomSpacing = BauhausDesign.space3,
-      double labelFieldGap = BauhausDesign.space3}) {
+  Widget _buildDropdownSetting(
+    String label,
+    String value,
+    List<String> options,
+    ValueChanged<String?> onChanged, {
+    double bottomSpacing = BauhausDesign.space3,
+    double labelFieldGap = BauhausDesign.space3,
+  }) {
     return Padding(
       padding: EdgeInsets.only(bottom: bottomSpacing),
       child: Row(
@@ -1094,9 +1103,9 @@ class _PricingConfigurationViewState
             child: Text(
               label,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: _inkBlack,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: _inkBlack,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           SizedBox(width: labelFieldGap),
@@ -1136,18 +1145,19 @@ class _PricingConfigurationViewState
                 ),
               ),
               items: options
-                  .map((option) => DropdownMenuItem(
-                        value: option,
-                        child: Text(
-                          option,
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodyMedium
-                              ?.copyWith(
-                                color: _inkBlack,
-                                fontWeight: FontWeight.w600,
-                              ),
-                        ),
-                      ))
+                  .map(
+                    (option) => DropdownMenuItem(
+                      value: option,
+                      child: Text(
+                        option,
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
+                            ?.copyWith(
+                              color: _inkBlack,
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                    ),
+                  )
                   .toList(),
               onChanged: onChanged,
               icon: const Icon(Icons.keyboard_arrow_down, color: _inkBlack),
@@ -1176,17 +1186,17 @@ class _PricingConfigurationViewState
               Text(
                 label,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: _inkBlack,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  color: _inkBlack,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const Spacer(),
               Text(
                 value.toStringAsFixed(1),
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: _accentRed,
-                    ),
+                  fontWeight: FontWeight.w800,
+                  color: _accentRed,
+                ),
               ),
             ],
           ),
@@ -1220,19 +1230,15 @@ class _PricingConfigurationViewState
               children: [
                 Text(
                   title,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: _inkBlack,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: BauhausDesign.space1),
                 Text(
                   description,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
                 ),
               ],
             ),
@@ -1263,9 +1269,9 @@ class _PricingConfigurationViewState
             child: Text(
               label,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: _inkBlack,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: _inkBlack,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           const SizedBox(width: BauhausDesign.space3),
@@ -1273,8 +1279,9 @@ class _PricingConfigurationViewState
             flex: 3,
             child: BauhausTextField(
               controller: TextEditingController(text: value.toString())
-                ..selection =
-                    TextSelection.collapsed(offset: value.toString().length),
+                ..selection = TextSelection.collapsed(
+                  offset: value.toString().length,
+                ),
               keyboardType: TextInputType.number,
               hintText: '$min - $max',
               onChanged: (text) {
@@ -1302,8 +1309,10 @@ class _PricingConfigurationViewState
       child: Container(
         decoration: BoxDecoration(
           color: _panelWhite,
-          border:
-              Border.all(color: _inkBlack, width: BauhausDesign.borderThick),
+          border: Border.all(
+            color: _inkBlack,
+            width: BauhausDesign.borderThick,
+          ),
         ),
         child: Padding(
           padding: const EdgeInsets.all(BauhausDesign.space3),
@@ -1332,8 +1341,7 @@ class _PricingConfigurationViewState
                   children: [
                     Text(
                       title,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
                             color: _inkBlack,
                             fontWeight: FontWeight.w800,
@@ -1342,9 +1350,9 @@ class _PricingConfigurationViewState
                     const SizedBox(height: BauhausDesign.space1),
                     Text(
                       description,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelSmall
-                          ?.copyWith(color: BauhausDesign.textMuted),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
                     ),
                   ],
                 ),
@@ -1405,7 +1413,8 @@ class _PricingConfigurationViewState
         _showSnackBar(settingsResp['message'] ?? l10n.settingsSaved);
       } else {
         // If validation errors come back, surface the first user-friendly message
-        final msg = settingsResp['message'] ??
+        final msg =
+            settingsResp['message'] ??
             l10n.failedToSaveSettings(l10n.errorGenericMessage);
         _showSnackBar(msg);
       }
@@ -1413,7 +1422,8 @@ class _PricingConfigurationViewState
       // Save Fallback Base Rate if present and changed
       final input = _fallbackRateController.text.trim();
       final parsed = double.tryParse(input);
-      final shouldSaveFallback = input.isNotEmpty &&
+      final shouldSaveFallback =
+          input.isNotEmpty &&
           parsed != null &&
           parsed > 0 &&
           parsed != _fallbackBaseRate;
@@ -1428,7 +1438,8 @@ class _PricingConfigurationViewState
       }
     } catch (e) {
       _showSnackBar(
-          AppLocalizations.of(context)!.failedToSaveSettings(e.toString()));
+        AppLocalizations.of(context)!.failedToSaveSettings(e.toString()),
+      );
     } finally {
       if (mounted) {
         setState(() {
@@ -1443,9 +1454,7 @@ class _PricingConfigurationViewState
       context: context,
       builder: (context) => AlertDialog(
         title: Text(AppLocalizations.of(context)!.resetConfigurationTitle),
-        content: Text(
-          AppLocalizations.of(context)!.resetConfigurationConfirm,
-        ),
+        content: Text(AppLocalizations.of(context)!.resetConfigurationConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -1486,7 +1495,8 @@ class _PricingConfigurationViewState
 
   void _editRule(Map<String, dynamic> rule) {
     _showSnackBar(
-        AppLocalizations.of(context)!.editPricingRuleDialog(rule['name']));
+      AppLocalizations.of(context)!.editPricingRuleDialog(rule['name']),
+    );
   }
 
   void _deleteRule(String ruleId) {
@@ -1496,12 +1506,14 @@ class _PricingConfigurationViewState
 
   void _syncIntegration(String integrationName) {
     _showSnackBar(
-        AppLocalizations.of(context)!.syncingIntegration(integrationName));
+      AppLocalizations.of(context)!.syncingIntegration(integrationName),
+    );
   }
 
   void _configureIntegration(String integrationName) {
-    _showSnackBar(AppLocalizations.of(context)!
-        .configureIntegrationHint(integrationName));
+    _showSnackBar(
+      AppLocalizations.of(context)!.configureIntegrationHint(integrationName),
+    );
   }
 
   void _exportConfiguration() {
@@ -1521,9 +1533,7 @@ class _PricingConfigurationViewState
       context: context,
       builder: (context) => AlertDialog(
         title: Text(AppLocalizations.of(context)!.priceHistoryClearedTitle),
-        content: Text(
-          AppLocalizations.of(context)!.priceHistoryClearedConfirm,
-        ),
+        content: Text(AppLocalizations.of(context)!.priceHistoryClearedConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -1533,7 +1543,8 @@ class _PricingConfigurationViewState
             onPressed: () {
               Navigator.pop(context);
               _showSnackBar(
-                  AppLocalizations.of(context)!.priceHistoryClearedSuccess);
+                AppLocalizations.of(context)!.priceHistoryClearedSuccess,
+              );
             },
             style: TextButton.styleFrom(foregroundColor: BauhausDesign.error),
             child: Text(AppLocalizations.of(context)!.clear),
@@ -1612,23 +1623,26 @@ class _PricingConfigurationViewState
     }
   }
 
-  void _showSnackBar(String message,
-      {bool isSuccess = false, bool isError = false}) {
+  void _showSnackBar(
+    String message, {
+    bool isSuccess = false,
+    bool isError = false,
+  }) {
     if (!mounted) return;
 
     final color = isError
         ? BauhausDesign.error
         : isSuccess
-            ? BauhausDesign.success
-            : BauhausDesign.textDark;
+        ? BauhausDesign.success
+        : BauhausDesign.textDark;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           message,
-          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-              ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
         ),
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,

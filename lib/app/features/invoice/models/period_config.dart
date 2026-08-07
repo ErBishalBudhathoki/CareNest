@@ -34,11 +34,11 @@ class PeriodConfig {
 
   /// Convert to JSON map.
   Map<String, dynamic> toJson() => {
-        'employeeEmail': employeeEmail,
-        'clientEmail': clientEmail,
-        'weekStartDay': weekStartDay,
-        'notes': notes,
-      };
+    'employeeEmail': employeeEmail,
+    'clientEmail': clientEmail,
+    'weekStartDay': weekStartDay,
+    'notes': notes,
+  };
 
   /// Returns a copy with optional changes.
   PeriodConfig copyWith({
@@ -66,5 +66,6 @@ class PeriodConfig {
   }
 
   @override
-  int get hashCode => Object.hash(employeeEmail, clientEmail, weekStartDay, notes);
+  int get hashCode =>
+      Object.hash(employeeEmail, clientEmail, weekStartDay, notes);
 }

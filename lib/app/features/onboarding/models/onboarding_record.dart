@@ -51,10 +51,8 @@ abstract class BankDetailsStep with _$BankDetailsStep {
 
 @freezed
 abstract class StepDetail with _$StepDetail {
-  const factory StepDetail({
-    required String status,
-    DateTime? updatedAt,
-  }) = _StepDetail;
+  const factory StepDetail({required String status, DateTime? updatedAt}) =
+      _StepDetail;
 
   factory StepDetail.fromJson(Map<String, dynamic> json) =>
       _$StepDetailFromJson(json);

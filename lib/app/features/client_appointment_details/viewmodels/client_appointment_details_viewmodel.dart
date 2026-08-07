@@ -11,7 +11,7 @@ class ClientAppointmentDetailsViewModel extends Notifier<int> {
   late final ClientAppointmentRepository _repository;
   late String _clientId;
   late final String? _clientEmail;
-  
+
   ClientDetailModel? _client;
   List<VisitHistoryModel> _visitHistory = [];
   ViewState _state = ViewState.idle;
@@ -22,14 +22,14 @@ class ClientAppointmentDetailsViewModel extends Notifier<int> {
     _repository = ref.watch(clientAppointmentRepositoryProvider);
     return 0;
   }
-  
+
   void initialize(String clientId, String? clientEmail) {
     if (_state != ViewState.idle) return;
     _clientId = clientId;
     _clientEmail = clientEmail;
     _init();
   }
-  
+
   void notifyListeners() {
     state = state + 1;
   }
@@ -47,7 +47,7 @@ class ClientAppointmentDetailsViewModel extends Notifier<int> {
       final prefs = SharedPreferencesUtils();
       await prefs.init();
       final organizationId = prefs.getString('organizationId') ?? '';
-      
+
       if (organizationId.isEmpty) {
         throw Exception('Organization ID not found');
       }
@@ -73,8 +73,11 @@ class ClientAppointmentDetailsViewModel extends Notifier<int> {
       _client ??= await _repository.getClientDetails(_clientId, organizationId);
 
       // Fetch visit history
-      _visitHistory = await _repository.getVisitHistory(_clientId, organizationId);
-      
+      _visitHistory = await _repository.getVisitHistory(
+        _clientId,
+        organizationId,
+      );
+
       _state = ViewState.idle;
     } catch (e) {
       _state = ViewState.error;

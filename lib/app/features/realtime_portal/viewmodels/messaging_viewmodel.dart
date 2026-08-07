@@ -41,7 +41,9 @@ class MessagingState {
       isLoading: isLoading ?? this.isLoading,
       error: error,
       conversations: conversations ?? this.conversations,
-      activeConversation: clearActiveConversation ? null : (activeConversation ?? this.activeConversation),
+      activeConversation: clearActiveConversation
+          ? null
+          : (activeConversation ?? this.activeConversation),
       messages: messages ?? this.messages,
       isSending: isSending ?? this.isSending,
       typingIndicators: typingIndicators ?? this.typingIndicators,
@@ -53,11 +55,10 @@ class MessagingState {
 class MessagingViewModel extends Notifier<MessagingState> {
   late final RealtimePortalRepository _repository;
 
-  
   @override
   MessagingState build() {
     final apiMethod = ref.watch(apiMethodProvider);
-    
+
     return MessagingState();
   }
 
@@ -89,16 +90,10 @@ class MessagingViewModel extends Notifier<MessagingState> {
 
       // Add message to list
       final updatedMessages = [...state.messages, sentMessage];
-      state = state.copyWith(
-        isSending: false,
-        messages: updatedMessages,
-      );
+      state = state.copyWith(isSending: false, messages: updatedMessages);
     } catch (e) {
       debugPrint('Error sending message: $e');
-      state = state.copyWith(
-        isSending: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isSending: false, error: e.toString());
     }
   }
 
@@ -159,17 +154,12 @@ class MessagingViewModel extends Notifier<MessagingState> {
       );
     } catch (e) {
       debugPrint('Error creating conversation: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
   /// Get user conversations
-  Future<void> getUserConversations({
-    required String userId,
-  }) async {
+  Future<void> getUserConversations({required String userId}) async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
@@ -192,10 +182,7 @@ class MessagingViewModel extends Notifier<MessagingState> {
       );
     } catch (e) {
       debugPrint('Error getting conversations: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -244,9 +231,7 @@ class MessagingViewModel extends Notifier<MessagingState> {
   }
 
   /// Load more messages (pagination)
-  Future<void> loadMoreMessages({
-    required String conversationId,
-  }) async {
+  Future<void> loadMoreMessages({required String conversationId}) async {
     if (state.messages.isEmpty) return;
 
     final oldestMessage = state.messages.first;
@@ -273,4 +258,7 @@ class MessagingViewModel extends Notifier<MessagingState> {
 }
 
 /// Provider for messaging viewmodel
-final messagingViewModelProvider = NotifierProvider<MessagingViewModel, MessagingState>(MessagingViewModel.new);
+final messagingViewModelProvider =
+    NotifierProvider<MessagingViewModel, MessagingState>(
+      MessagingViewModel.new,
+    );

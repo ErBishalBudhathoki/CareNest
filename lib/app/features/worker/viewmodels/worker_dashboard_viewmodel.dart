@@ -21,8 +21,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 ///   error: (error, stack) => ErrorWidget(error),
 /// );
 /// ```
-final workerDashboardViewModelProvider = AsyncNotifierProvider<
-    WorkerDashboardViewModel, WorkerDashboardData>(WorkerDashboardViewModel.new);
+final workerDashboardViewModelProvider =
+    AsyncNotifierProvider<WorkerDashboardViewModel, WorkerDashboardData>(
+      WorkerDashboardViewModel.new,
+    );
 
 /// Worker Dashboard ViewModel
 ///
@@ -54,13 +56,11 @@ class WorkerDashboardViewModel extends AsyncNotifier<WorkerDashboardData> {
       final data = await _repository.getDashboardData();
 
       // Check if still mounted (user might have navigated away)
-      
 
       // Update state with fetched data
       state = AsyncData(data);
     } catch (error, stackTrace) {
       // Check if still mounted
-      
 
       // Update state with error
       state = AsyncError(error, stackTrace);
@@ -88,12 +88,8 @@ class WorkerDashboardViewModel extends AsyncNotifier<WorkerDashboardData> {
       // Don't set loading state - keep current data visible
       final data = await _repository.getDashboardData();
 
-      
-
       state = AsyncData(data);
     } catch (error) {
-      
-
       // On error, keep current state (don't disrupt user if background refresh fails)
       print('Silent refresh failed: $error');
 

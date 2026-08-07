@@ -1,7 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/accounting_repository.dart';
 
-final accountingViewModelProvider = NotifierProvider<AccountingViewModel, AsyncValue<void>>(AccountingViewModel.new);
+final accountingViewModelProvider =
+    NotifierProvider<AccountingViewModel, AsyncValue<void>>(
+      AccountingViewModel.new,
+    );
 
 class AccountingViewModel extends Notifier<AsyncValue<void>> {
   late final AccountingRepository _repository;

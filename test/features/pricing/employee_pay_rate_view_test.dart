@@ -26,7 +26,9 @@ class MockEmployeePayRateViewModel extends EmployeePayRateViewModel {
 }
 
 void main() {
-  testWidgets('EmployeePayRateView dropdown interaction test', (WidgetTester tester) async {
+  testWidgets('EmployeePayRateView dropdown interaction test', (
+    WidgetTester tester,
+  ) async {
     // 1. Setup Test Data
     final testUser = User(
       id: '1',
@@ -44,9 +46,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          employeePayRateViewModelProvider.overrideWith(
-            () => mockViewModel,
-          ),
+          employeePayRateViewModelProvider.overrideWith(() => mockViewModel),
         ],
         child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -69,26 +69,38 @@ void main() {
     expect(find.text('Set Pay Rates: TEST USER'), findsOneWidget);
 
     // 4. Find Dropdowns
-    final streamDropdown = find.widgetWithText(DropdownButtonFormField<String>, 'Stream');
-    final levelDropdown = find.widgetWithText(DropdownButtonFormField<String>, 'Level');
-    final payPointDropdown = find.widgetWithText(DropdownButtonFormField<String>, 'Pay Point');
+    final streamDropdown = find.widgetWithText(
+      DropdownButtonFormField<String>,
+      'Stream',
+    );
+    final levelDropdown = find.widgetWithText(
+      DropdownButtonFormField<String>,
+      'Level',
+    );
+    final payPointDropdown = find.widgetWithText(
+      DropdownButtonFormField<String>,
+      'Pay Point',
+    );
 
     expect(streamDropdown, findsOneWidget);
     expect(levelDropdown, findsOneWidget);
     expect(payPointDropdown, findsOneWidget);
 
-    final streamWidget =
-        tester.widget<DropdownButtonFormField<String>>(streamDropdown);
+    final streamWidget = tester.widget<DropdownButtonFormField<String>>(
+      streamDropdown,
+    );
     streamWidget.onChanged?.call('Social & Community Services');
     await tester.pump();
 
-    final levelWidget =
-        tester.widget<DropdownButtonFormField<String>>(levelDropdown);
+    final levelWidget = tester.widget<DropdownButtonFormField<String>>(
+      levelDropdown,
+    );
     levelWidget.onChanged?.call('Level 1');
     await tester.pump();
 
-    final payPointWidget =
-        tester.widget<DropdownButtonFormField<String>>(payPointDropdown);
+    final payPointWidget = tester.widget<DropdownButtonFormField<String>>(
+      payPointDropdown,
+    );
     payPointWidget.onChanged?.call('Pay Point 1');
     await tester.pumpAndSettle();
 

@@ -1,13 +1,9 @@
-
 import 'package:flutter/material.dart';
 
 class ShiftDetailsWidget extends StatelessWidget {
   final Map<String, dynamic> shiftData;
 
-  const ShiftDetailsWidget({
-    super.key,
-    required this.shiftData,
-  });
+  const ShiftDetailsWidget({super.key, required this.shiftData});
 
   @override
   Widget build(BuildContext context) {

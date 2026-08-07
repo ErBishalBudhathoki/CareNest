@@ -39,11 +39,10 @@ class InvoiceListState {
 class InvoiceListViewModel extends Notifier<InvoiceListState> {
   late final InvoiceManagementService _invoiceService;
 
-  
   @override
   InvoiceListState build() {
     _invoiceService = ref.watch(invoiceManagementServiceProvider);
-    
+
     return InvoiceListState();
   }
 
@@ -56,7 +55,8 @@ class InvoiceListViewModel extends Notifier<InvoiceListState> {
     String? search,
   }) async {
     debugPrint(
-        '🔍 DEBUG: Loading invoices for organizationId: $organizationId');
+      '🔍 DEBUG: Loading invoices for organizationId: $organizationId',
+    );
     state = state.copyWith(isLoading: true, error: null);
 
     try {
@@ -141,9 +141,7 @@ class InvoiceListViewModel extends Notifier<InvoiceListState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        error: 'Error updating payment status: $e',
-      );
+      state = state.copyWith(error: 'Error updating payment status: $e');
     }
   }
 
@@ -163,9 +161,7 @@ class InvoiceListViewModel extends Notifier<InvoiceListState> {
       }
       // On success, you might want to show a success message or update the UI
     } catch (e) {
-      state = state.copyWith(
-        error: 'Error sharing invoice: $e',
-      );
+      state = state.copyWith(error: 'Error sharing invoice: $e');
     }
   }
 
@@ -178,8 +174,9 @@ class InvoiceListViewModel extends Notifier<InvoiceListState> {
 
       if (result['success'] == true) {
         // Remove the deleted invoice from the list
-        final updatedInvoices =
-            state.invoices.where((invoice) => invoice.id != invoiceId).toList();
+        final updatedInvoices = state.invoices
+            .where((invoice) => invoice.id != invoiceId)
+            .toList();
 
         state = state.copyWith(invoices: updatedInvoices);
       } else {
@@ -188,9 +185,7 @@ class InvoiceListViewModel extends Notifier<InvoiceListState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        error: 'Error deleting invoice: $e',
-      );
+      state = state.copyWith(error: 'Error deleting invoice: $e');
     }
   }
 
@@ -215,11 +210,16 @@ class InvoiceListViewModel extends Notifier<InvoiceListState> {
 }
 
 // Provider for the invoice management service
-final invoiceManagementServiceProvider =
-    Provider<InvoiceManagementService>((ref) {
+final invoiceManagementServiceProvider = Provider<InvoiceManagementService>((
+  ref,
+) {
   return InvoiceManagementService(
-      apiMethod: ref.read(app_providers.apiMethodProvider));
+    apiMethod: ref.read(app_providers.apiMethodProvider),
+  );
 });
 
 // Provider for the invoice list view model
-final invoiceListViewModelProvider = NotifierProvider<InvoiceListViewModel, InvoiceListState>(InvoiceListViewModel.new);
+final invoiceListViewModelProvider =
+    NotifierProvider<InvoiceListViewModel, InvoiceListState>(
+      InvoiceListViewModel.new,
+    );

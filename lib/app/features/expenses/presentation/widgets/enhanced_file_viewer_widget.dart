@@ -7,7 +7,8 @@ import 'package:carenest/config/environment.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'file_types.dart';
 
 /// Enhanced file viewer widget that supports multiple file types
@@ -96,7 +97,8 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
   String _getServerUrl(String path) {
     final resolved = AppConfig.resolveResourceUrl(path);
     debugPrint(
-        'Constructing server URL: originalPath=$path, fullUrl=$resolved');
+      'Constructing server URL: originalPath=$path, fullUrl=$resolved',
+    );
     return resolved;
   }
 
@@ -120,7 +122,11 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
   }
 
   /// Open file with appropriate viewer
-  Future<void> _openFile(BuildContext context, WidgetRef ref, String filePath) async {
+  Future<void> _openFile(
+    BuildContext context,
+    WidgetRef ref,
+    String filePath,
+  ) async {
     final fileType = _getFileType(filePath);
     final isServerFile = _isUrl(filePath);
 
@@ -128,8 +134,11 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
     if (!isServerFile) {
       final file = File(filePath);
       if (!file.existsSync()) {
-        _showErrorDialog(context, 'File not found',
-            'The selected file could not be found on the device.');
+        _showErrorDialog(
+          context,
+          'File not found',
+          'The selected file could not be found on the device.',
+        );
         return;
       }
     }
@@ -206,13 +215,17 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
 
   /// Download and open server file locally
   Future<void> _downloadAndOpenFile(
-      BuildContext context, WidgetRef ref, String filePath) async {
+    BuildContext context,
+    WidgetRef ref,
+    String filePath,
+  ) async {
     BuildContext? dialogContext;
 
     try {
       final serverUrl = _getServerUrl(filePath);
       debugPrint(
-          'DEBUG: Starting download for file: $filePath (URL: $serverUrl)');
+        'DEBUG: Starting download for file: $filePath (URL: $serverUrl)',
+      );
 
       // Show loading dialog
       showDialog(
@@ -275,7 +288,8 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
       final response = await apiMethod.getRawUrl(serverUrl);
       debugPrint('DEBUG: HTTP response status: ${response.statusCode}');
       debugPrint(
-          'DEBUG: Response content length: ${response.bodyBytes.length}');
+        'DEBUG: Response content length: ${response.bodyBytes.length}',
+      );
 
       if (response.statusCode == 200) {
         // Get temporary directory
@@ -289,7 +303,8 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
         await tempFile.writeAsBytes(response.bodyBytes);
 
         debugPrint(
-            'DEBUG: File saved successfully, size: ${await tempFile.length()} bytes');
+          'DEBUG: File saved successfully, size: ${await tempFile.length()} bytes',
+        );
 
         // Close loading dialog before opening file
         if (dialogContext != null && Navigator.of(dialogContext!).canPop()) {
@@ -322,7 +337,8 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
         }
 
         debugPrint(
-            'DEBUG: HTTP request failed with status: ${response.statusCode}');
+          'DEBUG: HTTP request failed with status: ${response.statusCode}',
+        );
         _showErrorDialog(
           context,
           'Download failed',
@@ -365,7 +381,11 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
 
   /// Show detailed error dialog for image loading failures with retry option
   void _showImageErrorDialog(
-      BuildContext context, String filePath, String url, String error) {
+    BuildContext context,
+    String filePath,
+    String url,
+    String error,
+  ) {
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -382,10 +402,10 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
           children: [
             Text(
               'Failed to load image from server:',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)
-                  .copyWith(
-                color: const Color(0xFF6B7280),
-              ),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ).copyWith(color: const Color(0xFF6B7280)),
             ),
             const SizedBox(height: 8),
             Container(
@@ -397,10 +417,7 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
               ),
               child: Text(
                 path.basename(filePath),
-                style: const TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: 12,
-                ),
+                style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
               ),
             ),
             const SizedBox(height: 12),
@@ -421,9 +438,9 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
               ),
               child: Text(
                 error,
-                style: const TextStyle(fontSize: 12).copyWith(
-                  color: Colors.red,
-                ),
+                style: const TextStyle(
+                  fontSize: 12,
+                ).copyWith(color: Colors.red),
               ),
             ),
             const SizedBox(height: 12),
@@ -472,11 +489,7 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
         // Header
         Row(
           children: [
-            const Icon(
-              Icons.attach_file,
-              color: Color(0xFF4CAF50),
-              size: 20,
-            ),
+            const Icon(Icons.attach_file, color: Color(0xFF4CAF50), size: 20),
             const SizedBox(width: 8),
             const Text(
               'Receipt Attachments',
@@ -568,55 +581,67 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
                           ),
                           child: fileExists
                               ? (fileType == ExpenseFileType.image
-                                  ? ClipRRect(
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(12),
-                                        topRight: Radius.circular(12),
-                                      ),
-                                      child: isServerFile
-                                          ? CachedNetworkImage(
-                                              imageUrl: _getServerUrl(filePath),
-                                              fit: BoxFit.cover,
-                                              placeholder: (context, url) {
-                                                debugPrint(
-                                                    'Loading image from URL: $url');
-                                                return const Center(
-                                                  child:
-                                                      CircularProgressIndicator(),
-                                                );
-                                              },
-                                              errorWidget:
-                                                  (context, url, error) {
-                                                debugPrint(
-                                                    'Failed to load image from URL: $url');
-                                                debugPrint('Error: $error');
-                                                return GestureDetector(
-                                                  onTap: () {
-                                                    // Show detailed error dialog and retry option
-                                                    _showImageErrorDialog(
+                                    ? ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(12),
+                                          topRight: Radius.circular(12),
+                                        ),
+                                        child: isServerFile
+                                            ? CachedNetworkImage(
+                                                imageUrl: _getServerUrl(
+                                                  filePath,
+                                                ),
+                                                fit: BoxFit.cover,
+                                                placeholder: (context, url) {
+                                                  debugPrint(
+                                                    'Loading image from URL: $url',
+                                                  );
+                                                  return const Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  );
+                                                },
+                                                errorWidget: (context, url, error) {
+                                                  debugPrint(
+                                                    'Failed to load image from URL: $url',
+                                                  );
+                                                  debugPrint('Error: $error');
+                                                  return GestureDetector(
+                                                    onTap: () {
+                                                      // Show detailed error dialog and retry option
+                                                      _showImageErrorDialog(
                                                         context,
                                                         filePath,
                                                         url,
-                                                        error.toString());
-                                                  },
-                                                  child: _buildImageErrorWidget(
-                                                      filePath,
-                                                      url,
-                                                      error.toString()),
-                                                );
-                                              },
-                                            )
-                                          : Image.file(
-                                              File(filePath),
-                                              fit: BoxFit.cover,
-                                              errorBuilder:
-                                                  (context, error, stackTrace) {
-                                                return _buildFileIcon(
-                                                    filePath, fileExists);
-                                              },
-                                            ),
-                                    )
-                                  : _buildFileIcon(filePath, fileExists))
+                                                        error.toString(),
+                                                      );
+                                                    },
+                                                    child:
+                                                        _buildImageErrorWidget(
+                                                          filePath,
+                                                          url,
+                                                          error.toString(),
+                                                        ),
+                                                  );
+                                                },
+                                              )
+                                            : Image.file(
+                                                File(filePath),
+                                                fit: BoxFit.cover,
+                                                errorBuilder:
+                                                    (
+                                                      context,
+                                                      error,
+                                                      stackTrace,
+                                                    ) {
+                                                      return _buildFileIcon(
+                                                        filePath,
+                                                        fileExists,
+                                                      );
+                                                    },
+                                              ),
+                                      )
+                                    : _buildFileIcon(filePath, fileExists))
                               : _buildFileIcon(filePath, fileExists),
                         ),
                       ),
@@ -695,8 +720,11 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.description,
-                        size: 16, color: Colors.blue.shade600),
+                    Icon(
+                      Icons.description,
+                      size: 16,
+                      color: Colors.blue.shade600,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       'Description',
@@ -711,10 +739,7 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
                 const SizedBox(height: 4),
                 Text(
                   description!,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.blue.shade700,
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.blue.shade700),
                 ),
               ],
             ),
@@ -755,27 +780,21 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.broken_image,
-            size: 32,
-            color: Colors.red.shade400,
-          ),
+          Icon(Icons.broken_image, size: 32, color: Colors.red.shade400),
           const SizedBox(height: 4),
           Text(
             'Image failed to load',
-            style: const TextStyle(fontSize: 12).copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.red,
-            ),
+            style: const TextStyle(
+              fontSize: 12,
+            ).copyWith(fontWeight: FontWeight.bold, color: Colors.red),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 2),
           Text(
             'Tap to retry',
-            style: const TextStyle(fontSize: 12).copyWith(
-              fontSize: 8,
-              color: Colors.red.withOpacity(0.1),
-            ),
+            style: const TextStyle(
+              fontSize: 12,
+            ).copyWith(fontSize: 8, color: Colors.red.withOpacity(0.1)),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
@@ -834,11 +853,7 @@ class _FullScreenImageViewer extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
-        child: InteractiveViewer(
-          child: _buildImageWidget(),
-        ),
-      ),
+      body: Center(child: InteractiveViewer(child: _buildImageWidget())),
     );
   }
 
@@ -880,18 +895,15 @@ class _FullScreenImageViewer extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.broken_image,
-                    size: 64,
-                    color: Colors.white,
-                  ),
+                  const Icon(Icons.broken_image, size: 64, color: Colors.white),
                   const SizedBox(height: 16),
                   const Text(
                     'Cannot load server image',
                     style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   const Text(
@@ -909,9 +921,10 @@ class _FullScreenImageViewer extends StatelessWidget {
                     child: Text(
                       'URL: $url',
                       style: const TextStyle(
-                          color: Colors.white60,
-                          fontSize: 11,
-                          fontFamily: 'monospace'),
+                        color: Colors.white60,
+                        fontSize: 11,
+                        fontFamily: 'monospace',
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -947,8 +960,10 @@ class _FullScreenImageViewer extends StatelessWidget {
                         onPressed: () async {
                           final uri = Uri.parse(url);
                           if (await canLaunchUrl(uri)) {
-                            await launchUrl(uri,
-                                mode: LaunchMode.externalApplication);
+                            await launchUrl(
+                              uri,
+                              mode: LaunchMode.externalApplication,
+                            );
                           }
                         },
                         icon: const Icon(Icons.open_in_new),
@@ -976,11 +991,7 @@ class _FullScreenImageViewer extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.broken_image,
-                        size: 64,
-                        color: Colors.white,
-                      ),
+                      Icon(Icons.broken_image, size: 64, color: Colors.white),
                       SizedBox(height: 16),
                       Text(
                         'Cannot load image',
@@ -995,11 +1006,7 @@ class _FullScreenImageViewer extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: Colors.white,
-                  ),
+                  Icon(Icons.error_outline, size: 64, color: Colors.white),
                   SizedBox(height: 16),
                   Text(
                     'Image file not found',

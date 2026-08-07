@@ -26,8 +26,9 @@ class WorkerShiftCard extends StatelessWidget {
               children: [
                 Text(
                   _formatDate(shift.startTime),
-                  style: BauhausTheme.labelStyle
-                      .copyWith(color: BauhausTheme.white),
+                  style: BauhausTheme.labelStyle.copyWith(
+                    color: BauhausTheme.white,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -35,19 +36,23 @@ class WorkerShiftCard extends StatelessWidget {
                   children: [
                     Text(
                       '${_formatTime(shift.startTime)} - ${_formatTime(shift.endTime)}',
-                      style: BauhausTheme.subHeaderStyle
-                          .copyWith(color: BauhausTheme.white),
+                      style: BauhausTheme.subHeaderStyle.copyWith(
+                        color: BauhausTheme.white,
+                      ),
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      decoration:
-                          const BoxDecoration(color: BauhausTheme.white),
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: const BoxDecoration(
+                        color: BauhausTheme.white,
+                      ),
                       child: Text(
                         shift.status.value.toUpperCase(),
                         style: BauhausTheme.labelStyle,
                       ),
-                    )
+                    ),
                   ],
                 ),
               ],
@@ -61,18 +66,26 @@ class WorkerShiftCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.person,
-                        color: BauhausTheme.black, size: 20),
+                    const Icon(
+                      Icons.person,
+                      color: BauhausTheme.black,
+                      size: 20,
+                    ),
                     const SizedBox(width: 8),
-                    Text(shift.clientName ?? 'Unknown Client',
-                        style: BauhausTheme.subHeaderStyle),
+                    Text(
+                      shift.clientName ?? 'Unknown Client',
+                      style: BauhausTheme.subHeaderStyle,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    const Icon(Icons.location_on,
-                        color: BauhausTheme.black, size: 20),
+                    const Icon(
+                      Icons.location_on,
+                      color: BauhausTheme.black,
+                      size: 20,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(

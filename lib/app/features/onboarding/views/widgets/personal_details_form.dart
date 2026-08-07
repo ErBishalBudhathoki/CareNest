@@ -52,9 +52,9 @@ class _PersonalDetailsFormState extends ConsumerState<PersonalDetailsForm> {
           Text(
             'Emergency Contact (Optional)',
             style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.bold,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space2),
           BauhausTextField(
@@ -70,10 +70,7 @@ class _PersonalDetailsFormState extends ConsumerState<PersonalDetailsForm> {
             keyboardType: TextInputType.phone,
           ),
           const SizedBox(height: BauhausDesign.space4),
-          ButtonWidget(
-            buttonText: 'Save & Continue',
-            onPressed: _submit,
-          ),
+          ButtonWidget(buttonText: 'Save & Continue', onPressed: _submit),
         ],
       ),
     );

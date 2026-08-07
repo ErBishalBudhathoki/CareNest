@@ -27,9 +27,7 @@ class HoursFormatting {
     final fixed = hours.toStringAsFixed(maxDecimals);
     final parts = fixed.split('.');
     if (parts.length == 1) {
-      return minDecimals > 0
-          ? '${parts[0]}.${'0' * minDecimals}'
-          : parts[0];
+      return minDecimals > 0 ? '${parts[0]}.${'0' * minDecimals}' : parts[0];
     }
     final whole = parts[0];
     var frac = parts[1];

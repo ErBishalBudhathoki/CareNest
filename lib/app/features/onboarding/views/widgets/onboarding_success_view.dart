@@ -34,8 +34,7 @@ class OnboardingSuccessView extends StatelessWidget {
                   color: data.color.withOpacity(0.08),
                   border: Border.all(color: data.color, width: 3),
                 ),
-                child:
-                    Icon(data.icon, size: 40, color: data.color),
+                child: Icon(data.icon, size: 40, color: data.color),
               ),
               const SizedBox(height: 32),
               Text(
@@ -60,8 +59,7 @@ class OnboardingSuccessView extends StatelessWidget {
                   (s) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: Row(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
                           width: 6,
@@ -74,8 +72,7 @@ class OnboardingSuccessView extends StatelessWidget {
                           child: Text(
                             s,
                             style: theme.bodyMedium?.copyWith(
-                              color: BauhausDesign.textDark
-                                  .withOpacity(0.7),
+                              color: BauhausDesign.textDark.withOpacity(0.7),
                               height: 1.45,
                             ),
                           ),
@@ -96,8 +93,7 @@ class OnboardingSuccessView extends StatelessWidget {
                 ButtonWidget(
                   buttonText: 'Back to Home',
                   onPressed: () {
-                    Navigator.pushReplacementNamed(
-                        context, Routes.login);
+                    Navigator.pushReplacementNamed(context, Routes.login);
                   },
                 ),
             ],

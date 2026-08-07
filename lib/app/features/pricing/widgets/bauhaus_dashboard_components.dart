@@ -66,65 +66,61 @@ class BauhausActionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BauhausCard(
-      padding: const EdgeInsets.all(BauhausDesign.space4),
-      onTap: isEnabled ? onTap : null,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Icon with background
-          Container(
-            padding: const EdgeInsets.all(BauhausDesign.space2),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-              border: Border.all(color: color.withOpacity(0.2), width: 1),
-            ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 20,
-            ),
-          ),
-
-          const SizedBox(height: BauhausDesign.space3),
-
-          // Title
-          Text(
-            title,
-            style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
+          padding: const EdgeInsets.all(BauhausDesign.space4),
+          onTap: isEnabled ? onTap : null,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Icon with background
+              Container(
+                padding: const EdgeInsets.all(BauhausDesign.space2),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                  border: Border.all(color: color.withOpacity(0.2), width: 1),
                 ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
+                child: Icon(icon, color: color, size: 20),
+              ),
 
-          const SizedBox(height: BauhausDesign.space1),
+              const SizedBox(height: BauhausDesign.space3),
 
-          // Subtitle
-          Expanded(
-            child: Text(
-              subtitle,
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.textMuted,
-                  ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
+              // Title
+              Text(
+                title,
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).titleMedium?.copyWith(fontWeight: FontWeight.w700),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
 
-          // Arrow indicator
-          Align(
-            alignment: Alignment.centerRight,
-            child: Icon(
-              Icons.arrow_forward,
-              size: 16,
-              color: BauhausDesign.textMuted,
-            ),
+              const SizedBox(height: BauhausDesign.space1),
+
+              // Subtitle
+              Expanded(
+                child: Text(
+                  subtitle,
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+
+              // Arrow indicator
+              Align(
+                alignment: Alignment.centerRight,
+                child: Icon(
+                  Icons.arrow_forward,
+                  size: 16,
+                  color: BauhausDesign.textMuted,
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    )
+        )
         .animate()
         .fadeIn(duration: 600.ms, delay: 200.ms)
         .slideX(begin: 0.3, end: 0);
@@ -160,9 +156,9 @@ class BauhausChartWidget extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).titleLarge?.copyWith(fontWeight: FontWeight.w700),
               ),
               BauhausChip(
                 label: _getChartTypeLabel(context),
@@ -198,10 +194,9 @@ class BauhausChartWidget extends StatelessWidget {
                   Text(
                     AppLocalizations.of(context)!.chartVisualizationPlaceholder,
                     textAlign: TextAlign.center,
-                    style:
-                        BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                              color: primaryColor.withOpacity(0.5),
-                            ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodySmall?.copyWith(color: primaryColor.withOpacity(0.5)),
                   ),
                 ],
               ),
@@ -272,25 +267,16 @@ class BauhausActivityItem extends StatelessWidget {
               decoration: BoxDecoration(
                 color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                border: Border.all(
-                  color: color,
-                  width: 1.5,
-                ),
+                border: Border.all(color: color, width: 1.5),
               ),
-              child: Icon(
-                icon,
-                size: 16,
-                color: color,
-              ),
+              child: Icon(icon, size: 16, color: color),
             ),
             if (!isLast)
               Container(
                 width: 2,
                 height: 40,
                 color: BauhausDesign.neutral,
-                margin: const EdgeInsets.symmetric(
-                  vertical: 4.0,
-                ),
+                margin: const EdgeInsets.symmetric(vertical: 4.0),
               ),
           ],
         ),
@@ -304,10 +290,9 @@ class BauhausActivityItem extends StatelessWidget {
             children: [
               Text(
                 title,
-                style:
-                    BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).titleMedium?.copyWith(fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: BauhausDesign.space1),
               Text(
@@ -317,9 +302,9 @@ class BauhausActivityItem extends StatelessWidget {
               const SizedBox(height: BauhausDesign.space1),
               Text(
                 timestamp,
-                style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                      color: BauhausDesign.textMuted,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
               ),
               if (!isLast) const SizedBox(height: BauhausDesign.space4),
             ],
@@ -346,13 +331,13 @@ class BauhausLoadingSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        color: BauhausDesign.neutral.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(borderRadius),
-      ),
-    )
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            color: BauhausDesign.neutral.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+        )
         .animate(onPlay: (controller) => controller.repeat())
         .shimmer(duration: 1500.ms, color: Colors.white.withOpacity(0.5));
   }
@@ -364,11 +349,7 @@ class ChartData {
   final double value;
   final Color? color;
 
-  ChartData({
-    required this.label,
-    required this.value,
-    this.color,
-  });
+  ChartData({required this.label, required this.value, this.color});
 }
 
 enum ChartType { line, bar, pie, area }

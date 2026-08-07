@@ -102,8 +102,8 @@ class User {
       if (json['name'] != null && json['name'].toString().isNotEmpty) {
         name = json['name'].toString();
       } else if (json['firstName'] != null || json['lastName'] != null) {
-        name =
-            ((json['firstName'] ?? '') + ' ' + (json['lastName'] ?? '')).trim();
+        name = ((json['firstName'] ?? '') + ' ' + (json['lastName'] ?? ''))
+            .trim();
       }
 
       // Handle organizationId - it might be directly in json or null
@@ -136,15 +136,18 @@ class User {
         ),
         roles: roleTags,
         organizationRole: json['organizationRole']?.toString(),
-        organizationPermissions: (json['organizationPermissions'] as List?)
+        organizationPermissions:
+            (json['organizationPermissions'] as List?)
                 ?.map((e) => e.toString())
                 .toList() ??
             const [],
         jobRole: json['jobRole']?.toString(),
         payRate: (json['payRate'] as num?)?.toDouble() ?? 0.0,
-        detailedRates:
-            json['rates'] != null ? RatesModel.fromJson(json['rates']) : null,
-        activeAllowances: (json['activeAllowances'] as List?)
+        detailedRates: json['rates'] != null
+            ? RatesModel.fromJson(json['rates'])
+            : null,
+        activeAllowances:
+            (json['activeAllowances'] as List?)
                 ?.map((e) => e.toString())
                 .toList() ??
             [],
@@ -158,7 +161,7 @@ class User {
             : null,
         permissions:
             (json['permissions'] as List?)?.map((e) => e.toString()).toList() ??
-                [],
+            [],
       );
     } catch (e) {
       debugPrint('Error parsing user data: $e');

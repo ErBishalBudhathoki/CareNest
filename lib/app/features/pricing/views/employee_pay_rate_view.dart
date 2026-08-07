@@ -96,8 +96,9 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
   void _selectUser(User user) {
     setState(() {
       _selectedUser = user;
-      _baseRateController.text =
-          user.payRate != 0.0 ? user.payRate.toString() : '';
+      _baseRateController.text = user.payRate != 0.0
+          ? user.payRate.toString()
+          : '';
       _payType = user.payType ?? 'Hourly';
 
       _selectedStream = _normalizeStream(user.stream);
@@ -115,8 +116,10 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
       if (_selectedStream != null &&
           _selectedLevel != null &&
           user.payPoint != null) {
-        final points =
-            SchadsRateConstants.getPayPoints(_selectedStream!, _selectedLevel!);
+        final points = SchadsRateConstants.getPayPoints(
+          _selectedStream!,
+          _selectedLevel!,
+        );
         if (points.contains(user.payPoint)) {
           _selectedPayPoint = user.payPoint;
         }
@@ -228,7 +231,8 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
     _nightShiftRateController.text = (base * nightMult).toStringAsFixed(2);
 
     debugPrint(
-        'Rates calculated: Sat=${_saturdayRateController.text}, Sun=${_sundayRateController.text}');
+      'Rates calculated: Sat=${_saturdayRateController.text}, Sun=${_sundayRateController.text}',
+    );
   }
 
   Future<void> _saveRate() async {
@@ -246,35 +250,37 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
       final repository = ref.read(earningsRepositoryProvider);
 
       final rates = RatesModel(
-          baseRate: baseRate,
-          saturdayRate: double.tryParse(_saturdayRateController.text) ?? 0,
-          sundayRate: double.tryParse(_sundayRateController.text) ?? 0,
-          publicHolidayRate:
-              double.tryParse(_publicHolidayRateController.text) ?? 0,
-          overtimeRate: double.tryParse(_overtimeRateController.text) ?? 0,
-          overtimeRate2: double.tryParse(_overtimeRate2Controller.text) ?? 0,
-          nightShiftRate: double.tryParse(_nightShiftRateController.text) ?? 0,
-          eveningShiftRate:
-              double.tryParse(_eveningShiftRateController.text) ?? 0);
+        baseRate: baseRate,
+        saturdayRate: double.tryParse(_saturdayRateController.text) ?? 0,
+        sundayRate: double.tryParse(_sundayRateController.text) ?? 0,
+        publicHolidayRate:
+            double.tryParse(_publicHolidayRateController.text) ?? 0,
+        overtimeRate: double.tryParse(_overtimeRateController.text) ?? 0,
+        overtimeRate2: double.tryParse(_overtimeRate2Controller.text) ?? 0,
+        nightShiftRate: double.tryParse(_nightShiftRateController.text) ?? 0,
+        eveningShiftRate:
+            double.tryParse(_eveningShiftRateController.text) ?? 0,
+      );
 
       await repository.setPayRate(
-          _selectedUser!.email,
-          baseRate,
-          _payType,
-          rates,
-          _selectedLevel,
-          _selectedPayPoint,
-          _selectedStream,
-          _selectedEmploymentType,
-          _selectedAllowances,
-          widget.organizationId,
-          widget.adminEmail);
+        _selectedUser!.email,
+        baseRate,
+        _payType,
+        rates,
+        _selectedLevel,
+        _selectedPayPoint,
+        _selectedStream,
+        _selectedEmploymentType,
+        _selectedAllowances,
+        widget.organizationId,
+        widget.adminEmail,
+      );
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content:
-                  Text(AppLocalizations.of(context)!.payRatesUpdatedSuccess)),
+            content: Text(AppLocalizations.of(context)!.payRatesUpdatedSuccess),
+          ),
         );
       }
 
@@ -283,8 +289,10 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(AppLocalizations.of(context)!
-                  .errorUpdatingRate(e.toString()))),
+            content: Text(
+              AppLocalizations.of(context)!.errorUpdatingRate(e.toString()),
+            ),
+          ),
         );
       }
     } finally {
@@ -332,8 +340,9 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
 
         if (current < minRate) {
           _updateUi(() {
-            _rateWarning = AppLocalizations.of(context)!
-                .rateBelowAwardWarning(minRate.toStringAsFixed(2));
+            _rateWarning = AppLocalizations.of(
+              context,
+            )!.rateBelowAwardWarning(minRate.toStringAsFixed(2));
           });
         } else {
           _updateUi(() {
@@ -355,8 +364,10 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
           builder: (dialogContext, dialogSetState) {
             _dialogSetState = dialogSetState;
             return Dialog(
-              insetPadding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+              insetPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 16,
+              ),
               backgroundColor: Colors.transparent,
               child: Container(
                 width: math.min(size.width * 0.95, 960),
@@ -366,7 +377,9 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                   border: Border.all(color: BauhausDesign.neutral, width: 2),
                   boxShadow: const [
                     BoxShadow(
-                        color: BauhausDesign.neutral, offset: Offset(4, 4))
+                      color: BauhausDesign.neutral,
+                      offset: Offset(4, 4),
+                    ),
                   ],
                 ),
                 padding: const EdgeInsets.all(24),
@@ -383,11 +396,12 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                         TextButton(
                           onPressed: () => Navigator.of(dialogContext).pop(),
                           child: Text(
-                            AppLocalizations.of(dialogContext)!
-                                .cancelAction
-                                .toUpperCase(),
+                            AppLocalizations.of(
+                              dialogContext,
+                            )!.cancelAction.toUpperCase(),
                             style: GoogleFonts.oswald(
-                                color: BauhausDesign.neutral),
+                              color: BauhausDesign.neutral,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -395,18 +409,19 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: BauhausDesign.secondary,
                             shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.zero),
+                              borderRadius: BorderRadius.zero,
+                            ),
                           ),
                           onPressed: _saveRate,
                           child: Text(
-                            AppLocalizations.of(dialogContext)!
-                                .saveRatesAction
-                                .toUpperCase(),
+                            AppLocalizations.of(
+                              dialogContext,
+                            )!.saveRatesAction.toUpperCase(),
                             style: GoogleFonts.oswald(color: Colors.white),
                           ),
                         ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -428,16 +443,17 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
           child: Text(
             l10n.setPayRatesTitle(_selectedUser!.name.toUpperCase()),
             style: GoogleFonts.oswald(
-                color: BauhausDesign.textDark,
-                fontSize: 22,
-                fontWeight: FontWeight.bold),
+              color: BauhausDesign.textDark,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.of(dialogContext).pop(),
           tooltip: l10n.cancelAction,
-        )
+        ),
       ],
     );
   }
@@ -451,13 +467,15 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildSectionTitle(
-                l10n.classificationEmploymentSection.toUpperCase()),
+              l10n.classificationEmploymentSection.toUpperCase(),
+            ),
             DropdownButtonFormField<String>(
               value: _selectedStream,
               decoration: InputDecoration(
                 labelText: l10n.streamLabel,
-                border:
-                    const OutlineInputBorder(borderRadius: BorderRadius.zero),
+                border: const OutlineInputBorder(
+                  borderRadius: BorderRadius.zero,
+                ),
                 filled: true,
                 fillColor: BauhausDesign.surfaceLight,
               ),
@@ -465,8 +483,10 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
               items: SchadsRateConstants.streams.map((s) {
                 return DropdownMenuItem(
                   value: s,
-                  child: Text(s,
-                      style: GoogleFonts.inter(color: BauhausDesign.textDark)),
+                  child: Text(
+                    s,
+                    style: GoogleFonts.inter(color: BauhausDesign.textDark),
+                  ),
                 );
               }).toList(),
               onChanged: (val) {
@@ -482,16 +502,19 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
               value: _selectedEmploymentType,
               decoration: InputDecoration(
                 labelText: l10n.employmentTypeLabel,
-                border:
-                    const OutlineInputBorder(borderRadius: BorderRadius.zero),
+                border: const OutlineInputBorder(
+                  borderRadius: BorderRadius.zero,
+                ),
                 filled: true,
                 fillColor: BauhausDesign.surfaceLight,
               ),
               items: SchadsRateConstants.employmentTypes.map((t) {
                 return DropdownMenuItem(
                   value: t,
-                  child: Text(t,
-                      style: GoogleFonts.inter(color: BauhausDesign.textDark)),
+                  child: Text(
+                    t,
+                    style: GoogleFonts.inter(color: BauhausDesign.textDark),
+                  ),
                 );
               }).toList(),
               onChanged: (val) {
@@ -513,7 +536,8 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                           : null,
                       labelText: l10n.levelLabel,
                       border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.zero),
+                        borderRadius: BorderRadius.zero,
+                      ),
                       filled: true,
                       fillColor: BauhausDesign.surfaceLight,
                     ),
@@ -521,17 +545,21 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                     items: _selectedStream == null
                         ? []
                         : (SchadsRateConstants
-                                    .levelsForStream[_selectedStream!] ??
-                                [])
-                            .map((level) {
-                            return DropdownMenuItem(
-                              value: level,
-                              child: Text(level,
-                                  style: GoogleFonts.inter(
-                                      color: BauhausDesign.textDark),
-                                  overflow: TextOverflow.ellipsis),
-                            );
-                          }).toList(),
+                                      .levelsForStream[_selectedStream!] ??
+                                  [])
+                              .map((level) {
+                                return DropdownMenuItem(
+                                  value: level,
+                                  child: Text(
+                                    level,
+                                    style: GoogleFonts.inter(
+                                      color: BauhausDesign.textDark,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                );
+                              })
+                              .toList(),
                     onChanged: _selectedStream == null
                         ? null
                         : (val) {
@@ -550,11 +578,12 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                     decoration: InputDecoration(
                       helperText:
                           (_selectedStream == null || _selectedLevel == null)
-                              ? l10n.selectLevelFirstHint
-                              : null,
+                          ? l10n.selectLevelFirstHint
+                          : null,
                       labelText: l10n.payPointLabel,
                       border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.zero),
+                        borderRadius: BorderRadius.zero,
+                      ),
                       filled: true,
                       fillColor: BauhausDesign.surfaceLight,
                     ),
@@ -562,25 +591,29 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                     items: (_selectedStream == null || _selectedLevel == null)
                         ? []
                         : SchadsRateConstants.getPayPoints(
-                                _selectedStream!, _selectedLevel!)
-                            .map((pp) {
+                            _selectedStream!,
+                            _selectedLevel!,
+                          ).map((pp) {
                             return DropdownMenuItem(
                               value: pp,
-                              child: Text(pp,
-                                  style: GoogleFonts.inter(
-                                      color: BauhausDesign.textDark),
-                                  overflow: TextOverflow.ellipsis),
+                              child: Text(
+                                pp,
+                                style: GoogleFonts.inter(
+                                  color: BauhausDesign.textDark,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             );
                           }).toList(),
                     onChanged:
                         (_selectedStream == null || _selectedLevel == null)
-                            ? null
-                            : (val) {
-                                _updateUi(() {
-                                  _selectedPayPoint = val;
-                                });
-                                _updateRateFromClassification();
-                              },
+                        ? null
+                        : (val) {
+                            _updateUi(() {
+                              _selectedPayPoint = val;
+                            });
+                            _updateRateFromClassification();
+                          },
                   ),
                 ),
               ],
@@ -597,9 +630,14 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                       const Icon(Icons.warning, color: Colors.red, size: 16),
                       const SizedBox(width: 8),
                       Expanded(
-                          child: Text(_rateWarning!,
-                              style: GoogleFonts.inter(
-                                  color: Colors.red, fontSize: 12))),
+                        child: Text(
+                          _rateWarning!,
+                          style: GoogleFonts.inter(
+                            color: Colors.red,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -623,32 +661,38 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                     decoration: InputDecoration(
                       labelText: l10n.payTypeLabel,
                       border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.zero),
+                        borderRadius: BorderRadius.zero,
+                      ),
                       filled: true,
                       fillColor: BauhausDesign.surfaceLight,
                     ),
                     style: GoogleFonts.inter(
-                        color: BauhausDesign.textDark,
-                        fontWeight: FontWeight.w500),
+                      color: BauhausDesign.textDark,
+                      fontWeight: FontWeight.w500,
+                    ),
                     dropdownColor: BauhausDesign.surfaceLight,
                     isExpanded: true,
                     items: [
                       DropdownMenuItem(
-                          value: 'Hourly',
-                          child: Text(
-                            l10n.hourlyLabel,
-                            style: GoogleFonts.inter(
-                                color: BauhausDesign.textDark),
-                            overflow: TextOverflow.ellipsis,
-                          )),
+                        value: 'Hourly',
+                        child: Text(
+                          l10n.hourlyLabel,
+                          style: GoogleFonts.inter(
+                            color: BauhausDesign.textDark,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                       DropdownMenuItem(
-                          value: 'Salary',
-                          child: Text(
-                            l10n.salaryLabel,
-                            style: GoogleFonts.inter(
-                                color: BauhausDesign.textDark),
-                            overflow: TextOverflow.ellipsis,
-                          )),
+                        value: 'Salary',
+                        child: Text(
+                          l10n.salaryLabel,
+                          style: GoogleFonts.inter(
+                            color: BauhausDesign.textDark,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ],
                     onChanged: (val) => _updateUi(() => _payType = val!),
                   ),
@@ -660,23 +704,29 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
             Row(
               children: [
                 Expanded(
-                    child: _buildTextField(
-                        controller: _saturdayRateController,
-                        label: l10n.saturdayPenaltyLabel)),
+                  child: _buildTextField(
+                    controller: _saturdayRateController,
+                    label: l10n.saturdayPenaltyLabel,
+                  ),
+                ),
                 const SizedBox(width: 16),
                 Expanded(
-                    child: _buildTextField(
-                        controller: _sundayRateController,
-                        label: l10n.sundayPenaltyLabel)),
+                  child: _buildTextField(
+                    controller: _sundayRateController,
+                    label: l10n.sundayPenaltyLabel,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
-                    child: _buildTextField(
-                        controller: _publicHolidayRateController,
-                        label: l10n.publicHolidayPenaltyLabel)),
+                  child: _buildTextField(
+                    controller: _publicHolidayRateController,
+                    label: l10n.publicHolidayPenaltyLabel,
+                  ),
+                ),
                 const SizedBox(width: 16),
                 Expanded(child: Container()),
               ],
@@ -685,14 +735,18 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
             Row(
               children: [
                 Expanded(
-                    child: _buildTextField(
-                        controller: _eveningShiftRateController,
-                        label: l10n.eveningShiftLabel)),
+                  child: _buildTextField(
+                    controller: _eveningShiftRateController,
+                    label: l10n.eveningShiftLabel,
+                  ),
+                ),
                 const SizedBox(width: 16),
                 Expanded(
-                    child: _buildTextField(
-                        controller: _nightShiftRateController,
-                        label: l10n.nightShiftLabel)),
+                  child: _buildTextField(
+                    controller: _nightShiftRateController,
+                    label: l10n.nightShiftLabel,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -700,14 +754,18 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
             Row(
               children: [
                 Expanded(
-                    child: _buildTextField(
-                        controller: _overtimeRateController,
-                        label: l10n.overtimeFirst2hLabel)),
+                  child: _buildTextField(
+                    controller: _overtimeRateController,
+                    label: l10n.overtimeFirst2hLabel,
+                  ),
+                ),
                 const SizedBox(width: 16),
                 Expanded(
-                    child: _buildTextField(
-                        controller: _overtimeRate2Controller,
-                        label: l10n.overtimeAfter2hLabel)),
+                  child: _buildTextField(
+                    controller: _overtimeRate2Controller,
+                    label: l10n.overtimeAfter2hLabel,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -718,25 +776,33 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
               return Material(
                 type: MaterialType.transparency,
                 child: CheckboxListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(allowance,
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(
+                    allowance,
                     style: GoogleFonts.inter(
-                        color: BauhausDesign.textDark, fontSize: 14)),
-                subtitle: Text('\$${rate?.toStringAsFixed(2)}',
+                      color: BauhausDesign.textDark,
+                      fontSize: 14,
+                    ),
+                  ),
+                  subtitle: Text(
+                    '\$${rate?.toStringAsFixed(2)}',
                     style: GoogleFonts.inter(
-                        color: BauhausDesign.neutral, fontSize: 12)),
-                value: isSelected,
-                activeColor: BauhausDesign.primary,
-                onChanged: (val) {
-                  _updateUi(() {
-                    if (val == true) {
-                      _selectedAllowances.add(allowance);
-                    } else {
-                      _selectedAllowances.remove(allowance);
-                    }
-                  });
-                },
-                controlAffinity: ListTileControlAffinity.leading,
+                      color: BauhausDesign.neutral,
+                      fontSize: 12,
+                    ),
+                  ),
+                  value: isSelected,
+                  activeColor: BauhausDesign.primary,
+                  onChanged: (val) {
+                    _updateUi(() {
+                      if (val == true) {
+                        _selectedAllowances.add(allowance);
+                      } else {
+                        _selectedAllowances.remove(allowance);
+                      }
+                    });
+                  },
+                  controlAffinity: ListTileControlAffinity.leading,
                 ),
               );
             }),
@@ -749,11 +815,14 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: Text(title,
-          style: GoogleFonts.inter(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: BauhausDesign.neutral)),
+      child: Text(
+        title,
+        style: GoogleFonts.inter(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: BauhausDesign.neutral,
+        ),
+      ),
     );
   }
 
@@ -788,8 +857,10 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
         ),
         filled: true,
         fillColor: BauhausDesign.surfaceLight,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 12,
+        ),
         isDense: true, // Make field more compact
       ),
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -806,8 +877,9 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
   @override
   Widget build(BuildContext context) {
     // Watch provider
-    final employeeState =
-        ref.watch(employeePayRateViewModelProvider(widget.organizationId));
+    final employeeState = ref.watch(
+      employeePayRateViewModelProvider(widget.organizationId),
+    );
 
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
@@ -819,27 +891,28 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
               child: employeeState.isLoading
                   ? const Center(
                       child: CircularProgressIndicator(
-                          color: BauhausDesign.primary))
+                        color: BauhausDesign.primary,
+                      ),
+                    )
                   : employeeState.error != null
-                      ? Center(child: Text('Error: ${employeeState.error}'))
-                      : RefreshIndicator(
-                          onRefresh: () =>
-                              _refreshEmployees(showLoading: false),
-                          child: ListView.separated(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            padding: const EdgeInsets.all(BauhausDesign.space4),
-                            itemCount: employeeState.employees.length,
-                            separatorBuilder: (_, __) =>
-                                const SizedBox(height: BauhausDesign.space4),
-                            itemBuilder: (context, index) {
-                              final user = employeeState.employees[index];
-                              return _EmployeeCard(
-                                user: user,
-                                onTap: () => _selectUser(user),
-                              );
-                            },
-                          ),
-                        ),
+                  ? Center(child: Text('Error: ${employeeState.error}'))
+                  : RefreshIndicator(
+                      onRefresh: () => _refreshEmployees(showLoading: false),
+                      child: ListView.separated(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.all(BauhausDesign.space4),
+                        itemCount: employeeState.employees.length,
+                        separatorBuilder: (_, __) =>
+                            const SizedBox(height: BauhausDesign.space4),
+                        itemBuilder: (context, index) {
+                          final user = employeeState.employees[index];
+                          return _EmployeeCard(
+                            user: user,
+                            onTap: () => _selectUser(user),
+                          );
+                        },
+                      ),
+                    ),
             ),
           ],
         ),
@@ -862,9 +935,9 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                 ),
                 const SizedBox(width: BauhausDesign.space4),
                 Text(
-                  AppLocalizations.of(context)!
-                      .employeePayRatesTitle
-                      .toUpperCase(),
+                  AppLocalizations.of(
+                    context,
+                  )!.employeePayRatesTitle.toUpperCase(),
                   style: GoogleFonts.oswald(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -897,7 +970,7 @@ class _EmployeeCard extends StatelessWidget {
           color: BauhausDesign.surfaceLight,
           border: Border.all(color: BauhausDesign.neutral, width: 2),
           boxShadow: const [
-            BoxShadow(color: BauhausDesign.neutral, offset: Offset(4, 4))
+            BoxShadow(color: BauhausDesign.neutral, offset: Offset(4, 4)),
           ],
         ),
         child: Row(
@@ -919,14 +992,17 @@ class _EmployeeCard extends StatelessWidget {
                   Text(
                     user.name.toUpperCase(),
                     style: GoogleFonts.oswald(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: BauhausDesign.textDark),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: BauhausDesign.textDark,
+                    ),
                   ),
                   Text(
                     user.email,
                     style: GoogleFonts.inter(
-                        fontSize: 12, color: BauhausDesign.neutral),
+                      fontSize: 12,
+                      color: BauhausDesign.neutral,
+                    ),
                   ),
                 ],
               ),
@@ -939,24 +1015,26 @@ class _EmployeeCard extends StatelessWidget {
                       ? '\$${user.payRate.toStringAsFixed(2)}'
                       : AppLocalizations.of(context)!.notSetLabel.toUpperCase(),
                   style: GoogleFonts.oswald(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: user.payRate != 0.0
-                          ? BauhausDesign.success
-                          : BauhausDesign.neutral),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: user.payRate != 0.0
+                        ? BauhausDesign.success
+                        : BauhausDesign.neutral,
+                  ),
                 ),
                 Text(
                   user.payType == 'Salary'
-                      ? AppLocalizations.of(context)!
-                          .perAnnumLabel
-                          .toUpperCase()
-                      : AppLocalizations.of(context)!
-                          .perHourLabel
-                          .toUpperCase(),
+                      ? AppLocalizations.of(
+                          context,
+                        )!.perAnnumLabel.toUpperCase()
+                      : AppLocalizations.of(
+                          context,
+                        )!.perHourLabel.toUpperCase(),
                   style: GoogleFonts.inter(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: BauhausDesign.textDark),
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: BauhausDesign.textDark,
+                  ),
                 ),
               ],
             ),

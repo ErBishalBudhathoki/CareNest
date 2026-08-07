@@ -9,8 +9,14 @@ void main() {
     });
 
     test('caps at 4 decimals and trims trailing zeros', () {
-      expect(HoursFormatting.formatDecimalHours(1.23), '1.23'); // 1.2300 -> 1.23
-      expect(HoursFormatting.formatDecimalHours(1.23008), '1.2301'); // rounded to 4
+      expect(
+        HoursFormatting.formatDecimalHours(1.23),
+        '1.23',
+      ); // 1.2300 -> 1.23
+      expect(
+        HoursFormatting.formatDecimalHours(1.23008),
+        '1.2301',
+      ); // rounded to 4
     });
 
     test('shows tiny seconds up to 4 decimals', () {

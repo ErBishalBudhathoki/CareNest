@@ -66,23 +66,21 @@ class _TaxDetailsFormState extends ConsumerState<TaxDetailsForm> {
           Text(
             'Tax Scale',
             style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: 6),
           DropdownButtonFormField<String>(
             value: _taxScale,
             dropdownColor: BauhausDesign.surfaceWhite,
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w600,
-                ),
-            decoration:
-                BauhausDesign.inputDecoration('Select tax scale').copyWith(
-              filled: true,
-              fillColor: BauhausDesign.surfaceWhite,
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w600,
             ),
+            decoration: BauhausDesign.inputDecoration(
+              'Select tax scale',
+            ).copyWith(filled: true, fillColor: BauhausDesign.surfaceWhite),
             items: const [
               DropdownMenuItem(
                 value: 'tax-free-threshold',
@@ -107,10 +105,7 @@ class _TaxDetailsFormState extends ConsumerState<TaxDetailsForm> {
             },
           ),
           const SizedBox(height: 24),
-          ButtonWidget(
-            buttonText: 'Save & Continue',
-            onPressed: _submit,
-          ),
+          ButtonWidget(buttonText: 'Save & Continue', onPressed: _submit),
         ],
       ),
     );
@@ -133,10 +128,7 @@ class _TaxDetailsFormState extends ConsumerState<TaxDetailsForm> {
 
     await ref.read(onboardingViewModelProvider.notifier).updateStep(
       'taxDetails',
-      {
-        'tfn': _tfnController.text.trim(),
-        'taxScale': _taxScale,
-      },
+      {'tfn': _tfnController.text.trim(), 'taxScale': _taxScale},
     );
 
     widget.onComplete();

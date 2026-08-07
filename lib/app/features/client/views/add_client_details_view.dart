@@ -15,10 +15,12 @@ class AddClientDetails extends ConsumerStatefulWidget {
 }
 
 class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
-  final GlobalKey<ScaffoldState> _scaffoldKey =
-      GlobalKey<ScaffoldState>(debugLabel: 'add_client_details_scaffold_key');
-  final _formKey =
-      GlobalKey<FormState>(debugLabel: 'add_client_details_form_key');
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(
+    debugLabel: 'add_client_details_scaffold_key',
+  );
+  final _formKey = GlobalKey<FormState>(
+    debugLabel: 'add_client_details_form_key',
+  );
 
   final _clientFirstNameController = TextEditingController();
   final _clientLastNameController = TextEditingController();
@@ -60,10 +62,12 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isCompact = _isCompactLayout(context);
-    final horizontalPadding =
-        isCompact ? BauhausDesign.space3 : BauhausDesign.space4;
-    final sectionSpacing =
-        isCompact ? BauhausDesign.space3 : BauhausDesign.space4;
+    final horizontalPadding = isCompact
+        ? BauhausDesign.space3
+        : BauhausDesign.space4;
+    final sectionSpacing = isCompact
+        ? BauhausDesign.space3
+        : BauhausDesign.space4;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -75,18 +79,15 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
         title: Text(
           l10n.addClient.toUpperCase(),
           style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                fontWeight: FontWeight.w900,
-                color: BauhausDesign.surfaceWhite,
-                letterSpacing: 1.0,
-              ),
+            fontWeight: FontWeight.w900,
+            color: BauhausDesign.surfaceWhite,
+            letterSpacing: 1.0,
+          ),
         ),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(
-            height: 1,
-            color: BauhausDesign.neutral,
-          ),
+          child: Container(height: 1, color: BauhausDesign.neutral),
         ),
       ),
       body: GestureDetector(
@@ -114,9 +115,10 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
                 SizedBox(height: sectionSpacing),
                 _buildBusinessInfoSection(context, l10n, isCompact: isCompact),
                 SizedBox(
-                    height: isCompact
-                        ? BauhausDesign.space5
-                        : BauhausDesign.space6),
+                  height: isCompact
+                      ? BauhausDesign.space5
+                      : BauhausDesign.space6,
+                ),
                 _buildActionButtons(context, l10n, isCompact: isCompact),
               ],
             ),
@@ -167,17 +169,17 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
                   ),
                 ),
                 SizedBox(
-                    width: isCompact
-                        ? BauhausDesign.space2
-                        : BauhausDesign.space3),
+                  width: isCompact
+                      ? BauhausDesign.space2
+                      : BauhausDesign.space3,
+                ),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         l10n.newClientTitle.toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context)
-                            .titleLarge
+                        style: BauhausDesign.getTextTheme(context).titleLarge
                             ?.copyWith(
                               color: foreground,
                               fontWeight: FontWeight.w900,
@@ -189,11 +191,8 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
                         l10n.addClientDesc,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
-                            ?.copyWith(
-                              color: foreground.withOpacity(0.92),
-                            ),
+                        style: BauhausDesign.getTextTheme(context).bodySmall
+                            ?.copyWith(color: foreground.withOpacity(0.92)),
                         maxLines: isCompact ? 3 : 4,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -206,8 +205,9 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(
-              horizontal:
-                  isCompact ? BauhausDesign.space3 : BauhausDesign.space4,
+              horizontal: isCompact
+                  ? BauhausDesign.space3
+                  : BauhausDesign.space4,
               vertical: isCompact ? BauhausDesign.space2 : BauhausDesign.space3,
             ),
             decoration: const BoxDecoration(
@@ -219,10 +219,10 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
             child: Text(
               'ENTER CLIENT DETAILS',
               style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-                    color: BauhausDesign.primary,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1.0,
-                  ),
+                color: BauhausDesign.primary,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.0,
+              ),
             ),
           ),
         ],
@@ -273,8 +273,9 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
                       height: isCompact ? 32 : 36,
                       decoration: BoxDecoration(
                         color: accentColor,
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusSm),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusSm,
+                        ),
                         border: Border.all(color: BauhausDesign.neutral),
                       ),
                       alignment: Alignment.center,
@@ -285,14 +286,14 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
                       ),
                     ),
                     SizedBox(
-                        width: isCompact
-                            ? BauhausDesign.space2
-                            : BauhausDesign.space3),
+                      width: isCompact
+                          ? BauhausDesign.space2
+                          : BauhausDesign.space3,
+                    ),
                     Expanded(
                       child: Text(
                         title.toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
+                        style: BauhausDesign.getTextTheme(context).labelLarge
                             ?.copyWith(
                               fontWeight: FontWeight.w900,
                               letterSpacing: 0.8,
@@ -304,8 +305,9 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
                   ],
                 ),
                 SizedBox(
-                  height:
-                      isCompact ? BauhausDesign.space3 : BauhausDesign.space4,
+                  height: isCompact
+                      ? BauhausDesign.space3
+                      : BauhausDesign.space4,
                 ),
                 ...children,
               ],
@@ -462,8 +464,10 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
                   label: l10n.city.toUpperCase(),
                   hintText: l10n.city,
                   controller: _clientCityController,
-                  prefixIcon:
-                      const Icon(Icons.location_city_outlined, size: 20),
+                  prefixIcon: const Icon(
+                    Icons.location_city_outlined,
+                    size: 20,
+                  ),
                   validator: (value) {
                     if ((value ?? '').trim().isEmpty) return l10n.cityRequired;
                     return null;
@@ -519,9 +523,9 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
         Text(
           l10n.businessName.toUpperCase(),
           style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-                color: BauhausDesign.textDark,
-                fontWeight: FontWeight.w700,
-              ),
+            color: BauhausDesign.textDark,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         const SizedBox(height: BauhausDesign.space1),
         BusinessNameDropdown(
@@ -549,8 +553,9 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
             variant: BauhausActionVariant.primary,
             icon: Icons.check_rounded,
             isLoading: _isSubmitting,
-            onPressed:
-                _isSubmitting ? null : () => _showConfirmationDialog(context),
+            onPressed: _isSubmitting
+                ? null
+                : () => _showConfirmationDialog(context),
             isFullWidth: true,
           ),
           const SizedBox(height: BauhausDesign.space3),
@@ -581,8 +586,9 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
             variant: BauhausActionVariant.primary,
             icon: Icons.check_rounded,
             isLoading: _isSubmitting,
-            onPressed:
-                _isSubmitting ? null : () => _showConfirmationDialog(context),
+            onPressed: _isSubmitting
+                ? null
+                : () => _showConfirmationDialog(context),
             isFullWidth: true,
           ),
         ),
@@ -606,9 +612,9 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
           backgroundColor: BauhausDesign.surfaceWhite,
           title: Text(
             l10n.addClient.toUpperCase(),
-            style: BauhausDesign.getTextTheme(dialogContext)
-                .headlineMedium
-                ?.copyWith(fontWeight: FontWeight.w800),
+            style: BauhausDesign.getTextTheme(
+              dialogContext,
+            ).headlineMedium?.copyWith(fontWeight: FontWeight.w800),
           ),
           content: Text(
             l10n.confirmAddClient,
@@ -648,10 +654,10 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
       final sharedPreferencesUtils = ref.read(sharedPreferencesProvider);
       await sharedPreferencesUtils.init();
 
-      final String? currentUserEmail =
-          await sharedPreferencesUtils.getUserEmailFromSharedPreferences();
-      final String? currentOrganizationId =
-          sharedPreferencesUtils.getOrganizationId();
+      final String? currentUserEmail = await sharedPreferencesUtils
+          .getUserEmailFromSharedPreferences();
+      final String? currentOrganizationId = sharedPreferencesUtils
+          .getOrganizationId();
 
       final response = await apiMethod.addClient(
         _clientFirstNameController.text.trim(),
@@ -668,7 +674,8 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
       );
       debugPrint('Add client response: $response');
 
-      final isSuccess = response['success'] == true ||
+      final isSuccess =
+          response['success'] == true ||
           response['statusCode'] == 200 ||
           response['statusCode'] == 201 ||
           (response['message']?.toString().toLowerCase().contains('success') ??
@@ -692,8 +699,9 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(response['message']?.toString() ?? l10n.clientAddFailed),
+            content: Text(
+              response['message']?.toString() ?? l10n.clientAddFailed,
+            ),
             backgroundColor: BauhausDesign.error,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(

@@ -29,7 +29,8 @@ abstract class SharedEmployeeAssignment with _$SharedEmployeeAssignment {
       assignmentType: json['assignmentType']?.toString() ?? '',
       costAllocation: (json['costAllocation'] as num?)?.toDouble() ?? 100,
       hourlyRate: (json['hourlyRate'] as num?)?.toDouble() ?? 0,
-      startDate: DateTime.tryParse(json['startDate']?.toString() ?? '') ??
+      startDate:
+          DateTime.tryParse(json['startDate']?.toString() ?? '') ??
           DateTime.now(),
       endDate: json['endDate'] != null
           ? DateTime.tryParse(json['endDate'].toString())

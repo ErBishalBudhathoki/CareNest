@@ -26,8 +26,11 @@ class ComplianceAlertsWidget extends StatelessWidget {
 
     // Sort by severity (critical first)
     final sortedAlerts = List<ComplianceAlert>.from(alerts!)
-      ..sort((a, b) => _getSeverityOrder(b.severity)
-          .compareTo(_getSeverityOrder(a.severity)));
+      ..sort(
+        (a, b) => _getSeverityOrder(
+          b.severity,
+        ).compareTo(_getSeverityOrder(a.severity)),
+      );
 
     return Card(
       elevation: 2,
@@ -173,11 +176,7 @@ class ComplianceAlertsWidget extends StatelessWidget {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(
-                      Icons.calendar_today,
-                      size: 12,
-                      color: color,
-                    ),
+                    Icon(Icons.calendar_today, size: 12, color: color),
                     const SizedBox(width: 4),
                     Text(
                       'Due: ${_formatDate(alert.dueDate)}',
@@ -222,9 +221,7 @@ class ComplianceAlertsWidget extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: const Padding(
         padding: EdgeInsets.all(32),
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
+        child: Center(child: CircularProgressIndicator()),
       ),
     );
   }
@@ -255,10 +252,7 @@ class ComplianceAlertsWidget extends StatelessWidget {
               const SizedBox(height: 4),
               const Text(
                 'No compliance issues',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Colors.grey, fontSize: 12),
               ),
             ],
           ),

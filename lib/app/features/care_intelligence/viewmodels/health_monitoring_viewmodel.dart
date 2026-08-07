@@ -32,7 +32,8 @@ class HealthMonitoringState {
       isLoading: isLoading ?? this.isLoading,
       healthTrends: healthTrends ?? this.healthTrends,
       vitalSigns: vitalSigns ?? this.vitalSigns,
-      deteriorationPrediction: deteriorationPrediction ?? this.deteriorationPrediction,
+      deteriorationPrediction:
+          deteriorationPrediction ?? this.deteriorationPrediction,
       alerts: alerts ?? this.alerts,
       error: error,
     );
@@ -43,11 +44,10 @@ class HealthMonitoringState {
 class HealthMonitoringViewModel extends Notifier<HealthMonitoringState> {
   late final CareIntelligenceRepository _repository;
 
-  
   @override
   HealthMonitoringState build() {
     final repository = ref.watch(careIntelligenceRepositoryProvider);
-    
+
     return HealthMonitoringState();
   }
 
@@ -72,9 +72,7 @@ class HealthMonitoringViewModel extends Notifier<HealthMonitoringState> {
         final patterns = result['patterns'];
         state = state.copyWith(
           isLoading: false,
-          healthTrends: {
-            'patterns': patterns,
-          },
+          healthTrends: {'patterns': patterns},
         );
       } else {
         state = state.copyWith(
@@ -83,10 +81,7 @@ class HealthMonitoringViewModel extends Notifier<HealthMonitoringState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -106,7 +101,8 @@ class HealthMonitoringViewModel extends Notifier<HealthMonitoringState> {
       if (result['success'] == true) {
         state = state.copyWith(
           isLoading: false,
-          deteriorationPrediction: result['healthPrediction'] as Map<String, dynamic>?,
+          deteriorationPrediction:
+              result['healthPrediction'] as Map<String, dynamic>?,
         );
       } else {
         state = state.copyWith(
@@ -115,10 +111,7 @@ class HealthMonitoringViewModel extends Notifier<HealthMonitoringState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -137,12 +130,7 @@ class HealthMonitoringViewModel extends Notifier<HealthMonitoringState> {
 
       if (result['success'] == true) {
         final report = result['report'];
-        state = state.copyWith(
-          isLoading: false,
-          alerts: {
-            'report': report,
-          },
-        );
+        state = state.copyWith(isLoading: false, alerts: {'report': report});
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -150,10 +138,7 @@ class HealthMonitoringViewModel extends Notifier<HealthMonitoringState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -169,4 +154,7 @@ class HealthMonitoringViewModel extends Notifier<HealthMonitoringState> {
 }
 
 // Provider for HealthMonitoringViewModel
-final healthMonitoringViewModelProvider = NotifierProvider<HealthMonitoringViewModel, HealthMonitoringState>(HealthMonitoringViewModel.new);
+final healthMonitoringViewModelProvider =
+    NotifierProvider<HealthMonitoringViewModel, HealthMonitoringState>(
+      HealthMonitoringViewModel.new,
+    );

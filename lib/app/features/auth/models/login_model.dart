@@ -47,14 +47,16 @@ class LoginModel extends ChangeNotifier implements VisibilityToggleModel {
 
   DateTime? get lockoutEndTime {
     if (_lastFailedAttempt == null) return null;
-    return _lastFailedAttempt!
-        .add(const Duration(minutes: lockoutDurationMinutes));
+    return _lastFailedAttempt!.add(
+      const Duration(minutes: lockoutDurationMinutes),
+    );
   }
 
   bool get isLockoutExpired {
     if (_lastFailedAttempt == null) return true;
-    return DateTime.now().isAfter(_lastFailedAttempt!
-        .add(const Duration(minutes: lockoutDurationMinutes)));
+    return DateTime.now().isAfter(
+      _lastFailedAttempt!.add(const Duration(minutes: lockoutDurationMinutes)),
+    );
   }
 
   /// Enhanced email validation with security checks
@@ -73,8 +75,9 @@ class LoginModel extends ChangeNotifier implements VisibilityToggleModel {
     }
 
     // Enhanced email regex with stricter validation
-    final emailRegex =
-        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    final emailRegex = RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    );
 
     // Additional checks
     final isValidFormat = emailRegex.hasMatch(sanitizedInput);
@@ -161,8 +164,9 @@ class LoginModel extends ChangeNotifier implements VisibilityToggleModel {
   int getRemainingLockoutMinutes() {
     if (!_isAccountLocked || _lastFailedAttempt == null) return 0;
 
-    final lockoutEnd = _lastFailedAttempt!
-        .add(const Duration(minutes: lockoutDurationMinutes));
+    final lockoutEnd = _lastFailedAttempt!.add(
+      const Duration(minutes: lockoutDurationMinutes),
+    );
     final remaining = lockoutEnd.difference(DateTime.now());
 
     return remaining.inMinutes.clamp(0, lockoutDurationMinutes);
@@ -245,7 +249,7 @@ class LoginModel extends ChangeNotifier implements VisibilityToggleModel {
       'test',
       'guest',
       'demo',
-      'sample'
+      'sample',
     ];
 
     return commonPasswords.contains(password.toLowerCase());

@@ -13,17 +13,15 @@ class AssignmentRepository {
   AssignmentRepository(this._apiMethod);
 
   Future<Map<String, dynamic>> getOrganizationAssignments(
-      String organizationId) async {
+    String organizationId,
+  ) async {
     // Manually construct query string
     final endpoint = 'assignments?organizationId=$organizationId';
 
     final response = await _apiMethod.get(endpoint);
 
     if (response['success'] == true) {
-      return {
-        'success': true,
-        'assignments': response['data'],
-      };
+      return {'success': true, 'assignments': response['data']};
     } else {
       return response;
     }

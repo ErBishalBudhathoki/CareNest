@@ -21,7 +21,7 @@ class PermissionGuard extends ConsumerWidget {
     return userAsync.when(
       data: (user) {
         if (user == null) return fallback ?? const SizedBox.shrink();
-        
+
         // Admin has all permissions
         if (user.role.toString().contains('admin')) {
           return child;

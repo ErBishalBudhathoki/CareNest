@@ -43,7 +43,9 @@ class LeaveRepository {
   }
 
   Future<Map<String, dynamic>> getLeaveForecast(
-      String userEmail, DateTime targetDate) async {
+    String userEmail,
+    DateTime targetDate,
+  ) async {
     return await _apiMethod.getLeaveForecast(userEmail, targetDate);
   }
 
@@ -60,7 +62,9 @@ class LeaveRepository {
   }
 
   Future<List<dynamic>> getHolidays({String? organizationId}) async {
-    final response = await _apiMethod.getHolidays(organizationId: organizationId);
+    final response = await _apiMethod.getHolidays(
+      organizationId: organizationId,
+    );
     if (response['success'] == true && response['data'] != null) {
       return response['data'];
     }

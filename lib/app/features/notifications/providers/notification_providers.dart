@@ -7,8 +7,15 @@ import 'package:carenest/app/features/notifications/viewmodels/notification_hist
 export 'package:carenest/app/features/notifications/repositories/notification_repository.dart'
     show notificationRepositoryProvider;
 
-final notificationSettingsViewModelProvider = NotifierProvider<NotificationSettingsViewModel, NotificationSettingsState>(NotificationSettingsViewModel.new);
+final notificationSettingsViewModelProvider =
+    NotifierProvider<NotificationSettingsViewModel, NotificationSettingsState>(
+      NotificationSettingsViewModel.new,
+    );
 
-final geofenceViewModelProvider = NotifierProvider<GeofenceViewModel, GeofenceState>(GeofenceViewModel.new);
+final geofenceViewModelProvider =
+    NotifierProvider<GeofenceViewModel, GeofenceState>(GeofenceViewModel.new);
 
-final notificationHistoryViewModelProvider = NotifierProvider<NotificationHistoryViewModel, NotificationHistoryState>(NotificationHistoryViewModel.new);
+final notificationHistoryViewModelProvider =
+    NotifierProvider<NotificationHistoryViewModel, NotificationHistoryState>(
+      NotificationHistoryViewModel.new,
+    );

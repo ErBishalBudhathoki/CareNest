@@ -20,9 +20,9 @@ class TrainingComplianceHubView extends ConsumerWidget {
         title: Text(
           AppLocalizations.of(context)!.trainingComplianceTitle,
           style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
-                color: BauhausDesign.textDark,
-                fontWeight: FontWeight.w700,
-              ),
+            color: BauhausDesign.textDark,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),
@@ -59,12 +59,16 @@ class TrainingComplianceHubView extends ConsumerWidget {
           _buildNavCard(
             context,
             title: AppLocalizations.of(context)!.complianceChecklistsTitle,
-            subtitle: AppLocalizations.of(context)!.complianceChecklistsSubtitle,
+            subtitle: AppLocalizations.of(
+              context,
+            )!.complianceChecklistsSubtitle,
             icon: Icons.checklist,
             color: BauhausDesign.accent,
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const ComplianceChecklistView()),
+              MaterialPageRoute(
+                builder: (_) => const ComplianceChecklistView(),
+              ),
             ),
           ),
         ],
@@ -91,10 +95,7 @@ class TrainingComplianceHubView extends ConsumerWidget {
         child: IntrinsicHeight(
           child: Row(
             children: [
-              Container(
-                width: 10,
-                color: color,
-              ),
+              Container(width: 10, color: color),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(BauhausDesign.space4),

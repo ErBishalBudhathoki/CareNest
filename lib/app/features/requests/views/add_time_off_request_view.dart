@@ -57,18 +57,17 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
               const SizedBox(height: BauhausDesign.space4),
               Text(
                 AppLocalizations.of(context)!.requestSent,
-                style:
-                    BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).headlineSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: BauhausDesign.space2),
               Text(
                 AppLocalizations.of(context)!.requestSentMessage,
                 textAlign: TextAlign.center,
-                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.textMuted,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
               ),
               const SizedBox(height: BauhausDesign.space4),
               SizedBox(
@@ -96,8 +95,8 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content:
-                  Text(AppLocalizations.of(context)!.pleaseSelectLeaveType)),
+            content: Text(AppLocalizations.of(context)!.pleaseSelectLeaveType),
+          ),
         );
       }
       return;
@@ -107,8 +106,8 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content:
-                  Text(AppLocalizations.of(context)!.endDateBeforeStartDate)),
+            content: Text(AppLocalizations.of(context)!.endDateBeforeStartDate),
+          ),
         );
       }
       return;
@@ -122,12 +121,9 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
       'ends': endDate.toIso8601String(),
     };
 
-    final success =
-        await ref.read(requestsViewModelProvider.notifier).createRequest(
-              'Time Off',
-              details,
-              _noteController.text,
-            );
+    final success = await ref
+        .read(requestsViewModelProvider.notifier)
+        .createRequest('Time Off', details, _noteController.text);
 
     if (mounted) setState(() => _isSubmitting = false);
 
@@ -137,8 +133,8 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content:
-                  Text(AppLocalizations.of(context)!.failedToCreateRequest)),
+            content: Text(AppLocalizations.of(context)!.failedToCreateRequest),
+          ),
         );
       }
     }
@@ -152,8 +148,9 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: const BoxDecoration(
         color: BauhausDesign.surfaceWhite,
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(BauhausDesign.radiusLg)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(BauhausDesign.radiusLg),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -175,17 +172,16 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
             children: [
               Text(
                 AppLocalizations.of(context)!.requestTypeTimeOff,
-                style:
-                    BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).headlineSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
               BauhausIconButton(
                 icon: Icons.close,
                 onPressed: () => Navigator.pop(context),
                 variant: BauhausActionVariant.neutral,
                 isSmall: true,
-              )
+              ),
             ],
           ),
           const SizedBox(height: BauhausDesign.space4),
@@ -193,9 +189,9 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
           // Type Section
           Text(
             AppLocalizations.of(context)!.leaveTypeLabel,
-            style: BauhausDesign.getTextTheme(context)
-                .titleSmall
-                ?.copyWith(fontWeight: FontWeight.bold),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).titleSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: BauhausDesign.space2),
           leaveTypesAsync.when(
@@ -210,7 +206,8 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
 
               return Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: BauhausDesign.space3),
+                  horizontal: BauhausDesign.space3,
+                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(color: BauhausDesign.neutral),
@@ -253,9 +250,9 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
                   children: [
                     Text(
                       AppLocalizations.of(context)!.fromLabel,
-                      style: BauhausDesign.getTextTheme(context)
-                          .titleSmall
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).titleSmall?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: BauhausDesign.space2),
                     GestureDetector(
@@ -264,8 +261,9 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
                           context: context,
                           initialDate: startDate,
                           firstDate: DateTime.now(),
-                          lastDate:
-                              DateTime.now().add(const Duration(days: 365)),
+                          lastDate: DateTime.now().add(
+                            const Duration(days: 365),
+                          ),
                           builder: (context, child) {
                             return Theme(
                               data: Theme.of(context).copyWith(
@@ -290,19 +288,21 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: BauhausDesign.space3,
-                            vertical: BauhausDesign.space2),
+                          horizontal: BauhausDesign.space3,
+                          vertical: BauhausDesign.space2,
+                        ),
                         decoration: BoxDecoration(
                           color: BauhausDesign.primary.withOpacity(0.1),
-                          borderRadius:
-                              BorderRadius.circular(BauhausDesign.radiusSm),
+                          borderRadius: BorderRadius.circular(
+                            BauhausDesign.radiusSm,
+                          ),
                           border: Border.all(
-                              color: BauhausDesign.primary.withOpacity(0.3)),
+                            color: BauhausDesign.primary.withOpacity(0.3),
+                          ),
                         ),
                         child: Text(
                           DateFormat('MMMM dd yyyy').format(startDate),
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodyMedium
+                          style: BauhausDesign.getTextTheme(context).bodyMedium
                               ?.copyWith(
                                 color: BauhausDesign.primary,
                                 fontWeight: FontWeight.bold,
@@ -320,9 +320,9 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
                   children: [
                     Text(
                       AppLocalizations.of(context)!.toLabel,
-                      style: BauhausDesign.getTextTheme(context)
-                          .titleSmall
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).titleSmall?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: BauhausDesign.space2),
                     GestureDetector(
@@ -331,8 +331,9 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
                           context: context,
                           initialDate: endDate,
                           firstDate: startDate,
-                          lastDate:
-                              DateTime.now().add(const Duration(days: 365)),
+                          lastDate: DateTime.now().add(
+                            const Duration(days: 365),
+                          ),
                           builder: (context, child) {
                             return Theme(
                               data: Theme.of(context).copyWith(
@@ -352,19 +353,21 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: BauhausDesign.space3,
-                            vertical: BauhausDesign.space2),
+                          horizontal: BauhausDesign.space3,
+                          vertical: BauhausDesign.space2,
+                        ),
                         decoration: BoxDecoration(
                           color: BauhausDesign.primary.withOpacity(0.1),
-                          borderRadius:
-                              BorderRadius.circular(BauhausDesign.radiusSm),
+                          borderRadius: BorderRadius.circular(
+                            BauhausDesign.radiusSm,
+                          ),
                           border: Border.all(
-                              color: BauhausDesign.primary.withOpacity(0.3)),
+                            color: BauhausDesign.primary.withOpacity(0.3),
+                          ),
                         ),
                         child: Text(
                           DateFormat('MMMM dd yyyy').format(endDate),
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodyMedium
+                          style: BauhausDesign.getTextTheme(context).bodyMedium
                               ?.copyWith(
                                 color: BauhausDesign.primary,
                                 fontWeight: FontWeight.bold,
@@ -389,13 +392,15 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
                     _showNoteField = true;
                   });
                 },
-                icon: const Icon(Icons.edit_outlined,
-                    color: BauhausDesign.primary),
+                icon: const Icon(
+                  Icons.edit_outlined,
+                  color: BauhausDesign.primary,
+                ),
                 label: Text(
                   'Add a note',
-                  style: BauhausDesign.getTextTheme(context)
-                      .labelLarge
-                      ?.copyWith(color: BauhausDesign.primary),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).labelLarge?.copyWith(color: BauhausDesign.primary),
                 ),
               ),
             ),
@@ -415,7 +420,9 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
           Text(
             "All requests will be sent for a manager's approval",
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.textMuted, fontStyle: FontStyle.italic),
+              color: BauhausDesign.textMuted,
+              fontStyle: FontStyle.italic,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space4),
 

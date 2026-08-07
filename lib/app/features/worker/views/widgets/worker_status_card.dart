@@ -14,10 +14,12 @@ class WorkerStatusCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BauhausTheme.blockDecoration.copyWith(
-        color: isClockedIn ? BauhausTheme.yellow.withOpacity(0.2) : BauhausTheme.white,
+        color: isClockedIn
+            ? BauhausTheme.yellow.withOpacity(0.2)
+            : BauhausTheme.white,
         border: Border.all(
-          color: isClockedIn ? BauhausTheme.yellow : BauhausTheme.black, 
-          width: 3
+          color: isClockedIn ? BauhausTheme.yellow : BauhausTheme.black,
+          width: 3,
         ),
       ),
       child: Row(
@@ -29,7 +31,9 @@ class WorkerStatusCard extends StatelessWidget {
               Text(
                 isClockedIn ? 'ON SHIFT' : 'OFF DUTY',
                 style: BauhausTheme.headerStyle.copyWith(
-                  color: isClockedIn ? BauhausTheme.textDark : BauhausTheme.textDark,
+                  color: isClockedIn
+                      ? BauhausTheme.textDark
+                      : BauhausTheme.textDark,
                 ),
               ),
               if (isClockedIn) ...[
@@ -38,7 +42,7 @@ class WorkerStatusCard extends StatelessWidget {
                   'Started at ${_formatTime(activeTimer!['startTime'])}',
                   style: BauhausTheme.bodyStyle,
                 ),
-              ]
+              ],
             ],
           ),
           Container(
@@ -52,7 +56,7 @@ class WorkerStatusCard extends StatelessWidget {
               isClockedIn ? Icons.stop : Icons.play_arrow,
               color: BauhausTheme.white,
             ),
-          )
+          ),
         ],
       ),
     );

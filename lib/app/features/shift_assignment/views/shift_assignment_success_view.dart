@@ -92,8 +92,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
                   child: Text(
                     text,
                     overflow: TextOverflow.ellipsis,
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelLarge
+                    style: BauhausDesign.getTextTheme(context).labelLarge
                         ?.copyWith(color: fg, fontWeight: FontWeight.w700),
                   ),
                 ),
@@ -128,21 +127,16 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
       vsync: this,
     );
 
-    _surfaceAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _surfaceController,
-      curve: Curves.easeOut,
-    ));
+    _surfaceAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _surfaceController, curve: Curves.easeOut),
+    );
 
-    _actionButtonAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _actionButtonController,
-      curve: Curves.elasticOut,
-    ));
+    _actionButtonAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _actionButtonController,
+        curve: Curves.elasticOut,
+      ),
+    );
 
     _surfaceController.forward();
   }
@@ -183,9 +177,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
           return Column(
             children: [
               _buildBauhausAppBar(),
-              Expanded(
-                child: _buildContent(),
-              ),
+              Expanded(child: _buildContent()),
             ],
           );
         },
@@ -218,9 +210,9 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
           Expanded(
             child: Text(
               AppLocalizations.of(context)!.assignmentComplete,
-              style: BauhausDesign.getTextTheme(context)
-                  .displaySmall
-                  ?.copyWith(color: BauhausDesign.textDark),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).displaySmall?.copyWith(color: BauhausDesign.textDark),
               textAlign: TextAlign.center,
             ),
           ),
@@ -264,9 +256,9 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
           const SizedBox(height: BauhausDesign.space3),
           Text(
             AppLocalizations.of(context)!.processingAssignment,
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textMuted,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
           ),
         ],
       ),
@@ -313,9 +305,11 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
           // Success Header
           AnimatedSuccessHeader(
             employeeName: _viewModel.getEmployeeName(
-                defaultName: AppLocalizations.of(context)!.unknownEmployee),
+              defaultName: AppLocalizations.of(context)!.unknownEmployee,
+            ),
             clientName: _viewModel.getClientName(
-                defaultName: AppLocalizations.of(context)!.unknownClient),
+              defaultName: AppLocalizations.of(context)!.unknownClient,
+            ),
             assignmentSummary: assignment.assignmentSummary,
             onAnimationComplete: _onHeaderAnimationComplete,
           ),
@@ -333,7 +327,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
             const SizedBox(height: BauhausDesign.space5),
             _buildShiftsList(),
             const SizedBox(height: BauhausDesign.space5),
-            _buildActionButtons()
+            _buildActionButtons(),
           ],
 
           const SizedBox(height: BauhausDesign.space2),
@@ -356,7 +350,8 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
                 icon: Icons.schedule_rounded,
                 label: AppLocalizations.of(context)!.totalHours,
                 value: _viewModel.getTotalWorkingHours(
-                    hoursSuffix: AppLocalizations.of(context)!.hoursSuffix),
+                  hoursSuffix: AppLocalizations.of(context)!.hoursSuffix,
+                ),
                 color: BauhausDesign.info,
               ),
             ),
@@ -393,9 +388,9 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
         Text(
           value,
           style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: BauhausDesign.textDark,
-              ),
+            fontWeight: FontWeight.bold,
+            color: BauhausDesign.textDark,
+          ),
         ),
         const SizedBox(height: BauhausDesign.space1),
         Text(
@@ -404,10 +399,10 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
           textAlign: TextAlign.center,
           overflow: TextOverflow.ellipsis,
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.textMuted,
-                fontWeight: FontWeight.w500,
-                height: 1.2,
-              ),
+            color: BauhausDesign.textMuted,
+            fontWeight: FontWeight.w500,
+            height: 1.2,
+          ),
         ),
         const SizedBox(height: BauhausDesign.space0_5),
       ],
@@ -433,11 +428,11 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
               const SizedBox(width: BauhausDesign.space2),
               Text(
                 AppLocalizations.of(context)!.assignedShifts,
-                style:
-                    BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: BauhausDesign.textDark,
-                        ),
+                style: BauhausDesign.getTextTheme(context).titleMedium
+                    ?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: BauhausDesign.textDark,
+                    ),
               ),
             ],
           ),
@@ -458,9 +453,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
       itemBuilder: (context, index) {
         final isLast = index == assignment.totalShifts - 1;
         return Padding(
-          padding: EdgeInsets.only(
-            bottom: isLast ? 0 : BauhausDesign.space1,
-          ),
+          padding: EdgeInsets.only(bottom: isLast ? 0 : BauhausDesign.space1),
           child: AnimatedShiftCard(
             shiftDetails: _viewModel.getShiftDetails(index),
             index: index,
@@ -508,7 +501,8 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
   void _shareAssignment() {
     if (_viewModel.hasAssignment) {
       final assignment = _viewModel.assignment!;
-      final shareText = '''
+      final shareText =
+          '''
 ${AppLocalizations.of(context)!.shiftAssignmentComplete}
 
 ${AppLocalizations.of(context)!.employee}: ${_viewModel.getEmployeeName(defaultName: AppLocalizations.of(context)!.unknownEmployee)}
@@ -531,9 +525,9 @@ ${AppLocalizations.of(context)!.assignmentId}: ${assignment.assignmentId}
               const SizedBox(width: BauhausDesign.space3),
               Text(
                 AppLocalizations.of(context)!.assignmentDetailsCopied,
-                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.textDark,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
               ),
             ],
           ),
@@ -570,11 +564,11 @@ ${AppLocalizations.of(context)!.assignmentId}: ${assignment.assignmentId}
               children: [
                 Text(
                   AppLocalizations.of(context)!.shiftIndexDetails(index + 1),
-                  style:
-                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: BauhausDesign.textDark,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).titleMedium
+                      ?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: BauhausDesign.textDark,
+                      ),
                 ),
                 const Spacer(),
                 IconButton(
@@ -586,14 +580,14 @@ ${AppLocalizations.of(context)!.assignmentId}: ${assignment.assignmentId}
             const SizedBox(height: BauhausDesign.space2),
             ...shiftDetails.entries.map(
               (entry) => Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: BauhausDesign.space1),
+                padding: const EdgeInsets.symmetric(
+                  vertical: BauhausDesign.space1,
+                ),
                 child: Row(
                   children: [
                     Text(
                       '${entry.key.toUpperCase()}: ',
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelMedium
+                      style: BauhausDesign.getTextTheme(context).labelMedium
                           ?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: BauhausDesign.textMuted,
@@ -601,8 +595,7 @@ ${AppLocalizations.of(context)!.assignmentId}: ${assignment.assignmentId}
                     ),
                     Text(
                       entry.value,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
                             fontWeight: FontWeight.w500,
                             color: BauhausDesign.textDark,

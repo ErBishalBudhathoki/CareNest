@@ -102,7 +102,8 @@ abstract class ETACalculation with _$ETACalculation {
 abstract class AppointmentStatus with _$AppointmentStatus {
   const factory AppointmentStatus({
     required String appointmentId,
-    required String status, // 'scheduled', 'en_route', 'arrived', 'in_progress', 'completed'
+    required String
+    status, // 'scheduled', 'en_route', 'arrived', 'in_progress', 'completed'
     required int progress, // 0-100
     String? notes,
     required DateTime timestamp,
@@ -178,9 +179,11 @@ abstract class MessageThread with _$MessageThread {
     String? lastMessage,
     DateTime? lastMessageAt,
     Map<String, int>? unreadCount,
+
     /// Resolved human-readable name for the worker in this conversation.
     /// Populated by the backend when listing conversations.
     String? workerName,
+
     /// Resolved human-readable name for the client in this conversation.
     String? clientName,
   }) = _MessageThread;
@@ -312,7 +315,8 @@ abstract class IncidentReport with _$IncidentReport {
     required String reportedBy,
     required String reporterType,
     required String severity, // 'low', 'medium', 'high', 'critical'
-    required String category, // 'safety', 'quality', 'behavior', 'equipment', 'other'
+    required String
+    category, // 'safety', 'quality', 'behavior', 'equipment', 'other'
     required String description,
     List<String>? photos,
     required DateTime timestamp,
@@ -440,10 +444,8 @@ abstract class NotificationPreferences with _$NotificationPreferences {
 
 @freezed
 abstract class QuietHours with _$QuietHours {
-  const factory QuietHours({
-    required String start,
-    required String end,
-  }) = _QuietHours;
+  const factory QuietHours({required String start, required String end}) =
+      _QuietHours;
 
   factory QuietHours.fromJson(Map<String, dynamic> json) =>
       _$QuietHoursFromJson(json);
@@ -571,4 +573,3 @@ abstract class RealtimePortalDashboard with _$RealtimePortalDashboard {
   factory RealtimePortalDashboard.fromJson(Map<String, dynamic> json) =>
       _$RealtimePortalDashboardFromJson(json);
 }
-

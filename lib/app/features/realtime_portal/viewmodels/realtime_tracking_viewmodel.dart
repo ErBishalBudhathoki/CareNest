@@ -58,11 +58,10 @@ class RealtimeTrackingState {
 class RealtimeTrackingViewModel extends Notifier<RealtimeTrackingState> {
   late final RealtimePortalRepository _repository;
 
-  
   @override
   RealtimeTrackingState build() {
     final apiMethod = ref.watch(apiMethodProvider);
-    
+
     return RealtimeTrackingState();
   }
 
@@ -113,9 +112,7 @@ class RealtimeTrackingViewModel extends Notifier<RealtimeTrackingState> {
         accuracy: accuracy,
       );
 
-      state = state.copyWith(
-        liveLocation: location,
-      );
+      state = state.copyWith(liveLocation: location);
     } catch (e) {
       debugPrint('Error updating location: $e');
       state = state.copyWith(error: e.toString());
@@ -123,9 +120,7 @@ class RealtimeTrackingViewModel extends Notifier<RealtimeTrackingState> {
   }
 
   /// Stop tracking session
-  Future<void> stopTracking({
-    required String appointmentId,
-  }) async {
+  Future<void> stopTracking({required String appointmentId}) async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
@@ -141,17 +136,12 @@ class RealtimeTrackingViewModel extends Notifier<RealtimeTrackingState> {
       );
     } catch (e) {
       debugPrint('Error stopping tracking: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
   /// Get live tracking data
-  Future<void> getLiveTracking({
-    required String appointmentId,
-  }) async {
+  Future<void> getLiveTracking({required String appointmentId}) async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
@@ -166,10 +156,7 @@ class RealtimeTrackingViewModel extends Notifier<RealtimeTrackingState> {
       );
     } catch (e) {
       debugPrint('Error getting live tracking: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -196,4 +183,7 @@ class RealtimeTrackingViewModel extends Notifier<RealtimeTrackingState> {
 }
 
 /// Provider for realtime tracking viewmodel
-final realtimeTrackingViewModelProvider = NotifierProvider<RealtimeTrackingViewModel, RealtimeTrackingState>(RealtimeTrackingViewModel.new);
+final realtimeTrackingViewModelProvider =
+    NotifierProvider<RealtimeTrackingViewModel, RealtimeTrackingState>(
+      RealtimeTrackingViewModel.new,
+    );

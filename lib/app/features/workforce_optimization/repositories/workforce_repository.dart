@@ -37,7 +37,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to forecast demand'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to forecast demand',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -69,7 +72,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to optimize staffing'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to optimize staffing',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -94,7 +100,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to predict turnover'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to predict turnover',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -122,7 +131,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to analyze scenarios'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to analyze scenarios',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -160,7 +172,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to optimize allocation'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to optimize allocation',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -188,7 +203,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to reallocate resources'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to reallocate resources',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -215,7 +233,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to get recommendations'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to get recommendations',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -245,7 +266,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to analyze workload'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to analyze workload',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -281,7 +305,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to get analytics'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to get analytics',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -310,7 +337,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to analyze trends'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to analyze trends',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -327,13 +357,13 @@ class WorkforceRepository {
       });
 
       if (response['success'] == true && response['data'] != null) {
-        return {
-          'success': true,
-          'prediction': response['data'],
-        };
+        return {'success': true, 'prediction': response['data']};
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to predict performance'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to predict performance',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -361,7 +391,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to track skills'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to track skills',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -388,7 +421,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to score quality'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to score quality',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -420,7 +456,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to check compliance'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to check compliance',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -452,7 +491,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to analyze sentiment'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to analyze sentiment',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -479,7 +521,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to assess risk'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to assess risk',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -504,7 +549,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to detect patterns'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to detect patterns',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -527,13 +575,13 @@ class WorkforceRepository {
       );
 
       if (response['success'] == true && response['data'] != null) {
-        return {
-          'success': true,
-          'auditTrail': response['data'],
-        };
+        return {'success': true, 'auditTrail': response['data']};
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to generate audit trail'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to generate audit trail',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -560,7 +608,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to get dashboard'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to get dashboard',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -590,7 +641,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to forecast revenue'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to forecast revenue',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -616,7 +670,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to predict churn'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to predict churn',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -648,7 +705,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to analyze profitability'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to analyze profitability',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -671,7 +731,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to analyze scenario'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to analyze scenario',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -698,7 +761,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to calculate CLV'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to calculate CLV',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -730,7 +796,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to train model'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to train model',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -747,13 +816,13 @@ class WorkforceRepository {
       });
 
       if (response['success'] == true && response['data'] != null) {
-        return {
-          'success': true,
-          'evaluation': response['data'],
-        };
+        return {'success': true, 'evaluation': response['data']};
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to evaluate model'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to evaluate model',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -776,7 +845,10 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to make prediction'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to make prediction',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -801,28 +873,27 @@ class WorkforceRepository {
         };
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to list models'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to list models',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
   }
 
-  Future<Map<String, dynamic>> getMLModelInfo({
-    required String modelId,
-  }) async {
+  Future<Map<String, dynamic>> getMLModelInfo({required String modelId}) async {
     try {
-      final response = await _apiMethod.getMLModelInfo(
-        modelId: modelId,
-      );
+      final response = await _apiMethod.getMLModelInfo(modelId: modelId);
 
       if (response['success'] == true && response['data'] != null) {
-        return {
-          'success': true,
-          'model': MLModel.fromJson(response['data']),
-        };
+        return {'success': true, 'model': MLModel.fromJson(response['data'])};
       }
 
-      return {'success': false, 'message': response['message'] ?? 'Failed to get model info'};
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Failed to get model info',
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }

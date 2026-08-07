@@ -28,8 +28,10 @@ class ClientInvoiceDetailView extends ConsumerWidget {
     final invoiceState = ref.watch(clientInvoiceDetailProvider(invoiceId));
     final actionState = ref.watch(invoiceActionsViewModelProvider);
 
-    ref.listen<AsyncValue<void>>(invoiceActionsViewModelProvider,
-        (previous, next) {
+    ref.listen<AsyncValue<void>>(invoiceActionsViewModelProvider, (
+      previous,
+      next,
+    ) {
       final prevLoading = previous?.isLoading ?? false;
       if (next.hasValue && !next.hasError && prevLoading) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -98,8 +100,12 @@ class ClientInvoiceDetailView extends ConsumerWidget {
     );
   }
 
-  Widget _buildContent(BuildContext context, WidgetRef ref,
-      ClientInvoice invoice, bool isLoading) {
+  Widget _buildContent(
+    BuildContext context,
+    WidgetRef ref,
+    ClientInvoice invoice,
+    bool isLoading,
+  ) {
     final status = invoice.workflow['status'] as String? ?? 'unknown';
     final isPending = status == 'pending_approval' || status == 'generated';
     final actionPanelReserve = isPending ? 220.0 : 0.0;
@@ -144,7 +150,10 @@ class ClientInvoiceDetailView extends ConsumerWidget {
   }
 
   Widget _buildStatusHeader(
-      BuildContext context, ClientInvoice invoice, String status) {
+    BuildContext context,
+    ClientInvoice invoice,
+    String status,
+  ) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -224,11 +233,11 @@ class ClientInvoiceDetailView extends ConsumerWidget {
               children: [
                 Text(
                   'TOTAL AMOUNT',
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.surfaceWhite.withOpacity(0.7),
-                            letterSpacing: 1.5,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: BauhausDesign.surfaceWhite.withOpacity(0.7),
+                        letterSpacing: 1.5,
+                      ),
                 ),
                 const SizedBox(height: BauhausDesign.space2),
                 Text(
@@ -259,24 +268,27 @@ class ClientInvoiceDetailView extends ConsumerWidget {
     );
   }
 
-  Widget _buildAmountRow(BuildContext context, String label, double amount,
-      {bool isBold = false}) {
+  Widget _buildAmountRow(
+    BuildContext context,
+    String label,
+    double amount, {
+    bool isBold = false,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,
           style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color:
-                    isBold ? BauhausDesign.textDark : BauhausDesign.textMuted,
-                fontWeight: isBold ? FontWeight.w600 : FontWeight.w400,
-              ),
+            color: isBold ? BauhausDesign.textDark : BauhausDesign.textMuted,
+            fontWeight: isBold ? FontWeight.w600 : FontWeight.w400,
+          ),
         ),
         Text(
           '\$${amount.toStringAsFixed(2)}',
           style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
-              ),
+            fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
+          ),
         ),
       ],
     );
@@ -294,20 +306,32 @@ class ClientInvoiceDetailView extends ConsumerWidget {
           Text(
             'INVOICE DETAILS',
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.textMuted,
-                  letterSpacing: 1,
-                ),
+              color: BauhausDesign.textMuted,
+              letterSpacing: 1,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space4),
-          _buildInfoRow(context, Icons.calendar_today_outlined, 'Due Date',
-              _formatDate(dueDate)),
+          _buildInfoRow(
+            context,
+            Icons.calendar_today_outlined,
+            'Due Date',
+            _formatDate(dueDate),
+          ),
           const SizedBox(height: BauhausDesign.space3),
-          _buildInfoRow(context, Icons.schedule_outlined, 'Created',
-              _formatDate(createdAt)),
+          _buildInfoRow(
+            context,
+            Icons.schedule_outlined,
+            'Created',
+            _formatDate(createdAt),
+          ),
           if (description != null && description.isNotEmpty) ...[
             const SizedBox(height: BauhausDesign.space3),
-            _buildInfoRow(context, Icons.description_outlined, 'Description',
-                description),
+            _buildInfoRow(
+              context,
+              Icons.description_outlined,
+              'Description',
+              description,
+            ),
           ],
         ],
       ),
@@ -315,7 +339,10 @@ class ClientInvoiceDetailView extends ConsumerWidget {
   }
 
   Widget _buildPdfActionsCard(
-      BuildContext context, WidgetRef ref, ClientInvoice invoice) {
+    BuildContext context,
+    WidgetRef ref,
+    ClientInvoice invoice,
+  ) {
     return BauhausCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -323,9 +350,9 @@ class ClientInvoiceDetailView extends ConsumerWidget {
           Text(
             'INVOICE PDF',
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.textMuted,
-                  letterSpacing: 1,
-                ),
+              color: BauhausDesign.textMuted,
+              letterSpacing: 1,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space3),
           Row(
@@ -357,9 +384,13 @@ class ClientInvoiceDetailView extends ConsumerWidget {
   }
 
   Widget _buildReceiptsSection(
-      BuildContext context, WidgetRef ref, ClientInvoice invoice) {
-    final receiptUrlsAsync =
-        ref.watch(clientInvoiceReceiptUrlsProvider(invoice.id));
+    BuildContext context,
+    WidgetRef ref,
+    ClientInvoice invoice,
+  ) {
+    final receiptUrlsAsync = ref.watch(
+      clientInvoiceReceiptUrlsProvider(invoice.id),
+    );
 
     return BauhausCard(
       child: Column(
@@ -368,9 +399,9 @@ class ClientInvoiceDetailView extends ConsumerWidget {
           Text(
             'RECEIPTS',
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.textMuted,
-                  letterSpacing: 1,
-                ),
+              color: BauhausDesign.textMuted,
+              letterSpacing: 1,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space3),
           receiptUrlsAsync.when(
@@ -378,10 +409,9 @@ class ClientInvoiceDetailView extends ConsumerWidget {
               if (urls.isEmpty) {
                 return Text(
                   'No receipts attached to this invoice.',
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                 );
               }
 
@@ -393,15 +423,19 @@ class ClientInvoiceDetailView extends ConsumerWidget {
 
                   return Padding(
                     padding: EdgeInsets.only(
-                        bottom: isLast ? 0 : BauhausDesign.space2),
+                      bottom: isLast ? 0 : BauhausDesign.space2,
+                    ),
                     child: Container(
                       padding: const EdgeInsets.all(BauhausDesign.space3),
                       decoration: BoxDecoration(
                         color: BauhausDesign.surfaceWhite,
-                        borderRadius:
-                            BorderRadius.circular(BauhausDesign.radiusSm),
-                        border:
-                            Border.all(color: BauhausDesign.neutral, width: 1),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusSm,
+                        ),
+                        border: Border.all(
+                          color: BauhausDesign.neutral,
+                          width: 1,
+                        ),
                       ),
                       child: Row(
                         children: [
@@ -409,8 +443,9 @@ class ClientInvoiceDetailView extends ConsumerWidget {
                             padding: const EdgeInsets.all(BauhausDesign.space2),
                             decoration: BoxDecoration(
                               color: BauhausDesign.primary.withOpacity(0.1),
-                              borderRadius:
-                                  BorderRadius.circular(BauhausDesign.radiusSm),
+                              borderRadius: BorderRadius.circular(
+                                BauhausDesign.radiusSm,
+                              ),
                             ),
                             child: const Icon(
                               Icons.receipt_long,
@@ -424,9 +459,7 @@ class ClientInvoiceDetailView extends ConsumerWidget {
                               'Receipt ${index + 1}',
                               style: BauhausDesign.getTextTheme(context)
                                   .bodyMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                  ?.copyWith(fontWeight: FontWeight.w600),
                             ),
                           ),
                           BauhausActionButton(
@@ -452,18 +485,17 @@ class ClientInvoiceDetailView extends ConsumerWidget {
                 const SizedBox(width: BauhausDesign.space2),
                 Text(
                   'Loading receipts...',
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                 ),
               ],
             ),
             error: (_, __) => Text(
               'Unable to load receipts right now.',
-              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.error,
-                  ),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodyMedium?.copyWith(color: BauhausDesign.error),
             ),
           ),
         ],
@@ -472,7 +504,11 @@ class ClientInvoiceDetailView extends ConsumerWidget {
   }
 
   Widget _buildInfoRow(
-      BuildContext context, IconData icon, String label, String value) {
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+  ) {
     return Row(
       children: [
         Container(
@@ -491,15 +527,15 @@ class ClientInvoiceDetailView extends ConsumerWidget {
             children: [
               Text(
                 label,
-                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                      color: BauhausDesign.textMuted,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
               ),
               Text(
                 value,
-                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyMedium?.copyWith(fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -532,29 +568,35 @@ class ClientInvoiceDetailView extends ConsumerWidget {
   }
 
   Widget _buildLineItemCard(BuildContext context, Map<String, dynamic> item) {
-    final itemNumber = (item['supportItemNumber'] ??
-            item['itemNumber'] ??
-            item['ndisItemNumber'])
-        ?.toString()
-        .trim();
-    final description = (item['description'] ??
-            item['supportItemName'] ??
-            item['itemName'] ??
-            item['serviceName'] ??
-            'Support Item')
-        .toString()
-        .trim();
+    final itemNumber =
+        (item['supportItemNumber'] ??
+                item['itemNumber'] ??
+                item['ndisItemNumber'])
+            ?.toString()
+            .trim();
+    final description =
+        (item['description'] ??
+                item['supportItemName'] ??
+                item['itemName'] ??
+                item['serviceName'] ??
+                'Support Item')
+            .toString()
+            .trim();
 
     final quantity = _toDouble(item['quantity']);
     final hoursWorked = _toDouble(item['hoursWorked'] ?? item['hours']);
-    final effectiveHours =
-        hoursWorked > 0 ? hoursWorked : (quantity > 0 ? quantity : 0);
-    final unitPrice =
-        _toDouble(item['unitPrice'] ?? item['price'] ?? item['rate']);
-    final total = _toDouble(item['total'] ??
-        item['totalPrice'] ??
-        item['amount'] ??
-        (effectiveHours > 0 ? effectiveHours * unitPrice : 0));
+    final effectiveHours = hoursWorked > 0
+        ? hoursWorked
+        : (quantity > 0 ? quantity : 0);
+    final unitPrice = _toDouble(
+      item['unitPrice'] ?? item['price'] ?? item['rate'],
+    );
+    final total = _toDouble(
+      item['total'] ??
+          item['totalPrice'] ??
+          item['amount'] ??
+          (effectiveHours > 0 ? effectiveHours * unitPrice : 0),
+    );
     final unit = (item['unit'] ?? 'hr').toString().trim();
     final subtitle = effectiveHours > 0
         ? '${effectiveHours.toStringAsFixed(effectiveHours % 1 == 0 ? 0 : 2)} $unit x \$${unitPrice.toStringAsFixed(2)}'
@@ -578,24 +620,25 @@ class ClientInvoiceDetailView extends ConsumerWidget {
             decoration: BoxDecoration(
               color: BauhausDesign.secondary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-              border:
-                  Border.all(color: BauhausDesign.secondary.withOpacity(0.3)),
+              border: Border.all(
+                color: BauhausDesign.secondary.withOpacity(0.3),
+              ),
             ),
             child: Center(
               child: Text(
                 (itemNumber != null && itemNumber.isNotEmpty)
                     ? itemNumber
                     : (effectiveHours > 0
-                        ? '${effectiveHours.toStringAsFixed(effectiveHours % 1 == 0 ? 0 : 2)}h'
-                        : '-'),
+                          ? '${effectiveHours.toStringAsFixed(effectiveHours % 1 == 0 ? 0 : 2)}h'
+                          : '-'),
                 textAlign: TextAlign.center,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
-                style:
-                    BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-                          color: BauhausDesign.secondary,
-                          fontWeight: FontWeight.bold,
-                        ),
+                style: BauhausDesign.getTextTheme(context).labelMedium
+                    ?.copyWith(
+                      color: BauhausDesign.secondary,
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
             ),
           ),
@@ -606,27 +649,24 @@ class ClientInvoiceDetailView extends ConsumerWidget {
               children: [
                 Text(
                   description,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodyMedium?.copyWith(fontWeight: FontWeight.w700),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
                 ),
                 if (effectiveHours > 0) ...[
                   const SizedBox(height: 2),
                   Text(
                     'Hours Worked: ${effectiveHours.toStringAsFixed(effectiveHours % 1 == 0 ? 0 : 2)}',
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelSmall
+                    style: BauhausDesign.getTextTheme(context).labelSmall
                         ?.copyWith(
                           color: BauhausDesign.textDark,
                           fontWeight: FontWeight.w600,
@@ -649,15 +689,17 @@ class ClientInvoiceDetailView extends ConsumerWidget {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, WidgetRef ref,
-      ClientInvoice invoice, bool isLoading) {
+  Widget _buildActionButtons(
+    BuildContext context,
+    WidgetRef ref,
+    ClientInvoice invoice,
+    bool isLoading,
+  ) {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: const BoxDecoration(
         color: BauhausDesign.surfaceWhite,
-        border: Border(
-          top: BorderSide(color: BauhausDesign.neutral, width: 2),
-        ),
+        border: Border(top: BorderSide(color: BauhausDesign.neutral, width: 2)),
         boxShadow: [
           BoxShadow(
             color: Color(0x1A000000),
@@ -701,7 +743,10 @@ class ClientInvoiceDetailView extends ConsumerWidget {
   }
 
   void _showDisputeDialog(
-      BuildContext context, WidgetRef ref, String invoiceId) {
+    BuildContext context,
+    WidgetRef ref,
+    String invoiceId,
+  ) {
     final controller = TextEditingController();
 
     showDialog(
@@ -767,14 +812,18 @@ class ClientInvoiceDetailView extends ConsumerWidget {
   }
 
   Future<void> _viewInvoicePdf(
-      BuildContext context, WidgetRef ref, ClientInvoice invoice) async {
+    BuildContext context,
+    WidgetRef ref,
+    ClientInvoice invoice,
+  ) async {
     final pdfResult = await _prepareInvoicePdf(context, ref, invoice);
     if (pdfResult == null || pdfResult['pdfPath'] == null || !context.mounted) {
       return;
     }
 
-    final receiptUrls =
-        await ref.read(clientInvoiceReceiptUrlsProvider(invoice.id).future);
+    final receiptUrls = await ref.read(
+      clientInvoiceReceiptUrlsProvider(invoice.id).future,
+    );
 
     await Navigator.push(
       context,
@@ -788,7 +837,10 @@ class ClientInvoiceDetailView extends ConsumerWidget {
   }
 
   Future<void> _downloadInvoicePdf(
-      BuildContext context, WidgetRef ref, ClientInvoice invoice) async {
+    BuildContext context,
+    WidgetRef ref,
+    ClientInvoice invoice,
+  ) async {
     final pdfResult = await _prepareInvoicePdf(context, ref, invoice);
     if (pdfResult == null || pdfResult['pdfPath'] == null || !context.mounted) {
       return;
@@ -800,8 +852,9 @@ class ClientInvoiceDetailView extends ConsumerWidget {
         [XFile(pdfResult['pdfPath'].toString())],
         subject: 'Invoice ${invoice.invoiceNumber}',
         text: 'Invoice ${invoice.invoiceNumber} PDF',
-        sharePositionOrigin:
-            box != null ? box.localToGlobal(Offset.zero) & box.size : null,
+        sharePositionOrigin: box != null
+            ? box.localToGlobal(Offset.zero) & box.size
+            : null,
       );
 
       if (!context.mounted) return;
@@ -823,21 +876,26 @@ class ClientInvoiceDetailView extends ConsumerWidget {
   }
 
   Future<Map<String, dynamic>?> _prepareInvoicePdf(
-      BuildContext context, WidgetRef ref, ClientInvoice invoice) async {
+    BuildContext context,
+    WidgetRef ref,
+    ClientInvoice invoice,
+  ) async {
     final organizationId = _resolveOrganizationId(ref);
     if (organizationId.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content:
-              Text('Organization is missing. Please refresh or sign in again.'),
+          content: Text(
+            'Organization is missing. Please refresh or sign in again.',
+          ),
           backgroundColor: BauhausDesign.error,
         ),
       );
       return null;
     }
 
-    final invoiceService =
-        ref.read(invoice_providers.invoiceManagementServiceProvider);
+    final invoiceService = ref.read(
+      invoice_providers.invoiceManagementServiceProvider,
+    );
     final shareService = InvoiceShareService(
       invoiceService,
       apiMethod: ref.read(app_providers.apiMethodProvider),
@@ -902,7 +960,9 @@ class ClientInvoiceDetailView extends ConsumerWidget {
   }
 
   InvoiceListModel _toInvoiceListModel(
-      ClientInvoice invoice, String organizationId) {
+    ClientInvoice invoice,
+    String organizationId,
+  ) {
     final createdAt = _parseDateTime(
       invoice.workflow['createdAt'] ?? invoice.workflow['updatedAt'],
     );
@@ -923,14 +983,15 @@ class ClientInvoiceDetailView extends ConsumerWidget {
       ),
       subtotalAmount: _toDouble(invoice.financialSummary['subtotal']),
       status: (invoice.workflow['status'] ?? 'generated').toString(),
-      paymentStatus:
-          (invoice.workflow['paymentStatus'] ?? 'pending').toString(),
-      deliveryStatus:
-          (invoice.workflow['deliveryStatus'] ?? 'pending').toString(),
+      paymentStatus: (invoice.workflow['paymentStatus'] ?? 'pending')
+          .toString(),
+      deliveryStatus: (invoice.workflow['deliveryStatus'] ?? 'pending')
+          .toString(),
       invoiceType: (invoice.workflow['invoiceType'] ?? 'standard').toString(),
       createdAt: createdAt,
       updatedAt: _parseDateTime(
-          invoice.workflow['updatedAt'] ?? invoice.workflow['createdAt']),
+        invoice.workflow['updatedAt'] ?? invoice.workflow['createdAt'],
+      ),
     );
   }
 

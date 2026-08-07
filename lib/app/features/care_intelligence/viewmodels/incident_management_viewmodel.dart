@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/features/care_intelligence/models/care_intelligence_models.dart' hide Provider;
+import 'package:carenest/app/features/care_intelligence/models/care_intelligence_models.dart'
+    hide Provider;
 import 'package:carenest/app/features/care_intelligence/repositories/care_intelligence_repository.dart';
 import 'package:carenest/app/features/care_intelligence/viewmodels/intelligence_viewmodel.dart';
 
@@ -48,11 +49,10 @@ class IncidentManagementState {
 class IncidentManagementViewModel extends Notifier<IncidentManagementState> {
   late final CareIntelligenceRepository _repository;
 
-  
   @override
   IncidentManagementState build() {
     final repository = ref.watch(careIntelligenceRepositoryProvider);
-    
+
     return IncidentManagementState();
   }
 
@@ -83,10 +83,7 @@ class IncidentManagementViewModel extends Notifier<IncidentManagementState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -115,10 +112,7 @@ class IncidentManagementViewModel extends Notifier<IncidentManagementState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -149,10 +143,7 @@ class IncidentManagementViewModel extends Notifier<IncidentManagementState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -181,10 +172,7 @@ class IncidentManagementViewModel extends Notifier<IncidentManagementState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -213,10 +201,7 @@ class IncidentManagementViewModel extends Notifier<IncidentManagementState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -232,4 +217,7 @@ class IncidentManagementViewModel extends Notifier<IncidentManagementState> {
 }
 
 // Provider for IncidentManagementViewModel
-final incidentManagementViewModelProvider = NotifierProvider<IncidentManagementViewModel, IncidentManagementState>(IncidentManagementViewModel.new);
+final incidentManagementViewModelProvider =
+    NotifierProvider<IncidentManagementViewModel, IncidentManagementState>(
+      IncidentManagementViewModel.new,
+    );

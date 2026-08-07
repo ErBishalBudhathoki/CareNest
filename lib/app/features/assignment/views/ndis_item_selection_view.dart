@@ -6,7 +6,8 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/utils/logging.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 class NdisItemSelectionView extends ConsumerStatefulWidget {
   const NdisItemSelectionView({super.key});
@@ -26,7 +27,9 @@ class _NdisItemSelectionViewState extends ConsumerState<NdisItemSelectionView> {
   @override
   void initState() {
     super.initState();
-    _ndisMatcher = NDISMatcher(apiMethod: ref.read(app_providers.apiMethodProvider));
+    _ndisMatcher = NDISMatcher(
+      apiMethod: ref.read(app_providers.apiMethodProvider),
+    );
     _loadNdisItems();
   }
 
@@ -98,32 +101,38 @@ class _NdisItemSelectionViewState extends ConsumerState<NdisItemSelectionView> {
           ),
           _isLoading
               ? const Expanded(
-                  child: Center(child: CircularProgressIndicator()))
+                  child: Center(child: CircularProgressIndicator()),
+                )
               : Expanded(
                   child: _filteredNdisItems.isEmpty && _searchQuery.isNotEmpty
                       ? Center(
                           child: Text(
                             'No matching NDIS items found.',
-                            style:
-                                BauhausDesign.getTextTheme(context).bodyMedium,
+                            style: BauhausDesign.getTextTheme(
+                              context,
+                            ).bodyMedium,
                           ),
                         )
                       : ListView.builder(
                           physics: const BouncingScrollPhysics(),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: BauhausDesign.space4),
+                            horizontal: BauhausDesign.space4,
+                          ),
                           itemCount: _filteredNdisItems.length,
                           itemBuilder: (context, index) {
                             final item = _filteredNdisItems[index];
                             return Padding(
                               padding: const EdgeInsets.only(
-                                  bottom: BauhausDesign.space2),
+                                bottom: BauhausDesign.space2,
+                              ),
                               child: BauhausCard(
-                                padding:
-                                    const EdgeInsets.all(BauhausDesign.space4),
+                                padding: const EdgeInsets.all(
+                                  BauhausDesign.space4,
+                                ),
                                 onTap: () {
-                                  Navigator.of(context)
-                                      .pop(item); // Return selected item
+                                  Navigator.of(
+                                    context,
+                                  ).pop(item); // Return selected item
                                 },
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,25 +146,28 @@ class _NdisItemSelectionViewState extends ConsumerState<NdisItemSelectionView> {
                                           ),
                                     ),
                                     const SizedBox(
-                                        height: BauhausDesign.space1),
+                                      height: BauhausDesign.space1,
+                                    ),
                                     Container(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: BauhausDesign.space2,
-                                          vertical: BauhausDesign.space1),
+                                        horizontal: BauhausDesign.space2,
+                                        vertical: BauhausDesign.space1,
+                                      ),
                                       decoration: BoxDecoration(
                                         color: BauhausDesign.primary
                                             .withOpacity(0.1),
                                         borderRadius: BorderRadius.circular(
-                                            BauhausDesign.radiusXs),
+                                          BauhausDesign.radiusXs,
+                                        ),
                                       ),
                                       child: Text(
                                         item.itemNumber,
                                         style:
-                                            BauhausDesign.getTextTheme(context)
-                                                .labelSmall
-                                                ?.copyWith(
-                                                  color: BauhausDesign.primary,
-                                                ),
+                                            BauhausDesign.getTextTheme(
+                                              context,
+                                            ).labelSmall?.copyWith(
+                                              color: BauhausDesign.primary,
+                                            ),
                                       ),
                                     ),
                                   ],

@@ -17,9 +17,9 @@ class ClientAppointmentRepository {
           'details/$clientId?organizationId=${Uri.encodeComponent(organizationId)}';
       final response = await _apiMethod.get(endpoint);
       if (response['success'] == true && response['client'] != null) {
-        return ClientDetailModel.fromJson(_normalizeClientJson(
-          Map<String, dynamic>.from(response['client']),
-        ));
+        return ClientDetailModel.fromJson(
+          _normalizeClientJson(Map<String, dynamic>.from(response['client'])),
+        );
       }
       return null;
     } catch (e) {
@@ -68,7 +68,12 @@ class ClientAppointmentRepository {
     return json;
   }
 
-  Future<bool> updateCareNotes(String clientId, String careNotes, String organizationId, String userEmail) async {
+  Future<bool> updateCareNotes(
+    String clientId,
+    String careNotes,
+    String organizationId,
+    String userEmail,
+  ) async {
     try {
       final response = await _apiMethod.post(
         'updateCareNotes/$clientId',
@@ -85,9 +90,14 @@ class ClientAppointmentRepository {
     }
   }
 
-  Future<List<VisitHistoryModel>> getVisitHistory(String clientId, String organizationId) async {
+  Future<List<VisitHistoryModel>> getVisitHistory(
+    String clientId,
+    String organizationId,
+  ) async {
     try {
-      final response = await _apiMethod.get('api/worked-time/history/$clientId?organizationId=$organizationId');
+      final response = await _apiMethod.get(
+        'api/worked-time/history/$clientId?organizationId=$organizationId',
+      );
       if (response['success'] == true && response['visits'] != null) {
         return (response['visits'] as List)
             .map((e) => VisitHistoryModel.fromJson(e))

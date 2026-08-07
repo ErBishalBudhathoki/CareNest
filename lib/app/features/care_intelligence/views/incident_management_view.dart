@@ -28,9 +28,7 @@ class _IncidentManagementViewState
     if (orgId != null) {
       ref
           .read(incidentManagementViewModelProvider.notifier)
-          .detectIncidentPatterns(
-            organizationId: orgId,
-          );
+          .detectIncidentPatterns(organizationId: orgId);
     }
   }
 
@@ -46,59 +44,59 @@ class _IncidentManagementViewState
         title: Text(
           'INCIDENT MANAGEMENT',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-                fontWeight: FontWeight.bold,
-              ),
+            color: BauhausDesign.surfaceWhite,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         elevation: 0,
       ),
       body: state.isLoading
           ? const Center(child: BauhausLoadingState())
           : state.error != null
-              ? Center(
-                  child: BauhausEmptyState(
-                    title: 'Error',
-                    message: state.error!,
-                    icon: Icons.error_outline,
-                    onAction: _loadData,
-                    actionLabel: 'RETRY',
+          ? Center(
+              child: BauhausEmptyState(
+                title: 'Error',
+                message: state.error!,
+                icon: Icons.error_outline,
+                onAction: _loadData,
+                actionLabel: 'RETRY',
+              ),
+            )
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  BauhausSectionHeader(title: 'INCIDENT TRENDS & PATTERNS'),
+                  const SizedBox(height: 16),
+                  _buildPatternsCard(state),
+                  const SizedBox(height: 32),
+                  BauhausSectionHeader(title: 'RECENT INCIDENTS'),
+                  const SizedBox(height: 16),
+                  if (state.incident == null && !state.isLoading)
+                    const BauhausEmptyState(
+                      title: 'No Recent Incidents',
+                      message:
+                          'All clear. No incidents reported in the last 30 days.',
+                      icon: Icons.verified_user_outlined,
+                    )
+                  else if (state.incident != null)
+                    _buildIncidentCard(state.incident!),
+                  const SizedBox(height: 32),
+                  SizedBox(
+                    width: double.infinity,
+                    child: BauhausActionButton(
+                      onPressed: () {
+                        // Logic to report new incident
+                      },
+                      text: 'REPORT NEW INCIDENT',
+                      variant: BauhausActionVariant.warning,
+                      isFullWidth: true,
+                    ),
                   ),
-                )
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BauhausSectionHeader(title: 'INCIDENT TRENDS & PATTERNS'),
-                      const SizedBox(height: 16),
-                      _buildPatternsCard(state),
-                      const SizedBox(height: 32),
-                      BauhausSectionHeader(title: 'RECENT INCIDENTS'),
-                      const SizedBox(height: 16),
-                      if (state.incident == null && !state.isLoading)
-                        const BauhausEmptyState(
-                          title: 'No Recent Incidents',
-                          message:
-                              'All clear. No incidents reported in the last 30 days.',
-                          icon: Icons.verified_user_outlined,
-                        )
-                      else if (state.incident != null)
-                        _buildIncidentCard(state.incident!),
-                      const SizedBox(height: 32),
-                      SizedBox(
-                        width: double.infinity,
-                        child: BauhausActionButton(
-                          onPressed: () {
-                            // Logic to report new incident
-                          },
-                          text: 'REPORT NEW INCIDENT',
-                          variant: BauhausActionVariant.warning,
-                          isFullWidth: true,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                ],
+              ),
+            ),
     );
   }
 
@@ -111,15 +109,17 @@ class _IncidentManagementViewState
           children: [
             Row(
               children: [
-                const Icon(Icons.analytics_outlined,
-                    color: BauhausDesign.secondary, size: 28),
+                const Icon(
+                  Icons.analytics_outlined,
+                  color: BauhausDesign.secondary,
+                  size: 28,
+                ),
                 const SizedBox(width: 12),
                 Text(
                   'SMART INSIGHTS',
-                  style:
-                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                            fontWeight: FontWeight.w900,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).titleMedium?.copyWith(fontWeight: FontWeight.w900),
                 ),
               ],
             ),
@@ -140,15 +140,19 @@ class _IncidentManagementViewState
       child: BauhausCard(
         child: ListTile(
           contentPadding: const EdgeInsets.all(16),
-          leading: const Icon(Icons.warning_amber_rounded,
-              color: BauhausDesign.error),
+          leading: const Icon(
+            Icons.warning_amber_rounded,
+            color: BauhausDesign.error,
+          ),
           title: Text(
             incident.category,
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           subtitle: Text(incident.reportedAt),
-          trailing:
-              const Icon(Icons.chevron_right, color: BauhausDesign.neutral),
+          trailing: const Icon(
+            Icons.chevron_right,
+            color: BauhausDesign.neutral,
+          ),
         ),
       ),
     );

@@ -42,10 +42,12 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
   }
 
   void onDidReceiveNotification(
-      NotificationResponse notificationResponse) async {
+    NotificationResponse notificationResponse,
+  ) async {
     // Handle notification tap
     _debugLog(
-        'DEBUG_NOTIF_HANDLER: Notification tapped with payload: ${notificationResponse.payload}');
+      'DEBUG_NOTIF_HANDLER: Notification tapped with payload: ${notificationResponse.payload}',
+    );
 
     if (notificationResponse.payload != null) {
       try {
@@ -59,7 +61,8 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
         _handleNotificationAction(parsedPayload);
       } catch (e) {
         _debugLog(
-            'DEBUG_NOTIF_HANDLER: Error parsing notification payload: $e');
+          'DEBUG_NOTIF_HANDLER: Error parsing notification payload: $e',
+        );
       }
     }
   }
@@ -71,7 +74,8 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
       if (payload.containsKey('type')) {
         final notificationType = payload['type'];
         _debugLog(
-            'DEBUG_NOTIF_HANDLER: Handling notification action for type: $notificationType');
+          'DEBUG_NOTIF_HANDLER: Handling notification action for type: $notificationType',
+        );
 
         // Handle different notification types
         switch (notificationType) {
@@ -80,7 +84,8 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
             if (payload.containsKey('invoiceId')) {
               final invoiceId = payload['invoiceId'];
               _debugLog(
-                  'DEBUG_NOTIF_HANDLER: Navigating to invoice details for ID: $invoiceId');
+                'DEBUG_NOTIF_HANDLER: Navigating to invoice details for ID: $invoiceId',
+              );
               // Example navigation:
               // Navigator.of(context).pushNamed('/invoice_details', arguments: {'invoiceId': invoiceId});
             }
@@ -96,23 +101,31 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
             if (payload.containsKey('messageId')) {
               final messageId = payload['messageId'];
               _debugLog(
-                  'DEBUG_NOTIF_HANDLER: Navigating to message details for ID: $messageId');
+                'DEBUG_NOTIF_HANDLER: Navigating to message details for ID: $messageId',
+              );
               // Example navigation:
               // Navigator.of(context).pushNamed('/messages', arguments: {'messageId': messageId});
             }
             break;
           case 'emergency_broadcast':
-            _debugLog('DEBUG_NOTIF_HANDLER: Navigating to home for emergency broadcast');
+            _debugLog(
+              'DEBUG_NOTIF_HANDLER: Navigating to home for emergency broadcast',
+            );
             // Navigation to home will trigger refresh on load
-            Navigator.of(context).pushNamedAndRemoveUntil('/bottomNavBar', (route) => false, arguments: {
-              'email': SharedPreferencesUtils().getUserEmail() ?? '',
-              'role': UserRole.employee, // Default to employee for this view
-            });
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              '/bottomNavBar',
+              (route) => false,
+              arguments: {
+                'email': SharedPreferencesUtils().getUserEmail() ?? '',
+                'role': UserRole.employee, // Default to employee for this view
+              },
+            );
             break;
           default:
             // Default action for other notification types
             _debugLog(
-                'DEBUG_NOTIF_HANDLER: Performing default action for notification');
+              'DEBUG_NOTIF_HANDLER: Performing default action for notification',
+            );
             // Example navigation:
             // Navigator.of(context).pushNamed('/notifications');
             break;
@@ -156,7 +169,8 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
       case AppLifecycleState.resumed:
         // App came to foreground, refresh notifications
         _debugLog(
-            'DEBUG_NOTIF_HANDLER: App resumed - refreshing notifications');
+          'DEBUG_NOTIF_HANDLER: App resumed - refreshing notifications',
+        );
         _refreshNotificationsOnResume();
         break;
       case AppLifecycleState.paused:
@@ -172,7 +186,8 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
   void _refreshNotificationsOnResume() async {
     try {
       _debugLog(
-          'DEBUG_NOTIF_HANDLER: Refreshing notifications after app resume');
+        'DEBUG_NOTIF_HANDLER: Refreshing notifications after app resume',
+      );
 
       // Add a small delay to ensure SharedPreferences operations complete
       await Future.delayed(const Duration(milliseconds: 100));
@@ -192,7 +207,8 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
   Future<void> _initializeNotificationSystem() async {
     try {
       _debugLog(
-          'DEBUG_NOTIF_HANDLER: Starting notification system initialization');
+        'DEBUG_NOTIF_HANDLER: Starting notification system initialization',
+      );
 
       // Step 1: Initialize local notification service (channels, plugin)
       _localNotificationService = LocalNotificationService();
@@ -206,43 +222,47 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
       await _registerFcmToken();
 
       // Step 3: Check Firebase permission status
-      final settings =
-          await FirebaseMessaging.instance.getNotificationSettings();
+      final settings = await FirebaseMessaging.instance
+          .getNotificationSettings();
       _debugLog(
-          'DEBUG_NOTIF_HANDLER: Firebase permission status: ${settings.authorizationStatus}');
+        'DEBUG_NOTIF_HANDLER: Firebase permission status: ${settings.authorizationStatus}',
+      );
 
       // Step 4: Request permission if not yet determined (Android 13+ / iOS)
       if (settings.authorizationStatus == AuthorizationStatus.notDetermined) {
-        final newSettings =
-            await FirebaseMessaging.instance.requestPermission(
+        final newSettings = await FirebaseMessaging.instance.requestPermission(
           alert: true,
           badge: true,
           sound: true,
           provisional: false,
         );
         _debugLog(
-            'DEBUG_NOTIF_HANDLER: Permission requested — result: ${newSettings.authorizationStatus}');
+          'DEBUG_NOTIF_HANDLER: Permission requested — result: ${newSettings.authorizationStatus}',
+        );
       }
 
       // Step 5: Set up foreground notification display pipeline only if granted.
       // The system tray still shows FCM push notifications in background/terminated
       // state without this (handled by Firebase directly on Android).
-      final currentSettings =
-          await FirebaseMessaging.instance.getNotificationSettings();
+      final currentSettings = await FirebaseMessaging.instance
+          .getNotificationSettings();
       if (currentSettings.authorizationStatus ==
               AuthorizationStatus.authorized ||
           currentSettings.authorizationStatus ==
               AuthorizationStatus.provisional) {
         _debugLog(
-            'DEBUG_NOTIF_HANDLER: ✅ Permissions granted, setting up foreground notification pipeline');
+          'DEBUG_NOTIF_HANDLER: ✅ Permissions granted, setting up foreground notification pipeline',
+        );
         await _initializeForegroundNotificationPipeline();
       } else {
         _debugLog(
-            'DEBUG_NOTIF_HANDLER: ℹ️ Permissions not granted — FCM token registered, foreground display skipped');
+          'DEBUG_NOTIF_HANDLER: ℹ️ Permissions not granted — FCM token registered, foreground display skipped',
+        );
       }
     } catch (e) {
       _debugLog(
-          'DEBUG_NOTIF_HANDLER: ❌ Error initializing notification system: $e');
+        'DEBUG_NOTIF_HANDLER: ❌ Error initializing notification system: $e',
+      );
     }
   }
 
@@ -263,31 +283,36 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
           email.isNotEmpty &&
           organizationId != null &&
           organizationId.isNotEmpty) {
-        final sessionTimeoutService =
-            SessionTimeoutService(sharedPrefs: sharedUtils);
+        final sessionTimeoutService = SessionTimeoutService(
+          sharedPrefs: sharedUtils,
+        );
         final isValidSession = await sessionTimeoutService.isSessionValid();
         debugPrint('🔔 FCM_REG: Session valid=$isValidSession');
         if (!isValidSession) {
           debugPrint(
-              '🔔 FCM_REG: ❌ Session invalid — skipping FCM token registration & logging out');
+            '🔔 FCM_REG: ❌ Session invalid — skipping FCM token registration & logging out',
+          );
           await sessionTimeoutService.logoutAndClearSession(
             reason: 'notification_handler_session_validation_failed',
           );
           return;
         }
         debugPrint(
-            '🔔 FCM_REG: Registering FCM token for $email with org $organizationId');
+          '🔔 FCM_REG: Registering FCM token for $email with org $organizationId',
+        );
         await ref
             .read(app_providers.fcmTokenManagerProvider)
             .initialize(email, organizationId);
-        debugPrint('🔔 FCM_REG: ✅ FCM token registered successfully for $email');
+        debugPrint(
+          '🔔 FCM_REG: ✅ FCM token registered successfully for $email',
+        );
       } else {
         debugPrint(
-            '🔔 FCM_REG: ⚠️ No email/orgId in prefs — skipping FCM token registration (email=$email, orgId=$organizationId)');
+          '🔔 FCM_REG: ⚠️ No email/orgId in prefs — skipping FCM token registration (email=$email, orgId=$organizationId)',
+        );
       }
     } catch (e, stackTrace) {
-      debugPrint(
-          '🔔 FCM_REG: ❌ Failed to register FCM token: $e');
+      debugPrint('🔔 FCM_REG: ❌ Failed to register FCM token: $e');
       debugPrint('🔔 FCM_REG: Stack: $stackTrace');
     }
   }
@@ -298,15 +323,18 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
     // Suppress automatic FCM-overlay so our custom in-app handler fires
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
-      alert: false,
-      badge: false,
-      sound: false,
-    );
+          alert: false,
+          badge: false,
+          sound: false,
+        );
     _debugLog(
-        'DEBUG_NOTIF_HANDLER: Foreground presentation options set (custom handling active)');
+      'DEBUG_NOTIF_HANDLER: Foreground presentation options set (custom handling active)',
+    );
 
     await configureForegroundNotifications();
-    _debugLog('DEBUG_NOTIF_HANDLER: Foreground notification listener configured');
+    _debugLog(
+      'DEBUG_NOTIF_HANDLER: Foreground notification listener configured',
+    );
   }
 
   // Legacy entry point kept for backward compatibility — delegates to the new split methods.
@@ -315,10 +343,12 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
     await _initializeForegroundNotificationPipeline();
   }
 
-
-
   Future<dynamic> createAndDisplayNotification(
-      int id, String? title, String? body, String? payload) async {
+    int id,
+    String? title,
+    String? body,
+    String? payload,
+  ) async {
     // Create NotificationModel for the notification
     final notification = NotificationModel(
       id: id.toString(),
@@ -353,119 +383,127 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
 
   Future<void> configureForegroundNotifications() async {
     _debugLog(
-        'DEBUG_NOTIF_HANDLER: Setting up foreground notification listener');
+      'DEBUG_NOTIF_HANDLER: Setting up foreground notification listener',
+    );
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      _debugLog('\n=== FLUTTER FOREGROUND NOTIFICATION RECEIVED ===');
-      _debugLog('Timestamp: ${DateTime.now().toIso8601String()}');
-      _debugLog('Message ID: ${message.messageId}');
-      _debugLog('Message Data: ${message.data}');
-      _debugLog('Message Notification: ${message.notification?.toMap()}');
+    FirebaseMessaging.onMessage.listen(
+      (RemoteMessage message) async {
+        _debugLog('\n=== FLUTTER FOREGROUND NOTIFICATION RECEIVED ===');
+        _debugLog('Timestamp: ${DateTime.now().toIso8601String()}');
+        _debugLog('Message ID: ${message.messageId}');
+        _debugLog('Message Data: ${message.data}');
+        _debugLog('Message Notification: ${message.notification?.toMap()}');
 
-      // --- START OF REFACTORED LOGIC ---
+        // --- START OF REFACTORED LOGIC ---
 
-      // 1. Extract title and body, prioritizing the `notification` payload
-      //    but falling back to the `data` payload.
-      final String? title =
-          message.notification?.title ?? message.data['title'];
-      final String? body = message.notification?.body ?? message.data['body'];
+        // 1. Extract title and body, prioritizing the `notification` payload
+        //    but falling back to the `data` payload.
+        final String? title =
+            message.notification?.title ?? message.data['title'];
+        final String? body = message.notification?.body ?? message.data['body'];
 
-      // 2. If we don't have a title and body, we can't show a notification.
-      if (title == null || body == null) {
-        _debugLog(
-            '❌ Message is missing title/body. Cannot display notification.');
-        _debugLog('=== END FLUTTER NOTIFICATION PROCESSING ===\n');
-        return;
-      }
-
-      _debugLog('✅ Processing Title: $title');
-      _debugLog('✅ Processing Body: $body');
-
-      try {
-        // 3. Determine Channel ID
-        final String channelId = message.data['channelId'] ?? 'timer_alerts';
-        _debugLog('✅ Using channel ID: $channelId');
-
-        // 4. Create a unified payload for the local notification and storage.
-        //    This combines data from both payloads.
-        final Map<String, dynamic> combinedPayload = {
-          ...message.data, // All original data
-          'title': title,
-          'body': body,
-          'channelId': channelId,
-          'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
-          'isForeground': 'true',
-        };
-
-        // 5. Create the NotificationModel for storage in the app's notification list.
-        final notificationForProvider = NotificationModel(
-          id: message.messageId ??
-              DateTime.now().millisecondsSinceEpoch.toString(),
-          title: title,
-          body: body,
-          timestamp: DateTime.now(),
-          isRead: false,
-          type: message.data['type'] ??
-              channelId, // Use type from data or fallback to channelId
-          data: combinedPayload, // Use the combined payload for consistency
-        );
-
-        // 6. Store the notification in your Riverpod provider.
-        _debugLog('\n--- STORING NOTIFICATION IN PROVIDER ---');
-        try {
-          ref
-              .read(notificationProvider.notifier)
-              .addNotification(notificationForProvider);
-          _debugLog('✅ Notification stored in provider successfully');
-        } catch (e) {
-          _debugLog('❌ Failed to store notification in provider: $e');
-        }
-
-        // 6.5. Also store in persistent storage for surfaceed app state
-        // This ensures notifications are preserved when app is surfaceed but not terminated
-        _debugLog('\n--- STORING NOTIFICATION IN PERSISTENT STORAGE ---');
-        try {
-          await _storeNotificationPersistently(
-            notificationForProvider.id,
-            title,
-            body,
-            notificationForProvider.type,
-            combinedPayload,
+        // 2. If we don't have a title and body, we can't show a notification.
+        if (title == null || body == null) {
+          _debugLog(
+            '❌ Message is missing title/body. Cannot display notification.',
           );
-          _debugLog('✅ Notification stored persistently successfully');
-        } catch (e) {
-          _debugLog('❌ Failed to store notification persistently: $e');
+          _debugLog('=== END FLUTTER NOTIFICATION PROCESSING ===\n');
+          return;
         }
 
-        // 7. Display the local notification using your service.
-        _debugLog('\n--- ATTEMPTING TO DISPLAY LOCAL NOTIFICATION ---');
+        _debugLog('✅ Processing Title: $title');
+        _debugLog('✅ Processing Body: $body');
+
         try {
-          await _localNotificationService.createAndDisplayNotification(
-            notificationForProvider, // Pass the model
-            combinedPayload, // Pass the full payload
-          );
-          _debugLog('✅ Local notification display attempt completed');
+          // 3. Determine Channel ID
+          final String channelId = message.data['channelId'] ?? 'timer_alerts';
+          _debugLog('✅ Using channel ID: $channelId');
 
-          // 8. Update app UI based on notification data if needed
-          await _updateAppUI(message);
+          // 4. Create a unified payload for the local notification and storage.
+          //    This combines data from both payloads.
+          final Map<String, dynamic> combinedPayload = {
+            ...message.data, // All original data
+            'title': title,
+            'body': body,
+            'channelId': channelId,
+            'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
+            'isForeground': 'true',
+          };
+
+          // 5. Create the NotificationModel for storage in the app's notification list.
+          final notificationForProvider = NotificationModel(
+            id:
+                message.messageId ??
+                DateTime.now().millisecondsSinceEpoch.toString(),
+            title: title,
+            body: body,
+            timestamp: DateTime.now(),
+            isRead: false,
+            type:
+                message.data['type'] ??
+                channelId, // Use type from data or fallback to channelId
+            data: combinedPayload, // Use the combined payload for consistency
+          );
+
+          // 6. Store the notification in your Riverpod provider.
+          _debugLog('\n--- STORING NOTIFICATION IN PROVIDER ---');
+          try {
+            ref
+                .read(notificationProvider.notifier)
+                .addNotification(notificationForProvider);
+            _debugLog('✅ Notification stored in provider successfully');
+          } catch (e) {
+            _debugLog('❌ Failed to store notification in provider: $e');
+          }
+
+          // 6.5. Also store in persistent storage for surfaceed app state
+          // This ensures notifications are preserved when app is surfaceed but not terminated
+          _debugLog('\n--- STORING NOTIFICATION IN PERSISTENT STORAGE ---');
+          try {
+            await _storeNotificationPersistently(
+              notificationForProvider.id,
+              title,
+              body,
+              notificationForProvider.type,
+              combinedPayload,
+            );
+            _debugLog('✅ Notification stored persistently successfully');
+          } catch (e) {
+            _debugLog('❌ Failed to store notification persistently: $e');
+          }
+
+          // 7. Display the local notification using your service.
+          _debugLog('\n--- ATTEMPTING TO DISPLAY LOCAL NOTIFICATION ---');
+          try {
+            await _localNotificationService.createAndDisplayNotification(
+              notificationForProvider, // Pass the model
+              combinedPayload, // Pass the full payload
+            );
+            _debugLog('✅ Local notification display attempt completed');
+
+            // 8. Update app UI based on notification data if needed
+            await _updateAppUI(message);
+          } catch (e) {
+            _debugLog('❌ Failed to display local notification: $e');
+          }
         } catch (e) {
-          _debugLog('❌ Failed to display local notification: $e');
+          _debugLog('\n❌ ERROR PROCESSING FOREGROUND MESSAGE');
+          _debugLog('Error: $e');
+          _debugLog('Stack trace: ${StackTrace.current}');
+        } finally {
+          _debugLog('=== END FLUTTER NOTIFICATION PROCESSING ===\n');
         }
-      } catch (e) {
-        _debugLog('\n❌ ERROR PROCESSING FOREGROUND MESSAGE');
-        _debugLog('Error: $e');
-        _debugLog('Stack trace: ${StackTrace.current}');
-      } finally {
-        _debugLog('=== END FLUTTER NOTIFICATION PROCESSING ===\n');
-      }
-      // --- END OF REFACTORED LOGIC ---
-    }, onError: (error) {
-      _debugLog('\n❌ ERROR IN ONMESSAGE LISTENER');
-      _debugLog('Error: $error');
-    });
+        // --- END OF REFACTORED LOGIC ---
+      },
+      onError: (error) {
+        _debugLog('\n❌ ERROR IN ONMESSAGE LISTENER');
+        _debugLog('Error: $error');
+      },
+    );
 
     _debugLog(
-        'DEBUG_NOTIF_HANDLER: ✅ Foreground notification listener configured');
+      'DEBUG_NOTIF_HANDLER: ✅ Foreground notification listener configured',
+    );
   }
 
   // Method to store notification in state management
@@ -533,7 +571,8 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
       _debugLog('DEBUG_NOTIF_HANDLER: Notification stored persistently: $id');
     } catch (e) {
       _debugLog(
-          'DEBUG_NOTIF_HANDLER: Error storing notification persistently: $e');
+        'DEBUG_NOTIF_HANDLER: Error storing notification persistently: $e',
+      );
     }
   }
 
@@ -553,7 +592,8 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
       if (data.containsKey('type')) {
         final notificationType = data['type'];
         _debugLog(
-            'DEBUG_NOTIF_HANDLER: Processing notification type: $notificationType');
+          'DEBUG_NOTIF_HANDLER: Processing notification type: $notificationType',
+        );
 
         // Handle different notification types
         switch (notificationType) {
@@ -567,7 +607,9 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
             // Update message-related UI
             break;
           case 'emergency_broadcast':
-            _debugLog('DEBUG_NOTIF_HANDLER: Emergency broadcast received - refreshing home dashboard');
+            _debugLog(
+              'DEBUG_NOTIF_HANDLER: Emergency broadcast received - refreshing home dashboard',
+            );
             final sharedUtils = SharedPreferencesUtils();
             await sharedUtils.init();
             final email = sharedUtils.getUserEmail();

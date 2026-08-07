@@ -21,8 +21,9 @@ class DeepLinkHandler {
     if (rawValue == null || rawValue.isEmpty) return null;
 
     try {
-      final normalizedValue =
-          rawValue.contains('://') ? rawValue : 'https://$rawValue';
+      final normalizedValue = rawValue.contains('://')
+          ? rawValue
+          : 'https://$rawValue';
       final parsed = Uri.parse(normalizedValue);
       final host = parsed.host.trim().toLowerCase();
       return host.isEmpty ? null : host;
@@ -161,13 +162,11 @@ class DeepLinkHandler {
     final navState = navigatorKey.currentState;
     if (navState == null) {
       debugPrint(
-          'DeepLinkHandler: navigator not ready, cannot route to signup yet');
+        'DeepLinkHandler: navigator not ready, cannot route to signup yet',
+      );
       return;
     }
-    navState.pushNamed(
-      Routes.signup,
-      arguments: {'prefilledOrgCode': orgCode},
-    );
+    navState.pushNamed(Routes.signup, arguments: {'prefilledOrgCode': orgCode});
   }
 
   /// Navigate to regular signup page
@@ -175,7 +174,8 @@ class DeepLinkHandler {
     final navState = navigatorKey.currentState;
     if (navState == null) {
       debugPrint(
-          'DeepLinkHandler: navigator not ready, cannot route to signup yet');
+        'DeepLinkHandler: navigator not ready, cannot route to signup yet',
+      );
       return;
     }
     navState.pushNamed(Routes.signup);
@@ -186,7 +186,8 @@ class DeepLinkHandler {
     final navState = navigatorKey.currentState;
     if (navState == null) {
       debugPrint(
-          'DeepLinkHandler: navigator not ready, cannot route to reset password yet');
+        'DeepLinkHandler: navigator not ready, cannot route to reset password yet',
+      );
       return;
     }
     navState.push(
@@ -200,7 +201,8 @@ class DeepLinkHandler {
     final navState = navigatorKey.currentState;
     if (navState == null) {
       debugPrint(
-          'DeepLinkHandler: navigator not ready, cannot route to email verification yet');
+        'DeepLinkHandler: navigator not ready, cannot route to email verification yet',
+      );
       return;
     }
 
@@ -215,7 +217,8 @@ class DeepLinkHandler {
       );
     } on FirebaseAuthException catch (e) {
       debugPrint(
-          'DeepLinkHandler: email verification failed: ${e.code} - ${e.message}');
+        'DeepLinkHandler: email verification failed: ${e.code} - ${e.message}',
+      );
       navState.pushNamedAndRemoveUntil(Routes.login, (route) => false);
       _showSnackBar(
         e.message ?? 'This verification link is invalid or has expired.',
@@ -237,17 +240,16 @@ class DeepLinkHandler {
       if (context == null) return;
       final messenger = ScaffoldMessenger.maybeOf(context);
       messenger?.showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: backgroundColor,
-        ),
+        SnackBar(content: Text(message), backgroundColor: backgroundColor),
       );
     });
   }
 
   /// Public method to navigate to signup (can be used by other parts of the app)
-  static void navigateToSignup(BuildContext context,
-      {String? organizationCode}) {
+  static void navigateToSignup(
+    BuildContext context, {
+    String? organizationCode,
+  }) {
     if (organizationCode != null && organizationCode.isNotEmpty) {
       Navigator.pushNamed(
         context,
@@ -261,8 +263,10 @@ class DeepLinkHandler {
 
   /// Generates a shareable signup link with organization code
   /// Uses universal link by default so users without the app can fall back to web/App Store.
-  static String generateSignupLink(String organizationCode,
-      {bool useCustomScheme = false}) {
+  static String generateSignupLink(
+    String organizationCode, {
+    bool useCustomScheme = false,
+  }) {
     final normalizedCode = organizationCode.trim();
     if (normalizedCode.isEmpty) {
       return Uri(
@@ -290,8 +294,9 @@ class DeepLinkHandler {
     return Uri(
       scheme: _customScheme,
       host: 'signup',
-      queryParameters:
-          normalizedCode.isEmpty ? null : {'orgCode': normalizedCode},
+      queryParameters: normalizedCode.isEmpty
+          ? null
+          : {'orgCode': normalizedCode},
     ).toString();
   }
 

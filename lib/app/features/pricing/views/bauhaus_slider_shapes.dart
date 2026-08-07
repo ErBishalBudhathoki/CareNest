@@ -31,7 +31,8 @@ class BauhausSliderThumbShape extends SliderComponentShape {
 
     // Draw square thumb
     final Paint fillPaint = Paint()
-      ..color = BauhausDesign.accent // Yellow/Accent color
+      ..color = BauhausDesign
+          .accent // Yellow/Accent color
       ..style = PaintingStyle.fill;
 
     final Paint borderPaint = Paint()

@@ -46,8 +46,7 @@ abstract class OnboardingContent {
   OnboardingContent._();
 
   static const String appName = 'CareNest';
-  static const String tagline =
-      'Smart care management\nfor NDIS providers';
+  static const String tagline = 'Smart care management\nfor NDIS providers';
 
   static const List<_Slide> carouselSlides = [
     _Slide(
@@ -102,8 +101,6 @@ class _Slide {
 }
 
 IconData carouselIcon(int i) => OnboardingContent.carouselSlides[i].icon;
-String carouselHeadline(int i) =>
-    OnboardingContent.carouselSlides[i].headline;
-String carouselSubtext(int i) =>
-    OnboardingContent.carouselSlides[i].subtext;
+String carouselHeadline(int i) => OnboardingContent.carouselSlides[i].headline;
+String carouselSubtext(int i) => OnboardingContent.carouselSlides[i].subtext;
 int get carouselSlideCount => OnboardingContent.carouselSlides.length;

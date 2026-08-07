@@ -57,7 +57,8 @@ class SignupModel extends ChangeNotifier implements VisibilityToggleModel {
 
   void validateFields() {
     debugPrint(
-        'email: ${emailController.text}\npassword: ${passwordController.text}\nconfirmPassword: ${confirmPasswordController.text}\nfirstName: ${firstNameController.text}\nlastName: ${lastNameController.text}\nabn: ${abnController.text} ${abnController.text.length}');
+      'email: ${emailController.text}\npassword: ${passwordController.text}\nconfirmPassword: ${confirmPasswordController.text}\nfirstName: ${firstNameController.text}\nlastName: ${lastNameController.text}\nabn: ${abnController.text} ${abnController.text.length}',
+    );
     final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
     final isEmailValid = emailRegex.hasMatch(emailController.text);
     final isPasswordValid = passwordController.text.isNotEmpty;
@@ -68,7 +69,8 @@ class SignupModel extends ChangeNotifier implements VisibilityToggleModel {
     final isAbnValid =
         abnController.text.isNotEmpty && abnController.text.length == 11;
     debugPrint(
-        'isEmailValid: $isEmailValid \n isPasswordValid: $isPasswordValid \n isConfirmPasswordValid: $isConfirmPasswordValid \n isFirstNameValid: $isFirstNameValid \n isLastNameValid: $isLastNameValid \n isAbnValid: $isAbnValid');
+      'isEmailValid: $isEmailValid \n isPasswordValid: $isPasswordValid \n isConfirmPasswordValid: $isConfirmPasswordValid \n isFirstNameValid: $isFirstNameValid \n isLastNameValid: $isLastNameValid \n isAbnValid: $isAbnValid',
+    );
     // Additional validation for organization fields
     bool isOrganizationValid = true;
     if (_selectedRole == 'admin' && _isCreatingOrganization) {
@@ -77,7 +79,8 @@ class SignupModel extends ChangeNotifier implements VisibilityToggleModel {
       isOrganizationValid = organizationCodeController.text.isNotEmpty;
     }
 
-    _isValid = isEmailValid &&
+    _isValid =
+        isEmailValid &&
         isPasswordValid &&
         isConfirmPasswordValid &&
         isFirstNameValid &&

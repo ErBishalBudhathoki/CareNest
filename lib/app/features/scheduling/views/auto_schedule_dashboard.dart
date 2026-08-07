@@ -8,10 +8,7 @@ import 'package:carenest/app/features/scheduling/viewmodels/shift_matching_viewm
 class AutoScheduleDashboard extends ConsumerWidget {
   final String? organizationId;
 
-  const AutoScheduleDashboard({
-    super.key,
-    this.organizationId,
-  });
+  const AutoScheduleDashboard({super.key, this.organizationId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,9 +21,9 @@ class AutoScheduleDashboard extends ConsumerWidget {
         title: Text(
           'AUTO-SCHEDULE',
           style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-                fontWeight: FontWeight.bold,
-              ),
+            color: BauhausDesign.surfaceWhite,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
       ),
@@ -71,18 +68,14 @@ class AutoScheduleDashboard extends ConsumerWidget {
                                 'INTELLIGENT SCHEDULING',
                                 style: BauhausDesign.getTextTheme(context)
                                     .titleLarge
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    ?.copyWith(fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 'Automatically assign optimal workers to shifts',
                                 style: BauhausDesign.getTextTheme(context)
                                     .bodyMedium
-                                    ?.copyWith(
-                                      color: BauhausDesign.textDark,
-                                    ),
+                                    ?.copyWith(color: BauhausDesign.textDark),
                               ),
                             ],
                           );
@@ -100,9 +93,7 @@ class AutoScheduleDashboard extends ConsumerWidget {
                                     'INTELLIGENT SCHEDULING',
                                     style: BauhausDesign.getTextTheme(context)
                                         .titleLarge
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                        ?.copyWith(fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
@@ -202,17 +193,13 @@ class AutoScheduleDashboard extends ConsumerWidget {
                             'TOTAL SHIFTS',
                             style: BauhausDesign.getTextTheme(context)
                                 .bodyMedium
-                                ?.copyWith(
-                                  color: BauhausDesign.textDark,
-                                ),
+                                ?.copyWith(color: BauhausDesign.textDark),
                           ),
                           Text(
                             '${viewModel.autoFillResult!.totalShifts}',
-                            style: BauhausDesign.getTextTheme(context)
-                                .titleLarge
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            style: BauhausDesign.getTextTheme(
+                              context,
+                            ).titleLarge?.copyWith(fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -224,9 +211,7 @@ class AutoScheduleDashboard extends ConsumerWidget {
                             'FILLED',
                             style: BauhausDesign.getTextTheme(context)
                                 .bodyMedium
-                                ?.copyWith(
-                                  color: BauhausDesign.success,
-                                ),
+                                ?.copyWith(color: BauhausDesign.success),
                           ),
                           Text(
                             '${viewModel.autoFillResult!.filledShifts}',
@@ -245,11 +230,9 @@ class AutoScheduleDashboard extends ConsumerWidget {
                         children: [
                           Text(
                             'UNFILLED',
-                            style: BauhausDesign.getTextTheme(context)
-                                .bodyMedium
-                                ?.copyWith(
-                                  color: BauhausDesign.error,
-                                ),
+                            style: BauhausDesign.getTextTheme(
+                              context,
+                            ).bodyMedium?.copyWith(color: BauhausDesign.error),
                           ),
                           Text(
                             '${viewModel.autoFillResult!.unfilledShifts}',
@@ -266,7 +249,9 @@ class AutoScheduleDashboard extends ConsumerWidget {
                           null) ...[
                         const SizedBox(height: 16),
                         const Divider(
-                            color: BauhausDesign.neutral, thickness: 1),
+                          color: BauhausDesign.neutral,
+                          thickness: 1,
+                        ),
                         const SizedBox(height: 16),
                         Text(
                           viewModel.autoFillResult!.optimizationSummary!,
@@ -305,9 +290,8 @@ class AutoScheduleDashboard extends ConsumerWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ShiftMatchingView(
-                        organizationId: organizationId,
-                      ),
+                      builder: (context) =>
+                          ShiftMatchingView(organizationId: organizationId),
                     ),
                   );
                 },
@@ -355,17 +339,16 @@ class AutoScheduleDashboard extends ConsumerWidget {
             const SizedBox(height: 12),
             Text(
               title,
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.textDark,
-                  ),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodySmall?.copyWith(color: BauhausDesign.textDark),
             ),
             const SizedBox(height: 4),
             Text(
               value,
-              style:
-                  BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).headlineMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -421,8 +404,9 @@ class AutoScheduleDashboard extends ConsumerWidget {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content:
-                      Text('Route optimization feature requires worker data'),
+                  content: Text(
+                    'Route optimization feature requires worker data',
+                  ),
                 ),
               );
             },

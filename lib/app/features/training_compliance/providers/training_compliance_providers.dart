@@ -9,19 +9,26 @@ import 'package:carenest/app/features/training_compliance/viewmodels/certificati
 
 final trainingComplianceRepositoryProvider =
     Provider<TrainingComplianceRepository>((ref) {
-  return TrainingComplianceRepository(
-      ref.read(app_providers.apiMethodProvider));
-});
+      return TrainingComplianceRepository(
+        ref.read(app_providers.apiMethodProvider),
+      );
+    });
 
 final certificationsViewModelProvider =
-    NotifierProvider<CertificationsViewModel, CertificationsState>(CertificationsViewModel.new);
+    NotifierProvider<CertificationsViewModel, CertificationsState>(
+      CertificationsViewModel.new,
+    );
 
 final trainingViewModelProvider =
     NotifierProvider<TrainingViewModel, TrainingState>(TrainingViewModel.new);
 
 final complianceViewModelProvider =
-    NotifierProvider<ComplianceViewModel, ComplianceState>(ComplianceViewModel.new);
+    NotifierProvider<ComplianceViewModel, ComplianceState>(
+      ComplianceViewModel.new,
+    );
 
 final certificationRequirementsViewModelProvider =
-    NotifierProvider<CertificationRequirementsViewModel,
-        CertificationRequirementsState>(CertificationRequirementsViewModel.new);
+    NotifierProvider<
+      CertificationRequirementsViewModel,
+      CertificationRequirementsState
+    >(CertificationRequirementsViewModel.new);

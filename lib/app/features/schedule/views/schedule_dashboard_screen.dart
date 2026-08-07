@@ -58,8 +58,9 @@ class _ScheduleDashboardScreenState
 
     try {
       // Get shifts for the current week
-      final startOfWeek =
-          _selectedDate.subtract(Duration(days: _selectedDate.weekday - 1));
+      final startOfWeek = _selectedDate.subtract(
+        Duration(days: _selectedDate.weekday - 1),
+      );
       final endOfWeek = startOfWeek.add(const Duration(days: 7));
 
       final response = await _api.getScheduleShifts(
@@ -79,7 +80,8 @@ class _ScheduleDashboardScreenState
         });
       } else {
         setState(() {
-          _error = response['error']?.toString() ??
+          _error =
+              response['error']?.toString() ??
               AppLocalizations.of(context)!.failedToLoadShifts;
           _isLoading = false;
         });
@@ -123,10 +125,13 @@ class _ScheduleDashboardScreenState
               Navigator.of(context).pop();
               _loadShifts();
               _showSuccessSnackbar(
-                  AppLocalizations.of(context)!.shiftAssignedSuccessfully);
+                AppLocalizations.of(context)!.shiftAssignedSuccessfully,
+              );
             } else {
-              _showErrorSnackbar(result['error']?.toString() ??
-                  AppLocalizations.of(context)!.failedToAssignShift);
+              _showErrorSnackbar(
+                result['error']?.toString() ??
+                    AppLocalizations.of(context)!.failedToAssignShift,
+              );
             }
           }
         },
@@ -145,9 +150,9 @@ class _ScheduleDashboardScreenState
               child: Text(
                 message,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.surfaceWhite,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  color: BauhausDesign.surfaceWhite,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
@@ -173,9 +178,9 @@ class _ScheduleDashboardScreenState
               child: Text(
                 message,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.surfaceWhite,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  color: BauhausDesign.surfaceWhite,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
@@ -197,10 +202,11 @@ class _ScheduleDashboardScreenState
       appBar: _buildBauhausAppBar(),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: BauhausDesign.primary))
+              child: CircularProgressIndicator(color: BauhausDesign.primary),
+            )
           : _error != null
-              ? _buildErrorState()
-              : _buildContent(),
+          ? _buildErrorState()
+          : _buildContent(),
       floatingActionButton: widget.isAdmin
           ? BauhausActionButton(
               onPressed: _showCreateShiftDialog,
@@ -253,25 +259,39 @@ class _ScheduleDashboardScreenState
         child: DropdownButton<String>(
           value: _selectedFilter,
           isDense: true,
-          icon:
-              const Icon(Icons.arrow_drop_down, color: BauhausDesign.textDark),
+          icon: const Icon(
+            Icons.arrow_drop_down,
+            color: BauhausDesign.textDark,
+          ),
           items: [
             DropdownMenuItem(
-                value: 'all',
-                child: Text(AppLocalizations.of(context)!.allShifts,
-                    style: BauhausDesign.getTextTheme(context).bodyMedium)),
+              value: 'all',
+              child: Text(
+                AppLocalizations.of(context)!.allShifts,
+                style: BauhausDesign.getTextTheme(context).bodyMedium,
+              ),
+            ),
             DropdownMenuItem(
-                value: 'pending',
-                child: Text(AppLocalizations.of(context)!.statusPendingShift,
-                    style: BauhausDesign.getTextTheme(context).bodyMedium)),
+              value: 'pending',
+              child: Text(
+                AppLocalizations.of(context)!.statusPendingShift,
+                style: BauhausDesign.getTextTheme(context).bodyMedium,
+              ),
+            ),
             DropdownMenuItem(
-                value: 'approved',
-                child: Text(AppLocalizations.of(context)!.statusApprovedShift,
-                    style: BauhausDesign.getTextTheme(context).bodyMedium)),
+              value: 'approved',
+              child: Text(
+                AppLocalizations.of(context)!.statusApprovedShift,
+                style: BauhausDesign.getTextTheme(context).bodyMedium,
+              ),
+            ),
             DropdownMenuItem(
-                value: 'completed',
-                child: Text(AppLocalizations.of(context)!.statusCompletedShift,
-                    style: BauhausDesign.getTextTheme(context).bodyMedium)),
+              value: 'completed',
+              child: Text(
+                AppLocalizations.of(context)!.statusCompletedShift,
+                style: BauhausDesign.getTextTheme(context).bodyMedium,
+              ),
+            ),
           ],
           onChanged: (value) {
             if (value != null) {
@@ -308,8 +328,9 @@ class _ScheduleDashboardScreenState
   }
 
   Widget _buildWeekNavigator() {
-    final startOfWeek =
-        _selectedDate.subtract(Duration(days: _selectedDate.weekday - 1));
+    final startOfWeek = _selectedDate.subtract(
+      Duration(days: _selectedDate.weekday - 1),
+    );
     final endOfWeek = startOfWeek.add(const Duration(days: 6));
     final dateFormat = DateFormat('MMM d');
 
@@ -338,10 +359,9 @@ class _ScheduleDashboardScreenState
             child: Center(
               child: Text(
                 '${dateFormat.format(startOfWeek)} - ${dateFormat.format(endOfWeek)}',
-                style:
-                    BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                          color: BauhausDesign.textDark,
-                        ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).titleMedium?.copyWith(color: BauhausDesign.textDark),
               ),
             ),
           ),
@@ -367,8 +387,9 @@ class _ScheduleDashboardScreenState
         title: AppLocalizations.of(context)!.noShiftsScheduled,
         message: AppLocalizations.of(context)!.createShiftToStart,
         icon: Icons.calendar_today,
-        actionLabel:
-            widget.isAdmin ? AppLocalizations.of(context)!.createShift : null,
+        actionLabel: widget.isAdmin
+            ? AppLocalizations.of(context)!.createShift
+            : null,
         onAction: widget.isAdmin ? _showCreateShiftDialog : null,
       ),
     );
@@ -410,7 +431,8 @@ class _ScheduleDashboardScreenState
   }
 
   Widget _buildDateHeader(DateTime date) {
-    final isToday = DateFormat('yyyy-MM-dd').format(date) ==
+    final isToday =
+        DateFormat('yyyy-MM-dd').format(date) ==
         DateFormat('yyyy-MM-dd').format(DateTime.now());
 
     return Row(
@@ -427,9 +449,9 @@ class _ScheduleDashboardScreenState
           ),
           child: Text(
             DateFormat('EEE, MMM d').format(date),
-            style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.surfaceWhite,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).labelLarge?.copyWith(color: BauhausDesign.surfaceWhite),
           ),
         ),
         if (isToday) ...[
@@ -447,9 +469,9 @@ class _ScheduleDashboardScreenState
             child: Text(
               'TODAY',
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.bold,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
@@ -478,27 +500,28 @@ class _ScheduleDashboardScreenState
               children: [
                 Text(
                   timeFormat.format(shift.startTime),
-                  style:
-                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                            color: BauhausDesign.primary,
-                            fontWeight: FontWeight.w800,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).titleMedium
+                      ?.copyWith(
+                        color: BauhausDesign.primary,
+                        fontWeight: FontWeight.w800,
+                      ),
                 ),
                 Text(
                   timeFormat.format(shift.endTime),
-                  style:
-                      BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                            color: BauhausDesign.accent,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: BauhausDesign.accent,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
               ],
             ),
 
             // Vertical divider
             Container(
-              margin:
-                  const EdgeInsets.symmetric(horizontal: BauhausDesign.space3),
+              margin: const EdgeInsets.symmetric(
+                horizontal: BauhausDesign.space3,
+              ),
               width: 2,
               height: 40,
               decoration: BoxDecoration(
@@ -525,8 +548,7 @@ class _ScheduleDashboardScreenState
                     shift.employeeName ??
                         shift.employeeEmail ??
                         AppLocalizations.of(context)!.unassigned,
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
+                    style: BauhausDesign.getTextTheme(context).bodyMedium
                         ?.copyWith(
                           color: shift.employeeEmail != null
                               ? BauhausDesign.neutral
@@ -542,7 +564,8 @@ class _ScheduleDashboardScreenState
 
             // Status badge
             BauhausChip(
-              text: shift.status.value[0].toUpperCase() +
+              text:
+                  shift.status.value[0].toUpperCase() +
                   shift.status.value.substring(1),
               color: statusColor,
               isSmall: true,
@@ -617,10 +640,12 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
       debugPrint('Fetching data for Organization ID: ${widget.organizationId}');
 
       final api = ref.read(app_providers.apiMethodProvider);
-      final clientsFuture =
-          api.getClientsByOrganizationId(widget.organizationId);
-      final employeesFuture =
-          api.getOrganizationEmployees(widget.organizationId);
+      final clientsFuture = api.getClientsByOrganizationId(
+        widget.organizationId,
+      );
+      final employeesFuture = api.getOrganizationEmployees(
+        widget.organizationId,
+      );
 
       final results = await Future.wait([clientsFuture, employeesFuture]);
 
@@ -641,7 +666,8 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
             debugPrint('First client data: ${_clients.first}');
           } else {
             debugPrint(
-                'No clients found in response. Raw result: ${results[0]}');
+              'No clients found in response. Raw result: ${results[0]}',
+            );
           }
 
           final empResult = results[1] as Map<String, dynamic>;
@@ -664,13 +690,15 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
         if (mounted) {
           setState(() {
             _clients = allClients
-                .map((c) => {
-                      'firstName': c.clientFirstName,
-                      'lastName': c.clientLastName,
-                      'email': c.clientEmail,
-                      'phone': c.clientPhone,
-                      '_id': c.id,
-                    })
+                .map(
+                  (c) => {
+                    'firstName': c.clientFirstName,
+                    'lastName': c.clientLastName,
+                    'email': c.clientEmail,
+                    'phone': c.clientPhone,
+                    '_id': c.id,
+                  },
+                )
                 .toList();
             _isFetchingData = false;
           });
@@ -750,8 +778,10 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(result['error']?.toString() ??
-                AppLocalizations.of(context)!.failedToCreateShift),
+            content: Text(
+              result['error']?.toString() ??
+                  AppLocalizations.of(context)!.failedToCreateShift,
+            ),
             backgroundColor: BauhausDesign.error,
           ),
         );
@@ -797,17 +827,17 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.error_outline,
-                          color: BauhausDesign.error),
+                      const Icon(
+                        Icons.error_outline,
+                        color: BauhausDesign.error,
+                      ),
                       const SizedBox(width: BauhausDesign.space3),
                       Expanded(
                         child: Text(
                           'No clients found for this organization.',
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodyMedium
-                              ?.copyWith(
-                                color: BauhausDesign.error,
-                              ),
+                          style: BauhausDesign.getTextTheme(
+                            context,
+                          ).bodyMedium?.copyWith(color: BauhausDesign.error),
                         ),
                       ),
                     ],
@@ -816,14 +846,17 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
               else
                 DropdownButtonFormField<String>(
                   value: _selectedClientEmail,
-                  decoration: BauhausDesign.inputDecoration(
-                    AppLocalizations.of(context)!.clientEmailLabel,
-                  ).copyWith(
-                    prefixIcon: const Icon(Icons.person,
-                        color: BauhausDesign.textMuted),
-                    filled: true,
-                    fillColor: BauhausDesign.surfaceWhite,
-                  ),
+                  decoration:
+                      BauhausDesign.inputDecoration(
+                        AppLocalizations.of(context)!.clientEmailLabel,
+                      ).copyWith(
+                        prefixIcon: const Icon(
+                          Icons.person,
+                          color: BauhausDesign.textMuted,
+                        ),
+                        filled: true,
+                        fillColor: BauhausDesign.surfaceWhite,
+                      ),
                   items: _clients
                       .map((client) {
                         final name =
@@ -839,9 +872,7 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                             overflow: TextOverflow.ellipsis,
                             style: BauhausDesign.getTextTheme(context)
                                 .bodyMedium
-                                ?.copyWith(
-                                  color: BauhausDesign.textDark,
-                                ),
+                                ?.copyWith(color: BauhausDesign.textDark),
                           ),
                         );
                       })
@@ -853,61 +884,65 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                       ? AppLocalizations.of(context)!.requiredField
                       : null,
                   isExpanded: true,
-                  icon: const Icon(Icons.arrow_drop_down,
-                      color: BauhausDesign.neutral),
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: BauhausDesign.textDark,
-                          ),
+                  icon: const Icon(
+                    Icons.arrow_drop_down,
+                    color: BauhausDesign.neutral,
+                  ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
                   dropdownColor: BauhausDesign.surfaceWhite,
                 ),
               const SizedBox(height: BauhausDesign.space4),
               if (!_isFetchingData) ...[
                 DropdownButtonFormField<String>(
                   value: _selectedEmployeeEmail,
-                  decoration: BauhausDesign.inputDecoration(
-                    'Assign Employee (Optional)',
-                  ).copyWith(
-                    prefixIcon:
-                        const Icon(Icons.badge, color: BauhausDesign.textMuted),
-                    filled: true,
-                    fillColor: BauhausDesign.surfaceWhite,
-                  ),
+                  decoration:
+                      BauhausDesign.inputDecoration(
+                        'Assign Employee (Optional)',
+                      ).copyWith(
+                        prefixIcon: const Icon(
+                          Icons.badge,
+                          color: BauhausDesign.textMuted,
+                        ),
+                        filled: true,
+                        fillColor: BauhausDesign.surfaceWhite,
+                      ),
                   items: [
                     const DropdownMenuItem<String>(
                       value: null,
                       child: Text('Unassigned'),
                     ),
-                    ..._employees.map((emp) {
-                      final name = '${emp['firstName']} ${emp['lastName']}';
-                      final email =
-                          emp['email'] as String?; // Handle potential null
-                      if (email == null) return null; // Skip if email is null
+                    ..._employees.map(
+                      (emp) {
+                        final name = '${emp['firstName']} ${emp['lastName']}';
+                        final email =
+                            emp['email'] as String?; // Handle potential null
+                        if (email == null) return null; // Skip if email is null
 
-                      return DropdownMenuItem<String>(
-                        value: email,
-                        child: Text(
-                          name,
-                          overflow: TextOverflow.ellipsis,
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodyMedium
-                              ?.copyWith(
-                                color: BauhausDesign.textDark,
-                              ),
-                        ),
-                      );
-                    }).whereType<
-                        DropdownMenuItem<String>>(), // Filter out nulls
+                        return DropdownMenuItem<String>(
+                          value: email,
+                          child: Text(
+                            name,
+                            overflow: TextOverflow.ellipsis,
+                            style: BauhausDesign.getTextTheme(context)
+                                .bodyMedium
+                                ?.copyWith(color: BauhausDesign.textDark),
+                          ),
+                        );
+                      },
+                    ).whereType<DropdownMenuItem<String>>(), // Filter out nulls
                   ],
                   onChanged: (value) =>
                       setState(() => _selectedEmployeeEmail = value),
                   isExpanded: true,
-                  icon: const Icon(Icons.arrow_drop_down,
-                      color: BauhausDesign.neutral),
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: BauhausDesign.textDark,
-                          ),
+                  icon: const Icon(
+                    Icons.arrow_drop_down,
+                    color: BauhausDesign.neutral,
+                  ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
                   dropdownColor: BauhausDesign.surfaceWhite,
                 ),
                 const SizedBox(height: BauhausDesign.space4),
@@ -915,10 +950,9 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
               const SizedBox(height: BauhausDesign.space4),
               Text(
                 AppLocalizations.of(context)!.dateTimeLabel,
-                style:
-                    BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).labelMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: BauhausDesign.space2),
               GestureDetector(
@@ -954,13 +988,18 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.calendar_today,
-                          size: 16, color: BauhausDesign.textMuted),
+                      const Icon(
+                        Icons.calendar_today,
+                        size: 16,
+                        color: BauhausDesign.textMuted,
+                      ),
                       const SizedBox(width: BauhausDesign.space2),
-                      Text(DateFormat('MMM dd, yyyy').format(_selectedDate),
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodyMedium
-                              ?.copyWith(color: BauhausDesign.textDark)),
+                      Text(
+                        DateFormat('MMM dd, yyyy').format(_selectedDate),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                      ),
                     ],
                   ),
                 ),
@@ -998,10 +1037,12 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: Text(AppLocalizations.of(context)!.cancelButton,
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
-                            ?.copyWith(color: BauhausDesign.neutral)),
+                    child: Text(
+                      AppLocalizations.of(context)!.cancelButton,
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).labelLarge?.copyWith(color: BauhausDesign.neutral),
+                    ),
                   ),
                   const SizedBox(width: BauhausDesign.space3),
                   BauhausActionButton(
@@ -1019,7 +1060,10 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
   }
 
   Widget _buildTimePicker(
-      String label, TimeOfDay time, Function(TimeOfDay) onChanged) {
+    String label,
+    TimeOfDay time,
+    Function(TimeOfDay) onChanged,
+  ) {
     return GestureDetector(
       onTap: () async {
         final newTime = await showTimePicker(
@@ -1051,13 +1095,18 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
         ),
         child: Row(
           children: [
-            const Icon(Icons.access_time,
-                size: 16, color: BauhausDesign.textMuted),
+            const Icon(
+              Icons.access_time,
+              size: 16,
+              color: BauhausDesign.textMuted,
+            ),
             const SizedBox(width: BauhausDesign.space2),
-            Text(time.format(context),
-                style: BauhausDesign.getTextTheme(context)
-                    .bodyMedium
-                    ?.copyWith(color: BauhausDesign.textDark)),
+            Text(
+              time.format(context),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+            ),
           ],
         ),
       ),

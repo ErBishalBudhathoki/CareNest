@@ -54,18 +54,12 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
     return AlertDialog(
       title: Row(
         children: [
-          Icon(
-            Icons.attach_money,
-            color: Theme.of(context).primaryColor,
-          ),
+          Icon(Icons.attach_money, color: Theme.of(context).primaryColor),
           const SizedBox(width: 8),
           const Expanded(
             child: Text(
               'Price Required',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -124,9 +118,13 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
             ),
             const SizedBox(height: 8),
             _buildInfoRow(
-                'NDIS Item:', widget.promptData['ndisItemNumber'] ?? 'N/A'),
+              'NDIS Item:',
+              widget.promptData['ndisItemNumber'] ?? 'N/A',
+            ),
             _buildInfoRow(
-                'Description:', widget.promptData['itemDescription'] ?? 'N/A'),
+              'Description:',
+              widget.promptData['itemDescription'] ?? 'N/A',
+            ),
             _buildQuantityRow(),
             if (widget.promptData['priceCap'] != null)
               _buildInfoRow(
@@ -150,10 +148,7 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
             width: 100,
             child: Text(
               label,
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 12,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
             ),
           ),
           Expanded(
@@ -192,10 +187,7 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
             width: 100,
             child: Text(
               'Quantity:',
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 12,
-              ),
+              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
             ),
           ),
           Expanded(
@@ -209,11 +201,7 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
                 const Tooltip(
                   message:
                       'Exact hours shown up to 4 decimals (seconds included). Total = Hours × Rate.',
-                  child: Icon(
-                    Icons.info_outline,
-                    size: 14,
-                    color: Colors.grey,
-                  ),
+                  child: Icon(Icons.info_outline, size: 14, color: Colors.grey),
                 ),
               ],
             ),
@@ -392,7 +380,8 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-                'NDIS Price Cap: \$${widget.promptData['priceCap'].toStringAsFixed(2)}'),
+              'NDIS Price Cap: \$${widget.promptData['priceCap'].toStringAsFixed(2)}',
+            ),
             const SizedBox(height: 8),
             const Text(
               'This is the maximum price allowed by NDIS for this support item. '
@@ -442,11 +431,9 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
       // Let the parent decide how to close the dialog; do not pop here.
       widget.onPriceProvided(resolution);
     } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: ${error.toString()}'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: ${error.toString()}')));
     } finally {
       setState(() {
         _isLoading = false;
@@ -512,10 +499,7 @@ class PricePromptManager {
         return [];
       }
 
-      resolutions.add({
-        'promptId': prompt['promptId'],
-        'resolution': result,
-      });
+      resolutions.add({'promptId': prompt['promptId'], 'resolution': result});
     }
 
     return resolutions;

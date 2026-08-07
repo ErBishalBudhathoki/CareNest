@@ -44,11 +44,10 @@ class ShiftMatchingState {
 class ShiftMatchingViewModel extends Notifier<ShiftMatchingState> {
   late final SchedulingRepository _repository;
 
-  
   @override
   ShiftMatchingState build() {
     final apiMethod = ref.watch(apiMethodProvider);
-    
+
     return ShiftMatchingState();
   }
 
@@ -66,10 +65,7 @@ class ShiftMatchingViewModel extends Notifier<ShiftMatchingState> {
         organizationId: organizationId,
         criteria: criteria,
       );
-      state = state.copyWith(
-        isLoading: false,
-        matches: matches,
-      );
+      state = state.copyWith(isLoading: false, matches: matches);
     } catch (e) {
       debugPrint('Error in matchWorkers: $e');
       state = state.copyWith(
@@ -94,16 +90,10 @@ class ShiftMatchingViewModel extends Notifier<ShiftMatchingState> {
         organizationId: organizationId,
         criteria: criteria,
       );
-      state = state.copyWith(
-        isLoading: false,
-        autoFillResult: autoFillResult,
-      );
+      state = state.copyWith(isLoading: false, autoFillResult: autoFillResult);
     } catch (e) {
       debugPrint('Error in autoFillShifts: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -127,10 +117,7 @@ class ShiftMatchingViewModel extends Notifier<ShiftMatchingState> {
       );
     } catch (e) {
       debugPrint('Error in optimizeRoute: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -152,10 +139,7 @@ class ShiftMatchingViewModel extends Notifier<ShiftMatchingState> {
       );
     } catch (e) {
       debugPrint('Error in getShiftRecommendations: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -166,4 +150,7 @@ class ShiftMatchingViewModel extends Notifier<ShiftMatchingState> {
 }
 
 /// Provider for shift matching viewmodel
-final shiftMatchingViewModelProvider = NotifierProvider<ShiftMatchingViewModel, ShiftMatchingState>(ShiftMatchingViewModel.new);
+final shiftMatchingViewModelProvider =
+    NotifierProvider<ShiftMatchingViewModel, ShiftMatchingState>(
+      ShiftMatchingViewModel.new,
+    );

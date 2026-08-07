@@ -11,27 +11,27 @@ extension ExpenseListExtension on List<ExpenseModel> {
       where((e) => e.status == status).toList();
 
   /// Calculates the total amount of expenses with a specific status
-  double totalAmountByStatus(String status) => filterByStatus(status)
-      .fold<double>(0.0, (sum, expense) => sum + expense.amount);
+  double totalAmountByStatus(String status) => filterByStatus(
+    status,
+  ).fold<double>(0.0, (sum, expense) => sum + expense.amount);
 
   /// Groups expenses by category and returns a map of category to total amount
   Map<String, double> groupByCategory({String? filterStatus}) {
-    final filteredList =
-        filterStatus != null ? filterByStatus(filterStatus) : this;
-    return filteredList.fold<Map<String, double>>(
-      {},
-      (map, expense) {
-        final category = expense.category;
-        final amount = expense.amount;
-        map[category] = (map[category] ?? 0.0) + amount;
-        return map;
-      },
-    );
+    final filteredList = filterStatus != null
+        ? filterByStatus(filterStatus)
+        : this;
+    return filteredList.fold<Map<String, double>>({}, (map, expense) {
+      final category = expense.category;
+      final amount = expense.amount;
+      map[category] = (map[category] ?? 0.0) + amount;
+      return map;
+    });
   }
 
   /// Returns a sorted list of category entries by amount (descending)
-  List<MapEntry<String, double>> sortedCategoriesByAmount(
-      {String? filterStatus}) {
+  List<MapEntry<String, double>> sortedCategoriesByAmount({
+    String? filterStatus,
+  }) {
     final categoryMap = groupByCategory(filterStatus: filterStatus);
     final sortedEntries = categoryMap.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
@@ -49,7 +49,7 @@ class ExpenseModel {
   final String? receiptUrl;
   final List<String>? receiptPhotos; // List of photo file paths
   final List<String>?
-      receiptFiles; // List of all receipt file paths (images, PDFs, Word docs)
+  receiptFiles; // List of all receipt file paths (images, PDFs, Word docs)
   final String? photoDescription; // Description for the photos
   final String? fileDescription; // Description for all attached files
   final String status; // 'pending', 'approved', 'rejected'
@@ -113,15 +113,17 @@ class ExpenseModel {
     // Debug date parsing
     DateTime date;
     debugPrint(
-        '=== EXPENSE MODEL DEBUG: expenseDate raw: ${json['expenseDate']} ===');
+      '=== EXPENSE MODEL DEBUG: expenseDate raw: ${json['expenseDate']} ===',
+    );
     debugPrint(
-        '=== EXPENSE MODEL DEBUG: expenseDate type: ${json['expenseDate'].runtimeType} ===');
+      '=== EXPENSE MODEL DEBUG: expenseDate type: ${json['expenseDate'].runtimeType} ===',
+    );
     date = _parseFlexibleDate(json['expenseDate']) ?? DateTime.now();
     debugPrint('=== EXPENSE MODEL DEBUG: Parsed date: $date ===');
 
     // Debug status parsing
-    final status =
-        (json['approvalStatus'] ?? json['status'] ?? 'pending').toString();
+    final status = (json['approvalStatus'] ?? json['status'] ?? 'pending')
+        .toString();
     debugPrint('=== EXPENSE MODEL DEBUG: Parsed status: $status ===');
 
     // Debug submittedBy parsing
@@ -133,7 +135,8 @@ class ExpenseModel {
     // Debug createdAt parsing
     DateTime createdAt;
     debugPrint(
-        '=== EXPENSE MODEL DEBUG: createdAt raw: ${json['createdAt']} ===');
+      '=== EXPENSE MODEL DEBUG: createdAt raw: ${json['createdAt']} ===',
+    );
     createdAt = _parseFlexibleDate(json['createdAt']) ?? date;
     debugPrint('=== EXPENSE MODEL DEBUG: Parsed createdAt: $createdAt ===');
 
@@ -145,26 +148,31 @@ class ExpenseModel {
         ? List<String>.from(json['receiptPhotos'])
         : null;
     debugPrint(
-        '=== EXPENSE MODEL DEBUG: Parsed receiptPhotos: $receiptPhotos ===');
+      '=== EXPENSE MODEL DEBUG: Parsed receiptPhotos: $receiptPhotos ===',
+    );
 
     final receiptFiles = json['receiptFiles'] != null
         ? List<String>.from(json['receiptFiles'])
         : null;
     debugPrint(
-        '=== EXPENSE MODEL DEBUG: Parsed receiptFiles: $receiptFiles ===');
+      '=== EXPENSE MODEL DEBUG: Parsed receiptFiles: $receiptFiles ===',
+    );
 
     final photoDescription = json['photoDescription']?.toString();
     debugPrint(
-        '=== EXPENSE MODEL DEBUG: Parsed photoDescription: $photoDescription ===');
+      '=== EXPENSE MODEL DEBUG: Parsed photoDescription: $photoDescription ===',
+    );
 
     final fileDescription = json['fileDescription']?.toString();
     debugPrint(
-        '=== EXPENSE MODEL DEBUG: Parsed fileDescription: $fileDescription ===');
+      '=== EXPENSE MODEL DEBUG: Parsed fileDescription: $fileDescription ===',
+    );
 
     // Debug organizationId parsing
     final organizationId = json['organizationId']?.toString() ?? '';
     debugPrint(
-        '=== EXPENSE MODEL DEBUG: Parsed organizationId: $organizationId ===');
+      '=== EXPENSE MODEL DEBUG: Parsed organizationId: $organizationId ===',
+    );
 
     final expense = ExpenseModel(
       id: id,
@@ -190,7 +198,8 @@ class ExpenseModel {
     );
 
     debugPrint(
-        '=== EXPENSE MODEL DEBUG: Successfully created ExpenseModel: ${expense.id} - ${expense.title} ===');
+      '=== EXPENSE MODEL DEBUG: Successfully created ExpenseModel: ${expense.id} - ${expense.title} ===',
+    );
     return expense;
   }
 

@@ -48,8 +48,7 @@ class MockGeolocatorPlatform extends GeolocatorPlatform {
   @override
   Future<Position?> getLastKnownPosition({
     bool forceLocationManager = false,
-  }) async =>
-      null;
+  }) async => null;
 
   @override
   Future<bool> openLocationSettings() async => false;
@@ -91,8 +90,7 @@ class _StubTimesheetRepository extends TimesheetRepository {
     required String email,
     required DateTime startDate,
     required DateTime endDate,
-  }) async =>
-      [];
+  }) async => [];
 }
 
 // ---------------------------------------------------------------------------
@@ -102,10 +100,8 @@ class _StubTimesheetRepository extends TimesheetRepository {
 Widget buildTestApp() {
   return ProviderScope(
     overrides: [
-      workerDashboardViewModelProvider
-          .overrideWith(FakeDashboardViewModel.new),
-      timesheetRepositoryProvider
-          .overrideWithValue(_StubTimesheetRepository()),
+      workerDashboardViewModelProvider.overrideWith(FakeDashboardViewModel.new),
+      timesheetRepositoryProvider.overrideWithValue(_StubTimesheetRepository()),
     ],
     child: const MediaQuery(
       data: MediaQueryData(disableAnimations: true),
@@ -128,18 +124,21 @@ void main() {
   setUp(() {
     GeolocatorPlatform.instance = MockGeolocatorPlatform();
     final binding = TestWidgetsFlutterBinding.ensureInitialized();
-    binding.platformDispatcher.views.first.physicalSize = const Size(1080, 1920);
+    binding.platformDispatcher.views.first.physicalSize = const Size(
+      1080,
+      1920,
+    );
     binding.platformDispatcher.views.first.devicePixelRatio = 1.0;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
-      const MethodChannel('flutter/platform_views'),
-      (MethodCall methodCall) async {
-        if (methodCall.method == 'create') {
-          return 1;
-        }
-        return null;
-      },
-    );
+          const MethodChannel('flutter/platform_views'),
+          (MethodCall methodCall) async {
+            if (methodCall.method == 'create') {
+              return 1;
+            }
+            return null;
+          },
+        );
   });
 
   tearDown(() {
@@ -149,9 +148,9 @@ void main() {
     GeolocatorPlatform.instance = originalGeolocatorPlatform;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
-      const MethodChannel('flutter/platform_views'),
-      null,
-    );
+          const MethodChannel('flutter/platform_views'),
+          null,
+        );
   });
 
   group('ClockInAndOutView', () {

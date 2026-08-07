@@ -13,8 +13,10 @@ class OcrRepository {
 
   OcrRepository(this._apiMethod);
 
-  Future<OcrResult> parseReceipt(String rawText,
-      {String source = 'unknown'}) async {
+  Future<OcrResult> parseReceipt(
+    String rawText, {
+    String source = 'unknown',
+  }) async {
     final response = await _apiMethod.post(
       'ocr/parse', // Matches backend route /api/ocr/parse (via base URL)
       body: {'rawText': rawText, 'source': source},

@@ -88,7 +88,8 @@ abstract class HealthStabilityPrediction with _$HealthStabilityPrediction {
 }
 
 @freezed
-abstract class ServiceUtilizationPrediction with _$ServiceUtilizationPrediction {
+abstract class ServiceUtilizationPrediction
+    with _$ServiceUtilizationPrediction {
   const factory ServiceUtilizationPrediction({
     required String predictedChange,
     required int percentage,
@@ -108,8 +109,7 @@ abstract class Alert with _$Alert {
     required String action,
   }) = _Alert;
 
-  factory Alert.fromJson(Map<String, dynamic> json) =>
-      _$AlertFromJson(json);
+  factory Alert.fromJson(Map<String, dynamic> json) => _$AlertFromJson(json);
 }
 
 @freezed
@@ -312,7 +312,8 @@ abstract class MonitoringPlan with _$MonitoringPlan {
 }
 
 @freezed
-abstract class BehaviorEscalationPrediction with _$BehaviorEscalationPrediction {
+abstract class BehaviorEscalationPrediction
+    with _$BehaviorEscalationPrediction {
   const factory BehaviorEscalationPrediction({
     required double escalationProbability,
     required String timeframe,
@@ -329,10 +330,8 @@ abstract class BehaviorEscalationPrediction with _$BehaviorEscalationPrediction 
 
 @freezed
 abstract class Trigger with _$Trigger {
-  const factory Trigger({
-    required String trigger,
-    required double likelihood,
-  }) = _Trigger;
+  const factory Trigger({required String trigger, required double likelihood}) =
+      _Trigger;
 
   factory Trigger.fromJson(Map<String, dynamic> json) =>
       _$TriggerFromJson(json);
@@ -451,13 +450,9 @@ abstract class Resources with _$Resources {
 
 @freezed
 abstract class Budget with _$Budget {
-  const factory Budget({
-    required int weekly,
-    required int monthly,
-  }) = _Budget;
+  const factory Budget({required int weekly, required int monthly}) = _Budget;
 
-  factory Budget.fromJson(Map<String, dynamic> json) =>
-      _$BudgetFromJson(json);
+  factory Budget.fromJson(Map<String, dynamic> json) => _$BudgetFromJson(json);
 }
 
 @freezed
@@ -480,19 +475,14 @@ abstract class Phase with _$Phase {
     required String focus,
   }) = _Phase;
 
-  factory Phase.fromJson(Map<String, dynamic> json) =>
-      _$PhaseFromJson(json);
+  factory Phase.fromJson(Map<String, dynamic> json) => _$PhaseFromJson(json);
 }
 
 @freezed
 abstract class Review with _$Review {
-  const factory Review({
-    required String type,
-    required String date,
-  }) = _Review;
+  const factory Review({required String type, required String date}) = _Review;
 
-  factory Review.fromJson(Map<String, dynamic> json) =>
-      _$ReviewFromJson(json);
+  factory Review.fromJson(Map<String, dynamic> json) => _$ReviewFromJson(json);
 }
 
 @freezed
@@ -569,10 +559,8 @@ abstract class RootCauseAnalysis with _$RootCauseAnalysis {
 
 @freezed
 abstract class RootCause with _$RootCause {
-  const factory RootCause({
-    required String cause,
-    required String likelihood,
-  }) = _RootCause;
+  const factory RootCause({required String cause, required String likelihood}) =
+      _RootCause;
 
   factory RootCause.fromJson(Map<String, dynamic> json) =>
       _$RootCauseFromJson(json);
@@ -651,8 +639,7 @@ abstract class Trends with _$Trends {
     required String significance,
   }) = _Trends;
 
-  factory Trends.fromJson(Map<String, dynamic> json) =>
-      _$TrendsFromJson(json);
+  factory Trends.fromJson(Map<String, dynamic> json) => _$TrendsFromJson(json);
 }
 
 @freezed
@@ -716,9 +703,8 @@ abstract class MedicationComplianceDetail with _$MedicationComplianceDetail {
 
 @freezed
 abstract class CompliancePatterns with _$CompliancePatterns {
-  const factory CompliancePatterns({
-    required MissedDoses missedDoses,
-  }) = _CompliancePatterns;
+  const factory CompliancePatterns({required MissedDoses missedDoses}) =
+      _CompliancePatterns;
 
   factory CompliancePatterns.fromJson(Map<String, dynamic> json) =>
       _$CompliancePatternsFromJson(json);

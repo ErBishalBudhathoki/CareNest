@@ -43,12 +43,14 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
       vsync: this,
     );
 
-    _elevationAnimation = Tween<double>(begin: 4, end: 12).animate(
-      CurvedAnimation(parent: _hoverController, curve: Curves.easeOut),
-    );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.02).animate(
-      CurvedAnimation(parent: _hoverController, curve: Curves.easeOut),
-    );
+    _elevationAnimation = Tween<double>(
+      begin: 4,
+      end: 12,
+    ).animate(CurvedAnimation(parent: _hoverController, curve: Curves.easeOut));
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.02,
+    ).animate(CurvedAnimation(parent: _hoverController, curve: Curves.easeOut));
     _chartAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _chartController, curve: Curves.elasticOut),
     );
@@ -85,10 +87,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    Colors.white,
-                    Colors.grey.shade50,
-                  ],
+                  colors: [Colors.white, Colors.grey.shade50],
                 ),
                 boxShadow: [
                   BoxShadow(
@@ -170,10 +169,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Colors.blue.shade400,
-                Colors.blue.shade600,
-              ],
+              colors: [Colors.blue.shade400, Colors.blue.shade600],
             ),
             boxShadow: [
               BoxShadow(
@@ -237,10 +233,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  Colors.orange.shade400,
-                  Colors.orange.shade600,
-                ],
+                colors: [Colors.orange.shade400, Colors.orange.shade600],
               ),
               boxShadow: [
                 BoxShadow(
@@ -308,15 +301,9 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            color.withOpacity(0.1),
-            color.withOpacity(0.1),
-          ],
+          colors: [color.withOpacity(0.1), color.withOpacity(0.1)],
         ),
-        border: Border.all(
-          color: color.withOpacity(0.1),
-          width: 1,
-        ),
+        border: Border.all(color: color.withOpacity(0.1), width: 1),
       ),
       child: Column(
         children: [
@@ -328,10 +315,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  color.withOpacity(0.1),
-                  color,
-                ],
+                colors: [color.withOpacity(0.1), color],
               ),
               boxShadow: [
                 BoxShadow(
@@ -341,11 +325,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                 ),
               ],
             ),
-            child: Icon(
-              icon,
-              color: Colors.white,
-              size: 16,
-            ),
+            child: Icon(icon, color: Colors.white, size: 16),
           ),
           const SizedBox(height: 8),
           Text(
@@ -358,10 +338,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
           ),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 11,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
           ),
         ],
       ),
@@ -377,15 +354,9 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Colors.blue.shade50,
-            Colors.indigo.shade50,
-          ],
+          colors: [Colors.blue.shade50, Colors.indigo.shade50],
         ),
-        border: Border.all(
-          color: Colors.blue.withOpacity(0.1),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.blue.withOpacity(0.1), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -422,10 +393,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                       spots: data,
                       isCurved: true,
                       gradient: LinearGradient(
-                        colors: [
-                          Colors.blue.shade400,
-                          Colors.indigo.shade600,
-                        ],
+                        colors: [Colors.blue.shade400, Colors.indigo.shade600],
                       ),
                       barWidth: 3,
                       isStrokeCapRound: true,
@@ -475,11 +443,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
       children: [
         Row(
           children: [
-            Icon(
-              Icons.event_outlined,
-              size: 16,
-              color: Colors.grey.shade700,
-            ),
+            Icon(Icons.event_outlined, size: 16, color: Colors.grey.shade700),
             const SizedBox(width: 8),
             Text(
               'Upcoming Shifts',
@@ -524,10 +488,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         color: Colors.white,
-        border: Border.all(
-          color: Colors.grey.shade200,
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey.shade200, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -543,8 +504,9 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
             height: 8,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color:
-                  isHighIntensity ? Colors.red.shade400 : Colors.green.shade400,
+              color: isHighIntensity
+                  ? Colors.red.shade400
+                  : Colors.green.shade400,
             ),
           ),
           const SizedBox(width: 12),
@@ -562,10 +524,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                 ),
                 Text(
                   '$startTime - $endTime',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                 ),
               ],
             ),
@@ -606,10 +565,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
             const SizedBox(width: 4),
             Text(
               'Created ${_formatDate(createdAt)}',
-              style: TextStyle(
-                fontSize: 11,
-                color: Colors.grey.shade500,
-              ),
+              style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
             ),
           ],
         ),
@@ -618,10 +574,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             gradient: LinearGradient(
-              colors: [
-                Colors.blue.shade50,
-                Colors.indigo.shade50,
-              ],
+              colors: [Colors.blue.shade50, Colors.indigo.shade50],
             ),
           ),
           child: Text(
@@ -663,7 +616,10 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
   }
 
   double _calculateShiftHours(
-      String startTime, String endTime, String breakTime) {
+    String startTime,
+    String endTime,
+    String breakTime,
+  ) {
     try {
       final start = _parseTime(startTime);
       final end = _parseTime(endTime);

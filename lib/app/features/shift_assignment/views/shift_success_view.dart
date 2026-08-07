@@ -45,8 +45,10 @@ class ShiftSuccessView extends StatelessWidget {
                     padding: const EdgeInsets.all(BauhausDesign.space2),
                     decoration: BoxDecoration(
                       color: BauhausDesign.success,
-                      border:
-                          Border.all(color: BauhausDesign.neutral, width: 2),
+                      border: Border.all(
+                        color: BauhausDesign.neutral,
+                        width: 2,
+                      ),
                     ),
                     child: const Icon(
                       Icons.check,
@@ -88,7 +90,9 @@ class ShiftSuccessView extends StatelessWidget {
                   ),
                   const SizedBox(height: BauhausDesign.space3),
                   Container(
-                      height: 2, color: BauhausDesign.neutral.withOpacity(0.2)),
+                    height: 2,
+                    color: BauhausDesign.neutral.withOpacity(0.2),
+                  ),
                   const SizedBox(height: BauhausDesign.space3),
                   _buildDetailRow(
                     context,
@@ -149,20 +153,22 @@ class ShiftSuccessView extends StatelessWidget {
         ),
         child: SafeArea(
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
+            padding: const EdgeInsets.symmetric(
+              horizontal: BauhausDesign.space4,
+            ),
             child: Row(
               children: [
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.arrow_back,
-                      color: BauhausDesign.textDark),
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: BauhausDesign.textDark,
+                  ),
                 ),
                 const SizedBox(width: BauhausDesign.space2),
                 Text(
                   AppLocalizations.of(context)!.shiftDetails.toUpperCase(),
-                  style: BauhausDesign.getTextTheme(context)
-                      .displaySmall
+                  style: BauhausDesign.getTextTheme(context).displaySmall
                       ?.copyWith(
                         color: BauhausDesign.textDark,
                         fontWeight: FontWeight.bold,
@@ -202,17 +208,17 @@ class ShiftSuccessView extends StatelessWidget {
               Text(
                 label,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: BauhausDesign.neutral,
-                      letterSpacing: 1,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: BauhausDesign.neutral,
+                  letterSpacing: 1,
+                ),
               ),
               Text(
                 value,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: BauhausDesign.textDark,
-                    ),
+                  fontWeight: FontWeight.w600,
+                  color: BauhausDesign.textDark,
+                ),
                 overflow: TextOverflow.ellipsis,
               ),
             ],

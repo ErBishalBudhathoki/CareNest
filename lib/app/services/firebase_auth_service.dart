@@ -23,10 +23,12 @@ class FirebaseAuthService {
   Future<void> initializeAppCheck() async {
     try {
       await _appCheck.activate(
-        androidProvider:
-            kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
-        appleProvider:
-            kDebugMode ? AppleProvider.debug : AppleProvider.appAttest,
+        androidProvider: kDebugMode
+            ? AndroidProvider.debug
+            : AndroidProvider.playIntegrity,
+        appleProvider: kDebugMode
+            ? AppleProvider.debug
+            : AppleProvider.appAttest,
       );
       debugPrint('✅ Firebase App Check initialized');
     } catch (e) {
@@ -115,7 +117,8 @@ class FirebaseAuthService {
       debugPrint('✅ Password reset code verified');
     } on FirebaseAuthException catch (e) {
       debugPrint(
-          '❌ Password reset code verification error: ${e.code} - ${e.message}');
+        '❌ Password reset code verification error: ${e.code} - ${e.message}',
+      );
       throw _handleAuthException(e);
     }
   }
@@ -143,8 +146,9 @@ class FirebaseAuthService {
       if (!user.emailVerified) {
         final projectId = Firebase.app().options.projectId;
         final isDev = AppConfig.appFlavor == Flavor.development;
-        final bundleId =
-            isDev ? 'com.bishal.invoice.dev' : 'com.bishal.invoice';
+        final bundleId = isDev
+            ? 'com.bishal.invoice.dev'
+            : 'com.bishal.invoice';
 
         final actionCodeSettings = ActionCodeSettings(
           url: 'https://$projectId.firebaseapp.com/email-verified',
@@ -256,10 +260,12 @@ class FirebaseAuthService {
     final lowerMessage = rawMessage.toLowerCase();
     String message;
 
-    if (lowerMessage
-            .contains('requests from this android client application') &&
+    if (lowerMessage.contains(
+          'requests from this android client application',
+        ) &&
         lowerMessage.contains('are blocked')) {
-      message = 'This app build is blocked by Firebase/Google Cloud security settings. '
+      message =
+          'This app build is blocked by Firebase/Google Cloud security settings. '
           'Ensure the signing SHA fingerprint for this build is added to '
           'the API key restrictions in Google Cloud Console, and the app '
           'is registered in Firebase App Check.';

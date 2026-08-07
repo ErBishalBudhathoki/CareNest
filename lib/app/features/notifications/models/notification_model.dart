@@ -57,7 +57,9 @@ class NotificationModel {
       timestamp: DateTime.fromMillisecondsSinceEpoch(json['timestamp'] ?? 0),
       isRead: json['isRead'] ?? false,
       type: json['type'],
-      data: json['data'] != null ? Map<String, dynamic>.from(json['data']) : null,
+      data: json['data'] != null
+          ? Map<String, dynamic>.from(json['data'])
+          : null,
     );
   }
 

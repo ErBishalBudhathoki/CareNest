@@ -24,9 +24,12 @@ class AppointmentRepository {
   }
 
   Future<ClientDetailModel?> loadAppointmentDetails(
-      String userEmail, String clientEmail) async {
-    final response =
-        await _apiMethod.get('loadAppointmentDetails/$userEmail/$clientEmail');
+    String userEmail,
+    String clientEmail,
+  ) async {
+    final response = await _apiMethod.get(
+      'loadAppointmentDetails/$userEmail/$clientEmail',
+    );
 
     if (response['success'] == true) {
       final data = response['data'];
@@ -41,36 +44,43 @@ class AppointmentRepository {
     final response = await _apiMethod.post('setWorkedTime', body: data);
 
     if (response['success'] != true && response['statusCode'] != 200) {
-      throw Exception(response['message'] ??
-          response['error'] ??
-          'Failed to set worked time');
+      throw Exception(
+        response['message'] ?? response['error'] ?? 'Failed to set worked time',
+      );
     }
   }
 
   Future<List<AssignedClientAppointment>> getOrganizationAssignments(
-      String organizationId) async {
-    final response =
-        await _apiMethod.get('getOrganizationAssignments/$organizationId');
+    String organizationId,
+  ) async {
+    final response = await _apiMethod.get(
+      'getOrganizationAssignments/$organizationId',
+    );
 
     if (response['success'] == true) {
       final List data = response['assignments'] ?? [];
       return data.map((e) => AssignedClientAppointment.fromJson(e)).toList();
     }
     throw Exception(
-        response['error'] ?? 'Failed to get organization assignments');
+      response['error'] ?? 'Failed to get organization assignments',
+    );
   }
 
   Future<void> removeClientAssignment(
-      String userEmail, String clientEmail) async {
+    String userEmail,
+    String clientEmail,
+  ) async {
     // Manually constructing query params for DELETE as per previous fix
     final endpoint =
         'removeClientAssignment?userEmail=$userEmail&clientEmail=$clientEmail';
     final response = await _apiMethod.delete(endpoint);
 
     if (response['success'] != true && response['statusCode'] != 200) {
-      throw Exception(response['error'] ??
-          response['message'] ??
-          'Failed to remove assignment');
+      throw Exception(
+        response['error'] ??
+            response['message'] ??
+            'Failed to remove assignment',
+      );
     }
   }
 

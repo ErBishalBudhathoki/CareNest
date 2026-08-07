@@ -22,7 +22,8 @@ class MultiOrgRepository {
       return data.map((e) => MultiOrgRollup.fromJson(e)).toList();
     } else {
       throw Exception(
-          response['message'] ?? 'Failed to fetch multi-org rollup');
+        response['message'] ?? 'Failed to fetch multi-org rollup',
+      );
     }
   }
 }

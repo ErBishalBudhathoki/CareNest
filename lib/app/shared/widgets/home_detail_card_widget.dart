@@ -51,29 +51,17 @@ class _HomeDetailCardState extends State<HomeDetailCard>
     );
 
     // Setup animations
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.02,
-    ).animate(CurvedAnimation(
-      parent: _hoverController,
-      curve: Curves.easeInOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.02).animate(
+      CurvedAnimation(parent: _hoverController, curve: Curves.easeInOut),
+    );
 
-    _elevationAnimation = Tween<double>(
-      begin: 8.0,
-      end: 16.0,
-    ).animate(CurvedAnimation(
-      parent: _hoverController,
-      curve: Curves.easeInOut,
-    ));
+    _elevationAnimation = Tween<double>(begin: 8.0, end: 16.0).animate(
+      CurvedAnimation(parent: _hoverController, curve: Curves.easeInOut),
+    );
 
-    _floatingAnimation = Tween<double>(
-      begin: -8.0,
-      end: 8.0,
-    ).animate(CurvedAnimation(
-      parent: _floatingController,
-      curve: Curves.easeInOut,
-    ));
+    _floatingAnimation = Tween<double>(begin: -8.0, end: 8.0).animate(
+      CurvedAnimation(parent: _floatingController, curve: Curves.easeInOut),
+    );
 
     // Start floating animation
     _floatingController.repeat(reverse: true);
@@ -121,7 +109,9 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                     // Main card container with enhanced shadow
                     Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusLg,
+                        ),
                         gradient: LinearGradient(
                           colors: [
                             widget.gradientStartColor,
@@ -149,17 +139,16 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
+                        borderRadius: BorderRadius.circular(
+                          BauhausDesign.radiusLg,
+                        ),
                         gradient: LinearGradient(
                           colors: _isHovered
                               ? [
                                   BauhausDesign.surfaceWhite.withOpacity(0.1),
                                   BauhausDesign.surfaceWhite.withOpacity(0.05),
                                 ]
-                              : [
-                                  Colors.transparent,
-                                  Colors.transparent,
-                                ],
+                              : [Colors.transparent, Colors.transparent],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -177,25 +166,29 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                             Text(
                               widget.cardLabel,
                               textAlign: TextAlign.center,
-                              style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                                color: BauhausDesign.surfaceWhite,
-                                letterSpacing: -0.5,
-                                height: 1.1,
-                                shadows: [
-                                  const Shadow(
-                                    color: Colors.black26,
-                                    blurRadius: 8,
-                                    offset: Offset(0, 2),
+                              style: BauhausDesign.getTextTheme(context)
+                                  .headlineSmall
+                                  ?.copyWith(
+                                    color: BauhausDesign.surfaceWhite,
+                                    letterSpacing: -0.5,
+                                    height: 1.1,
+                                    shadows: [
+                                      const Shadow(
+                                        color: Colors.black26,
+                                        blurRadius: 8,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
                             ),
                             const SizedBox(height: BauhausDesign.space3),
 
                             // Enhanced Button with ripple effect
                             Container(
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                                borderRadius: BorderRadius.circular(
+                                  BauhausDesign.radiusMd,
+                                ),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withOpacity(0.1),
@@ -205,32 +198,49 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                                 ],
                               ),
                               child: Material(
-                                color: BauhausDesign.surfaceWhite.withOpacity(0.95),
-                                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                                color: BauhausDesign.surfaceWhite.withOpacity(
+                                  0.95,
+                                ),
+                                borderRadius: BorderRadius.circular(
+                                  BauhausDesign.radiusMd,
+                                ),
                                 child: InkWell(
                                   onTap: widget.onPressed,
-                                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                                  splashColor: widget.gradientStartColor.withOpacity(0.2),
-                                  highlightColor: widget.gradientStartColor.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(
+                                    BauhausDesign.radiusMd,
+                                  ),
+                                  splashColor: widget.gradientStartColor
+                                      .withOpacity(0.2),
+                                  highlightColor: widget.gradientStartColor
+                                      .withOpacity(0.1),
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: BauhausDesign.space3),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: BauhausDesign.space3,
+                                    ),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Icon(
                                           Icons.add_circle_outline_rounded,
                                           color: widget.gradientStartColor,
                                           size: 18,
                                         ),
-                                        const SizedBox(width: BauhausDesign.space2),
+                                        const SizedBox(
+                                          width: BauhausDesign.space2,
+                                        ),
                                         Flexible(
                                           child: Text(
                                             widget.buttonLabel,
-                                            style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                                              color: widget.gradientStartColor,
-                                              fontWeight: FontWeight.bold,
-                                              letterSpacing: 0.2,
-                                            ),
+                                            style:
+                                                BauhausDesign.getTextTheme(
+                                                  context,
+                                                ).labelLarge?.copyWith(
+                                                  color:
+                                                      widget.gradientStartColor,
+                                                  fontWeight: FontWeight.bold,
+                                                  letterSpacing: 0.2,
+                                                ),
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
@@ -255,17 +265,24 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                         child: Container(
                           height: 180,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                            borderRadius: BorderRadius.circular(
+                              BauhausDesign.radiusMd,
+                            ),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.1),
                                 blurRadius: 20,
-                                offset: Offset(0, 10 + _floatingAnimation.value.abs()),
+                                offset: Offset(
+                                  0,
+                                  10 + _floatingAnimation.value.abs(),
+                                ),
                               ),
                             ],
                           ),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                            borderRadius: BorderRadius.circular(
+                              BauhausDesign.radiusMd,
+                            ),
                             child: widget.image,
                           ),
                         ),
@@ -275,28 +292,35 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                     // Shimmer effect for premium feel
                     if (_isHovered)
                       Positioned.fill(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.transparent,
-                                BauhausDesign.surfaceWhite.withOpacity(0.1),
-                                Colors.transparent,
-                              ],
-                              stops: const [0.0, 0.5, 1.0],
-                              begin: const Alignment(-1.0, -1.0),
-                              end: const Alignment(1.0, 1.0),
-                            ),
-                          ),
-                        )
-                            .animate(
-                              onPlay: (controller) => controller.repeat(),
-                            )
-                            .shimmer(
-                              duration: 2000.ms,
-                              color: BauhausDesign.surfaceWhite.withOpacity(0.3),
-                            ),
+                        child:
+                            Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                      BauhausDesign.radiusLg,
+                                    ),
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Colors.transparent,
+                                        BauhausDesign.surfaceWhite.withOpacity(
+                                          0.1,
+                                        ),
+                                        Colors.transparent,
+                                      ],
+                                      stops: const [0.0, 0.5, 1.0],
+                                      begin: const Alignment(-1.0, -1.0),
+                                      end: const Alignment(1.0, 1.0),
+                                    ),
+                                  ),
+                                )
+                                .animate(
+                                  onPlay: (controller) => controller.repeat(),
+                                )
+                                .shimmer(
+                                  duration: 2000.ms,
+                                  color: BauhausDesign.surfaceWhite.withOpacity(
+                                    0.3,
+                                  ),
+                                ),
                       ),
                   ],
                 ),

@@ -151,20 +151,25 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
               child: Container(
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
-                  gradient: widget.data.gradient ??
+                  gradient:
+                      widget.data.gradient ??
                       LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          widget.data.surfaceColor ??
-                              Colors.white,
-                          (widget.data.surfaceColor ??
-                                  Colors.white)
+                          widget.data.surfaceColor ?? Colors.white,
+                          (widget.data.surfaceColor ?? Colors.white)
                               .withOpacity(0.1),
                         ],
                       ),
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 8,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
                   border: widget.data.showBorder
                       ? Border.all(
                           color: (widget.data.color ?? const Color(0xFFE0E0E0))
@@ -199,7 +204,8 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
 
     // Apply accessibility semantics
     card = Semantics(
-      label: widget.data.accessibilityLabel ??
+      label:
+          widget.data.accessibilityLabel ??
           '${widget.data.title}: ${widget.data.value}',
       value: widget.data.trend != null
           ? '${widget.data.trend!.isPositive ? "Increased" : "Decreased"} by ${widget.data.trend!.percentage}%'
@@ -254,10 +260,11 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
         Expanded(
           child: Text(
             widget.data.title,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500).copyWith(
-              color: widget.data.titleColor ?? const Color(0xFF6B7280),
-              letterSpacing: 0.5,
-            ),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)
+                .copyWith(
+                  color: widget.data.titleColor ?? const Color(0xFF6B7280),
+                  letterSpacing: 0.5,
+                ),
             overflow: TextOverflow.ellipsis,
             maxLines: 2,
           ),
@@ -282,8 +289,7 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: (widget.data.color ?? const Color(0xFF667EEA))
-            .withOpacity(0.1),
+        color: (widget.data.color ?? const Color(0xFF667EEA)).withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(
@@ -297,10 +303,11 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
   Widget _buildValue() {
     return Text(
       widget.data.value,
-      style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700).copyWith(
-        color: widget.data.valueColor ?? const Color(0xFF1F2937),
-        letterSpacing: -0.5,
-      ),
+      style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700)
+          .copyWith(
+            color: widget.data.valueColor ?? const Color(0xFF1F2937),
+            letterSpacing: -0.5,
+          ),
       overflow: TextOverflow.ellipsis,
       maxLines: 1,
     );
@@ -309,16 +316,12 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
   Widget _buildTrendIndicator() {
     final trend = widget.data.trend!;
     final isPositive = trend.isPositive;
-    final color =
-        isPositive ? Colors.green : Colors.red;
+    final color = isPositive ? Colors.green : Colors.red;
 
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
-            vertical: 2,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2),
           decoration: BoxDecoration(
             color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
@@ -334,10 +337,10 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
               const SizedBox(width: 2),
               Text(
                 '${trend.percentage}%',
-                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500).copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: color,
-                ),
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                ).copyWith(fontWeight: FontWeight.w600, color: color),
               ),
             ],
           ),
@@ -346,9 +349,10 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
           const SizedBox(width: 16.0),
           Text(
             trend.period!,
-            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500).copyWith(
-              color: const Color(0xFF9CA3AF),
-            ),
+            style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+            ).copyWith(color: const Color(0xFF9CA3AF)),
           ),
         ],
       ],
@@ -477,18 +481,10 @@ class TrendData {
   });
 
   factory TrendData.positive(double percentage, {String? period}) {
-    return TrendData(
-      percentage: percentage,
-      isPositive: true,
-      period: period,
-    );
+    return TrendData(percentage: percentage, isPositive: true, period: period);
   }
 
   factory TrendData.negative(double percentage, {String? period}) {
-    return TrendData(
-      percentage: percentage,
-      isPositive: false,
-      period: period,
-    );
+    return TrendData(percentage: percentage, isPositive: false, period: period);
   }
 }

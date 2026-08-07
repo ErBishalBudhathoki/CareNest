@@ -49,7 +49,6 @@ class InvoiceDetailState {
 class InvoiceDetailViewModel extends Notifier<InvoiceDetailState> {
   late final InvoiceManagementService _invoiceService;
 
-  
   @override
   InvoiceDetailState build() {
     _invoiceService = ref.watch(invoiceManagementServiceProvider);
@@ -62,7 +61,9 @@ class InvoiceDetailViewModel extends Notifier<InvoiceDetailState> {
 
   // Load invoice details
   Future<void> loadInvoiceDetails(
-      String invoiceId, String organizationId) async {
+    String invoiceId,
+    String organizationId,
+  ) async {
     state = state.copyWith(isLoading: true, error: null, warning: null);
 
     try {
@@ -89,10 +90,7 @@ class InvoiceDetailViewModel extends Notifier<InvoiceDetailState> {
           );
           return;
         }
-        state = state.copyWith(
-          isLoading: false,
-          error: message,
-        );
+        state = state.copyWith(isLoading: false, error: message);
       }
     } catch (e) {
       if (state.invoice != null) {
@@ -162,10 +160,14 @@ class InvoiceDetailViewModel extends Notifier<InvoiceDetailState> {
 }
 
 // Providers
-final invoiceDetailViewModelProvider = NotifierProvider<InvoiceDetailViewModel, InvoiceDetailState>(InvoiceDetailViewModel.new);
+final invoiceDetailViewModelProvider =
+    NotifierProvider<InvoiceDetailViewModel, InvoiceDetailState>(
+      InvoiceDetailViewModel.new,
+    );
 
 // Provider for invoice service
 final invoiceManagementServiceProvider = Provider<InvoiceManagementService>(
   (ref) => InvoiceManagementService(
-      apiMethod: ref.read(app_providers.apiMethodProvider)),
+    apiMethod: ref.read(app_providers.apiMethodProvider),
+  ),
 );

@@ -18,10 +18,7 @@ class AccountingRepository {
   }) async {
     final response = await _apiMethod.post(
       'accounting/connect',
-      body: {
-        'provider': provider,
-        'organizationId': organizationId,
-      },
+      body: {'provider': provider, 'organizationId': organizationId},
     );
 
     if (response['success'] == true) {
@@ -37,10 +34,7 @@ class AccountingRepository {
   }) async {
     final response = await _apiMethod.post(
       'accounting/sync',
-      body: {
-        'organizationId': organizationId,
-        'invoiceIds': invoiceIds,
-      },
+      body: {'organizationId': organizationId, 'invoiceIds': invoiceIds},
     );
 
     if (response['success'] == true) {

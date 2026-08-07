@@ -8,7 +8,8 @@ class QualityAssuranceView extends ConsumerStatefulWidget {
   const QualityAssuranceView({super.key});
 
   @override
-  ConsumerState<QualityAssuranceView> createState() => _QualityAssuranceViewState();
+  ConsumerState<QualityAssuranceView> createState() =>
+      _QualityAssuranceViewState();
 }
 
 class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
@@ -24,10 +25,9 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
     final orgState = ref.read(organizationProvider);
     final orgId = orgState.currentOrganization?.id;
     if (orgId != null) {
-      ref.read(qualityAssuranceViewModelProvider.notifier).scoreServiceQuality(
-        organizationId: orgId,
-        appointmentId: 'all',
-      );
+      ref
+          .read(qualityAssuranceViewModelProvider.notifier)
+          .scoreServiceQuality(organizationId: orgId, appointmentId: 'all');
     }
   }
 
@@ -62,24 +62,24 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
       body: state.isLoading
           ? const Center(child: CircularProgressIndicator())
           : state.error != null
-              ? _buildError(state.error!)
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildHeader(),
-                      const SizedBox(height: 24),
-                      _buildQualityScore(state),
-                      const SizedBox(height: 24),
-                      _buildComplianceStatus(state),
-                      const SizedBox(height: 24),
-                      _buildRiskAssessment(state),
-                      const SizedBox(height: 24),
-                      _buildActionButtons(),
-                    ],
-                  ),
-                ),
+          ? _buildError(state.error!)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(),
+                  const SizedBox(height: 24),
+                  _buildQualityScore(state),
+                  const SizedBox(height: 24),
+                  _buildComplianceStatus(state),
+                  const SizedBox(height: 24),
+                  _buildRiskAssessment(state),
+                  const SizedBox(height: 24),
+                  _buildActionButtons(),
+                ],
+              ),
+            ),
     );
   }
 
@@ -117,7 +117,10 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.colorOrange, AppColors.colorOrange.withOpacity(0.8)],
+          colors: [
+            AppColors.colorOrange,
+            AppColors.colorOrange.withOpacity(0.8),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -161,10 +164,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
                 SizedBox(height: 4),
                 Text(
                   'Automated quality checks',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.colorWhite,
-                  ),
+                  style: TextStyle(fontSize: 14, color: AppColors.colorWhite),
                 ),
               ],
             ),
@@ -180,8 +180,8 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
     final scoreColor = score >= 0.8
         ? AppColors.colorGreen
         : score >= 0.6
-            ? AppColors.colorOrange
-            : AppColors.colorRed;
+        ? AppColors.colorOrange
+        : AppColors.colorRed;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,7 +231,11 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
               ),
               const SizedBox(height: 16),
               Text(
-                score >= 0.8 ? 'Excellent' : score >= 0.6 ? 'Good' : 'Needs Improvement',
+                score >= 0.8
+                    ? 'Excellent'
+                    : score >= 0.6
+                    ? 'Good'
+                    : 'Needs Improvement',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -291,7 +295,10 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: Color(0xFF1A1A1A), width: 2), // BauhausDesign.neutral
+          bottom: BorderSide(
+            color: Color(0xFF1A1A1A),
+            width: 2,
+          ), // BauhausDesign.neutral
         ),
       ),
       child: Row(
@@ -325,10 +332,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
                 const SizedBox(height: 4),
                 Text(
                   isCompliant ? 'Compliant' : 'Non-compliant',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: color,
-                  ),
+                  style: TextStyle(fontSize: 12, color: color),
                 ),
               ],
             ),
@@ -396,8 +400,8 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
     final color = risk > 0.7
         ? AppColors.colorRed
         : risk > 0.4
-            ? AppColors.colorOrange
-            : AppColors.colorGreen;
+        ? AppColors.colorOrange
+        : AppColors.colorGreen;
 
     return Row(
       children: [
@@ -428,12 +432,19 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
       decoration: BoxDecoration(
         color: AppColors.colorWhite,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Color(0xFF1A1A1A), width: 2), // BauhausDesign.neutral
+        border: Border.all(
+          color: Color(0xFF1A1A1A),
+          width: 2,
+        ), // BauhausDesign.neutral
       ),
       child: Center(
         child: Column(
           children: [
-            const Icon(Icons.inbox_outlined, size: 48, color: Color(0xFF666666)), // BauhausDesign.textMuted
+            const Icon(
+              Icons.inbox_outlined,
+              size: 48,
+              color: Color(0xFF666666),
+            ), // BauhausDesign.textMuted
             const SizedBox(height: 12),
             Text(
               message,

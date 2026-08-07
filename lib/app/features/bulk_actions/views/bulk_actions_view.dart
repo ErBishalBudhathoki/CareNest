@@ -131,10 +131,7 @@ class _BulkTimesheetTabState extends State<_BulkTimesheetTab> {
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: [
-                        approveButton,
-                        rejectButton,
-                      ],
+                      children: [approveButton, rejectButton],
                     ),
                   ],
                 );
@@ -159,10 +156,7 @@ class _BulkTimesheetTabState extends State<_BulkTimesheetTab> {
                       spacing: 8,
                       runSpacing: 8,
                       alignment: WrapAlignment.end,
-                      children: [
-                        approveButton,
-                        rejectButton,
-                      ],
+                      children: [approveButton, rejectButton],
                     ),
                   ),
                 ],
@@ -194,9 +188,7 @@ class _BulkTimesheetTabState extends State<_BulkTimesheetTab> {
     );
 
     if (timesheets.isEmpty) {
-      return const Center(
-        child: Text('No pending timesheets'),
-      );
+      return const Center(child: Text('No pending timesheets'));
     }
 
     return ListView.builder(
@@ -379,10 +371,7 @@ class _BulkInvoiceTabState extends State<_BulkInvoiceTab> {
                         Wrap(
                           spacing: 8,
                           runSpacing: 8,
-                          children: [
-                            previewButton,
-                            generateButton,
-                          ],
+                          children: [previewButton, generateButton],
                         ),
                       ],
                     );
@@ -407,10 +396,7 @@ class _BulkInvoiceTabState extends State<_BulkInvoiceTab> {
                           spacing: 8,
                           runSpacing: 8,
                           alignment: WrapAlignment.end,
-                          children: [
-                            previewButton,
-                            generateButton,
-                          ],
+                          children: [previewButton, generateButton],
                         ),
                       ),
                     ],
@@ -454,9 +440,7 @@ class _BulkInvoiceTabState extends State<_BulkInvoiceTab> {
     );
 
     if (appointments.isEmpty) {
-      return const Center(
-        child: Text('No completed appointments to invoice'),
-      );
+      return const Center(child: Text('No completed appointments to invoice'));
     }
 
     return ListView.builder(
@@ -557,8 +541,9 @@ class _BulkAssignmentTabState extends State<_BulkAssignmentTab> {
             builder: (context, constraints) {
               final isCompact = constraints.maxWidth < 900;
               final suggestButton = ElevatedButton.icon(
-                onPressed:
-                    _assignments.isEmpty ? null : () => _getSuggestions(),
+                onPressed: _assignments.isEmpty
+                    ? null
+                    : () => _getSuggestions(),
                 icon: const Icon(Icons.lightbulb, size: 20),
                 label: const Text('SUGGEST'),
                 style: ElevatedButton.styleFrom(
@@ -591,10 +576,7 @@ class _BulkAssignmentTabState extends State<_BulkAssignmentTab> {
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: [
-                        suggestButton,
-                        assignButton,
-                      ],
+                      children: [suggestButton, assignButton],
                     ),
                   ],
                 );
@@ -619,10 +601,7 @@ class _BulkAssignmentTabState extends State<_BulkAssignmentTab> {
                       spacing: 8,
                       runSpacing: 8,
                       alignment: WrapAlignment.end,
-                      children: [
-                        suggestButton,
-                        assignButton,
-                      ],
+                      children: [suggestButton, assignButton],
                     ),
                   ),
                 ],
@@ -654,9 +633,7 @@ class _BulkAssignmentTabState extends State<_BulkAssignmentTab> {
     );
 
     if (shifts.isEmpty) {
-      return const Center(
-        child: Text('No unassigned shifts'),
-      );
+      return const Center(child: Text('No unassigned shifts'));
     }
 
     return ListView.builder(
@@ -744,10 +721,7 @@ class _BulkMessagingTabState extends State<_BulkMessagingTab> {
           // Recipients
           const Text(
             'Recipients',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           _buildRecipientSelector(),
@@ -756,10 +730,7 @@ class _BulkMessagingTabState extends State<_BulkMessagingTab> {
           // Channels
           const Text(
             'Channels',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Wrap(

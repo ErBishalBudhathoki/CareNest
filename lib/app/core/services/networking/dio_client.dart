@@ -29,10 +29,9 @@ class DioClient {
     _dio.interceptors.add(AuthInterceptor(_dio, _storage));
 
     if (kDebugMode) {
-      _dio.interceptors.add(LogInterceptor(
-        requestBody: true,
-        responseBody: true,
-      ));
+      _dio.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
     }
   }
 
@@ -49,7 +48,9 @@ class AuthInterceptor extends Interceptor {
 
   @override
   void onRequest(
-      RequestOptions options, RequestInterceptorHandler handler) async {
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
     // Add Access Token if available
     final accessToken = await _storage.read(key: 'accessToken');
     if (accessToken != null) {
@@ -94,9 +95,10 @@ class AuthInterceptor extends Interceptor {
         // Call Refresh API
         // Use a FRESH Dio instance to avoid interceptor loop
         final refreshDio = Dio(BaseOptions(baseUrl: _dio.options.baseUrl));
-        final response = await refreshDio.post('/auth/v2/refresh-token', data: {
-          'refreshToken': refreshToken,
-        });
+        final response = await refreshDio.post(
+          '/auth/v2/refresh-token',
+          data: {'refreshToken': refreshToken},
+        );
 
         if (response.statusCode == 200) {
           final newAccessToken = response.data['data']['accessToken'];
@@ -113,10 +115,7 @@ class AuthInterceptor extends Interceptor {
 
           final clonedRequest = await _dio.request(
             opts.path,
-            options: Options(
-              method: opts.method,
-              headers: opts.headers,
-            ),
+            options: Options(method: opts.method, headers: opts.headers),
             data: opts.data,
             queryParameters: opts.queryParameters,
           );

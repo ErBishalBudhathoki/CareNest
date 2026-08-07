@@ -13,14 +13,14 @@ class RecommendationModel {
   final String employeeName;
   final String firstName;
   final String lastName;
-  final int matchScore;       // Composite score 0-100
-  final int skillScore;       // Skill match score 0-100
+  final int matchScore; // Composite score 0-100
+  final int skillScore; // Skill match score 0-100
   final int availabilityScore; // Availability score 0-100
-  final int distanceScore;    // Proximity score 0-100
-  final double? distanceKm;   // Distance in kilometers
-  final int? aiScore;         // AI-adjusted score
-  final String? reasoning;    // AI reasoning text
-  final List<String> skills;  // Employee's skills
+  final int distanceScore; // Proximity score 0-100
+  final double? distanceKm; // Distance in kilometers
+  final int? aiScore; // AI-adjusted score
+  final String? reasoning; // AI reasoning text
+  final List<String> skills; // Employee's skills
 
   const RecommendationModel({
     required this.employeeId,
@@ -53,7 +53,8 @@ class RecommendationModel {
       distanceKm: (json['distanceKm'] as num?)?.toDouble(),
       aiScore: (json['aiScore'] as num?)?.toInt(),
       reasoning: json['reasoning']?.toString(),
-      skills: (json['skills'] as List<dynamic>?)
+      skills:
+          (json['skills'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
           [],
@@ -145,8 +146,11 @@ class RecommendationsResponse {
   factory RecommendationsResponse.fromJson(Map<String, dynamic> json) {
     return RecommendationsResponse(
       success: json['success'] == true,
-      recommendations: (json['recommendations'] as List<dynamic>?)
-              ?.map((e) => RecommendationModel.fromJson(e as Map<String, dynamic>))
+      recommendations:
+          (json['recommendations'] as List<dynamic>?)
+              ?.map(
+                (e) => RecommendationModel.fromJson(e as Map<String, dynamic>),
+              )
               .toList() ??
           [],
       totalCandidates: (json['totalCandidates'] as num?)?.toInt() ?? 0,
@@ -213,7 +217,8 @@ class ConflictCheckResponse {
     return ConflictCheckResponse(
       success: json['success'] == true,
       hasConflict: json['hasConflict'] == true,
-      conflicts: (json['conflicts'] as List<dynamic>?)
+      conflicts:
+          (json['conflicts'] as List<dynamic>?)
               ?.map((e) => ConflictModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],

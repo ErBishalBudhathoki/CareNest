@@ -18,7 +18,7 @@ class InvoiceDataProcessor {
   bool _matcherLoaded = false;
 
   InvoiceDataProcessor(this.ref, {this.enhancedInvoiceService})
-      : _ndisMatcher = NDISMatcher(apiMethod: ref.read(apiMethodProvider));
+    : _ndisMatcher = NDISMatcher(apiMethod: ref.read(apiMethodProvider));
 
   void setEnhancedInvoiceService(EnhancedInvoiceService service) {
     enhancedInvoiceService = service;
@@ -38,14 +38,18 @@ class InvoiceDataProcessor {
   /// When [clientId] is provided, performs a client-specific pricing lookup
   /// which takes precedence over organization-level pricing.
   Future<Map<String, dynamic>> _getEnhancedPricingWithSource(
-      String ndisItemNumber, String? organizationId,
-      {String? clientId}) async {
+    String ndisItemNumber,
+    String? organizationId, {
+    String? clientId,
+  }) async {
     debugPrint(
-        'InvoiceDataProcessor: Getting enhanced pricing for item: $ndisItemNumber, clientId: $clientId');
+      'InvoiceDataProcessor: Getting enhanced pricing for item: $ndisItemNumber, clientId: $clientId',
+    );
 
     if (enhancedInvoiceService == null) {
       debugPrint(
-          'InvoiceDataProcessor: No enhanced service available, using standard price fallback');
+        'InvoiceDataProcessor: No enhanced service available, using standard price fallback',
+      );
       try {
         final api = ref.read(apiMethodProvider);
         final std = await api.getStandardPrice(ndisItemNumber);
@@ -83,7 +87,8 @@ class InvoiceDataProcessor {
       if (clientId != null && clientId.isNotEmpty && organizationId != null) {
         try {
           debugPrint(
-              'InvoiceDataProcessor: Performing client-specific pricing lookup for $ndisItemNumber (clientId: $clientId)');
+            'InvoiceDataProcessor: Performing client-specific pricing lookup for $ndisItemNumber (clientId: $clientId)',
+          );
           final api = ref.read(apiMethodProvider);
 
           final pricingData = await api.getPricingLookup(
@@ -105,13 +110,15 @@ class InvoiceDataProcessor {
                 : double.tryParse(priceRaw?.toString() ?? '');
 
             debugPrint(
-                'InvoiceDataProcessor: Client-specific pricing for $ndisItemNumber - customPrice: $customPrice, price: $price, source: $source');
+              'InvoiceDataProcessor: Client-specific pricing for $ndisItemNumber - customPrice: $customPrice, price: $price, source: $source',
+            );
 
             final double? resolvedPrice =
                 (customPrice != null && customPrice > 0) ? customPrice : price;
             if (resolvedPrice != null && resolvedPrice > 0) {
               debugPrint(
-                  'InvoiceDataProcessor: Using client-specific price: $resolvedPrice (source: $source)');
+                'InvoiceDataProcessor: Using client-specific price: $resolvedPrice (source: $source)',
+              );
               return {
                 'price': double.parse(resolvedPrice.toStringAsFixed(2)),
                 'source': source ?? 'client_specific',
@@ -120,7 +127,8 @@ class InvoiceDataProcessor {
           }
         } catch (e) {
           debugPrint(
-              'InvoiceDataProcessor: Client-specific lookup failed for $ndisItemNumber: $e');
+            'InvoiceDataProcessor: Client-specific lookup failed for $ndisItemNumber: $e',
+          );
         }
       }
 
@@ -139,21 +147,21 @@ class InvoiceDataProcessor {
               ? fallbackPriceRaw.toDouble()
               : double.tryParse(fallbackPriceRaw?.toString() ?? '');
           debugPrint(
-              'InvoiceDataProcessor: Cached org pricing for $ndisItemNumber - custom: $customPrice, fallback price: $fallbackPrice, source: $source');
+            'InvoiceDataProcessor: Cached org pricing for $ndisItemNumber - custom: $customPrice, fallback price: $fallbackPrice, source: $source',
+          );
 
           if (customPrice != null && customPrice > 0) {
             debugPrint(
-                'InvoiceDataProcessor: Using org custom price: $customPrice');
-            return {
-              'price': customPrice,
-              'source': source ?? 'organization',
-            };
+              'InvoiceDataProcessor: Using org custom price: $customPrice',
+            );
+            return {'price': customPrice, 'source': source ?? 'organization'};
           }
 
           // Use organization fallback base rate from bulk data when available
           if (fallbackPrice != null && fallbackPrice > 0) {
             debugPrint(
-                'InvoiceDataProcessor: Using fallback base rate from bulk data: $fallbackPrice');
+              'InvoiceDataProcessor: Using fallback base rate from bulk data: $fallbackPrice',
+            );
             return {
               'price': fallbackPrice,
               'source': source ?? 'fallback-base-rate',
@@ -162,7 +170,8 @@ class InvoiceDataProcessor {
 
           // Avoid trusting any other cached price; fetch standard price via API
           debugPrint(
-              'InvoiceDataProcessor: Fetching base standard price via API');
+            'InvoiceDataProcessor: Fetching base standard price via API',
+          );
           final stdFromApi = await enhancedInvoiceService!
               .getStandardPriceForItem(ndisItemNumber);
           if (stdFromApi != null && stdFromApi > 0) {
@@ -173,28 +182,26 @@ class InvoiceDataProcessor {
           final fallback = await readOrgFallbackBaseRate();
           if (fallback != null && fallback > 0) {
             debugPrint(
-                'InvoiceDataProcessor: Using organization fallback base rate for $ndisItemNumber: $fallback');
-            return {
-              'price': fallback,
-              'source': 'fallback-base-rate',
-            };
+              'InvoiceDataProcessor: Using organization fallback base rate for $ndisItemNumber: $fallback',
+            );
+            return {'price': fallback, 'source': 'fallback-base-rate'};
           }
         }
       }
 
       debugPrint(
-          'InvoiceDataProcessor: No cached pricing found, using standard price fallback for $ndisItemNumber');
-      final std =
-          await enhancedInvoiceService!.getStandardPriceForItem(ndisItemNumber);
+        'InvoiceDataProcessor: No cached pricing found, using standard price fallback for $ndisItemNumber',
+      );
+      final std = await enhancedInvoiceService!.getStandardPriceForItem(
+        ndisItemNumber,
+      );
       if (std == null || std <= 0) {
         final fallback = await readOrgFallbackBaseRate();
         if (fallback != null && fallback > 0) {
           debugPrint(
-              'InvoiceDataProcessor: Using organization fallback base rate for $ndisItemNumber (no standard): $fallback');
-          return {
-            'price': fallback,
-            'source': 'fallback-base-rate',
-          };
+            'InvoiceDataProcessor: Using organization fallback base rate for $ndisItemNumber (no standard): $fallback',
+          );
+          return {'price': fallback, 'source': 'fallback-base-rate'};
         }
       }
       return {
@@ -204,8 +211,9 @@ class InvoiceDataProcessor {
     } catch (e) {
       debugPrint('InvoiceDataProcessor: Error getting enhanced pricing: $e');
       try {
-        final std = await enhancedInvoiceService!
-            .getStandardPriceForItem(ndisItemNumber);
+        final std = await enhancedInvoiceService!.getStandardPriceForItem(
+          ndisItemNumber,
+        );
         return {
           'price': std != null && std > 0 ? std : 0.0,
           'source': std != null && std > 0 ? 'standard' : 'missing',
@@ -221,26 +229,34 @@ class InvoiceDataProcessor {
   /// When [clientId] is provided, performs a client-specific pricing lookup
   /// which takes precedence over organization-level pricing.
   Future<double> _getEnhancedPricing(
-      String ndisItemNumber, String? organizationId,
-      {String? clientId}) async {
+    String ndisItemNumber,
+    String? organizationId, {
+    String? clientId,
+  }) async {
     final result = await _getEnhancedPricingWithSource(
-        ndisItemNumber, organizationId,
-        clientId: clientId);
+      ndisItemNumber,
+      organizationId,
+      clientId: clientId,
+    );
     return (result['price'] as num?)?.toDouble() ?? 0.0;
   }
 
   /// Load bulk pricing data for all NDIS items
   Future<void> _loadBulkPricingData(
-      Set<String> ndisItemNumbers, String? organizationId) async {
+    Set<String> ndisItemNumbers,
+    String? organizationId,
+  ) async {
     if (enhancedInvoiceService == null || ndisItemNumbers.isEmpty) {
       debugPrint(
-          'InvoiceDataProcessor: Cannot load bulk pricing - no service or items');
+        'InvoiceDataProcessor: Cannot load bulk pricing - no service or items',
+      );
       return;
     }
 
     try {
       debugPrint(
-          'InvoiceDataProcessor: Loading bulk pricing for ${ndisItemNumbers.length} items');
+        'InvoiceDataProcessor: Loading bulk pricing for ${ndisItemNumbers.length} items',
+      );
       debugPrint('InvoiceDataProcessor: Organization ID: $organizationId');
       debugPrint('InvoiceDataProcessor: NDIS items: $ndisItemNumbers');
 
@@ -259,12 +275,15 @@ class InvoiceDataProcessor {
       if (bulkData != null && bulkData.containsKey('01_020_0120_1_1')) {
         final item01020 = bulkData['01_020_0120_1_1'];
         debugPrint(
-            'InvoiceDataProcessor: DEBUG - Item 01_020_0120_1_1 data: $item01020');
+          'InvoiceDataProcessor: DEBUG - Item 01_020_0120_1_1 data: $item01020',
+        );
         if (item01020 != null) {
           debugPrint(
-              'InvoiceDataProcessor: DEBUG - Custom price for 01_020_0120_1_1: ${item01020['customPrice']}');
+            'InvoiceDataProcessor: DEBUG - Custom price for 01_020_0120_1_1: ${item01020['customPrice']}',
+          );
           debugPrint(
-              'InvoiceDataProcessor: DEBUG - Standard price for 01_020_0120_1_1: ${item01020['standardPrice']}');
+            'InvoiceDataProcessor: DEBUG - Standard price for 01_020_0120_1_1: ${item01020['standardPrice']}',
+          );
         }
       }
     } catch (e) {
@@ -305,7 +324,10 @@ class InvoiceDataProcessor {
   /// range. If either boundary is `null` or the date cannot be parsed, returns
   /// `true` (do not filter out).
   bool _isDateInSelectedRange(
-      String? dateStr, DateTime? startDate, DateTime? endDate) {
+    String? dateStr,
+    DateTime? startDate,
+    DateTime? endDate,
+  ) {
     if (startDate == null || endDate == null) return true;
     final parsed = _tryParseDateFlexible(dateStr);
     if (parsed == null) return true;
@@ -318,7 +340,8 @@ class InvoiceDataProcessor {
     final inRange = !d.isBefore(s) && !d.isAfter(e);
     if (!inRange) {
       debugPrint(
-          'InvoiceDataProcessor: Filtering out item on $dateStr (outside $s - $e)');
+        'InvoiceDataProcessor: Filtering out item on $dateStr (outside $s - $e)',
+      );
     }
     return inRange;
   }
@@ -369,11 +392,13 @@ class InvoiceDataProcessor {
     if (invoiceType == 'employee') {
       try {
         debugPrint(
-            'Fetching holidays for employee invoice rate calculation...');
+          'Fetching holidays for employee invoice rate calculation...',
+        );
         final holidayService = ref.read(holidayServiceProvider);
         final holidays = await holidayService.getAllHolidays();
-        holidaySet =
-            holidays.map((h) => h.date.toIso8601String().split('T')[0]).toSet();
+        holidaySet = holidays
+            .map((h) => h.date.toIso8601String().split('T')[0])
+            .toSet();
         debugPrint('Loaded ${holidaySet.length} holidays');
       } catch (e) {
         debugPrint('InvoiceDataProcessor: Failed to load holidays: $e');
@@ -392,7 +417,8 @@ class InvoiceDataProcessor {
     // Collect all NDIS item numbers for bulk pricing lookup
     Set<String> allNdisItemNumbers = {};
     debugPrint(
-        'InvoiceDataProcessor: Collecting NDIS item numbers for bulk pricing lookup');
+      'InvoiceDataProcessor: Collecting NDIS item numbers for bulk pricing lookup',
+    );
 
     // Pre-scan to collect NDIS item numbers from schedules
     if (assignedClients.containsKey('clients')) {
@@ -423,7 +449,8 @@ class InvoiceDataProcessor {
     }
 
     debugPrint(
-        'InvoiceDataProcessor: Found ${allNdisItemNumbers.length} unique NDIS items: $allNdisItemNumbers');
+      'InvoiceDataProcessor: Found ${allNdisItemNumbers.length} unique NDIS items: $allNdisItemNumbers',
+    );
 
     // Load bulk pricing data if we have NDIS items and enhanced service
     if (allNdisItemNumbers.isNotEmpty && enhancedInvoiceService != null) {
@@ -507,7 +534,8 @@ class InvoiceDataProcessor {
       }
     } else {
       debugPrint(
-          'Warning: No recognized data structure found in assignedClients');
+        'Warning: No recognized data structure found in assignedClients',
+      );
       debugPrint('Available keys: ${assignedClients.keys}');
     }
 
@@ -519,8 +547,9 @@ class InvoiceDataProcessor {
           return false;
 
         // Check approval status
-        final approvalStatus =
-            (expense['approvalStatus'] ?? '').toString().toLowerCase();
+        final approvalStatus = (expense['approvalStatus'] ?? '')
+            .toString()
+            .toLowerCase();
         if (approvalStatus != 'approved') return false;
 
         // Check if already processed
@@ -530,7 +559,8 @@ class InvoiceDataProcessor {
 
       if (orphanExpenses.isNotEmpty) {
         debugPrint(
-            'InvoiceDataProcessor: Found ${orphanExpenses.length} orphan expenses for employee invoice');
+          'InvoiceDataProcessor: Found ${orphanExpenses.length} orphan expenses for employee invoice',
+        );
 
         final transformedOrphans = orphanExpenses.map((expense) {
           return _transformExpense(expense, invoiceType: invoiceType);
@@ -538,7 +568,9 @@ class InvoiceDataProcessor {
 
         // Calculate totals
         double expensesTotal = transformedOrphans.fold(
-            0.0, (sum, e) => sum + _getSafeDouble(e['totalAmount']));
+          0.0,
+          (sum, e) => sum + _getSafeDouble(e['totalAmount']),
+        );
 
         // Get employee details from first processed client if available
         String employeeName = 'Employee';
@@ -582,8 +614,9 @@ class InvoiceDataProcessor {
           'startDate': startDate != null
               ? DateFormat('dd/MM/yyyy').format(startDate)
               : '',
-          'endDate':
-              endDate != null ? DateFormat('dd/MM/yyyy').format(endDate) : '',
+          'endDate': endDate != null
+              ? DateFormat('dd/MM/yyyy').format(endDate)
+              : '',
         };
 
         processedClients.add(orphanBlock);
@@ -669,16 +702,19 @@ class InvoiceDataProcessor {
     if (invoiceType == 'employee' && userEmail.isNotEmpty) {
       try {
         debugPrint(
-            'InvoiceDataProcessor: Fetching employee profile for $userEmail');
+          'InvoiceDataProcessor: Fetching employee profile for $userEmail',
+        );
         final api = ref.read(apiMethodProvider);
         final resp = await api.getUserPayDetails(userEmail);
         if (resp['success'] == true && resp['data'] is Map<String, dynamic>) {
           employeeUser = User.fromJson(resp['data'] as Map<String, dynamic>);
           debugPrint(
-              'InvoiceDataProcessor: Loaded employee pay details. PayRate: ${employeeUser.payRate}, BaseRate: ${employeeUser.detailedRates?.baseRate}');
+            'InvoiceDataProcessor: Loaded employee pay details. PayRate: ${employeeUser.payRate}, BaseRate: ${employeeUser.detailedRates?.baseRate}',
+          );
         } else {
           debugPrint(
-              'InvoiceDataProcessor: Failed to load employee pay details for $userEmail: ${resp['message'] ?? resp}');
+            'InvoiceDataProcessor: Failed to load employee pay details for $userEmail: ${resp['message'] ?? resp}',
+          );
         }
       } catch (e) {
         debugPrint('InvoiceDataProcessor: Error fetching employee profile: $e');
@@ -686,13 +722,15 @@ class InvoiceDataProcessor {
     }
 
     if (invoiceType == 'employee') {
-      final baseRate = (employeeUser?.detailedRates?.baseRate ??
-              employeeUser?.payRate ??
-              0.0)
-          .toDouble();
+      final baseRate =
+          (employeeUser?.detailedRates?.baseRate ??
+                  employeeUser?.payRate ??
+                  0.0)
+              .toDouble();
       if (employeeUser == null || baseRate <= 0) {
         throw Exception(
-            'Employee pay rates are not configured for $userEmail. Please set the Employee Pay Rate before generating an employee invoice.');
+          'Employee pay rates are not configured for $userEmail. Please set the Employee Pay Rate before generating an employee invoice.',
+        );
       }
     }
 
@@ -714,7 +752,8 @@ class InvoiceDataProcessor {
     clientData['clientState'] = clientDetail['clientState'] ?? '';
     clientData['clientZip'] = clientDetail['clientZip'] ?? '';
     clientData['clientPhone'] = clientDetail['clientPhone'] ?? '';
-    clientData['clientABN'] = clientDetail['abn'] ??
+    clientData['clientABN'] =
+        clientDetail['abn'] ??
         clientDetail['clientABN'] ??
         (clientDetail['taxIdentifiers'] != null
             ? clientDetail['taxIdentifiers']['abn']
@@ -726,7 +765,8 @@ class InvoiceDataProcessor {
 
     // Extract employee information from doc
     // userEmail is already defined above
-    String employeeName = employeeDetails?['name'] ??
+    String employeeName =
+        employeeDetails?['name'] ??
         doc['employeeName'] ??
         doc['userName'] ??
         '';
@@ -737,35 +777,39 @@ class InvoiceDataProcessor {
       employeeName = emailName.replaceAll('.', ' ').replaceAll('_', ' ');
       employeeName = employeeName
           .split(' ')
-          .map((word) => word.isNotEmpty
-              ? word[0].toUpperCase() + word.substring(1).toLowerCase()
-              : '')
+          .map(
+            (word) => word.isNotEmpty
+                ? word[0].toUpperCase() + word.substring(1).toLowerCase()
+                : '',
+          )
           .join(' ');
     }
 
-    clientData['employeeName'] =
-        employeeName.isNotEmpty ? employeeName : 'Unknown Employee';
+    clientData['employeeName'] = employeeName.isNotEmpty
+        ? employeeName
+        : 'Unknown Employee';
     clientData['employeeEmail'] = userEmail;
     clientData['employeeId'] = (employeeUser?.id.isNotEmpty == true)
         ? employeeUser!.id
         : (employeeDetails?['id'] ??
-                employeeDetails?['_id'] ??
-                employeeDetails?['userId'] ??
-                doc['userId'])
-            ?.toString();
+                  employeeDetails?['_id'] ??
+                  employeeDetails?['userId'] ??
+                  doc['userId'])
+              ?.toString();
     clientData['providerABN'] = providerABN;
     // Preserve employee details for header rendering when employee invoice
     clientData['employeeDetails'] = {
       'id': (employeeUser?.id.isNotEmpty == true)
           ? employeeUser!.id
           : (employeeDetails?['id'] ??
-                  employeeDetails?['_id'] ??
-                  employeeDetails?['userId'] ??
-                  doc['userId'])
-              ?.toString(),
+                    employeeDetails?['_id'] ??
+                    employeeDetails?['userId'] ??
+                    doc['userId'])
+                ?.toString(),
       'name': employeeName,
       'email': userEmail,
-      'address': employeeDetails?['address'] ??
+      'address':
+          employeeDetails?['address'] ??
           employeeDetails?['employeeAddress'] ??
           '',
       'phone': employeeDetails?['phone'] ?? employeeDetails?['mobile'] ?? '',
@@ -780,7 +824,8 @@ class InvoiceDataProcessor {
 
     List<Map<String, dynamic>> items = [];
 
-    bool hasWorkedTimeData = workedTimeData != null &&
+    bool hasWorkedTimeData =
+        workedTimeData != null &&
         workedTimeData['success'] == true &&
         workedTimeData['workedTimes'] != null;
 
@@ -818,14 +863,16 @@ class InvoiceDataProcessor {
               itemNumber = ndisItem['itemNumber'] ?? '';
               itemName = ndisItem['itemName'] ?? '';
               debugPrint(
-                  'Using NDIS item from schedule: $itemNumber - $itemName');
+                'Using NDIS item from schedule: $itemNumber - $itemName',
+              );
             } else {
               // Fallback to legacy method if no NDIS item data
               String timePeriod = helpers.getTimePeriod(startTime);
               itemName = '$dayOfWeek $timePeriod';
               itemNumber = itemMap[itemName] ?? '';
               debugPrint(
-                  'Using fallback item generation: $itemNumber - $itemName');
+                'Using fallback item generation: $itemNumber - $itemName',
+              );
             }
 
             double rate = 0.0;
@@ -881,7 +928,8 @@ class InvoiceDataProcessor {
                     // but we can trust the matcher to find the best fit from all loaded items.
                     final bestMatch = _ndisMatcher.findBestMatch(
                       shiftStart: shiftStartDateTime,
-                      dynamicHolidays: [], // Ideally fetch this from HolidayService
+                      dynamicHolidays:
+                          [], // Ideally fetch this from HolidayService
                       // If we have an existing item number, we could look it up to get its category/group
                       // to ensure we stay within the same type of support.
                       // For now, we rely on the matcher's scoring.
@@ -919,7 +967,8 @@ class InvoiceDataProcessor {
                       // and we found a specific time-based one.
                       if (itemNumber != bestMatch.itemNumber && shouldUpgrade) {
                         debugPrint(
-                            'InvoiceDataProcessor: Upgrading item from $itemNumber ($itemName) to ${bestMatch.itemNumber} (${bestMatch.itemName})');
+                          'InvoiceDataProcessor: Upgrading item from $itemNumber ($itemName) to ${bestMatch.itemNumber} (${bestMatch.itemName})',
+                        );
                         itemNumber = bestMatch.itemNumber;
                         itemName = bestMatch.itemName;
                       }
@@ -927,17 +976,22 @@ class InvoiceDataProcessor {
                   }
                 } catch (e) {
                   debugPrint(
-                      'InvoiceDataProcessor: Error upgrading NDIS item: $e');
+                    'InvoiceDataProcessor: Error upgrading NDIS item: $e',
+                  );
                 }
               }
 
               // Get enhanced pricing for this NDIS item
               if (itemNumber.isNotEmpty) {
-                rate = await _getEnhancedPricing(itemNumber, organizationId,
-                    clientId: clientId);
+                rate = await _getEnhancedPricing(
+                  itemNumber,
+                  organizationId,
+                  clientId: clientId,
+                );
                 resolvedRateSource = 'NDIS_PRICING';
                 debugPrint(
-                    'InvoiceDataProcessor: Enhanced rate for $itemNumber (clientId: $clientId): $rate');
+                  'InvoiceDataProcessor: Enhanced rate for $itemNumber (clientId: $clientId): $rate',
+                );
               } else {
                 // Use organization fallback base rate when item number is missing
                 try {
@@ -949,18 +1003,21 @@ class InvoiceDataProcessor {
                         : 0.0;
                     resolvedRateSource = 'ORG_FALLBACK_BASE_RATE';
                     debugPrint(
-                        'InvoiceDataProcessor: Using organization fallback base rate for $dayOfWeek: $rate');
+                      'InvoiceDataProcessor: Using organization fallback base rate for $dayOfWeek: $rate',
+                    );
                   } else {
                     // As a last resort, use legacy helper mapping
                     rate = helpers.getRate([dayOfWeek], [])[0];
                     rate = double.parse(rate.toStringAsFixed(2));
                     resolvedRateSource = 'LEGACY_FALLBACK';
                     debugPrint(
-                        'InvoiceDataProcessor: Using legacy fallback rate for $dayOfWeek: $rate');
+                      'InvoiceDataProcessor: Using legacy fallback rate for $dayOfWeek: $rate',
+                    );
                   }
                 } catch (e) {
                   debugPrint(
-                      'InvoiceDataProcessor: Error fetching fallback base rate: $e');
+                    'InvoiceDataProcessor: Error fetching fallback base rate: $e',
+                  );
                   resolvedRateSource = 'FALLBACK_ERROR';
                   rate = 0.0;
                 }
@@ -982,10 +1039,7 @@ class InvoiceDataProcessor {
                   itemNumber, // Use itemNumber as itemCode for consistency
               'workedTimeSource': 'database',
               // Add ndisItem structure for PDF generator compatibility
-              'ndisItem': {
-                'itemNumber': itemNumber,
-                'itemName': itemName,
-              },
+              'ndisItem': {'itemNumber': itemNumber, 'itemName': itemName},
               // Also add direct fields for backward compatibility
               'ndisItemNumber': itemNumber,
               'ndisItemName': itemName,
@@ -995,10 +1049,12 @@ class InvoiceDataProcessor {
       }
     } else {
       debugPrint(
-          'Using calculated time data for pricing (no worked time data available)');
+        'Using calculated time data for pricing (no worked time data available)',
+      );
       List<String> dateList = List<String>.from(doc['dateList'] ?? []);
-      List<String> startTimeList =
-          List<String>.from(doc['startTimeList'] ?? []);
+      List<String> startTimeList = List<String>.from(
+        doc['startTimeList'] ?? [],
+      );
       List<String> endTimeList = List<String>.from(doc['endTimeList'] ?? []);
       List<String> timeList = List<String>.from(doc['Time'] ?? []);
 
@@ -1006,8 +1062,11 @@ class InvoiceDataProcessor {
       List<dynamic> schedule = doc['schedule'] as List<dynamic>? ?? [];
 
       List<String> dayOfWeek = helpers.findDayOfWeek(dateList);
-      List<double> totalHours =
-          helpers.calculateTotalHours(startTimeList, endTimeList, timeList);
+      List<double> totalHours = helpers.calculateTotalHours(
+        startTimeList,
+        endTimeList,
+        timeList,
+      );
 
       for (int i = 0; i < dateList.length; i++) {
         // Strict date-range filtering for calculated schedule entries
@@ -1030,14 +1089,16 @@ class InvoiceDataProcessor {
           itemNumber = ndisItem['itemNumber'] ?? '';
           itemName = ndisItem['itemName'] ?? '';
           debugPrint(
-              'Using NDIS item from calculated schedule: $itemNumber - $itemName');
+            'Using NDIS item from calculated schedule: $itemNumber - $itemName',
+          );
         } else {
           // Fallback to legacy method
           String timePeriod = helpers.getTimePeriod(startTimeList[i]);
           itemName = '${dayOfWeek[i]} $timePeriod';
           itemNumber = itemMap[itemName] ?? '';
           debugPrint(
-              'Using fallback calculated item generation: $itemNumber - $itemName');
+            'Using fallback calculated item generation: $itemNumber - $itemName',
+          );
         }
 
         double rate = 0.0;
@@ -1073,7 +1134,8 @@ class InvoiceDataProcessor {
           // If we are here, it means employeeUser was null or something failed above.
           // We should explicitly handle this to avoid NDIS fallback.
           debugPrint(
-              'InvoiceDataProcessor: Employee rate calculation skipped (User null?). Using fallback 0.00 rate.');
+            'InvoiceDataProcessor: Employee rate calculation skipped (User null?). Using fallback 0.00 rate.',
+          );
           rate = 0.0;
           rateCalculated = true; // Prevent NDIS logic
           resolvedRateSource = 'EMP_MISSING_PROFILE';
@@ -1084,11 +1146,15 @@ class InvoiceDataProcessor {
         // 2. NDIS Item Matching & Pricing (Only if not already calculated AND not an employee invoice)
         if (!rateCalculated && invoiceType != 'employee') {
           if (itemNumber.isNotEmpty) {
-            rate = await _getEnhancedPricing(itemNumber, organizationId,
-                clientId: clientId);
+            rate = await _getEnhancedPricing(
+              itemNumber,
+              organizationId,
+              clientId: clientId,
+            );
             resolvedRateSource = 'NDIS_PRICING';
             debugPrint(
-                'InvoiceDataProcessor: Enhanced rate for $itemNumber (clientId: $clientId): $rate');
+              'InvoiceDataProcessor: Enhanced rate for $itemNumber (clientId: $clientId): $rate',
+            );
           } else {
             try {
               if (organizationId != null) {
@@ -1099,17 +1165,20 @@ class InvoiceDataProcessor {
                     : 0.0;
                 resolvedRateSource = 'ORG_FALLBACK_BASE_RATE';
                 debugPrint(
-                    'InvoiceDataProcessor: Using organization fallback base rate for ${dayOfWeek[i]}: $rate');
+                  'InvoiceDataProcessor: Using organization fallback base rate for ${dayOfWeek[i]}: $rate',
+                );
               } else {
                 rate = helpers.getRate([dayOfWeek[i]], [])[0];
                 rate = double.parse(rate.toStringAsFixed(2));
                 resolvedRateSource = 'LEGACY_FALLBACK';
                 debugPrint(
-                    'InvoiceDataProcessor: Using legacy fallback rate for ${dayOfWeek[i]}: $rate');
+                  'InvoiceDataProcessor: Using legacy fallback rate for ${dayOfWeek[i]}: $rate',
+                );
               }
             } catch (e) {
               debugPrint(
-                  'InvoiceDataProcessor: Error fetching fallback base rate: $e');
+                'InvoiceDataProcessor: Error fetching fallback base rate: $e',
+              );
               resolvedRateSource = 'FALLBACK_ERROR';
               rate = 0.0;
             }
@@ -1129,10 +1198,7 @@ class InvoiceDataProcessor {
           'itemCode': itemNumber, // Use itemNumber as itemCode for consistency
           'workedTimeSource': 'calculated',
           // Add ndisItem structure for PDF generator compatibility
-          'ndisItem': {
-            'itemNumber': itemNumber,
-            'itemName': itemName,
-          },
+          'ndisItem': {'itemNumber': itemNumber, 'itemName': itemName},
           // Also add direct fields for backward compatibility
           'ndisItemNumber': itemNumber,
           'ndisItemName': itemName,
@@ -1147,8 +1213,11 @@ class InvoiceDataProcessor {
       if (da == null && db == null) return 0;
       if (da == null) return 1; // place a after b
       if (db == null) return -1; // place a before b
-      return DateTime(da.year, da.month, da.day)
-          .compareTo(DateTime(db.year, db.month, db.day));
+      return DateTime(
+        da.year,
+        da.month,
+        da.day,
+      ).compareTo(DateTime(db.year, db.month, db.day));
     });
 
     // Determine period start/end based on sorted items if dates not provided
@@ -1168,10 +1237,12 @@ class InvoiceDataProcessor {
 
     final DateTime? displayStart = startDate ?? earliest;
     final DateTime? displayEnd = endDate ?? latest;
-    clientData['startDate'] =
-        displayStart != null ? displayFormat.format(displayStart) : '';
-    clientData['endDate'] =
-        displayEnd != null ? displayFormat.format(displayEnd) : '';
+    clientData['startDate'] = displayStart != null
+        ? displayFormat.format(displayStart)
+        : '';
+    clientData['endDate'] = displayEnd != null
+        ? displayFormat.format(displayEnd)
+        : '';
 
     clientData['items'] = items;
 
@@ -1198,7 +1269,8 @@ class InvoiceDataProcessor {
             item['amount'] = hours * newPrice;
 
             debugPrint(
-                'Applied price override for $itemNumber: \$${originalAmount.toStringAsFixed(2)} -> \$${item['amount'].toStringAsFixed(2)}');
+              'Applied price override for $itemNumber: \$${originalAmount.toStringAsFixed(2)} -> \$${item['amount'].toStringAsFixed(2)}',
+            );
           }
 
           // Apply description override if provided
@@ -1215,7 +1287,8 @@ class InvoiceDataProcessor {
 
     // Add expenses to client data if provided
     debugPrint(
-        'Data Processor: Processing expenses - received ${expenses?.length ?? 0} expenses');
+      'Data Processor: Processing expenses - received ${expenses?.length ?? 0} expenses',
+    );
     if (expenses != null && expenses.isNotEmpty) {
       debugPrint('Data Processor: First raw expense: ${expenses.first}');
 
@@ -1226,19 +1299,25 @@ class InvoiceDataProcessor {
       final clientExpensesRaw = expenses.where((expense) {
         // Check date range first
         if (!_isExpenseDateInRange(
-            expense['expenseDate'], startDate, endDate)) {
+          expense['expenseDate'],
+          startDate,
+          endDate,
+        )) {
           return false;
         }
 
         // Check approval status
-        final approvalStatus =
-            (expense['approvalStatus'] ?? '').toString().toLowerCase();
+        final approvalStatus = (expense['approvalStatus'] ?? '')
+            .toString()
+            .toLowerCase();
         if (approvalStatus != 'approved') return false;
 
         bool shouldInclude = false;
         final expenseClientId = expense['clientId']?.toString() ?? '';
-        final expenseClientEmail =
-            (expense['clientEmail'] ?? '').toString().trim().toLowerCase();
+        final expenseClientEmail = (expense['clientEmail'] ?? '')
+            .toString()
+            .trim()
+            .toLowerCase();
         final normalizedClientEmail = clientEmail.trim().toLowerCase();
 
         // Prefer explicit client linkage by clientId, then clientEmail.
@@ -1274,16 +1353,20 @@ class InvoiceDataProcessor {
 
       clientData['expenses'] = transformedExpenses;
       debugPrint(
-          'Added ${transformedExpenses.length} transformed expenses to client $clientEmail');
+        'Added ${transformedExpenses.length} transformed expenses to client $clientEmail',
+      );
       debugPrint(
-          'Data Processor: Final expenses in clientData: ${clientData['expenses']}');
+        'Data Processor: Final expenses in clientData: ${clientData['expenses']}',
+      );
     } else {
       clientData['expenses'] = <Map<String, dynamic>>[];
     }
 
     // Calculate subtotal from items
-    double itemsSubtotal =
-        items.fold(0.0, (sum, item) => sum + _getSafeDouble(item['amount']));
+    double itemsSubtotal = items.fold(
+      0.0,
+      (sum, item) => sum + _getSafeDouble(item['amount']),
+    );
 
     // Calculate expenses total
     final clientExpensesList = clientData['expenses'] as List<dynamic>? ?? [];
@@ -1320,7 +1403,8 @@ class InvoiceDataProcessor {
         if (age < 18) {
           isUnder18 = true;
           debugPrint(
-              'InvoiceDataProcessor: Employee is under 18 (Age: ${age.toStringAsFixed(1)})');
+            'InvoiceDataProcessor: Employee is under 18 (Age: ${age.toStringAsFixed(1)})',
+          );
         }
       }
 
@@ -1339,8 +1423,9 @@ class InvoiceDataProcessor {
           // Get week number (or unique week ID)
           // Simple week ID: Year * 53 + WeekOfYear.
           // Or just find Monday of the week.
-          final monday =
-              date.subtract(Duration(days: date.weekday - 1)); // Mon = 1
+          final monday = date.subtract(
+            Duration(days: date.weekday - 1),
+          ); // Mon = 1
           final weekId =
               monday.millisecondsSinceEpoch; // Unique ID for the week
 
@@ -1361,7 +1446,8 @@ class InvoiceDataProcessor {
         // If Under 18 and worked <= 30 hours, exclude this week from Super
         if (isUnder18 && totalWeekHours <= 30) {
           debugPrint(
-              'InvoiceDataProcessor: Under 18 & worked ${totalWeekHours}h in week starting ${DateTime.fromMillisecondsSinceEpoch(weekId)} -> Excluded from Super');
+            'InvoiceDataProcessor: Under 18 & worked ${totalWeekHours}h in week starting ${DateTime.fromMillisecondsSinceEpoch(weekId)} -> Excluded from Super',
+          );
           continue;
         }
 
@@ -1391,12 +1477,15 @@ class InvoiceDataProcessor {
         if (userEmail.isNotEmpty && refDateIso.isNotEmpty) {
           final api = ref.read(apiMethodProvider);
 
-          final capResp =
-              await api.getQuarterlyOTE(userEmail, date: refDateIso);
+          final capResp = await api.getQuarterlyOTE(
+            userEmail,
+            date: refDateIso,
+          );
           if (capResp['success'] == true && capResp['data'] != null) {
             final ytdOTE = _getSafeDouble(capResp['data']['quarterlyOTE']);
             debugPrint(
-                'InvoiceDataProcessor: Quarterly Cap Check - YTD OTE: \$$ytdOTE, Current Invoice OTE: \$$oteTotal');
+              'InvoiceDataProcessor: Quarterly Cap Check - YTD OTE: \$$ytdOTE, Current Invoice OTE: \$$oteTotal',
+            );
 
             const quarterlyCap = 62500.0;
             final remainingCap = quarterlyCap - ytdOTE;
@@ -1404,11 +1493,13 @@ class InvoiceDataProcessor {
             if (remainingCap <= 0) {
               superableOTE = 0.0;
               debugPrint(
-                  'InvoiceDataProcessor: Quarterly Cap Exceeded. Superable OTE set to 0.');
+                'InvoiceDataProcessor: Quarterly Cap Exceeded. Superable OTE set to 0.',
+              );
             } else if (oteTotal > remainingCap) {
               superableOTE = remainingCap;
               debugPrint(
-                  'InvoiceDataProcessor: Quarterly Cap Reached. Capping Superable OTE at \$$remainingCap');
+                'InvoiceDataProcessor: Quarterly Cap Reached. Capping Superable OTE at \$$remainingCap',
+              );
             }
           }
         }
@@ -1424,11 +1515,13 @@ class InvoiceDataProcessor {
       clientData['superRate'] = 0.12;
 
       debugPrint(
-          'InvoiceDataProcessor: Final Super Calculation: \$$superAmount (OTE: \$$superableOTE)');
+        'InvoiceDataProcessor: Final Super Calculation: \$$superAmount (OTE: \$$superableOTE)',
+      );
     }
 
     debugPrint(
-        'Invoice totals - Items: \$${itemsSubtotal.toStringAsFixed(2)}, Expenses: \$${expensesTotal.toStringAsFixed(2)}, Subtotal: \$${subtotal.toStringAsFixed(2)}, Total: \$${clientData['total'].toStringAsFixed(2)}');
+      'Invoice totals - Items: \$${itemsSubtotal.toStringAsFixed(2)}, Expenses: \$${expensesTotal.toStringAsFixed(2)}, Subtotal: \$${subtotal.toStringAsFixed(2)}, Total: \$${clientData['total'].toStringAsFixed(2)}',
+    );
 
     return clientData;
   }
@@ -1507,7 +1600,10 @@ class InvoiceDataProcessor {
   /// If either boundary is null or the date cannot be parsed, returns true
   /// to avoid unintentionally dropping expenses.
   bool _isExpenseDateInRange(
-      dynamic expenseDate, DateTime? startDate, DateTime? endDate) {
+    dynamic expenseDate,
+    DateTime? startDate,
+    DateTime? endDate,
+  ) {
     if (startDate == null || endDate == null) return true;
     final parsed = _parseExpenseDate(expenseDate);
     if (parsed == null) return true;
@@ -1597,16 +1693,18 @@ class InvoiceDataProcessor {
     }
 
     debugPrint(
-        'InvoiceDataProcessor: Shift $date ($startTime-$endTime) '
-        'inputHours=$hours effectiveHours=$effectiveHours '
-        'ordinaryHours=$ordinaryHours overtimeHours=$overtimeHours '
-        'splitApplied=${effectiveHours > 10.0}');
+      'InvoiceDataProcessor: Shift $date ($startTime-$endTime) '
+      'inputHours=$hours effectiveHours=$effectiveHours '
+      'ordinaryHours=$ordinaryHours overtimeHours=$overtimeHours '
+      'splitApplied=${effectiveHours > 10.0}',
+    );
 
     // Common Rate Calculation Logic
     DateTime? shiftDate = _tryParseDateFlexible(date);
     if (shiftDate == null) {
       debugPrint(
-          'InvoiceDataProcessor: Could not parse date $date for employee item');
+        'InvoiceDataProcessor: Could not parse date $date for employee item',
+      );
       return [];
     }
 
@@ -1626,7 +1724,8 @@ class InvoiceDataProcessor {
     // Only apply fallback if we have a valid base rate but missing penalties
     if (base > 0 && (satRate <= 0 || sunRate <= 0)) {
       debugPrint(
-          'InvoiceDataProcessor: Detected incomplete rates for ${employeeUser?.email}. Applying SCHADS fallback calculation.');
+        'InvoiceDataProcessor: Detected incomplete rates for ${employeeUser?.email}. Applying SCHADS fallback calculation.',
+      );
 
       final isCasual = employeeUser?.employmentType == 'Casual';
 
@@ -1694,8 +1793,9 @@ class InvoiceDataProcessor {
       'ndisItemName': itemName,
     });
     debugPrint(
-        'InvoiceDataProcessor: ORDINARY item "$itemName" hours=$ordinaryHours '
-        'rate=$ordinaryRate amount=${ordinaryHours * ordinaryRate}');
+      'InvoiceDataProcessor: ORDINARY item "$itemName" hours=$ordinaryHours '
+      'rate=$ordinaryRate amount=${ordinaryHours * ordinaryRate}',
+    );
 
     // -- Calculate Overtime Item (if any) --
     if (overtimeHours > 0) {
@@ -1704,11 +1804,12 @@ class InvoiceDataProcessor {
 
       // Fallback: if OT rate is 0, use 1.5x base rate
       if (otRate <= 0) {
-        double base =
-            (rates?.baseRate ?? employeeUser?.payRate ?? 0.0).toDouble();
+        double base = (rates?.baseRate ?? employeeUser?.payRate ?? 0.0)
+            .toDouble();
         otRate = base * 1.5;
         debugPrint(
-            'InvoiceDataProcessor: Using fallback OT rate (1.5x Base): $otRate');
+          'InvoiceDataProcessor: Using fallback OT rate (1.5x Base): $otRate',
+        );
       }
 
       String otItemName = 'Overtime (>10h Shift)';
@@ -1731,15 +1832,19 @@ class InvoiceDataProcessor {
         'ndisItemName': otItemName,
       });
       debugPrint(
-          'InvoiceDataProcessor: OVERTIME item "$otItemName" hours=$overtimeHours '
-          'rate=$otRate amount=${overtimeHours * otRate}');
+        'InvoiceDataProcessor: OVERTIME item "$otItemName" hours=$overtimeHours '
+        'rate=$otRate amount=${overtimeHours * otRate}',
+      );
     }
 
     return resultItems;
   }
 
   String _deriveItemName(
-      DateTime shiftDate, bool isHoliday, String rateSource) {
+    DateTime shiftDate,
+    bool isHoliday,
+    String rateSource,
+  ) {
     if (isHoliday) return 'Public Holiday Shift';
     if (shiftDate.weekday == DateTime.saturday) return 'Saturday Shift';
     if (shiftDate.weekday == DateTime.sunday) return 'Sunday Shift';
@@ -1749,12 +1854,15 @@ class InvoiceDataProcessor {
   }
 
   /// Transform expense data to match PDF generator expectations
-  Map<String, dynamic> _transformExpense(Map<String, dynamic> expense,
-      {String? invoiceType}) {
+  Map<String, dynamic> _transformExpense(
+    Map<String, dynamic> expense, {
+    String? invoiceType,
+  }) {
     // Debug: Log original expense data
     debugPrint('Data Processor: Processing expense: ${expense['description']}');
     debugPrint(
-        'Data Processor: Original receiptPhotos: ${expense['receiptPhotos']}');
+      'Data Processor: Original receiptPhotos: ${expense['receiptPhotos']}',
+    );
 
     // Clean receiptPhotos by removing backticks and trimming
     final originalReceiptPhotos =
@@ -1795,7 +1903,8 @@ class InvoiceDataProcessor {
     };
 
     debugPrint(
-        'Data Processor: Transformed receiptPhotos: ${transformedExpense['receiptPhotos']}');
+      'Data Processor: Transformed receiptPhotos: ${transformedExpense['receiptPhotos']}',
+    );
     return transformedExpense;
   }
 }

@@ -110,10 +110,7 @@ class QuickActionsWidget extends StatelessWidget {
                         const SizedBox(height: 2),
                         Text(
                           '${action.count} pending',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: color,
-                          ),
+                          style: TextStyle(fontSize: 12, color: color),
                         ),
                       ],
                     ],
@@ -158,9 +155,7 @@ class QuickActionsWidget extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: const Padding(
         padding: EdgeInsets.all(32),
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
+        child: Center(child: CircularProgressIndicator()),
       ),
     );
   }
@@ -186,10 +181,7 @@ class QuickActionsWidget extends StatelessWidget {
               SizedBox(height: 4),
               Text(
                 'No pending actions',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Colors.grey, fontSize: 12),
               ),
             ],
           ),

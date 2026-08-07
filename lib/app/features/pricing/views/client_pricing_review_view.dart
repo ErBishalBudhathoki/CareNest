@@ -69,8 +69,9 @@ class _ClientPricingReviewViewState
     });
 
     try {
-      final response =
-          await _apiMethod.getOrganizationAssignments(widget.organizationId);
+      final response = await _apiMethod.getOrganizationAssignments(
+        widget.organizationId,
+      );
 
       if (response != null && response['success'] == true) {
         final assignments = response['assignments'] as List<dynamic>? ?? [];
@@ -94,7 +95,8 @@ class _ClientPricingReviewViewState
                   resolvedName = '$first $last'.trim();
                 }
                 if (resolvedName.isEmpty) {
-                  resolvedName = assignment['clientName']?.toString() ??
+                  resolvedName =
+                      assignment['clientName']?.toString() ??
                       clientEmail.split('@')[0];
                 }
 
@@ -102,7 +104,8 @@ class _ClientPricingReviewViewState
                   'clientId': clientId,
                   'clientEmail': clientEmail,
                   'clientName': resolvedName,
-                  'clientState': assignment['clientState'] ??
+                  'clientState':
+                      assignment['clientState'] ??
                       details?['clientState'] ??
                       'NSW',
                   'assignments': <Map<String, dynamic>>[],
@@ -121,15 +124,17 @@ class _ClientPricingReviewViewState
         });
       } else {
         setState(() {
-          _errorMessage = response?['message'] ??
+          _errorMessage =
+              response?['message'] ??
               AppLocalizations.of(context)!.failedToLoadClients;
           _isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
-        _errorMessage =
-            AppLocalizations.of(context)!.errorLoadingClients(e.toString());
+        _errorMessage = AppLocalizations.of(
+          context,
+        )!.errorLoadingClients(e.toString());
         _isLoading = false;
       });
     }
@@ -189,8 +194,9 @@ class _ClientPricingReviewViewState
         );
 
         // Get NDIS price cap details
-        final supportItemDetails =
-            await _apiMethod.getSupportItemDetails(itemNumber);
+        final supportItemDetails = await _apiMethod.getSupportItemDetails(
+          itemNumber,
+        );
 
         // Extract current price - prefer customPrice over price
         double currentPrice = 0.0;
@@ -251,8 +257,10 @@ class _ClientPricingReviewViewState
       }
 
       // Sort by item number for consistent display
-      itemsWithPricing.sort((a, b) =>
-          (a['itemNumber'] as String).compareTo(b['itemNumber'] as String));
+      itemsWithPricing.sort(
+        (a, b) =>
+            (a['itemNumber'] as String).compareTo(b['itemNumber'] as String),
+      );
 
       setState(() {
         _supportItems = itemsWithPricing;
@@ -321,9 +329,9 @@ class _ClientPricingReviewViewState
       title: Text(
         AppLocalizations.of(context)!.clientPricingReviewTitle,
         style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-              color: BauhausDesign.textDark,
-              fontWeight: FontWeight.bold,
-            ),
+          color: BauhausDesign.textDark,
+          fontWeight: FontWeight.bold,
+        ),
       ),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios_new_rounded),
@@ -349,7 +357,8 @@ class _ClientPricingReviewViewState
   Widget _buildBody() {
     if (_isLoading) {
       return const Center(
-          child: CircularProgressIndicator(color: BauhausDesign.primary));
+        child: CircularProgressIndicator(color: BauhausDesign.primary),
+      );
     }
 
     if (_errorMessage != null) {
@@ -411,70 +420,73 @@ class _ClientPricingReviewViewState
 
   /// Mobile client card with tap to navigate
   Widget _buildClientCardMobile(
-      Map<String, dynamic> client, int assignmentCount, int index) {
+    Map<String, dynamic> client,
+    int assignmentCount,
+    int index,
+  ) {
     return BauhausCard(
-      onTap: () => _onClientTapMobile(client),
-      padding: const EdgeInsets.all(BauhausDesign.space4),
-      child: Row(
-        children: [
-          // Avatar
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: BauhausDesign.secondary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            ),
-            child: Icon(Icons.person, color: BauhausDesign.secondary),
-          ),
-          const SizedBox(width: BauhausDesign.space3),
-          // Client info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  client['clientName'] ?? 'Unknown',
-                  style:
-                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+          onTap: () => _onClientTapMobile(client),
+          padding: const EdgeInsets.all(BauhausDesign.space4),
+          child: Row(
+            children: [
+              // Avatar
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: BauhausDesign.secondary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                ),
+                child: Icon(Icons.person, color: BauhausDesign.secondary),
+              ),
+              const SizedBox(width: BauhausDesign.space3),
+              // Client info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      client['clientName'] ?? 'Unknown',
+                      style: BauhausDesign.getTextTheme(context).titleMedium
+                          ?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: BauhausDesign.textDark,
                           ),
-                ),
-                const SizedBox(height: BauhausDesign.space1),
-                Text(
-                  client['clientEmail'] ?? '',
-                  style:
-                      BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: BauhausDesign.space2),
-                Row(
-                  children: [
-                    BauhausChip(
-                      text: client['clientState'] ?? 'NSW',
-                      color: BauhausDesign.primary,
-                      size: BauhausChipSize.small,
                     ),
-                    const SizedBox(width: BauhausDesign.space2),
-                    BauhausChip(
-                      text: AppLocalizations.of(context)!
-                          .assignmentsCountLabel(assignmentCount.toString()),
-                      color: BauhausDesign.secondary,
-                      size: BauhausChipSize.small,
+                    const SizedBox(height: BauhausDesign.space1),
+                    Text(
+                      client['clientEmail'] ?? '',
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: BauhausDesign.space2),
+                    Row(
+                      children: [
+                        BauhausChip(
+                          text: client['clientState'] ?? 'NSW',
+                          color: BauhausDesign.primary,
+                          size: BauhausChipSize.small,
+                        ),
+                        const SizedBox(width: BauhausDesign.space2),
+                        BauhausChip(
+                          text: AppLocalizations.of(
+                            context,
+                          )!.assignmentsCountLabel(assignmentCount.toString()),
+                          color: BauhausDesign.secondary,
+                          size: BauhausChipSize.small,
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+              // Chevron
+              Icon(Icons.chevron_right, color: BauhausDesign.neutral),
+            ],
           ),
-          // Chevron
-          Icon(Icons.chevron_right, color: BauhausDesign.neutral),
-        ],
-      ),
-    )
+        )
         .animate(delay: Duration(milliseconds: index * 50))
         .fadeIn(duration: 300.ms)
         .slideX(begin: 0.1, end: 0);
@@ -500,11 +512,11 @@ class _ClientPricingReviewViewState
                 const SizedBox(width: BauhausDesign.space2),
                 Text(
                   AppLocalizations.of(context)!.clientsCountTitle(
-                      _clientsWithAssignments.length.toString()),
-                  style:
-                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                    _clientsWithAssignments.length.toString(),
+                  ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).titleMedium?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -518,7 +530,10 @@ class _ClientPricingReviewViewState
                 final isSelected = client['clientId'] == _selectedClientId;
                 final assignmentCount = (client['assignments'] as List).length;
                 return _buildClientTileTablet(
-                    client, isSelected, assignmentCount);
+                  client,
+                  isSelected,
+                  assignmentCount,
+                );
               },
             ),
           ),
@@ -529,7 +544,10 @@ class _ClientPricingReviewViewState
 
   /// Tablet client tile with selection state
   Widget _buildClientTileTablet(
-      Map<String, dynamic> client, bool isSelected, int count) {
+    Map<String, dynamic> client,
+    bool isSelected,
+    int count,
+  ) {
     return Material(
       color: isSelected
           ? BauhausDesign.primary.withOpacity(0.1)
@@ -538,7 +556,9 @@ class _ClientPricingReviewViewState
         onTap: () => _loadClientSupportItems(client),
         child: Container(
           padding: const EdgeInsets.symmetric(
-              horizontal: BauhausDesign.space4, vertical: BauhausDesign.space3),
+            horizontal: BauhausDesign.space4,
+            vertical: BauhausDesign.space3,
+          ),
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(color: BauhausDesign.neutral.withOpacity(0.5)),
@@ -553,27 +573,27 @@ class _ClientPricingReviewViewState
               Text(
                 client['clientName'] ?? 'Unknown',
                 style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
-                      color: isSelected
-                          ? BauhausDesign.primary
-                          : BauhausDesign.textDark,
-                    ),
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  color: isSelected
+                      ? BauhausDesign.primary
+                      : BauhausDesign.textDark,
+                ),
               ),
               const SizedBox(height: BauhausDesign.space1),
               Row(
                 children: [
-                  Icon(Icons.email_outlined,
-                      size: 14, color: BauhausDesign.textMuted),
+                  Icon(
+                    Icons.email_outlined,
+                    size: 14,
+                    color: BauhausDesign.textMuted,
+                  ),
                   const SizedBox(width: BauhausDesign.space1),
                   Expanded(
                     child: Text(
                       client['clientEmail'] ?? '',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
-                          ?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -589,8 +609,9 @@ class _ClientPricingReviewViewState
                   ),
                   const SizedBox(width: BauhausDesign.space2),
                   BauhausChip(
-                    text: AppLocalizations.of(context)!
-                        .assignmentsCountLabel(count.toString()),
+                    text: AppLocalizations.of(
+                      context,
+                    )!.assignmentsCountLabel(count.toString()),
                     color: BauhausDesign.primary,
                     size: BauhausChipSize.small,
                   ),
@@ -617,7 +638,8 @@ class _ClientPricingReviewViewState
 
     if (_isLoadingItems) {
       return const Center(
-          child: CircularProgressIndicator(color: BauhausDesign.primary));
+        child: CircularProgressIndicator(color: BauhausDesign.primary),
+      );
     }
 
     return Container(
@@ -630,8 +652,9 @@ class _ClientPricingReviewViewState
                 ? Center(
                     child: BauhausEmptyState(
                       title: AppLocalizations.of(context)!.noSupportItemsTitle,
-                      subtitle: AppLocalizations.of(context)!
-                          .noItemsFoundForClientDesc,
+                      subtitle: AppLocalizations.of(
+                        context,
+                      )!.noItemsFoundForClientDesc,
                       icon: Icons.inventory_2_outlined,
                     ),
                   )
@@ -647,8 +670,9 @@ class _ClientPricingReviewViewState
     final clientName = _selectedClientData?['clientName'] ?? 'Unknown';
     final clientState = _selectedClientData?['clientState'] ?? 'NSW';
     final itemCount = _supportItems.length;
-    final exceedsCapCount =
-        _supportItems.where((i) => i['exceedsCap'] == true).length;
+    final exceedsCapCount = _supportItems
+        .where((i) => i['exceedsCap'] == true)
+        .length;
 
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -664,11 +688,9 @@ class _ClientPricingReviewViewState
               children: [
                 Text(
                   clientName,
-                  style: BauhausDesign.getTextTheme(context)
-                      .headlineSmall
-                      ?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).headlineSmall?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: BauhausDesign.space2),
                 Wrap(
@@ -682,8 +704,9 @@ class _ClientPricingReviewViewState
                       size: BauhausChipSize.small,
                     ),
                     BauhausChip(
-                      text: AppLocalizations.of(context)!
-                          .assignmentsCountLabel(itemCount.toString()),
+                      text: AppLocalizations.of(
+                        context,
+                      )!.assignmentsCountLabel(itemCount.toString()),
                       color: BauhausDesign.primary,
                       icon: Icons.list_alt,
                       size: BauhausChipSize.small,
@@ -723,7 +746,10 @@ class _ClientPricingReviewViewState
 
   /// Support item card - used in both tablet and mobile layouts
   Widget _buildSupportItemCard(
-      Map<String, dynamic> item, int index, bool isMobile) {
+    Map<String, dynamic> item,
+    int index,
+    bool isMobile,
+  ) {
     final itemNumber = item['itemNumber'] as String;
     final itemName = item['itemName'] as String? ?? 'Unknown Item';
     final currentPrice = item['currentPrice'] as double;
@@ -733,69 +759,81 @@ class _ClientPricingReviewViewState
     final priceCapType = item['priceCapType'] as String?;
 
     return BauhausCard(
-      margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
-      padding: const EdgeInsets.all(BauhausDesign.space4),
-      borderColor: exceedsCap ? BauhausDesign.error.withOpacity(0.5) : null,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Item header with number, name, and warning badge
-          Row(
+          margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
+          padding: const EdgeInsets.all(BauhausDesign.space4),
+          borderColor: exceedsCap ? BauhausDesign.error.withOpacity(0.5) : null,
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      itemNumber,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelMedium
-                          ?.copyWith(
-                            color: BauhausDesign.primary,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'monospace',
-                          ),
+              // Item header with number, name, and warning badge
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          itemNumber,
+                          style: BauhausDesign.getTextTheme(context).labelMedium
+                              ?.copyWith(
+                                color: BauhausDesign.primary,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'monospace',
+                              ),
+                        ),
+                        const SizedBox(height: BauhausDesign.space1),
+                        Text(
+                          itemName,
+                          style: BauhausDesign.getTextTheme(
+                            context,
+                          ).bodyLarge?.copyWith(fontWeight: FontWeight.w500),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: BauhausDesign.space1),
-                    Text(
-                      itemName,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyLarge
-                          ?.copyWith(
-                            fontWeight: FontWeight.w500,
-                          ),
+                  ),
+                  if (exceedsCap)
+                    BauhausChip(
+                      text: AppLocalizations.of(context)!.exceedsLabel,
+                      color: BauhausDesign.error,
+                      icon: Icons.warning_amber_rounded,
+                      size: BauhausChipSize.small,
                     ),
-                  ],
-                ),
+                ],
               ),
-              if (exceedsCap)
-                BauhausChip(
-                  text: AppLocalizations.of(context)!.exceedsLabel,
-                  color: BauhausDesign.error,
-                  icon: Icons.warning_amber_rounded,
-                  size: BauhausChipSize.small,
-                ),
+              const SizedBox(height: BauhausDesign.space3),
+              // Pricing details - different layout for mobile vs tablet
+              isMobile
+                  ? _buildPricingColumnsMobile(
+                      currentPrice,
+                      priceSource,
+                      ndisPriceCap,
+                      priceCapType,
+                      exceedsCap,
+                    )
+                  : _buildPricingColumnsTablet(
+                      currentPrice,
+                      priceSource,
+                      ndisPriceCap,
+                      priceCapType,
+                      exceedsCap,
+                    ),
             ],
           ),
-          const SizedBox(height: BauhausDesign.space3),
-          // Pricing details - different layout for mobile vs tablet
-          isMobile
-              ? _buildPricingColumnsMobile(currentPrice, priceSource,
-                  ndisPriceCap, priceCapType, exceedsCap)
-              : _buildPricingColumnsTablet(currentPrice, priceSource,
-                  ndisPriceCap, priceCapType, exceedsCap),
-        ],
-      ),
-    )
+        )
         .animate(delay: Duration(milliseconds: index * 50))
         .fadeIn(duration: 300.ms)
         .slideY(begin: 0.1, end: 0);
   }
 
   /// Tablet pricing columns - horizontal layout
-  Widget _buildPricingColumnsTablet(double currentPrice, String priceSource,
-      double? ndisPriceCap, String? priceCapType, bool exceedsCap) {
+  Widget _buildPricingColumnsTablet(
+    double currentPrice,
+    String priceSource,
+    double? ndisPriceCap,
+    String? priceCapType,
+    bool exceedsCap,
+  ) {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
@@ -842,8 +880,13 @@ class _ClientPricingReviewViewState
   }
 
   /// Mobile pricing columns - 2x2 grid layout
-  Widget _buildPricingColumnsMobile(double currentPrice, String priceSource,
-      double? ndisPriceCap, String? priceCapType, bool exceedsCap) {
+  Widget _buildPricingColumnsMobile(
+    double currentPrice,
+    String priceSource,
+    double? ndisPriceCap,
+    String? priceCapType,
+    bool exceedsCap,
+  ) {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
@@ -906,17 +949,16 @@ class _ClientPricingReviewViewState
         Text(
           label,
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.textMuted,
-                fontWeight: FontWeight.bold,
-              ),
+            color: BauhausDesign.textMuted,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 2),
         Text(
           value,
-          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: color),
         ),
       ],
     );
@@ -924,31 +966,35 @@ class _ClientPricingReviewViewState
 
   /// Tablet price column - centered with subtitle
   Widget _buildPriceColumn(
-      String label, String value, String subtitle, Color subtitleColor) {
+    String label,
+    String value,
+    String subtitle,
+    Color subtitleColor,
+  ) {
     return Column(
       children: [
         Text(
           label,
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.textMuted,
-                fontWeight: FontWeight.bold,
-              ),
+            color: BauhausDesign.textMuted,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 4),
         Text(
           value,
           style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: BauhausDesign.primary,
-              ),
+            fontWeight: FontWeight.bold,
+            color: BauhausDesign.primary,
+          ),
         ),
         const SizedBox(height: 2),
         Text(
           subtitle,
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: subtitleColor,
-                fontWeight: FontWeight.w600,
-              ),
+            color: subtitleColor,
+            fontWeight: FontWeight.w600,
+          ),
           textAlign: TextAlign.center,
         ),
       ],
@@ -1079,8 +1125,9 @@ class _ClientPricingDetailPageState
         );
 
         // Get NDIS price cap details
-        final supportItemDetails =
-            await _apiMethod.getSupportItemDetails(itemNumber);
+        final supportItemDetails = await _apiMethod.getSupportItemDetails(
+          itemNumber,
+        );
 
         // Extract current price
         double currentPrice = 0.0;
@@ -1143,8 +1190,10 @@ class _ClientPricingDetailPageState
       }
 
       // Sort by item number
-      itemsWithPricing.sort((a, b) =>
-          (a['itemNumber'] as String).compareTo(b['itemNumber'] as String));
+      itemsWithPricing.sort(
+        (a, b) =>
+            (a['itemNumber'] as String).compareTo(b['itemNumber'] as String),
+      );
 
       setState(() {
         _items = itemsWithPricing;
@@ -1187,9 +1236,9 @@ class _ClientPricingDetailPageState
         title: Text(
           clientName,
           style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: BauhausDesign.textDark,
-              ),
+            fontWeight: FontWeight.bold,
+            color: BauhausDesign.textDark,
+          ),
         ),
         actions: [
           IconButton(
@@ -1206,7 +1255,8 @@ class _ClientPricingDetailPageState
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: BauhausDesign.primary))
+              child: CircularProgressIndicator(color: BauhausDesign.primary),
+            )
           : Column(
               children: [
                 // Header with client info and edit button
@@ -1258,10 +1308,12 @@ class _ClientPricingDetailPageState
                   child: _items.isEmpty
                       ? Center(
                           child: BauhausEmptyState(
-                            title: AppLocalizations.of(context)!
-                                .noSupportItemsTitle,
-                            subtitle: AppLocalizations.of(context)!
-                                .noItemsFoundForClientDesc,
+                            title: AppLocalizations.of(
+                              context,
+                            )!.noSupportItemsTitle,
+                            subtitle: AppLocalizations.of(
+                              context,
+                            )!.noItemsFoundForClientDesc,
                             icon: Icons.inventory_2_outlined,
                           ),
                         )
@@ -1287,200 +1339,258 @@ class _ClientPricingDetailPageState
     final exceedsCap = item['exceedsCap'] as bool;
 
     return BauhausCard(
-      margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
-      padding: const EdgeInsets.all(BauhausDesign.space4),
-      borderColor: exceedsCap ? BauhausDesign.error.withOpacity(0.5) : null,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Item header
-          Row(
+          margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
+          padding: const EdgeInsets.all(BauhausDesign.space4),
+          borderColor: exceedsCap ? BauhausDesign.error.withOpacity(0.5) : null,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      itemNumber,
-                      style: BauhausDesign.getTextTheme(context)
-                          .titleMedium
-                          ?.copyWith(
-                            color: BauhausDesign.primary,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'monospace',
-                          ),
+              // Item header
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          itemNumber,
+                          style: BauhausDesign.getTextTheme(context).titleMedium
+                              ?.copyWith(
+                                color: BauhausDesign.primary,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'monospace',
+                              ),
+                        ),
+                        const SizedBox(height: BauhausDesign.space1),
+                        Text(
+                          itemName,
+                          style: BauhausDesign.getTextTheme(context).titleMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.w500,
+                                color: BauhausDesign.textDark,
+                              ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: BauhausDesign.space1),
-                    Text(
-                      itemName,
-                      style: BauhausDesign.getTextTheme(context)
-                          .titleMedium
-                          ?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: BauhausDesign.textDark,
+                  ),
+                  if (exceedsCap)
+                    BauhausChip(
+                      text: AppLocalizations.of(context)!.exceedsLabel,
+                      color: BauhausDesign.error,
+                      icon: Icons.warning_amber_rounded,
+                      size: BauhausChipSize.small,
+                    ),
+                ],
+              ),
+              const SizedBox(height: BauhausDesign.space3),
+              // Pricing bento grid
+              Container(
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFFDD0), // Cream color
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  boxShadow: const [BauhausDesign.shadowHardSm],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Top section: Current Price
+                    Padding(
+                      padding: const EdgeInsets.all(BauhausDesign.space4),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.currentLabel.toUpperCase(),
+                            style: BauhausDesign.getTextTheme(context)
+                                .labelLarge
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.2,
+                                  color: BauhausDesign.textMuted,
+                                ),
                           ),
+                          const SizedBox(height: BauhausDesign.space1),
+                          Text(
+                            '\$${currentPrice.toStringAsFixed(2)}',
+                            style: BauhausDesign.getTextTheme(context)
+                                .displaySmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w900,
+                                  color: widget.getPriceSourceColor(
+                                    priceSource,
+                                  ),
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(
+                      height: 2,
+                      thickness: 2,
+                      color: BauhausDesign.neutral,
+                    ),
+
+                    // Middle section: NDIS Cap & Status
+                    IntrinsicHeight(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(
+                                BauhausDesign.space3,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.ndisCapLabel.toUpperCase(),
+                                    style: BauhausDesign.getTextTheme(context)
+                                        .labelSmall
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: BauhausDesign.textMuted,
+                                        ),
+                                  ),
+                                  const SizedBox(height: BauhausDesign.space1),
+                                  Text(
+                                    ndisPriceCap != null
+                                        ? '\$${ndisPriceCap.toStringAsFixed(2)}'
+                                        : AppLocalizations.of(
+                                            context,
+                                          )!.notAvailableLabel,
+                                    style: BauhausDesign.getTextTheme(context)
+                                        .titleMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: BauhausDesign.textDark,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const VerticalDivider(
+                            width: 2,
+                            thickness: 2,
+                            color: BauhausDesign.neutral,
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(
+                                BauhausDesign.space3,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.statusLabel.toUpperCase(),
+                                    style: BauhausDesign.getTextTheme(context)
+                                        .labelSmall
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: BauhausDesign.textMuted,
+                                        ),
+                                  ),
+                                  const SizedBox(height: BauhausDesign.space1),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        exceedsCap
+                                            ? Icons.warning_amber_rounded
+                                            : Icons.check_circle_outline,
+                                        color: exceedsCap
+                                            ? BauhausDesign.error
+                                            : BauhausDesign.success,
+                                        size: 16,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Expanded(
+                                        child: Text(
+                                          exceedsCap
+                                              ? AppLocalizations.of(
+                                                  context,
+                                                )!.overCapLabel
+                                              : AppLocalizations.of(
+                                                  context,
+                                                )!.okLabel,
+                                          style:
+                                              BauhausDesign.getTextTheme(
+                                                context,
+                                              ).titleMedium?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: exceedsCap
+                                                    ? BauhausDesign.error
+                                                    : BauhausDesign.success,
+                                              ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(
+                      height: 2,
+                      thickness: 2,
+                      color: BauhausDesign.neutral,
+                    ),
+
+                    // Bottom section: Source
+                    Container(
+                      color: BauhausDesign.surfaceWhite,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: BauhausDesign.space3,
+                        vertical: BauhausDesign.space3,
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.sourceLabel.toUpperCase(),
+                            style: BauhausDesign.getTextTheme(context)
+                                .labelSmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: BauhausDesign.textMuted,
+                                ),
+                          ),
+                          const SizedBox(width: BauhausDesign.space3),
+                          Expanded(
+                            child: Text(
+                              widget.getPriceSourceLabel(priceSource),
+                              textAlign: TextAlign.right,
+                              style: BauhausDesign.getTextTheme(context)
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: widget.getPriceSourceColor(
+                                      priceSource,
+                                    ),
+                                  ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
-              if (exceedsCap)
-                BauhausChip(
-                  text: AppLocalizations.of(context)!.exceedsLabel,
-                  color: BauhausDesign.error,
-                  icon: Icons.warning_amber_rounded,
-                  size: BauhausChipSize.small,
-                ),
             ],
           ),
-          const SizedBox(height: BauhausDesign.space3),
-          // Pricing bento grid
-          Container(
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFFDD0), // Cream color
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
-              boxShadow: const [BauhausDesign.shadowHardSm],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Top section: Current Price
-                Padding(
-                  padding: const EdgeInsets.all(BauhausDesign.space4),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        AppLocalizations.of(context)!.currentLabel.toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.2,
-                              color: BauhausDesign.textMuted,
-                            ),
-                      ),
-                      const SizedBox(height: BauhausDesign.space1),
-                      Text(
-                        '\$${currentPrice.toStringAsFixed(2)}',
-                        style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-                              fontWeight: FontWeight.w900,
-                              color: widget.getPriceSourceColor(priceSource),
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Divider(height: 2, thickness: 2, color: BauhausDesign.neutral),
-                
-                // Middle section: NDIS Cap & Status
-                IntrinsicHeight(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(BauhausDesign.space3),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!.ndisCapLabel.toUpperCase(),
-                                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: BauhausDesign.textMuted,
-                                    ),
-                              ),
-                              const SizedBox(height: BauhausDesign.space1),
-                              Text(
-                                ndisPriceCap != null
-                                    ? '\$${ndisPriceCap.toStringAsFixed(2)}'
-                                    : AppLocalizations.of(context)!.notAvailableLabel,
-                                style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: BauhausDesign.textDark,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const VerticalDivider(width: 2, thickness: 2, color: BauhausDesign.neutral),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(BauhausDesign.space3),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!.statusLabel.toUpperCase(),
-                                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: BauhausDesign.textMuted,
-                                    ),
-                              ),
-                              const SizedBox(height: BauhausDesign.space1),
-                              Row(
-                                children: [
-                                  Icon(
-                                    exceedsCap ? Icons.warning_amber_rounded : Icons.check_circle_outline,
-                                    color: exceedsCap ? BauhausDesign.error : BauhausDesign.success,
-                                    size: 16,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Expanded(
-                                    child: Text(
-                                      exceedsCap
-                                          ? AppLocalizations.of(context)!.overCapLabel
-                                          : AppLocalizations.of(context)!.okLabel,
-                                      style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: exceedsCap ? BauhausDesign.error : BauhausDesign.success,
-                                          ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Divider(height: 2, thickness: 2, color: BauhausDesign.neutral),
-                
-                // Bottom section: Source
-                Container(
-                  color: BauhausDesign.surfaceWhite,
-                  padding: const EdgeInsets.symmetric(horizontal: BauhausDesign.space3, vertical: BauhausDesign.space3),
-                  child: Row(
-                    children: [
-                      Text(
-                        AppLocalizations.of(context)!.sourceLabel.toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: BauhausDesign.textMuted,
-                            ),
-                      ),
-                      const SizedBox(width: BauhausDesign.space3),
-                      Expanded(
-                        child: Text(
-                          widget.getPriceSourceLabel(priceSource),
-                          textAlign: TextAlign.right,
-                          style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: widget.getPriceSourceColor(priceSource),
-                              ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    )
+        )
         .animate(delay: Duration(milliseconds: index * 50))
         .fadeIn(duration: 300.ms)
         .slideY(begin: 0.1, end: 0);
@@ -1493,17 +1603,16 @@ class _ClientPricingDetailPageState
         Text(
           label,
           style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                color: BauhausDesign.textMuted,
-                fontWeight: FontWeight.bold,
-              ),
+            color: BauhausDesign.textMuted,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: BauhausDesign.space1),
         Text(
           value,
-          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).titleLarge?.copyWith(fontWeight: FontWeight.bold, color: color),
         ),
       ],
     );

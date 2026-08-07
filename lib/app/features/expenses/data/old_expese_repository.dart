@@ -15,61 +15,74 @@ class ExpenseRepository {
 
   /// Fetches all expenses for an organization
   Future<List<ExpenseModel>> getOrganizationExpenses(
-      String organizationId) async {
+    String organizationId,
+  ) async {
     try {
       debugPrint(
-          '=== EXPENSE REPO DEBUG: Fetching expenses for organizationId: $organizationId ===');
+        '=== EXPENSE REPO DEBUG: Fetching expenses for organizationId: $organizationId ===',
+      );
       final response = await _apiMethod.get(
         'expenses/organization/$organizationId',
       );
 
       debugPrint('=== EXPENSE REPO DEBUG: API Response: $response ===');
       debugPrint(
-          '=== EXPENSE REPO DEBUG: Response statusCode: ${response['statusCode']} ===');
+        '=== EXPENSE REPO DEBUG: Response statusCode: ${response['statusCode']} ===',
+      );
       debugPrint(
-          '=== EXPENSE REPO DEBUG: Response data: ${response['data']} ===');
+        '=== EXPENSE REPO DEBUG: Response data: ${response['data']} ===',
+      );
       debugPrint(
-          '=== EXPENSE REPO DEBUG: Response data type: ${response['data'].runtimeType} ===');
+        '=== EXPENSE REPO DEBUG: Response data type: ${response['data'].runtimeType} ===',
+      );
       debugPrint(
-          '=== EXPENSE REPO DEBUG: Response data length: ${response['data']?.length} ===');
+        '=== EXPENSE REPO DEBUG: Response data length: ${response['data']?.length} ===',
+      );
 
       // Backend returns statusCode: 200 and data field containing expenses
       if (response['statusCode'] == 200 && response['data'] != null) {
         final List<dynamic> expensesJson = response['data'];
         debugPrint(
-            '=== EXPENSE REPO DEBUG: Processing ${expensesJson.length} expenses ===');
+          '=== EXPENSE REPO DEBUG: Processing ${expensesJson.length} expenses ===',
+        );
 
         // Debug each expense record
         for (int i = 0; i < expensesJson.length; i++) {
           debugPrint(
-              '=== EXPENSE REPO DEBUG: Expense $i: ${expensesJson[i]} ===');
+            '=== EXPENSE REPO DEBUG: Expense $i: ${expensesJson[i]} ===',
+          );
         }
 
         final expenses = expensesJson.map((json) {
           try {
             final expense = ExpenseModel.fromJson(json);
             debugPrint(
-                '=== EXPENSE REPO DEBUG: Successfully parsed expense: ${expense.id} - ${expense.title} ===');
+              '=== EXPENSE REPO DEBUG: Successfully parsed expense: ${expense.id} - ${expense.title} ===',
+            );
             return expense;
           } catch (e) {
             debugPrint(
-                '=== EXPENSE REPO DEBUG: Error parsing expense: $json ===');
+              '=== EXPENSE REPO DEBUG: Error parsing expense: $json ===',
+            );
             debugPrint('=== EXPENSE REPO DEBUG: Parse error: $e ===');
             rethrow;
           }
         }).toList();
 
         debugPrint(
-            '=== EXPENSE REPO DEBUG: Returning ${expenses.length} expenses ===');
+          '=== EXPENSE REPO DEBUG: Returning ${expenses.length} expenses ===',
+        );
         return expenses;
       } else {
         debugPrint(
-            '=== EXPENSE REPO DEBUG: API call failed - statusCode: ${response['statusCode']}, message: ${response['message']} ===');
+          '=== EXPENSE REPO DEBUG: API call failed - statusCode: ${response['statusCode']}, message: ${response['message']} ===',
+        );
         throw Exception(response['message'] ?? 'Failed to fetch expenses');
       }
     } catch (e) {
       debugPrint(
-          '=== EXPENSE REPO DEBUG: Exception in getOrganizationExpenses: $e ===');
+        '=== EXPENSE REPO DEBUG: Exception in getOrganizationExpenses: $e ===',
+      );
       throw Exception('Error fetching expenses: $e');
     }
   }
@@ -79,9 +92,11 @@ class ExpenseRepository {
     debugPrint('=== EXPENSE REPO DEBUG: createExpense method started ===');
     debugPrint('=== EXPENSE REPO DEBUG: Input expense ID: ${expense.id} ===');
     debugPrint(
-        '=== EXPENSE REPO DEBUG: Input expense title: ${expense.title} ===');
+      '=== EXPENSE REPO DEBUG: Input expense title: ${expense.title} ===',
+    );
     debugPrint(
-        '=== EXPENSE REPO DEBUG: Input expense amount: ${expense.amount} ===');
+      '=== EXPENSE REPO DEBUG: Input expense amount: ${expense.amount} ===',
+    );
 
     try {
       List<String>? uploadedReceiptFiles;
@@ -100,8 +115,9 @@ class ExpenseRepository {
             final receiptFile = File(filePath);
             if (await receiptFile.exists()) {
               try {
-                final serverUrl =
-                    await _fileUploadService.uploadReceiptFile(receiptFile);
+                final serverUrl = await _fileUploadService.uploadReceiptFile(
+                  receiptFile,
+                );
                 serverUrls.add(serverUrl);
 
                 // If it's an image, also add to photos array for backward compatibility
@@ -113,7 +129,8 @@ class ExpenseRepository {
               } catch (e) {
                 debugPrint('Failed to upload receipt file $filePath: $e');
                 throw Exception(
-                    'Failed to upload file: ${filePath.split('/').last}. Please try again.');
+                  'Failed to upload file: ${filePath.split('/').last}. Please try again.',
+                );
               }
             } else {
               throw Exception('File not found: ${filePath.split('/').last}');
@@ -140,22 +157,26 @@ class ExpenseRepository {
           final receiptFile = File(expense.receiptUrl!);
           if (await receiptFile.exists()) {
             try {
-              uploadedReceiptUrl =
-                  await _fileUploadService.uploadReceiptFile(receiptFile);
+              uploadedReceiptUrl = await _fileUploadService.uploadReceiptFile(
+                receiptFile,
+              );
               uploadedReceiptFiles = [uploadedReceiptUrl];
               if (_isImageFile(expense.receiptUrl!)) {
                 uploadedReceiptPhotos = [uploadedReceiptUrl];
               }
               debugPrint(
-                  'Successfully uploaded receipt file: $uploadedReceiptUrl');
+                'Successfully uploaded receipt file: $uploadedReceiptUrl',
+              );
             } catch (e) {
               debugPrint('Failed to upload receipt file: $e');
               throw Exception(
-                  'Failed to upload receipt file. Please try again.');
+                'Failed to upload receipt file. Please try again.',
+              );
             }
           } else {
             throw Exception(
-                'Receipt file not found. Please select the file again.');
+              'Receipt file not found. Please select the file again.',
+            );
           }
         } else {
           uploadedReceiptUrl = expense.receiptUrl;
@@ -192,25 +213,34 @@ class ExpenseRepository {
       debugPrint('=== EXPENSE REPO DEBUG: Starting createExpense method ===');
       debugPrint('=== EXPENSE REPO DEBUG: Base URL: ${_apiMethod.baseUrl} ===');
       debugPrint(
-          '=== EXPENSE REPO DEBUG: Full URL will be: ${_apiMethod.baseUrl}api/expenses/create ===');
+        '=== EXPENSE REPO DEBUG: Full URL will be: ${_apiMethod.baseUrl}api/expenses/create ===',
+      );
       debugPrint(
-          '=== EXPENSE REPO DEBUG: Request body (string): ${requestBody.toString()} ===');
+        '=== EXPENSE REPO DEBUG: Request body (string): ${requestBody.toString()} ===',
+      );
       debugPrint(
-          '=== EXPENSE REPO DEBUG: Request body (JSON encoded): ${json.encode(requestBody)} ===');
+        '=== EXPENSE REPO DEBUG: Request body (JSON encoded): ${json.encode(requestBody)} ===',
+      );
       debugPrint(
-          '=== EXPENSE REPO DEBUG: Request body keys: ${requestBody.keys.toList()} ===');
+        '=== EXPENSE REPO DEBUG: Request body keys: ${requestBody.keys.toList()} ===',
+      );
       debugPrint(
-          '=== EXPENSE REPO DEBUG: Request body values: ${requestBody.values.toList()} ===');
+        '=== EXPENSE REPO DEBUG: Request body values: ${requestBody.values.toList()} ===',
+      );
 
       debugPrint('=== EXPENSE REPO DEBUG: About to make API call ===');
       debugPrint(
-          '=== EXPENSE REPO DEBUG: API base URL: ${_apiMethod.baseUrl} ===');
+        '=== EXPENSE REPO DEBUG: API base URL: ${_apiMethod.baseUrl} ===',
+      );
       debugPrint(
-          '=== EXPENSE REPO DEBUG: API endpoint: api/expenses/create ===');
+        '=== EXPENSE REPO DEBUG: API endpoint: api/expenses/create ===',
+      );
       debugPrint(
-          '=== EXPENSE REPO DEBUG: Full URL will be: ${_apiMethod.baseUrl}api/expenses/create ===');
+        '=== EXPENSE REPO DEBUG: Full URL will be: ${_apiMethod.baseUrl}api/expenses/create ===',
+      );
       debugPrint(
-          '=== EXPENSE REPO DEBUG: Request body: ${json.encode(requestBody)} ===');
+        '=== EXPENSE REPO DEBUG: Request body: ${json.encode(requestBody)} ===',
+      );
 
       debugPrint('=== EXPENSE REPO DEBUG: Making POST request now... ===');
       final response = await _apiMethod.post(
@@ -221,18 +251,24 @@ class ExpenseRepository {
 
       debugPrint('=== EXPENSE REPO DEBUG: Raw backend response: $response ===');
       debugPrint(
-          '=== EXPENSE REPO DEBUG: Response type: ${response.runtimeType} ===');
+        '=== EXPENSE REPO DEBUG: Response type: ${response.runtimeType} ===',
+      );
       debugPrint(
-          '=== EXPENSE REPO DEBUG: Response keys: ${response.keys.toList()} ===');
+        '=== EXPENSE REPO DEBUG: Response keys: ${response.keys.toList()} ===',
+      );
       debugPrint(
-          '=== EXPENSE REPO DEBUG: Response success field: ${response['success']} ===');
+        '=== EXPENSE REPO DEBUG: Response success field: ${response['success']} ===',
+      );
       debugPrint(
-          '=== EXPENSE REPO DEBUG: Response expense field: ${response['expense']} ===');
+        '=== EXPENSE REPO DEBUG: Response expense field: ${response['expense']} ===',
+      );
       debugPrint(
-          '=== EXPENSE REPO DEBUG: Response message field: ${response['message']} ===');
+        '=== EXPENSE REPO DEBUG: Response message field: ${response['message']} ===',
+      );
       debugPrint('=== EXPENSE REPO DEBUG: Backend response: $response ===');
       debugPrint(
-          '=== EXPENSE REPO DEBUG: Response success status: ${response['success']} ===');
+        '=== EXPENSE REPO DEBUG: Response success status: ${response['success']} ===',
+      );
 
       if (response['statusCode'] == 201 && response['expenseId'] != null) {
         // Return the expense with the generated ID and uploaded file URLs
@@ -243,11 +279,13 @@ class ExpenseRepository {
           receiptPhotos: uploadedReceiptPhotos,
         );
         debugPrint(
-            '=== EXPENSE REPO DEBUG: Returning updated expense with ID: ${updatedExpense.id} ===');
+          '=== EXPENSE REPO DEBUG: Returning updated expense with ID: ${updatedExpense.id} ===',
+        );
         return updatedExpense;
       } else {
         debugPrint(
-            '=== EXPENSE REPO DEBUG: Backend error response: ${response.toString()} ===');
+          '=== EXPENSE REPO DEBUG: Backend error response: ${response.toString()} ===',
+        );
         throw Exception(response['message'] ?? 'Failed to create expense');
       }
     } catch (e) {
@@ -280,8 +318,9 @@ class ExpenseRepository {
             final receiptFile = File(filePath);
             if (await receiptFile.exists()) {
               try {
-                final serverUrl =
-                    await _fileUploadService.uploadReceiptFile(receiptFile);
+                final serverUrl = await _fileUploadService.uploadReceiptFile(
+                  receiptFile,
+                );
                 serverUrls.add(serverUrl);
 
                 // If it's an image, also add to photos array for backward compatibility
@@ -290,12 +329,15 @@ class ExpenseRepository {
                 }
 
                 debugPrint(
-                    'Successfully uploaded receipt file during update: $serverUrl');
+                  'Successfully uploaded receipt file during update: $serverUrl',
+                );
               } catch (e) {
                 debugPrint(
-                    'Failed to upload receipt file $filePath during update: $e');
+                  'Failed to upload receipt file $filePath during update: $e',
+                );
                 throw Exception(
-                    'Failed to upload file: ${filePath.split('/').last}. Please try again.');
+                  'Failed to upload file: ${filePath.split('/').last}. Please try again.',
+                );
               }
             } else {
               throw Exception('File not found: ${filePath.split('/').last}');
@@ -322,22 +364,26 @@ class ExpenseRepository {
           final receiptFile = File(expense.receiptUrl!);
           if (await receiptFile.exists()) {
             try {
-              uploadedReceiptUrl =
-                  await _fileUploadService.uploadReceiptFile(receiptFile);
+              uploadedReceiptUrl = await _fileUploadService.uploadReceiptFile(
+                receiptFile,
+              );
               uploadedReceiptFiles = [uploadedReceiptUrl];
               if (_isImageFile(expense.receiptUrl!)) {
                 uploadedReceiptPhotos = [uploadedReceiptUrl];
               }
               debugPrint(
-                  'Successfully uploaded receipt file during update: $uploadedReceiptUrl');
+                'Successfully uploaded receipt file during update: $uploadedReceiptUrl',
+              );
             } catch (e) {
               debugPrint('Failed to upload receipt file during update: $e');
               throw Exception(
-                  'Failed to upload receipt file. Please try again.');
+                'Failed to upload receipt file. Please try again.',
+              );
             }
           } else {
             throw Exception(
-                'Receipt file not found. Please select the file again.');
+              'Receipt file not found. Please select the file again.',
+            );
           }
         } else {
           uploadedReceiptUrl = expense.receiptUrl;
@@ -390,9 +436,7 @@ class ExpenseRepository {
   /// Deletes an expense
   Future<bool> deleteExpense(String expenseId) async {
     try {
-      final response = await _apiMethod.delete(
-        'expenses/$expenseId',
-      );
+      final response = await _apiMethod.delete('expenses/$expenseId');
 
       if (response['success'] == true) {
         return true;
@@ -409,10 +453,7 @@ class ExpenseRepository {
     try {
       final response = await _apiMethod.put(
         'expenses/$expenseId/approval',
-        body: {
-          'approvalStatus': 'approved',
-          'userEmail': approverEmail,
-        },
+        body: {'approvalStatus': 'approved', 'userEmail': approverEmail},
       );
 
       // Backend returns statusCode, message, and approvalStatus
@@ -431,10 +472,7 @@ class ExpenseRepository {
     try {
       final response = await _apiMethod.put(
         'expenses/$expenseId/approval',
-        body: {
-          'approvalStatus': 'rejected',
-          'userEmail': approverEmail,
-        },
+        body: {'approvalStatus': 'rejected', 'userEmail': approverEmail},
       );
 
       // Backend returns statusCode, message, and approvalStatus
@@ -458,7 +496,8 @@ class ExpenseRepository {
         return categoriesJson.map((c) => c.toString()).toList();
       } else {
         throw Exception(
-            response['message'] ?? 'Failed to fetch expense categories');
+          response['message'] ?? 'Failed to fetch expense categories',
+        );
       }
     } catch (e) {
       throw Exception('Error fetching expense categories: $e');
@@ -478,7 +517,8 @@ class ExpenseRepository {
         return expensesJson.map((json) => ExpenseModel.fromJson(json)).toList();
       } else {
         throw Exception(
-            response['message'] ?? 'Failed to fetch recurring expenses');
+          response['message'] ?? 'Failed to fetch recurring expenses',
+        );
       }
     } catch (e) {
       throw Exception('Error fetching recurring expenses: $e');
@@ -487,7 +527,8 @@ class ExpenseRepository {
 
   /// Gets expense statistics for an organization
   Future<Map<String, dynamic>> getExpenseStatistics(
-      String organizationId) async {
+    String organizationId,
+  ) async {
     try {
       final response = await _apiMethod.get(
         'expenses/statistics/$organizationId',
@@ -497,7 +538,8 @@ class ExpenseRepository {
         return response['statistics'];
       } else {
         throw Exception(
-            response['message'] ?? 'Failed to fetch expense statistics');
+          response['message'] ?? 'Failed to fetch expense statistics',
+        );
       }
     } catch (e) {
       throw Exception('Error fetching expense statistics: $e');

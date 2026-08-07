@@ -7,10 +7,7 @@ import 'package:carenest/app/shared/widgets/profile_image_widget.dart';
 class BauhausSettingsHeader extends StatelessWidget {
   final String title;
 
-  const BauhausSettingsHeader({
-    super.key,
-    required this.title,
-  });
+  const BauhausSettingsHeader({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +22,7 @@ class BauhausSettingsHeader extends StatelessWidget {
       decoration: BoxDecoration(
         color: BauhausDesign.secondary, // Royal Indigo background
         border: const Border(
-          bottom: BorderSide(
-            color: BauhausDesign.neutral,
-            width: 3.0,
-          ),
+          bottom: BorderSide(color: BauhausDesign.neutral, width: 3.0),
         ),
       ),
       child: Column(
@@ -37,10 +31,10 @@ class BauhausSettingsHeader extends StatelessWidget {
           Text(
             title.toUpperCase(),
             style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-                  color: BauhausDesign.textLight,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1.0,
-                ),
+              color: BauhausDesign.textLight,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.0,
+            ),
           ),
         ],
       ),
@@ -92,10 +86,7 @@ class BauhausProfileCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: BauhausDesign.surfaceLight,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(
-          color: BauhausDesign.neutral,
-          width: 2.0,
-        ),
+        border: Border.all(color: BauhausDesign.neutral, width: 2.0),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Column(
@@ -109,10 +100,10 @@ class BauhausProfileCard extends StatelessWidget {
               userEmail,
               textAlign: TextAlign.left,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textMuted,
-                    fontWeight: FontWeight.w500,
-                    letterSpacing: 0.2,
-                  ),
+                color: BauhausDesign.textMuted,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.2,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -124,10 +115,11 @@ class BauhausProfileCard extends StatelessWidget {
               vertical: BauhausDesign.space2,
             ),
             decoration: BoxDecoration(
-              color: (isEmailVerified
-                      ? BauhausDesign.success
-                      : BauhausDesign.warning)
-                  .withOpacity(0.12),
+              color:
+                  (isEmailVerified
+                          ? BauhausDesign.success
+                          : BauhausDesign.warning)
+                      .withOpacity(0.12),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               border: Border.all(
                 color: isEmailVerified
@@ -151,14 +143,14 @@ class BauhausProfileCard extends StatelessWidget {
                 const SizedBox(width: 6),
                 Text(
                   isEmailVerified ? 'EMAIL VERIFIED' : 'EMAIL NOT VERIFIED',
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 0.5,
-                            color: isEmailVerified
-                                ? BauhausDesign.success
-                                : BauhausDesign.warning,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.5,
+                        color: isEmailVerified
+                            ? BauhausDesign.success
+                            : BauhausDesign.warning,
+                      ),
                 ),
               ],
             ),
@@ -182,8 +174,7 @@ class BauhausProfileCard extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Hello,',
-                  style: BauhausDesign.getTextTheme(context)
-                      .displayLarge
+                  style: BauhausDesign.getTextTheme(context).displayLarge
                       ?.copyWith(
                         color: BauhausDesign.textDark,
                         fontSize: 56,
@@ -200,8 +191,7 @@ class BauhausProfileCard extends StatelessWidget {
                   _primaryName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: BauhausDesign.getTextTheme(context)
-                      .displayLarge
+                  style: BauhausDesign.getTextTheme(context).displayLarge
                       ?.copyWith(
                         color: BauhausDesign.textDark,
                         fontSize: 72,
@@ -232,10 +222,7 @@ class BauhausProfileCard extends StatelessWidget {
                 padding: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: BauhausDesign.neutral,
-                    width: 2.0,
-                  ),
+                  border: Border.all(color: BauhausDesign.neutral, width: 2.0),
                 ),
                 child: ProfileImageWidget(
                   photoData: photoData,
@@ -296,11 +283,10 @@ class BauhausSectionTitle extends StatelessWidget {
       child: Text(
         title.toUpperCase(),
         style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0,
-              color:
-                  isDangerZone ? BauhausDesign.error : BauhausDesign.textDark,
-            ),
+          fontWeight: FontWeight.w900,
+          letterSpacing: 1.0,
+          color: isDangerZone ? BauhausDesign.error : BauhausDesign.textDark,
+        ),
       ),
     );
   }
@@ -327,8 +313,8 @@ class BauhausSettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final iconForegroundColor =
         ThemeData.estimateBrightnessForColor(iconColor) == Brightness.dark
-            ? BauhausDesign.textLight
-            : BauhausDesign.textDark;
+        ? BauhausDesign.textLight
+        : BauhausDesign.textDark;
 
     return Container(
       margin: const EdgeInsets.symmetric(
@@ -338,10 +324,7 @@ class BauhausSettingsTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: BauhausDesign.surfaceLight,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(
-          color: BauhausDesign.neutral,
-          width: 2.0,
-        ),
+        border: Border.all(color: BauhausDesign.neutral, width: 2.0),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Material(
@@ -364,11 +347,7 @@ class BauhausSettingsTile extends StatelessWidget {
                       width: 1.5,
                     ),
                   ),
-                  child: Icon(
-                    icon,
-                    size: 20,
-                    color: iconForegroundColor,
-                  ),
+                  child: Icon(icon, size: 20, color: iconForegroundColor),
                 ),
                 const SizedBox(width: BauhausDesign.space3),
                 // Text Content
@@ -378,8 +357,7 @@ class BauhausSettingsTile extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: BauhausDesign.getTextTheme(context)
-                            .titleSmall
+                        style: BauhausDesign.getTextTheme(context).titleSmall
                             ?.copyWith(
                               fontWeight: FontWeight.w800,
                               color: BauhausDesign.textDark,
@@ -389,8 +367,7 @@ class BauhausSettingsTile extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         subtitle,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
+                        style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
                               color: BauhausDesign.textDark.withOpacity(0.8),
                               fontWeight: FontWeight.w500,

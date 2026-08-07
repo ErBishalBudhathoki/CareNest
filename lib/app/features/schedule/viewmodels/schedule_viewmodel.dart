@@ -5,7 +5,8 @@ import '../repositories/schedule_repository.dart';
 
 final scheduleViewModelProvider =
     NotifierProvider.family<ScheduleViewModel, ScheduleState, String>(
-        ScheduleViewModel.new);
+      ScheduleViewModel.new,
+    );
 
 class ScheduleState {
   final AsyncValue<List<ShiftModel>> shifts;
@@ -45,8 +46,9 @@ class ScheduleViewModel extends Notifier<ScheduleState> {
 
   Future<void> loadShifts() async {
     // Calculate week range based on selected date
-    final startOfWeek = state.selectedDate
-        .subtract(Duration(days: state.selectedDate.weekday - 1));
+    final startOfWeek = state.selectedDate.subtract(
+      Duration(days: state.selectedDate.weekday - 1),
+    );
     final endOfWeek = startOfWeek.add(const Duration(days: 7));
 
     state = state.copyWith(shifts: const AsyncValue.loading());
@@ -58,8 +60,8 @@ class ScheduleViewModel extends Notifier<ScheduleState> {
         endDate: endOfWeek,
         status: state.selectedFilter == 'all' ? null : state.selectedFilter,
       );
-      
-        state = state.copyWith(shifts: AsyncValue.data(shifts));
+
+      state = state.copyWith(shifts: AsyncValue.data(shifts));
     } catch (e, st) {
       state = state.copyWith(shifts: AsyncValue.error(e, st));
     }

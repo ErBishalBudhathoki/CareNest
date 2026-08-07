@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:carenest/app/features/organization/models/organization_model.dart' as models;
+import 'package:carenest/app/features/organization/models/organization_model.dart'
+    as models;
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class BauhausContactSection extends ConsumerStatefulWidget {
@@ -15,14 +16,15 @@ class BauhausContactSection extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<BauhausContactSection> createState() => _BauhausContactSectionState();
+  ConsumerState<BauhausContactSection> createState() =>
+      _BauhausContactSectionState();
 }
 
 class _BauhausContactSectionState extends ConsumerState<BauhausContactSection> {
   late TextEditingController _phoneController;
   late TextEditingController _emailController;
   late TextEditingController _websiteController;
-  
+
   final _formKey = GlobalKey<FormState>();
   bool _isSaving = false;
   String? _errorMessage;
@@ -30,9 +32,15 @@ class _BauhausContactSectionState extends ConsumerState<BauhausContactSection> {
   @override
   void initState() {
     super.initState();
-    _phoneController = TextEditingController(text: widget.organization.contactDetails?.phone ?? '');
-    _emailController = TextEditingController(text: widget.organization.contactDetails?.email ?? '');
-    _websiteController = TextEditingController(text: widget.organization.contactDetails?.website ?? '');
+    _phoneController = TextEditingController(
+      text: widget.organization.contactDetails?.phone ?? '',
+    );
+    _emailController = TextEditingController(
+      text: widget.organization.contactDetails?.email ?? '',
+    );
+    _websiteController = TextEditingController(
+      text: widget.organization.contactDetails?.website ?? '',
+    );
   }
 
   @override
@@ -96,10 +104,16 @@ class _BauhausContactSectionState extends ConsumerState<BauhausContactSection> {
 
       final updates = {
         'contactDetails': {
-          'phone': _phoneController.text.trim().isEmpty ? null : _phoneController.text.trim(),
-          'email': _emailController.text.trim().isEmpty ? null : _emailController.text.trim(),
-          'website': _websiteController.text.trim().isEmpty ? null : _websiteController.text.trim(),
-        }
+          'phone': _phoneController.text.trim().isEmpty
+              ? null
+              : _phoneController.text.trim(),
+          'email': _emailController.text.trim().isEmpty
+              ? null
+              : _emailController.text.trim(),
+          'website': _websiteController.text.trim().isEmpty
+              ? null
+              : _websiteController.text.trim(),
+        },
       };
 
       await widget.onSave(widget.organization.id, updates);
@@ -143,7 +157,9 @@ class _BauhausContactSectionState extends ConsumerState<BauhausContactSection> {
         return Form(
           key: _formKey,
           child: Container(
-            padding: isMobile ? EdgeInsets.zero : const EdgeInsets.all(BauhausDesign.space8),
+            padding: isMobile
+                ? EdgeInsets.zero
+                : const EdgeInsets.all(BauhausDesign.space8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -153,9 +169,9 @@ class _BauhausContactSectionState extends ConsumerState<BauhausContactSection> {
                   subtitle: 'Communication channels and primary contacts',
                   icon: Icons.contact_mail_outlined,
                 ),
-                
+
                 const SizedBox(height: BauhausDesign.space8),
-                
+
                 if (isMobile) ...[
                   // Mobile Layout (Stacked)
                   Column(
@@ -194,16 +210,20 @@ class _BauhausContactSectionState extends ConsumerState<BauhausContactSection> {
                           ),
                         ],
                       ),
-                      
+
                       const SizedBox(height: BauhausDesign.space6),
-                      
+
                       // Contact Statistics Visualization
-                      _BauhausContactStatsCard(organization: widget.organization),
-                      
+                      _BauhausContactStatsCard(
+                        organization: widget.organization,
+                      ),
+
                       const SizedBox(height: BauhausDesign.space6),
-                      
+
                       // Communication Preferences
-                      _BauhausCommunicationCard(organization: widget.organization),
+                      _BauhausCommunicationCard(
+                        organization: widget.organization,
+                      ),
                     ],
                   ),
                 ] else ...[
@@ -250,38 +270,44 @@ class _BauhausContactSectionState extends ConsumerState<BauhausContactSection> {
                                 ),
                               ],
                             ),
-                            
+
                             const SizedBox(height: BauhausDesign.space6),
-                            
+
                             // Contact Statistics Visualization
-                            _BauhausContactStatsCard(organization: widget.organization),
+                            _BauhausContactStatsCard(
+                              organization: widget.organization,
+                            ),
                           ],
                         ),
                       ),
-                      
+
                       const SizedBox(width: BauhausDesign.space6),
-                      
+
                       // Right Column - Contact Statistics & Communication
                       Expanded(
                         flex: 2,
                         child: Column(
                           children: [
                             // Contact Statistics Visualization
-                            _BauhausContactStatsCard(organization: widget.organization),
-                            
+                            _BauhausContactStatsCard(
+                              organization: widget.organization,
+                            ),
+
                             const SizedBox(height: BauhausDesign.space6),
-                            
+
                             // Communication Preferences
-                            _BauhausCommunicationCard(organization: widget.organization),
+                            _BauhausCommunicationCard(
+                              organization: widget.organization,
+                            ),
                           ],
                         ),
                       ),
                     ],
                   ),
                 ],
-                
+
                 const SizedBox(height: BauhausDesign.space8),
-                
+
                 // Action Buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -290,9 +316,12 @@ class _BauhausContactSectionState extends ConsumerState<BauhausContactSection> {
                       text: 'Reset',
                       onPressed: () {
                         // Reset controllers to original values
-                        _phoneController.text = widget.organization.contactDetails?.phone ?? '';
-                        _emailController.text = widget.organization.contactDetails?.email ?? '';
-                        _websiteController.text = widget.organization.contactDetails?.website ?? '';
+                        _phoneController.text =
+                            widget.organization.contactDetails?.phone ?? '';
+                        _emailController.text =
+                            widget.organization.contactDetails?.email ?? '';
+                        _websiteController.text =
+                            widget.organization.contactDetails?.website ?? '';
                       },
                     ),
                     const SizedBox(width: BauhausDesign.space4),
@@ -377,10 +406,7 @@ class _BauhausInfoCard extends StatelessWidget {
   final String title;
   final List<Widget> children;
 
-  const _BauhausInfoCard({
-    required this.title,
-    required this.children,
-  });
+  const _BauhausInfoCard({required this.title, required this.children});
 
   @override
   Widget build(BuildContext context) {
@@ -407,7 +433,11 @@ class _BauhausInfoCard extends StatelessWidget {
                   width: 32,
                   height: 32,
                   color: BauhausDesign.surfaceWhite,
-                  child: Icon(Icons.info_outline, color: BauhausDesign.secondary, size: 20),
+                  child: Icon(
+                    Icons.info_outline,
+                    color: BauhausDesign.secondary,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: BauhausDesign.space3),
                 Expanded(
@@ -425,9 +455,7 @@ class _BauhausInfoCard extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(BauhausDesign.space4),
-            child: Column(
-              children: children,
-            ),
+            child: Column(children: children),
           ),
         ],
       ),
@@ -545,10 +573,14 @@ class _BauhausPrimaryButton extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: isEnabled ? BauhausDesign.primary : BauhausDesign.neutral.withOpacity(0.1),
+        color: isEnabled
+            ? BauhausDesign.primary
+            : BauhausDesign.neutral.withOpacity(0.1),
         border: Border.all(
-          color: isEnabled ? BauhausDesign.neutral : BauhausDesign.neutral.withOpacity(0.3), 
-          width: 2
+          color: isEnabled
+              ? BauhausDesign.neutral
+              : BauhausDesign.neutral.withOpacity(0.3),
+          width: 2,
         ),
         boxShadow: isEnabled ? [BauhausDesign.shadowHard] : [],
       ),
@@ -562,23 +594,25 @@ class _BauhausPrimaryButton extends StatelessWidget {
               vertical: BauhausDesign.space3,
             ),
             child: isLoading
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        strokeWidth: 2,
-                      ),
-                    )
-                  : Text(
-                      text,
-                      style: GoogleFonts.inter(
-                        fontSize: BauhausDesign.fontMd,
-                        fontWeight: FontWeight.w600,
-                        color: isEnabled ? Colors.white : BauhausDesign.textDark.withOpacity(0.3),
-                      ),
-                      textAlign: TextAlign.center,
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      strokeWidth: 2,
                     ),
+                  )
+                : Text(
+                    text,
+                    style: GoogleFonts.inter(
+                      fontSize: BauhausDesign.fontMd,
+                      fontWeight: FontWeight.w600,
+                      color: isEnabled
+                          ? Colors.white
+                          : BauhausDesign.textDark.withOpacity(0.3),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
           ),
         ),
       ),
@@ -590,10 +624,7 @@ class _BauhausSecondaryButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
 
-  const _BauhausSecondaryButton({
-    required this.text,
-    this.onPressed,
-  });
+  const _BauhausSecondaryButton({required this.text, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -603,8 +634,10 @@ class _BauhausSecondaryButton extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.transparent,
         border: Border.all(
-          color: isEnabled ? BauhausDesign.neutral : BauhausDesign.neutral.withOpacity(0.3), 
-          width: 2
+          color: isEnabled
+              ? BauhausDesign.neutral
+              : BauhausDesign.neutral.withOpacity(0.3),
+          width: 2,
         ),
         boxShadow: isEnabled ? [BauhausDesign.shadowHardSm] : [],
       ),
@@ -622,7 +655,9 @@ class _BauhausSecondaryButton extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: BauhausDesign.fontMd,
                 fontWeight: FontWeight.w600,
-                color: isEnabled ? BauhausDesign.textDark : BauhausDesign.textDark.withOpacity(0.3),
+                color: isEnabled
+                    ? BauhausDesign.textDark
+                    : BauhausDesign.textDark.withOpacity(0.3),
               ),
               textAlign: TextAlign.center,
             ),
@@ -643,11 +678,17 @@ class _BauhausContactStatsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasPhone = organization.contactDetails?.phone?.isNotEmpty ?? false;
     final hasEmail = organization.contactDetails?.email?.isNotEmpty ?? false;
-    final hasWebsite = organization.contactDetails?.website?.isNotEmpty ?? false;
+    final hasWebsite =
+        organization.contactDetails?.website?.isNotEmpty ?? false;
     final hasContactPerson = false; // No contactPerson field in ContactDetails
-    
-    final totalChannels = [hasPhone, hasEmail, hasWebsite, hasContactPerson].where((e) => e).length;
-    
+
+    final totalChannels = [
+      hasPhone,
+      hasEmail,
+      hasWebsite,
+      hasContactPerson,
+    ].where((e) => e).length;
+
     return Container(
       decoration: BoxDecoration(
         color: BauhausDesign.surfaceOffWhite,
@@ -667,7 +708,11 @@ class _BauhausContactStatsCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.analytics_outlined, color: BauhausDesign.textDark, size: 20),
+                Icon(
+                  Icons.analytics_outlined,
+                  color: BauhausDesign.textDark,
+                  size: 20,
+                ),
                 const SizedBox(width: BauhausDesign.space2),
                 Expanded(
                   child: Text(
@@ -779,7 +824,9 @@ class _BauhausContactChannelIndicator extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space2),
       decoration: BoxDecoration(
-        color: isActive ? BauhausDesign.success.withOpacity(0.1) : BauhausDesign.surfaceWhite,
+        color: isActive
+            ? BauhausDesign.success.withOpacity(0.1)
+            : BauhausDesign.surfaceWhite,
         border: Border.all(
           color: isActive ? BauhausDesign.success : BauhausDesign.neutral,
           width: isActive ? 2 : 1,
@@ -816,7 +863,7 @@ class _BauhausCommunicationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final preferredMethod = _getPreferredContactMethod();
-    
+
     return Container(
       decoration: BoxDecoration(
         color: BauhausDesign.surfaceWhite,
@@ -836,7 +883,11 @@ class _BauhausCommunicationCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.settings_phone_outlined, color: BauhausDesign.warning, size: 20),
+                Icon(
+                  Icons.settings_phone_outlined,
+                  color: BauhausDesign.warning,
+                  size: 20,
+                ),
                 const SizedBox(width: BauhausDesign.space2),
                 Expanded(
                   child: Text(
@@ -957,7 +1008,10 @@ class _BauhausCommunicationCard extends StatelessWidget {
           padding: const EdgeInsets.all(BauhausDesign.space2),
           decoration: BoxDecoration(
             color: BauhausDesign.surfaceWhite,
-            border: Border.all(color: BauhausDesign.neutral.withOpacity(0.5), width: 1),
+            border: Border.all(
+              color: BauhausDesign.neutral.withOpacity(0.5),
+              width: 1,
+            ),
           ),
           child: Row(
             children: [

@@ -158,8 +158,9 @@ class OcrView extends ConsumerWidget {
               height: 60,
               child: CircularProgressIndicator(
                 strokeWidth: 8,
-                valueColor:
-                    AlwaysStoppedAnimation<Color>(const Color(0xFFE63946)),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  const Color(0xFFE63946),
+                ),
                 backgroundColor: const Color(0xFF1D3557),
               ),
             ),

@@ -29,7 +29,8 @@ class EncryptionUtils {
     debugPrint("[WEB] generateSalt called");
     var random = Random.secure();
     return Uint8List.fromList(
-        List.generate(length, (_) => random.nextInt(256)));
+      List.generate(length, (_) => random.nextInt(256)),
+    );
   }
 
   // Web-safe fallback using SHA-256 instead of Argon2 (which isn't JS-compatible here)
@@ -37,9 +38,7 @@ class EncryptionUtils {
     debugPrint("[WEB] encryptPasswordWithArgon2andSalt fallback using SHA-256");
     final salts = salt.isEmpty ? generateSalt() : salt;
     final passwordBytes = utf8.encode(password);
-    final combined = <int>[...passwordBytes, ...salts]
-      
-      ;
+    final combined = <int>[...passwordBytes, ...salts];
     final digest = crypto.sha256.convert(combined);
 
     final resultHex = _bytesToHex(Uint8List.fromList(digest.bytes));

@@ -52,24 +52,21 @@ class _OfflineSyncDashboardViewState
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
       backgroundColor: BauhausTheme.white,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.offlineSyncTitle,
-            style: BauhausTheme.headerStyle),
+        title: Text(
+          AppLocalizations.of(context)!.offlineSyncTitle,
+          style: BauhausTheme.headerStyle,
+        ),
         backgroundColor: BauhausTheme.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: BauhausTheme.black),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadData,
-          )
+          IconButton(icon: const Icon(Icons.refresh), onPressed: _loadData),
         ],
       ),
       body: Padding(
@@ -85,25 +82,33 @@ class _OfflineSyncDashboardViewState
               ),
               child: Row(
                 children: [
-                  Icon(_isOnline ? Icons.wifi : Icons.wifi_off,
-                      size: 48, color: BauhausTheme.white),
+                  Icon(
+                    _isOnline ? Icons.wifi : Icons.wifi_off,
+                    size: 48,
+                    color: BauhausTheme.white,
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                            _isOnline
-                                ? 'Online'
-                                : AppLocalizations.of(context)!.offlineStatus,
-                            style: BauhausTheme.headerStyle.copyWith(
-                                color: BauhausTheme.white, fontSize: 24)),
+                          _isOnline
+                              ? 'Online'
+                              : AppLocalizations.of(context)!.offlineStatus,
+                          style: BauhausTheme.headerStyle.copyWith(
+                            color: BauhausTheme.white,
+                            fontSize: 24,
+                          ),
+                        ),
                         Text(
-                            _queue.isEmpty
-                                ? 'All data is synced'
-                                : '${_queue.length} requests pending',
-                            style: BauhausTheme.bodyStyle
-                                .copyWith(color: BauhausTheme.white)),
+                          _queue.isEmpty
+                              ? 'All data is synced'
+                              : '${_queue.length} requests pending',
+                          style: BauhausTheme.bodyStyle.copyWith(
+                            color: BauhausTheme.white,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -112,8 +117,10 @@ class _OfflineSyncDashboardViewState
             ),
             const SizedBox(height: 32),
 
-            Text(AppLocalizations.of(context)!.pendingUploads,
-                style: BauhausTheme.subHeaderStyle),
+            Text(
+              AppLocalizations.of(context)!.pendingUploads,
+              style: BauhausTheme.subHeaderStyle,
+            ),
             const SizedBox(height: 16),
 
             Expanded(
@@ -122,12 +129,18 @@ class _OfflineSyncDashboardViewState
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.check_circle_outline,
-                              size: 64, color: Colors.grey),
+                          Icon(
+                            Icons.check_circle_outline,
+                            size: 64,
+                            color: Colors.grey,
+                          ),
                           SizedBox(height: 16),
-                          Text('No pending changes',
-                              style: BauhausTheme.bodyStyle
-                                  .copyWith(color: Colors.grey)),
+                          Text(
+                            'No pending changes',
+                            style: BauhausTheme.bodyStyle.copyWith(
+                              color: Colors.grey,
+                            ),
+                          ),
                         ],
                       ),
                     )
@@ -147,38 +160,45 @@ class _OfflineSyncDashboardViewState
               width: double.infinity,
               height: 56,
               child: StreamBuilder<bool>(
-                  stream: _syncManager.isSyncingStream,
-                  initialData: _syncManager.isSyncing,
-                  builder: (context, snapshot) {
-                    final isSyncing = snapshot.data ?? false;
-                    return ElevatedButton.icon(
-                      onPressed: (_isOnline && !isSyncing && _queue.isNotEmpty)
-                          ? () async {
-                              await _syncManager.processQueue();
-                              _loadData();
-                            }
-                          : null,
-                      icon: isSyncing
-                          ? SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                  color: Colors.white, strokeWidth: 2))
-                          : const Icon(Icons.sync, color: BauhausTheme.white),
-                      label: Text(
-                          isSyncing
-                              ? 'Syncing...'
-                              : AppLocalizations.of(context)!.syncNow,
-                          style: BauhausTheme.subHeaderStyle
-                              .copyWith(color: BauhausTheme.white)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: BauhausTheme.black,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(0)),
-                        disabledBackgroundColor: Colors.grey,
+                stream: _syncManager.isSyncingStream,
+                initialData: _syncManager.isSyncing,
+                builder: (context, snapshot) {
+                  final isSyncing = snapshot.data ?? false;
+                  return ElevatedButton.icon(
+                    onPressed: (_isOnline && !isSyncing && _queue.isNotEmpty)
+                        ? () async {
+                            await _syncManager.processQueue();
+                            _loadData();
+                          }
+                        : null,
+                    icon: isSyncing
+                        ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Icon(Icons.sync, color: BauhausTheme.white),
+                    label: Text(
+                      isSyncing
+                          ? 'Syncing...'
+                          : AppLocalizations.of(context)!.syncNow,
+                      style: BauhausTheme.subHeaderStyle.copyWith(
+                        color: BauhausTheme.white,
                       ),
-                    );
-                  }),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: BauhausTheme.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0),
+                      ),
+                      disabledBackgroundColor: Colors.grey,
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -211,12 +231,17 @@ class _OfflineSyncDashboardViewState
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(item.endpoint,
-                      style:
-                          BauhausTheme.subHeaderStyle.copyWith(fontSize: 14)),
-                  Text(item.method,
-                      style: BauhausTheme.bodyStyle
-                          .copyWith(fontSize: 12, color: Colors.grey)),
+                  Text(
+                    item.endpoint,
+                    style: BauhausTheme.subHeaderStyle.copyWith(fontSize: 14),
+                  ),
+                  Text(
+                    item.method,
+                    style: BauhausTheme.bodyStyle.copyWith(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
+                  ),
                 ],
               ),
             ],

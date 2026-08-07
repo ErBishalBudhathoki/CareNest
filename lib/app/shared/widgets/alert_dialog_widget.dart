@@ -20,10 +20,7 @@ Future<void> showAlertDialog(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               color: BauhausDesign.surfaceWhite,
-              border: Border.all(
-                color: BauhausDesign.neutral,
-                width: 3.0,
-              ),
+              border: Border.all(color: BauhausDesign.neutral, width: 3.0),
               boxShadow: const [
                 BoxShadow(
                   color: Colors.black,
@@ -59,20 +56,19 @@ Future<void> showAlertDialog(
                 Text(
                   message,
                   textAlign: TextAlign.center,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodyLarge
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   "Please wait...",
                   textAlign: TextAlign.center,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                 ),
               ],
             ),
@@ -105,10 +101,7 @@ Future<void> showBauhausConfirmDialog({
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
             color: BauhausDesign.surfaceWhite,
-            border: Border.all(
-              color: BauhausDesign.neutral,
-              width: 3.0,
-            ),
+            border: Border.all(color: BauhausDesign.neutral, width: 3.0),
             boxShadow: const [
               BoxShadow(
                 color: Colors.black,
@@ -125,10 +118,7 @@ Future<void> showBauhausConfirmDialog({
                 height: 56,
                 decoration: BoxDecoration(
                   color: BauhausDesign.primary,
-                  border: Border.all(
-                    color: BauhausDesign.neutral,
-                    width: 2.0,
-                  ),
+                  border: Border.all(color: BauhausDesign.neutral, width: 2.0),
                 ),
                 child: const Icon(
                   Icons.help_outline,
@@ -141,17 +131,17 @@ Future<void> showBauhausConfirmDialog({
                 title,
                 textAlign: TextAlign.center,
                 style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                      color: BauhausDesign.textDark,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(height: 12),
               Text(
                 message,
                 textAlign: TextAlign.center,
-                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.textMuted,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
               ),
               const SizedBox(height: 24),
               Row(
@@ -174,8 +164,7 @@ Future<void> showBauhausConfirmDialog({
                         child: Text(
                           cancelText,
                           textAlign: TextAlign.center,
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodyMedium
+                          style: BauhausDesign.getTextTheme(context).bodyMedium
                               ?.copyWith(
                                 color: BauhausDesign.textDark,
                                 fontWeight: FontWeight.w600,
@@ -210,8 +199,7 @@ Future<void> showBauhausConfirmDialog({
                         child: Text(
                           confirmText,
                           textAlign: TextAlign.center,
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodyMedium
+                          style: BauhausDesign.getTextTheme(context).bodyMedium
                               ?.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,

@@ -1,11 +1,11 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class SystemUIService {
-  static const MethodChannel _channel = MethodChannel('com.bishal.invoice/system_ui');
-  
+  static const MethodChannel _channel = MethodChannel(
+    'com.bishal.invoice/system_ui',
+  );
+
   /// Hide system UI (navigation bar and status bar) for immersive experience
   static Future<void> hideSystemUI() async {
     try {
@@ -16,7 +16,7 @@ class SystemUIService {
       debugPrint('Failed to hide system UI: ${e.message}');
     }
   }
-  
+
   /// Show system UI (navigation bar and status bar)
   static Future<void> showSystemUI() async {
     try {

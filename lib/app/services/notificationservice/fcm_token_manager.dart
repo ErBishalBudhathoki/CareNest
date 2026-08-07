@@ -41,8 +41,8 @@ class FcmTokenManager {
       debugPrint('Firebase Messaging initialized: $isInitialized');
 
       // Check notification permissions
-      final settings =
-          await FirebaseMessaging.instance.getNotificationSettings();
+      final settings = await FirebaseMessaging.instance
+          .getNotificationSettings();
       debugPrint('Notification permission: ${settings.authorizationStatus}');
       debugPrint('Alert setting: ${settings.alert}');
       debugPrint('Badge setting: ${settings.badge}');
@@ -91,11 +91,12 @@ class FcmTokenManager {
 
         // Check if it's a Firebase Installations Service error
         if (e.toString().contains('FIS_AUTH_ERROR') ||
-            e
-                .toString()
-                .contains('Firebase Installations Service is unavailable')) {
+            e.toString().contains(
+              'Firebase Installations Service is unavailable',
+            )) {
           debugPrint(
-              '🔄 Firebase Installations Service error detected, will retry...');
+            '🔄 Firebase Installations Service error detected, will retry...',
+          );
         }
 
         // If this is the last attempt, don't wait
@@ -149,11 +150,14 @@ class FcmTokenManager {
       if (currentToken == null) {
         debugPrint('❌ Failed to get FCM token from Firebase after retries');
         debugPrint(
-            '⚠️ This is likely due to Firebase Installations Service being temporarily unavailable');
+          '⚠️ This is likely due to Firebase Installations Service being temporarily unavailable',
+        );
         debugPrint(
-            '📱 App will continue to function normally, but push notifications may not work');
+          '📱 App will continue to function normally, but push notifications may not work',
+        );
         debugPrint(
-            '🔄 FCM token will be retried on next app launch or token refresh');
+          '🔄 FCM token will be retried on next app launch or token refresh',
+        );
         debugPrint('=== END FCM TOKEN MANAGER (NO TOKEN) ===\n');
 
         // Set up token refresh listener anyway, in case service becomes available
@@ -175,7 +179,8 @@ class FcmTokenManager {
         debugPrint('\n--- SENDING TOKEN TO BACKEND ---');
         debugPrint('Backend endpoint: /auth/register-fcm-token');
         debugPrint(
-            'Payload: {email: $userEmail, organizationId: $organizationId, fcmToken: ${currentToken.substring(0, 20)}...}');
+          'Payload: {email: $userEmail, organizationId: $organizationId, fcmToken: ${currentToken.substring(0, 20)}...}',
+        );
 
         try {
           await _apiMethod.registerFcmToken(
@@ -261,19 +266,22 @@ class FcmTokenManager {
 
       // Check when the token was last sent
       final lastSentTimestamp = prefs.getInt(_tokenLastSentKey) ?? 0;
-      final lastSentDate =
-          DateTime.fromMillisecondsSinceEpoch(lastSentTimestamp);
+      final lastSentDate = DateTime.fromMillisecondsSinceEpoch(
+        lastSentTimestamp,
+      );
       final now = DateTime.now();
 
       // If the token hasn't been sent in the last 24 hours, we should send it
       final difference = now.difference(lastSentDate).inHours;
       debugPrint(
-          'FCM Token Manager: Hours since last token update: $difference');
+        'FCM Token Manager: Hours since last token update: $difference',
+      );
 
       return difference >= 24;
     } catch (e) {
       debugPrint(
-          'FCM Token Manager: Error checking if token should be sent - $e');
+        'FCM Token Manager: Error checking if token should be sent - $e',
+      );
       return true; // If there's an error, send the token to be safe
     }
   }
@@ -285,7 +293,9 @@ class FcmTokenManager {
 
       await prefs.setString(_fcmTokenKey, token);
       await prefs.setInt(
-          _tokenLastSentKey, DateTime.now().millisecondsSinceEpoch);
+        _tokenLastSentKey,
+        DateTime.now().millisecondsSinceEpoch,
+      );
 
       debugPrint('FCM Token Manager: Token info saved');
     } catch (e) {
@@ -322,7 +332,8 @@ class FcmTokenManager {
 
       if (currentToken == null) {
         debugPrint(
-            'FCM Token Manager: Failed to get FCM token for force update');
+          'FCM Token Manager: Failed to get FCM token for force update',
+        );
         return false;
       }
 

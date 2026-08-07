@@ -51,7 +51,8 @@ class TimesheetEntry {
       int h = seconds ~/ 3600;
       int m = (seconds % 3600) ~/ 60;
       int s = seconds % 60;
-      timeWorkedStr = '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
+      timeWorkedStr =
+          '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
     } else {
       timeWorkedStr = json['timeWorked']?.toString();
     }

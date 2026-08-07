@@ -56,7 +56,6 @@ class MileageController extends Notifier<MileageState> {
   late final ApiMethod _api;
   StreamSubscription<Position>? _positionSubscription;
 
-  
   @override
   MileageState build() {
     _api = ref.watch(app_providers.apiMethodProvider);
@@ -86,16 +85,17 @@ class MileageController extends Notifier<MileageState> {
       if (lat != null && lng != null && timeStr != null) {
         // Reconstruct position (mocking timestamp/accuracy for simplicity as they aren't stored)
         final position = Position(
-            latitude: lat,
-            longitude: lng,
-            timestamp: DateTime.parse(timeStr),
-            accuracy: 0,
-            altitude: 0,
-            heading: 0,
-            speed: 0,
-            speedAccuracy: 0,
-            altitudeAccuracy: 0,
-            headingAccuracy: 0);
+          latitude: lat,
+          longitude: lng,
+          timestamp: DateTime.parse(timeStr),
+          accuracy: 0,
+          altitude: 0,
+          heading: 0,
+          speed: 0,
+          speedAccuracy: 0,
+          altitudeAccuracy: 0,
+          headingAccuracy: 0,
+        );
 
         state = state.copyWith(
           isTracking: true,
@@ -122,7 +122,8 @@ class MileageController extends Notifier<MileageState> {
 
       if (permission == LocationPermission.deniedForever) {
         state = state.copyWith(
-            error: 'Location permissions are permanently denied');
+          error: 'Location permissions are permanently denied',
+        );
         return;
       }
 
@@ -155,41 +156,42 @@ class MileageController extends Notifier<MileageState> {
 
   void _startPositionTracking() {
     _positionSubscription?.cancel();
-    _positionSubscription = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.bestForNavigation,
-        distanceFilter: 5,
-      ),
-    ).listen(
-      (position) {
-        if (!state.isTracking) return;
+    _positionSubscription =
+        Geolocator.getPositionStream(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.bestForNavigation,
+            distanceFilter: 5,
+          ),
+        ).listen(
+          (position) {
+            if (!state.isTracking) return;
 
-        final points = List<Position>.from(state.routePoints);
-        var updatedDistance = state.currentDistance;
+            final points = List<Position>.from(state.routePoints);
+            var updatedDistance = state.currentDistance;
 
-        if (points.isNotEmpty) {
-          final previous = points.last;
-          final segmentMeters = Geolocator.distanceBetween(
-            previous.latitude,
-            previous.longitude,
-            position.latitude,
-            position.longitude,
-          );
-          if (segmentMeters.isFinite && segmentMeters > 0.5) {
-            updatedDistance += segmentMeters;
-          }
-        }
+            if (points.isNotEmpty) {
+              final previous = points.last;
+              final segmentMeters = Geolocator.distanceBetween(
+                previous.latitude,
+                previous.longitude,
+                position.latitude,
+                position.longitude,
+              );
+              if (segmentMeters.isFinite && segmentMeters > 0.5) {
+                updatedDistance += segmentMeters;
+              }
+            }
 
-        points.add(position);
-        state = state.copyWith(
-          routePoints: points,
-          currentDistance: updatedDistance,
+            points.add(position);
+            state = state.copyWith(
+              routePoints: points,
+              currentDistance: updatedDistance,
+            );
+          },
+          onError: (e) {
+            state = state.copyWith(error: 'Location tracking error: $e');
+          },
         );
-      },
-      onError: (e) {
-        state = state.copyWith(error: 'Location tracking error: $e');
-      },
-    );
   }
 
   Future<double> stopTracking() async {
@@ -277,7 +279,8 @@ class MileageController extends Notifier<MileageState> {
       final sharedPrefs = await SharedPreferencesUtils.getInstance();
       final userId = sharedPrefs.getUserId();
       final organizationId = sharedPrefs.getOrganizationId();
-      final userEmail = sharedPrefs.getUserEmail() ??
+      final userEmail =
+          sharedPrefs.getUserEmail() ??
           await sharedPrefs.getUserEmailFromSharedPreferences();
 
       final firebaseUser = FirebaseAuth.instance.currentUser;
@@ -304,8 +307,9 @@ class MileageController extends Notifier<MileageState> {
       final distanceKm = state.currentDistance / 1000;
       final routePoints = List<Position>.from(state.routePoints);
       routePointsForPayload = routePoints;
-      final startPoint =
-          routePoints.isNotEmpty ? routePoints.first : state.startPosition;
+      final startPoint = routePoints.isNotEmpty
+          ? routePoints.first
+          : state.startPosition;
       final endPoint = routePoints.isNotEmpty ? routePoints.last : null;
 
       final tripData = {
@@ -313,11 +317,13 @@ class MileageController extends Notifier<MileageState> {
         'userId': userId,
         if (userEmail != null && userEmail.isNotEmpty) 'userEmail': userEmail,
         'date': DateTime.now().toIso8601String(),
-        'startLocation': startLocation ??
+        'startLocation':
+            startLocation ??
             (startPoint != null
                 ? '${startPoint.latitude}, ${startPoint.longitude}'
                 : 'Current Location'),
-        'endLocation': endLocation ??
+        'endLocation':
+            endLocation ??
             (endPoint != null
                 ? '${endPoint.latitude}, ${endPoint.longitude}'
                 : 'Current Location'),
@@ -336,11 +342,13 @@ class MileageController extends Notifier<MileageState> {
           },
         if (routePoints.length >= 2)
           'routePath': routePoints
-              .map((p) => {
-                    'lat': p.latitude,
-                    'lng': p.longitude,
-                    'timestamp': p.timestamp.toIso8601String(),
-                  })
+              .map(
+                (p) => {
+                  'lat': p.latitude,
+                  'lng': p.longitude,
+                  'timestamp': p.timestamp.toIso8601String(),
+                },
+              )
               .toList(),
       };
 
@@ -374,7 +382,8 @@ class MileageController extends Notifier<MileageState> {
       await _cacheTrip({
         'organizationId': sharedPrefs.getOrganizationId(),
         'userId': sharedPrefs.getUserId(),
-        'userEmail': sharedPrefs.getUserEmail() ??
+        'userEmail':
+            sharedPrefs.getUserEmail() ??
             await sharedPrefs.getUserEmailFromSharedPreferences(),
         'date': DateTime.now().toIso8601String(),
         'startLocation': startLocation,
@@ -384,11 +393,13 @@ class MileageController extends Notifier<MileageState> {
         'clientId': clientId,
         if (routePointsForPayload.length >= 2)
           'routePath': routePointsForPayload
-              .map((p) => {
-                    'lat': p.latitude,
-                    'lng': p.longitude,
-                    'timestamp': p.timestamp.toIso8601String(),
-                  })
+              .map(
+                (p) => {
+                  'lat': p.latitude,
+                  'lng': p.longitude,
+                  'timestamp': p.timestamp.toIso8601String(),
+                },
+              )
               .toList(),
         'error': e.toString(),
       });
@@ -407,7 +418,7 @@ class MileageController extends Notifier<MileageState> {
     unsynced.add(jsonEncode(tripData));
     await prefs.setStringList(_kUnsyncedTrips, unsynced);
   }
-
 }
 
-final mileageControllerProvider = NotifierProvider<MileageController, MileageState>(MileageController.new);
+final mileageControllerProvider =
+    NotifierProvider<MileageController, MileageState>(MileageController.new);

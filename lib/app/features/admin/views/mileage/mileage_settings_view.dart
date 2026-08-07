@@ -8,7 +8,8 @@ class MileageSettingsView extends ConsumerStatefulWidget {
   const MileageSettingsView({super.key});
 
   @override
-  ConsumerState<MileageSettingsView> createState() => _MileageSettingsViewState();
+  ConsumerState<MileageSettingsView> createState() =>
+      _MileageSettingsViewState();
 }
 
 class _MileageSettingsViewState extends ConsumerState<MileageSettingsView> {
@@ -33,7 +34,9 @@ class _MileageSettingsViewState extends ConsumerState<MileageSettingsView> {
       appBar: AppBar(
         title: Text(
           'MILEAGE SETTINGS',
-          style: textTheme.displaySmall?.copyWith(color: BauhausDesign.textDark),
+          style: textTheme.displaySmall?.copyWith(
+            color: BauhausDesign.textDark,
+          ),
         ),
         backgroundColor: BauhausDesign.surfaceLight,
         elevation: 0,
@@ -68,7 +71,7 @@ class _MileageSettingsViewState extends ConsumerState<MileageSettingsView> {
               ),
             ),
             const SizedBox(height: BauhausDesign.space5),
-            
+
             // Rate Input
             Text(
               'REIMBURSEMENT RATE (\$ / km)',
@@ -85,60 +88,82 @@ class _MileageSettingsViewState extends ConsumerState<MileageSettingsView> {
               ),
               child: TextField(
                 controller: _rateController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                style: textTheme.headlineMedium?.copyWith(color: BauhausDesign.textDark),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                style: textTheme.headlineMedium?.copyWith(
+                  color: BauhausDesign.textDark,
+                ),
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: BauhausDesign.surfaceLight,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.zero,
-                    borderSide: const BorderSide(color: BauhausDesign.neutral, width: 2),
+                    borderSide: const BorderSide(
+                      color: BauhausDesign.neutral,
+                      width: 2,
+                    ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.zero,
-                    borderSide: const BorderSide(color: BauhausDesign.neutral, width: 2),
+                    borderSide: const BorderSide(
+                      color: BauhausDesign.neutral,
+                      width: 2,
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.zero,
-                    borderSide: const BorderSide(color: BauhausDesign.textDark, width: 2),
+                    borderSide: const BorderSide(
+                      color: BauhausDesign.textDark,
+                      width: 2,
+                    ),
                   ),
                   contentPadding: const EdgeInsets.all(BauhausDesign.space4),
                   suffixText: '/ km',
                 ),
               ),
             ),
-            
+
             const Spacer(),
-            
+
             // Save Button
             SizedBox(
               width: double.infinity,
               height: 56,
               child: ElevatedButton(
-                onPressed: viewModel.isLoading 
-                  ? null 
-                  : () async {
-                      final rate = double.tryParse(_rateController.text);
-                      if (rate != null) {
-                        await ref.read(mileageSettingsViewModelProvider.notifier).updateRate(rate);
-                        if (mounted) Navigator.pop(context);
-                      }
-                    },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: BauhausDesign.primary,
-                  foregroundColor: BauhausDesign.textLight,
-                  elevation: 0,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
-                    side: BorderSide(color: BauhausDesign.neutral, width: 2),
-                  ),
-                  shadowColor: Colors.transparent, // We use custom shadow via Container if needed, or simple button
-                ).copyWith(
-                  // Hack for hard shadow: typically done with a Stack/Container, 
-                  // but for simplicity we'll just use the bold style.
-                ),
+                onPressed: viewModel.isLoading
+                    ? null
+                    : () async {
+                        final rate = double.tryParse(_rateController.text);
+                        if (rate != null) {
+                          await ref
+                              .read(mileageSettingsViewModelProvider.notifier)
+                              .updateRate(rate);
+                          if (mounted) Navigator.pop(context);
+                        }
+                      },
+                style:
+                    ElevatedButton.styleFrom(
+                      backgroundColor: BauhausDesign.primary,
+                      foregroundColor: BauhausDesign.textLight,
+                      elevation: 0,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                        side: BorderSide(
+                          color: BauhausDesign.neutral,
+                          width: 2,
+                        ),
+                      ),
+                      shadowColor: Colors
+                          .transparent, // We use custom shadow via Container if needed, or simple button
+                    ).copyWith(
+                      // Hack for hard shadow: typically done with a Stack/Container,
+                      // but for simplicity we'll just use the bold style.
+                    ),
                 child: viewModel.isLoading
-                    ? const CircularProgressIndicator(color: BauhausDesign.textLight)
+                    ? const CircularProgressIndicator(
+                        color: BauhausDesign.textLight,
+                      )
                     : Text(
                         'SAVE SETTINGS',
                         style: textTheme.labelLarge?.copyWith(

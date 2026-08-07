@@ -41,10 +41,9 @@ class DownloadService {
       encoder.close();
 
       try {
-        await Share.shareXFiles(
-          [XFile(zipFilePath, mimeType: 'application/zip')],
-          subject: 'Invoices',
-        );
+        await Share.shareXFiles([
+          XFile(zipFilePath, mimeType: 'application/zip'),
+        ], subject: 'Invoices');
       } on PlatformException catch (e) {
         debugPrint("Error while sharing ZIP file: $e");
       } catch (e) {
@@ -76,9 +75,7 @@ class DownloadService {
   }
 
   Future<bool> requestStoragePermission() async {
-    List<Permission> permissions = [
-      Permission.storage,
-    ];
+    List<Permission> permissions = [Permission.storage];
 
     int sdkInt;
     try {
@@ -103,8 +100,8 @@ class DownloadService {
           if (storageStatus.isGranted) {
             debugPrint('Storage permission granted');
           } else if (storageStatus.isDenied) {
-            final PermissionStatus requestResult =
-                await Permission.storage.request();
+            final PermissionStatus requestResult = await Permission.storage
+                .request();
             if (requestResult == PermissionStatus.granted) {
               debugPrint('Storage permission granted after request');
             } else if (requestResult == PermissionStatus.permanentlyDenied) {

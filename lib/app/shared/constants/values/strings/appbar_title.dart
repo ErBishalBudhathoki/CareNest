@@ -13,12 +13,14 @@ class AppBarTitle extends StatelessWidget implements PreferredSizeWidget {
         height: 50,
         color: AppColors.colorPrimary,
         child: Center(
-          child: Text(title,
-              style: const TextStyle(
-                fontWeight: FontWeight.normal,
-                fontSize: AppDimens.fontSizeXXXMedium,
-                color: AppColors.colorWhite,
-              )),
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.normal,
+              fontSize: AppDimens.fontSizeXXXMedium,
+              color: AppColors.colorWhite,
+            ),
+          ),
         ),
       ),
     );

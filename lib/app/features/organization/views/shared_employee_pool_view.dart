@@ -26,15 +26,14 @@ class SharedEmployeePoolView extends ConsumerWidget {
               children: [
                 const Text(
                   'Available Employees',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: BauhausDesign.primaryBlue,
-                    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
+                    ),
                   ),
                   onPressed: () {
                     // Add shared employee
@@ -47,15 +46,14 @@ class SharedEmployeePoolView extends ConsumerWidget {
             Expanded(
               child: ListView.separated(
                 itemCount: 0, // TODO: Fetch from provider
-                separatorBuilder: (_, __) => const SizedBox(height: BauhausDesign.space3),
+                separatorBuilder: (_, __) =>
+                    const SizedBox(height: BauhausDesign.space3),
                 itemBuilder: (context, index) {
                   return const SizedBox();
                 },
               ),
             ),
-            const Center(
-              child: Text('No shared employees yet.'),
-            ),
+            const Center(child: Text('No shared employees yet.')),
           ],
         ),
       ),

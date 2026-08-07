@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/features/holiday/models/holiday_model.dart';
 import 'package:carenest/backend/api_method.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -69,26 +70,30 @@ class HolidayService {
 
             if (counties == null) {
               // National
-              holidays.add(Holiday(
-                id: 'public_${date.millisecondsSinceEpoch}_${name.hashCode}_nat',
-                title: name,
-                date: date,
-                jurisdiction: 'national',
-                isPublic: true,
-                isCustom: false,
-              ));
+              holidays.add(
+                Holiday(
+                  id: 'public_${date.millisecondsSinceEpoch}_${name.hashCode}_nat',
+                  title: name,
+                  date: date,
+                  jurisdiction: 'national',
+                  isPublic: true,
+                  isCustom: false,
+                ),
+              );
             } else {
               for (var countyCode in counties) {
                 // countyCode is "AU-NSW" -> "NSW"
                 final state = countyCode.toString().replaceFirst('AU-', '');
-                holidays.add(Holiday(
-                  id: 'public_${date.millisecondsSinceEpoch}_${name.hashCode}_$state',
-                  title: name,
-                  date: date,
-                  jurisdiction: state.toLowerCase(),
-                  isPublic: true,
-                  isCustom: false,
-                ));
+                holidays.add(
+                  Holiday(
+                    id: 'public_${date.millisecondsSinceEpoch}_${name.hashCode}_$state',
+                    title: name,
+                    date: date,
+                    jurisdiction: state.toLowerCase(),
+                    isPublic: true,
+                    isCustom: false,
+                  ),
+                );
               }
             }
           }
@@ -109,8 +114,9 @@ class HolidayService {
       final String? currentOrgId = prefs.getOrganizationId();
 
       // Pass organizationId to backend if available.
-      final response =
-          await _apiMethod.getHolidays(organizationId: currentOrgId);
+      final response = await _apiMethod.getHolidays(
+        organizationId: currentOrgId,
+      );
       final rawHolidays = response['data'];
 
       if (rawHolidays is! List) {
@@ -123,7 +129,8 @@ class HolidayService {
 
         final itemOrgId = map['organizationId'] ?? map['OrganizationId'];
         final itemOrgIdStr = itemOrgId?.toString();
-        final bool isCustom = map['isCustom'] == true ||
+        final bool isCustom =
+            map['isCustom'] == true ||
             (itemOrgIdStr != null && itemOrgIdStr.isNotEmpty);
 
         // We only return organization-specific custom holidays from MongoDB.
@@ -134,7 +141,8 @@ class HolidayService {
           continue;
         }
 
-        final name = (map['name'] ??
+        final name =
+            (map['name'] ??
                     map['Holiday'] ??
                     map['HolidayName'] ??
                     map['title'])
