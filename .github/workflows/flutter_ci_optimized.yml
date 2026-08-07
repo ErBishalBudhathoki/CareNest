@@ -220,12 +220,8 @@ jobs:
           KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           if [ -f android/app/keystore.jks ]; then
-            cat > android/key.properties <<EOF
-            storePassword=${KEYSTORE_PASSWORD}
-            keyPassword=${KEY_PASSWORD}
-            keyAlias=${KEY_ALIAS}
-            storeFile=keystore.jks
-            EOF
+            printf 'storePassword=%s\nkeyPassword=%s\nkeyAlias=%s\nstoreFile=keystore.jks\n' \
+              "$KEYSTORE_PASSWORD" "$KEY_PASSWORD" "$KEY_ALIAS" > android/key.properties
             echo "key.properties created."
           fi
 
