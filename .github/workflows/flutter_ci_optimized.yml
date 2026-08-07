@@ -83,6 +83,9 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Generate .env from example
+        run: cp .env.example .env
+
       - name: Run dependency audit
         run: |
           # Check for known vulnerabilities in dependencies
@@ -114,6 +117,9 @@ jobs:
 
       - name: Get dependencies
         run: flutter pub get
+
+      - name: Generate .env from example
+        run: cp .env.example .env
 
       - name: Run unit tests
         run: flutter test --coverage --reporter expanded

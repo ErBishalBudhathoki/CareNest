@@ -43,6 +43,9 @@ jobs:
       # Install Dependencies
       - run: flutter pub get
 
+      # Generate .env from example so the declared asset exists in CI
+      - run: cp .env.example .env
+
       # Static Analysis (Fail fast if code is bad)
       - run: flutter analyze
 
