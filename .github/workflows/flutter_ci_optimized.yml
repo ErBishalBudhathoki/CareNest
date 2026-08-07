@@ -185,6 +185,9 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Generate .env from example
+        run: cp .env.example .env
+
       - name: Decode keystore (Release only)
         if: matrix.build-type == 'release'
         env:
