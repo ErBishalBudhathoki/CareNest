@@ -140,7 +140,7 @@ class InvoiceManagementService {
         body: {
           'organizationId': organizationId,
           'recipientEmail': recipientEmail,
-          if (message != null) 'message': message,
+          'message': ?message,
         },
       );
       return result;

@@ -596,7 +596,7 @@ class _RealtimePortalDashboardState
                     child: ListView.separated(
                       shrinkWrap: true,
                       itemCount: clients.length,
-                      separatorBuilder: (_, __) =>
+                      separatorBuilder: (_, _) =>
                           Divider(color: BauhausDesign.neutral, height: 1),
                       itemBuilder: (context, index) {
                         final client = clients[index];

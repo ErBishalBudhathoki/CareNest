@@ -46,7 +46,7 @@ class SharedEmployeePoolView extends ConsumerWidget {
             Expanded(
               child: ListView.separated(
                 itemCount: 0, // TODO: Fetch from provider
-                separatorBuilder: (_, __) =>
+                separatorBuilder: (_, _) =>
                     const SizedBox(height: BauhausDesign.space3),
                 itemBuilder: (context, index) {
                   return const SizedBox();

@@ -47,7 +47,7 @@ final financialMetricsProvider = FutureProvider<List<FinancialMetric>>((
       );
     },
     loading: () => [],
-    error: (_, __) => [],
+    error: (_, _) => [],
   );
 });
 
@@ -69,7 +69,7 @@ final utilizationMetricsProvider = FutureProvider<List<UtilizationMetric>>((
       );
     },
     loading: () => [],
-    error: (_, __) => [],
+    error: (_, _) => [],
   );
 });
 
@@ -90,7 +90,7 @@ final overtimeMetricsProvider = FutureProvider<List<OvertimeMetric>>((
       );
     },
     loading: () => [],
-    error: (_, __) => [],
+    error: (_, _) => [],
   );
 });
 
@@ -112,6 +112,6 @@ final reliabilityMetricsProvider = FutureProvider<List<ReliabilityMetric>>((
       );
     },
     loading: () => [],
-    error: (_, __) => [],
+    error: (_, _) => [],
   );
 });

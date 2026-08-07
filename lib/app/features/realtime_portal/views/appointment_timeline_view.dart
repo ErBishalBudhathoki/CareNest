@@ -191,7 +191,7 @@ class AppointmentTimelineView extends ConsumerWidget {
                 return ListView.separated(
                   padding: const EdgeInsets.all(BauhausDesign.space5),
                   itemCount: appointments.length + 1,
-                  separatorBuilder: (_, __) =>
+                  separatorBuilder: (_, _) =>
                       const SizedBox(height: BauhausDesign.space4),
                   itemBuilder: (context, index) {
                     if (index == 0) {
@@ -707,7 +707,7 @@ class AppointmentTimelineView extends ConsumerWidget {
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: confirmation.checklist!.length,
-                                  separatorBuilder: (_, __) => Divider(
+                                  separatorBuilder: (_, _) => Divider(
                                     color: BauhausDesign.neutral,
                                     height: 1,
                                   ),

@@ -930,7 +930,7 @@ class _EmployeeInvoiceGenerationViewState
       ),
       child: ListView.separated(
         itemCount: _employees.length,
-        separatorBuilder: (_, __) =>
+        separatorBuilder: (_, _) =>
             const Divider(height: 1, thickness: 1.5, color: _neoBlack),
         itemBuilder: (context, index) {
           final e = _employees[index];
@@ -1252,7 +1252,7 @@ class _EmployeeInvoiceGenerationViewState
       ),
       child: ListView.separated(
         itemCount: employee.clients.length,
-        separatorBuilder: (_, __) =>
+        separatorBuilder: (_, _) =>
             const Divider(height: 1, thickness: 1.5, color: _neoBlack),
         itemBuilder: (context, index) {
           final c = employee.clients[index];
@@ -2110,7 +2110,7 @@ class _EmployeeInvoiceGenerationViewState
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: _generatedResults.length,
-            separatorBuilder: (_, __) =>
+            separatorBuilder: (_, _) =>
                 const Divider(height: 1, color: _neoBlack, thickness: 1.5),
             itemBuilder: (context, index) {
               final item = _generatedResults[index];

@@ -34,7 +34,7 @@ class PermissionGuard extends ConsumerWidget {
         return fallback ?? const SizedBox.shrink();
       },
       loading: () => const SizedBox.shrink(),
-      error: (_, __) => fallback ?? const SizedBox.shrink(),
+      error: (_, _) => fallback ?? const SizedBox.shrink(),
     );
   }
 }

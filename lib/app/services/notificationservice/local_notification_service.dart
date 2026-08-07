@@ -54,7 +54,7 @@ class LocalNotificationService {
 
     // Initialize the plugin
     await _notificationsPlugin.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       onDidReceiveNotificationResponse: onDidReceiveNotification,
     );
 
@@ -145,10 +145,10 @@ class LocalNotificationService {
       final stopwatch = Stopwatch()..start();
 
       await _notificationsPlugin.show(
-        notificationId, // Notification ID
-        notificationModel.title,
-        notificationModel.body,
-        notificationDetails,
+        id: notificationId,
+        title: notificationModel.title,
+        body: notificationModel.body,
+        notificationDetails: notificationDetails,
         payload: jsonEncode(payload),
       );
 

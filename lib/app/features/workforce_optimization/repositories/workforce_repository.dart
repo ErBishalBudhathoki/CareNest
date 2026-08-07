@@ -154,8 +154,8 @@ class WorkforceRepository {
       final response = await _apiMethod.optimizeAllocation({
         'organizationId': organizationId,
         'date': date,
-        if (appointments != null) 'appointments': appointments,
-        if (constraints != null) 'constraints': constraints,
+        'appointments': ?appointments,
+        'constraints': ?constraints,
       });
 
       if (response['success'] == true && response['data'] != null) {
@@ -439,9 +439,9 @@ class WorkforceRepository {
     try {
       final response = await _apiMethod.performComplianceCheck({
         'organizationId': organizationId,
-        if (employeeId != null) 'employeeId': employeeId,
-        if (startDate != null) 'startDate': startDate,
-        if (endDate != null) 'endDate': endDate,
+        'employeeId': ?employeeId,
+        'startDate': ?startDate,
+        'endDate': ?endDate,
       });
 
       if (response['success'] == true && response['data'] != null) {
@@ -474,9 +474,9 @@ class WorkforceRepository {
     try {
       final response = await _apiMethod.analyzeFeedbackSentiment({
         'organizationId': organizationId,
-        if (employeeId != null) 'employeeId': employeeId,
-        if (startDate != null) 'startDate': startDate,
-        if (endDate != null) 'endDate': endDate,
+        'employeeId': ?employeeId,
+        'startDate': ?startDate,
+        'endDate': ?endDate,
       });
 
       if (response['success'] == true && response['data'] != null) {
@@ -507,7 +507,7 @@ class WorkforceRepository {
     try {
       final response = await _apiMethod.assessRisk({
         'organizationId': organizationId,
-        if (appointmentId != null) 'appointmentId': appointmentId,
+        'appointmentId': ?appointmentId,
       });
 
       if (response['success'] == true && response['data'] != null) {

@@ -19,7 +19,7 @@ class VoiceRepository {
   }) async {
     final response = await _apiMethod.post(
       'api/voice/command',
-      body: {'commandText': text, if (context != null) 'context': context},
+      body: {'commandText': text, 'context': ?context},
     );
 
     if (response['success'] == true) {

@@ -128,7 +128,7 @@ class ReminderSchedulerService {
 
     for (final suffix in suffixes) {
       final notificationId = _generateNotificationId(appointmentId, suffix);
-      await _notificationsPlugin.cancel(notificationId);
+      await _notificationsPlugin.cancel(id: notificationId);
     }
 
     await _removePersistedReminders(appointmentId);
@@ -221,15 +221,13 @@ class ReminderSchedulerService {
 
     try {
       await _notificationsPlugin.zonedSchedule(
-        id,
-        title,
-        body,
-        tzScheduledTime,
-        notificationDetails,
+        id: id,
+        title: title,
+        body: body,
+        scheduledDate: tzScheduledTime,
+        notificationDetails: notificationDetails,
         payload: jsonEncode(payload),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: null,
       );
     } on PlatformException catch (e) {
@@ -238,15 +236,13 @@ class ReminderSchedulerService {
           'ReminderSchedulerService: Exact alarms not permitted, falling back to inexact',
         );
         await _notificationsPlugin.zonedSchedule(
-          id,
-          title,
-          body,
-          tzScheduledTime,
-          notificationDetails,
+          id: id,
+          title: title,
+          body: body,
+          scheduledDate: tzScheduledTime,
+          notificationDetails: notificationDetails,
           payload: jsonEncode(payload),
           androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-          uiLocalNotificationDateInterpretation:
-              UILocalNotificationDateInterpretation.absoluteTime,
           matchDateTimeComponents: null,
         );
       } else {

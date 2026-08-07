@@ -393,7 +393,7 @@ class _ClientPricingReviewViewState
     return ListView.separated(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       itemCount: _clientsWithAssignments.length,
-      separatorBuilder: (_, __) => const SizedBox(height: BauhausDesign.space3),
+      separatorBuilder: (_, _) => const SizedBox(height: BauhausDesign.space3),
       itemBuilder: (context, index) {
         final client = _clientsWithAssignments[index];
         final assignmentCount = (client['assignments'] as List).length;

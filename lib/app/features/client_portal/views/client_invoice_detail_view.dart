@@ -491,7 +491,7 @@ class ClientInvoiceDetailView extends ConsumerWidget {
                 ),
               ],
             ),
-            error: (_, __) => Text(
+            error: (_, _) => Text(
               'Unable to load receipts right now.',
               style: BauhausDesign.getTextTheme(
                 context,
@@ -1229,7 +1229,7 @@ class _SecureReceiptViewerPageState
         child: Image.memory(
           _fileBytes!,
           fit: BoxFit.contain,
-          errorBuilder: (_, __, ___) => const Center(
+          errorBuilder: (_, _, _) => const Center(
             child: BauhausEmptyState(
               title: 'Preview Failed',
               message: 'Could not render this receipt image.',

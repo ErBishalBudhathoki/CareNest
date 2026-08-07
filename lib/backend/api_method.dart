@@ -107,10 +107,7 @@ class ApiMethod extends ChangeNotifier {
     String? adminNotes,
   }) async {
     final endpoint = 'requests/$requestId/status';
-    final body = {
-      'status': status,
-      if (adminNotes != null) 'adminNotes': adminNotes,
-    };
+    final body = {'status': status, 'adminNotes': ?adminNotes};
     return await put(endpoint, body: body);
   }
 
@@ -124,7 +121,7 @@ class ApiMethod extends ChangeNotifier {
     final body = {
       'startDate': startDate,
       'endDate': endDate,
-      if (organizationId != null) 'organizationId': organizationId,
+      'organizationId': ?organizationId,
       'dailyHours': dailyHours,
     };
     return await post(endpoint, body: body);
@@ -765,7 +762,7 @@ class ApiMethod extends ChangeNotifier {
     final headers = <String, String>{
       'Content-Type': 'application/json',
       if (!kIsWeb && Platform.isIOS) 'X-Platform': 'ios',
-      if (extra != null) ...extra,
+      ...?extra,
     };
 
     if (includeAuth && !headers.containsKey('Authorization')) {
@@ -818,7 +815,7 @@ class ApiMethod extends ChangeNotifier {
         : _buildUri(url);
     final baseUri = Uri.parse(_baseUrl);
     final Map<String, String> combinedHeaders = {
-      if (headers != null) ...headers,
+      ...?headers,
       if (!kIsWeb && Platform.isIOS) 'X-Platform': 'ios',
     };
 
@@ -852,7 +849,7 @@ class ApiMethod extends ChangeNotifier {
         : _buildUri(url);
     final baseUri = Uri.parse(_baseUrl);
     final Map<String, String> combinedHeaders = {
-      if (headers != null) ...headers,
+      ...?headers,
       if (!kIsWeb && Platform.isIOS) 'X-Platform': 'ios',
     };
 
@@ -883,7 +880,7 @@ class ApiMethod extends ChangeNotifier {
   }) async {
     final uri = _buildUri(endpoint);
     final Map<String, String> combinedHeaders = {
-      if (headers != null) ...headers,
+      ...?headers,
       if (!kIsWeb && Platform.isIOS) 'X-Platform': 'ios',
     };
     final authValue = await _getAuthorizationHeaderValue();
@@ -1656,7 +1653,7 @@ class ApiMethod extends ChangeNotifier {
         'date': normalizedDate,
         'startTime': normalizedStartTime,
         'endTime': normalizedEndTime,
-        if (breakDuration != null) 'breakDuration': breakDuration,
+        'breakDuration': ?breakDuration,
       };
 
       debugPrint('Request body: ${json.encode(body)}');
@@ -1817,8 +1814,8 @@ class ApiMethod extends ChangeNotifier {
         'email': email,
         'organizationId': organizationId,
         'fcmToken': fcmToken,
-        if (deviceId != null) 'deviceId': deviceId,
-        if (deviceInfo != null) 'deviceInfo': deviceInfo,
+        'deviceId': ?deviceId,
+        'deviceInfo': ?deviceInfo,
         'timestamp': DateTime.now().toIso8601String(),
       };
 
@@ -2764,7 +2761,7 @@ class ApiMethod extends ChangeNotifier {
           "Content-Type": "application/json",
           "Accept": "application/json",
           if (!kIsWeb && Platform.isIOS) 'X-Platform': 'ios',
-          if (appCheckToken != null) "X-Firebase-AppCheck": appCheckToken,
+          "X-Firebase-AppCheck": ?appCheckToken,
         },
         body: jsonEncode(requestBody),
       );
@@ -2878,7 +2875,7 @@ class ApiMethod extends ChangeNotifier {
           'clientCity': clientCity,
           'clientState': clientState,
           'clientZip': clientZip,
-          if (businessName != null) 'businessName': businessName,
+          'businessName': ?businessName,
           'userEmail': userEmail,
           'organizationId': organizationId,
         },
@@ -2927,14 +2924,14 @@ class ApiMethod extends ChangeNotifier {
         body: {
           'userEmail': userEmail,
           'organizationId': organizationId,
-          if (clientFirstName != null) 'clientFirstName': clientFirstName,
-          if (clientLastName != null) 'clientLastName': clientLastName,
-          if (clientPhone != null) 'clientPhone': clientPhone,
-          if (clientAddress != null) 'clientAddress': clientAddress,
-          if (clientCity != null) 'clientCity': clientCity,
-          if (clientState != null) 'clientState': clientState,
-          if (clientZip != null) 'clientZip': clientZip,
-          if (businessName != null) 'businessName': businessName,
+          'clientFirstName': ?clientFirstName,
+          'clientLastName': ?clientLastName,
+          'clientPhone': ?clientPhone,
+          'clientAddress': ?clientAddress,
+          'clientCity': ?clientCity,
+          'clientState': ?clientState,
+          'clientZip': ?clientZip,
+          'businessName': ?businessName,
         },
       );
     } catch (e) {
@@ -5074,7 +5071,7 @@ class ApiMethod extends ChangeNotifier {
         payload: {
           'organizationId': organizationId,
           'supportItemNumber': supportItemNumber,
-          if (clientId != null) 'clientId': clientId,
+          'clientId': ?clientId,
         },
       );
       final response = await http.get(Uri.parse(url), headers: headers);
@@ -5106,7 +5103,7 @@ class ApiMethod extends ChangeNotifier {
         details: {
           'organizationId': organizationId,
           'supportItemNumber': supportItemNumber,
-          if (clientId != null) 'clientId': clientId,
+          'clientId': ?clientId,
           'error': e.toString(),
         },
       );
@@ -5187,7 +5184,7 @@ class ApiMethod extends ChangeNotifier {
         details: {
           'organizationId': organizationId,
           'supportItemNumbers': supportItemNumbers,
-          if (clientId != null) 'clientId': clientId,
+          'clientId': ?clientId,
           'error': e.toString(),
         },
       );
@@ -5302,7 +5299,7 @@ class ApiMethod extends ChangeNotifier {
           'price': price,
           'pricingType': pricingType,
           'userEmail': userEmail,
-          if (supportItemName != null) 'supportItemName': supportItemName,
+          'supportItemName': ?supportItemName,
           'error': e.toString(),
         },
       );
@@ -5397,7 +5394,7 @@ class ApiMethod extends ChangeNotifier {
           'price': price,
           'pricingType': pricingType,
           'userEmail': userEmail,
-          if (supportItemName != null) 'supportItemName': supportItemName,
+          'supportItemName': ?supportItemName,
           'error': e.toString(),
         },
       );
@@ -5579,10 +5576,10 @@ class ApiMethod extends ChangeNotifier {
           'price': price,
           'pricingType': pricingType,
           'userEmail': userEmail,
-          if (supportItemName != null) 'supportItemName': supportItemName,
-          if (multiplier != null) 'multiplier': multiplier,
-          if (clientId != null) 'clientId': clientId,
-          if (clientSpecific != null) 'clientSpecific': clientSpecific,
+          'supportItemName': ?supportItemName,
+          'multiplier': ?multiplier,
+          'clientId': ?clientId,
+          'clientSpecific': ?clientSpecific,
           'error': e.toString(),
         },
       );
@@ -6343,7 +6340,7 @@ class ApiMethod extends ChangeNotifier {
     try {
       final queryParams = <String, String>{
         'organizationId': organizationId,
-        if (clientEmail != null) 'clientEmail': clientEmail,
+        'clientEmail': ?clientEmail,
         if (startTime != null) 'startTime': startTime.toIso8601String(),
         if (endTime != null) 'endTime': endTime.toIso8601String(),
         if (requiredSkills != null && requiredSkills.isNotEmpty)
@@ -6418,9 +6415,9 @@ class ApiMethod extends ChangeNotifier {
       final queryParams = <String, String>{
         if (startDate != null) 'startDate': startDate.toIso8601String(),
         if (endDate != null) 'endDate': endDate.toIso8601String(),
-        if (status != null) 'status': status,
-        if (employeeEmail != null) 'employeeEmail': employeeEmail,
-        if (clientEmail != null) 'clientEmail': clientEmail,
+        'status': ?status,
+        'employeeEmail': ?employeeEmail,
+        'clientEmail': ?clientEmail,
       };
 
       final uri = Uri.parse(
@@ -6560,11 +6557,11 @@ class ApiMethod extends ChangeNotifier {
       );
 
       final payload = {
-        if (employeeId != null) 'employeeId': employeeId,
+        'employeeId': ?employeeId,
         'employeeEmail': employeeEmail,
         'startTime': startTime.toIso8601String(),
         'endTime': endTime.toIso8601String(),
-        if (excludeShiftId != null) 'excludeShiftId': excludeShiftId,
+        'excludeShiftId': ?excludeShiftId,
       };
 
       final response = await http.post(
@@ -6639,9 +6636,9 @@ class ApiMethod extends ChangeNotifier {
       final body = {
         'organizationId': organizationId,
         'status': status,
-        if (notes != null) 'notes': notes,
-        if (paidAmount != null) 'paidAmount': paidAmount,
-        if (updatedBy != null) 'updatedBy': updatedBy,
+        'notes': ?notes,
+        'paidAmount': ?paidAmount,
+        'updatedBy': ?updatedBy,
       };
 
       final response = await http.patch(
@@ -6708,10 +6705,10 @@ class ApiMethod extends ChangeNotifier {
       final endpoint = 'integrations/$organizationId/connect';
       final body = {
         'integrationType': integrationType,
-        if (apiKey != null) 'apiKey': apiKey,
-        if (accessToken != null) 'accessToken': accessToken,
-        if (refreshToken != null) 'refreshToken': refreshToken,
-        if (metadata != null) 'metadata': metadata,
+        'apiKey': ?apiKey,
+        'accessToken': ?accessToken,
+        'refreshToken': ?refreshToken,
+        'metadata': ?metadata,
       };
       return await post(endpoint, body: body);
     } catch (e) {
@@ -6745,7 +6742,7 @@ class ApiMethod extends ChangeNotifier {
       final endpoint = 'integrations/$organizationId/auth-url';
       final body = {
         'integrationType': integrationType,
-        if (redirectUri != null) 'redirectUri': redirectUri,
+        'redirectUri': ?redirectUri,
       };
       return await post(endpoint, body: body);
     } catch (e) {
@@ -6766,7 +6763,7 @@ class ApiMethod extends ChangeNotifier {
       final body = {
         'integrationType': integrationType,
         'code': code,
-        if (state != null) 'state': state,
+        'state': ?state,
       };
       return await post(endpoint, body: body);
     } catch (e) {
@@ -6783,10 +6780,7 @@ class ApiMethod extends ChangeNotifier {
   }) async {
     try {
       final endpoint = 'integrations/$organizationId/sync';
-      final body = {
-        'integrationType': integrationType,
-        if (options != null) 'options': options,
-      };
+      final body = {'integrationType': integrationType, 'options': ?options};
       return await post(endpoint, body: body);
     } catch (e) {
       debugPrint('Error syncing integration: $e');
@@ -7027,7 +7021,7 @@ class ApiMethod extends ChangeNotifier {
       final body = {
         'shiftId': shiftId,
         'organizationId': organizationId,
-        if (criteria != null) 'criteria': criteria,
+        'criteria': ?criteria,
       };
       return await post(endpoint, body: body);
     } catch (e) {
@@ -7047,7 +7041,7 @@ class ApiMethod extends ChangeNotifier {
       final body = {
         'shiftIds': shiftIds,
         'organizationId': organizationId,
-        if (criteria != null) 'criteria': criteria,
+        'criteria': ?criteria,
       };
       return await post(endpoint, body: body);
     } catch (e) {
@@ -7389,7 +7383,7 @@ class ApiMethod extends ChangeNotifier {
       final body = {
         'conflictId': conflictId,
         'resolution': resolution,
-        if (mergedData != null) 'mergedData': mergedData,
+        'mergedData': ?mergedData,
       };
       return await post(endpoint, body: body);
     } catch (e) {
@@ -8244,8 +8238,8 @@ class ApiMethod extends ChangeNotifier {
       'care-intelligence/intelligence/patterns/$clientId',
       body: {
         'organizationId': organizationId,
-        if (startDate != null) 'startDate': startDate,
-        if (endDate != null) 'endDate': endDate,
+        'startDate': ?startDate,
+        'endDate': ?endDate,
       },
     );
   }
@@ -8341,8 +8335,8 @@ class ApiMethod extends ChangeNotifier {
       'care-intelligence/risk/trends/$clientId',
       body: {
         'organizationId': organizationId,
-        if (startDate != null) 'startDate': startDate,
-        if (endDate != null) 'endDate': endDate,
+        'startDate': ?startDate,
+        'endDate': ?endDate,
       },
     );
   }
@@ -8358,7 +8352,7 @@ class ApiMethod extends ChangeNotifier {
       body: {
         'clientId': clientId,
         'organizationId': organizationId,
-        if (preferences != null) 'preferences': preferences,
+        'preferences': ?preferences,
       },
     );
   }
@@ -8370,10 +8364,7 @@ class ApiMethod extends ChangeNotifier {
   }) async {
     return await post(
       'care-intelligence/care-plan/goals/$clientId',
-      body: {
-        'organizationId': organizationId,
-        if (outcomeAreas != null) 'outcomeAreas': outcomeAreas,
-      },
+      body: {'organizationId': organizationId, 'outcomeAreas': ?outcomeAreas},
     );
   }
 
@@ -8422,7 +8413,7 @@ class ApiMethod extends ChangeNotifier {
       body: {
         'clientId': clientId,
         'organizationId': organizationId,
-        if (condition != null) 'condition': condition,
+        'condition': ?condition,
       },
     );
   }
@@ -8460,10 +8451,7 @@ class ApiMethod extends ChangeNotifier {
   }) async {
     return await post(
       'care-intelligence/incident/patterns/$organizationId',
-      body: {
-        if (startDate != null) 'startDate': startDate,
-        if (endDate != null) 'endDate': endDate,
-      },
+      body: {'startDate': ?startDate, 'endDate': ?endDate},
     );
   }
 
@@ -8513,8 +8501,8 @@ class ApiMethod extends ChangeNotifier {
       'care-intelligence/medication/compliance/$clientId',
       body: {
         'organizationId': organizationId,
-        if (startDate != null) 'startDate': startDate,
-        if (endDate != null) 'endDate': endDate,
+        'startDate': ?startDate,
+        'endDate': ?endDate,
       },
     );
   }
@@ -8980,9 +8968,9 @@ class ApiMethod extends ChangeNotifier {
       final body = {
         'firebaseUid': firebaseUid,
         'email': email,
-        if (firstName != null) 'firstName': firstName,
-        if (lastName != null) 'lastName': lastName,
-        if (photoURL != null) 'photoURL': photoURL,
+        'firstName': ?firstName,
+        'lastName': ?lastName,
+        'photoURL': ?photoURL,
       };
 
       final appCheckToken = await _getAppCheckToken();

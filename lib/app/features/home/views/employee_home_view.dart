@@ -61,7 +61,7 @@ class EmployeeHomeView extends ConsumerStatefulWidget {
 class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
   final PageController _pageController = PageController();
   Timer? _broadcastPollTimer;
-  var eml;
+  dynamic eml;
   var initialData = {};
 
   // Bank details state
@@ -451,7 +451,7 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                                 : const SizedBox.shrink();
                           },
                           loading: () => const SizedBox.shrink(),
-                          error: (_, __) => const SizedBox.shrink(),
+                          error: (_, _) => const SizedBox.shrink(),
                         ),
                         // --- APPOINTMENTS ---
                         BauhausSectionHeader(
@@ -483,7 +483,7 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                               padding: EdgeInsets.zero,
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: appointments.length,
-                              separatorBuilder: (_, __) =>
+                              separatorBuilder: (_, _) =>
                                   const SizedBox(height: 16),
                               itemBuilder: (context, index) {
                                 final appointment = appointments[index];
@@ -577,7 +577,7 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                             );
                           },
                           loading: () => const SizedBox.shrink(),
-                          error: (_, __) => const SizedBox.shrink(),
+                          error: (_, _) => const SizedBox.shrink(),
                         ),
 
                         // Leave Tracker

@@ -259,7 +259,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
               child: ListView.separated(
                 shrinkWrap: true,
                 itemCount: employees.length,
-                separatorBuilder: (_, __) =>
+                separatorBuilder: (_, _) =>
                     const Divider(height: 1, color: BauhausDesign.neutral),
                 itemBuilder: (context, index) {
                   final employee = employees[index];
@@ -327,7 +327,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
                   : ListView.separated(
                       shrinkWrap: true,
                       itemCount: assignments.length,
-                      separatorBuilder: (_, __) => const Divider(
+                      separatorBuilder: (_, _) => const Divider(
                         height: 1,
                         color: BauhausDesign.neutral,
                       ),

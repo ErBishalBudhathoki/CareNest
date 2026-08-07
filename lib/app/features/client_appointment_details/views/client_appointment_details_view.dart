@@ -323,7 +323,7 @@ class ClientAppointmentDetailsView extends ConsumerWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: visits.length > 3 ? 3 : visits.length,
-              separatorBuilder: (_, __) => const Divider(),
+              separatorBuilder: (_, _) => const Divider(),
               itemBuilder: (context, index) {
                 final visit = visits[index];
                 return ListTile(
