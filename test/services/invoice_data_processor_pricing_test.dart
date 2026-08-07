@@ -31,8 +31,6 @@ class StubApiMethod extends Mock implements ApiMethod {
 
 /// Test-specific LineItemViewModel that returns an empty list to satisfy dependencies.
 class TestLineItemViewModel extends LineItemViewModel {
-  TestLineItemViewModel(super.api);
-
   @override
   Future<List<Map<String, dynamic>>> getSupportItems() async {
     return <Map<String, dynamic>>[];
@@ -46,11 +44,10 @@ void main() {
 
   setUp(() {
     mockApiMethod = StubApiMethod();
-    final lineItemVM = TestLineItemViewModel(mockApiMethod);
-
+    
     final container = ProviderContainer(
       overrides: [
-        app_providers.lineItemViewModelProvider.overrideWith((ref) => lineItemVM),
+        app_providers.lineItemViewModelProvider.overrideWith(TestLineItemViewModel.new),
         app_providers.apiMethodProvider.overrideWith((ref) => mockApiMethod),
       ],
     );

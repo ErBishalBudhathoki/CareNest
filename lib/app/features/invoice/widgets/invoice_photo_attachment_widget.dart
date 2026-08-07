@@ -386,11 +386,12 @@ class _InvoicePhotoAttachmentWidgetState
             GestureDetector(
               onTap: _isLoading ? null : _showPhotoSourceDialog,
               child: DottedBorder(
-                borderType: BorderType.RRect,
-                radius: const Radius.circular(8),
-                color: BauhausDesign.primary.withOpacity(0.3),
-                strokeWidth: 2,
-                dashPattern: const [8, 4],
+                options: RoundedRectDottedBorderOptions(
+                  radius: const Radius.circular(8),
+                  color: BauhausDesign.primary.withOpacity(0.3),
+                  strokeWidth: 2,
+                  dashPattern: const [8, 4],
+                ),
                 child: Container(
                   height: 80,
                   width: double.infinity,

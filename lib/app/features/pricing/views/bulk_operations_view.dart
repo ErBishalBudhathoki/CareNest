@@ -97,7 +97,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
 
   Future<void> _importCsv(List<PricingLiveRecord> records) async {
     final l10n = AppLocalizations.of(context)!;
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: const ['csv'],
       withData: true,

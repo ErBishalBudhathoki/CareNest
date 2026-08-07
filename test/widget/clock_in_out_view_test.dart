@@ -76,7 +76,10 @@ class MockWorkerRepository extends WorkerRepository {
 }
 
 class FakeDashboardViewModel extends WorkerDashboardViewModel {
-  FakeDashboardViewModel() : super(MockWorkerRepository());
+  @override
+  Future<WorkerDashboardData> build() async {
+    return _fakeDashboardData;
+  }
 }
 
 // Stub repository that returns empty timesheets without needing SharedPreferences
@@ -100,7 +103,7 @@ Widget buildTestApp() {
   return ProviderScope(
     overrides: [
       workerDashboardViewModelProvider
-          .overrideWith((ref) => FakeDashboardViewModel()),
+          .overrideWith(FakeDashboardViewModel.new),
       timesheetRepositoryProvider
           .overrideWithValue(_StubTimesheetRepository()),
     ],

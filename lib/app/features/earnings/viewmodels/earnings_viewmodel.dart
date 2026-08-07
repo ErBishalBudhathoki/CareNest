@@ -56,8 +56,8 @@ class EarningsState {
 final earningsViewModelProvider = NotifierProvider<EarningsViewModel, EarningsState>(EarningsViewModel.new);
 
 class EarningsViewModel extends Notifier<EarningsState> {
-  late final EarningsRepository _repository;
-  late final String _userEmail;
+  late EarningsRepository _repository;
+  late String _userEmail;
   Map<String, dynamic>? _taxConfig;
 
   

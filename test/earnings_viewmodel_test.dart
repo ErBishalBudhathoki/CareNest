@@ -1,8 +1,12 @@
+import 'package:carenest/app/features/auth/models/user_model.dart';
 import 'package:carenest/app/features/earnings/models/earnings_data.dart';
 import 'package:carenest/app/features/earnings/repositories/earnings_repository.dart';
 import 'package:carenest/app/features/earnings/viewmodels/earnings_viewmodel.dart';
+import 'package:carenest/app/features/auth/models/user_role.dart';
+import 'package:carenest/app/features/auth/providers/user_provider.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class _RecordingEarningsRepository extends EarningsRepository {
   _RecordingEarningsRepository() : super(ApiMethod());
@@ -62,11 +66,32 @@ class _RecordingEarningsRepository extends EarningsRepository {
   }
 }
 
+User _testUser() {
+  return User(
+    id: 'u1',
+    organizationId: 'org1',
+    name: 'Test User',
+    email: 'user@example.com',
+    phone: '123',
+    role: UserRole.employee,
+    roles: const ['employee'],
+    payRate: 0,
+    activeAllowances: const [],
+    permissions: const [],
+  );
+}
+
 void main() {
   group('EarningsViewModel', () {
     test('monthly range uses first and last day of month', () async {
       final repo = _RecordingEarningsRepository();
-      final vm = EarningsViewModel(repo, 'user@example.com', autoLoad: false);
+      final container = ProviderContainer(overrides: [
+        earningsRepositoryProvider.overrideWith((ref) => repo),
+        currentUserProvider.overrideWith((ref) async => _testUser()),
+      ]);
+      addTearDown(container.dispose);
+      await container.read(currentUserProvider.future);
+      final vm = container.read(earningsViewModelProvider.notifier);
 
       vm.state = vm.state.copyWith(
         period: EarningsPeriod.monthly,
@@ -82,9 +107,15 @@ void main() {
       expect(repo.historyBucket, 'month');
     });
 
-    test('weekly range uses Monday–Sunday week', () async {
+    test('weekly range uses Monday-Sunday week', () async {
       final repo = _RecordingEarningsRepository();
-      final vm = EarningsViewModel(repo, 'user@example.com', autoLoad: false);
+      final container = ProviderContainer(overrides: [
+        earningsRepositoryProvider.overrideWith((ref) => repo),
+        currentUserProvider.overrideWith((ref) async => _testUser()),
+      ]);
+      addTearDown(container.dispose);
+      await container.read(currentUserProvider.future);
+      final vm = container.read(earningsViewModelProvider.notifier);
 
       vm.state = vm.state.copyWith(
         period: EarningsPeriod.weekly,
@@ -102,7 +133,12 @@ void main() {
 
     test('calculateTax supports frequency scaling', () {
       final repo = _RecordingEarningsRepository();
-      final vm = EarningsViewModel(repo, 'user@example.com', autoLoad: false);
+      final container = ProviderContainer(overrides: [
+        earningsRepositoryProvider.overrideWith((ref) => repo),
+        currentUserProvider.overrideWith((ref) async => _testUser()),
+      ]);
+      addTearDown(container.dispose);
+      final vm = container.read(earningsViewModelProvider.notifier);
 
       final r = vm.calculateTax(1000, TaxFrequency.weekly);
       expect(r['gross'], 1000);

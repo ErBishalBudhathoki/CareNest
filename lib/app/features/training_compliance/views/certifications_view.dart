@@ -704,7 +704,7 @@ class _UploadCertificationDialogState
               const SizedBox(height: BauhausDesign.space3),
               GestureDetector(
                 onTap: () async {
-                  final result = await FilePicker.platform.pickFiles(
+                  final result = await FilePicker.pickFiles(
                       type: FileType.custom,
                       allowedExtensions: ['pdf', 'jpg', 'png']);
                   if (result != null) {

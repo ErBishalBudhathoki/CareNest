@@ -16,9 +16,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class _ImmediateUserRoleNotifier extends UserRoleNotifier {
-  _ImmediateUserRoleNotifier(super.prefs, UserRole role) {
-    state = role;
-  }
+  _ImmediateUserRoleNotifier(this._role);
+
+  final UserRole _role;
+
+  @override
+  UserRole build() => _role;
 }
 
 class _TestPrefs extends SharedPreferencesUtils {
@@ -117,7 +120,7 @@ void main() {
       ProviderScope(
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
-          userRoleProvider.overrideWith((ref) => _ImmediateUserRoleNotifier(prefs, UserRole.admin)),
+          userRoleProvider.overrideWith(() => _ImmediateUserRoleNotifier(UserRole.admin)),
           currentUserProvider.overrideWith((ref) async => user),
           earningsRepositoryProvider.overrideWithValue(_FakeEarningsRepository()),
           businessStatsProvider.overrideWith((ref, orgId) async {
@@ -165,7 +168,7 @@ void main() {
       ProviderScope(
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
-          userRoleProvider.overrideWith((ref) => _ImmediateUserRoleNotifier(prefs, UserRole.employee)),
+          userRoleProvider.overrideWith(() => _ImmediateUserRoleNotifier(UserRole.employee)),
           currentUserProvider.overrideWith((ref) async => user),
           earningsRepositoryProvider.overrideWithValue(_FakeEarningsRepository()),
         ],

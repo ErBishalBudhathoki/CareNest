@@ -239,7 +239,7 @@ class _EnhancedFileAttachmentWidgetState
   Future<void> _pickFiles() async {
     try {
       picker.FilePickerResult? result =
-          await picker.FilePicker.platform.pickFiles(
+          await picker.FilePicker.pickFiles(
         type: picker.FileType.custom,
         allowedExtensions:
             _allSupportedExtensions.map((e) => e.substring(1)).toList(),
