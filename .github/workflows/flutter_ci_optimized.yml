@@ -194,18 +194,14 @@ jobs:
           echo "${{ secrets.GOOGLE_SERVICES_JSON_DEV }}" | base64 -d > android/app/src/development/google-services.json
 
       - name: Decode keystore (Release only)
-        if: matrix.build-type == 'release'
+        if: matrix.build-type == 'release' && secrets.ANDROID_KEYSTORE_BASE64 != ''
         env:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
-          if [ -n "$KEYSTORE_BASE64" ]; then
-            echo "$KEYSTORE_BASE64" | base64 -d > android/app/keystore.jks
-          else
-            echo "::warning::No keystore found, skipping signing"
-          fi
+          echo "$KEYSTORE_BASE64" | base64 -d > android/app/keystore.jks
 
       - name: Create key.properties (Release only)
-        if: matrix.build-type == 'release'
+        if: matrix.build-type == 'release' && secrets.ANDROID_KEYSTORE_BASE64 != ''
         env:
           KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
@@ -219,18 +215,24 @@ jobs:
           EOF
 
       - name: Build Android ${{ matrix.build-type }}
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
+          if [ "${{ matrix.build-type }}" == "release" ] && [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::warning::No Android keystore secret configured, skipping release build"
+            exit 0
+          fi
           if [ "${{ matrix.build-type }}" == "release" ]; then
-            flutter build appbundle --release --build-number=${{ github.run_number }}
+            flutter build appbundle --release --flavor production --build-number=${{ github.run_number }}
           else
-            flutter build apk --debug
+            flutter build apk --debug --flavor production
           fi
 
       - name: Sign APK/AAB with apksigner (additional verification)
         if: matrix.build-type == 'release'
         run: |
           # Verify the signature
-          $ANDROID_HOME/build-tools/*/apksigner verify build/app/outputs/bundle/release/app-release.aab || \
+          $ANDROID_HOME/build-tools/*/apksigner verify build/app/outputs/bundle/productionRelease/app-production-release.aab || \
             echo "::warning::APK/AAB verification failed"
 
       - name: Generate SBOM (Software Bill of Materials)
