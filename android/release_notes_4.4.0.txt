@@ -1,4 +1,4 @@
-# Release Notes - v4.2.9
+# Release Notes - v4.4.0
 
 🚀 What's New:
 - **Communication Hub**: Broadcasts to all devices with channel selection, plus SMS/Email dispatch.
@@ -9,7 +9,7 @@
 - **Smarter Invoicing**: Expenses/reimbursements are now correctly excluded from the GST tax base.
 
 🛠 Improvements:
-- Android 16 (API 36) compliance for Play Store requirements.
+- Android 16 (API 36) compliance: edge-to-edge handling and large-screen (resizability/orientation) support for Play Store requirements.
 - Migrated to Riverpod 3 Notifier APIs (faster, more reliable state management).
 - Fixed emergency push notifications not reaching devices.
 - App Check debug token stability across reinstalls and logouts.
