@@ -114,7 +114,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                 hoursAsync.when(
                   data: (hours) => hours.toStringAsFixed(1),
                   loading: () => '--',
-                  error: (_, __) => '--',
+                  error: (_, _) => '--',
                 ),
                 style: BauhausDesign.getTextTheme(context).displayLarge
                     ?.copyWith(
@@ -241,7 +241,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
       itemCount: shifts.length,
-      separatorBuilder: (_, __) => const SizedBox(height: BauhausDesign.space2),
+      separatorBuilder: (_, _) => const SizedBox(height: BauhausDesign.space2),
       itemBuilder: (context, index) => _buildShiftCard(shifts[index]),
     );
   }

@@ -104,7 +104,7 @@ class NotificationSettingsView extends ConsumerWidget {
           ),
         ),
         loading: () => null,
-        error: (_, __) => null,
+        error: (_, _) => null,
       ),
     );
   }

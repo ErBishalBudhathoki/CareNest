@@ -136,11 +136,7 @@ class RequestRepository {
     try {
       final response = await _apiMethod.patch(
         'api/requests/$requestId/status',
-        body: {
-          'status': status,
-          'userEmail': userEmail,
-          if (reason != null) 'reason': reason,
-        },
+        body: {'status': status, 'userEmail': userEmail, 'reason': ?reason},
       );
 
       return response['success'] == true;

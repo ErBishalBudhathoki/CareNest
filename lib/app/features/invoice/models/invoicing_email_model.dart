@@ -17,7 +17,7 @@ class InvoicingEmailModel extends ChangeNotifier
   }
 
   bool _isValid = false;
-  get isValid => _isValid;
+  bool get isValid => _isValid;
 
   void isValidEmail(String input) {
     final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');

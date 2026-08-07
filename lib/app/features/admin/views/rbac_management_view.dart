@@ -210,7 +210,7 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: _roles.length,
-        separatorBuilder: (_, __) => const VerticalDivider(
+        separatorBuilder: (_, _) => const VerticalDivider(
           width: 1,
           thickness: 1,
           color: BauhausDesign.neutral,

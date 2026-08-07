@@ -70,7 +70,7 @@ class _AdminCertificationRequirementsViewState
           : ListView.separated(
               padding: const EdgeInsets.all(BauhausDesign.space4),
               itemCount: state.requirements.length,
-              separatorBuilder: (_, __) =>
+              separatorBuilder: (_, _) =>
                   const SizedBox(height: BauhausDesign.space3),
               itemBuilder: (context, index) {
                 final requirement = state.requirements[index];

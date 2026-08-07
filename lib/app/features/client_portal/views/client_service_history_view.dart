@@ -109,7 +109,7 @@ class _ClientServiceHistoryViewState
                           child: ListView.separated(
                             padding: const EdgeInsets.all(BauhausDesign.space4),
                             itemCount: history.length + 1,
-                            separatorBuilder: (_, __) =>
+                            separatorBuilder: (_, _) =>
                                 const SizedBox(height: BauhausDesign.space3),
                             itemBuilder: (context, index) {
                               if (index == history.length) {

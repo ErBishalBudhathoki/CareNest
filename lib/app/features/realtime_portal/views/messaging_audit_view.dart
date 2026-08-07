@@ -264,7 +264,7 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
     return ListView.separated(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       itemCount: state.conversations.length + 1,
-      separatorBuilder: (_, __) => const SizedBox(height: BauhausDesign.space4),
+      separatorBuilder: (_, _) => const SizedBox(height: BauhausDesign.space4),
       itemBuilder: (context, index) {
         if (index == 0) {
           return BauhausSectionHeader(
@@ -432,7 +432,7 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
               : ListView.separated(
                   padding: const EdgeInsets.all(BauhausDesign.space4),
                   itemCount: state.messages.length,
-                  separatorBuilder: (_, __) =>
+                  separatorBuilder: (_, _) =>
                       const SizedBox(height: BauhausDesign.space3),
                   itemBuilder: (context, index) {
                     final msg = state.messages[index];
