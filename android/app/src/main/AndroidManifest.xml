@@ -132,7 +132,6 @@
         <!-- Your other activities and meta-data are preserved -->
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/Ucrop.CropTheme"/>
 
         <!-- Don't delete the meta-data below.
