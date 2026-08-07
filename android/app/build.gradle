@@ -64,7 +64,7 @@ android {
     defaultConfig {
         applicationId "com.bishal.invoice"
         minSdkVersion 24
-        targetSdk 35
+        targetSdk 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true

@@ -1,4 +1,4 @@
-name: Flutter CI/CD
+name: Flutter CI (Legacy - CI only)
 
 on:
   push:
@@ -63,23 +63,4 @@ jobs:
           gem install bundler
           bundle install || gem install fastlane
 
-      # Deploy to Google Play (Only on push to main or workflow_dispatch)
-      - name: Deploy to Google Play
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-        working-directory: android
-        env:
-          GOOGLE_PLAY_API_KEY: ${{ secrets.GOOGLE_PLAY_API_KEY }}
-        run: |
-          # Create the API key file from secret
-          echo "$GOOGLE_PLAY_API_KEY" > fastlane/google-play-service-key.json
-          
-          # Determine the lane to run
-          TARGET_LANE="deploy_${{ github.event.inputs.deploy_target || 'development' }}"
-          
-          # On push to main, default to development (safer than production)
-          if [ "${{ github.event_name }}" == "push" ]; then
-             TARGET_LANE="deploy_development"
-          fi
-          
-          echo "Running Fastlane lane: $TARGET_LANE"
-          fastlane $TARGET_LANE
+      # Deployment is handled by flutter_ci_optimized.yml (workflow_dispatch only)
