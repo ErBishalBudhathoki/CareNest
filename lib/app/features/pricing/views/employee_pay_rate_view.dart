@@ -715,7 +715,9 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
             ...SchadsRateConstants.allowances.keys.map((allowance) {
               final isSelected = _selectedAllowances.contains(allowance);
               final rate = SchadsRateConstants.allowances[allowance];
-              return CheckboxListTile(
+              return Material(
+                type: MaterialType.transparency,
+                child: CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
                 title: Text(allowance,
                     style: GoogleFonts.inter(
@@ -735,6 +737,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                   });
                 },
                 controlAffinity: ListTileControlAffinity.leading,
+                ),
               );
             }),
           ],

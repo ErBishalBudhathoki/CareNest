@@ -2272,7 +2272,7 @@ class _EnhancedInvoiceGenerationViewState
   Future<void> _pickAdditionalFiles() async {
     final l10n = AppLocalizations.of(context)!;
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
+      FilePickerResult? result = await FilePicker.pickFiles(
         allowMultiple: true,
         type: FileType.custom,
         allowedExtensions: ['pdf', 'doc', 'docx', 'txt', 'jpg', 'jpeg', 'png'],

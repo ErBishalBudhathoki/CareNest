@@ -1,25 +1,25 @@
 import 'package:carenest/app/features/auth/models/user_model.dart';
 import 'package:carenest/app/features/pricing/viewmodels/employee_pay_rate_viewmodel.dart';
 import 'package:carenest/app/features/pricing/views/employee_pay_rate_view.dart';
-import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
 import 'package:carenest/app/features/auth/models/user_role.dart';
 
 // Mock ViewModel
-class MockEmployeePayRateViewModel extends StateNotifier<EmployeePayRateState>
-    implements EmployeePayRateViewModel {
-  MockEmployeePayRateViewModel(List<User> employees)
-      : super(EmployeePayRateState(employees: employees));
+class MockEmployeePayRateViewModel extends EmployeePayRateViewModel {
+  MockEmployeePayRateViewModel(List<User> employees) : super('test-org') {
+    _employees = employees;
+  }
 
-  // ignore: unused_field
-  final ApiMethod _apiMethod = ApiMethod();
+  late final List<User> _employees;
+
   @override
-  final String organizationId = 'test-org';
+  EmployeePayRateState build() {
+    return EmployeePayRateState(employees: _employees);
+  }
 
   @override
   Future<void> fetchEmployees({bool showLoading = true}) async {}
@@ -45,7 +45,7 @@ void main() {
       ProviderScope(
         overrides: [
           employeePayRateViewModelProvider.overrideWith(
-            (ref, orgId) => mockViewModel,
+            () => mockViewModel,
           ),
         ],
         child: MaterialApp(
