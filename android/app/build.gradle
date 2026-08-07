@@ -42,7 +42,10 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace "com.bishal.invoice"
     compileSdkVersion 36
-    ndkVersion localProperties.getProperty('flutter.ndkVersion')
+    // Fall back to Flutter's default NDK version when the property is not
+    // present (e.g. in CI where local.properties is not committed).
+    def ndkVersionOverride = localProperties.getProperty('flutter.ndkVersion')
+    ndkVersion ndkVersionOverride ?: flutter.ndkVersion
 
     compileOptions {
         coreLibraryDesugaringEnabled true
