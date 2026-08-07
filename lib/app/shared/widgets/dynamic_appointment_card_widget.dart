@@ -181,8 +181,8 @@ class _DynamicAppointmentCardWidgetState
   late Future<List<Patient>> futureClientsData;
   late Future<List> futureData;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  var setAppointmentData;
-  var setFutureClientsData;
+  dynamic setAppointmentData;
+  dynamic setFutureClientsData;
   var appointmentData = {};
   late List<dynamic> clients = [];
   late final ApiMethod apiMethod;

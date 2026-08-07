@@ -16,7 +16,7 @@ class ChangePasswordModel extends ChangeNotifier
   get isVisible => _isNewPasswordVisible;
 
   // Separate getter for confirm password visibility (not part of interface)
-  get isConfirmPasswordVisible => _isConfirmPasswordVisible;
+  bool get isConfirmPasswordVisible => _isConfirmPasswordVisible;
 
   @override
   set isVisible(value) {
@@ -25,7 +25,7 @@ class ChangePasswordModel extends ChangeNotifier
   }
 
   // Separate setter for confirm password visibility (not part of interface)
-  set isConfirmPasswordVisible(value) {
+  set isConfirmPasswordVisible(bool value) {
     _isConfirmPasswordVisible = value;
     notifyListeners();
   }

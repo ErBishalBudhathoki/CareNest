@@ -67,7 +67,7 @@ class _AdminTrainingManagementViewState
           : ListView.separated(
               padding: const EdgeInsets.all(BauhausDesign.space4),
               itemCount: state.modules.length,
-              separatorBuilder: (_, __) =>
+              separatorBuilder: (_, _) =>
                   const SizedBox(height: BauhausDesign.space3),
               itemBuilder: (context, index) {
                 final module = state.modules[index];
@@ -238,7 +238,7 @@ class _AdminTrainingManagementViewState
                     height: 240,
                     child: ListView.separated(
                       itemCount: data.length,
-                      separatorBuilder: (_, __) => const Divider(),
+                      separatorBuilder: (_, _) => const Divider(),
                       itemBuilder: (context, index) {
                         final entry = Map<String, dynamic>.from(
                           data[index] as Map,

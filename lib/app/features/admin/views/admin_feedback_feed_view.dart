@@ -85,7 +85,7 @@ class AdminFeedbackFeedView extends ConsumerWidget {
             child: ListView.separated(
               padding: const EdgeInsets.all(BauhausDesign.space4),
               itemCount: feedbacks.length + 1,
-              separatorBuilder: (_, __) =>
+              separatorBuilder: (_, _) =>
                   const SizedBox(height: BauhausDesign.space4),
               itemBuilder: (context, index) {
                 if (index == 0) {

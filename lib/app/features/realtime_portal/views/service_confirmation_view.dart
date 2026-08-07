@@ -197,7 +197,11 @@ class _ServiceConfirmationViewState
     );
   }
 
-  Widget _buildStepContent(state, String workerName, String serviceName) {
+  Widget _buildStepContent(
+    ServiceConfirmationState state,
+    String workerName,
+    String serviceName,
+  ) {
     switch (_currentStep) {
       case 0:
         return _buildChecklistStep(state, serviceName);
@@ -210,7 +214,10 @@ class _ServiceConfirmationViewState
     }
   }
 
-  Widget _buildChecklistStep(state, String serviceName) {
+  Widget _buildChecklistStep(
+    ServiceConfirmationState state,
+    String serviceName,
+  ) {
     if (state.checklist.isEmpty) {
       return Center(
         child: Container(
@@ -308,7 +315,7 @@ class _ServiceConfirmationViewState
     );
   }
 
-  Widget _buildRatingStep(state, String workerName) {
+  Widget _buildRatingStep(ServiceConfirmationState state, String workerName) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -397,7 +404,7 @@ class _ServiceConfirmationViewState
     );
   }
 
-  Widget _buildSignatureStep(state) {
+  Widget _buildSignatureStep(ServiceConfirmationState state) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -488,7 +495,7 @@ class _ServiceConfirmationViewState
   }
 
   Widget _buildNavigationButtons(
-    state,
+    ServiceConfirmationState state,
     String appointmentId,
     String clientId,
     String workerId,
@@ -581,7 +588,7 @@ class _ServiceConfirmationViewState
   }
 
   void _handleNext(
-    state,
+    ServiceConfirmationState state,
     String appointmentId,
     String clientId,
     String workerId,
@@ -596,7 +603,7 @@ class _ServiceConfirmationViewState
   }
 
   Future<void> _submitConfirmation(
-    state,
+    ServiceConfirmationState state,
     String appointmentId,
     String clientId,
     String workerId,

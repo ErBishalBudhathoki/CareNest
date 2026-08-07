@@ -23,7 +23,10 @@ class UpdateInvoiceEmailViewModel extends ChangeNotifier {
 
   UpdateInvoiceEmailViewModel();
 
-  AddUpdateInvoicingEmailViewControllers(String email, String password) async {
+  Future<void> AddUpdateInvoicingEmailViewControllers(
+    String email,
+    String password,
+  ) async {
     _admin_business_name = adminBusinessName;
     _email = email;
     _password = password;

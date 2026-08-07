@@ -143,7 +143,7 @@ class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: state.matches.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 16),
+                      separatorBuilder: (_, _) => const SizedBox(height: 16),
                       itemBuilder: (context, index) {
                         final match = state.matches[index];
                         return _buildWorkerMatchCard(match);

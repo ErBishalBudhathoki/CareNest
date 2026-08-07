@@ -685,10 +685,7 @@ class _NdisPricingManagementViewState
       'p01Price': p01Price,
       'p02Price': p02Price,
       'isHighIntensity': isHighIntensity,
-      'labelledCaps': <String, double>{
-        if (p01Price != null) 'P01': p01Price,
-        if (p02Price != null) 'P02': p02Price,
-      },
+      'labelledCaps': <String, double>{'P01': ?p01Price, 'P02': ?p02Price},
       'source': 'regional_prices',
     };
   }
@@ -835,8 +832,8 @@ class _NdisPricingManagementViewState
     final resolvedP02 = p02Price ?? fallbackP02;
     final mergedLabelledCaps = <String, double>{
       ...labelledCaps,
-      if (resolvedP01 != null) 'P01': resolvedP01,
-      if (resolvedP02 != null) 'P02': resolvedP02,
+      'P01': ?resolvedP01,
+      'P02': ?resolvedP02,
     };
 
     return {

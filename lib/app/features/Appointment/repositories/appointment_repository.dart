@@ -104,8 +104,7 @@ class AppointmentRepository {
       'breakList': breakList,
       'ndisItem': ndisItem,
       'highIntensityList': highIntensityList,
-      if (scheduleWithNdisItems != null)
-        'scheduleWithNdisItems': scheduleWithNdisItems,
+      'scheduleWithNdisItems': ?scheduleWithNdisItems,
     };
 
     // Use standard 'assignments' endpoint

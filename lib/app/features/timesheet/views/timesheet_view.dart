@@ -284,7 +284,7 @@ class _TimesheetDataBody extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: days.length,
-            separatorBuilder: (_, __) =>
+            separatorBuilder: (_, _) =>
                 const SizedBox(height: BauhausDesign.space3),
             itemBuilder: (context, index) => _DayCard(summary: days[index]),
           ),

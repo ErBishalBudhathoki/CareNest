@@ -7,13 +7,13 @@ class NavigationService {
     double longitude, {
     String? title,
   }) async {
-    final availableMaps = await MapLauncher.installedMaps;
+    final request = MapLauncher.marker(
+      Location.coords(latitude, longitude, title: title ?? "Destination"),
+    );
+    final availableMaps = await request.getSupportedMaps(MapApp.all);
 
     if (availableMaps.isNotEmpty) {
-      await availableMaps.first.showMarker(
-        coords: Coords(latitude, longitude),
-        title: title ?? "Destination",
-      );
+      await availableMaps.first.show();
     } else {
       throw Exception("No map application installed");
     }

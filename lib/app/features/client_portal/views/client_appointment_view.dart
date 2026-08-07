@@ -297,7 +297,7 @@ class _ClientAppointmentViewState extends ConsumerState<ClientAppointmentView> {
       child: ListView.separated(
         padding: const EdgeInsets.all(BauhausDesign.space4),
         itemCount: appointments.length + 1,
-        separatorBuilder: (_, __) =>
+        separatorBuilder: (_, _) =>
             const SizedBox(height: BauhausDesign.space3),
         itemBuilder: (context, index) {
           if (index == appointments.length) {

@@ -34,7 +34,7 @@ final filteredEmployeesProvider =
               .toList();
         },
         loading: () => [],
-        error: (_, __) => [],
+        error: (_, _) => [],
       );
     });
 
@@ -50,7 +50,7 @@ final employeeStatsProvider = Provider<Map<String, int>>((ref) {
       'offline': state.data.offlineEmployees,
     },
     loading: () => {'total': 0, 'active': 0, 'onBreak': 0, 'offline': 0},
-    error: (_, __) => {'total': 0, 'active': 0, 'onBreak': 0, 'offline': 0},
+    error: (_, _) => {'total': 0, 'active': 0, 'onBreak': 0, 'offline': 0},
   );
 });
 
@@ -69,7 +69,7 @@ final employeeStatusCountsProvider = Provider<Map<WorkStatus, int>>((ref) {
       WorkStatus.onBreak: 0,
       WorkStatus.offline: 0,
     },
-    error: (_, __) => {
+    error: (_, _) => {
       WorkStatus.active: 0,
       WorkStatus.onBreak: 0,
       WorkStatus.offline: 0,
