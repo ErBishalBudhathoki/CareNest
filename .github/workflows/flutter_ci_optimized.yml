@@ -185,8 +185,15 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Generate .env from example
-        run: cp .env.example .env
+      - name: Restore .env
+        env:
+          ENV_FILE_B64: ${{ secrets.ENV_FILE }}
+        run: |
+          if [ -n "$ENV_FILE_B64" ]; then
+            echo "$ENV_FILE_B64" | base64 -d > .env
+          else
+            cp .env.example .env
+          fi
 
       - name: Restore google-services.json
         run: |
@@ -256,9 +263,9 @@ jobs:
         with:
           name: android-release-build
           path: |
-            build/app/outputs/flutter-apk/*.apk
-            build/app/outputs/bundle/release/*.aab
+            build/app/outputs/bundle/productionRelease/app-production-release.aab
             build/sbom.json
+          if-no-files-found: warn
           retention-days: 30
 
       - name: Cleanup sensitive files
@@ -273,9 +280,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     needs: build-android
-    if: |
-      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'workflow_dispatch')
+    if: github.event_name == 'workflow_dispatch'
     environment:
       name: ${{ github.event.inputs.deploy_target || 'development' }}
       url: https://play.google.com/console
@@ -300,7 +305,12 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           name: android-release-build
-          path: build/app/outputs/
+          path: ./
+
+      - name: Place AAB for Fastlane
+        run: |
+          find . -name 'app-production-release.aab' -type f | head -n1 | xargs -I{} cp {} build/app/outputs/bundle/productionRelease/app-production-release.aab
+          ls -la build/app/outputs/bundle/productionRelease/
 
       - name: Setup Google Play credentials
         env:
@@ -323,12 +333,7 @@ jobs:
             echo "::error::Invalid deployment target: $TARGET"
             exit 1
           fi
-          
-          # On push to main, force development (safer default)
-          if [ "${{ github.event_name }}" == "push" ]; then
-            TARGET="development"
-          fi
-          
+                    
           # Require manual approval for production
           if [ "$TARGET" == "production" ]; then
             echo "::warning::Deploying to PRODUCTION - this requires manual approval"
@@ -341,7 +346,15 @@ jobs:
         env:
           SUPPLY_JSON_KEY: fastlane/google-play-service-key.json
         run: |
-          TARGET_LANE="deploy_${{ steps.validate-target.outputs.target }}"
+          TARGET="${{ steps.validate-target.outputs.target }}"
+          case "$TARGET" in
+            production)
+              TARGET_LANE="upload_production_aab"
+              ;;
+            *)
+              TARGET_LANE="upload_internal_aab"
+              ;;
+          esac
           echo "Deploying via Fastlane lane: $TARGET_LANE"
           
           fastlane $TARGET_LANE
