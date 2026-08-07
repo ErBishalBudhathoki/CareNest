@@ -50,7 +50,8 @@ class BauhausErrorWidget extends StatelessWidget {
   }) {
     return BauhausErrorWidget(
       title: 'CONNECTION ERROR',
-      message: 'Unable to connect to the server. Please check your internet connection and try again.',
+      message:
+          'Unable to connect to the server. Please check your internet connection and try again.',
       icon: Icons.wifi_off,
       onRetry: onRetry,
       compact: compact,
@@ -63,11 +64,7 @@ class BauhausErrorWidget extends StatelessWidget {
     String message = 'No items found matching your criteria.',
     IconData icon = Icons.inbox_outlined,
   }) {
-    return BauhausErrorWidget(
-      title: title,
-      message: message,
-      icon: icon,
-    );
+    return BauhausErrorWidget(title: title, message: message, icon: icon);
   }
 
   /// Factory for permission errors
@@ -77,7 +74,8 @@ class BauhausErrorWidget extends StatelessWidget {
   }) {
     return BauhausErrorWidget(
       title: 'PERMISSION REQUIRED',
-      message: '$permissionType access is required for this feature. Please grant permission to continue.',
+      message:
+          '$permissionType access is required for this feature. Please grant permission to continue.',
       icon: Icons.lock_outline,
       onRetry: onRequestPermission,
     );
@@ -112,11 +110,7 @@ class BauhausErrorWidget extends StatelessWidget {
                 color: BauhausDesign.error.withOpacity(0.1),
                 border: Border.all(color: BauhausDesign.error, width: 2),
               ),
-              child: Icon(
-                icon,
-                size: 48,
-                color: BauhausDesign.error,
-              ),
+              child: Icon(icon, size: 48, color: BauhausDesign.error),
             ),
             const SizedBox(height: BauhausDesign.space6),
 
@@ -134,11 +128,7 @@ class BauhausErrorWidget extends StatelessWidget {
             const SizedBox(height: BauhausDesign.space3),
 
             // Divider
-            Container(
-              height: 3,
-              width: 60,
-              color: BauhausDesign.error,
-            ),
+            Container(height: 3, width: 60, color: BauhausDesign.error),
             const SizedBox(height: BauhausDesign.space4),
 
             // Message
@@ -156,10 +146,12 @@ class BauhausErrorWidget extends StatelessWidget {
 
             // Actions
             if (onRetry != null) ...[
-              _BauhausRetryButton(onPressed: () {
-                HapticFeedback.mediumImpact();
-                onRetry!();
-              }),
+              _BauhausRetryButton(
+                onPressed: () {
+                  HapticFeedback.mediumImpact();
+                  onRetry!();
+                },
+              ),
             ],
 
             if (showDiagnostics && diagnosticInfo != null) ...[

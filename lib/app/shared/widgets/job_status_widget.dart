@@ -2,18 +2,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/backend/api_method.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/app/features/analytics/theme/bauhaus_theme.dart';
 
 class JobStatusWidget extends ConsumerStatefulWidget {
   final String jobId;
   final VoidCallback? onComplete;
 
-  const JobStatusWidget({
-    super.key,
-    required this.jobId,
-    this.onComplete,
-  });
+  const JobStatusWidget({super.key, required this.jobId, this.onComplete});
 
   @override
   ConsumerState<JobStatusWidget> createState() => _JobStatusWidgetState();
@@ -35,7 +32,10 @@ class _JobStatusWidgetState extends ConsumerState<JobStatusWidget> {
   }
 
   void _startPolling() {
-    _timer = Timer.periodic(const Duration(seconds: 2), (timer) => _checkStatus());
+    _timer = Timer.periodic(
+      const Duration(seconds: 2),
+      (timer) => _checkStatus(),
+    );
   }
 
   Future<void> _checkStatus() async {
@@ -127,7 +127,7 @@ class _JobStatusWidgetState extends ConsumerState<JobStatusWidget> {
                 },
                 child: const Text('Download Result'),
               ),
-            ]
+            ],
           ],
         ),
       );
@@ -142,8 +142,14 @@ class _JobStatusWidgetState extends ConsumerState<JobStatusWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Processing... ($_status)', style: BauhausTheme.subHeaderStyle),
-              Text('${(_progress * 100).toInt()}%', style: BauhausTheme.bodyStyle),
+              Text(
+                'Processing... ($_status)',
+                style: BauhausTheme.subHeaderStyle,
+              ),
+              Text(
+                '${(_progress * 100).toInt()}%',
+                style: BauhausTheme.bodyStyle,
+              ),
             ],
           ),
           const SizedBox(height: 8),

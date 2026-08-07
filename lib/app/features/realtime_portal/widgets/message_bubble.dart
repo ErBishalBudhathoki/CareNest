@@ -10,18 +10,16 @@ class MessageBubble extends StatelessWidget {
   final SecureMessage message;
   final bool isMe;
 
-  const MessageBubble({
-    super.key,
-    required this.message,
-    required this.isMe,
-  });
+  const MessageBubble({super.key, required this.message, required this.isMe});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: BauhausDesign.space4),
       child: Row(
-        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isMe
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isMe) ...[
@@ -36,11 +34,7 @@ class MessageBubble extends StatelessWidget {
                   width: BauhausDesign.borderThick,
                 ),
               ),
-              child: const Icon(
-                Icons.person,
-                color: Colors.white,
-                size: 16,
-              ),
+              child: const Icon(Icons.person, color: Colors.white, size: 16),
             ),
             const SizedBox(width: BauhausDesign.space2),
           ],
@@ -62,7 +56,9 @@ class MessageBubble extends StatelessWidget {
                 children: [
                   if (!isMe)
                     Padding(
-                      padding: const EdgeInsets.only(bottom: BauhausDesign.space1),
+                      padding: const EdgeInsets.only(
+                        bottom: BauhausDesign.space1,
+                      ),
                       child: Text(
                         message.senderName,
                         style: BauhausDesign.neoHeadingStyle(
@@ -123,11 +119,7 @@ class MessageBubble extends StatelessWidget {
                   width: BauhausDesign.borderThick,
                 ),
               ),
-              child: const Icon(
-                Icons.person,
-                color: Colors.white,
-                size: 16,
-              ),
+              child: const Icon(Icons.person, color: Colors.white, size: 16),
             ),
           ],
         ],

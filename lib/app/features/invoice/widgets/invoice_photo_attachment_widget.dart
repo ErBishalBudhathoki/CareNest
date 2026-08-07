@@ -1,5 +1,3 @@
-
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -113,8 +111,10 @@ class _InvoicePhotoAttachmentWidgetState
     final filesToProcess = pickedFiles.take(remainingSlots).toList();
 
     if (filesToProcess.length < pickedFiles.length) {
-      _showMessage('Only ${filesToProcess.length} photos added due to limit',
-          isError: true);
+      _showMessage(
+        'Only ${filesToProcess.length} photos added due to limit',
+        isError: true,
+      );
     }
 
     // Process each selected image
@@ -164,8 +164,9 @@ class _InvoicePhotoAttachmentWidgetState
       // Show system UI after cropping
       await SystemUIService.showSystemUI();
 
-      final File finalFile =
-          croppedFile != null ? File(croppedFile.path) : File(imagePath);
+      final File finalFile = croppedFile != null
+          ? File(croppedFile.path)
+          : File(imagePath);
 
       setState(() {
         _selectedPhotos.add(finalFile);
@@ -228,9 +229,9 @@ class _InvoicePhotoAttachmentWidgetState
               const SizedBox(height: 20),
               Text(
                 'Add Invoice Photo',
-                style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
               _buildSourceOption(
@@ -272,23 +273,19 @@ class _InvoicePhotoAttachmentWidgetState
           color: BauhausDesign.primary.withOpacity(0.1),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(
-          icon,
-          color: BauhausDesign.primary,
-          size: 24,
-        ),
+        child: Icon(icon, color: BauhausDesign.primary, size: 24),
       ),
       title: Text(
         title,
-        style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-          fontWeight: FontWeight.w600,
-        ),
+        style: BauhausDesign.getTextTheme(
+          context,
+        ).bodyMedium?.copyWith(fontWeight: FontWeight.w600),
       ),
       subtitle: Text(
         subtitle,
-        style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-          color: BauhausDesign.textMuted,
-        ),
+        style: BauhausDesign.getTextTheme(
+          context,
+        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
       ),
       onTap: onTap,
     );
@@ -379,7 +376,8 @@ class _InvoicePhotoAttachmentWidgetState
               },
             ),
 
-          if (_selectedPhotos.isNotEmpty) const SizedBox(height: BauhausDesign.space4),
+          if (_selectedPhotos.isNotEmpty)
+            const SizedBox(height: BauhausDesign.space4),
 
           // Add photo button
           if (_selectedPhotos.length < widget.maxPhotos)
@@ -416,10 +414,12 @@ class _InvoicePhotoAttachmentWidgetState
                             const SizedBox(height: 4),
                             Text(
                               'Add Photo',
-                              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                                color: BauhausDesign.primary,
-                                fontWeight: FontWeight.w500,
-                              ),
+                              style: BauhausDesign.getTextTheme(context)
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color: BauhausDesign.primary,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                             ),
                           ],
                         ),
@@ -434,7 +434,10 @@ class _InvoicePhotoAttachmentWidgetState
             controller: _descriptionController,
             label: 'Photo Description (Optional)',
             hintText: 'Describe the attached photos...',
-            prefixIcon: const Icon(Icons.description_outlined, color: BauhausDesign.textMuted),
+            prefixIcon: const Icon(
+              Icons.description_outlined,
+              color: BauhausDesign.textMuted,
+            ),
             maxLines: 2,
             onChanged: widget.onDescriptionChanged,
           ),

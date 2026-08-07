@@ -6,7 +6,7 @@ class NotificationSettingsState {
   final NotificationSettingsModel? settings;
   final bool isLoading;
   final String? errorMessage;
-  
+
   const NotificationSettingsState({
     this.settings,
     this.isLoading = false,
@@ -26,7 +26,8 @@ class NotificationSettingsState {
   }
 }
 
-class NotificationSettingsViewModel extends Notifier<NotificationSettingsState> {
+class NotificationSettingsViewModel
+    extends Notifier<NotificationSettingsState> {
   late final NotificationRepository _repository;
 
   @override
@@ -59,7 +60,7 @@ class NotificationSettingsViewModel extends Notifier<NotificationSettingsState> 
     } catch (e) {
       state = state.copyWith(errorMessage: e.toString());
       // Reload settings to ensure UI is in sync with server
-      await loadSettings(); 
+      await loadSettings();
     } finally {
       state = state.copyWith(isLoading: false);
     }
@@ -68,7 +69,9 @@ class NotificationSettingsViewModel extends Notifier<NotificationSettingsState> 
   /// Toggle Shift Reminders
   Future<void> toggleShiftReminders(bool enabled) async {
     if (state.settings == null) return;
-    final newSettings = state.settings!.copyWith(shiftRemindersEnabled: enabled);
+    final newSettings = state.settings!.copyWith(
+      shiftRemindersEnabled: enabled,
+    );
     await updateSettings(newSettings);
   }
 
@@ -82,27 +85,31 @@ class NotificationSettingsViewModel extends Notifier<NotificationSettingsState> 
   /// Toggle Expense Reminders
   Future<void> toggleExpenseReminders(bool enabled) async {
     if (state.settings == null) return;
-    final newSettings = state.settings!.copyWith(expenseRemindersEnabled: enabled);
+    final newSettings = state.settings!.copyWith(
+      expenseRemindersEnabled: enabled,
+    );
     await updateSettings(newSettings);
   }
 
   /// Toggle Timesheet Reminders
   Future<void> toggleTimesheetReminders(bool enabled) async {
     if (state.settings == null) return;
-    final newSettings = state.settings!.copyWith(timesheetRemindersEnabled: enabled);
+    final newSettings = state.settings!.copyWith(
+      timesheetRemindersEnabled: enabled,
+    );
     await updateSettings(newSettings);
   }
 
   /// Update Quiet Hours
   Future<void> updateQuietHours(String start, String end) async {
     if (state.settings == null) return;
-    
+
     final newQuietHours = QuietHours(
       start: start,
       end: end,
       timezone: state.settings!.quietHours?.timezone ?? 'Australia/Sydney',
     );
-    
+
     final newSettings = state.settings!.copyWith(quietHours: newQuietHours);
     await updateSettings(newSettings);
   }

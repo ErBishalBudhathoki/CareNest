@@ -6,8 +6,7 @@ import '../constants/onboarding_app_constants.dart';
 class OnboardingAppPersonalization extends StatefulWidget {
   final VoidCallback onNext;
 
-  const OnboardingAppPersonalization(
-      {super.key, required this.onNext});
+  const OnboardingAppPersonalization({super.key, required this.onNext});
 
   @override
   State<OnboardingAppPersonalization> createState() =>
@@ -37,15 +36,13 @@ class _OnboardingAppPersonalizationState
         curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
       ),
     );
-    _bodySlide = Tween<Offset>(
-      begin: const Offset(0, 0.1),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _entryCtrl,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
-      ),
-    );
+    _bodySlide = Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _entryCtrl,
+            curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
+          ),
+        );
 
     final count = OnboardingContent.personalizationOptions.length;
     _staggeredOps = List.generate(count, (i) {
@@ -100,8 +97,7 @@ class _OnboardingAppPersonalizationState
                 child: GestureDetector(
                   onTap: widget.onNext,
                   child: Padding(
-                    padding: const EdgeInsets.all(
-                        BauhausDesign.space2),
+                    padding: const EdgeInsets.all(BauhausDesign.space2),
                     child: Text(
                       'Skip',
                       style: BauhausDesign.neoMonoStyle(
@@ -148,16 +144,14 @@ class _OnboardingAppPersonalizationState
                 (i) {
                   final isSelected = _selected.contains(i);
                   return Padding(
-                    padding: EdgeInsets.only(
-                        bottom: BauhausDesign.space3),
+                    padding: EdgeInsets.only(bottom: BauhausDesign.space3),
                     child: AnimatedBuilder(
                       animation: _entryCtrl,
                       builder: (context, _) {
                         return Opacity(
                           opacity: _staggeredOps[i].value,
                           child: _OptionChip(
-                            label: OnboardingContent
-                                .personalizationOptions[i],
+                            label: OnboardingContent.personalizationOptions[i],
                             isSelected: isSelected,
                             onTap: () => _toggle(i),
                           ),
@@ -168,10 +162,7 @@ class _OnboardingAppPersonalizationState
                 },
               ),
               const Spacer(),
-              _NextButton(
-                enabled: _selected.isNotEmpty,
-                onTap: widget.onNext,
-              ),
+              _NextButton(enabled: _selected.isNotEmpty, onTap: widget.onNext),
             ],
           ),
         ),
@@ -219,9 +210,7 @@ class _OptionChip extends StatelessWidget {
         child: Row(
           children: [
             Icon(
-              isSelected
-                  ? Icons.check_box
-                  : Icons.check_box_outline_blank,
+              isSelected ? Icons.check_box : Icons.check_box_outline_blank,
               size: 24,
               color: isSelected
                   ? BauhausDesign.surfaceWhite
@@ -230,14 +219,12 @@ class _OptionChip extends StatelessWidget {
             const SizedBox(width: BauhausDesign.space3),
             Text(
               label,
-              style: BauhausDesign.getTextTheme(context)
-                  .labelLarge
-                  ?.copyWith(
-                    color: isSelected
-                        ? BauhausDesign.surfaceWhite
-                        : BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
+              style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                color: isSelected
+                    ? BauhausDesign.surfaceWhite
+                    : BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ],
         ),
@@ -266,26 +253,20 @@ class _NextButton extends StatelessWidget {
                 ? BauhausDesign.neoInk
                 : BauhausDesign.surfaceOffWhite,
             border: Border.all(
-              color: enabled
-                  ? BauhausDesign.neoInk
-                  : BauhausDesign.textMuted,
+              color: enabled ? BauhausDesign.neoInk : BauhausDesign.textMuted,
               width: 2.5,
             ),
-            boxShadow: enabled
-                ? const [BauhausDesign.shadowHard]
-                : const [],
+            boxShadow: enabled ? const [BauhausDesign.shadowHard] : const [],
           ),
           child: Text(
             'Continue',
-            style: BauhausDesign.getTextTheme(context)
-                .labelLarge
-                ?.copyWith(
-                  color: enabled
-                      ? BauhausDesign.surfaceWhite
-                      : BauhausDesign.textMuted,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.5,
-                ),
+            style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+              color: enabled
+                  ? BauhausDesign.surfaceWhite
+                  : BauhausDesign.textMuted,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+            ),
           ),
         ),
       ),

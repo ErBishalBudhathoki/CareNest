@@ -8,6 +8,4 @@ class VerifyOTPViewModel extends Notifier<void> {
   void build() {
     ref.onDispose(() => pinController.dispose());
   }
-
-
 }

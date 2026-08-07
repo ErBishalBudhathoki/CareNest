@@ -9,61 +9,67 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 /// Provider to fetch organization employees list (caches them for ID-to-Name conversion)
-final orgEmployeesProvider = FutureProvider.family.autoDispose<Map<String, String>, String>((ref, orgId) async {
-  final api = ref.read(apiMethodProvider);
-  
-  // Resolve actual organization ID (fallback to organizationIdProvider if orgId parameter is empty)
-  final resolvedOrgId = orgId.isNotEmpty 
-      ? orgId 
-      : (ref.watch(organizationIdProvider) ?? '');
-      
-  debugPrint('🔍 DEBUG: orgEmployeesProvider called with orgId: "$orgId", resolvedOrgId: "$resolvedOrgId"');
-  if (resolvedOrgId.isEmpty) {
-    debugPrint('🔍 DEBUG: resolvedOrgId is empty, returning empty map');
-    return {};
-  }
+final orgEmployeesProvider = FutureProvider.family
+    .autoDispose<Map<String, String>, String>((ref, orgId) async {
+      final api = ref.read(apiMethodProvider);
 
-  try {
-    final response = await api.getOrganizationEmployees(resolvedOrgId);
-    debugPrint('🔍 DEBUG: getOrganizationEmployees success: ${response['success']}');
-    final Map<String, String> map = {};
-    if (response['success'] == true) {
-      final list = (response['employees'] ?? response['members'] ?? []) as List;
-      debugPrint('🔍 DEBUG: employees/members list length: ${list.length}');
-      for (final item in list) {
-        if (item is Map) {
-          final email = item['email'] as String? ?? '';
-          final firstName = item['firstName'] as String? ?? '';
-          final lastName = item['lastName'] as String? ?? '';
-          final displayName = item['displayName'] as String? ?? '';
-          final rawName = item['name'] as String? ?? '';
-          
-          String name = '$firstName $lastName'.trim();
-          if (name.isEmpty) name = displayName.trim();
-          if (name.isEmpty) name = rawName.trim();
-          
-          final id = item['id'] as String? ?? item['_id'] as String? ?? '';
-          
-          if (name.isNotEmpty) {
-            debugPrint('🔍 DEBUG: Mapping "$id" and "$email" to "$name"');
-            if (email.isNotEmpty) {
-              map[email] = name;
-              map[email.toLowerCase()] = name;
-            }
-            if (id.isNotEmpty) {
-              map[id] = name;
-              map[id.toLowerCase()] = name;
+      // Resolve actual organization ID (fallback to organizationIdProvider if orgId parameter is empty)
+      final resolvedOrgId = orgId.isNotEmpty
+          ? orgId
+          : (ref.watch(organizationIdProvider) ?? '');
+
+      debugPrint(
+        '🔍 DEBUG: orgEmployeesProvider called with orgId: "$orgId", resolvedOrgId: "$resolvedOrgId"',
+      );
+      if (resolvedOrgId.isEmpty) {
+        debugPrint('🔍 DEBUG: resolvedOrgId is empty, returning empty map');
+        return {};
+      }
+
+      try {
+        final response = await api.getOrganizationEmployees(resolvedOrgId);
+        debugPrint(
+          '🔍 DEBUG: getOrganizationEmployees success: ${response['success']}',
+        );
+        final Map<String, String> map = {};
+        if (response['success'] == true) {
+          final list =
+              (response['employees'] ?? response['members'] ?? []) as List;
+          debugPrint('🔍 DEBUG: employees/members list length: ${list.length}');
+          for (final item in list) {
+            if (item is Map) {
+              final email = item['email'] as String? ?? '';
+              final firstName = item['firstName'] as String? ?? '';
+              final lastName = item['lastName'] as String? ?? '';
+              final displayName = item['displayName'] as String? ?? '';
+              final rawName = item['name'] as String? ?? '';
+
+              String name = '$firstName $lastName'.trim();
+              if (name.isEmpty) name = displayName.trim();
+              if (name.isEmpty) name = rawName.trim();
+
+              final id = item['id'] as String? ?? item['_id'] as String? ?? '';
+
+              if (name.isNotEmpty) {
+                debugPrint('🔍 DEBUG: Mapping "$id" and "$email" to "$name"');
+                if (email.isNotEmpty) {
+                  map[email] = name;
+                  map[email.toLowerCase()] = name;
+                }
+                if (id.isNotEmpty) {
+                  map[id] = name;
+                  map[id.toLowerCase()] = name;
+                }
+              }
             }
           }
         }
+        return map;
+      } catch (e) {
+        debugPrint('🔍 DEBUG: orgEmployeesProvider Exception: $e');
+        return {};
       }
-    }
-    return map;
-  } catch (e) {
-    debugPrint('🔍 DEBUG: orgEmployeesProvider Exception: $e');
-    return {};
-  }
-});
+    });
 
 class MessagingAuditView extends ConsumerStatefulWidget {
   final String? clientId;
@@ -89,9 +95,12 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_resolvedClientId == null) {
-      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-      _resolvedClientId = widget.clientId ?? args?['clientId'] as String? ?? 'client_123';
-      _resolvedClientName = widget.clientName ?? args?['clientName'] as String? ?? 'Client';
+      final args =
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      _resolvedClientId =
+          widget.clientId ?? args?['clientId'] as String? ?? 'client_123';
+      _resolvedClientName =
+          widget.clientName ?? args?['clientName'] as String? ?? 'Client';
     }
   }
 
@@ -134,7 +143,9 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
         backgroundColor: BauhausDesign.surfaceWhite,
         elevation: 0,
         title: Text(
-          isViewingChat ? 'SECURE CONVERSATION AUDIT' : 'SECURE MESSAGING LEDGER',
+          isViewingChat
+              ? 'SECURE CONVERSATION AUDIT'
+              : 'SECURE MESSAGING LEDGER',
           style: GoogleFonts.oswald(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -146,7 +157,9 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
           icon: const Icon(Icons.arrow_back_ios, color: BauhausDesign.textDark),
           onPressed: () {
             if (isViewingChat) {
-              ref.read(messagingViewModelProvider.notifier).clearActiveConversation();
+              ref
+                  .read(messagingViewModelProvider.notifier)
+                  .clearActiveConversation();
             } else {
               Navigator.pop(context);
             }
@@ -176,8 +189,8 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
             child: state.isLoading
                 ? const Center(child: BauhausLoadingState())
                 : isViewingChat
-                    ? _buildChatView(state)
-                    : _buildConversationsList(state),
+                ? _buildChatView(state)
+                : _buildConversationsList(state),
           ),
         ],
       ),
@@ -185,7 +198,8 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
   }
 
   Widget _buildClientContextStrip(BuildContext context) {
-    final isViewingChat = ref.watch(messagingViewModelProvider).activeConversation != null;
+    final isViewingChat =
+        ref.watch(messagingViewModelProvider).activeConversation != null;
 
     return Container(
       width: double.infinity,
@@ -240,7 +254,8 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
       return const Center(
         child: BauhausEmptyState(
           title: 'No Message Threads',
-          message: 'No secure messaging conversations are active for this client.',
+          message:
+              'No secure messaging conversations are active for this client.',
           icon: Icons.chat_bubble_outline,
         ),
       );
@@ -254,17 +269,21 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
         if (index == 0) {
           return BauhausSectionHeader(
             title: 'ACTIVE COMMUNICATION CHANNELS',
-            subtitle: 'This client has ${state.conversations.length} message threads. Tap a channel to audit and inspect transcripts.',
+            subtitle:
+                'This client has ${state.conversations.length} message threads. Tap a channel to audit and inspect transcripts.',
           );
         }
 
         final thread = state.conversations[index - 1];
         final unread = thread.unreadCount?[_resolvedClientId ?? ''] ?? 0;
 
-        final employeesMap = ref.watch(orgEmployeesProvider(thread.organizationId)).value ?? {};
+        final employeesMap =
+            ref.watch(orgEmployeesProvider(thread.organizationId)).value ?? {};
         final workerName = (thread.workerName?.isNotEmpty == true)
             ? thread.workerName!
-            : employeesMap[thread.workerId] ?? employeesMap[thread.workerId.toLowerCase()] ?? 'Worker ${_shortId(thread.workerId)}';
+            : employeesMap[thread.workerId] ??
+                  employeesMap[thread.workerId.toLowerCase()] ??
+                  'Worker ${_shortId(thread.workerId)}';
 
         return Container(
           decoration: BoxDecoration(
@@ -285,9 +304,16 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
                       height: 44,
                       decoration: BoxDecoration(
                         color: BauhausDesign.secondary,
-                        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                        border: Border.all(
+                          color: BauhausDesign.neutral,
+                          width: 1.5,
+                        ),
                       ),
-                      child: const Icon(Icons.forum_rounded, color: Colors.white, size: 20),
+                      child: const Icon(
+                        Icons.forum_rounded,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                     ),
                     const SizedBox(width: BauhausDesign.space4),
                     Expanded(
@@ -318,10 +344,16 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
                     if (unread > 0)
                       Container(
                         margin: const EdgeInsets.only(right: 8),
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: BauhausDesign.primary,
-                          border: Border.all(color: BauhausDesign.neutral, width: 1),
+                          border: Border.all(
+                            color: BauhausDesign.neutral,
+                            width: 1,
+                          ),
                         ),
                         child: Text(
                           '$unread UNREAD',
@@ -332,7 +364,11 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
                           ),
                         ),
                       ),
-                    const Icon(Icons.arrow_forward_ios, color: BauhausDesign.neutral, size: 14),
+                    const Icon(
+                      Icons.arrow_forward_ios,
+                      color: BauhausDesign.neutral,
+                      size: 14,
+                    ),
                   ],
                 ),
               ),
@@ -345,10 +381,13 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
 
   Widget _buildChatView(MessagingState state) {
     final active = state.activeConversation!;
-    final employeesMap = ref.watch(orgEmployeesProvider(active.organizationId)).value ?? {};
+    final employeesMap =
+        ref.watch(orgEmployeesProvider(active.organizationId)).value ?? {};
     final workerName = (active.workerName?.isNotEmpty == true)
         ? active.workerName!
-        : employeesMap[active.workerId] ?? employeesMap[active.workerId.toLowerCase()] ?? 'Worker ${_shortId(active.workerId)}';
+        : employeesMap[active.workerId] ??
+              employeesMap[active.workerId.toLowerCase()] ??
+              'Worker ${_shortId(active.workerId)}';
 
     return Column(
       children: [
@@ -385,31 +424,41 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
               ? const Center(
                   child: BauhausEmptyState(
                     title: 'Empty Transcript',
-                    message: 'No encrypted messages have been logged in this channel yet.',
+                    message:
+                        'No encrypted messages have been logged in this channel yet.',
                     icon: Icons.hourglass_empty_rounded,
                   ),
                 )
               : ListView.separated(
                   padding: const EdgeInsets.all(BauhausDesign.space4),
                   itemCount: state.messages.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: BauhausDesign.space3),
+                  separatorBuilder: (_, __) =>
+                      const SizedBox(height: BauhausDesign.space3),
                   itemBuilder: (context, index) {
                     final msg = state.messages[index];
                     final isClient = msg.senderType.toLowerCase() == 'client';
 
                     return Align(
-                      alignment: isClient ? Alignment.centerLeft : Alignment.centerRight,
+                      alignment: isClient
+                          ? Alignment.centerLeft
+                          : Alignment.centerRight,
                       child: Container(
                         constraints: BoxConstraints(
                           maxWidth: MediaQuery.of(context).size.width * 0.75,
                         ),
                         decoration: BoxDecoration(
-                          color: isClient ? BauhausDesign.surfaceWhite : BauhausDesign.neutral.withOpacity(0.1),
+                          color: isClient
+                              ? BauhausDesign.surfaceWhite
+                              : BauhausDesign.neutral.withOpacity(0.1),
                           border: Border.all(
-                            color: isClient ? BauhausDesign.neutral : BauhausDesign.neutral.withOpacity(0.5),
+                            color: isClient
+                                ? BauhausDesign.neutral
+                                : BauhausDesign.neutral.withOpacity(0.5),
                             width: 1.5,
                           ),
-                          boxShadow: isClient ? const [BauhausDesign.shadowHardSm] : [],
+                          boxShadow: isClient
+                              ? const [BauhausDesign.shadowHardSm]
+                              : [],
                         ),
                         padding: const EdgeInsets.all(BauhausDesign.space3),
                         child: Column(
@@ -426,7 +475,9 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
                                   style: GoogleFonts.shareTechMono(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
-                                    color: isClient ? BauhausDesign.primary : BauhausDesign.secondary,
+                                    color: isClient
+                                        ? BauhausDesign.primary
+                                        : BauhausDesign.secondary,
                                   ),
                                 ),
                                 const SizedBox(width: 16),
@@ -462,13 +513,17 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
           padding: const EdgeInsets.all(BauhausDesign.space4),
           decoration: const BoxDecoration(
             color: BauhausDesign.surfaceWhite,
-            border: Border(top: BorderSide(color: BauhausDesign.neutral, width: 1.5)),
+            border: Border(
+              top: BorderSide(color: BauhausDesign.neutral, width: 1.5),
+            ),
           ),
           child: Row(
             children: [
               Expanded(
                 child: BauhausActionButton(
-                  onPressed: () => ref.read(messagingViewModelProvider.notifier).clearActiveConversation(),
+                  onPressed: () => ref
+                      .read(messagingViewModelProvider.notifier)
+                      .clearActiveConversation(),
                   text: 'RETURN TO THREADS LIST',
                   icon: Icons.keyboard_return,
                   variant: BauhausActionVariant.ghost,

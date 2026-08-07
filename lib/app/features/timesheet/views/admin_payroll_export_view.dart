@@ -8,17 +8,15 @@ import '../viewmodels/payroll_export_viewmodel.dart';
 class AdminPayrollExportView extends ConsumerStatefulWidget {
   final String organizationId;
 
-  const AdminPayrollExportView({
-    super.key,
-    required this.organizationId,
-  });
+  const AdminPayrollExportView({super.key, required this.organizationId});
 
   @override
   ConsumerState<AdminPayrollExportView> createState() =>
       _AdminPayrollExportViewState();
 }
 
-class _AdminPayrollExportViewState extends ConsumerState<AdminPayrollExportView> {
+class _AdminPayrollExportViewState
+    extends ConsumerState<AdminPayrollExportView> {
   DateTime _startDate = DateTime.now().subtract(const Duration(days: 14));
   DateTime _endDate = DateTime.now();
 
@@ -27,7 +25,10 @@ class _AdminPayrollExportViewState extends ConsumerState<AdminPayrollExportView>
     final state = ref.watch(payrollExportViewModelProvider);
 
     // Listen for errors
-    ref.listen<AsyncValue<void>>(payrollExportViewModelProvider, (previous, next) {
+    ref.listen<AsyncValue<void>>(payrollExportViewModelProvider, (
+      previous,
+      next,
+    ) {
       if (next.hasError) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -38,7 +39,7 @@ class _AdminPayrollExportViewState extends ConsumerState<AdminPayrollExportView>
       }
       final prevLoading = previous?.isLoading ?? false;
       if (!next.isLoading && !next.hasError && prevLoading) {
-         ScaffoldMessenger.of(context).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Export generated successfully'),
             backgroundColor: BauhausDesign.success,
@@ -100,7 +101,10 @@ class _AdminPayrollExportViewState extends ConsumerState<AdminPayrollExportView>
                     onTap: () => _selectDate(context, true),
                   ),
                   const SizedBox(height: BauhausDesign.space4),
-                  const Icon(Icons.arrow_downward, color: BauhausDesign.neutral),
+                  const Icon(
+                    Icons.arrow_downward,
+                    color: BauhausDesign.neutral,
+                  ),
                   const SizedBox(height: BauhausDesign.space4),
                   _buildDateSelector(
                     context,
@@ -121,10 +125,14 @@ class _AdminPayrollExportViewState extends ConsumerState<AdminPayrollExportView>
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: BauhausDesign.primary,
-                  foregroundColor: BauhausDesign.textDark, // Ensure textDark on light/primary
+                  foregroundColor: BauhausDesign
+                      .textDark, // Ensure textDark on light/primary
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                    side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+                    side: const BorderSide(
+                      color: BauhausDesign.neutral,
+                      width: 2,
+                    ),
                   ),
                   elevation: 0,
                 ),
@@ -140,7 +148,9 @@ class _AdminPayrollExportViewState extends ConsumerState<AdminPayrollExportView>
                             );
                       },
                 child: state.isLoading
-                    ? const CircularProgressIndicator(color: BauhausDesign.textDark)
+                    ? const CircularProgressIndicator(
+                        color: BauhausDesign.textDark,
+                      )
                     : Text(
                         'EXPORT CSV',
                         style: GoogleFonts.oswald(
@@ -158,8 +168,12 @@ class _AdminPayrollExportViewState extends ConsumerState<AdminPayrollExportView>
     );
   }
 
-  Widget _buildDateSelector(BuildContext context,
-      {required String label, required DateTime date, required VoidCallback onTap}) {
+  Widget _buildDateSelector(
+    BuildContext context, {
+    required String label,
+    required DateTime date,
+    required VoidCallback onTap,
+  }) {
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -176,7 +190,8 @@ class _AdminPayrollExportViewState extends ConsumerState<AdminPayrollExportView>
               children: [
                 Text(
                   label,
-                  style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: BauhausDesign.neutral,
                       ),

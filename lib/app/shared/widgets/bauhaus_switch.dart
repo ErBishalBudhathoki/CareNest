@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
-enum BauhausSwitchVariant {
-  primary,
-  secondary,
-  neutral,
-}
+enum BauhausSwitchVariant { primary, secondary, neutral }
 
 class BauhausSwitch extends StatefulWidget {
   final bool value;
@@ -100,16 +96,9 @@ class _BauhausSwitchState extends State<BauhausSwitch>
             height: 32,
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              color: Color.lerp(
-                _inactiveColor,
-                _activeColor,
-                _animation.value,
-              ),
+              color: Color.lerp(_inactiveColor, _activeColor, _animation.value),
               borderRadius: BorderRadius.zero,
-              border: Border.all(
-                color: _trackBorderColor,
-                width: 2.0,
-              ),
+              border: Border.all(color: _trackBorderColor, width: 2.0),
             ),
             child: Stack(
               children: [
@@ -125,13 +114,8 @@ class _BauhausSwitchState extends State<BauhausSwitch>
                     decoration: BoxDecoration(
                       color: BauhausDesign.surfaceWhite,
                       borderRadius: BorderRadius.zero,
-                      border: Border.all(
-                        color: _thumbBorderColor,
-                        width: 2.0,
-                      ),
-                      boxShadow: const [
-                        BauhausDesign.shadowHardSm,
-                      ],
+                      border: Border.all(color: _thumbBorderColor, width: 2.0),
+                      boxShadow: const [BauhausDesign.shadowHardSm],
                     ),
                   ),
                 ),

@@ -31,26 +31,30 @@ class TimesheetView extends ConsumerWidget {
             weekStart: weekStart,
             weekEnd: weekEnd,
             onPreviousWeek: () {
-              ref.read(timesheetDateProvider.notifier).setDate(
-                  weekStart.subtract(const Duration(days: 7)));
+              ref
+                  .read(timesheetDateProvider.notifier)
+                  .setDate(weekStart.subtract(const Duration(days: 7)));
             },
             onNextWeek: () {
-              ref.read(timesheetDateProvider.notifier).setDate(
-                  weekStart.add(const Duration(days: 7)));
+              ref
+                  .read(timesheetDateProvider.notifier)
+                  .setDate(weekStart.add(const Duration(days: 7)));
             },
             onThisWeek: () {
               final now = DateTime.now();
               final monday = now.subtract(Duration(days: now.weekday - 1));
-              ref.read(timesheetDateProvider.notifier).setDate(
-                  DateTime(monday.year, monday.month, monday.day));
+              ref
+                  .read(timesheetDateProvider.notifier)
+                  .setDate(DateTime(monday.year, monday.month, monday.day));
             },
           ),
           Expanded(
             child: entriesAsync.when(
               loading: () => const BauhausLoadingState(showMessage: false),
               error: (error, _) => BauhausErrorState(
-                title: AppLocalizations.of(context)!
-                    .errorFetchingWorkedTime(error.toString()),
+                title: AppLocalizations.of(
+                  context,
+                )!.errorFetchingWorkedTime(error.toString()),
                 onRetry: () =>
                     ref.invalidate(timesheetViewModelProvider(email)),
               ),
@@ -101,16 +105,15 @@ class TimesheetView extends ConsumerWidget {
                 const SizedBox(width: BauhausDesign.space2),
                 Text(
                   AppLocalizations.of(context)!.timesheetTitle,
-                  style: BauhausDesign.getTextTheme(context)
-                      .displaySmall
-                      ?.copyWith(color: BauhausDesign.textDark),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).displaySmall?.copyWith(color: BauhausDesign.textDark),
                 ),
                 const Spacer(),
                 BauhausIconButton(
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) =>
-                          TimesheetHistoryView(email: email),
+                      builder: (context) => TimesheetHistoryView(email: email),
                     ),
                   ),
                   icon: Icons.history_rounded,
@@ -190,12 +193,12 @@ class _WeekRangeHeader extends StatelessWidget {
               child: Text(
                 '${DateFormat('MMM dd').format(weekStart)} – ${DateFormat('MMM dd, yyyy').format(weekEnd)}'
                     .toUpperCase(),
-                style:
-                    BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                          fontWeight: FontWeight.w900,
-                          color: BauhausDesign.textDark,
-                          letterSpacing: 1.0,
-                        ),
+                style: BauhausDesign.getTextTheme(context).titleMedium
+                    ?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      color: BauhausDesign.textDark,
+                      letterSpacing: 1.0,
+                    ),
               ),
             ),
           ),
@@ -256,15 +259,10 @@ class _TimesheetDataBody extends StatelessWidget {
 
           // ── Section Label ──
           Padding(
-            padding:
-                const EdgeInsets.only(bottom: BauhausDesign.space3),
+            padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
             child: Row(
               children: [
-                Container(
-                  width: 4,
-                  height: 20,
-                  color: BauhausDesign.secondary,
-                ),
+                Container(width: 4, height: 20, color: BauhausDesign.secondary),
                 const SizedBox(width: BauhausDesign.space2),
                 Text(
                   'DAILY BREAKDOWN',
@@ -288,17 +286,13 @@ class _TimesheetDataBody extends StatelessWidget {
             itemCount: days.length,
             separatorBuilder: (_, __) =>
                 const SizedBox(height: BauhausDesign.space3),
-            itemBuilder: (context, index) =>
-                _DayCard(summary: days[index]),
+            itemBuilder: (context, index) => _DayCard(summary: days[index]),
           ),
 
           const SizedBox(height: BauhausDesign.space5),
 
           // ── History Banner ──
-          _HistoryBanner(
-            entryCount: entries.length,
-            onTap: onOpenHistory,
-          ),
+          _HistoryBanner(entryCount: entries.length, onTap: onOpenHistory),
 
           const SizedBox(height: BauhausDesign.space4),
         ],
@@ -486,8 +480,7 @@ class _WeeklyProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fraction =
-        (totalSeconds / _weeklyTargetSeconds).clamp(0.0, 1.0);
+    final fraction = (totalSeconds / _weeklyTargetSeconds).clamp(0.0, 1.0);
     final hours = totalSeconds / 3600;
 
     return Container(
@@ -526,8 +519,7 @@ class _WeeklyProgressBar extends StatelessWidget {
             height: 10,
             decoration: BoxDecoration(
               color: BauhausDesign.neutral.withOpacity(0.1),
-              border:
-                  Border.all(color: BauhausDesign.neutral, width: 1),
+              border: Border.all(color: BauhausDesign.neutral, width: 1),
             ),
             child: FractionallySizedBox(
               alignment: Alignment.centerLeft,
@@ -555,14 +547,19 @@ class _DayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final today = DateTime.now();
-    final isToday = summary.date.year == today.year &&
+    final isToday =
+        summary.date.year == today.year &&
         summary.date.month == today.month &&
         summary.date.day == today.day;
     final hasWork = summary.totalSeconds > 0;
-    final regularFraction =
-        (summary.regularSeconds / (8 * 3600)).clamp(0.0, 1.0);
-    final overtimeFraction =
-        (summary.overtimeSeconds / (8 * 3600)).clamp(0.0, 1.0);
+    final regularFraction = (summary.regularSeconds / (8 * 3600)).clamp(
+      0.0,
+      1.0,
+    );
+    final overtimeFraction = (summary.overtimeSeconds / (8 * 3600)).clamp(
+      0.0,
+      1.0,
+    );
 
     return Container(
       decoration: BoxDecoration(
@@ -580,8 +577,8 @@ class _DayCard extends StatelessWidget {
               color: isToday
                   ? BauhausDesign.primary
                   : (hasWork
-                      ? BauhausDesign.secondary
-                      : BauhausDesign.neutral.withOpacity(0.2)),
+                        ? BauhausDesign.secondary
+                        : BauhausDesign.neutral.withOpacity(0.2)),
             ),
             // ── Date column ──
             Container(
@@ -627,7 +624,10 @@ class _DayCard extends StatelessWidget {
                 padding: const EdgeInsets.all(BauhausDesign.space3),
                 child: hasWork
                     ? _buildWorkContent(
-                        context, regularFraction, overtimeFraction)
+                        context,
+                        regularFraction,
+                        overtimeFraction,
+                      )
                     : _buildEmptyContent(context, isToday),
               ),
             ),
@@ -663,8 +663,7 @@ class _DayCard extends StatelessWidget {
               ),
               if (overtimeFraction > 0)
                 Flexible(
-                  flex:
-                      (overtimeFraction * 100).round().clamp(0, 100),
+                  flex: (overtimeFraction * 100).round().clamp(0, 100),
                   child: Container(color: BauhausDesign.primary),
                 ),
               Flexible(
@@ -702,10 +701,7 @@ class _DayCard extends StatelessWidget {
               ),
               decoration: BoxDecoration(
                 color: BauhausDesign.accent,
-                border: Border.all(
-                  color: BauhausDesign.neutral,
-                  width: 1.5,
-                ),
+                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
               ),
               child: Text(
                 _formatHoursMinutes(summary.totalSeconds),
@@ -723,11 +719,7 @@ class _DayCard extends StatelessWidget {
           const SizedBox(height: BauhausDesign.space2),
           Row(
             children: [
-              Icon(
-                Icons.schedule,
-                size: 13,
-                color: BauhausDesign.textMuted,
-              ),
+              Icon(Icons.schedule, size: 13, color: BauhausDesign.textMuted),
               const SizedBox(width: 4),
               Expanded(
                 child: Text(
@@ -825,10 +817,7 @@ class _EmptyWeekState extends StatelessWidget {
   final DateTime weekStart;
   final DateTime weekEnd;
 
-  const _EmptyWeekState({
-    required this.weekStart,
-    required this.weekEnd,
-  });
+  const _EmptyWeekState({required this.weekStart, required this.weekEnd});
 
   @override
   Widget build(BuildContext context) {
@@ -845,11 +834,7 @@ class _EmptyWeekState extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Icon(
-              Icons.event_busy,
-              size: 32,
-              color: BauhausDesign.textMuted,
-            ),
+            Icon(Icons.event_busy, size: 32, color: BauhausDesign.textMuted),
             const SizedBox(height: BauhausDesign.space2),
             Text(
               'NO WORKED TIME',
@@ -881,10 +866,7 @@ class _HistoryBanner extends StatelessWidget {
   final int entryCount;
   final VoidCallback onTap;
 
-  const _HistoryBanner({
-    required this.entryCount,
-    required this.onTap,
-  });
+  const _HistoryBanner({required this.entryCount, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -927,10 +909,7 @@ class _HistoryBanner extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: BauhausDesign.accent,
-                  border: Border.all(
-                    color: BauhausDesign.neutral,
-                    width: 1.5,
-                  ),
+                  border: Border.all(color: BauhausDesign.neutral, width: 1.5),
                 ),
                 child: Text(
                   '$entryCount',
@@ -965,10 +944,10 @@ class _DayTimesheetSummary {
   String? primaryShiftLabel;
 
   _DayTimesheetSummary({required this.date})
-      : totalSeconds = 0,
-        regularSeconds = 0,
-        overtimeSeconds = 0,
-        shiftCount = 0;
+    : totalSeconds = 0,
+      regularSeconds = 0,
+      overtimeSeconds = 0,
+      shiftCount = 0;
 }
 
 class _WeekTotals {
@@ -992,16 +971,14 @@ List<_DayTimesheetSummary> _buildWeekSummaries(
   final baseStart = DateTime(weekStart.year, weekStart.month, weekStart.day);
   final summaries = List.generate(
     7,
-    (index) =>
-        _DayTimesheetSummary(date: baseStart.add(Duration(days: index))),
+    (index) => _DayTimesheetSummary(date: baseStart.add(Duration(days: index))),
   );
 
   for (final entry in entries) {
     final entryDate = _entryDate(entry);
     if (entryDate == null) continue;
 
-    final normalized =
-        DateTime(entryDate.year, entryDate.month, entryDate.day);
+    final normalized = DateTime(entryDate.year, entryDate.month, entryDate.day);
     final dayDiff = normalized.difference(baseStart).inDays;
     if (dayDiff < 0 || dayDiff > 6) continue;
 

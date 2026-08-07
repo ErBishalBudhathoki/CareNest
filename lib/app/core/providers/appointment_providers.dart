@@ -61,7 +61,10 @@ class AppointmentNotifier extends Notifier<AppointmentState> {
 }
 
 // Appointment provider
-final appointmentProvider = NotifierProvider<AppointmentNotifier, AppointmentState>(AppointmentNotifier.new);
+final appointmentProvider =
+    NotifierProvider<AppointmentNotifier, AppointmentState>(
+      AppointmentNotifier.new,
+    );
 
 // Derived provider for appointment count
 final appointmentCountProvider = Provider<int>((ref) {

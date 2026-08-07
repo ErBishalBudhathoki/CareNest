@@ -19,7 +19,9 @@ class EncryptionService {
     _iv = encrypt.IV.fromLength(16);
 
     // Create encrypter with AES algorithm
-    _encrypter = encrypt.Encrypter(encrypt.AES(_key, mode: encrypt.AESMode.cbc));
+    _encrypter = encrypt.Encrypter(
+      encrypt.AES(_key, mode: encrypt.AESMode.cbc),
+    );
 
     debugPrint('Encryption service initialized');
   }
@@ -52,14 +54,13 @@ class EncryptionService {
     try {
       // Generate random IV for this message
       final iv = encrypt.IV.fromSecureRandom(16);
-      final encrypter = encrypt.Encrypter(encrypt.AES(_key, mode: encrypt.AESMode.cbc));
-      
+      final encrypter = encrypt.Encrypter(
+        encrypt.AES(_key, mode: encrypt.AESMode.cbc),
+      );
+
       final encrypted = encrypter.encrypt(message, iv: iv);
-      
-      return {
-        'encrypted': encrypted.base64,
-        'iv': iv.base64,
-      };
+
+      return {'encrypted': encrypted.base64, 'iv': iv.base64};
     } catch (e) {
       debugPrint('Error encrypting message with IV: $e');
       rethrow;
@@ -70,9 +71,11 @@ class EncryptionService {
   String decryptMessageWithIV(String encryptedMessage, String ivString) {
     try {
       final iv = encrypt.IV.fromBase64(ivString);
-      final encrypter = encrypt.Encrypter(encrypt.AES(_key, mode: encrypt.AESMode.cbc));
+      final encrypter = encrypt.Encrypter(
+        encrypt.AES(_key, mode: encrypt.AESMode.cbc),
+      );
       final encrypted = encrypt.Encrypted.fromBase64(encryptedMessage);
-      
+
       final decrypted = encrypter.decrypt(encrypted, iv: iv);
       return decrypted;
     } catch (e) {
@@ -169,7 +172,7 @@ class EncryptionService {
   Map<String, String> createEncryptedPackage(String message) {
     final encrypted = encryptMessageWithIV(message);
     final hash = generateHash(message);
-    
+
     return {
       'encrypted': encrypted['encrypted']!,
       'iv': encrypted['iv']!,
@@ -184,22 +187,22 @@ class EncryptionService {
       final encrypted = package['encrypted'];
       final iv = package['iv'];
       final hash = package['hash'];
-      
+
       if (encrypted == null || iv == null || hash == null) {
         debugPrint('Invalid package: missing required fields');
         return null;
       }
-      
+
       // Decrypt message
       final decrypted = decryptMessageWithIV(encrypted, iv);
-      
+
       // Verify hash
       final isValid = verifyHash(decrypted, hash);
       if (!isValid) {
         debugPrint('Hash verification failed');
         return null;
       }
-      
+
       return decrypted;
     } catch (e) {
       debugPrint('Error verifying and decrypting package: $e');

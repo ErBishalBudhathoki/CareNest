@@ -42,8 +42,9 @@ class PaymentActionsWidget extends ConsumerWidget {
               Text('Balance Due', style: BauhausTheme.bodyStyle),
               Text(
                 '\$${balanceDue.toStringAsFixed(2)}',
-                style:
-                    BauhausTheme.headerStyle.copyWith(color: BauhausTheme.red),
+                style: BauhausTheme.headerStyle.copyWith(
+                  color: BauhausTheme.red,
+                ),
               ),
             ],
           ),
@@ -60,7 +61,8 @@ class PaymentActionsWidget extends ConsumerWidget {
                       // ref.read(paymentViewModelProvider.notifier).createPaymentIntent(...)
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            content: Text('Starting Payment Flow...')),
+                          content: Text('Starting Payment Flow...'),
+                        ),
                       );
                     },
                   ),
@@ -83,27 +85,36 @@ class PaymentActionsWidget extends ConsumerWidget {
             alignment: Alignment.centerRight,
             child: TextButton(
               onPressed: () => _showCreditNoteDialog(context, ref),
-              child: Text('Issue Credit Note',
-                  style: BauhausTheme.labelStyle
-                      .copyWith(decoration: TextDecoration.underline)),
+              child: Text(
+                'Issue Credit Note',
+                style: BauhausTheme.labelStyle.copyWith(
+                  decoration: TextDecoration.underline,
+                ),
+              ),
             ),
           ),
           if (payment?.transactions.isNotEmpty ?? false) ...[
             const SizedBox(height: 24),
             Text('HISTORY', style: BauhausTheme.labelStyle),
             const SizedBox(height: 8),
-            ...payment!.transactions.map((t) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(t.date.toString().split(' ')[0],
-                          style: BauhausTheme.bodyStyle),
-                      Text('\$${t.amount.toStringAsFixed(2)} (${t.method})',
-                          style: BauhausTheme.bodyStyle),
-                    ],
-                  ),
-                )),
+            ...payment!.transactions.map(
+              (t) => Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      t.date.toString().split(' ')[0],
+                      style: BauhausTheme.bodyStyle,
+                    ),
+                    Text(
+                      '\$${t.amount.toStringAsFixed(2)} (${t.method})',
+                      style: BauhausTheme.bodyStyle,
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ],
       ),
@@ -116,8 +127,10 @@ class PaymentActionsWidget extends ConsumerWidget {
     }
 
     final status = payment.status.toLowerCase();
-    final derivedBalance = (invoice.totalAmount - payment.paidAmount)
-        .clamp(0.0, invoice.totalAmount);
+    final derivedBalance = (invoice.totalAmount - payment.paidAmount).clamp(
+      0.0,
+      invoice.totalAmount,
+    );
 
     if (status == 'paid') {
       return 0.0;
@@ -188,7 +201,9 @@ class PaymentActionsWidget extends ConsumerWidget {
             onPressed: () {
               final amount = double.tryParse(amountController.text);
               if (amount != null) {
-                ref.read(paymentViewModelProvider.notifier).recordPayment(
+                ref
+                    .read(paymentViewModelProvider.notifier)
+                    .recordPayment(
                       invoiceId: invoiceId,
                       amount: amount,
                       method: 'manual',
@@ -279,8 +294,10 @@ class _BauhausButton extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: BauhausTheme.bodyStyle
-              .copyWith(color: textColor, fontWeight: FontWeight.w900),
+          style: BauhausTheme.bodyStyle.copyWith(
+            color: textColor,
+            fontWeight: FontWeight.w900,
+          ),
         ),
       ),
     );

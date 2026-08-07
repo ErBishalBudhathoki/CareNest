@@ -139,10 +139,7 @@ class BauhausHomeHeader extends StatelessWidget {
       height: 60,
       decoration: BoxDecoration(
         color: BauhausDesign.surfaceLight,
-        border: Border.all(
-          color: BauhausDesign.textDark,
-          width: 3,
-        ),
+        border: Border.all(color: BauhausDesign.textDark, width: 3),
         boxShadow: const [
           BoxShadow(
             color: BauhausDesign.textDark,
@@ -152,15 +149,11 @@ class BauhausHomeHeader extends StatelessWidget {
         ],
       ),
       child: photoData != null
-          ? Image.memory(
-              photoData!,
-              fit: BoxFit.cover,
-            )
+          ? Image.memory(photoData!, fit: BoxFit.cover)
           : Center(
               child: Text(
                 userName.isNotEmpty ? userName[0].toUpperCase() : '?',
-                style: BauhausDesign.getTextTheme(context)
-                    .headlineMedium
+                style: BauhausDesign.getTextTheme(context).headlineMedium
                     ?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: BauhausDesign.textDark,
@@ -202,10 +195,7 @@ class _AnimatedRefreshButtonState extends State<_AnimatedRefreshButton> {
             color: _isPressed
                 ? BauhausDesign.neutral.withOpacity(0.1)
                 : BauhausDesign.surfaceWhite,
-            border: Border.all(
-              color: BauhausDesign.textDark,
-              width: 2,
-            ),
+            border: Border.all(color: BauhausDesign.textDark, width: 2),
           ),
           child: const Icon(
             Icons.refresh,

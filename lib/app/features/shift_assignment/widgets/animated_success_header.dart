@@ -64,73 +64,59 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
     );
 
     // Icon animations
-    _iconScaleAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _mainController,
-      curve: const Interval(0.0, 0.4, curve: Curves.elasticOut),
-    ));
+    _iconScaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.0, 0.4, curve: Curves.elasticOut),
+      ),
+    );
 
-    _iconRotationAnimation = Tween<double>(
-      begin: -0.5,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _mainController,
-      curve: const Interval(0.0, 0.4, curve: Curves.easeOutBack),
-    ));
+    _iconRotationAnimation = Tween<double>(begin: -0.5, end: 0.0).animate(
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.0, 0.4, curve: Curves.easeOutBack),
+      ),
+    );
 
     // Title animations
-    _titleSlideAnimation = Tween<double>(
-      begin: 30.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _mainController,
-      curve: const Interval(0.2, 0.6, curve: Curves.easeOutCubic),
-    ));
+    _titleSlideAnimation = Tween<double>(begin: 30.0, end: 0.0).animate(
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.2, 0.6, curve: Curves.easeOutCubic),
+      ),
+    );
 
-    _titleFadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _mainController,
-      curve: const Interval(0.2, 0.6, curve: Curves.easeOut),
-    ));
+    _titleFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.2, 0.6, curve: Curves.easeOut),
+      ),
+    );
 
     // Details animations
-    _detailsSlideAnimation = Tween<double>(
-      begin: 20.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _mainController,
-      curve: const Interval(0.4, 0.8, curve: Curves.easeOutCubic),
-    ));
+    _detailsSlideAnimation = Tween<double>(begin: 20.0, end: 0.0).animate(
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.4, 0.8, curve: Curves.easeOutCubic),
+      ),
+    );
 
-    _detailsFadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _mainController,
-      curve: const Interval(0.4, 0.8, curve: Curves.easeOut),
-    ));
+    _detailsFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.4, 0.8, curve: Curves.easeOut),
+      ),
+    );
 
     // Pulse animation
-    _pulseAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.1,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
 
     // Confetti animation
-    _confettiAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _confettiController,
-      curve: Curves.easeOut,
-    ));
+    _confettiAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _confettiController, curve: Curves.easeOut),
+    );
   }
 
   void _startAnimations() {
@@ -275,9 +261,9 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
         child: Text(
           AppLocalizations.of(context)!.assignmentSuccessful,
           style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: BauhausDesign.primary,
-              ),
+            fontWeight: FontWeight.bold,
+            color: BauhausDesign.primary,
+          ),
           textAlign: TextAlign.center,
         ),
       ),
@@ -318,13 +304,12 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: BauhausDesign.space3, vertical: BauhausDesign.space2),
+        horizontal: BauhausDesign.space3,
+        vertical: BauhausDesign.space2,
+      ),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        border: Border.all(
-          color: color,
-          width: 2,
-        ),
+        border: Border.all(color: color, width: 2),
       ),
       child: Row(
         children: [
@@ -334,11 +319,7 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
               color: color.withOpacity(0.1),
               border: Border.all(color: color),
             ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 20.0,
-            ),
+            child: Icon(icon, color: color, size: 20.0),
           ),
           const SizedBox(width: BauhausDesign.space3),
           Expanded(
@@ -347,20 +328,20 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
               children: [
                 Text(
                   label,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.textMuted,
-                            fontWeight: FontWeight.w500,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: BauhausDesign.textMuted,
+                        fontWeight: FontWeight.w500,
+                      ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodyLarge
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
               ],
             ),
@@ -377,7 +358,9 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
         opacity: _detailsFadeAnimation.value.clamp(0.0, 1.0),
         child: Container(
           padding: const EdgeInsets.symmetric(
-              horizontal: BauhausDesign.space4, vertical: BauhausDesign.space2),
+            horizontal: BauhausDesign.space4,
+            vertical: BauhausDesign.space2,
+          ),
           decoration: BoxDecoration(
             color: BauhausDesign.success.withOpacity(0.1),
             border: Border.all(color: BauhausDesign.success, width: 1.5),
@@ -385,9 +368,9 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
           child: Text(
             widget.assignmentSummary,
             style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-                  color: BauhausDesign.success,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: BauhausDesign.success,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),

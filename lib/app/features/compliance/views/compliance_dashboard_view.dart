@@ -21,34 +21,41 @@ class _ComplianceDashboardViewState
     return Scaffold(
       backgroundColor: BauhausTheme.white,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.complianceAuditTitle,
-            style: BauhausTheme.headerStyle),
+        title: Text(
+          AppLocalizations.of(context)!.complianceAuditTitle,
+          style: BauhausTheme.headerStyle,
+        ),
         backgroundColor: BauhausTheme.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: BauhausTheme.black),
       ),
       body: state.isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: BauhausTheme.blue))
+              child: CircularProgressIndicator(color: BauhausTheme.blue),
+            )
           : state.error != null
-              ? Center(
-                  child: Text(state.error!,
-                      style: BauhausTheme.bodyStyle
-                          .copyWith(color: BauhausTheme.red)))
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildScoreCard(state.data),
-                      const SizedBox(height: 24),
-                      Text(AppLocalizations.of(context)!.attentionRequired,
-                          style: BauhausTheme.subHeaderStyle),
-                      const SizedBox(height: 12),
-                      _buildAlertList(state.data),
-                    ],
+          ? Center(
+              child: Text(
+                state.error!,
+                style: BauhausTheme.bodyStyle.copyWith(color: BauhausTheme.red),
+              ),
+            )
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildScoreCard(state.data),
+                  const SizedBox(height: 24),
+                  Text(
+                    AppLocalizations.of(context)!.attentionRequired,
+                    style: BauhausTheme.subHeaderStyle,
                   ),
-                ),
+                  const SizedBox(height: 12),
+                  _buildAlertList(state.data),
+                ],
+              ),
+            ),
     );
   }
 
@@ -66,19 +73,26 @@ class _ComplianceDashboardViewState
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(AppLocalizations.of(context)!.overallScore,
-                  style: BauhausTheme.subHeaderStyle
-                      .copyWith(color: BauhausTheme.white)),
-              Text('$score%',
-                  style: BauhausTheme.headerStyle
-                      .copyWith(fontSize: 48, color: BauhausTheme.white)),
+              Text(
+                AppLocalizations.of(context)!.overallScore,
+                style: BauhausTheme.subHeaderStyle.copyWith(
+                  color: BauhausTheme.white,
+                ),
+              ),
+              Text(
+                '$score%',
+                style: BauhausTheme.headerStyle.copyWith(
+                  fontSize: 48,
+                  color: BauhausTheme.white,
+                ),
+              ),
             ],
           ),
           Icon(
             score > 80 ? Icons.check_circle : Icons.warning,
             size: 64,
             color: BauhausTheme.white,
-          )
+          ),
         ],
       ),
     );
@@ -89,8 +103,10 @@ class _ComplianceDashboardViewState
     final expired = data?['expiredDocs'] as List<dynamic>? ?? [];
 
     if (expiring.isEmpty && expired.isEmpty) {
-      return Text(AppLocalizations.of(context)!.allDocumentsUpToDate,
-          style: BauhausTheme.bodyStyle);
+      return Text(
+        AppLocalizations.of(context)!.allDocumentsUpToDate,
+        style: BauhausTheme.bodyStyle,
+      );
     }
 
     return Column(
@@ -107,8 +123,9 @@ class _ComplianceDashboardViewState
       padding: const EdgeInsets.all(16),
       decoration: BauhausTheme.blockDecoration.copyWith(
         border: Border.all(
-            color: isExpired ? BauhausTheme.red : BauhausTheme.yellow,
-            width: 2),
+          color: isExpired ? BauhausTheme.red : BauhausTheme.yellow,
+          width: 2,
+        ),
       ),
       child: Row(
         children: [
@@ -121,19 +138,24 @@ class _ComplianceDashboardViewState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(doc['documentType'] ?? 'Document',
-                    style: BauhausTheme.subHeaderStyle.copyWith(fontSize: 16)),
                 Text(
-                    AppLocalizations.of(context)!.expiresLabel(
-                        doc['expiryDate']?.toString().split('T')[0] ?? ''),
-                    style: BauhausTheme.bodyStyle),
+                  doc['documentType'] ?? 'Document',
+                  style: BauhausTheme.subHeaderStyle.copyWith(fontSize: 16),
+                ),
+                Text(
+                  AppLocalizations.of(context)!.expiresLabel(
+                    doc['expiryDate']?.toString().split('T')[0] ?? '',
+                  ),
+                  style: BauhausTheme.bodyStyle,
+                ),
               ],
             ),
           ),
           if (isExpired)
-            Text(AppLocalizations.of(context)!.expiredCaps,
-                style:
-                    BauhausTheme.labelStyle.copyWith(color: BauhausTheme.red)),
+            Text(
+              AppLocalizations.of(context)!.expiredCaps,
+              style: BauhausTheme.labelStyle.copyWith(color: BauhausTheme.red),
+            ),
         ],
       ),
     );

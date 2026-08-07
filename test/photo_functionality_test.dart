@@ -15,7 +15,6 @@ import 'photo_functionality_test.mocks.dart';
 
 // Generate mocks for testing
 @GenerateMocks([http.Client])
-
 /// Test suite for photo upload and retrieval functionality
 ///
 /// This test file covers:
@@ -216,7 +215,7 @@ class PhotoFunctionalityTest {
       0x00,
       0x80,
       0xFF,
-      0xD9
+      0xD9,
     ]);
 
     final file = File(testImagePath);
@@ -399,7 +398,7 @@ class PhotoFunctionalityTest {
       0x00,
       0x80,
       0xFF,
-      0xD9
+      0xD9,
     ]);
 
     return base64Encode(testImageData);
@@ -425,8 +424,11 @@ void main() {
     });
 
     // Helper method to simulate API responses without ApiMethod dependency
-    Map<String, dynamic> createMockResponse(bool success,
-        {String? message, dynamic data}) {
+    Map<String, dynamic> createMockResponse(
+      bool success, {
+      String? message,
+      dynamic data,
+    }) {
       return {
         'success': success,
         'message':
@@ -445,10 +447,12 @@ void main() {
         when(mockClient.send(any)).thenAnswer((_) async {
           final response = http.StreamedResponse(
             Stream.fromIterable([
-              utf8.encode(json.encode({
-                'statusCode': 200,
-                'message': 'Photo uploaded successfully'
-              }))
+              utf8.encode(
+                json.encode({
+                  'statusCode': 200,
+                  'message': 'Photo uploaded successfully',
+                }),
+              ),
             ]),
             200,
           );
@@ -456,8 +460,11 @@ void main() {
         });
 
         // Act & Assert - Test the mock response directly
-        final mockResponse = createMockResponse(true,
-            message: 'Photo uploaded successfully', data: {'statusCode': 200});
+        final mockResponse = createMockResponse(
+          true,
+          message: 'Photo uploaded successfully',
+          data: {'statusCode': 200},
+        );
 
         expect(mockResponse['success'], isTrue);
         expect(mockResponse['message'], equals('Photo uploaded successfully'));
@@ -476,8 +483,12 @@ void main() {
         when(mockClient.send(any)).thenAnswer((_) async {
           final response = http.StreamedResponse(
             Stream.fromIterable([
-              utf8.encode(json.encode(
-                  {'statusCode': 400, 'message': 'No photo file provided'}))
+              utf8.encode(
+                json.encode({
+                  'statusCode': 400,
+                  'message': 'No photo file provided',
+                }),
+              ),
             ]),
             400,
           );
@@ -485,8 +496,11 @@ void main() {
         });
 
         // Act & Assert - Test the mock error response
-        final mockResponse = createMockResponse(false,
-            message: 'No photo file provided', data: {'statusCode': 400});
+        final mockResponse = createMockResponse(
+          false,
+          message: 'No photo file provided',
+          data: {'statusCode': 400},
+        );
 
         expect(mockResponse['success'], isFalse);
         expect(mockResponse['message'], equals('No photo file provided'));
@@ -499,7 +513,8 @@ void main() {
           final response = http.StreamedResponse(
             Stream.fromIterable([
               utf8.encode(
-                  json.encode({'statusCode': 404, 'message': 'User not found'}))
+                json.encode({'statusCode': 404, 'message': 'User not found'}),
+              ),
             ]),
             404,
           );
@@ -507,8 +522,11 @@ void main() {
         });
 
         // Act & Assert - Test the mock error response
-        final mockResponse = createMockResponse(false,
-            message: 'User not found', data: {'statusCode': 404});
+        final mockResponse = createMockResponse(
+          false,
+          message: 'User not found',
+          data: {'statusCode': 404},
+        );
 
         expect(mockResponse['success'], isFalse);
         expect(mockResponse['message'], equals('User not found'));
@@ -524,21 +542,30 @@ void main() {
             PhotoFunctionalityTest.createTestBase64ImageData();
 
         // Mock successful response
-        when(mockClient.get(Uri.parse(
-                '${PhotoFunctionalityTest.baseUrl}/getUserPhoto/$testEmail')))
-            .thenAnswer((_) async => http.Response(
-                  json.encode({
-                    'statusCode': 200,
-                    'message': 'Photo found',
-                    'success': true,
-                    'data': testBase64Data
-                  }),
-                  200,
-                ));
+        when(
+          mockClient.get(
+            Uri.parse(
+              '${PhotoFunctionalityTest.baseUrl}/getUserPhoto/$testEmail',
+            ),
+          ),
+        ).thenAnswer(
+          (_) async => http.Response(
+            json.encode({
+              'statusCode': 200,
+              'message': 'Photo found',
+              'success': true,
+              'data': testBase64Data,
+            }),
+            200,
+          ),
+        );
 
         // Act & Assert - Test the mock response directly
-        final mockResponse = createMockResponse(true,
-            message: 'Photo found', data: testBase64Data);
+        final mockResponse = createMockResponse(
+          true,
+          message: 'Photo found',
+          data: testBase64Data,
+        );
 
         expect(mockResponse['success'], isTrue);
         expect(mockResponse['message'], equals('Photo found'));
@@ -551,16 +578,25 @@ void main() {
         const testEmail = 'nonexistent@example.com';
 
         // Mock error response
-        when(mockClient.get(Uri.parse(
-                '${PhotoFunctionalityTest.baseUrl}/getUserPhoto/$testEmail')))
-            .thenAnswer((_) async => http.Response(
-                  json.encode({'statusCode': 404, 'message': 'User not found'}),
-                  404,
-                ));
+        when(
+          mockClient.get(
+            Uri.parse(
+              '${PhotoFunctionalityTest.baseUrl}/getUserPhoto/$testEmail',
+            ),
+          ),
+        ).thenAnswer(
+          (_) async => http.Response(
+            json.encode({'statusCode': 404, 'message': 'User not found'}),
+            404,
+          ),
+        );
 
         // Act & Assert - Test the mock error response
-        final mockResponse = createMockResponse(false,
-            message: 'User not found', data: {'statusCode': 404});
+        final mockResponse = createMockResponse(
+          false,
+          message: 'User not found',
+          data: {'statusCode': 404},
+        );
 
         expect(mockResponse['success'], isFalse);
         expect(mockResponse['message'], equals('User not found'));
@@ -572,16 +608,20 @@ void main() {
         const testEmail = PhotoFunctionalityTest.testEmail;
 
         // Mock invalid response
-        when(mockClient.get(Uri.parse(
-                '${PhotoFunctionalityTest.baseUrl}/getUserPhoto/$testEmail')))
-            .thenAnswer((_) async => http.Response(
-                  'Invalid JSON response',
-                  200,
-                ));
+        when(
+          mockClient.get(
+            Uri.parse(
+              '${PhotoFunctionalityTest.baseUrl}/getUserPhoto/$testEmail',
+            ),
+          ),
+        ).thenAnswer((_) async => http.Response('Invalid JSON response', 200));
 
         // Act & Assert - Test the mock error response
-        final mockResponse = createMockResponse(false,
-            message: 'User not found', data: {'statusCode': 404});
+        final mockResponse = createMockResponse(
+          false,
+          message: 'User not found',
+          data: {'statusCode': 404},
+        );
 
         expect(mockResponse['success'], isFalse);
         expect(mockResponse['message'], equals('User not found'));
@@ -593,21 +633,30 @@ void main() {
         const testEmail = PhotoFunctionalityTest.testEmail;
 
         // Mock response with no photo data
-        when(mockClient.get(Uri.parse(
-                '${PhotoFunctionalityTest.baseUrl}/getUserPhoto/$testEmail')))
-            .thenAnswer((_) async => http.Response(
-                  json.encode({
-                    'statusCode': 200,
-                    'message': 'Photo found',
-                    'success': false,
-                    'data': null
-                  }),
-                  200,
-                ));
+        when(
+          mockClient.get(
+            Uri.parse(
+              '${PhotoFunctionalityTest.baseUrl}/getUserPhoto/$testEmail',
+            ),
+          ),
+        ).thenAnswer(
+          (_) async => http.Response(
+            json.encode({
+              'statusCode': 200,
+              'message': 'Photo found',
+              'success': false,
+              'data': null,
+            }),
+            200,
+          ),
+        );
 
         // Act & Assert - Test the mock response directly
-        final mockResponse =
-            createMockResponse(false, message: 'Photo found', data: null);
+        final mockResponse = createMockResponse(
+          false,
+          message: 'Photo found',
+          data: null,
+        );
 
         expect(mockResponse['success'], isFalse);
         expect(mockResponse['message'], equals('Photo found'));
@@ -616,191 +665,202 @@ void main() {
     });
 
     group('Data Integrity Tests', () {
-      test('should maintain data integrity between upload and retrieval',
-          () async {
-        // Arrange
-        final originalImageData = Uint8List.fromList([
-          0xFF,
-          0xD8,
-          0xFF,
-          0xE0,
-          0x00,
-          0x10,
-          0x4A,
-          0x46,
-          0x49,
-          0x46,
-          0x00,
-          0x01,
-          0x01,
-          0x01,
-          0x00,
-          0x48,
-          0x00,
-          0x48,
-          0x00,
-          0x00,
-          0xFF,
-          0xDB,
-          0x00,
-          0x43,
-          0x00,
-          0x08,
-          0x06,
-          0x06,
-          0x07,
-          0x06,
-          0x05,
-          0x08,
-          0x07,
-          0x07,
-          0x07,
-          0x09,
-          0x09,
-          0x08,
-          0x0A,
-          0x0C,
-          0x14,
-          0x0D,
-          0x0C,
-          0x0B,
-          0x0B,
-          0x0C,
-          0x19,
-          0x12,
-          0x13,
-          0x0F,
-          0x14,
-          0x1D,
-          0x1A,
-          0x1F,
-          0x1E,
-          0x1D,
-          0x1A,
-          0x1C,
-          0x1C,
-          0x20,
-          0x24,
-          0x2E,
-          0x27,
-          0x20,
-          0x22,
-          0x2C,
-          0x23,
-          0x1C,
-          0x1C,
-          0x28,
-          0x37,
-          0x29,
-          0x2C,
-          0x30,
-          0x31,
-          0x34,
-          0x34,
-          0x34,
-          0x1F,
-          0x27,
-          0x39,
-          0x3D,
-          0x38,
-          0x32,
-          0x3C,
-          0x2E,
-          0x33,
-          0x34,
-          0x32,
-          0xFF,
-          0xC0,
-          0x00,
-          0x11,
-          0x08,
-          0x00,
-          0x01,
-          0x00,
-          0x01,
-          0x01,
-          0x01,
-          0x11,
-          0x00,
-          0x02,
-          0x11,
-          0x01,
-          0x03,
-          0x11,
-          0x01,
-          0xFF,
-          0xC4,
-          0x00,
-          0x14,
-          0x00,
-          0x01,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0xFF,
-          0xDA,
-          0x00,
-          0x0C,
-          0x03,
-          0x01,
-          0x00,
-          0x02,
-          0x11,
-          0x03,
-          0x11,
-          0x00,
-          0x3F,
-          0x00,
-          0x80,
-          0xFF,
-          0xD9
-        ]);
+      test(
+        'should maintain data integrity between upload and retrieval',
+        () async {
+          // Arrange
+          final originalImageData = Uint8List.fromList([
+            0xFF,
+            0xD8,
+            0xFF,
+            0xE0,
+            0x00,
+            0x10,
+            0x4A,
+            0x46,
+            0x49,
+            0x46,
+            0x00,
+            0x01,
+            0x01,
+            0x01,
+            0x00,
+            0x48,
+            0x00,
+            0x48,
+            0x00,
+            0x00,
+            0xFF,
+            0xDB,
+            0x00,
+            0x43,
+            0x00,
+            0x08,
+            0x06,
+            0x06,
+            0x07,
+            0x06,
+            0x05,
+            0x08,
+            0x07,
+            0x07,
+            0x07,
+            0x09,
+            0x09,
+            0x08,
+            0x0A,
+            0x0C,
+            0x14,
+            0x0D,
+            0x0C,
+            0x0B,
+            0x0B,
+            0x0C,
+            0x19,
+            0x12,
+            0x13,
+            0x0F,
+            0x14,
+            0x1D,
+            0x1A,
+            0x1F,
+            0x1E,
+            0x1D,
+            0x1A,
+            0x1C,
+            0x1C,
+            0x20,
+            0x24,
+            0x2E,
+            0x27,
+            0x20,
+            0x22,
+            0x2C,
+            0x23,
+            0x1C,
+            0x1C,
+            0x28,
+            0x37,
+            0x29,
+            0x2C,
+            0x30,
+            0x31,
+            0x34,
+            0x34,
+            0x34,
+            0x1F,
+            0x27,
+            0x39,
+            0x3D,
+            0x38,
+            0x32,
+            0x3C,
+            0x2E,
+            0x33,
+            0x34,
+            0x32,
+            0xFF,
+            0xC0,
+            0x00,
+            0x11,
+            0x08,
+            0x00,
+            0x01,
+            0x00,
+            0x01,
+            0x01,
+            0x01,
+            0x11,
+            0x00,
+            0x02,
+            0x11,
+            0x01,
+            0x03,
+            0x11,
+            0x01,
+            0xFF,
+            0xC4,
+            0x00,
+            0x14,
+            0x00,
+            0x01,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0xFF,
+            0xDA,
+            0x00,
+            0x0C,
+            0x03,
+            0x01,
+            0x00,
+            0x02,
+            0x11,
+            0x03,
+            0x11,
+            0x00,
+            0x3F,
+            0x00,
+            0x80,
+            0xFF,
+            0xD9,
+          ]);
 
-        final originalBase64 = base64Encode(originalImageData);
-        const testEmail = PhotoFunctionalityTest.testEmail;
+          final originalBase64 = base64Encode(originalImageData);
+          const testEmail = PhotoFunctionalityTest.testEmail;
 
-        // Mock retrieval response with same data
-        when(mockClient.get(Uri.parse(
-                '${PhotoFunctionalityTest.baseUrl}/getUserPhoto/$testEmail')))
-            .thenAnswer((_) async => http.Response(
-                  json.encode({
-                    'statusCode': 200,
-                    'message': 'Photo found',
-                    'success': true,
-                    'data': originalBase64
-                  }),
-                  200,
-                ));
+          // Mock retrieval response with same data
+          when(
+            mockClient.get(
+              Uri.parse(
+                '${PhotoFunctionalityTest.baseUrl}/getUserPhoto/$testEmail',
+              ),
+            ),
+          ).thenAnswer(
+            (_) async => http.Response(
+              json.encode({
+                'statusCode': 200,
+                'message': 'Photo found',
+                'success': true,
+                'data': originalBase64,
+              }),
+              200,
+            ),
+          );
 
-        // Act & Assert - Test the mock response directly
-        final mockResponse = createMockResponse(true,
-            message: 'Photo found', data: originalBase64);
+          // Act & Assert - Test the mock response directly
+          final mockResponse = createMockResponse(
+            true,
+            message: 'Photo found',
+            data: originalBase64,
+          );
 
-        expect(mockResponse['success'], isTrue);
-        expect(mockResponse['message'], equals('Photo found'));
-        expect(mockResponse['data'], equals(originalBase64));
-        expect(mockResponse['data'], isNotNull);
-      });
+          expect(mockResponse['success'], isTrue);
+          expect(mockResponse['message'], equals('Photo found'));
+          expect(mockResponse['data'], equals(originalBase64));
+          expect(mockResponse['data'], isNotNull);
+        },
+      );
 
       test('should handle base64 encoding/decoding correctly', () {
         // Arrange
@@ -890,13 +950,20 @@ void main() {
         const testEmail = PhotoFunctionalityTest.testEmail;
 
         // Mock timeout
-        when(mockClient.get(Uri.parse(
-                '${PhotoFunctionalityTest.baseUrl}/getUserPhoto/$testEmail')))
-            .thenThrow(const SocketException('Network timeout'));
+        when(
+          mockClient.get(
+            Uri.parse(
+              '${PhotoFunctionalityTest.baseUrl}/getUserPhoto/$testEmail',
+            ),
+          ),
+        ).thenThrow(const SocketException('Network timeout'));
 
         // Act & Assert - Test the mock error response
-        final mockResponse = createMockResponse(false,
-            message: 'User not found', data: {'statusCode': 404});
+        final mockResponse = createMockResponse(
+          false,
+          message: 'User not found',
+          data: {'statusCode': 404},
+        );
 
         expect(mockResponse['success'], isFalse);
         expect(mockResponse['message'], equals('User not found'));
@@ -908,17 +975,28 @@ void main() {
         const testEmail = PhotoFunctionalityTest.testEmail;
 
         // Mock server error
-        when(mockClient.get(Uri.parse(
-                '${PhotoFunctionalityTest.baseUrl}/getUserPhoto/$testEmail')))
-            .thenAnswer((_) async => http.Response(
-                  json.encode(
-                      {'statusCode': 500, 'message': 'Internal server error'}),
-                  500,
-                ));
+        when(
+          mockClient.get(
+            Uri.parse(
+              '${PhotoFunctionalityTest.baseUrl}/getUserPhoto/$testEmail',
+            ),
+          ),
+        ).thenAnswer(
+          (_) async => http.Response(
+            json.encode({
+              'statusCode': 500,
+              'message': 'Internal server error',
+            }),
+            500,
+          ),
+        );
 
         // Act & Assert - Test the mock error response
-        final mockResponse = createMockResponse(false,
-            message: 'User not found', data: {'statusCode': 404});
+        final mockResponse = createMockResponse(
+          false,
+          message: 'User not found',
+          data: {'statusCode': 404},
+        );
 
         expect(mockResponse['success'], isFalse);
         expect(mockResponse['message'], equals('User not found'));
@@ -952,8 +1030,10 @@ void main() {
 
         // Assert
         expect(decodedData, equals(largeImageData));
-        expect(stopwatch.elapsedMilliseconds,
-            lessThan(1000)); // Should complete within 1 second
+        expect(
+          stopwatch.elapsedMilliseconds,
+          lessThan(1000),
+        ); // Should complete within 1 second
       });
 
       test('should handle multiple concurrent photo requests', () async {
@@ -963,23 +1043,33 @@ void main() {
             PhotoFunctionalityTest.createTestBase64ImageData();
 
         // Mock successful responses
-        when(mockClient.get(Uri.parse(
-                '${PhotoFunctionalityTest.baseUrl}/getUserPhoto/$testEmail')))
-            .thenAnswer((_) async => http.Response(
-                  json.encode({
-                    'statusCode': 200,
-                    'message': 'Photo found',
-                    'success': true,
-                    'data': testBase64Data
-                  }),
-                  200,
-                ));
+        when(
+          mockClient.get(
+            Uri.parse(
+              '${PhotoFunctionalityTest.baseUrl}/getUserPhoto/$testEmail',
+            ),
+          ),
+        ).thenAnswer(
+          (_) async => http.Response(
+            json.encode({
+              'statusCode': 200,
+              'message': 'Photo found',
+              'success': true,
+              'data': testBase64Data,
+            }),
+            200,
+          ),
+        );
 
         // Act & Assert - Test concurrent mock responses
         final mockResponses = List.generate(
-            5,
-            (_) => createMockResponse(true,
-                message: 'Photo found', data: testBase64Data));
+          5,
+          (_) => createMockResponse(
+            true,
+            message: 'Photo found',
+            data: testBase64Data,
+          ),
+        );
 
         expect(mockResponses.length, equals(5));
         for (final response in mockResponses) {

@@ -10,11 +10,7 @@ class ClientState {
   final bool isLoading;
   final String? error;
 
-  ClientState({
-    required this.clients,
-    required this.isLoading,
-    this.error,
-  });
+  ClientState({required this.clients, required this.isLoading, this.error});
 
   ClientState copyWith({
     List<Patient>? clients,
@@ -44,11 +40,12 @@ class ClientNotifier extends Notifier<ClientState> {
     try {
       state = state.copyWith(isLoading: true, error: null);
 
-      final List<Map<String, dynamic>> clientsData =
-          await _apiMethod.getClientsByOrganizationId(organizationId);
+      final List<Map<String, dynamic>> clientsData = await _apiMethod
+          .getClientsByOrganizationId(organizationId);
 
-      final List<Patient> clients =
-          clientsData.map((json) => Patient.fromJson(json)).toList();
+      final List<Patient> clients = clientsData
+          .map((json) => Patient.fromJson(json))
+          .toList();
 
       state = state.copyWith(clients: clients, isLoading: false);
     } catch (e) {
@@ -63,11 +60,12 @@ class ClientNotifier extends Notifier<ClientState> {
     try {
       state = state.copyWith(isLoading: true, error: null);
 
-      final List<Map<String, dynamic>> clientsData =
-          await _apiMethod.getDeletedClientsByOrganizationId(organizationId);
+      final List<Map<String, dynamic>> clientsData = await _apiMethod
+          .getDeletedClientsByOrganizationId(organizationId);
 
-      final List<Patient> clients =
-          clientsData.map((json) => Patient.fromJson(json)).toList();
+      final List<Patient> clients = clientsData
+          .map((json) => Patient.fromJson(json))
+          .toList();
 
       state = state.copyWith(clients: clients, isLoading: false);
     } catch (e) {
@@ -228,8 +226,7 @@ final apiMethodProvider = Provider<ApiMethod>(
 );
 
 // Provider for ClientNotifier
-final clientProvider =
-    NotifierProvider<ClientNotifier, ClientState>(() {
+final clientProvider = NotifierProvider<ClientNotifier, ClientState>(() {
   return ClientNotifier();
 });
 

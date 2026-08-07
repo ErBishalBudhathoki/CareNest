@@ -16,8 +16,14 @@ class OnboardingRepository {
     throw Exception(response['message'] ?? 'Failed to get status');
   }
 
-  Future<OnboardingRecord> updateStep(String stepName, Map<String, dynamic> data) async {
-    final response = await _apiMethod.put('api/onboarding/step/$stepName', body: data);
+  Future<OnboardingRecord> updateStep(
+    String stepName,
+    Map<String, dynamic> data,
+  ) async {
+    final response = await _apiMethod.put(
+      'api/onboarding/step/$stepName',
+      body: data,
+    );
     if (response['success'] == true) {
       return OnboardingRecord.fromJson(response['data']);
     }
@@ -29,7 +35,10 @@ class OnboardingRepository {
   }
 
   Future<EmployeeDocument> saveDocument(Map<String, dynamic> data) async {
-    final response = await _apiMethod.post('api/onboarding/documents', body: data);
+    final response = await _apiMethod.post(
+      'api/onboarding/documents',
+      body: data,
+    );
     if (response['success'] == true) {
       return EmployeeDocument.fromJson(response['data']);
     }
@@ -71,7 +80,9 @@ class OnboardingRepository {
   }
 
   Future<List<EmployeeDocument>> getAdminDocuments(String userId) async {
-    final response = await _apiMethod.get('api/onboarding/admin/documents/$userId');
+    final response = await _apiMethod.get(
+      'api/onboarding/admin/documents/$userId',
+    );
     if (response['success'] == true) {
       final List data = response['data'];
       return data.map((e) => EmployeeDocument.fromJson(e)).toList();
@@ -79,7 +90,11 @@ class OnboardingRepository {
     throw Exception(response['message'] ?? 'Failed to get user documents');
   }
 
-  Future<void> verifyDocument(String docId, String status, {String? reason}) async {
+  Future<void> verifyDocument(
+    String docId,
+    String status, {
+    String? reason,
+  }) async {
     final response = await _apiMethod.put(
       'api/onboarding/admin/verify-document/$docId',
       body: {'status': status, 'reason': reason},

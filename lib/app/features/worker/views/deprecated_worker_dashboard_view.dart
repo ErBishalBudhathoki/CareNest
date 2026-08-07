@@ -34,10 +34,8 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => QuickExpenseCaptureView(
-            adminEmail: email,
-            organizationId: orgId,
-          ),
+          builder: (_) =>
+              QuickExpenseCaptureView(adminEmail: email, organizationId: orgId),
         ),
       );
     }
@@ -45,8 +43,10 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: BauhausTheme.white,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.workerDashboardTitle,
-            style: BauhausTheme.headerStyle),
+        title: Text(
+          AppLocalizations.of(context)!.workerDashboardTitle,
+          style: BauhausTheme.headerStyle,
+        ),
         backgroundColor: BauhausTheme.white,
         elevation: 0,
         centerTitle: true,
@@ -54,8 +54,10 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
         actions: [
           IconButton(
             tooltip: 'Scan Invoice',
-            icon: const Icon(Icons.document_scanner_outlined,
-                color: BauhausTheme.black),
+            icon: const Icon(
+              Icons.document_scanner_outlined,
+              color: BauhausTheme.black,
+            ),
             onPressed: openScanInvoice,
           ),
           IconButton(
@@ -67,11 +69,14 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
       ),
       body: dashboardState.when(
         loading: () => const Center(
-            child: CircularProgressIndicator(color: BauhausTheme.blue)),
+          child: CircularProgressIndicator(color: BauhausTheme.blue),
+        ),
         error: (err, stack) => Center(
-            child: Text('Error: $err',
-                style:
-                    BauhausTheme.bodyStyle.copyWith(color: BauhausTheme.red))),
+          child: Text(
+            'Error: $err',
+            style: BauhausTheme.bodyStyle.copyWith(color: BauhausTheme.red),
+          ),
+        ),
         data: (data) => SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -80,14 +85,16 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
               // Emergency Banners
               if (data.activeBroadcasts.isNotEmpty)
                 _buildEmergencyBanners(context, data.activeBroadcasts),
-              
+
               // Status Card (Clock In/Out)
               WorkerStatusCard(activeTimer: data.activeTimer),
               const SizedBox(height: 24),
 
               // Next Shift Section
-              Text(AppLocalizations.of(context)!.nextShiftCaps,
-                  style: BauhausTheme.subHeaderStyle),
+              Text(
+                AppLocalizations.of(context)!.nextShiftCaps,
+                style: BauhausTheme.subHeaderStyle,
+              ),
               const SizedBox(height: 12),
               if (data.nextShift != null)
                 WorkerShiftCard(shift: data.nextShift!)
@@ -100,8 +107,10 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('PAST ASSIGNED SHIFTS',
-                      style: BauhausTheme.subHeaderStyle),
+                  Text(
+                    'PAST ASSIGNED SHIFTS',
+                    style: BauhausTheme.subHeaderStyle,
+                  ),
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).push(
@@ -117,7 +126,7 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
                         decoration: TextDecoration.underline,
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
               const SizedBox(height: 12),
@@ -133,16 +142,20 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
               const SizedBox(height: 24),
 
               // Quick Actions
-              Text(AppLocalizations.of(context)!.actionsCaps,
-                  style: BauhausTheme.subHeaderStyle),
+              Text(
+                AppLocalizations.of(context)!.actionsCaps,
+                style: BauhausTheme.subHeaderStyle,
+              ),
               const SizedBox(height: 8),
               SizedBox(
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton.icon(
                   onPressed: openScanInvoice,
-                  icon: const Icon(Icons.document_scanner_outlined,
-                      color: BauhausTheme.white),
+                  icon: const Icon(
+                    Icons.document_scanner_outlined,
+                    color: BauhausTheme.white,
+                  ),
                   label: const Text(
                     'Scan Invoice',
                     style: TextStyle(color: BauhausTheme.white),
@@ -150,7 +163,8 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: BauhausTheme.black,
                     shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero),
+                      borderRadius: BorderRadius.zero,
+                    ),
                   ),
                 ),
               ),
@@ -160,12 +174,16 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
               const SizedBox(height: 24),
 
               // Recent Expenses
-              Text(AppLocalizations.of(context)!.recentExpensesCaps,
-                  style: BauhausTheme.subHeaderStyle),
+              Text(
+                AppLocalizations.of(context)!.recentExpensesCaps,
+                style: BauhausTheme.subHeaderStyle,
+              ),
               const SizedBox(height: 12),
               if (data.recentExpenses.isEmpty)
-                Text(AppLocalizations.of(context)!.noRecentExpenses,
-                    style: BauhausTheme.bodyStyle.copyWith(color: Colors.grey))
+                Text(
+                  AppLocalizations.of(context)!.noRecentExpenses,
+                  style: BauhausTheme.bodyStyle.copyWith(color: Colors.grey),
+                )
               else
                 for (var e in data.recentExpenses)
                   Container(
@@ -181,13 +199,18 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(e.category, style: BauhausTheme.labelStyle),
-                            Text(e.date.toIso8601String().split('T')[0],
-                                style: BauhausTheme.bodyStyle
-                                    .copyWith(fontSize: 12)),
+                            Text(
+                              e.date.toIso8601String().split('T')[0],
+                              style: BauhausTheme.bodyStyle.copyWith(
+                                fontSize: 12,
+                              ),
+                            ),
                           ],
                         ),
-                        Text('\$${e.amount.toStringAsFixed(2)}',
-                            style: BauhausTheme.subHeaderStyle),
+                        Text(
+                          '\$${e.amount.toStringAsFixed(2)}',
+                          style: BauhausTheme.subHeaderStyle,
+                        ),
                       ],
                     ),
                   ),
@@ -199,7 +222,9 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
   }
 
   Widget _buildEmergencyBanners(
-      BuildContext context, List<dynamic> broadcasts) {
+    BuildContext context,
+    List<dynamic> broadcasts,
+  ) {
     return Column(
       children: broadcasts.map((b) {
         return Container(
@@ -210,10 +235,7 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
             color: const Color(0xFFE63946), // Strong Red
             border: Border.all(color: Colors.black, width: 2),
             boxShadow: const [
-              BoxShadow(
-                color: Colors.black,
-                offset: Offset(4, 4),
-              ),
+              BoxShadow(color: Colors.black, offset: Offset(4, 4)),
             ],
           ),
           child: Column(
@@ -221,8 +243,11 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.warning_amber_rounded,
-                      color: Colors.white, size: 28),
+                  const Icon(
+                    Icons.warning_amber_rounded,
+                    color: Colors.white,
+                    size: 28,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -285,8 +310,10 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
       padding: const EdgeInsets.all(24),
       decoration: BauhausTheme.blockDecoration,
       child: Center(
-        child: Text(AppLocalizations.of(context)!.noUpcomingShifts,
-            style: BauhausTheme.bodyStyle),
+        child: Text(
+          AppLocalizations.of(context)!.noUpcomingShifts,
+          style: BauhausTheme.bodyStyle,
+        ),
       ),
     );
   }

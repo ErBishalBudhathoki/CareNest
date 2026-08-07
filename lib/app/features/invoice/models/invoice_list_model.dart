@@ -66,7 +66,8 @@ class InvoiceListModel {
           final expenses = clients[0]['expenses'] as List?;
           if (expenses != null) {
             debugPrint(
-                '🔍 InvoiceListModel: Found ${expenses.length} expenses');
+              '🔍 InvoiceListModel: Found ${expenses.length} expenses',
+            );
             for (var expense in expenses) {
               if (expense is Map<String, dynamic>) {
                 final receiptFiles = expense['receiptFiles'] as List?;
@@ -74,7 +75,8 @@ class InvoiceListModel {
                 final receiptUrl = expense['receiptUrl'] as String?;
 
                 debugPrint(
-                    '🔍 InvoiceListModel: Expense has - receiptUrl: $receiptUrl, files: ${receiptFiles?.length}, photos: ${receiptPhotos?.length}');
+                  '🔍 InvoiceListModel: Expense has - receiptUrl: $receiptUrl, files: ${receiptFiles?.length}, photos: ${receiptPhotos?.length}',
+                );
 
                 String? resolveToDownloadUrl(String value) {
                   final resolved = AppConfig.resolveResourceUrl(value);
@@ -117,7 +119,8 @@ class InvoiceListModel {
             }
           } else {
             debugPrint(
-                '🔍 InvoiceListModel: No expenses found in calculatedPayloadData');
+              '🔍 InvoiceListModel: No expenses found in calculatedPayloadData',
+            );
           }
         }
       } else if (json['extractedReceiptUrls'] != null) {
@@ -126,7 +129,8 @@ class InvoiceListModel {
         extractedReceiptUrls = List<String>.from(json['extractedReceiptUrls']);
       } else {
         debugPrint(
-            '🔍 InvoiceListModel: No calculatedPayloadData or extractedReceiptUrls found');
+          '🔍 InvoiceListModel: No calculatedPayloadData or extractedReceiptUrls found',
+        );
       }
     } catch (e) {
       debugPrint('Error extracting receipt URLs in InvoiceListModel: $e');
@@ -135,7 +139,8 @@ class InvoiceListModel {
     // Remove duplicates
     extractedReceiptUrls = extractedReceiptUrls.toSet().toList();
     debugPrint(
-        '🔍 InvoiceListModel: Final extracted URLs: $extractedReceiptUrls');
+      '🔍 InvoiceListModel: Final extracted URLs: $extractedReceiptUrls',
+    );
 
     return InvoiceListModel(
       id: json['_id'] ?? '',
@@ -144,9 +149,12 @@ class InvoiceListModel {
       clientName: json['clientName'] ?? '',
       clientEmail: json['clientEmail'] ?? '',
       issueDate: DateTime.parse(
-          json['auditTrail']?['createdAt'] ?? DateTime.now().toIso8601String()),
-      dueDate: DateTime.parse(json['financialSummary']?['dueDate'] ??
-          DateTime.now().toIso8601String()),
+        json['auditTrail']?['createdAt'] ?? DateTime.now().toIso8601String(),
+      ),
+      dueDate: DateTime.parse(
+        json['financialSummary']?['dueDate'] ??
+            DateTime.now().toIso8601String(),
+      ),
       totalAmount: (json['financialSummary']?['totalAmount'] ?? 0.0).toDouble(),
       taxAmount: (json['financialSummary']?['taxAmount'] ?? 0.0).toDouble(),
       subtotalAmount: (json['financialSummary']?['subtotal'] ?? 0.0).toDouble(),
@@ -155,9 +163,11 @@ class InvoiceListModel {
       deliveryStatus: json['delivery']?['status'] ?? 'pending',
       invoiceType: json['metadata']?['invoiceType'] ?? 'standard',
       createdAt: DateTime.parse(
-          json['auditTrail']?['createdAt'] ?? DateTime.now().toIso8601String()),
+        json['auditTrail']?['createdAt'] ?? DateTime.now().toIso8601String(),
+      ),
       updatedAt: DateTime.parse(
-          json['auditTrail']?['updatedAt'] ?? DateTime.now().toIso8601String()),
+        json['auditTrail']?['updatedAt'] ?? DateTime.now().toIso8601String(),
+      ),
       pdfPath: json['metadata']?['pdfPath'],
       pdfArtifactUrl:
           json['pdfArtifact']?['url'] ?? json['metadata']?['pdfArtifactUrl'],
@@ -178,10 +188,7 @@ class InvoiceListModel {
       '_id': id,
       'invoiceNumber': invoiceNumber,
       'organizationId': organizationId,
-      'clientInfo': {
-        'name': clientName,
-        'email': clientEmail,
-      },
+      'clientInfo': {'name': clientName, 'email': clientEmail},
       'issueDate': issueDate.toIso8601String(),
       'dueDate': dueDate.toIso8601String(),
       'financialSummary': {
@@ -189,24 +196,15 @@ class InvoiceListModel {
         'taxAmount': taxAmount,
         'subtotalAmount': subtotalAmount,
       },
-      'workflowStatus': {
-        'status': status,
-      },
+      'workflowStatus': {'status': status},
       'paymentStatus': paymentStatus,
       'deliveryStatus': deliveryStatus,
       'invoiceType': invoiceType,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
-      'deliveryInfo': {
-        'pdfPath': pdfPath,
-        'pdfArtifactUrl': pdfArtifactUrl,
-      },
-      'sharing': {
-        'shareableLink': shareableLink,
-      },
-      'deletion': {
-        'isDeleted': isDeleted,
-      },
+      'deliveryInfo': {'pdfPath': pdfPath, 'pdfArtifactUrl': pdfArtifactUrl},
+      'sharing': {'shareableLink': shareableLink},
+      'deletion': {'isDeleted': isDeleted},
       'extractedReceiptUrls': receiptUrls,
       'payment': payment?.toJson(),
       'recurrence': recurrence?.toJson(),

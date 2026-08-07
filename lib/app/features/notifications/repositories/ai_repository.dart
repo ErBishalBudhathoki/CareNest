@@ -16,8 +16,9 @@ class AiRepository {
   // --- AI Timing ---
 
   Future<List<TimingPrediction>> getPredictions() async {
-    final response =
-        await _apiMethod.get('api/notifications/ai-timing/predictions');
+    final response = await _apiMethod.get(
+      'api/notifications/ai-timing/predictions',
+    );
 
     if (response['success'] == true) {
       final List<dynamic> list = response['data'];
@@ -28,8 +29,9 @@ class AiRepository {
   }
 
   Future<TimingPrediction> getPrediction(String type) async {
-    final response =
-        await _apiMethod.get('api/notifications/ai-timing/predict/$type');
+    final response = await _apiMethod.get(
+      'api/notifications/ai-timing/predict/$type',
+    );
 
     if (response['success'] == true) {
       return TimingPrediction.fromJson(response['data']);
@@ -47,8 +49,10 @@ class AiRepository {
 
   // --- Calendar ---
 
-  Future<List<CalendarEvent>> getCalendarEvents(
-      {DateTime? start, DateTime? end}) async {
+  Future<List<CalendarEvent>> getCalendarEvents({
+    DateTime? start,
+    DateTime? end,
+  }) async {
     String query = '';
     if (start != null) query += '?start=${start.toIso8601String()}';
     if (end != null) query += '&end=${end.toIso8601String()}';
@@ -64,8 +68,10 @@ class AiRepository {
   }
 
   Future<void> syncCalendar(String provider) async {
-    final response = await _apiMethod
-        .post('api/calendar/sync', body: {'provider': provider});
+    final response = await _apiMethod.post(
+      'api/calendar/sync',
+      body: {'provider': provider},
+    );
 
     if (response['success'] != true) {
       throw Exception(response['message'] ?? 'Failed to sync calendar');

@@ -182,8 +182,9 @@ class _NdisPricingManagementViewState
       final directState = _normalizeStateCode(candidate['state']?.toString());
       if (directState != null) return directState;
 
-      final businessState =
-          _normalizeStateCode(candidate['businessState']?.toString());
+      final businessState = _normalizeStateCode(
+        candidate['businessState']?.toString(),
+      );
       if (businessState != null) return businessState;
     }
 
@@ -235,13 +236,18 @@ class _NdisPricingManagementViewState
       }
     } catch (e, s) {
       log.severe(
-          "Failed to load NDIS items in NdisPricingManagementView", e, s);
+        "Failed to load NDIS items in NdisPricingManagementView",
+        e,
+        s,
+      );
       if (mounted) {
         setState(() {
           _isLoading = false;
         });
-        _showSnackBar(AppLocalizations.of(context)!.failedToLoadNdisItems,
-            isError: true);
+        _showSnackBar(
+          AppLocalizations.of(context)!.failedToLoadNdisItems,
+          isError: true,
+        );
       }
     }
   }
@@ -253,18 +259,21 @@ class _NdisPricingManagementViewState
     try {
       // Load organization fallback base rate once for display when item-level
       // custom pricing does not exist.
-      final fallbackRate =
-          await _apiMethod.getFallbackBaseRate(widget.organizationId!);
+      final fallbackRate = await _apiMethod.getFallbackBaseRate(
+        widget.organizationId!,
+      );
       if (mounted) {
         setState(() {
-          _fallbackBaseRate =
-              (fallbackRate != null && fallbackRate > 0) ? fallbackRate : null;
+          _fallbackBaseRate = (fallbackRate != null && fallbackRate > 0)
+              ? fallbackRate
+              : null;
         });
       }
 
       // Get all item numbers for bulk lookup
-      final allItemNumbers =
-          _allNdisItems.map((item) => item.itemNumber).toList();
+      final allItemNumbers = _allNdisItems
+          .map((item) => item.itemNumber)
+          .toList();
       log.info("Loading pricing data for ${allItemNumbers.length} items");
 
       // Use bulk pricing lookup to get all custom pricing data at once
@@ -274,7 +283,8 @@ class _NdisPricingManagementViewState
       );
 
       log.info(
-          "Bulk pricing data received: ${bulkPricingData?.keys.length ?? 0} items with custom pricing");
+        "Bulk pricing data received: ${bulkPricingData?.keys.length ?? 0} items with custom pricing",
+      );
 
       // Initialize pricing data with custom pricing for all items
       if (bulkPricingData != null && bulkPricingData.isNotEmpty) {
@@ -288,20 +298,23 @@ class _NdisPricingManagementViewState
               };
             });
             log.fine(
-                "Loaded custom pricing for item $itemNumber: ${customPricingData['price']}");
+              "Loaded custom pricing for item $itemNumber: ${customPricingData['price']}",
+            );
           }
         }
       } else {
         log.info(
-            "No custom pricing data found for organization ${widget.organizationId}");
+          "No custom pricing data found for organization ${widget.organizationId}",
+        );
       }
 
       // Load support item details for the first 50 items to start with
       for (final item in _allNdisItems.take(50)) {
         if (!mounted) break; // Exit early if widget is disposed
 
-        final supportItemDetails =
-            await _apiMethod.getSupportItemDetails(item.itemNumber);
+        final supportItemDetails = await _apiMethod.getSupportItemDetails(
+          item.itemNumber,
+        );
 
         if (mounted) {
           setState(() {
@@ -335,8 +348,9 @@ class _NdisPricingManagementViewState
   double? _toPositiveDouble(dynamic value) {
     if (value is num && value > 0) return value.toDouble();
     if (value is String) {
-      final parsed =
-          double.tryParse(value.replaceAll(RegExp(r'[^0-9.\-]'), ''));
+      final parsed = double.tryParse(
+        value.replaceAll(RegExp(r'[^0-9.\-]'), ''),
+      );
       if (parsed != null && parsed > 0) return parsed;
     }
     return null;
@@ -408,11 +422,13 @@ class _NdisPricingManagementViewState
         // Debug logging for first few items
         if (filtered.indexOf(item) < 5) {
           log.info(
-              "Item ${item.itemNumber}: hasCustomPricing=$hasCustomPricing, pricingData=${pricingData != null ? 'exists' : 'null'}");
+            "Item ${item.itemNumber}: hasCustomPricing=$hasCustomPricing, pricingData=${pricingData != null ? 'exists' : 'null'}",
+          );
           if (pricingData != null && pricingData['customPricing'] != null) {
             final customPricing = pricingData['customPricing'];
             log.info(
-                "  customPricing source: ${customPricing['source']}, price: ${customPricing['price']}, shouldInclude: ${_selectedFilter == 'Custom Pricing' ? hasCustomPricing : !hasCustomPricing}");
+              "  customPricing source: ${customPricing['source']}, price: ${customPricing['price']}, shouldInclude: ${_selectedFilter == 'Custom Pricing' ? hasCustomPricing : !hasCustomPricing}",
+            );
           }
         }
 
@@ -423,7 +439,8 @@ class _NdisPricingManagementViewState
       }).toList();
 
       log.info(
-          "After pricing filter: ${filtered.length} items (filter: $_selectedFilter)");
+        "After pricing filter: ${filtered.length} items (filter: $_selectedFilter)",
+      );
     }
 
     // Apply state filter - only filter if we have support item data or if filtering for custom pricing
@@ -473,8 +490,9 @@ class _NdisPricingManagementViewState
 
         // Only load if we don't already have support item details
         if (_pricingData[item.itemNumber]?['supportItem'] == null) {
-          final supportItemDetails =
-              await _apiMethod.getSupportItemDetails(item.itemNumber);
+          final supportItemDetails = await _apiMethod.getSupportItemDetails(
+            item.itemNumber,
+          );
 
           if (mounted) {
             setState(() {
@@ -536,7 +554,8 @@ class _NdisPricingManagementViewState
       }
 
       if (_extractResolvedPrice(customPricing) != null) {
-        final isClientSpecific = customPricing['clientId'] != null ||
+        final isClientSpecific =
+            customPricing['clientId'] != null ||
             _isClientSpecificSource(source);
         return isClientSpecific
             ? AppLocalizations.of(context)!.clientSpecificRate
@@ -570,7 +589,9 @@ class _NdisPricingManagementViewState
   }
 
   Map<String, double> _resolveLabelledCaps(
-      dynamic labelledCaps, String targetState) {
+    dynamic labelledCaps,
+    String targetState,
+  ) {
     final resolved = <String, double>{};
     if (labelledCaps is! Map) return resolved;
 
@@ -619,7 +640,10 @@ class _NdisPricingManagementViewState
   }
 
   Map<String, dynamic>? _resolveCapInfoFromRegionalPrices(
-      NDISItem item, String targetState, bool isHighIntensity) {
+    NDISItem item,
+    String targetState,
+    bool isHighIntensity,
+  ) {
     final regionalPrices = _getRegionalPrices(item);
     final stateRegion = _stateToPriceRegion(targetState);
     final statePrice = stateRegion == null
@@ -742,20 +766,29 @@ class _NdisPricingManagementViewState
       );
     }
 
-    final standardPrice =
-        _resolveStatePrice(priceCaps['standard'], targetState);
+    final standardPrice = _resolveStatePrice(
+      priceCaps['standard'],
+      targetState,
+    );
     final highIntensityPrice = _resolveStatePrice(
       priceCaps['highIntensity'] ?? priceCaps['high_intensity'],
       targetState,
     );
-    final labelledCaps =
-        _resolveLabelledCaps(priceCaps['labelled'], targetState);
-    final p01Price = labelledCaps['P01'] ??
+    final labelledCaps = _resolveLabelledCaps(
+      priceCaps['labelled'],
+      targetState,
+    );
+    final p01Price =
+        labelledCaps['P01'] ??
         _resolveStatePrice(priceCaps['P01'], targetState);
-    final p02Price = labelledCaps['P02'] ??
+    final p02Price =
+        labelledCaps['P02'] ??
         _resolveStatePrice(priceCaps['P02'], targetState);
-    final regionalFallback =
-        _resolveCapInfoFromRegionalPrices(item, targetState, isHighIntensity);
+    final regionalFallback = _resolveCapInfoFromRegionalPrices(
+      item,
+      targetState,
+      isHighIntensity,
+    );
     final fallbackP01 = regionalFallback?['p01Price'] as double?;
     final fallbackP02 = regionalFallback?['p02Price'] as double?;
 
@@ -774,8 +807,10 @@ class _NdisPricingManagementViewState
     }
 
     if (selectedPrice == null) {
-      final maxByStatePrice =
-          _resolveStatePrice(priceCaps['maxByState'], targetState);
+      final maxByStatePrice = _resolveStatePrice(
+        priceCaps['maxByState'],
+        targetState,
+      );
       if (maxByStatePrice != null) {
         selectedPrice = maxByStatePrice;
         selectedLabel = 'MAX';
@@ -851,14 +886,16 @@ class _NdisPricingManagementViewState
           !(_showPriceOverride[itemNumber] ?? false);
       if (_showPriceOverride[itemNumber] == true) {
         // Initialize controller with current price
-        final item = _filteredNdisItems
-            .firstWhere((item) => item.itemNumber == itemNumber);
+        final item = _filteredNdisItems.firstWhere(
+          (item) => item.itemNumber == itemNumber,
+        );
         final current = _getCurrentPrice(item);
         _priceControllers[itemNumber] = TextEditingController(
           text: current > 0 ? current.toStringAsFixed(2) : '',
         );
-        _isCustomPriceEnabled[itemNumber] =
-            _hasItemLevelCustomPricing(_pricingData[itemNumber]);
+        _isCustomPriceEnabled[itemNumber] = _hasItemLevelCustomPricing(
+          _pricingData[itemNumber],
+        );
       } else {
         // Dispose controller
         _priceControllers[itemNumber]?.dispose();
@@ -879,8 +916,10 @@ class _NdisPricingManagementViewState
     final price = double.tryParse(priceText);
 
     if (price == null || price <= 0) {
-      _showSnackBar(AppLocalizations.of(context)!.enterValidPrice,
-          isError: true);
+      _showSnackBar(
+        AppLocalizations.of(context)!.enterValidPrice,
+        isError: true,
+      );
       return;
     }
 
@@ -892,12 +931,14 @@ class _NdisPricingManagementViewState
       // Resolve user email: prefer adminEmail, fallback to stored user email
       final userEmail =
           (widget.adminEmail != null && widget.adminEmail!.trim().isNotEmpty)
-              ? widget.adminEmail!
-              : (_sharedPrefs.getUserEmail() ?? '');
+          ? widget.adminEmail!
+          : (_sharedPrefs.getUserEmail() ?? '');
 
       if (userEmail.isEmpty) {
-        _showSnackBar(AppLocalizations.of(context)!.missingUserEmail,
-            isError: true);
+        _showSnackBar(
+          AppLocalizations.of(context)!.missingUserEmail,
+          isError: true,
+        );
         setState(() {
           _isSavingPrice[item.itemNumber] = false;
         });
@@ -951,8 +992,9 @@ class _NdisPricingManagementViewState
         _showSnackBar(AppLocalizations.of(context)!.customPricingSaved);
       } else {
         _showSnackBar(
-            result['message'] ?? AppLocalizations.of(context)!.errorOccurred,
-            isError: true);
+          result['message'] ?? AppLocalizations.of(context)!.errorOccurred,
+          isError: true,
+        );
       }
     } catch (e) {
       log.severe("Failed to save custom pricing: $e");
@@ -987,8 +1029,9 @@ class _NdisPricingManagementViewState
         _showSnackBar(AppLocalizations.of(context)!.customPricingRemoved);
       } else {
         _showSnackBar(
-            result['message'] ?? AppLocalizations.of(context)!.errorOccurred,
-            isError: true);
+          result['message'] ?? AppLocalizations.of(context)!.errorOccurred,
+          isError: true,
+        );
       }
     } catch (e) {
       log.severe("Failed to remove custom pricing: $e");
@@ -1003,9 +1046,9 @@ class _NdisPricingManagementViewState
       SnackBar(
         content: Text(
           message,
-          style: BauhausDesign.getTextTheme(context)
-              .bodyMedium
-              ?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
         ),
         backgroundColor: isError ? BauhausDesign.error : BauhausDesign.success,
         behavior: SnackBarBehavior.floating,
@@ -1111,8 +1154,7 @@ class _NdisPricingManagementViewState
                   children: [
                     Text(
                       'PRICING ENGINE V2.1',
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelLarge
+                      style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
                             color: _inkBlack,
                             fontWeight: FontWeight.w800,
@@ -1154,11 +1196,7 @@ class _NdisPricingManagementViewState
                   ],
                 ),
                 const SizedBox(height: 10),
-                const Divider(
-                  color: _inkBlack,
-                  height: 1,
-                  thickness: 1,
-                ),
+                const Divider(color: _inkBlack, height: 1, thickness: 1),
               ],
             ),
           ),
@@ -1224,11 +1262,8 @@ class _NdisPricingManagementViewState
                     isDense: true,
                     hintText: '01_002_0107_1_1',
                   ),
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: _inkBlack,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w600),
                 ),
               ),
             ],
@@ -1268,29 +1303,30 @@ class _NdisPricingManagementViewState
         ),
       ),
       items: ['All', 'Custom', 'Standard', 'High Intensity']
-          .map((filter) => DropdownMenuItem(
-                value: filter == 'Custom'
-                    ? 'Custom Pricing' // Keeping values as strings for logic match
+          .map(
+            (filter) => DropdownMenuItem(
+              value: filter == 'Custom'
+                  ? 'Custom Pricing' // Keeping values as strings for logic match
+                  : filter == 'Standard'
+                  ? 'Standard Pricing'
+                  : filter == 'High Intensity'
+                  ? 'High Intensity'
+                  : filter,
+              child: Text(
+                filter == 'Custom'
+                    ? 'Custom Rates'
                     : filter == 'Standard'
-                        ? 'Standard Pricing'
-                        : filter == 'High Intensity'
-                            ? 'High Intensity'
-                            : filter,
-                child: Text(
-                  filter == 'Custom'
-                      ? 'Custom Rates'
-                      : filter == 'Standard'
-                          ? 'Standard Rates'
-                          : filter == 'High Intensity'
-                              ? 'High Intensity'
-                              : 'All Cats',
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: _inkBlack,
-                            fontWeight: FontWeight.w700,
-                          ),
+                    ? 'Standard Rates'
+                    : filter == 'High Intensity'
+                    ? 'High Intensity'
+                    : 'All Cats',
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: _inkBlack,
+                  fontWeight: FontWeight.w700,
                 ),
-              ))
+              ),
+            ),
+          )
           .toList(),
       onChanged: (value) {
         setState(() {
@@ -1325,17 +1361,18 @@ class _NdisPricingManagementViewState
         ),
       ),
       items: ['All', 'NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT']
-          .map((state) => DropdownMenuItem(
-                value: state,
-                child: Text(
-                  state == 'All' ? 'All States' : state,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: _inkBlack,
-                            fontWeight: FontWeight.w700,
-                          ),
+          .map(
+            (state) => DropdownMenuItem(
+              value: state,
+              child: Text(
+                state == 'All' ? 'All States' : state,
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: _inkBlack,
+                  fontWeight: FontWeight.w700,
                 ),
-              ))
+              ),
+            ),
+          )
           .toList(),
       onChanged: (value) {
         setState(() {
@@ -1358,11 +1395,7 @@ class _NdisPricingManagementViewState
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 6,
-            height: 82,
-            color: _accentRed,
-          ),
+          Container(width: 6, height: 82, color: _accentRed),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
@@ -1387,8 +1420,7 @@ class _NdisPricingManagementViewState
                     child: Text(
                       'Notice: Pricing shown for Standard rates in ${_getTargetPricingState()}. '
                       'Custom pricing overrides standard rates.',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
+                      style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
                             color: _inkBlack,
                             fontWeight: FontWeight.w700,
@@ -1409,10 +1441,10 @@ class _NdisPricingManagementViewState
     return Text(
       text,
       style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-            color: _inkBlack,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.6,
-          ),
+        color: _inkBlack,
+        fontWeight: FontWeight.w800,
+        letterSpacing: 0.6,
+      ),
     );
   }
 
@@ -1441,8 +1473,9 @@ class _NdisPricingManagementViewState
               const SizedBox(height: 12),
               Text(
                 _searchQuery.isNotEmpty
-                    ? AppLocalizations.of(context)!
-                        .noNdisItemsFoundMatch(_searchQuery)
+                    ? AppLocalizations.of(
+                        context,
+                      )!.noNdisItemsFoundMatch(_searchQuery)
                     : AppLocalizations.of(context)!.noNdisItemsFound,
                 style: TextStyle(color: Colors.grey[600]),
               ),
@@ -1468,16 +1501,13 @@ class _NdisPricingManagementViewState
     return SliverPadding(
       padding: const EdgeInsets.fromLTRB(12, 10, 12, 20),
       sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final item = _filteredNdisItems[index];
-            return Semantics(
-              label: 'NDIS item ${item.itemNumber}',
-              child: _buildNdisItemCard(item, index),
-            );
-          },
-          childCount: _filteredNdisItems.length,
-        ),
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final item = _filteredNdisItems[index];
+          return Semantics(
+            label: 'NDIS item ${item.itemNumber}',
+            child: _buildNdisItemCard(item, index),
+          );
+        }, childCount: _filteredNdisItems.length),
       ),
     );
   }
@@ -1492,246 +1522,260 @@ class _NdisPricingManagementViewState
     final showOverride = _showPriceOverride[item.itemNumber] ?? false;
     final updatedText = _formatLastUpdated(item.itemNumber);
     final subtitle = _extractSubtitle(item.itemName);
-    final capText =
-        ndisCapPrice != null ? '\$${ndisCapPrice.toStringAsFixed(2)}' : 'N/A';
-    final p01Text =
-        p01Price != null ? '\$${p01Price.toStringAsFixed(2)}' : 'N/A';
+    final capText = ndisCapPrice != null
+        ? '\$${ndisCapPrice.toStringAsFixed(2)}'
+        : 'N/A';
+    final p01Text = p01Price != null
+        ? '\$${p01Price.toStringAsFixed(2)}'
+        : 'N/A';
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: _panelWhite,
-        border: Border.all(color: _inkBlack, width: 2),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: double.infinity,
-            color: _inkBlack,
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            child: Row(
-              children: [
-                Text(
-                  'PRICING ITEM',
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: _panelWhite,
+            border: Border.all(color: _inkBlack, width: 2),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: double.infinity,
+                color: _inkBlack,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      'PRICING ITEM',
+                      style: BauhausDesign.getTextTheme(context).labelSmall
+                          ?.copyWith(
                             color: BauhausDesign.surfaceWhite,
                             letterSpacing: 0.6,
                             fontWeight: FontWeight.w800,
                           ),
-                ),
-                const Spacer(),
-                Text(
-                  '\$',
-                  style:
-                      BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                    ),
+                    const Spacer(),
+                    Text(
+                      '\$',
+                      style: BauhausDesign.getTextTheme(context).labelLarge
+                          ?.copyWith(
                             color: BauhausDesign.surfaceWhite,
                             fontWeight: FontWeight.w700,
                           ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                item.itemName.toUpperCase(),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: BauhausDesign.getTextTheme(context)
+                                    .headlineMedium
+                                    ?.copyWith(
+                                      color: _inkBlack,
+                                      fontWeight: FontWeight.w900,
+                                      height: 1.1,
+                                    ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                subtitle,
+                                style: BauhausDesign.getTextTheme(context)
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: Colors.black54,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(
+                            minWidth: 24,
+                            minHeight: 24,
+                          ),
+                          icon: Icon(
+                            showOverride
+                                ? Icons.keyboard_arrow_up
+                                : Icons.keyboard_arrow_down,
+                            color: _inkBlack,
+                            size: 22,
+                          ),
+                          onPressed: () =>
+                              _togglePriceOverride(item.itemNumber),
+                          tooltip: AppLocalizations.of(
+                            context,
+                          )!.setCustomPriceTooltip,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 9,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF4F4F4),
+                        border: Border.all(color: _accentRed, width: 2),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.qr_code_2,
+                            size: 15,
+                            color: _accentRed,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            item.itemNumber,
+                            style: BauhausDesign.getTextTheme(context)
+                                .labelLarge
+                                ?.copyWith(
+                                  color: _accentRed,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 0.5,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        _buildTagChip('FALLBACK BASE'),
+                        _buildTagChip('NDIS CAP: $ndisCapState'),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                      decoration: BoxDecoration(
+                        color: _accentYellow,
+                        border: Border.all(color: _inkBlack, width: 2),
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            item.itemName.toUpperCase(),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: BauhausDesign.getTextTheme(context)
-                                .headlineMedium
-                                ?.copyWith(
-                                  color: _inkBlack,
-                                  fontWeight: FontWeight.w900,
-                                  height: 1.1,
-                                ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            subtitle,
-                            style: BauhausDesign.getTextTheme(context)
-                                .bodySmall
-                                ?.copyWith(
-                                  color: Colors.black54,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(
-                        minWidth: 24,
-                        minHeight: 24,
-                      ),
-                      icon: Icon(
-                        showOverride
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down,
-                        color: _inkBlack,
-                        size: 22,
-                      ),
-                      onPressed: () => _togglePriceOverride(item.itemNumber),
-                      tooltip:
-                          AppLocalizations.of(context)!.setCustomPriceTooltip,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Container(
-                  width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF4F4F4),
-                    border: Border.all(color: _accentRed, width: 2),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.qr_code_2, size: 15, color: _accentRed),
-                      const SizedBox(width: 8),
-                      Text(
-                        item.itemNumber,
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
-                            ?.copyWith(
-                              color: _accentRed,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 0.5,
+                          Container(
+                            color: _inkBlack,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
                             ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    _buildTagChip('FALLBACK BASE'),
-                    _buildTagChip('NDIS CAP: $ndisCapState'),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                  decoration: BoxDecoration(
-                    color: _accentYellow,
-                    border: Border.all(color: _inkBlack, width: 2),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        color: _inkBlack,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        child: Text(
-                          'BILLABLE RATE',
-                          style: BauhausDesign.getTextTheme(context)
-                              .labelSmall
-                              ?.copyWith(
-                                color: BauhausDesign.surfaceWhite,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 0.4,
-                              ),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            currentPrice > 0
-                                ? '\$${currentPrice.toStringAsFixed(2)}'
-                                : '\$0.00',
-                            style: BauhausDesign.getTextTheme(context)
-                                .displaySmall
-                                ?.copyWith(
-                                  color: _inkBlack,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 40,
-                                ),
-                          ),
-                          const Spacer(),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
                             child: Text(
-                              '/ hr',
+                              'BILLABLE RATE',
                               style: BauhausDesign.getTextTheme(context)
-                                  .labelLarge
+                                  .labelSmall
                                   ?.copyWith(
-                                    color: _inkBlack,
+                                    color: BauhausDesign.surfaceWhite,
                                     fontWeight: FontWeight.w800,
+                                    letterSpacing: 0.4,
                                   ),
                             ),
                           ),
+                          const SizedBox(height: 4),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                currentPrice > 0
+                                    ? '\$${currentPrice.toStringAsFixed(2)}'
+                                    : '\$0.00',
+                                style: BauhausDesign.getTextTheme(context)
+                                    .displaySmall
+                                    ?.copyWith(
+                                      color: _inkBlack,
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 40,
+                                    ),
+                              ),
+                              const Spacer(),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: Text(
+                                  '/ hr',
+                                  style: BauhausDesign.getTextTheme(context)
+                                      .labelLarge
+                                      ?.copyWith(
+                                        color: _inkBlack,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildMetricBlock(
+                            title: 'NDIS MAX CAP',
+                            value: capText,
+                            valueColor: _accentBlue,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _buildMetricBlock(
+                            title: 'REMOTE P01',
+                            value: p01Text,
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (showOverride) ...[
+                      const SizedBox(height: 10),
+                      _buildPriceOverrideSection(item),
                     ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildMetricBlock(
-                        title: 'NDIS MAX CAP',
-                        value: capText,
-                        valueColor: _accentBlue,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: _buildMetricBlock(
-                        title: 'REMOTE P01',
-                        value: p01Text,
-                      ),
-                    ),
                   ],
                 ),
-                if (showOverride) ...[
-                  const SizedBox(height: 10),
-                  _buildPriceOverrideSection(item),
-                ],
-              ],
-            ),
-          ),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 9),
-            decoration: const BoxDecoration(
-              color: Color(0xFFE5E5E5),
-              border: Border(
-                top: BorderSide(color: _inkBlack, width: 2),
               ),
-            ),
-            child: Text(
-              updatedText,
-              textAlign: TextAlign.center,
-              style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                    color: Colors.black54,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.3,
-                  ),
-            ),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 9),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFE5E5E5),
+                  border: Border(top: BorderSide(color: _inkBlack, width: 2)),
+                ),
+                child: Text(
+                  updatedText,
+                  textAlign: TextAlign.center,
+                  style: BauhausDesign.getTextTheme(context).labelLarge
+                      ?.copyWith(
+                        color: Colors.black54,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.3,
+                      ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    )
+        )
         .animate(delay: (index * 40).ms)
         .fadeIn(duration: 350.ms)
         .slideY(begin: 0.1, end: 0);
@@ -1747,10 +1791,10 @@ class _NdisPricingManagementViewState
       child: Text(
         label,
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: _inkBlack,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 0.4,
-            ),
+          color: _inkBlack,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 0.4,
+        ),
       ),
     );
   }
@@ -1772,18 +1816,18 @@ class _NdisPricingManagementViewState
           Text(
             title,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: Colors.black54,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.4,
-                ),
+              color: Colors.black54,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.4,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             value,
             style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-                  color: valueColor,
-                  fontWeight: FontWeight.w900,
-                ),
+              color: valueColor,
+              fontWeight: FontWeight.w900,
+            ),
           ),
         ],
       ),
@@ -1800,7 +1844,8 @@ class _NdisPricingManagementViewState
     final pricing = _pricingData[itemNumber];
     final customPricing = pricing?['customPricing'];
     final supportItem = pricing?['supportItem'];
-    final raw = customPricing?['updatedAt'] ??
+    final raw =
+        customPricing?['updatedAt'] ??
         customPricing?['createdAt'] ??
         supportItem?['updatedAt'];
     if (raw == null) return 'LAST UPDATED: JUST NOW';
@@ -1846,10 +1891,10 @@ class _NdisPricingManagementViewState
             child: Text(
               'CUSTOM PRICING OVERRIDE',
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.surfaceWhite,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.6,
-                  ),
+                color: BauhausDesign.surfaceWhite,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.6,
+              ),
             ),
           ),
           Padding(
@@ -1866,11 +1911,7 @@ class _NdisPricingManagementViewState
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        width: 6,
-                        height: 62,
-                        color: _accentRed,
-                      ),
+                      Container(width: 6, height: 62, color: _accentRed),
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
@@ -1881,8 +1922,8 @@ class _NdisPricingManagementViewState
                                 standardPrice > 0
                                     ? 'STANDARD NDIS RATE'
                                     : (hasFallbackRate
-                                        ? 'FALLBACK BASE RATE'
-                                        : 'NO BASE RATE FOUND'),
+                                          ? 'FALLBACK BASE RATE'
+                                          : 'NO BASE RATE FOUND'),
                                 style: BauhausDesign.getTextTheme(context)
                                     .labelSmall
                                     ?.copyWith(
@@ -1896,16 +1937,17 @@ class _NdisPricingManagementViewState
                                 standardPrice > 0
                                     ? '\$${standardPrice.toStringAsFixed(2)} / hr'
                                     : (hasFallbackRate
-                                        ? '\$${fallbackRate.toStringAsFixed(2)} / hr'
-                                        : AppLocalizations.of(context)!
-                                            .pleaseEnterCustomPrice),
+                                          ? '\$${fallbackRate.toStringAsFixed(2)} / hr'
+                                          : AppLocalizations.of(
+                                              context,
+                                            )!.pleaseEnterCustomPrice),
                                 style: BauhausDesign.getTextTheme(context)
                                     .bodyLarge
                                     ?.copyWith(
                                       color:
                                           standardPrice > 0 || hasFallbackRate
-                                              ? _accentBlue
-                                              : _accentRed,
+                                          ? _accentBlue
+                                          : _accentRed,
                                       fontWeight: FontWeight.w800,
                                     ),
                               ),
@@ -1926,8 +1968,8 @@ class _NdisPricingManagementViewState
                             ? () {
                                 setState(() {
                                   _isCustomPriceEnabled[item.itemNumber] = true;
-                                  controller?.text =
-                                      standardPrice.toStringAsFixed(2);
+                                  controller?.text = standardPrice
+                                      .toStringAsFixed(2);
                                 });
                               }
                             : null,
@@ -1941,8 +1983,8 @@ class _NdisPricingManagementViewState
                             ? () {
                                 setState(() {
                                   _isCustomPriceEnabled[item.itemNumber] = true;
-                                  controller?.text =
-                                      fallbackRate.toStringAsFixed(2);
+                                  controller?.text = fallbackRate
+                                      .toStringAsFixed(2);
                                 });
                               }
                             : null,
@@ -1953,9 +1995,9 @@ class _NdisPricingManagementViewState
                 if (standardPrice <= 0 && !hasFallbackRate) ...[
                   const SizedBox(height: 10),
                   _buildOverrideQuickButton(
-                    label: AppLocalizations.of(context)!
-                        .enterPriceAction
-                        .toUpperCase(),
+                    label: AppLocalizations.of(
+                      context,
+                    )!.enterPriceAction.toUpperCase(),
                     isPrimary: true,
                     onTap: () async {
                       final resolution = await showPricePromptDialog(
@@ -1994,15 +2036,17 @@ class _NdisPricingManagementViewState
                         controller?.text = standardPrice > 0
                             ? standardPrice.toStringAsFixed(2)
                             : (hasFallbackRate
-                                ? fallbackRate.toStringAsFixed(2)
-                                : '');
+                                  ? fallbackRate.toStringAsFixed(2)
+                                  : '');
                       }
                     });
                   },
                   child: Container(
                     width: double.infinity,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFE8E8E8),
                       border: Border.all(color: _inkBlack, width: 2),
@@ -2019,8 +2063,8 @@ class _NdisPricingManagementViewState
                                 controller?.text = standardPrice > 0
                                     ? standardPrice.toStringAsFixed(2)
                                     : (hasFallbackRate
-                                        ? fallbackRate.toStringAsFixed(2)
-                                        : '');
+                                          ? fallbackRate.toStringAsFixed(2)
+                                          : '');
                               }
                             });
                           },
@@ -2029,8 +2073,9 @@ class _NdisPricingManagementViewState
                         const SizedBox(width: 6),
                         Expanded(
                           child: Text(
-                            AppLocalizations.of(context)!
-                                .setCustomPriceOrgLabel,
+                            AppLocalizations.of(
+                              context,
+                            )!.setCustomPriceOrgLabel,
                             style: BauhausDesign.getTextTheme(context)
                                 .bodyMedium
                                 ?.copyWith(
@@ -2047,8 +2092,10 @@ class _NdisPricingManagementViewState
                   const SizedBox(height: 10),
                   Container(
                     width: double.infinity,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: _panelWhite,
                       border: Border.all(color: _inkBlack, width: 2),
@@ -2057,11 +2104,10 @@ class _NdisPricingManagementViewState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          AppLocalizations.of(context)!
-                              .customPriceHourlyLabel
-                              .toUpperCase(),
-                          style: BauhausDesign.getTextTheme(context)
-                              .labelSmall
+                          AppLocalizations.of(
+                            context,
+                          )!.customPriceHourlyLabel.toUpperCase(),
+                          style: BauhausDesign.getTextTheme(context).labelSmall
                               ?.copyWith(
                                 color: _inkBlack,
                                 fontWeight: FontWeight.w800,
@@ -2072,10 +2118,12 @@ class _NdisPricingManagementViewState
                         TextField(
                           controller: controller,
                           keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true),
+                            decimal: true,
+                          ),
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d*\.?\d{0,2}')),
+                              RegExp(r'^\d*\.?\d{0,2}'),
+                            ),
                           ],
                           style: BauhausDesign.getTextTheme(context)
                               .headlineMedium
@@ -2091,18 +2139,24 @@ class _NdisPricingManagementViewState
                             fillColor: Color(0xFFF8F8F8),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.zero,
-                              borderSide:
-                                  BorderSide(color: _inkBlack, width: 2),
+                              borderSide: BorderSide(
+                                color: _inkBlack,
+                                width: 2,
+                              ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.zero,
-                              borderSide:
-                                  BorderSide(color: _inkBlack, width: 2),
+                              borderSide: BorderSide(
+                                color: _inkBlack,
+                                width: 2,
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.zero,
-                              borderSide:
-                                  BorderSide(color: _inkBlack, width: 2),
+                              borderSide: BorderSide(
+                                color: _inkBlack,
+                                width: 2,
+                              ),
                             ),
                           ),
                         ),
@@ -2116,20 +2170,21 @@ class _NdisPricingManagementViewState
                         child: _buildOverrideQuickButton(
                           label: isSaving
                               ? 'SAVING...'
-                              : AppLocalizations.of(context)!
-                                  .saveCustomPriceAction
-                                  .toUpperCase(),
+                              : AppLocalizations.of(
+                                  context,
+                                )!.saveCustomPriceAction.toUpperCase(),
                           isPrimary: true,
-                          onTap:
-                              isSaving ? null : () => _saveCustomPricing(item),
+                          onTap: isSaving
+                              ? null
+                              : () => _saveCustomPricing(item),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: _buildOverrideQuickButton(
-                          label: AppLocalizations.of(context)!
-                              .cancelAction
-                              .toUpperCase(),
+                          label: AppLocalizations.of(
+                            context,
+                          )!.cancelAction.toUpperCase(),
                           onTap: () {
                             setState(() {
                               _showPriceOverride[item.itemNumber] = false;
@@ -2142,16 +2197,17 @@ class _NdisPricingManagementViewState
                   const SizedBox(height: 10),
                   Container(
                     width: double.infinity,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFFFF3CC),
                       border: Border.all(color: _inkBlack, width: 2),
                     ),
                     child: Text(
                       AppLocalizations.of(context)!.customPricingAppliedOrgWide,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
+                      style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
                             color: _inkBlack,
                             fontWeight: FontWeight.w700,
@@ -2192,10 +2248,10 @@ class _NdisPricingManagementViewState
           label,
           textAlign: TextAlign.center,
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: textColor,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 0.5,
-              ),
+            color: textColor,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.5,
+          ),
         ),
       ),
     );

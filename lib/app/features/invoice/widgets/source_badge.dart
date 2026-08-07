@@ -61,17 +61,11 @@ class SourceBadge extends StatelessWidget {
     );
 
     if (isSmall) {
-      badge = Transform.scale(
-        scale: 0.8,
-        child: badge,
-      );
+      badge = Transform.scale(scale: 0.8, child: badge);
     }
 
     if (tooltip != null) {
-      return Tooltip(
-        message: tooltip!,
-        child: badge,
-      );
+      return Tooltip(message: tooltip!, child: badge);
     }
     return badge;
   }

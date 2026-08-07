@@ -106,8 +106,8 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
       final resolvedId = (storedUserId != null && storedUserId.isNotEmpty)
           ? storedUserId
           : ((storedEmail != null && storedEmail.isNotEmpty)
-              ? storedEmail
-              : null);
+                ? storedEmail
+                : null);
 
       if (resolvedId == null || resolvedId.isEmpty) {
         setState(() {
@@ -170,10 +170,7 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
           .read(messagingViewModelProvider.notifier)
           .getMessages(conversationId: selected.id);
       final refreshedState = ref.read(messagingViewModelProvider);
-      _resetSeenMessagesForConversation(
-        selected.id,
-        refreshedState.messages,
-      );
+      _resetSeenMessagesForConversation(selected.id, refreshedState.messages);
       _startMessagePolling();
       _scrollToBottom();
     } else {
@@ -195,10 +192,7 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
         .read(messagingViewModelProvider.notifier)
         .getMessages(conversationId: conversation.id, silent: true);
     final refreshedState = ref.read(messagingViewModelProvider);
-    _resetSeenMessagesForConversation(
-      conversation.id,
-      refreshedState.messages,
-    );
+    _resetSeenMessagesForConversation(conversation.id, refreshedState.messages);
     _startMessagePolling();
     _scrollToBottom();
   }
@@ -207,7 +201,8 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
   /// we never show raw emails in chat bubbles.
   void _seedNameCacheFromConversation(MessageThread conversation) {
     final me = _effectiveUserId;
-    final isWorker = widget.userType == 'employee' ||
+    final isWorker =
+        widget.userType == 'employee' ||
         widget.userType == 'worker' ||
         conversation.workerId == me;
     final otherName = isWorker
@@ -240,7 +235,8 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
 
   String _conversationTitle(MessageThread conversation) {
     final me = _effectiveUserId;
-    final isWorkerPerspective = widget.userType.toLowerCase() == 'worker' ||
+    final isWorkerPerspective =
+        widget.userType.toLowerCase() == 'worker' ||
         conversation.workerId == me;
 
     if (isWorkerPerspective) {
@@ -280,7 +276,9 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
       return;
     }
 
-    await ref.read(messagingViewModelProvider.notifier).sendMessage(
+    await ref
+        .read(messagingViewModelProvider.notifier)
+        .sendMessage(
           conversationId: conversation.id,
           senderId: senderId,
           senderType: widget.userType,
@@ -318,8 +316,10 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
   }
 
   void _startMessagePolling() {
-    final conversationId =
-        ref.read(messagingViewModelProvider).activeConversation?.id;
+    final conversationId = ref
+        .read(messagingViewModelProvider)
+        .activeConversation
+        ?.id;
     if (conversationId == null || conversationId.isEmpty) {
       _stopMessagePolling();
       return;
@@ -352,10 +352,9 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
 
     _pollInFlight = true;
     try {
-      await ref.read(messagingViewModelProvider.notifier).getMessages(
-            conversationId: conversationId,
-            silent: true,
-          );
+      await ref
+          .read(messagingViewModelProvider.notifier)
+          .getMessages(conversationId: conversationId, silent: true);
 
       final refreshed = ref.read(messagingViewModelProvider);
       await _notifyIncomingMessages(
@@ -422,8 +421,9 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
 
     final counterpartLabel = _conversationTitle(conversation);
     final prefix = isIncoming ? 'From' : 'To';
-    final body =
-        messageBody.trim().isEmpty ? 'Secure message' : messageBody.trim();
+    final body = messageBody.trim().isEmpty
+        ? 'Secure message'
+        : messageBody.trim();
 
     final notification = NotificationModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -437,15 +437,12 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
       },
     );
 
-    await _localNotificationService.createAndDisplayNotification(
-      notification,
-      {
-        'channelId': 'message',
-        'type': 'message',
-        'conversationId': conversation.id,
-        'direction': isIncoming ? 'incoming' : 'outgoing',
-      },
-    );
+    await _localNotificationService.createAndDisplayNotification(notification, {
+      'channelId': 'message',
+      'type': 'message',
+      'conversationId': conversation.id,
+      'direction': isIncoming ? 'incoming' : 'outgoing',
+    });
   }
 
   void _stopMessagePolling() {
@@ -489,9 +486,9 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
           title: Text(
             'Secure Messaging',
             style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-                  color: BauhausDesign.primary,
-                  fontWeight: FontWeight.bold,
-                ),
+              color: BauhausDesign.primary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.5),
@@ -516,9 +513,9 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
           title: Text(
             'Secure Messaging',
             style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-                  color: BauhausDesign.primary,
-                  fontWeight: FontWeight.bold,
-                ),
+              color: BauhausDesign.primary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.5),
@@ -534,7 +531,11 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.error_outline, size: 48, color: BauhausDesign.primary),
+                  const Icon(
+                    Icons.error_outline,
+                    size: 48,
+                    color: BauhausDesign.primary,
+                  ),
                   const SizedBox(height: BauhausDesign.space4),
                   Text(
                     _identityError!,
@@ -554,7 +555,10 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
                       elevation: 0,
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
-                        side: BorderSide(color: BauhausDesign.neutral, width: 2),
+                        side: BorderSide(
+                          color: BauhausDesign.neutral,
+                          width: 2,
+                        ),
                       ),
                       padding: const EdgeInsets.symmetric(
                         horizontal: BauhausDesign.space6,
@@ -585,10 +589,10 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
             Text(
               'Secure Messaging',
               style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-                    color: BauhausDesign.primary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
+                color: BauhausDesign.primary,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
             ),
             Text(
               widget.userType.toLowerCase() == 'worker'
@@ -624,12 +628,14 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
       body: state.isLoading
           ? const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(BauhausDesign.primary),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  BauhausDesign.primary,
+                ),
               ),
             )
           : state.activeConversation == null
-              ? _buildConversationsList(state)
-              : _buildChatView(state),
+          ? _buildConversationsList(state)
+          : _buildChatView(state),
     );
   }
 
@@ -652,7 +658,8 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
               const SizedBox(height: BauhausDesign.space4),
               Text(
                 'No Conversations',
-                style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+                style: BauhausDesign.getTextTheme(context).headlineLarge
+                    ?.copyWith(
                       color: BauhausDesign.textDark,
                       fontWeight: FontWeight.bold,
                     ),
@@ -711,7 +718,11 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
                       width: BauhausDesign.borderThick,
                     ),
                   ),
-                  child: const Icon(Icons.person, color: Colors.white, size: 24),
+                  child: const Icon(
+                    Icons.person,
+                    color: Colors.white,
+                    size: 24,
+                  ),
                 ),
                 const SizedBox(width: BauhausDesign.space4),
                 Expanded(
@@ -742,7 +753,10 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
                 if (unread > 0)
                   Container(
                     margin: const EdgeInsets.only(right: BauhausDesign.space3),
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: BauhausDesign.primaryRed,
                       border: Border.all(
@@ -827,7 +841,8 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
                   itemCount: state.messages.length,
                   itemBuilder: (context, index) {
                     final message = state.messages[index];
-                    final isMe = message.senderId == _effectiveUserId ||
+                    final isMe =
+                        message.senderId == _effectiveUserId ||
                         _myAlternateIds.contains(message.senderId) ||
                         (_myEmail != null &&
                             message.senderId.toLowerCase() ==
@@ -842,8 +857,9 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
                           final nameFromCache =
                               _nameCache[message.senderName.toLowerCase()];
                           if (nameFromCache != null) {
-                            displayMessage =
-                                message.copyWith(senderName: nameFromCache);
+                            displayMessage = message.copyWith(
+                              senderName: nameFromCache,
+                            );
                           }
                         } else {
                           // Other sender — use resolved name from conversation
@@ -851,17 +867,15 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
                               ? conversation.clientName
                               : conversation.workerName;
                           if (otherName != null && otherName.isNotEmpty) {
-                            displayMessage =
-                                message.copyWith(senderName: otherName);
+                            displayMessage = message.copyWith(
+                              senderName: otherName,
+                            );
                           }
                         }
                       }
                     }
 
-                    return MessageBubble(
-                      message: displayMessage,
-                      isMe: isMe,
-                    );
+                    return MessageBubble(message: displayMessage, isMe: isMe);
                   },
                 ),
         ),
@@ -890,7 +904,9 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
                       fontWeight: FontWeight.w500,
                     ),
                     cursorColor: BauhausDesign.neutral,
-                    decoration: BauhausDesign.inputDecoration('Type a message...'),
+                    decoration: BauhausDesign.inputDecoration(
+                      'Type a message...',
+                    ),
                   ),
                 ),
                 const SizedBox(width: BauhausDesign.space3),
@@ -933,7 +949,8 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
             const SizedBox(width: 12),
             Text(
               'SECURITY INFO',
-              style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+              style: BauhausDesign.getTextTheme(context).headlineMedium
+                  ?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: BauhausDesign.textDark,
                   ),
@@ -978,7 +995,11 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
       padding: const EdgeInsets.only(bottom: BauhausDesign.space2),
       child: Row(
         children: [
-          const Icon(Icons.check_circle, color: BauhausDesign.success, size: 18),
+          const Icon(
+            Icons.check_circle,
+            color: BauhausDesign.success,
+            size: 18,
+          ),
           const SizedBox(width: 10),
           Expanded(
             child: Text(

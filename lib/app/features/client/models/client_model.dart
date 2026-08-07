@@ -68,7 +68,8 @@ class Patient {
             .trim()
             .toLowerCase();
     final activationPendingFromStatus = activationStatus == 'pending';
-    final isActivatedFromStatus = activationStatus == 'activated' ||
+    final isActivatedFromStatus =
+        activationStatus == 'activated' ||
         activationStatus == 'completed' ||
         activationStatus == 'active';
 
@@ -87,11 +88,12 @@ class Patient {
       careNotes: json['careNotes'] as String?,
       preferences: json['preferences'] as Map<String, dynamic>?,
       isActive: _parseBool(json['isActive'], defaultValue: true),
-      isActivated: _parseBool(json['isActivated'], defaultValue: false) ||
+      isActivated:
+          _parseBool(json['isActivated'], defaultValue: false) ||
           isActivatedFromStatus,
       activationPending:
           _parseBool(json['activationPending'], defaultValue: false) ||
-              activationPendingFromStatus,
+          activationPendingFromStatus,
       deletedAt: _parseDate(json['deletedAt']),
       purgeAfter: _parseDate(json['purgeAfter']),
     );

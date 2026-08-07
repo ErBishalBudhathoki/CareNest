@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 Future<int?> showShiftSelectionDialog(
@@ -69,7 +68,8 @@ class _ShiftSelectionDialogContentState
       currentClient = widget.assignedClient as Map<String, dynamic>;
     } else {
       debugPrint(
-          'Invalid assignedClient data type: ${widget.assignedClient.runtimeType}');
+        'Invalid assignedClient data type: ${widget.assignedClient.runtimeType}',
+      );
       return;
     }
 
@@ -82,7 +82,8 @@ class _ShiftSelectionDialogContentState
     }
 
     // Check for the new 'schedule' array first
-    if (currentClient['schedule'] != null && currentClient['schedule'] is List) {
+    if (currentClient['schedule'] != null &&
+        currentClient['schedule'] is List) {
       final scheduleList = currentClient['schedule'] as List;
       for (int i = 0; i < scheduleList.length; i++) {
         final schedule = scheduleList[i];
@@ -107,10 +108,12 @@ class _ShiftSelectionDialogContentState
     } else {
       // Fallback to legacy format with separate arrays
       List<String> dates = List<String>.from(currentClient['dateList'] ?? []);
-      List<String> startTimes =
-          List<String>.from(currentClient['startTimeList'] ?? []);
-      List<String> endTimes =
-          List<String>.from(currentClient['endTimeList'] ?? []);
+      List<String> startTimes = List<String>.from(
+        currentClient['startTimeList'] ?? [],
+      );
+      List<String> endTimes = List<String>.from(
+        currentClient['endTimeList'] ?? [],
+      );
       List<String> breaks = List<String>.from(currentClient['breakList'] ?? []);
 
       for (int i = 0; i < dates.length; i++) {

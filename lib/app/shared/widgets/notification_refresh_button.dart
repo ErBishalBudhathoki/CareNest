@@ -20,7 +20,8 @@ class NotificationRefreshButton extends ConsumerWidget {
         if (userEmail == null || organizationId == null) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-                content: Text('Please log in to refresh notifications')),
+              content: Text('Please log in to refresh notifications'),
+            ),
           );
           return;
         }
@@ -44,8 +45,9 @@ class NotificationRefreshButton extends ConsumerWidget {
         try {
           // Get a fresh FCM token
           await FirebaseMessaging.instance.deleteToken();
-          final updated =
-              await ref.read(fcmTokenManagerProvider).forceUpdateToken(userEmail, organizationId);
+          final updated = await ref
+              .read(fcmTokenManagerProvider)
+              .forceUpdateToken(userEmail, organizationId);
           if (!updated) {
             throw Exception('Failed to refresh FCM token');
           }
@@ -139,8 +141,10 @@ class NotificationSettingsPanel extends ConsumerWidget {
                     if (userEmail == null || organizationId == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            content:
-                                Text('Please log in to refresh notifications')),
+                          content: Text(
+                            'Please log in to refresh notifications',
+                          ),
+                        ),
                       );
                       return;
                     }
@@ -164,7 +168,8 @@ class NotificationSettingsPanel extends ConsumerWidget {
                     try {
                       // Get a fresh FCM token
                       await FirebaseMessaging.instance.deleteToken();
-                      final updated = await ref.read(fcmTokenManagerProvider)
+                      final updated = await ref
+                          .read(fcmTokenManagerProvider)
                           .forceUpdateToken(userEmail, organizationId);
                       if (!updated) {
                         throw Exception('Failed to refresh FCM token');
@@ -177,7 +182,8 @@ class NotificationSettingsPanel extends ConsumerWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text(
-                              'Notification settings refreshed successfully'),
+                            'Notification settings refreshed successfully',
+                          ),
                         ),
                       );
                     } catch (e) {
@@ -188,7 +194,8 @@ class NotificationSettingsPanel extends ConsumerWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                              'Failed to refresh notification settings: $e'),
+                            'Failed to refresh notification settings: $e',
+                          ),
                         ),
                       );
                     }

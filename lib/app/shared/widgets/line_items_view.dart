@@ -41,17 +41,16 @@ class _LineItemsControllerState extends ConsumerState<LineItemsView> {
         child: Center(
           child: Text(
             title!,
-            style: const TextStyle(fontSize: 16).copyWith(
-              color: Colors.white,
-            ),
+            style: const TextStyle(fontSize: 16).copyWith(color: Colors.white),
           ),
         ),
       ),
     );
   }
 
-  final GlobalKey<ScaffoldState> _scaffoldKey =
-      GlobalKey<ScaffoldState>(debugLabel: 'line_items_scaffold_key');
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(
+    debugLabel: 'line_items_scaffold_key',
+  );
 
   @override
   Widget build(BuildContext context) {

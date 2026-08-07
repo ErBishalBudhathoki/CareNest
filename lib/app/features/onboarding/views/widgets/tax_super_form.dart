@@ -49,9 +49,9 @@ class _TaxSuperFormState extends ConsumerState<TaxSuperForm> {
           Text(
             'Tax Declaration',
             style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.bold,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space4),
           BauhausTextField(
@@ -77,12 +77,21 @@ class _TaxSuperFormState extends ConsumerState<TaxSuperForm> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(BauhausDesign.space2),
-                borderSide: const BorderSide(color: BauhausDesign.primary, width: 2),
+                borderSide: const BorderSide(
+                  color: BauhausDesign.primary,
+                  width: 2,
+                ),
               ),
             ),
             items: const [
-              DropdownMenuItem(value: 'tax-free-threshold', child: Text('Claim Tax-Free Threshold')),
-              DropdownMenuItem(value: 'no-tax-free-threshold', child: Text('No Tax-Free Threshold')),
+              DropdownMenuItem(
+                value: 'tax-free-threshold',
+                child: Text('Claim Tax-Free Threshold'),
+              ),
+              DropdownMenuItem(
+                value: 'no-tax-free-threshold',
+                child: Text('No Tax-Free Threshold'),
+              ),
             ],
             onChanged: (val) => setState(() => _taxScale = val!),
           ),
@@ -90,9 +99,9 @@ class _TaxSuperFormState extends ConsumerState<TaxSuperForm> {
           Text(
             'Superannuation',
             style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.bold,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space4),
           BauhausTextField(
@@ -116,10 +125,7 @@ class _TaxSuperFormState extends ConsumerState<TaxSuperForm> {
             validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
           ),
           const SizedBox(height: 24),
-          ButtonWidget(
-            buttonText: 'Save & Continue',
-            onPressed: _submit,
-          ),
+          ButtonWidget(buttonText: 'Save & Continue', onPressed: _submit),
         ],
       ),
     );
@@ -130,22 +136,18 @@ class _TaxSuperFormState extends ConsumerState<TaxSuperForm> {
       // Save Tax
       await ref.read(onboardingViewModelProvider.notifier).updateStep(
         'taxDetails',
-        {
-          'tfn': _tfnController.text,
-          'taxScale': _taxScale,
-        },
+        {'tfn': _tfnController.text, 'taxScale': _taxScale},
       );
-      
+
       // Save Super
-      await ref.read(onboardingViewModelProvider.notifier).updateStep(
-        'superannuation',
-        {
-          'fundName': _fundNameController.text,
-          'memberNumber': _memberNumberController.text,
-          'usi': _usiController.text,
-          'currentStep': 4,
-        },
-      );
+      await ref
+          .read(onboardingViewModelProvider.notifier)
+          .updateStep('superannuation', {
+            'fundName': _fundNameController.text,
+            'memberNumber': _memberNumberController.text,
+            'usi': _usiController.text,
+            'currentStep': 4,
+          });
 
       widget.onComplete();
     }

@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 
-final communicationRepositoryProvider = Provider<CommunicationRepository>((ref) {
+final communicationRepositoryProvider = Provider<CommunicationRepository>((
+  ref,
+) {
   final apiMethod = ref.watch(apiMethodProvider);
   return CommunicationRepository(apiMethod);
 });
@@ -12,7 +14,9 @@ class CommunicationRepository {
   CommunicationRepository(this._apiMethod);
 
   /// Send a message via specified channel
-  Future<Map<String, dynamic>> sendMessage({required Map<String, dynamic> messageData}) async {
+  Future<Map<String, dynamic>> sendMessage({
+    required Map<String, dynamic> messageData,
+  }) async {
     try {
       final response = await _apiMethod.post(
         'communication-hub/send',
@@ -25,7 +29,9 @@ class CommunicationRepository {
   }
 
   /// Broadcast a message to a specific group
-  Future<Map<String, dynamic>> broadcastMessage({required Map<String, dynamic> broadcastData}) async {
+  Future<Map<String, dynamic>> broadcastMessage({
+    required Map<String, dynamic> broadcastData,
+  }) async {
     try {
       final response = await _apiMethod.post(
         'communication-hub/broadcast',
@@ -38,7 +44,9 @@ class CommunicationRepository {
   }
 
   /// Fetch user conversations
-  Future<Map<String, dynamic>> getConversations({required String userId}) async {
+  Future<Map<String, dynamic>> getConversations({
+    required String userId,
+  }) async {
     try {
       final response = await _apiMethod.get(
         'communication-hub/conversations/$userId',
@@ -50,7 +58,9 @@ class CommunicationRepository {
   }
 
   /// Fetch messages for a conversation
-  Future<Map<String, dynamic>> getMessages({required String conversationId}) async {
+  Future<Map<String, dynamic>> getMessages({
+    required String conversationId,
+  }) async {
     try {
       final response = await _apiMethod.get(
         'communication-hub/messages/$conversationId',
@@ -62,7 +72,9 @@ class CommunicationRepository {
   }
 
   /// Schedule a message for later delivery
-  Future<Map<String, dynamic>> scheduleMessage({required Map<String, dynamic> scheduleData}) async {
+  Future<Map<String, dynamic>> scheduleMessage({
+    required Map<String, dynamic> scheduleData,
+  }) async {
     try {
       final response = await _apiMethod.post(
         'communication-hub/schedule',
@@ -89,7 +101,9 @@ class CommunicationRepository {
     required String messageId,
   }) async {
     try {
-      final response = await _apiMethod.get('communication-hub/status/$messageId');
+      final response = await _apiMethod.get(
+        'communication-hub/status/$messageId',
+      );
       return response;
     } catch (e) {
       return {'success': false, 'message': 'Error fetching message status: $e'};
@@ -125,7 +139,7 @@ class CommunicationRepository {
       return {'success': false, 'data': [], 'message': e.toString()};
     }
   }
-  
+
   /// Acknowledge a broadcast
   Future<Map<String, dynamic>> acknowledgeBroadcast({
     required String broadcastId,

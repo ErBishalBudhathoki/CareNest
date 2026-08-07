@@ -21,5 +21,6 @@ abstract class Certification with _$Certification {
     String? notes,
   }) = _Certification;
 
-  factory Certification.fromJson(Map<String, dynamic> json) => _$CertificationFromJson(json);
+  factory Certification.fromJson(Map<String, dynamic> json) =>
+      _$CertificationFromJson(json);
 }

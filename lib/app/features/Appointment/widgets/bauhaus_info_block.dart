@@ -51,8 +51,11 @@ class BauhausInfoBlock extends StatelessWidget {
                     color: iconColor,
                     border: Border.all(color: BauhausDesign.textDark, width: 2),
                   ),
-                  child:
-                      Icon(icon, size: 16, color: BauhausDesign.surfaceLight),
+                  child: Icon(
+                    icon,
+                    size: 16,
+                    color: BauhausDesign.surfaceLight,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(

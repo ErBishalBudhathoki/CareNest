@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/foundation.dart';
 
 /// Model representing a shift assignment with all necessary details

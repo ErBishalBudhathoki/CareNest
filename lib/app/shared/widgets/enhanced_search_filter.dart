@@ -92,19 +92,13 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
               onChanged: widget.onSearchChanged,
               decoration: InputDecoration(
                 hintText: widget.searchHint,
-                hintStyle: const TextStyle(fontSize: 16).copyWith(
-                  color: const Color(0xFF9CA3AF),
-                ),
-                prefixIcon: const Icon(
-                  Icons.search,
-                  color: Color(0xFF9CA3AF),
-                ),
+                hintStyle: const TextStyle(
+                  fontSize: 16,
+                ).copyWith(color: const Color(0xFF9CA3AF)),
+                prefixIcon: const Icon(Icons.search, color: Color(0xFF9CA3AF)),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(
-                          Icons.clear,
-                          color: Color(0xFF9CA3AF),
-                        ),
+                        icon: const Icon(Icons.clear, color: Color(0xFF9CA3AF)),
                         onPressed: () {
                           _searchController.clear();
                           widget.onSearchChanged?.call('');
@@ -120,11 +114,7 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
             ),
           ),
           if (widget.filterOptions?.isNotEmpty == true) ...[
-            Container(
-              width: 1,
-              height: 24,
-              color: const Color(0xFFE0E0E0),
-            ),
+            Container(width: 1, height: 24, color: const Color(0xFFE0E0E0)),
             _buildFilterButton(),
           ],
         ],
@@ -134,10 +124,7 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
 
   Widget _buildFilterButton() {
     return PopupMenuButton<FilterOption>(
-      icon: const Icon(
-        Icons.filter_list,
-        color: Color(0xFF6B7280),
-      ),
+      icon: const Icon(Icons.filter_list, color: Color(0xFF6B7280)),
       onSelected: widget.onFilterChanged,
       itemBuilder: (context) {
         return widget.filterOptions!.map((option) {
@@ -166,7 +153,9 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
                     child: Text(
                       option.count.toString(),
                       style: const TextStyle(
-                          fontSize: 11, fontWeight: FontWeight.w500),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ],
@@ -189,11 +178,10 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
               return Chip(
                 label: Text(
                   filter,
-                  style:
-                      const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)
-                          .copyWith(
-                    color: const Color(0xFF667EEA),
-                  ),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ).copyWith(color: const Color(0xFF667EEA)),
                 ),
                 deleteIcon: const Icon(
                   Icons.close,
@@ -215,10 +203,10 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
             onPressed: widget.onClearFilters,
             child: Text(
               'Clear All',
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)
-                  .copyWith(
-                color: const Color(0xFF6B7280),
-              ),
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ).copyWith(color: const Color(0xFF6B7280)),
             ),
           ),
       ],

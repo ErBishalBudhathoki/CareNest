@@ -14,9 +14,7 @@ class SmartExpenseRepository {
   }) async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
-      return await apiMethod.scanReceipt(
-        imageBase64: imageBase64,
-      );
+      return await apiMethod.scanReceipt(imageBase64: imageBase64);
     } catch (e) {
       debugPrint('Error scanning receipt: $e');
       return {'success': false, 'message': e.toString()};
@@ -29,9 +27,7 @@ class SmartExpenseRepository {
   }) async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
-      return await apiMethod.categorizeExpense(
-        expenseData: expenseData,
-      );
+      return await apiMethod.categorizeExpense(expenseData: expenseData);
     } catch (e) {
       debugPrint('Error categorizing expense: $e');
       return {'success': false, 'message': e.toString()};
@@ -44,9 +40,7 @@ class SmartExpenseRepository {
   }) async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
-      return await apiMethod.validateExpensePolicy(
-        expenseData: expenseData,
-      );
+      return await apiMethod.validateExpensePolicy(expenseData: expenseData);
     } catch (e) {
       debugPrint('Error validating expense policy: $e');
       return {'success': false, 'message': e.toString()};
@@ -59,9 +53,7 @@ class SmartExpenseRepository {
   }) async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
-      return await apiMethod.checkDuplicateReceipt(
-        receiptHash: receiptHash,
-      );
+      return await apiMethod.checkDuplicateReceipt(receiptHash: receiptHash);
     } catch (e) {
       debugPrint('Error checking duplicate receipt: $e');
       return {'success': false, 'message': e.toString()};
@@ -74,9 +66,7 @@ class SmartExpenseRepository {
   }) async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
-      return await apiMethod.calculateMileage(
-        locations: locations,
-      );
+      return await apiMethod.calculateMileage(locations: locations);
     } catch (e) {
       debugPrint('Error calculating mileage: $e');
       return {'success': false, 'message': e.toString()};

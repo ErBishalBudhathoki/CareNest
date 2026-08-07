@@ -19,7 +19,7 @@ abstract class Trip with _$Trip {
     String? adminApprovalStatus,
     @Default(false) bool isReimbursable,
     @Default(false) bool isBillable,
-    
+
     // Joined fields
     EmployeeInfo? employee,
   }) = _Trip;
@@ -35,5 +35,6 @@ abstract class EmployeeInfo with _$EmployeeInfo {
     String? email,
   }) = _EmployeeInfo;
 
-  factory EmployeeInfo.fromJson(Map<String, dynamic> json) => _$EmployeeInfoFromJson(json);
+  factory EmployeeInfo.fromJson(Map<String, dynamic> json) =>
+      _$EmployeeInfoFromJson(json);
 }

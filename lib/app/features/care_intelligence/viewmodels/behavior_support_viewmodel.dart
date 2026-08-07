@@ -43,11 +43,10 @@ class BehaviorSupportState {
 class BehaviorSupportViewModel extends Notifier<BehaviorSupportState> {
   late final CareIntelligenceRepository _repository;
 
-  
   @override
   BehaviorSupportState build() {
     final repository = ref.watch(careIntelligenceRepositoryProvider);
-    
+
     return BehaviorSupportState();
   }
 
@@ -72,9 +71,7 @@ class BehaviorSupportViewModel extends Notifier<BehaviorSupportState> {
         final patterns = result['patterns'];
         state = state.copyWith(
           isLoading: false,
-          behaviorAnalysis: {
-            'patterns': patterns,
-          },
+          behaviorAnalysis: {'patterns': patterns},
         );
       } else {
         state = state.copyWith(
@@ -83,10 +80,7 @@ class BehaviorSupportViewModel extends Notifier<BehaviorSupportState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -106,9 +100,7 @@ class BehaviorSupportViewModel extends Notifier<BehaviorSupportState> {
       if (result['success'] == true) {
         state = state.copyWith(
           isLoading: false,
-          escalationPrediction: {
-            'prediction': result['behaviorPrediction'],
-          },
+          escalationPrediction: {'prediction': result['behaviorPrediction']},
         );
       } else {
         state = state.copyWith(
@@ -117,10 +109,7 @@ class BehaviorSupportViewModel extends Notifier<BehaviorSupportState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -136,4 +125,7 @@ class BehaviorSupportViewModel extends Notifier<BehaviorSupportState> {
 }
 
 // Provider for BehaviorSupportViewModel
-final behaviorSupportViewModelProvider = NotifierProvider<BehaviorSupportViewModel, BehaviorSupportState>(BehaviorSupportViewModel.new);
+final behaviorSupportViewModelProvider =
+    NotifierProvider<BehaviorSupportViewModel, BehaviorSupportState>(
+      BehaviorSupportViewModel.new,
+    );

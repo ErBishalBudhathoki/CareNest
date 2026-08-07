@@ -61,12 +61,15 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final recordsAsync =
-        ref.watch(pricingLiveRecordsProvider(widget.organizationId));
-    final analyticsAsync =
-        ref.watch(pricingOrgAnalyticsProvider(widget.organizationId));
-    final clientsAsync =
-        ref.watch(pricingOrgClientsProvider(widget.organizationId));
+    final recordsAsync = ref.watch(
+      pricingLiveRecordsProvider(widget.organizationId),
+    );
+    final analyticsAsync = ref.watch(
+      pricingOrgAnalyticsProvider(widget.organizationId),
+    );
+    final clientsAsync = ref.watch(
+      pricingOrgClientsProvider(widget.organizationId),
+    );
 
     final records = recordsAsync.value ?? const <PricingLiveRecord>[];
     final clients = clientsAsync.value ?? const <Map<String, dynamic>>[];
@@ -87,18 +90,17 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
 
     final detailAsync =
         (_selectedClientId != null && _selectedSupportItem != null)
-            ? ref.watch(
-                pricingDetailedHistoryProvider(
-                  PriceHistoryQuery(
-                    supportItemNumber: _selectedSupportItem!,
-                    clientId: _selectedClientId!,
-                  ),
-                ),
-              )
-            : const AsyncData<List<Map<String, dynamic>>>([]);
+        ? ref.watch(
+            pricingDetailedHistoryProvider(
+              PriceHistoryQuery(
+                supportItemNumber: _selectedSupportItem!,
+                clientId: _selectedClientId!,
+              ),
+            ),
+          )
+        : const AsyncData<List<Map<String, dynamic>>>([]);
 
-    final detailRows =
-        detailAsync.value ?? const <Map<String, dynamic>>[];
+    final detailRows = detailAsync.value ?? const <Map<String, dynamic>>[];
 
     return Scaffold(
       backgroundColor: _screenGray,
@@ -183,8 +185,11 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                           color: _panelWhite,
                           border: Border.all(color: _inkBlack, width: 2),
                         ),
-                        child: const Icon(Icons.arrow_back,
-                            size: 18, color: _inkBlack),
+                        child: const Icon(
+                          Icons.arrow_back,
+                          size: 18,
+                          color: _inkBlack,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -208,8 +213,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                     Expanded(
                       child: Text(
                         l10n.trackPricingChanges,
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
+                        style: BauhausDesign.getTextTheme(context).labelLarge
                             ?.copyWith(
                               color: _inkBlack,
                               fontWeight: FontWeight.w700,
@@ -218,15 +222,16 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 4),
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: _accentRed,
                         border: Border.all(color: _inkBlack, width: 2),
                       ),
                       child: Text(
                         l10n.systemActive.toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
+                        style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
                               color: BauhausDesign.surfaceWhite,
                               fontWeight: FontWeight.w800,
@@ -253,14 +258,18 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
   ) {
     final custom = records.where((record) => record.isCustom).length;
     final updated = records
-        .where((record) =>
-            record.isCustom &&
-            (record.effectiveTimestamp != null) &&
-            record.effectiveTimestamp!
-                .isAfter(DateTime.now().subtract(const Duration(days: 7))))
+        .where(
+          (record) =>
+              record.isCustom &&
+              (record.effectiveTimestamp != null) &&
+              record.effectiveTimestamp!.isAfter(
+                DateTime.now().subtract(const Duration(days: 7)),
+              ),
+        )
         .length;
     final violations = analytics?.metrics.nonCompliantItems ?? 0;
-    final compliance = analytics?.metrics.complianceRate ??
+    final compliance =
+        analytics?.metrics.complianceRate ??
         (records.isEmpty ? 0.0 : (custom / records.length) * 100);
 
     final List<Map<String, Object>> cards = [
@@ -319,8 +328,11 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                   color: card['color'] as Color,
                   border: Border.all(color: _inkBlack, width: 2),
                 ),
-                child: Icon(card['icon'] as IconData,
-                    size: 12, color: BauhausDesign.surfaceWhite),
+                child: Icon(
+                  card['icon'] as IconData,
+                  size: 12,
+                  color: BauhausDesign.surfaceWhite,
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -332,18 +344,19 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                       card['value'] as String,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelLarge
+                      style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
-                              color: _inkBlack, fontWeight: FontWeight.w900),
+                            color: _inkBlack,
+                            fontWeight: FontWeight.w900,
+                          ),
                     ),
                     Text(
                       card['title'] as String,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelSmall
-                          ?.copyWith(color: BauhausDesign.textMuted),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
                     ),
                   ],
                 ),
@@ -370,9 +383,9 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
         labelPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         labelColor: BauhausDesign.surfaceWhite,
         unselectedLabelColor: _inkBlack,
-        labelStyle: BauhausDesign.getTextTheme(context)
-            .labelSmall
-            ?.copyWith(fontWeight: FontWeight.w900),
+        labelStyle: BauhausDesign.getTextTheme(
+          context,
+        ).labelSmall?.copyWith(fontWeight: FontWeight.w900),
         tabs: [
           Tab(text: l10n.tabPriceChanges),
           Tab(text: l10n.tabHistory),
@@ -383,7 +396,9 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
   }
 
   Widget _buildRecordTimeline(
-      AppLocalizations l10n, List<PricingLiveRecord> records) {
+    AppLocalizations l10n,
+    List<PricingLiveRecord> records,
+  ) {
     return ListView(
       primary: false,
       padding: const EdgeInsets.only(top: 0),
@@ -393,7 +408,9 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
         if (records.isEmpty)
           _buildEmpty(l10n.moduleNoTrackedChanges)
         else
-          ...records.take(80).map(
+          ...records
+              .take(80)
+              .map(
                 (record) => _buildTimelineCard(
                   title:
                       '${record.supportItemNumber} · ${record.supportItemName}',
@@ -439,17 +456,11 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
           const SizedBox(height: 4),
           Row(
             children: [
-              Expanded(
-                child: _buildRangeButton(l10n.timeRange7Days, 7),
-              ),
+              Expanded(child: _buildRangeButton(l10n.timeRange7Days, 7)),
               const SizedBox(width: 6),
-              Expanded(
-                child: _buildRangeButton(l10n.timeRange30Days, 30),
-              ),
+              Expanded(child: _buildRangeButton(l10n.timeRange30Days, 30)),
               const SizedBox(width: 6),
-              Expanded(
-                child: _buildRangeButton(l10n.timeRange90Days, 90),
-              ),
+              Expanded(child: _buildRangeButton(l10n.timeRange90Days, 90)),
             ],
           ),
         ],
@@ -471,9 +482,9 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
           label,
           textAlign: TextAlign.center,
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: selected ? BauhausDesign.surfaceWhite : _inkBlack,
-                fontWeight: FontWeight.w900,
-              ),
+            color: selected ? BauhausDesign.surfaceWhite : _inkBlack,
+            fontWeight: FontWeight.w900,
+          ),
         ),
       ),
     );
@@ -506,27 +517,30 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                 items: clients
                     .map(
                       (client) => DropdownMenuItem<String>(
-                        value: (client['id'] ??
-                                client['_id'] ??
-                                client['clientId'])
-                            ?.toString(),
+                        value:
+                            (client['id'] ??
+                                    client['_id'] ??
+                                    client['clientId'])
+                                ?.toString(),
                         child: Text(
                           (client['name'] ??
                                   '${client['firstName'] ?? ''} ${client['lastName'] ?? ''}')
                               .toString()
                               .trim(),
                           overflow: TextOverflow.ellipsis,
-                          style: (BauhausDesign.getTextTheme(context).labelSmall ??
-                                  const TextStyle(fontSize: 12))
-                              .copyWith(
-                                color: BauhausDesign.textDark,
-                                fontWeight: FontWeight.w700,
-                              ),
+                          style:
+                              (BauhausDesign.getTextTheme(context).labelSmall ??
+                                      const TextStyle(fontSize: 12))
+                                  .copyWith(
+                                    color: BauhausDesign.textDark,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                         ),
                       ),
                     )
                     .where(
-                        (item) => item.value != null && item.value!.isNotEmpty)
+                      (item) => item.value != null && item.value!.isNotEmpty,
+                    )
                     .toList(),
                 onChanged: (value) {
                   setState(() => _selectedClientId = value);
@@ -543,12 +557,13 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                         child: Text(
                           '${record.supportItemNumber} · ${record.supportItemName}',
                           overflow: TextOverflow.ellipsis,
-                          style: (BauhausDesign.getTextTheme(context).labelSmall ??
-                                  const TextStyle(fontSize: 12))
-                              .copyWith(
-                                color: BauhausDesign.textDark,
-                                fontWeight: FontWeight.w700,
-                              ),
+                          style:
+                              (BauhausDesign.getTextTheme(context).labelSmall ??
+                                      const TextStyle(fontSize: 12))
+                                  .copyWith(
+                                    color: BauhausDesign.textDark,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                         ),
                       ),
                     )
@@ -565,29 +580,31 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
           _buildEmpty(l10n.selectClientToViewPricing)
         else if (isLoading)
           const Center(
-              child: Padding(
-            padding: EdgeInsets.all(16),
-            child: CircularProgressIndicator(),
-          ))
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: CircularProgressIndicator(),
+            ),
+          )
         else if (detailRows.isEmpty)
           _buildEmpty(l10n.moduleNoTrackedChanges)
         else
           ...detailRows.map((row) {
             final oldPrice = pricingToDouble(row['oldPrice']);
             final newPrice = pricingToDouble(row['newPrice'] ?? row['price']);
-            final reason =
-                (row['reason'] ?? row['changeReason'] ?? '').toString();
-            final changedBy =
-                (row['changedBy'] ?? row['userEmail'] ?? '').toString();
+            final reason = (row['reason'] ?? row['changeReason'] ?? '')
+                .toString();
+            final changedBy = (row['changedBy'] ?? row['userEmail'] ?? '')
+                .toString();
             return _buildTimelineCard(
               title: '${row['supportItemNumber'] ?? _selectedSupportItem}',
               subtitle:
                   'old \$${oldPrice.toStringAsFixed(2)} -> new \$${newPrice.toStringAsFixed(2)} ${reason.isNotEmpty ? '· $reason' : ''} ${changedBy.isNotEmpty ? '· $changedBy' : ''}',
               time: _historyDateFromMap(row),
-              status: (row['status'] ??
-                      row['changeType'] ??
-                      l10n.moduleStatusHealthy)
-                  .toString(),
+              status:
+                  (row['status'] ??
+                          row['changeType'] ??
+                          l10n.moduleStatusHealthy)
+                      .toString(),
             );
           }),
       ],
@@ -603,15 +620,20 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
     final avgCustom = custom.isEmpty
         ? 0.0
         : custom.fold<double>(
-                0.0, (sum, record) => sum + (record.customPrice ?? 0)) /
-            custom.length;
+                0.0,
+                (sum, record) => sum + (record.customPrice ?? 0),
+              ) /
+              custom.length;
     final avgStandard = records.isEmpty
         ? 0.0
         : records.fold<double>(
-                0.0, (sum, record) => sum + record.standardPrice) /
-            records.length;
+                0.0,
+                (sum, record) => sum + record.standardPrice,
+              ) /
+              records.length;
 
-    final compliance = analytics?.metrics.complianceRate ??
+    final compliance =
+        analytics?.metrics.complianceRate ??
         (records.isEmpty ? 0.0 : (custom.length / records.length) * 100);
     final violations = analytics?.metrics.nonCompliantItems ?? 0;
 
@@ -652,7 +674,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
   }) {
     final baseStyle =
         BauhausDesign.getTextTheme(context).labelSmall ??
-            const TextStyle(fontSize: 12);
+        const TextStyle(fontSize: 12);
     final dropdownTextStyle = baseStyle.copyWith(
       color: BauhausDesign.textDark,
       fontWeight: FontWeight.w700,
@@ -705,23 +727,25 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
         children: [
           Text(
             title.toUpperCase(),
-            style: BauhausDesign.getTextTheme(context)
-                .labelSmall
-                ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w900),
+            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+              color: _inkBlack,
+              fontWeight: FontWeight.w900,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             value,
-            style: BauhausDesign.getTextTheme(context)
-                .headlineSmall
-                ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w900),
+            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+              color: _inkBlack,
+              fontWeight: FontWeight.w900,
+            ),
           ),
           const SizedBox(height: 2),
           Text(
             secondary,
-            style: BauhausDesign.getTextTheme(context)
-                .labelSmall
-                ?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
           ),
         ],
       ),
@@ -752,8 +776,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: BauhausDesign.getTextTheme(context)
-                      .labelSmall
+                  style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w900),
                 ),
                 const SizedBox(height: 2),
@@ -761,17 +784,16 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                   subtitle,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: BauhausDesign.getTextTheme(context)
-                      .labelSmall
-                      ?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   time == null
                       ? AppLocalizations.of(context)!.moduleNoDataYet
                       : _formatDate(time),
-                  style: BauhausDesign.getTextTheme(context)
-                      .labelSmall
+                  style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w700),
                 ),
               ],
@@ -786,9 +808,9 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
             ),
             child: Text(
               status.toUpperCase(),
-              style: BauhausDesign.getTextTheme(context)
-                  .labelSmall
-                  ?.copyWith(color: BauhausDesign.surfaceWhite),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).labelSmall?.copyWith(color: BauhausDesign.surfaceWhite),
             ),
           ),
         ],
@@ -822,9 +844,9 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
       child: Text(
         text,
         textAlign: TextAlign.center,
-        style: BauhausDesign.getTextTheme(context)
-            .bodyMedium
-            ?.copyWith(color: BauhausDesign.textMuted),
+        style: BauhausDesign.getTextTheme(
+          context,
+        ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
       ),
     );
   }

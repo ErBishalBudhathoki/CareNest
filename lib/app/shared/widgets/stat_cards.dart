@@ -39,8 +39,9 @@ class StatCards extends StatelessWidget {
               child: StatCard(
                 data: card,
                 animate: animate,
-                animationDelay:
-                    Duration(milliseconds: index * animationDelayMs),
+                animationDelay: Duration(
+                  milliseconds: index * animationDelayMs,
+                ),
                 animationDuration: animationDuration,
               ),
             ),
@@ -90,10 +91,7 @@ class StatCard extends StatelessWidget {
     if (animate) {
       return card
           .animate(delay: animationDelay)
-          .fadeIn(
-            duration: animationDuration,
-            curve: Curves.easeOutCubic,
-          )
+          .fadeIn(duration: animationDuration, curve: Curves.easeOutCubic)
           .scale(
             begin: const Offset(0.95, 0.95),
             end: const Offset(1.0, 1.0),
@@ -112,8 +110,9 @@ class StatCard extends StatelessWidget {
         // Icon with fixed size
         SizedBox(
           width: 48,
-          child:
-              data.iconContainer ? _buildContainerIcon() : _buildSimpleIcon(),
+          child: data.iconContainer
+              ? _buildContainerIcon()
+              : _buildSimpleIcon(),
         ),
         const SizedBox(width: BauhausDesign.space2),
         // Flexible text to prevent overflow
@@ -150,9 +149,9 @@ class StatCard extends StatelessWidget {
   Widget _buildTitle(BuildContext context) {
     return Text(
       data.title,
-      style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-        color: data.titleColor ?? BauhausDesign.textDark,
-      ),
+      style: BauhausDesign.getTextTheme(
+        context,
+      ).labelLarge?.copyWith(color: data.titleColor ?? BauhausDesign.textDark),
       overflow: TextOverflow.ellipsis,
       maxLines: 2,
     );

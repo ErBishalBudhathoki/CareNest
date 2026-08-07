@@ -97,7 +97,8 @@ class PayrollEmployee {
   final double hoursWorked;
   final double tax;
   final double superAmount;
-  final BreakdownTotals breakdown; // Assuming same structure for individual breakdown
+  final BreakdownTotals
+  breakdown; // Assuming same structure for individual breakdown
   final List<PayrollAnomaly> anomalies;
 
   PayrollEmployee({
@@ -122,7 +123,8 @@ class PayrollEmployee {
       tax: (json['tax'] ?? 0).toDouble(),
       superAmount: (json['super'] ?? 0).toDouble(),
       breakdown: BreakdownTotals.fromJson(json['breakdown'] ?? {}),
-      anomalies: (json['anomalies'] as List?)
+      anomalies:
+          (json['anomalies'] as List?)
               ?.map((e) => PayrollAnomaly.fromJson(e))
               .toList() ??
           [],

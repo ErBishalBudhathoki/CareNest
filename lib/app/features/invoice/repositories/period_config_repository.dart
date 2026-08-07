@@ -26,7 +26,9 @@ class PeriodConfigRepository {
   /// Throws if emails are empty.
   Future<void> saveConfig(PeriodConfig config) async {
     if (config.employeeEmail.isEmpty || config.clientEmail.isEmpty) {
-      throw Exception('PeriodConfigRepository: employeeEmail/clientEmail required');
+      throw Exception(
+        'PeriodConfigRepository: employeeEmail/clientEmail required',
+      );
     }
     await _prefs.init();
     final key = _key(config.employeeEmail, config.clientEmail);
@@ -35,7 +37,10 @@ class PeriodConfigRepository {
   }
 
   /// Retrieve a period configuration for an employee-client pair.
-  Future<PeriodConfig?> getConfig(String employeeEmail, String clientEmail) async {
+  Future<PeriodConfig?> getConfig(
+    String employeeEmail,
+    String clientEmail,
+  ) async {
     await _prefs.init();
     final key = _key(employeeEmail, clientEmail);
     final raw = _prefs.getString(key);

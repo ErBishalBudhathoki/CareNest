@@ -41,8 +41,7 @@ class PricingOptimizationState {
 }
 
 /// Pricing Optimization ViewModel
-class PricingOptimizationViewModel
-    extends Notifier<PricingOptimizationState> {
+class PricingOptimizationViewModel extends Notifier<PricingOptimizationState> {
   late final FinancialIntelligenceRepository _repository;
 
   @override
@@ -67,10 +66,7 @@ class PricingOptimizationViewModel
       );
 
       if (result['success'] == true) {
-        state = state.copyWith(
-          isLoading: false,
-          optimizations: result,
-        );
+        state = state.copyWith(isLoading: false, optimizations: result);
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -78,10 +74,7 @@ class PricingOptimizationViewModel
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -106,10 +99,7 @@ class PricingOptimizationViewModel
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -137,10 +127,7 @@ class PricingOptimizationViewModel
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -157,10 +144,7 @@ class PricingOptimizationViewModel
       );
 
       if (result['success'] == true) {
-        state = state.copyWith(
-          isLoading: false,
-          margins: result['analysis'],
-        );
+        state = state.copyWith(isLoading: false, margins: result['analysis']);
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -168,10 +152,7 @@ class PricingOptimizationViewModel
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -199,10 +180,7 @@ class PricingOptimizationViewModel
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -213,4 +191,7 @@ class PricingOptimizationViewModel
 }
 
 /// Provider for Pricing Optimization ViewModel
-final pricingOptimizationViewModelProvider = NotifierProvider<PricingOptimizationViewModel, PricingOptimizationState>(PricingOptimizationViewModel.new);
+final pricingOptimizationViewModelProvider =
+    NotifierProvider<PricingOptimizationViewModel, PricingOptimizationState>(
+      PricingOptimizationViewModel.new,
+    );

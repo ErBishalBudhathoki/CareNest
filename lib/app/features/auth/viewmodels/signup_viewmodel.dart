@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:carenest/app/features/auth/models/signup_model.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 class SignupViewModel extends Notifier<int> {
   final SignupModel model = SignupModel();
@@ -22,14 +23,14 @@ class SignupViewModel extends Notifier<int> {
   int build() {
     apiMethod = ref.watch(app_providers.apiMethodProvider);
     _firebaseAuthService = FirebaseAuthService();
-    
+
     ref.onDispose(() {
       emailController.dispose();
       passwordController.dispose();
       confirmPasswordController.dispose();
       model.dispose();
     });
-    
+
     return 0;
   }
 
@@ -80,7 +81,9 @@ class SignupViewModel extends Notifier<int> {
   }
 
   Future<SignupResult> signup(
-      BuildContext context, GlobalKey<FormState> formKey) async {
+    BuildContext context,
+    GlobalKey<FormState> formKey,
+  ) async {
     debugPrint('SignupViewModel.signup');
     _setLoading(true);
 
@@ -91,8 +94,9 @@ class SignupViewModel extends Notifier<int> {
           // Determine if creating organization (admin role)
           bool isOwner =
               model.selectedRole == 'admin' && model.isCreatingOrganization;
-          String? orgName =
-              isOwner ? model.organizationNameController.text : null;
+          String? orgName = isOwner
+              ? model.organizationNameController.text
+              : null;
 
           // If joining organization, verify the code first
           String? organizationId;
@@ -159,12 +163,15 @@ class SignupViewModel extends Notifier<int> {
             debugPrint("DEBUG: Response data: $data");
             if (data is Map) {
               _organizationId = data['organizationId']?.toString();
-              _organizationCode = data['organizationCode']?.toString() ??
+              _organizationCode =
+                  data['organizationCode']?.toString() ??
                   data['organization']?['code']?.toString();
-              _organizationName = data['organizationName']?.toString() ??
+              _organizationName =
+                  data['organizationName']?.toString() ??
                   data['organization']?['name']?.toString();
               debugPrint(
-                  "DEBUG: Extracted orgId: $_organizationId, orgCode: $_organizationCode, orgName: $_organizationName");
+                "DEBUG: Extracted orgId: $_organizationId, orgCode: $_organizationCode, orgName: $_organizationName",
+              );
             }
 
             final signupEmail = model.emailController.text.trim();
@@ -178,7 +185,8 @@ class SignupViewModel extends Notifier<int> {
               );
             } catch (verificationError) {
               debugPrint(
-                  'DEBUG: Non-fatal verification email send failure: $verificationError');
+                'DEBUG: Non-fatal verification email send failure: $verificationError',
+              );
               message =
                   'Account created. Please sign in and request email verification from Settings.';
             }
@@ -190,7 +198,8 @@ class SignupViewModel extends Notifier<int> {
             );
           } else {
             debugPrint(
-                "DEBUG: User signup failed - unexpected response format");
+              "DEBUG: User signup failed - unexpected response format",
+            );
             return SignupResult(
               success: false,
               title: "Error",
@@ -236,5 +245,4 @@ class SignupViewModel extends Notifier<int> {
       await _firebaseAuthService.signOut();
     }
   }
-
 }

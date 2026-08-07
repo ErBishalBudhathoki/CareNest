@@ -9,25 +9,29 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 /// Provider to fetch completed service history (pings the actual endpoint)
-final adminClientServiceHistoryProvider = FutureProvider.family.autoDispose<List<ServiceHistory>, String>((ref, clientId) async {
-  final api = ref.read(apiMethodProvider);
-  final response = await api.getServiceHistory(clientId: clientId);
-  if (response['success'] == true && response['data'] is List) {
-    final rawList = response['data'] as List;
-    return rawList.map((item) => ServiceHistory.fromJson(item)).toList();
-  }
-  return [];
-});
+final adminClientServiceHistoryProvider = FutureProvider.family
+    .autoDispose<List<ServiceHistory>, String>((ref, clientId) async {
+      final api = ref.read(apiMethodProvider);
+      final response = await api.getServiceHistory(clientId: clientId);
+      if (response['success'] == true && response['data'] is List) {
+        final rawList = response['data'] as List;
+        return rawList.map((item) => ServiceHistory.fromJson(item)).toList();
+      }
+      return [];
+    });
 
 /// Provider to fetch detailed service confirmation on click
-final serviceConfirmationDetailsProvider = FutureProvider.family.autoDispose<ServiceConfirmation?, String>((ref, appointmentId) async {
-  final api = ref.read(apiMethodProvider);
-  final response = await api.getServiceConfirmation(appointmentId: appointmentId);
-  if (response['success'] == true && response['data'] != null) {
-    return ServiceConfirmation.fromJson(response['data']);
-  }
-  return null;
-});
+final serviceConfirmationDetailsProvider = FutureProvider.family
+    .autoDispose<ServiceConfirmation?, String>((ref, appointmentId) async {
+      final api = ref.read(apiMethodProvider);
+      final response = await api.getServiceConfirmation(
+        appointmentId: appointmentId,
+      );
+      if (response['success'] == true && response['data'] != null) {
+        return ServiceConfirmation.fromJson(response['data']);
+      }
+      return null;
+    });
 
 class AdminServiceConfirmationsView extends ConsumerWidget {
   final String clientId;
@@ -64,7 +68,8 @@ class AdminServiceConfirmationsView extends ConsumerWidget {
         ),
         actions: [
           IconButton(
-            onPressed: () => ref.invalidate(adminClientServiceHistoryProvider(clientId)),
+            onPressed: () =>
+                ref.invalidate(adminClientServiceHistoryProvider(clientId)),
             icon: const Icon(Icons.refresh),
             tooltip: 'Refresh Ledger',
           ),
@@ -87,7 +92,9 @@ class AdminServiceConfirmationsView extends ConsumerWidget {
                 child: BauhausErrorState(
                   title: 'Unable to Load Ledger',
                   message: error.toString(),
-                  onRetry: () => ref.invalidate(adminClientServiceHistoryProvider(clientId)),
+                  onRetry: () => ref.invalidate(
+                    adminClientServiceHistoryProvider(clientId),
+                  ),
                 ),
               ),
               data: (history) {
@@ -95,7 +102,8 @@ class AdminServiceConfirmationsView extends ConsumerWidget {
                   return const Center(
                     child: BauhausEmptyState(
                       title: 'No Completed Shifts Yet',
-                      message: 'Confirmations will appear here once the client submits feedback for a completed shift.',
+                      message:
+                          'Confirmations will appear here once the client submits feedback for a completed shift.',
                     ),
                   );
                 }
@@ -104,12 +112,14 @@ class AdminServiceConfirmationsView extends ConsumerWidget {
                 return ListView.separated(
                   padding: const EdgeInsets.all(BauhausDesign.space4),
                   itemCount: history.length + 1,
-                  separatorBuilder: (_, __) => const SizedBox(height: BauhausDesign.space4),
+                  separatorBuilder: (_, __) =>
+                      const SizedBox(height: BauhausDesign.space4),
                   itemBuilder: (context, index) {
                     if (index == 0) {
                       return const BauhausSectionHeader(
                         title: 'COMPLETED SHIFTS & VERIFICATIONS',
-                        subtitle: 'Tap any shift to inspect digital signatures, task checklists, and ratings.',
+                        subtitle:
+                            'Tap any shift to inspect digital signatures, task checklists, and ratings.',
                       );
                     }
 
@@ -206,10 +216,16 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: BauhausDesign.backgroundLight,
-                    border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.5,
+                    ),
                   ),
                   child: Text(
                     service.date,
@@ -221,22 +237,31 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: hasVerification
                         ? BauhausDesign.success.withOpacity(0.2)
                         : BauhausDesign.warning.withOpacity(0.2),
                     border: Border.all(
-                      color: hasVerification ? BauhausDesign.success : BauhausDesign.warning,
+                      color: hasVerification
+                          ? BauhausDesign.success
+                          : BauhausDesign.warning,
                       width: 1.5,
                     ),
-                    borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
+                    borderRadius: BorderRadius.circular(
+                      BauhausDesign.radiusFull,
+                    ),
                   ),
                   child: Text(
                     hasVerification ? 'VERIFIED' : 'PENDING CLIENT',
                     style: BauhausDesign.neoMonoStyle(
                       context,
-                      color: hasVerification ? BauhausDesign.success : BauhausDesign.warning,
+                      color: hasVerification
+                          ? BauhausDesign.success
+                          : BauhausDesign.warning,
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                     ),
@@ -299,10 +324,15 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
               children: [
                 Expanded(
                   child: BauhausActionButton(
-                    onPressed: () => _showConfirmationDetailsBottomSheet(context, ref),
-                    text: hasVerification ? 'INSPECT VERIFICATION' : 'VIEW DETAILS',
+                    onPressed: () =>
+                        _showConfirmationDetailsBottomSheet(context, ref),
+                    text: hasVerification
+                        ? 'INSPECT VERIFICATION'
+                        : 'VIEW DETAILS',
                     icon: Icons.visibility,
-                    variant: hasVerification ? BauhausActionVariant.primary : BauhausActionVariant.ghost,
+                    variant: hasVerification
+                        ? BauhausActionVariant.primary
+                        : BauhausActionVariant.ghost,
                     isSmall: true,
                   ),
                 ),
@@ -314,17 +344,24 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
     );
   }
 
-  void _showConfirmationDetailsBottomSheet(BuildContext context, WidgetRef ref) {
+  void _showConfirmationDetailsBottomSheet(
+    BuildContext context,
+    WidgetRef ref,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: BauhausDesign.surfaceWhite,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(BauhausDesign.radiusLg)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(BauhausDesign.radiusLg),
+        ),
       ),
       builder: (context) => Consumer(
         builder: (context, ref, _) {
-          final detailState = ref.watch(serviceConfirmationDetailsProvider(service.serviceId));
+          final detailState = ref.watch(
+            serviceConfirmationDetailsProvider(service.serviceId),
+          );
 
           return Container(
             constraints: BoxConstraints(
@@ -378,7 +415,9 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                         child: Container(
                           width: 40,
                           height: 4,
-                          margin: const EdgeInsets.symmetric(vertical: BauhausDesign.space3),
+                          margin: const EdgeInsets.symmetric(
+                            vertical: BauhausDesign.space3,
+                          ),
                           decoration: BoxDecoration(
                             color: BauhausDesign.neutral,
                             borderRadius: BorderRadius.circular(2),
@@ -405,13 +444,20 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.close_rounded, color: BauhausDesign.neutral),
+                              icon: const Icon(
+                                Icons.close_rounded,
+                                color: BauhausDesign.neutral,
+                              ),
                               onPressed: () => Navigator.pop(context),
                             ),
                           ],
                         ),
                       ),
-                      Divider(color: BauhausDesign.neutral, height: 1.5, thickness: 1.5),
+                      Divider(
+                        color: BauhausDesign.neutral,
+                        height: 1.5,
+                        thickness: 1.5,
+                      ),
 
                       Padding(
                         padding: const EdgeInsets.all(BauhausDesign.space5),
@@ -421,17 +467,26 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                             // Summary Section
                             _buildSummaryItem('Worker', service.workerName),
                             _buildSummaryItem('Service', service.serviceName),
-                            _buildSummaryItem('Date/Time', '${service.date} • ${service.startTime} - ${service.endTime}'),
+                            _buildSummaryItem(
+                              'Date/Time',
+                              '${service.date} • ${service.startTime} - ${service.endTime}',
+                            ),
                             const SizedBox(height: BauhausDesign.space4),
 
                             // Rating Section
                             Text(
                               'CLIENT RATING',
-                              style: BauhausDesign.neoMonoStyle(context, fontWeight: FontWeight.bold, fontSize: 11),
+                              style: BauhausDesign.neoMonoStyle(
+                                context,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 11,
+                              ),
                             ),
                             const SizedBox(height: BauhausDesign.space2),
                             Container(
-                              padding: const EdgeInsets.all(BauhausDesign.space4),
+                              padding: const EdgeInsets.all(
+                                BauhausDesign.space4,
+                              ),
                               decoration: BauhausDesign.cardDecoration,
                               width: double.infinity,
                               child: Column(
@@ -441,14 +496,19 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                     children: List.generate(
                                       5,
                                       (index) => Icon(
-                                        index < (confirmation.rating ?? 0) ? Icons.star : Icons.star_border,
+                                        index < (confirmation.rating ?? 0)
+                                            ? Icons.star
+                                            : Icons.star_border,
                                         size: 28,
                                         color: BauhausDesign.accent,
                                       ),
                                     ),
                                   ),
-                                  if (confirmation.feedback != null && confirmation.feedback!.isNotEmpty) ...[
-                                    const SizedBox(height: BauhausDesign.space3),
+                                  if (confirmation.feedback != null &&
+                                      confirmation.feedback!.isNotEmpty) ...[
+                                    const SizedBox(
+                                      height: BauhausDesign.space3,
+                                    ),
                                     Text(
                                       '"${confirmation.feedback}"',
                                       style: GoogleFonts.inter(
@@ -467,56 +527,89 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                             // Checklist Section
                             Text(
                               'COMPLETED TASK CHECKLIST',
-                              style: BauhausDesign.neoMonoStyle(context, fontWeight: FontWeight.bold, fontSize: 11),
+                              style: BauhausDesign.neoMonoStyle(
+                                context,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 11,
+                              ),
                             ),
                             const SizedBox(height: BauhausDesign.space2),
-                            if (confirmation.checklist == null || confirmation.checklist!.isEmpty)
+                            if (confirmation.checklist == null ||
+                                confirmation.checklist!.isEmpty)
                               Text(
                                 'No tasks configured for this shift.',
-                                style: GoogleFonts.inter(color: BauhausDesign.textMuted),
+                                style: GoogleFonts.inter(
+                                  color: BauhausDesign.textMuted,
+                                ),
                               )
                             else
                               Container(
                                 decoration: BoxDecoration(
                                   color: BauhausDesign.surfaceWhite,
-                                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                                  border: Border.all(
+                                    color: BauhausDesign.neutral,
+                                    width: 2,
+                                  ),
                                 ),
                                 child: ListView.separated(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: confirmation.checklist!.length,
-                                  separatorBuilder: (_, __) => Divider(color: BauhausDesign.neutral, height: 1),
+                                  separatorBuilder: (_, __) => Divider(
+                                    color: BauhausDesign.neutral,
+                                    height: 1,
+                                  ),
                                   itemBuilder: (context, idx) {
                                     final item = confirmation.checklist![idx];
                                     final completed = item.completed ?? false;
                                     return ListTile(
                                       leading: Icon(
-                                        completed ? Icons.check_box_outlined : Icons.check_box_outline_blank,
-                                        color: completed ? BauhausDesign.success : BauhausDesign.textMuted,
+                                        completed
+                                            ? Icons.check_box_outlined
+                                            : Icons.check_box_outline_blank,
+                                        color: completed
+                                            ? BauhausDesign.success
+                                            : BauhausDesign.textMuted,
                                       ),
                                       title: Text(
                                         item.item,
                                         style: GoogleFonts.inter(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 14,
-                                          decoration: completed ? TextDecoration.lineThrough : null,
-                                          color: completed ? BauhausDesign.textMuted : BauhausDesign.textDark,
+                                          decoration: completed
+                                              ? TextDecoration.lineThrough
+                                              : null,
+                                          color: completed
+                                              ? BauhausDesign.textMuted
+                                              : BauhausDesign.textDark,
                                         ),
                                       ),
                                       trailing: item.required
                                           ? Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 6,
+                                                    vertical: 2,
+                                                  ),
                                               decoration: BoxDecoration(
-                                                color: BauhausDesign.primaryBlue.withOpacity(0.1),
-                                                border: Border.all(color: BauhausDesign.primaryBlue, width: 1),
+                                                color: BauhausDesign.primaryBlue
+                                                    .withOpacity(0.1),
+                                                border: Border.all(
+                                                  color:
+                                                      BauhausDesign.primaryBlue,
+                                                  width: 1,
+                                                ),
                                               ),
                                               child: Text(
                                                 'REQ',
-                                                style: GoogleFonts.shareTechMono(
-                                                  fontSize: 9,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: BauhausDesign.primaryBlue,
-                                                ),
+                                                style:
+                                                    GoogleFonts.shareTechMono(
+                                                      fontSize: 9,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: BauhausDesign
+                                                          .primaryBlue,
+                                                    ),
                                               ),
                                             )
                                           : null,
@@ -529,18 +622,28 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                             // Signature Section
                             Text(
                               'DIGITAL SIGNATURE VERIFICATION',
-                              style: BauhausDesign.neoMonoStyle(context, fontWeight: FontWeight.bold, fontSize: 11),
+                              style: BauhausDesign.neoMonoStyle(
+                                context,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 11,
+                              ),
                             ),
                             const SizedBox(height: BauhausDesign.space2),
                             Container(
-                              padding: const EdgeInsets.all(BauhausDesign.space4),
+                              padding: const EdgeInsets.all(
+                                BauhausDesign.space4,
+                              ),
                               decoration: BauhausDesign.cardDecoration,
                               width: double.infinity,
                               height: 120,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.draw_rounded, size: 36, color: BauhausDesign.neutral),
+                                  Icon(
+                                    Icons.draw_rounded,
+                                    size: 36,
+                                    color: BauhausDesign.neutral,
+                                  ),
                                   const SizedBox(height: 8),
                                   Text(
                                     'ELECTRONIC SIGNATURE SECURED',
@@ -564,51 +667,74 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                             const SizedBox(height: BauhausDesign.space5),
 
                             // Incidents Section (if any reported)
-                            if (confirmation.incidents != null && confirmation.incidents!.isNotEmpty) ...[
+                            if (confirmation.incidents != null &&
+                                confirmation.incidents!.isNotEmpty) ...[
                               Text(
                                 'SHIFTS ALERTS / INCIDENTS',
-                                style: BauhausDesign.neoMonoStyle(context, fontWeight: FontWeight.bold, fontSize: 11, color: BauhausDesign.warning),
+                                style: BauhausDesign.neoMonoStyle(
+                                  context,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 11,
+                                  color: BauhausDesign.warning,
+                                ),
                               ),
                               const SizedBox(height: BauhausDesign.space2),
-                              ...confirmation.incidents!.map((incident) => Container(
-                                margin: const EdgeInsets.only(bottom: 8),
-                                padding: const EdgeInsets.all(BauhausDesign.space4),
-                                decoration: BoxDecoration(
-                                  color: BauhausDesign.warning.withOpacity(0.1),
-                                  border: Border.all(color: BauhausDesign.warning, width: 2),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Icon(Icons.warning_amber_rounded, color: BauhausDesign.warning),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          '${incident.category.toUpperCase()} (${incident.severity.toUpperCase()})',
-                                          style: GoogleFonts.shareTechMono(
-                                            fontWeight: FontWeight.bold,
+                              ...confirmation.incidents!.map(
+                                (incident) => Container(
+                                  margin: const EdgeInsets.only(bottom: 8),
+                                  padding: const EdgeInsets.all(
+                                    BauhausDesign.space4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: BauhausDesign.warning.withOpacity(
+                                      0.1,
+                                    ),
+                                    border: Border.all(
+                                      color: BauhausDesign.warning,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.warning_amber_rounded,
                                             color: BauhausDesign.warning,
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      incident.description,
-                                      style: GoogleFonts.inter(
-                                        fontSize: 13,
-                                        color: BauhausDesign.textDark,
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            '${incident.category.toUpperCase()} (${incident.severity.toUpperCase()})',
+                                            style: GoogleFonts.shareTechMono(
+                                              fontWeight: FontWeight.bold,
+                                              color: BauhausDesign.warning,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        incident.description,
+                                        style: GoogleFonts.inter(
+                                          fontSize: 13,
+                                          color: BauhausDesign.textDark,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              )),
+                              ),
                             ],
                           ],
                         ),
                       ),
-                      SizedBox(height: MediaQuery.of(context).padding.bottom + BauhausDesign.space5),
+                      SizedBox(
+                        height:
+                            MediaQuery.of(context).padding.bottom +
+                            BauhausDesign.space5,
+                      ),
                     ],
                   ),
                 );
@@ -629,7 +755,10 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
           children: [
             TextSpan(
               text: '$label: ',
-              style: const TextStyle(fontWeight: FontWeight.bold, color: BauhausDesign.textMuted),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: BauhausDesign.textMuted,
+              ),
             ),
             TextSpan(
               text: value,

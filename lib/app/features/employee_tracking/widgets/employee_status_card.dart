@@ -38,8 +38,7 @@ class EmployeeStatusCard extends StatelessWidget {
                     children: [
                       Text(
                         employee.name,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyLarge
+                        style: BauhausDesign.getTextTheme(context).bodyLarge
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: BauhausDesign.textDark,
@@ -48,8 +47,7 @@ class EmployeeStatusCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         employee.email,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
                             ?.copyWith(
                               color: BauhausDesign.textMuted,
                               fontSize: 12,
@@ -78,17 +76,13 @@ class EmployeeStatusCard extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: BauhausDesign.neutral.withOpacity(0.1),
-        border: Border.all(
-          color: _getStatusColor(),
-          width: 2,
-        ),
+        border: Border.all(color: _getStatusColor(), width: 2),
       ),
-      child: (employee.photoData != null && employee.photoData!.isNotEmpty) ||
+      child:
+          (employee.photoData != null && employee.photoData!.isNotEmpty) ||
               (employee.profileImage != null &&
                   employee.profileImage!.isNotEmpty)
-          ? ClipOval(
-              child: _buildProfileImage(),
-            )
+          ? ClipOval(child: _buildProfileImage())
           : _buildDefaultAvatar(),
     );
   }
@@ -114,11 +108,7 @@ class EmployeeStatusCard extends StatelessWidget {
         shape: BoxShape.circle,
         color: BauhausDesign.neutral.withOpacity(0.1),
       ),
-      child: Icon(
-        Icons.person,
-        size: 30.0,
-        color: BauhausDesign.textMuted,
-      ),
+      child: Icon(Icons.person, size: 30.0, color: BauhausDesign.textMuted),
     );
   }
 
@@ -203,31 +193,31 @@ class EmployeeStatusCard extends StatelessWidget {
   }
 
   Widget _buildDetailRow(
-      BuildContext context, IconData icon, String label, String value) {
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: BauhausDesign.space1),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 16,
-            color: BauhausDesign.textMuted,
-          ),
+          Icon(icon, size: 16, color: BauhausDesign.textMuted),
           const SizedBox(width: BauhausDesign.space2),
           Text(
             '$label:',
             style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: BauhausDesign.textMuted,
-                ),
+              fontWeight: FontWeight.w600,
+              color: BauhausDesign.textMuted,
+            ),
           ),
           const SizedBox(width: BauhausDesign.space2),
           Expanded(
             child: Text(
               value,
-              style: BauhausDesign.getTextTheme(context)
-                  .bodySmall
-                  ?.copyWith(color: BauhausDesign.textDark),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodySmall?.copyWith(color: BauhausDesign.textDark),
               textAlign: TextAlign.end,
             ),
           ),

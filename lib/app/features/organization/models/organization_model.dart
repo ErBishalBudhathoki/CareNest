@@ -67,7 +67,7 @@ abstract class Organization with _$Organization {
     NdisRegistration? ndisRegistration,
     String? stripeAccountId,
     String? logoUrl,
-    @JsonKey(fromJson: _brandingFromJson, toJson: _brandingToJson) 
+    @JsonKey(fromJson: _brandingFromJson, toJson: _brandingToJson)
     OrganizationBrandingConfig? branding,
     @JsonKey(fromJson: _integrationsFromJson, toJson: _integrationsToJson)
     OrganizationIntegrations? integrations,
@@ -75,7 +75,7 @@ abstract class Organization with _$Organization {
 
   factory Organization.fromJson(Map<String, dynamic> json) =>
       _$OrganizationFromJson(json);
-  
+
   static Organization fromBackend(Map<String, dynamic> json) {
     return Organization.fromJson(json);
   }
@@ -102,6 +102,8 @@ OrganizationIntegrations? _integrationsFromJson(dynamic json) {
   return null;
 }
 
-Map<String, dynamic>? _integrationsToJson(OrganizationIntegrations? integrations) {
+Map<String, dynamic>? _integrationsToJson(
+  OrganizationIntegrations? integrations,
+) {
   return integrations?.toJson();
 }

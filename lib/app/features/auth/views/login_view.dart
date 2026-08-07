@@ -40,11 +40,10 @@ class _LoginViewState extends ConsumerState<LoginView>
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
     );
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(
-        CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
+        );
 
     _fadeController.forward();
     _slideController.forward();
@@ -65,12 +64,14 @@ class _LoginViewState extends ConsumerState<LoginView>
     final bool isSmallScreen = size.height < 700;
 
     // Enhanced status bar styling for professional SaaS look
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: BauhausDesign.backgroundLight,
-      systemNavigationBarIconBrightness: Brightness.dark,
-    ));
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: BauhausDesign.backgroundLight,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+    );
 
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
@@ -80,9 +81,7 @@ class _LoginViewState extends ConsumerState<LoginView>
         child: Stack(
           children: [
             // Bauhaus background
-            Container(
-              color: BauhausDesign.backgroundLight,
-            ),
+            Container(color: BauhausDesign.backgroundLight),
 
             // Bauhaus liquid animation at the top (Header Background)
             Positioned(
@@ -125,7 +124,10 @@ class _LoginViewState extends ConsumerState<LoginView>
                     child: SlideTransition(
                       position: _slideAnimation,
                       child: _buildEnhancedForm(
-                          loginViewModel, isSmallScreen, size),
+                        loginViewModel,
+                        isSmallScreen,
+                        size,
+                      ),
                     ),
                   ),
                 ),
@@ -159,20 +161,20 @@ class _LoginViewState extends ConsumerState<LoginView>
               Text(
                 AppLocalizations.of(context)!.loginWelcome,
                 style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                      color: BauhausDesign.neutral,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1.2,
-                    ),
+                  color: BauhausDesign.neutral,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1.2,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
                 AppLocalizations.of(context)!.loginTitle,
-                style:
-                    BauhausDesign.getTextTheme(context).displayMedium?.copyWith(
-                          color: BauhausDesign.textDark,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 2.0,
-                        ),
+                style: BauhausDesign.getTextTheme(context).displayMedium
+                    ?.copyWith(
+                      color: BauhausDesign.textDark,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2.0,
+                    ),
               ),
             ],
           ),
@@ -183,7 +185,10 @@ class _LoginViewState extends ConsumerState<LoginView>
 
   // Enhanced form with modern glassmorphism design
   Widget _buildEnhancedForm(
-      dynamic loginViewModel, bool isSmallScreen, Size size) {
+    dynamic loginViewModel,
+    bool isSmallScreen,
+    Size size,
+  ) {
     return Container(
       width: double.infinity,
       constraints: BoxConstraints(
@@ -201,15 +206,19 @@ class _LoginViewState extends ConsumerState<LoginView>
               controller: loginViewModel.model.emailController,
               label: AppLocalizations.of(context)!.emailLabel,
               hintText: AppLocalizations.of(context)!.emailHint,
-              prefixIcon:
-                  Icon(Iconsax.sms, color: BauhausDesign.textMuted, size: 20),
+              prefixIcon: Icon(
+                Iconsax.sms,
+                color: BauhausDesign.textMuted,
+                size: 20,
+              ),
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
                 if (value?.isEmpty ?? true) {
                   return AppLocalizations.of(context)!.emailRequired;
                 }
-                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                    .hasMatch(value!)) {
+                if (!RegExp(
+                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                ).hasMatch(value!)) {
                   return AppLocalizations.of(context)!.emailInvalid;
                 }
                 return null;
@@ -225,13 +234,16 @@ class _LoginViewState extends ConsumerState<LoginView>
             Consumer(
               builder: (context, ref, child) {
                 ref.watch(loginViewModelProvider);
-              final viewModel = ref.read(loginViewModelProvider.notifier);
+                final viewModel = ref.read(loginViewModelProvider.notifier);
                 return BauhausTextField(
                   controller: viewModel.model.passwordController,
                   label: AppLocalizations.of(context)!.passwordLabel,
                   hintText: AppLocalizations.of(context)!.passwordHint,
-                  prefixIcon: Icon(Iconsax.lock,
-                      color: BauhausDesign.textMuted, size: 20),
+                  prefixIcon: Icon(
+                    Iconsax.lock,
+                    color: BauhausDesign.textMuted,
+                    size: 20,
+                  ),
                   obscureText: !viewModel.model.isVisible,
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -265,15 +277,16 @@ class _LoginViewState extends ConsumerState<LoginView>
                   Navigator.pushNamed(context, '/forgotPassword');
                 },
                 style: TextButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: Text(
                   AppLocalizations.of(context)!.forgotPassword,
-                  style: BauhausDesign.getTextTheme(context)
-                      .bodySmall
+                  style: BauhausDesign.getTextTheme(context).bodySmall
                       ?.copyWith(
                         color: BauhausDesign.primary,
                         fontWeight: FontWeight.w500,
@@ -307,26 +320,21 @@ class _LoginViewState extends ConsumerState<LoginView>
             Row(
               children: [
                 Expanded(
-                  child: Container(
-                    height: 2,
-                    color: BauhausDesign.neutral,
-                  ),
+                  child: Container(height: 2, color: BauhausDesign.neutral),
                 ),
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 16),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: BauhausDesign.surfaceWhite,
-                    border: Border.all(
-                      color: BauhausDesign.neutral,
-                      width: 2,
-                    ),
+                    border: Border.all(color: BauhausDesign.neutral, width: 2),
                   ),
                   child: Text(
                     AppLocalizations.of(context)!.or,
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
+                    style: BauhausDesign.getTextTheme(context).bodyMedium
                         ?.copyWith(
                           color: BauhausDesign.neutral,
                           fontWeight: FontWeight.w700,
@@ -335,10 +343,7 @@ class _LoginViewState extends ConsumerState<LoginView>
                   ),
                 ),
                 Expanded(
-                  child: Container(
-                    height: 2,
-                    color: BauhausDesign.neutral,
-                  ),
+                  child: Container(height: 2, color: BauhausDesign.neutral),
                 ),
               ],
             ),
@@ -374,10 +379,7 @@ class _LoginViewState extends ConsumerState<LoginView>
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       decoration: BoxDecoration(
         color: BauhausDesign.surfaceWhite,
-        border: Border.all(
-          color: BauhausDesign.neutral,
-          width: 2,
-        ),
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
       ),
       child: Column(
         children: [
@@ -389,10 +391,7 @@ class _LoginViewState extends ConsumerState<LoginView>
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: BauhausDesign.success,
-                  border: Border.all(
-                    color: BauhausDesign.neutral,
-                    width: 2,
-                  ),
+                  border: Border.all(color: BauhausDesign.neutral, width: 2),
                   boxShadow: const [BauhausDesign.shadowHardSm],
                 ),
                 child: Icon(
@@ -405,12 +404,12 @@ class _LoginViewState extends ConsumerState<LoginView>
               Flexible(
                 child: Text(
                   AppLocalizations.of(context)!.securedWith256Bit,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w600,
-                            fontSize: BauhausDesign.fontXxs,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w600,
+                        fontSize: BauhausDesign.fontXxs,
+                      ),
                 ),
               ),
             ],
@@ -421,18 +420,15 @@ class _LoginViewState extends ConsumerState<LoginView>
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: BauhausDesign.backgroundLight,
-              border: Border.all(
-                color: BauhausDesign.neutral,
-                width: 2,
-              ),
+              border: Border.all(color: BauhausDesign.neutral, width: 2),
             ),
             child: Text(
               AppLocalizations.of(context)!.copyright,
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w600,
-                    fontSize: BauhausDesign.fontXxs,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w600,
+                fontSize: BauhausDesign.fontXxs,
+              ),
             ),
           ),
         ],

@@ -10,7 +10,8 @@ import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Dialog showing AI-powered employee recommendations
@@ -66,22 +67,25 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
         final recsData = response['recommendations'] as List<dynamic>? ?? [];
         setState(() {
           _recommendations = recsData
-              .map((e) =>
-                  RecommendationModel.fromJson(e as Map<String, dynamic>))
+              .map(
+                (e) => RecommendationModel.fromJson(e as Map<String, dynamic>),
+              )
               .toList();
           _isLoading = false;
         });
       } else {
         setState(() {
-          _error = response['error']?.toString() ??
+          _error =
+              response['error']?.toString() ??
               AppLocalizations.of(context)!.failedToLoadRecommendations;
           _isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
-        _error = AppLocalizations.of(context)!
-            .errorLoadingRecommendations(e.toString());
+        _error = AppLocalizations.of(
+          context,
+        )!.errorLoadingRecommendations(e.toString());
         _isLoading = false;
       });
     }
@@ -111,14 +115,15 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
                       child: Padding(
                         padding: EdgeInsets.all(BauhausDesign.space8),
                         child: CircularProgressIndicator(
-                            color: BauhausDesign.primary),
+                          color: BauhausDesign.primary,
+                        ),
                       ),
                     )
                   : _error != null
-                      ? _buildErrorState()
-                      : _recommendations.isEmpty
-                          ? _buildEmptyState()
-                          : _buildRecommendationsList(),
+                  ? _buildErrorState()
+                  : _recommendations.isEmpty
+                  ? _buildEmptyState()
+                  : _buildRecommendationsList(),
             ),
             _buildFooter(),
           ],
@@ -269,7 +274,10 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
   }
 
   Widget _buildRecommendationCard(
-      RecommendationModel rec, bool isSelected, int rank) {
+    RecommendationModel rec,
+    bool isSelected,
+    int rank,
+  ) {
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -301,8 +309,8 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
                   color: rank == 0
                       ? BauhausDesign.accent
                       : rank == 1
-                          ? BauhausDesign.neutral.withOpacity(0.3)
-                          : BauhausDesign.backgroundLight,
+                      ? BauhausDesign.neutral.withOpacity(0.3)
+                      : BauhausDesign.backgroundLight,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(
                     color: rank == 0
@@ -314,8 +322,7 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
                 child: Center(
                   child: Text(
                     '#${rank + 1}',
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelSmall
+                    style: BauhausDesign.getTextTheme(context).labelSmall
                         ?.copyWith(
                           color: rank == 0
                               ? BauhausDesign.textDark
@@ -336,16 +343,15 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
                   color: _getScoreColor(rec.matchScore).withOpacity(0.15),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(
-                      color: _getScoreColor(rec.matchScore), width: 1.5),
+                    color: _getScoreColor(rec.matchScore),
+                    width: 1.5,
+                  ),
                 ),
                 child: Center(
                   child: Text(
                     rec.initials,
-                    style: BauhausDesign.getTextTheme(context)
-                        .titleMedium
-                        ?.copyWith(
-                          color: _getScoreColor(rec.matchScore),
-                        ),
+                    style: BauhausDesign.getTextTheme(context).titleMedium
+                        ?.copyWith(color: _getScoreColor(rec.matchScore)),
                   ),
                 ),
               ),
@@ -375,8 +381,9 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
                           const SizedBox(width: 2),
                           Text(
                             rec.formattedDistance,
-                            style:
-                                BauhausDesign.getTextTheme(context).bodySmall,
+                            style: BauhausDesign.getTextTheme(
+                              context,
+                            ).bodySmall,
                           ),
                           const SizedBox(width: BauhausDesign.space2),
                         ],
@@ -384,8 +391,9 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
                           Flexible(
                             child: Text(
                               rec.skills.take(2).join(', '),
-                              style:
-                                  BauhausDesign.getTextTheme(context).bodySmall,
+                              style: BauhausDesign.getTextTheme(
+                                context,
+                              ).bodySmall,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -403,8 +411,11 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.auto_awesome,
-                                size: 10, color: BauhausDesign.accent),
+                            Icon(
+                              Icons.auto_awesome,
+                              size: 10,
+                              color: BauhausDesign.accent,
+                            ),
                             const SizedBox(width: 4),
                             Expanded(
                               child: Text(
@@ -457,10 +468,9 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
       children: [
         Text(
           '$score%',
-          style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                color: color,
-                fontWeight: FontWeight.bold,
-              ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).titleMedium?.copyWith(color: color, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 2),
         SizedBox(
@@ -491,9 +501,7 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: const BoxDecoration(
         color: BauhausDesign.backgroundLight,
-        border: Border(
-          top: BorderSide(color: BauhausDesign.neutral, width: 1),
-        ),
+        border: Border(top: BorderSide(color: BauhausDesign.neutral, width: 1)),
       ),
       child: Row(
         children: [

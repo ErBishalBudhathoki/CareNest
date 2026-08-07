@@ -5,7 +5,7 @@ class InvoiceManagementService {
   final ApiMethod _apiMethod;
 
   InvoiceManagementService({required ApiMethod apiMethod})
-      : _apiMethod = apiMethod;
+    : _apiMethod = apiMethod;
 
   /// Get list of invoices for an organization
   Future<Map<String, dynamic>> getInvoicesList({
@@ -48,10 +48,7 @@ class InvoiceManagementService {
       return result;
     } catch (e) {
       debugPrint('DEBUG: Exception in getInvoicesList: $e');
-      return {
-        'success': false,
-        'message': 'Error fetching invoices: $e',
-      };
+      return {'success': false, 'message': 'Error fetching invoices: $e'};
     }
   }
 
@@ -75,10 +72,7 @@ class InvoiceManagementService {
       );
       return result;
     } catch (e) {
-      return {
-        'success': false,
-        'message': 'Error updating payment status: $e',
-      };
+      return {'success': false, 'message': 'Error updating payment status: $e'};
     }
   }
 
@@ -88,8 +82,9 @@ class InvoiceManagementService {
     required String organizationId,
   }) async {
     try {
-      final result = await _apiMethod
-          .get('invoices/$invoiceId?organizationId=$organizationId');
+      final result = await _apiMethod.get(
+        'invoices/$invoiceId?organizationId=$organizationId',
+      );
       return result;
     } catch (e) {
       return {
@@ -108,17 +103,11 @@ class InvoiceManagementService {
     try {
       final result = await _apiMethod.post(
         'invoices/$invoiceId/share',
-        body: {
-          'organizationId': organizationId,
-          'shareMethod': shareMethod,
-        },
+        body: {'organizationId': organizationId, 'shareMethod': shareMethod},
       );
       return result;
     } catch (e) {
-      return {
-        'success': false,
-        'message': 'Error sharing invoice: $e',
-      };
+      return {'success': false, 'message': 'Error sharing invoice: $e'};
     }
   }
 
@@ -130,16 +119,11 @@ class InvoiceManagementService {
     try {
       final result = await _apiMethod.post(
         'invoices/$invoiceId/share/pdf',
-        body: {
-          'organizationId': organizationId,
-        },
+        body: {'organizationId': organizationId},
       );
       return result;
     } catch (e) {
-      return {
-        'success': false,
-        'message': 'Error sharing invoice as PDF: $e',
-      };
+      return {'success': false, 'message': 'Error sharing invoice as PDF: $e'};
     }
   }
 
@@ -177,10 +161,7 @@ class InvoiceManagementService {
     try {
       final result = await _apiMethod.post(
         'invoices/$invoiceId/share/whatsapp',
-        body: {
-          'organizationId': organizationId,
-          'phoneNumber': phoneNumber,
-        },
+        body: {'organizationId': organizationId, 'phoneNumber': phoneNumber},
       );
       return result;
     } catch (e) {
@@ -197,14 +178,12 @@ class InvoiceManagementService {
     required String organizationId,
   }) async {
     try {
-      final result = await _apiMethod
-          .delete('invoices/$invoiceId?organizationId=$organizationId');
+      final result = await _apiMethod.delete(
+        'invoices/$invoiceId?organizationId=$organizationId',
+      );
       return result;
     } catch (e) {
-      return {
-        'success': false,
-        'message': 'Error deleting invoice: $e',
-      };
+      return {'success': false, 'message': 'Error deleting invoice: $e'};
     }
   }
 
@@ -216,10 +195,7 @@ class InvoiceManagementService {
       final result = await _apiMethod.get('invoices/stats/$organizationId');
       return result;
     } catch (e) {
-      return {
-        'success': false,
-        'message': 'Error fetching invoice stats: $e',
-      };
+      return {'success': false, 'message': 'Error fetching invoice stats: $e'};
     }
   }
 }

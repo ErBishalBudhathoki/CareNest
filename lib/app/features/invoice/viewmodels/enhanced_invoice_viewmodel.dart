@@ -13,11 +13,10 @@ class EnhancedInvoiceViewModel extends Notifier<EnhancedInvoiceState> {
   late final Ref ref;
   late final EnhancedInvoiceService _invoiceService;
 
-  
   @override
   EnhancedInvoiceState build() {
     _invoiceService = ref.watch(enhancedInvoiceServiceProvider);
-    
+
     return EnhancedInvoiceState();
   }
 
@@ -211,7 +210,10 @@ class EnhancedInvoiceViewModel extends Notifier<EnhancedInvoiceState> {
   /// Send invoice emails with enhanced error handling
   /// Returns a boolean indicating success or failure
   Future<bool> sendInvoiceEmails(
-      String pdfPath, String email, String genKey) async {
+    String pdfPath,
+    String email,
+    String genKey,
+  ) async {
     try {
       // Update local state
       state = state.copyWith(isLoading: true, errorMessage: '');
@@ -317,4 +319,7 @@ class EnhancedInvoiceState {
 }
 
 /// Provider for EnhancedInvoiceViewModel
-final enhancedInvoiceViewModelProvider = NotifierProvider<EnhancedInvoiceViewModel, EnhancedInvoiceState>(EnhancedInvoiceViewModel.new);
+final enhancedInvoiceViewModelProvider =
+    NotifierProvider<EnhancedInvoiceViewModel, EnhancedInvoiceState>(
+      EnhancedInvoiceViewModel.new,
+    );

@@ -200,11 +200,7 @@ abstract class MessageTemplate with _$MessageTemplate {
       _$MessageTemplateFromJson(json);
 }
 
-enum MessageChannel {
-  push,
-  sms,
-  email,
-}
+enum MessageChannel { push, sms, email }
 
 @freezed
 abstract class BulkMessage with _$BulkMessage {

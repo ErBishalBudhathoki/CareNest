@@ -55,21 +55,17 @@ class _AutomaticInvoiceGenerationViewState
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     _animationController.forward();
   }
@@ -102,10 +98,7 @@ class _AutomaticInvoiceGenerationViewState
       appBar: _buildAppBar(),
       body: FadeTransition(
         opacity: _fadeAnimation,
-        child: SlideTransition(
-          position: _slideAnimation,
-          child: _buildBody(),
-        ),
+        child: SlideTransition(position: _slideAnimation, child: _buildBody()),
       ),
     );
   }
@@ -118,9 +111,9 @@ class _AutomaticInvoiceGenerationViewState
       title: Text(
         'Automatic Invoice Generation',
         style: BauhausDesign.getTextTheme(context).bodyMedium!.copyWith(
-              color: BauhausDesign.surfaceLight,
-              fontWeight: FontWeight.w600,
-            ),
+          color: BauhausDesign.surfaceLight,
+          fontWeight: FontWeight.w600,
+        ),
       ),
       centerTitle: true,
     );
@@ -128,9 +121,7 @@ class _AutomaticInvoiceGenerationViewState
 
   Widget _buildBody() {
     if (_organizationId == null) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     return Consumer(
@@ -190,20 +181,16 @@ class _AutomaticInvoiceGenerationViewState
                   children: [
                     Text(
                       'One-Click Invoice Generation',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall!
-                          .copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodySmall!.copyWith(fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: BauhausDesign.space1),
                     Text(
                       widget.organizationName ?? 'Organization',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium!
-                          .copyWith(
-                            color: BauhausDesign.neutral,
-                          ),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodyMedium!.copyWith(color: BauhausDesign.neutral),
                     ),
                   ],
                 ),
@@ -231,11 +218,9 @@ class _AutomaticInvoiceGenerationViewState
                 Expanded(
                   child: Text(
                     'This will automatically generate invoices for all employees and their assigned clients in your organization. No manual selection required.',
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium!
-                        .copyWith(
-                          color: BauhausDesign.secondary,
-                        ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodyMedium!.copyWith(color: BauhausDesign.secondary),
                   ),
                 ),
               ],
@@ -259,9 +244,9 @@ class _AutomaticInvoiceGenerationViewState
         children: [
           Text(
             'Invoice Configuration',
-            style: BauhausDesign.getTextTheme(context).bodySmall!.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodySmall!.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: BauhausDesign.space5),
           _buildConfigOption(
@@ -355,18 +340,16 @@ class _AutomaticInvoiceGenerationViewState
               children: [
                 Text(
                   title,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyLarge!.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodyLarge!.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: BauhausDesign.space1),
                 Text(
                   subtitle,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodySmall!.copyWith(
-                            color: BauhausDesign.neutral,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodySmall!.copyWith(color: BauhausDesign.neutral),
                 ),
               ],
             ),
@@ -397,16 +380,16 @@ class _AutomaticInvoiceGenerationViewState
             children: [
               Text(
                 'Tax Rate',
-                style: BauhausDesign.getTextTheme(context).bodyLarge!.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyLarge!.copyWith(fontWeight: FontWeight.w600),
               ),
               Text(
                 '${(_taxRate * 100).toStringAsFixed(1)}%',
                 style: BauhausDesign.getTextTheme(context).bodyLarge!.copyWith(
-                      color: BauhausDesign.secondary,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  color: BauhausDesign.secondary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),
@@ -414,8 +397,9 @@ class _AutomaticInvoiceGenerationViewState
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: BauhausDesign.secondary,
-              inactiveTrackColor:
-                  BauhausDesign.secondary.withValues(alpha: 0.3),
+              inactiveTrackColor: BauhausDesign.secondary.withValues(
+                alpha: 0.3,
+              ),
               thumbColor: BauhausDesign.secondary,
               overlayColor: BauhausDesign.secondary.withValues(alpha: 0.2),
             ),
@@ -460,10 +444,9 @@ class _AutomaticInvoiceGenerationViewState
                 Expanded(
                   child: Text(
                     'Generating Invoices...',
-                    style:
-                        BauhausDesign.getTextTheme(context).bodySmall!.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodySmall!.copyWith(fontWeight: FontWeight.w600),
                   ),
                 ),
               ],
@@ -479,17 +462,17 @@ class _AutomaticInvoiceGenerationViewState
             const SizedBox(height: BauhausDesign.space3),
             Text(
               state.currentStep,
-              style: BauhausDesign.getTextTheme(context).bodyMedium!.copyWith(
-                    color: BauhausDesign.neutral,
-                  ),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodyMedium!.copyWith(color: BauhausDesign.neutral),
             ),
             const SizedBox(height: BauhausDesign.space2),
             Text(
               '${(state.progress * 100).toStringAsFixed(0)}% Complete',
               style: BauhausDesign.getTextTheme(context).bodySmall!.copyWith(
-                    color: BauhausDesign.secondary,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: BauhausDesign.secondary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
@@ -532,9 +515,9 @@ class _AutomaticInvoiceGenerationViewState
         label: Text(
           'Generate All Invoices',
           style: BauhausDesign.getTextTheme(context).bodySmall!.copyWith(
-                color: BauhausDesign.surfaceLight,
-                fontWeight: FontWeight.w600,
-              ),
+            color: BauhausDesign.surfaceLight,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );
@@ -572,8 +555,7 @@ class _AutomaticInvoiceGenerationViewState
                   children: [
                     Text(
                       'Generation Complete!',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall!
+                      style: BauhausDesign.getTextTheme(context).bodySmall!
                           .copyWith(
                             fontWeight: FontWeight.w700,
                             color: BauhausDesign.success,
@@ -582,11 +564,9 @@ class _AutomaticInvoiceGenerationViewState
                     const SizedBox(height: BauhausDesign.space1),
                     Text(
                       'All invoices have been generated successfully',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium!
-                          .copyWith(
-                            color: BauhausDesign.neutral,
-                          ),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodyMedium!.copyWith(color: BauhausDesign.neutral),
                     ),
                   ],
                 ),
@@ -595,16 +575,28 @@ class _AutomaticInvoiceGenerationViewState
           ),
           const SizedBox(height: BauhausDesign.space5),
           _buildStatCard(
-              'Total Employees', state.totalEmployees.toString(), Icons.people),
+            'Total Employees',
+            state.totalEmployees.toString(),
+            Icons.people,
+          ),
           const SizedBox(height: BauhausDesign.space3),
           _buildStatCard(
-              'Total Clients', state.totalClients.toString(), Icons.business),
+            'Total Clients',
+            state.totalClients.toString(),
+            Icons.business,
+          ),
           const SizedBox(height: BauhausDesign.space3),
           _buildStatCard(
-              'Valid Pairs', state.validPairs.toString(), Icons.link),
+            'Valid Pairs',
+            state.validPairs.toString(),
+            Icons.link,
+          ),
           const SizedBox(height: BauhausDesign.space3),
-          _buildStatCard('Generated Invoices',
-              state.generatedPdfPaths.length.toString(), Icons.description),
+          _buildStatCard(
+            'Generated Invoices',
+            state.generatedPdfPaths.length.toString(),
+            Icons.description,
+          ),
           const SizedBox(height: BauhausDesign.space5),
           if (state.generatedPdfPaths.isNotEmpty) ...[
             _buildGeneratedPdfsSection(state.generatedPdfPaths),
@@ -644,7 +636,9 @@ class _AutomaticInvoiceGenerationViewState
                 onTap: _resetGeneration,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                      vertical: 18, horizontal: BauhausDesign.space6),
+                    vertical: 18,
+                    horizontal: BauhausDesign.space6,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -652,8 +646,9 @@ class _AutomaticInvoiceGenerationViewState
                         padding: const EdgeInsets.all(BauhausDesign.space2),
                         decoration: BoxDecoration(
                           color: BauhausDesign.neutral.withValues(alpha: 0.2),
-                          borderRadius:
-                              BorderRadius.circular(BauhausDesign.radiusMd),
+                          borderRadius: BorderRadius.circular(
+                            BauhausDesign.radiusMd,
+                          ),
                         ),
                         child: Icon(
                           Icons.refresh_rounded,
@@ -664,8 +659,7 @@ class _AutomaticInvoiceGenerationViewState
                       const SizedBox(width: BauhausDesign.space3),
                       Text(
                         'Generate Again',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyLarge!
+                        style: BauhausDesign.getTextTheme(context).bodyLarge!
                             .copyWith(
                               color: BauhausDesign.neutral,
                               fontWeight: FontWeight.w600,
@@ -693,26 +687,22 @@ class _AutomaticInvoiceGenerationViewState
       ),
       child: Row(
         children: [
-          Icon(
-            icon,
-            color: BauhausDesign.secondary,
-            size: 24,
-          ),
+          Icon(icon, color: BauhausDesign.secondary, size: 24),
           const SizedBox(width: BauhausDesign.space4),
           Expanded(
             child: Text(
               label,
-              style: BauhausDesign.getTextTheme(context).bodyMedium!.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodyMedium!.copyWith(fontWeight: FontWeight.w500),
             ),
           ),
           Text(
             value,
             style: BauhausDesign.getTextTheme(context).bodySmall!.copyWith(
-                  color: BauhausDesign.secondary,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: BauhausDesign.secondary,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
       ),
@@ -741,11 +731,11 @@ class _AutomaticInvoiceGenerationViewState
               Expanded(
                 child: Text(
                   'Generation Failed',
-                  style:
-                      BauhausDesign.getTextTheme(context).bodySmall!.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: BauhausDesign.error,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).bodySmall!
+                      .copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: BauhausDesign.error,
+                      ),
                 ),
               ),
             ],
@@ -753,9 +743,9 @@ class _AutomaticInvoiceGenerationViewState
           const SizedBox(height: BauhausDesign.space4),
           Text(
             state.errorMessage,
-            style: BauhausDesign.getTextTheme(context).bodyMedium!.copyWith(
-                  color: BauhausDesign.error,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium!.copyWith(color: BauhausDesign.error),
           ),
           const SizedBox(height: 20),
           SizedBox(
@@ -765,8 +755,9 @@ class _AutomaticInvoiceGenerationViewState
               style: ElevatedButton.styleFrom(
                 backgroundColor: BauhausDesign.error,
                 foregroundColor: BauhausDesign.neutral,
-                padding:
-                    const EdgeInsets.symmetric(vertical: BauhausDesign.space4),
+                padding: const EdgeInsets.symmetric(
+                  vertical: BauhausDesign.space4,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
                 ),
@@ -847,8 +838,9 @@ class _AutomaticInvoiceGenerationViewState
         children: [
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: BauhausDesign.space4,
-                vertical: BauhausDesign.space3),
+              horizontal: BauhausDesign.space4,
+              vertical: BauhausDesign.space3,
+            ),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -886,8 +878,7 @@ class _AutomaticInvoiceGenerationViewState
                     children: [
                       Text(
                         'Generated Invoices',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall!
+                        style: BauhausDesign.getTextTheme(context).bodySmall!
                             .copyWith(
                               fontWeight: FontWeight.w700,
                               color: BauhausDesign.secondary,
@@ -895,8 +886,7 @@ class _AutomaticInvoiceGenerationViewState
                       ),
                       Text(
                         '${generatedPdfs.length} invoice${generatedPdfs.length != 1 ? 's' : ''} ready',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall!
+                        style: BauhausDesign.getTextTheme(context).bodySmall!
                             .copyWith(
                               color: BauhausDesign.neutral,
                               fontWeight: FontWeight.w500,
@@ -950,8 +940,9 @@ class _AutomaticInvoiceGenerationViewState
                                 BauhausDesign.success.withValues(alpha: 0.08),
                               ],
                             ),
-                            borderRadius:
-                                BorderRadius.circular(BauhausDesign.radiusLg),
+                            borderRadius: BorderRadius.circular(
+                              BauhausDesign.radiusLg,
+                            ),
                           ),
                           child: Icon(
                             Icons.picture_as_pdf_rounded,
@@ -1040,8 +1031,10 @@ class _AutomaticInvoiceGenerationViewState
                                     value: 'view',
                                     child: Row(
                                       children: [
-                                        Icon(Icons.visibility_rounded,
-                                            size: 18),
+                                        Icon(
+                                          Icons.visibility_rounded,
+                                          size: 18,
+                                        ),
                                         SizedBox(width: BauhausDesign.space2),
                                         Text('View PDF'),
                                       ],
@@ -1060,10 +1053,12 @@ class _AutomaticInvoiceGenerationViewState
                                 ],
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: BauhausDesign.secondary
-                                        .withValues(alpha: 0.1),
+                                    color: BauhausDesign.secondary.withValues(
+                                      alpha: 0.1,
+                                    ),
                                     borderRadius: BorderRadius.circular(
-                                        BauhausDesign.radiusMd),
+                                      BauhausDesign.radiusMd,
+                                    ),
                                   ),
                                   child: IconButton(
                                     onPressed: null,
@@ -1074,7 +1069,8 @@ class _AutomaticInvoiceGenerationViewState
                                     ),
                                     tooltip: 'Actions',
                                     padding: const EdgeInsets.all(
-                                        BauhausDesign.space2),
+                                      BauhausDesign.space2,
+                                    ),
                                   ),
                                 ),
                               );
@@ -1097,9 +1093,7 @@ class _AutomaticInvoiceGenerationViewState
     if (File(pdfPath).existsSync()) {
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => PdfViewPage(pdfPath: pdfPath),
-        ),
+        MaterialPageRoute(builder: (context) => PdfViewPage(pdfPath: pdfPath)),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1132,11 +1126,7 @@ class _AutomaticInvoiceGenerationViewState
       ),
       child: IconButton(
         onPressed: onPressed,
-        icon: Icon(
-          icon,
-          color: BauhausDesign.secondary,
-          size: 20,
-        ),
+        icon: Icon(icon, color: BauhausDesign.secondary, size: 20),
         tooltip: tooltip,
         padding: const EdgeInsets.all(BauhausDesign.space2),
       ),

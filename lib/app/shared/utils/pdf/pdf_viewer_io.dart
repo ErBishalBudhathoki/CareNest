@@ -40,7 +40,8 @@ class _PdfViewPageState extends State<PdfViewPage> {
     super.initState();
     debugPrint('📄 PdfViewPage: Initializing with path: ${widget.pdfPath}');
     debugPrint(
-        '📄 PdfViewPage: Receipt URLs count: ${widget.receiptUrls.length}');
+      '📄 PdfViewPage: Receipt URLs count: ${widget.receiptUrls.length}',
+    );
     debugPrint('📄 PdfViewPage: Receipt URLs: ${widget.receiptUrls}');
 
     _pdfController = PdfControllerPinch(
@@ -65,7 +66,8 @@ class _PdfViewPageState extends State<PdfViewPage> {
       final isPrivateR2ApiHost = AppConfig.isPrivateR2StorageHost(uri.host);
       final isFilesDownloadProxy = uri.path.contains('/files/download');
       debugPrint(
-          '🔗 PdfViewPage: URL classification host=${uri.host}, isPrivateR2ApiHost=$isPrivateR2ApiHost, isFilesDownloadProxy=$isFilesDownloadProxy');
+        '🔗 PdfViewPage: URL classification host=${uri.host}, isPrivateR2ApiHost=$isPrivateR2ApiHost, isFilesDownloadProxy=$isFilesDownloadProxy',
+      );
 
       if (isPrivateR2ApiHost || isFilesDownloadProxy) {
         final proxyUrl = isFilesDownloadProxy
@@ -81,7 +83,8 @@ class _PdfViewPageState extends State<PdfViewPage> {
 
       if (!canLaunch) {
         debugPrint(
-            '⚠️ PdfViewPage: canLaunchUrl is false, but attempting launch anyway...');
+          '⚠️ PdfViewPage: canLaunchUrl is false, but attempting launch anyway...',
+        );
       }
 
       // Try external application mode first (opens in browser/external app)
@@ -97,7 +100,8 @@ class _PdfViewPageState extends State<PdfViewPage> {
 
       // Fallback to platform default (might use Custom Tabs / In-App Browser)
       debugPrint(
-          '⚠️ PdfViewPage: Falling back to LaunchMode.platformDefault...');
+        '⚠️ PdfViewPage: Falling back to LaunchMode.platformDefault...',
+      );
       if (await launchUrl(uri, mode: LaunchMode.platformDefault)) {
         debugPrint('✅ PdfViewPage: launchUrl(platformDefault) success');
         return;
@@ -109,7 +113,8 @@ class _PdfViewPageState extends State<PdfViewPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text(
-                'Could not open receipt. Please check your internet connection or browser settings.'),
+              'Could not open receipt. Please check your internet connection or browser settings.',
+            ),
             backgroundColor: BauhausDesign.error,
           ),
         );
@@ -153,7 +158,8 @@ class _PdfViewPageState extends State<PdfViewPage> {
     final response = await http.get(uri, headers: headers);
     if (response.statusCode != 200) {
       throw Exception(
-          'Failed to download receipt (HTTP ${response.statusCode})');
+        'Failed to download receipt (HTTP ${response.statusCode})',
+      );
     }
 
     final fileName = _extractFileName(response, uri);
@@ -170,8 +176,9 @@ class _PdfViewPageState extends State<PdfViewPage> {
 
   String _extractFileName(http.Response response, Uri fallbackUri) {
     final disposition = response.headers['content-disposition'] ?? '';
-    final quotedMatch =
-        RegExp(r'filename=\"([^\"]+)\"').firstMatch(disposition);
+    final quotedMatch = RegExp(
+      r'filename=\"([^\"]+)\"',
+    ).firstMatch(disposition);
     if (quotedMatch != null && quotedMatch.groupCount >= 1) {
       final value = quotedMatch.group(1);
       if (value != null && value.trim().isNotEmpty) {
@@ -224,9 +231,14 @@ class _PdfViewPageState extends State<PdfViewPage> {
                     label: 'Open Receipt ${index + 1}',
                     child: ListTile(
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      leading: const Icon(Icons.description_outlined,
-                          size: 24, color: BauhausDesign.primary),
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      leading: const Icon(
+                        Icons.description_outlined,
+                        size: 24,
+                        color: BauhausDesign.primary,
+                      ),
                       title: Text(
                         'Receipt ${index + 1}',
                         style: BauhausDesign.getTextTheme(context).bodyLarge,
@@ -260,8 +272,9 @@ class _PdfViewPageState extends State<PdfViewPage> {
       await Share.shareXFiles(
         [XFile(widget.pdfPath)],
         subject: 'Invoice PDF',
-        sharePositionOrigin:
-            box != null ? box.localToGlobal(Offset.zero) & box.size : null,
+        sharePositionOrigin: box != null
+            ? box.localToGlobal(Offset.zero) & box.size
+            : null,
       );
     } catch (e) {
       if (mounted) {
@@ -289,15 +302,17 @@ class _PdfViewPageState extends State<PdfViewPage> {
         await Share.shareXFiles(
           [XFile(widget.pdfPath)],
           subject: 'Invoice PDF',
-          sharePositionOrigin:
-              box != null ? box.localToGlobal(Offset.zero) & box.size : null,
+          sharePositionOrigin: box != null
+              ? box.localToGlobal(Offset.zero) & box.size
+              : null,
         );
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content:
-                  Text('PDF ready. Choose Save to Files to keep a local copy.'),
+              content: Text(
+                'PDF ready. Choose Save to Files to keep a local copy.',
+              ),
               backgroundColor: BauhausDesign.success,
             ),
           );
@@ -370,18 +385,15 @@ class _PdfViewPageState extends State<PdfViewPage> {
         foregroundColor: BauhausDesign.textDark,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: BauhausDesign.textDark,
-          ),
+          icon: const Icon(Icons.arrow_back_ios, color: BauhausDesign.textDark),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Invoice PDF',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                color: BauhausDesign.textDark,
-                fontWeight: FontWeight.w600,
-              ),
+            color: BauhausDesign.textDark,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         actions: <Widget>[
           Padding(
@@ -510,12 +522,12 @@ class _PdfViewPageState extends State<PdfViewPage> {
               child: Text(
                 '$page/${pagesCount ?? 0}',
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                      color: BauhausDesign.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  color: BauhausDesign.primary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
-          )
+          ),
         ],
       ),
       body: PdfViewPinch(

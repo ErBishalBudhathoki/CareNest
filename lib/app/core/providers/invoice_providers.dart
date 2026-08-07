@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
- import 'package:carenest/app/features/invoice/services/enhanced_invoice_service.dart';
+import 'package:carenest/app/features/invoice/services/enhanced_invoice_service.dart';
 import 'package:carenest/app/features/invoice/utils/invoice_data_processor.dart';
 import 'package:carenest/app/features/invoice/utils/invoice_helpers.dart';
 import 'package:carenest/app/features/invoice/repositories/invoice_repository.dart';
@@ -41,8 +41,11 @@ class InvoiceGenerationStateNotifier extends Notifier<InvoiceGenerationState> {
   @override
   set state(InvoiceGenerationState newState) => super.state = newState;
 }
+
 final invoiceGenerationStateProvider =
-    NotifierProvider<InvoiceGenerationStateNotifier, InvoiceGenerationState>(InvoiceGenerationStateNotifier.new);
+    NotifierProvider<InvoiceGenerationStateNotifier, InvoiceGenerationState>(
+      InvoiceGenerationStateNotifier.new,
+    );
 
 /// Enum for tracking invoice generation state
 enum InvoiceGenerationState {
@@ -62,7 +65,11 @@ class InvoiceGenerationErrorNotifier extends Notifier<String> {
   @override
   set state(String newState) => super.state = newState;
 }
-final invoiceGenerationErrorProvider = NotifierProvider<InvoiceGenerationErrorNotifier, String>(InvoiceGenerationErrorNotifier.new);
+
+final invoiceGenerationErrorProvider =
+    NotifierProvider<InvoiceGenerationErrorNotifier, String>(
+      InvoiceGenerationErrorNotifier.new,
+    );
 
 /// Provider for generated invoice paths
 class GeneratedInvoicePathsNotifier extends Notifier<List<String>> {
@@ -72,4 +79,8 @@ class GeneratedInvoicePathsNotifier extends Notifier<List<String>> {
   @override
   set state(List<String> newState) => super.state = newState;
 }
-final generatedInvoicePathsProvider = NotifierProvider<GeneratedInvoicePathsNotifier, List<String>>(GeneratedInvoicePathsNotifier.new);
+
+final generatedInvoicePathsProvider =
+    NotifierProvider<GeneratedInvoicePathsNotifier, List<String>>(
+      GeneratedInvoicePathsNotifier.new,
+    );

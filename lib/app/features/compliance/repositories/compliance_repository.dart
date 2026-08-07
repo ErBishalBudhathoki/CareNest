@@ -20,7 +20,8 @@ class ComplianceRepository {
       return response['data'];
     } else {
       throw Exception(
-          response['message'] ?? 'Failed to fetch compliance summary');
+        response['message'] ?? 'Failed to fetch compliance summary',
+      );
     }
   }
 }

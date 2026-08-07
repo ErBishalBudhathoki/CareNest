@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 
-
 import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pw;
@@ -13,7 +12,7 @@ class FileConversionService {
   Future<File?> convertFileToPdf(File file) async {
     try {
       final extension = path.extension(file.path).toLowerCase();
-      
+
       switch (extension) {
         case '.pdf':
           // Already a PDF, return as is
@@ -48,30 +47,26 @@ class FileConversionService {
   Future<File> _convertImageToPdf(File imageFile) async {
     final pdf = pw.Document();
     final imageBytes = await imageFile.readAsBytes();
-    
+
     // Create image widget
     final image = pw.MemoryImage(imageBytes);
-    
+
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
         build: (pw.Context context) {
-          return pw.Center(
-            child: pw.Image(
-              image,
-              fit: pw.BoxFit.contain,
-            ),
-          );
+          return pw.Center(child: pw.Image(image, fit: pw.BoxFit.contain));
         },
       ),
     );
 
     // Save the PDF
     final output = await getApplicationDocumentsDirectory();
-    final fileName = '${path.basenameWithoutExtension(imageFile.path)}_converted.pdf';
+    final fileName =
+        '${path.basenameWithoutExtension(imageFile.path)}_converted.pdf';
     final pdfFile = File('${output.path}/$fileName');
     await pdfFile.writeAsBytes(await pdf.save());
-    
+
     return pdfFile;
   }
 
@@ -79,7 +74,7 @@ class FileConversionService {
   Future<File> _convertTextToPdf(File textFile) async {
     final pdf = pw.Document();
     final content = await textFile.readAsString();
-    
+
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
@@ -91,20 +86,18 @@ class FileConversionService {
               style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
             ),
           ),
-          pw.Paragraph(
-            text: content,
-            style: const pw.TextStyle(fontSize: 12),
-          ),
+          pw.Paragraph(text: content, style: const pw.TextStyle(fontSize: 12)),
         ],
       ),
     );
 
     // Save the PDF
     final output = await getApplicationDocumentsDirectory();
-    final fileName = '${path.basenameWithoutExtension(textFile.path)}_converted.pdf';
+    final fileName =
+        '${path.basenameWithoutExtension(textFile.path)}_converted.pdf';
     final pdfFile = File('${output.path}/$fileName');
     await pdfFile.writeAsBytes(await pdf.save());
-    
+
     return pdfFile;
   }
 
@@ -114,7 +107,7 @@ class FileConversionService {
     final fileName = path.basename(file.path);
     final fileSize = await file.length();
     final fileSizeKB = (fileSize / 1024).toStringAsFixed(2);
-    
+
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
@@ -187,10 +180,11 @@ class FileConversionService {
 
     // Save the PDF
     final output = await getApplicationDocumentsDirectory();
-    final pdfFileName = '${path.basenameWithoutExtension(file.path)}_placeholder.pdf';
+    final pdfFileName =
+        '${path.basenameWithoutExtension(file.path)}_placeholder.pdf';
     final pdfFile = File('${output.path}/$pdfFileName');
     await pdfFile.writeAsBytes(await pdf.save());
-    
+
     return pdfFile;
   }
 
@@ -213,7 +207,7 @@ class FileConversionService {
     for (final pdfFile in pdfFiles) {
       try {
         final pdfBytes = await pdfFile.readAsBytes();
-        
+
         // For now, we'll add each PDF as an image page
         // In a production app, you'd use a proper PDF merging library
         mergedPdf.addPage(
@@ -269,15 +263,18 @@ class FileConversionService {
     final output = await getApplicationDocumentsDirectory();
     final mergedFile = File('${output.path}/$outputFileName');
     await mergedFile.writeAsBytes(await mergedPdf.save());
-    
+
     return mergedFile;
   }
 
   /// Convert multiple files to PDFs and merge them with the main invoice PDF
-  Future<File> convertAndMergeWithInvoice(File invoicePdf, List<File> attachments) async {
+  Future<File> convertAndMergeWithInvoice(
+    File invoicePdf,
+    List<File> attachments,
+  ) async {
     try {
       final convertedPdfs = <File>[invoicePdf]; // Start with the main invoice
-      
+
       // Convert each attachment to PDF
       for (final attachment in attachments) {
         final convertedPdf = await convertFileToPdf(attachment);
@@ -285,14 +282,14 @@ class FileConversionService {
           convertedPdfs.add(convertedPdf);
         }
       }
-      
+
       // Generate a unique filename for the merged PDF
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final mergedFileName = 'Invoice_with_attachments_$timestamp.pdf';
-      
+
       // Merge all PDFs
       final mergedPdf = await mergePdfs(convertedPdfs, mergedFileName);
-      
+
       // Clean up temporary converted files (keep the original invoice)
       for (int i = 1; i < convertedPdfs.length; i++) {
         try {
@@ -301,7 +298,7 @@ class FileConversionService {
           debugPrint('Error deleting temporary file: $e');
         }
       }
-      
+
       return mergedPdf;
     } catch (e) {
       debugPrint('Error in convertAndMergeWithInvoice: $e');

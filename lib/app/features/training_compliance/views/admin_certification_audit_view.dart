@@ -35,8 +35,10 @@ class _AdminCertificationAuditViewState
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.certificationAuditTitle,
-            style: BauhausDesign.getTextTheme(context).headlineLarge),
+        title: Text(
+          AppLocalizations.of(context)!.certificationAuditTitle,
+          style: BauhausDesign.getTextTheme(context).headlineLarge,
+        ),
         backgroundColor: BauhausDesign.surfaceLight,
         iconTheme: const IconThemeData(color: BauhausDesign.textDark),
         elevation: 0,
@@ -47,24 +49,25 @@ class _AdminCertificationAuditViewState
       ),
       body: state.isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: BauhausDesign.primary))
+              child: CircularProgressIndicator(color: BauhausDesign.primary),
+            )
           : state.certifications.isEmpty
-              ? Center(
-                  child: Text(
-                    AppLocalizations.of(context)!.noCertificationsFound,
-                    style: BauhausDesign.getTextTheme(context).bodyLarge,
-                  ),
-                )
-              : ListView.separated(
-                  padding: const EdgeInsets.all(BauhausDesign.space4),
-                  itemCount: state.certifications.length,
-                  separatorBuilder: (_, __) =>
-                      const SizedBox(height: BauhausDesign.space3),
-                  itemBuilder: (context, index) {
-                    final cert = state.certifications[index];
-                    return _buildAuditCard(context, cert);
-                  },
-                ),
+          ? Center(
+              child: Text(
+                AppLocalizations.of(context)!.noCertificationsFound,
+                style: BauhausDesign.getTextTheme(context).bodyLarge,
+              ),
+            )
+          : ListView.separated(
+              padding: const EdgeInsets.all(BauhausDesign.space4),
+              itemCount: state.certifications.length,
+              separatorBuilder: (_, __) =>
+                  const SizedBox(height: BauhausDesign.space3),
+              itemBuilder: (context, index) {
+                final cert = state.certifications[index];
+                return _buildAuditCard(context, cert);
+              },
+            ),
     );
   }
 
@@ -86,8 +89,9 @@ class _AdminCertificationAuditViewState
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: BauhausDesign.space3,
-                    vertical: BauhausDesign.space1),
+                  horizontal: BauhausDesign.space3,
+                  vertical: BauhausDesign.space1,
+                ),
                 decoration: BoxDecoration(
                   color: BauhausDesign.warning,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
@@ -95,33 +99,41 @@ class _AdminCertificationAuditViewState
                 ),
                 child: Text(
                   cert.status.toUpperCase(),
-                  style:
-                      BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                            color: Colors.white,
-                            fontSize: 10,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).labelLarge?.copyWith(color: Colors.white, fontSize: 10),
                 ),
               ),
             ],
           ),
           const SizedBox(height: BauhausDesign.space2),
-          Text('User ID: ${cert.userId}',
-              style: BauhausDesign.getTextTheme(context).bodyMedium),
-          Text(AppLocalizations.of(context)!.issuerLabel(cert.issuer),
-              style: BauhausDesign.getTextTheme(context).bodyMedium),
           Text(
-              AppLocalizations.of(context)!.expiresLabel(
-                  DateFormat('dd MMM yyyy').format(cert.expiryDate)),
-              style: BauhausDesign.getTextTheme(context).bodyMedium),
+            'User ID: ${cert.userId}',
+            style: BauhausDesign.getTextTheme(context).bodyMedium,
+          ),
+          Text(
+            AppLocalizations.of(context)!.issuerLabel(cert.issuer),
+            style: BauhausDesign.getTextTheme(context).bodyMedium,
+          ),
+          Text(
+            AppLocalizations.of(
+              context,
+            )!.expiresLabel(DateFormat('dd MMM yyyy').format(cert.expiryDate)),
+            style: BauhausDesign.getTextTheme(context).bodyMedium,
+          ),
           if (cert.certificationNumber != null &&
               cert.certificationNumber!.isNotEmpty)
-            Text('Certification No: ${cert.certificationNumber}',
-                style: BauhausDesign.getTextTheme(context).bodyMedium),
+            Text(
+              'Certification No: ${cert.certificationNumber}',
+              style: BauhausDesign.getTextTheme(context).bodyMedium,
+            ),
           if (cert.notes != null)
-            Text(AppLocalizations.of(context)!.notesDetailLabel(cert.notes!),
-                style: BauhausDesign.getTextTheme(context)
-                    .bodyMedium
-                    ?.copyWith(fontStyle: FontStyle.italic)),
+            Text(
+              AppLocalizations.of(context)!.notesDetailLabel(cert.notes!),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodyMedium?.copyWith(fontStyle: FontStyle.italic),
+            ),
           const SizedBox(height: BauhausDesign.space4),
           Row(
             children: [
@@ -135,8 +147,11 @@ class _AdminCertificationAuditViewState
                     if (await canLaunchUrl(uri)) {
                       await launchUrl(uri);
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text('Could not launch file URL')));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Could not launch file URL'),
+                        ),
+                      );
                     }
                   },
                 ),
@@ -169,94 +184,110 @@ class _AdminCertificationAuditViewState
   }
 
   void _showAuditDialog(
-      BuildContext context, Certification cert, String status) {
+    BuildContext context,
+    Certification cert,
+    String status,
+  ) {
     final actionLabel = status == 'active' ? 'Approve' : 'Reject';
     final notesController = TextEditingController();
-    final numberController =
-        TextEditingController(text: cert.certificationNumber ?? '');
+    final numberController = TextEditingController(
+      text: cert.certificationNumber ?? '',
+    );
     DateTime? expiryDate = cert.expiryDate;
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-        backgroundColor: BauhausDesign.surfaceLight,
-        shape: RoundedRectangleBorder(
+          backgroundColor: BauhausDesign.surfaceLight,
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            side: const BorderSide(color: BauhausDesign.neutral, width: 2)),
-        title: Text('$actionLabel Certification',
-            style: BauhausDesign.getTextTheme(context).headlineLarge),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Are you sure you want to mark this as $actionLabel?',
-                style: BauhausDesign.getTextTheme(context).bodyMedium),
-            const SizedBox(height: BauhausDesign.space3),
-            TextFormField(
-              controller: numberController,
-              decoration: BauhausDesign.inputDecoration('').copyWith(
-                  labelText: 'Certification / NDIS Check Number (Optional)'),
-            ),
-            const SizedBox(height: BauhausDesign.space3),
-            GestureDetector(
-              onTap: () async {
-                final date = await showDatePicker(
-                  context: context,
-                  initialDate:
-                      expiryDate ?? DateTime.now().add(const Duration(days: 365)),
-                  firstDate: DateTime.now().subtract(const Duration(days: 3650)),
-                  lastDate: DateTime.now().add(const Duration(days: 3650)),
-                );
-                if (date != null) {
-                  setState(() => expiryDate = date);
-                }
-              },
-              child: Container(
-                padding: const EdgeInsets.all(BauhausDesign.space3),
-                decoration: BoxDecoration(
-                  color: BauhausDesign.backgroundLight,
-                  border: Border.all(color: BauhausDesign.neutral),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.calendar_today, size: 20),
-                    const SizedBox(width: BauhausDesign.space2),
-                    Text(
-                      expiryDate == null
-                          ? AppLocalizations.of(context)!.selectExpiryDate
-                          : DateFormat('dd MMM yyyy').format(expiryDate!),
-                      style: BauhausDesign.getTextTheme(context).bodyMedium,
-                    ),
-                  ],
+            side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+          ),
+          title: Text(
+            '$actionLabel Certification',
+            style: BauhausDesign.getTextTheme(context).headlineLarge,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Are you sure you want to mark this as $actionLabel?',
+                style: BauhausDesign.getTextTheme(context).bodyMedium,
+              ),
+              const SizedBox(height: BauhausDesign.space3),
+              TextFormField(
+                controller: numberController,
+                decoration: BauhausDesign.inputDecoration('').copyWith(
+                  labelText: 'Certification / NDIS Check Number (Optional)',
                 ),
               ),
-            ),
-            const SizedBox(height: BauhausDesign.space3),
-            TextFormField(
-              controller: notesController,
-              decoration: BauhausDesign.inputDecoration('')
-                  .copyWith(labelText: 'Audit Notes (Optional)'),
-              maxLines: 2,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancelButton,
-                style: BauhausDesign.getTextTheme(context)
-                    .labelLarge
-                    ?.copyWith(color: BauhausDesign.textDark)),
+              const SizedBox(height: BauhausDesign.space3),
+              GestureDetector(
+                onTap: () async {
+                  final date = await showDatePicker(
+                    context: context,
+                    initialDate:
+                        expiryDate ??
+                        DateTime.now().add(const Duration(days: 365)),
+                    firstDate: DateTime.now().subtract(
+                      const Duration(days: 3650),
+                    ),
+                    lastDate: DateTime.now().add(const Duration(days: 3650)),
+                  );
+                  if (date != null) {
+                    setState(() => expiryDate = date);
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(BauhausDesign.space3),
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.backgroundLight,
+                    border: Border.all(color: BauhausDesign.neutral),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.calendar_today, size: 20),
+                      const SizedBox(width: BauhausDesign.space2),
+                      Text(
+                        expiryDate == null
+                            ? AppLocalizations.of(context)!.selectExpiryDate
+                            : DateFormat('dd MMM yyyy').format(expiryDate!),
+                        style: BauhausDesign.getTextTheme(context).bodyMedium,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: BauhausDesign.space3),
+              TextFormField(
+                controller: notesController,
+                decoration: BauhausDesign.inputDecoration(
+                  '',
+                ).copyWith(labelText: 'Audit Notes (Optional)'),
+                maxLines: 2,
+              ),
+            ],
           ),
-          BauhausButton(
-            text: 'Confirm',
-            backgroundColor: status == 'active'
-                ? BauhausDesign.success
-                : BauhausDesign.error,
-            onPressed: () async {
-              // We need to add auditCertification to viewmodel first
-              final repo = ref.read(trainingComplianceRepositoryProvider);
-              try {
-                await repo.auditCertification(
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                AppLocalizations.of(context)!.cancelButton,
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).labelLarge?.copyWith(color: BauhausDesign.textDark),
+              ),
+            ),
+            BauhausButton(
+              text: 'Confirm',
+              backgroundColor: status == 'active'
+                  ? BauhausDesign.success
+                  : BauhausDesign.error,
+              onPressed: () async {
+                // We need to add auditCertification to viewmodel first
+                final repo = ref.read(trainingComplianceRepositoryProvider);
+                try {
+                  await repo.auditCertification(
                     cert.id!,
                     status,
                     notesController.text,
@@ -265,23 +296,24 @@ class _AdminCertificationAuditViewState
                         : numberController.text.trim(),
                     expiryDate: expiryDate,
                   );
-                if (context.mounted) {
-                  Navigator.pop(context);
-                  // Refresh list
-                  ref
-                      .read(certificationsViewModelProvider.notifier)
-                      .loadCertifications(status: 'pending_approval');
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                    // Refresh list
+                    ref
+                        .read(certificationsViewModelProvider.notifier)
+                        .loadCertifications(status: 'pending_approval');
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(e.toString())));
+                  }
                 }
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(e.toString())));
-                }
-              }
-            },
-          ),
-        ],
-      ),
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

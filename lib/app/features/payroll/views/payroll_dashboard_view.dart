@@ -8,7 +8,8 @@ class PayrollDashboardView extends ConsumerStatefulWidget {
   const PayrollDashboardView({super.key});
 
   @override
-  ConsumerState<PayrollDashboardView> createState() => _PayrollDashboardViewState();
+  ConsumerState<PayrollDashboardView> createState() =>
+      _PayrollDashboardViewState();
 }
 
 class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
@@ -38,14 +39,18 @@ class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
       body: state.isLoading
           ? const Center(child: CircularProgressIndicator())
           : state.errorMessage != null
-              ? Center(child: Text('Error: ${state.errorMessage}'))
-              : state.summary == null
-                  ? const Center(child: Text('No data available'))
-                  : _buildContent(context, state, notifier),
+          ? Center(child: Text('Error: ${state.errorMessage}'))
+          : state.summary == null
+          ? const Center(child: Text('No data available'))
+          : _buildContent(context, state, notifier),
     );
   }
 
-  Widget _buildContent(BuildContext context, PayrollState state, PayrollViewModel notifier) {
+  Widget _buildContent(
+    BuildContext context,
+    PayrollState state,
+    PayrollViewModel notifier,
+  ) {
     final summary = state.summary!;
 
     return SingleChildScrollView(
@@ -72,7 +77,11 @@ class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
     );
   }
 
-  Widget _buildDateSelector(BuildContext context, PayrollState state, PayrollViewModel notifier) {
+  Widget _buildDateSelector(
+    BuildContext context,
+    PayrollState state,
+    PayrollViewModel notifier,
+  ) {
     final range = state.selectedDateRange;
     final format = DateFormat('MMM dd, yyyy');
 
@@ -86,7 +95,10 @@ class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
             if (range != null)
               Text(
                 '${format.format(range.start)} - ${format.format(range.end)}',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             const Spacer(),
             TextButton(
@@ -146,7 +158,12 @@ class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
     );
   }
 
-  Widget _buildMetricCard(String title, String value, IconData icon, Color color) {
+  Widget _buildMetricCard(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Card(
       elevation: 2,
       child: Padding(
@@ -163,8 +180,17 @@ class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(title, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                  Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(
+                    title,
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  Text(
+                    value,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -181,15 +207,36 @@ class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Earnings Breakdown', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              'Earnings Breakdown',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 12),
             _buildBreakdownRow('Base Pay', summary.breakdown.basePay),
-            _buildBreakdownRow('Saturday Penalties', summary.breakdown.saturdayPenalties),
-            _buildBreakdownRow('Sunday Penalties', summary.breakdown.sundayPenalties),
-            _buildBreakdownRow('Public Holiday', summary.breakdown.publicHolidayPenalties),
-            _buildBreakdownRow('Night Shift', summary.breakdown.nightShiftPenalties),
-            _buildBreakdownRow('Overtime (First 2h)', summary.breakdown.overtimeFirst2h),
-            _buildBreakdownRow('Overtime (After 2h)', summary.breakdown.overtimeAfter2h),
+            _buildBreakdownRow(
+              'Saturday Penalties',
+              summary.breakdown.saturdayPenalties,
+            ),
+            _buildBreakdownRow(
+              'Sunday Penalties',
+              summary.breakdown.sundayPenalties,
+            ),
+            _buildBreakdownRow(
+              'Public Holiday',
+              summary.breakdown.publicHolidayPenalties,
+            ),
+            _buildBreakdownRow(
+              'Night Shift',
+              summary.breakdown.nightShiftPenalties,
+            ),
+            _buildBreakdownRow(
+              'Overtime (First 2h)',
+              summary.breakdown.overtimeFirst2h,
+            ),
+            _buildBreakdownRow(
+              'Overtime (After 2h)',
+              summary.breakdown.overtimeAfter2h,
+            ),
           ],
         ),
       ),
@@ -204,7 +251,10 @@ class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label),
-          Text('\$${value.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(
+            '\$${value.toStringAsFixed(2)}',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
         ],
       ),
     );
@@ -247,7 +297,10 @@ class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
               children: [
                 Text(
                   '\$${employee.grossPay.toStringAsFixed(2)}',
-                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
                 ),
                 Text(
                   'Tax: \$${employee.tax.toStringAsFixed(0)}',
@@ -274,22 +327,46 @@ class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(employee.name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(
+              employee.name,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
             const Divider(),
             _buildBreakdownRow('Gross Pay', employee.grossPay),
             _buildBreakdownRow('Tax Withheld', employee.tax),
             _buildBreakdownRow('Superannuation', employee.superAmount),
             const Divider(),
-            const Text('Details:', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              'Details:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             _buildBreakdownRow('Base Pay', employee.breakdown.basePay),
-            _buildBreakdownRow('Saturday', employee.breakdown.saturdayPenalties),
+            _buildBreakdownRow(
+              'Saturday',
+              employee.breakdown.saturdayPenalties,
+            ),
             _buildBreakdownRow('Sunday', employee.breakdown.sundayPenalties),
-            _buildBreakdownRow('Overtime', employee.breakdown.overtimeFirst2h + employee.breakdown.overtimeAfter2h),
+            _buildBreakdownRow(
+              'Overtime',
+              employee.breakdown.overtimeFirst2h +
+                  employee.breakdown.overtimeAfter2h,
+            ),
             if (employee.anomalies.isNotEmpty) ...[
-                const Divider(),
-                const Text('Anomalies:', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-                ...employee.anomalies.map((a) => Text('• ${a.description}', style: const TextStyle(color: Colors.red))),
-            ]
+              const Divider(),
+              const Text(
+                'Anomalies:',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              ...employee.anomalies.map(
+                (a) => Text(
+                  '• ${a.description}',
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
           ],
         ),
       ),

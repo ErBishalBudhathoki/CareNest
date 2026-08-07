@@ -38,15 +38,15 @@ class _GeofenceViewState extends ConsumerState<GeofenceView> {
       body: state.isLoading
           ? const Center(child: LoadingIndicator())
           : state.geofences.isEmpty
-              ? _buildEmptyState()
-              : ListView.builder(
-                  padding: const EdgeInsets.all(16.0),
-                  itemCount: state.geofences.length,
-                  itemBuilder: (context, index) {
-                    final geofence = state.geofences[index];
-                    return _buildGeofenceItem(geofence, notifier);
-                  },
-                ),
+          ? _buildEmptyState()
+          : ListView.builder(
+              padding: const EdgeInsets.all(16.0),
+              itemCount: state.geofences.length,
+              itemBuilder: (context, index) {
+                final geofence = state.geofences[index];
+                return _buildGeofenceItem(geofence, notifier);
+              },
+            ),
     );
   }
 
@@ -75,9 +75,7 @@ class _GeofenceViewState extends ConsumerState<GeofenceView> {
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
       child: ListTile(
-        leading: const CircleAvatar(
-          child: Icon(Icons.location_on),
-        ),
+        leading: const CircleAvatar(child: Icon(Icons.location_on)),
         title: Text(geofence.name),
         subtitle: Text('${geofence.address}\nRadius: ${geofence.radius}m'),
         isThreeLine: true,
@@ -109,7 +107,9 @@ class _GeofenceViewState extends ConsumerState<GeofenceView> {
     );
 
     if (confirm == true) {
-      await ref.read(geofenceViewModelProvider.notifier).deleteGeofence(geofence.id);
+      await ref
+          .read(geofenceViewModelProvider.notifier)
+          .deleteGeofence(geofence.id);
     }
   }
 
@@ -159,12 +159,14 @@ class _AddGeofenceDialogState extends ConsumerState<AddGeofenceDialog> {
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(labelText: 'Name'),
-                validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+                validator: (value) =>
+                    value?.isEmpty ?? true ? 'Required' : null,
               ),
               TextFormField(
                 controller: _addressController,
                 decoration: const InputDecoration(labelText: 'Address'),
-                validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+                validator: (value) =>
+                    value?.isEmpty ?? true ? 'Required' : null,
               ),
               Row(
                 children: [
@@ -173,7 +175,8 @@ class _AddGeofenceDialogState extends ConsumerState<AddGeofenceDialog> {
                       controller: _latController,
                       decoration: const InputDecoration(labelText: 'Latitude'),
                       keyboardType: TextInputType.number,
-                      validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+                      validator: (value) =>
+                          value?.isEmpty ?? true ? 'Required' : null,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -182,7 +185,8 @@ class _AddGeofenceDialogState extends ConsumerState<AddGeofenceDialog> {
                       controller: _lngController,
                       decoration: const InputDecoration(labelText: 'Longitude'),
                       keyboardType: TextInputType.number,
-                      validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+                      validator: (value) =>
+                          value?.isEmpty ?? true ? 'Required' : null,
                     ),
                   ),
                 ],
@@ -191,7 +195,8 @@ class _AddGeofenceDialogState extends ConsumerState<AddGeofenceDialog> {
                 controller: _radiusController,
                 decoration: const InputDecoration(labelText: 'Radius (meters)'),
                 keyboardType: TextInputType.number,
-                validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+                validator: (value) =>
+                    value?.isEmpty ?? true ? 'Required' : null,
               ),
             ],
           ),
@@ -202,10 +207,7 @@ class _AddGeofenceDialogState extends ConsumerState<AddGeofenceDialog> {
           onPressed: () => Navigator.pop(context),
           child: const Text('Cancel'),
         ),
-        ElevatedButton(
-          onPressed: _submit,
-          child: const Text('Add'),
-        ),
+        ElevatedButton(onPressed: _submit, child: const Text('Add')),
       ],
     );
   }
@@ -224,7 +226,9 @@ class _AddGeofenceDialogState extends ConsumerState<AddGeofenceDialog> {
       );
 
       try {
-        await ref.read(geofenceViewModelProvider.notifier).addGeofence(geofence);
+        await ref
+            .read(geofenceViewModelProvider.notifier)
+            .addGeofence(geofence);
         if (mounted) Navigator.pop(context);
       } catch (e) {
         // Handle error (maybe show snackbar)

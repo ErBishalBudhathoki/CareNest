@@ -8,7 +8,7 @@ class EnhancedDataTable extends StatefulWidget {
   final bool sortAscending;
   final int? sortColumnIndex;
   final DataColumnSortCallback?
-      onSort; // Change from ValueChanged<int>? to DataColumnSortCallback?
+  onSort; // Change from ValueChanged<int>? to DataColumnSortCallback?
   final bool showCheckboxColumn;
   final ValueChanged<bool?>? onSelectAll;
   final bool isLoading;
@@ -79,10 +79,13 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4)),
+        ],
       ),
-      child:
-          widget.responsive ? _buildResponsiveTable() : _buildStandardTable(),
+      child: widget.responsive
+          ? _buildResponsiveTable()
+          : _buildStandardTable(),
     );
   }
 
@@ -117,15 +120,14 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
               sortColumnIndex: widget.sortColumnIndex,
               showCheckboxColumn: widget.showCheckboxColumn,
               onSelectAll: widget.onSelectAll,
-              headingRowColor: WidgetStateProperty.all(
-                Colors.white,
-              ),
-              headingTextStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500).copyWith(
-                color: const Color(0xFF6B7280),
-              ),
-              dataTextStyle: const TextStyle(fontSize: 14).copyWith(
-                color: const Color(0xFF1F2937),
-              ),
+              headingRowColor: WidgetStateProperty.all(Colors.white),
+              headingTextStyle: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ).copyWith(color: const Color(0xFF6B7280)),
+              dataTextStyle: const TextStyle(
+                fontSize: 14,
+              ).copyWith(color: const Color(0xFF1F2937)),
               columns: widget.columns.map((column) {
                 return DataColumn(
                   label: column.label,
@@ -199,9 +201,10 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
                   width: 100,
                   child: Text(
                     _getColumnTitle(column.label),
-                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500).copyWith(
-                      color: const Color(0xFF6B7280),
-                    ),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                    ).copyWith(color: const Color(0xFF6B7280)),
                   ),
                 ),
                 Expanded(
@@ -233,21 +236,19 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4)),
+        ],
       ),
       child: const Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             CircularProgressIndicator(
-              valueColor:
-                  AlwaysStoppedAnimation<Color>(Color(0xFF667EEA)),
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF667EEA)),
             ),
             SizedBox(height: 12.0),
-            Text(
-              'Loading data...',
-              style: TextStyle(fontSize: 16),
-            ),
+            Text('Loading data...', style: TextStyle(fontSize: 16)),
           ],
         ),
       ),
@@ -260,10 +261,13 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4)),
+        ],
       ),
       child: Center(
-        child: widget.emptyWidget ??
+        child:
+            widget.emptyWidget ??
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -275,9 +279,10 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
                 const SizedBox(height: 12.0),
                 Text(
                   widget.emptyMessage ?? 'No data available',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600).copyWith(
-                    color: const Color(0xFF6B7280),
-                  ),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ).copyWith(color: const Color(0xFF6B7280)),
                 ),
               ],
             ),
@@ -365,31 +370,25 @@ class EnhancedDataCell {
     return EnhancedDataCell(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 32.0,
-          vertical: 4,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 4),
         decoration: BoxDecoration(
           color: (color ?? statusColor).withOpacity(0.1),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: (color ?? statusColor).withOpacity(0.1),
-          ),
+          border: Border.all(color: (color ?? statusColor).withOpacity(0.1)),
         ),
         child: Text(
           status,
-          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500).copyWith(
-            color: color ?? statusColor,
-          ),
+          style: const TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+          ).copyWith(color: color ?? statusColor),
         ),
       ),
     );
   }
 
   /// Factory for action cell
-  factory EnhancedDataCell.actions({
-    required List<ActionButton> actions,
-  }) {
+  factory EnhancedDataCell.actions({required List<ActionButton> actions}) {
     return EnhancedDataCell(
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -405,10 +404,7 @@ class EnhancedDataCell {
               onPressed: action.onPressed,
               tooltip: action.tooltip,
               padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(
-                minWidth: 32,
-                minHeight: 32,
-              ),
+              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
             ),
           );
         }).toList(),

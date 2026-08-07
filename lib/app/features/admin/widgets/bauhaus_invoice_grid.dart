@@ -36,10 +36,7 @@ class BauhausActionBlock extends StatelessWidget {
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            border: Border.all(
-              color: BauhausDesign.neutral,
-              width: 2.5,
-            ),
+            border: Border.all(color: BauhausDesign.neutral, width: 2.5),
             boxShadow: const [BauhausDesign.shadowHard],
           ),
           padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -53,27 +50,21 @@ class BauhausActionBlock extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: BauhausDesign.surfaceLight,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(
-                    color: BauhausDesign.neutral,
-                    width: 2,
-                  ),
+                  border: Border.all(color: BauhausDesign.neutral, width: 2),
                   boxShadow: const [BauhausDesign.shadowHardSm],
                 ),
-                child: Icon(
-                  icon,
-                  size: 28,
-                  color: BauhausDesign.textDark,
-                ),
+                child: Icon(icon, size: 28, color: BauhausDesign.textDark),
               ),
               const Spacer(),
               // Title
               Text(
                 title.toUpperCase(),
-                style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  color: textColor,
-                  letterSpacing: 0.5,
-                ),
+                style: BauhausDesign.getTextTheme(context).titleMedium
+                    ?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      color: textColor,
+                      letterSpacing: 0.5,
+                    ),
               ),
               const SizedBox(height: 4),
               // Subtitle
@@ -124,10 +115,7 @@ class BauhausWideActionBlock extends StatelessWidget {
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            border: Border.all(
-              color: BauhausDesign.neutral,
-              width: 2.5,
-            ),
+            border: Border.all(color: BauhausDesign.neutral, width: 2.5),
             boxShadow: const [BauhausDesign.shadowHard],
           ),
           padding: const EdgeInsets.symmetric(
@@ -142,17 +130,10 @@ class BauhausWideActionBlock extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: BauhausDesign.surfaceLight,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(
-                    color: BauhausDesign.neutral,
-                    width: 2,
-                  ),
+                  border: Border.all(color: BauhausDesign.neutral, width: 2),
                   boxShadow: const [BauhausDesign.shadowHardSm],
                 ),
-                child: Icon(
-                  icon,
-                  size: 28,
-                  color: BauhausDesign.textDark,
-                ),
+                child: Icon(icon, size: 28, color: BauhausDesign.textDark),
               ),
               const SizedBox(width: BauhausDesign.space4),
               // Text Content
@@ -162,19 +143,21 @@ class BauhausWideActionBlock extends StatelessWidget {
                   children: [
                     Text(
                       title.toUpperCase(),
-                      style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                        fontWeight: FontWeight.w900,
-                        color: textColor,
-                        letterSpacing: 0.5,
-                      ),
+                      style: BauhausDesign.getTextTheme(context).titleMedium
+                          ?.copyWith(
+                            fontWeight: FontWeight.w900,
+                            color: textColor,
+                            letterSpacing: 0.5,
+                          ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       subtitle,
-                      style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                        color: textColor.withOpacity(0.8),
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: BauhausDesign.getTextTheme(context).bodySmall
+                          ?.copyWith(
+                            color: textColor.withOpacity(0.8),
+                            fontWeight: FontWeight.w500,
+                          ),
                     ),
                   ],
                 ),

@@ -16,15 +16,9 @@ class TimerState {
   bool isRunning = false;
   DateTime startTime = DateTime.now();
 
-  TimerState({
-    this.isRunning = false,
-    this.elapsedTime = Duration.zero,
-  });
+  TimerState({this.isRunning = false, this.elapsedTime = Duration.zero});
 
-  TimerState copyWith({
-    bool? isRunning,
-    Duration? elapsedTime,
-  }) {
+  TimerState copyWith({bool? isRunning, Duration? elapsedTime}) {
     return TimerState(
       isRunning: isRunning ?? this.isRunning,
       elapsedTime: elapsedTime ?? this.elapsedTime,
@@ -39,8 +33,10 @@ class TimerServiceNotifier extends Notifier<TimerService> {
 }
 
 // Timer service provider
-final timerServiceProvider = NotifierProvider<TimerServiceNotifier, TimerService>(TimerServiceNotifier.new);
-
+final timerServiceProvider =
+    NotifierProvider<TimerServiceNotifier, TimerService>(
+      TimerServiceNotifier.new,
+    );
 
 // ==================== SHIFT DATA ====================
 
@@ -58,7 +54,7 @@ class ShiftDataNotifier extends Notifier<List<dynamic>> {
   void markShiftCompleted(int index) {
     state = [
       for (var i = 0; i < state.length; i++)
-        if (i == index) {...state[i], 'isCompleted': true} else state[i]
+        if (i == index) {...state[i], 'isCompleted': true} else state[i],
     ];
   }
 
@@ -69,4 +65,6 @@ class ShiftDataNotifier extends Notifier<List<dynamic>> {
 }
 
 // Shift data provider
-final shiftDataProvider = NotifierProvider<ShiftDataNotifier, List<dynamic>>(ShiftDataNotifier.new);
+final shiftDataProvider = NotifierProvider<ShiftDataNotifier, List<dynamic>>(
+  ShiftDataNotifier.new,
+);

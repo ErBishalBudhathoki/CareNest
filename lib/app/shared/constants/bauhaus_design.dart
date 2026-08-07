@@ -19,8 +19,9 @@ class BauhausDesign {
   static const Color info = Color(0xFF2D6CDF); // Info Blue
 
   // Surface & Background
-  static const Color background =
-      Color(0xFFF7F5F0); // Alias for backgroundLight
+  static const Color background = Color(
+    0xFFF7F5F0,
+  ); // Alias for backgroundLight
   static const Color backgroundLight = Color(0xFFF7F5F0); // Cream Vest
   static const Color backgroundDark = Color(0xFF121212);
   static const Color surfaceWhite = Color(0xFFFFFFFF);
@@ -110,11 +111,7 @@ class BauhausDesign {
   );
 
   static const List<BoxShadow> shadowSm = [
-    BoxShadow(
-      color: Color(0x0D000000),
-      blurRadius: 2,
-      offset: Offset(0, 1),
-    )
+    BoxShadow(color: Color(0x0D000000), blurRadius: 2, offset: Offset(0, 1)),
   ];
 
   static const BoxShadow shadowSoft = BoxShadow(
@@ -151,8 +148,10 @@ class BauhausDesign {
   static BoxDecoration neoCardDecoration({Color? backgroundColor}) {
     return BoxDecoration(
       color: backgroundColor ?? neoPaper,
-      border:
-          Border.all(color: neoInk.withOpacity(0.78), width: neoBorderWidth),
+      border: Border.all(
+        color: neoInk.withOpacity(0.78),
+        width: neoBorderWidth,
+      ),
       boxShadow: [
         BoxShadow(
           color: neoInk.withOpacity(0.48),
@@ -329,27 +328,25 @@ class BauhausDesign {
 
   // ==================== COMPONENT STYLES ====================
   static ButtonStyle get primaryButtonStyle => ElevatedButton.styleFrom(
-        backgroundColor: primary,
-        foregroundColor: Colors.white,
-        padding:
-            const EdgeInsets.symmetric(horizontal: space6, vertical: space3),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusMd),
-        ),
-        elevation: 0,
-        shadowColor: Colors.transparent,
-      );
+    backgroundColor: primary,
+    foregroundColor: Colors.white,
+    padding: const EdgeInsets.symmetric(horizontal: space6, vertical: space3),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(radiusMd),
+    ),
+    elevation: 0,
+    shadowColor: Colors.transparent,
+  );
 
   static ButtonStyle get secondaryButtonStyle => OutlinedButton.styleFrom(
-        foregroundColor: secondary,
-        side: const BorderSide(color: secondary, width: 1.5),
-        padding:
-            const EdgeInsets.symmetric(horizontal: space6, vertical: space3),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusMd),
-        ),
-        elevation: 0,
-      );
+    foregroundColor: secondary,
+    side: const BorderSide(color: secondary, width: 1.5),
+    padding: const EdgeInsets.symmetric(horizontal: space6, vertical: space3),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(radiusMd),
+    ),
+    elevation: 0,
+  );
 
   // ==================== DECORATIONS ====================
   static BoxDecoration cardDecoration = BoxDecoration(
@@ -402,27 +399,29 @@ class BauhausDesign {
   }
 
   static InputDecoration get defaultInputDecoration => InputDecoration(
-        filled: true,
-        fillColor: surfaceWhite,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: space4, vertical: space3),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusSm),
-          borderSide: const BorderSide(color: neutral, width: borderThick),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusSm),
-          borderSide: const BorderSide(color: neutral, width: borderThick),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusSm),
-          borderSide: const BorderSide(color: primary, width: borderThick),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusSm),
-          borderSide: const BorderSide(color: error, width: borderThick),
-        ),
-      );
+    filled: true,
+    fillColor: surfaceWhite,
+    contentPadding: const EdgeInsets.symmetric(
+      horizontal: space4,
+      vertical: space3,
+    ),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(radiusSm),
+      borderSide: const BorderSide(color: neutral, width: borderThick),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(radiusSm),
+      borderSide: const BorderSide(color: neutral, width: borderThick),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(radiusSm),
+      borderSide: const BorderSide(color: primary, width: borderThick),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(radiusSm),
+      borderSide: const BorderSide(color: error, width: borderThick),
+    ),
+  );
 }
 
 // ==================== BAUHAUS BUTTON WIDGET ====================

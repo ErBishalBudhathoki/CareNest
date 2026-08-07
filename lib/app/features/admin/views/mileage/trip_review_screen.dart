@@ -46,8 +46,10 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
     final routePoints = _extractRoutePoints(rawTrip, trip);
     final startPoint = routePoints.isNotEmpty ? routePoints.first : null;
     final endPoint = routePoints.isNotEmpty ? routePoints.last : null;
-    final status =
-        _normalizeStatus(trip.status, rawTrip?['adminApprovalStatus']);
+    final status = _normalizeStatus(
+      trip.status,
+      rawTrip?['adminApprovalStatus'],
+    );
     final updatedAt = _tryParseDate(rawTrip?['updatedAt']?.toString());
 
     // Initialize controllers if not editing and values differ (simple sync)
@@ -63,8 +65,9 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
       appBar: AppBar(
         title: Text(
           'REVIEW TRIP',
-          style:
-              textTheme.displaySmall?.copyWith(color: BauhausDesign.textDark),
+          style: textTheme.displaySmall?.copyWith(
+            color: BauhausDesign.textDark,
+          ),
         ),
         backgroundColor: BauhausDesign.surfaceLight,
         elevation: 0,
@@ -121,11 +124,16 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.map,
-                                size: 48, color: BauhausDesign.neutral),
+                            const Icon(
+                              Icons.map,
+                              size: 48,
+                              color: BauhausDesign.neutral,
+                            ),
                             const SizedBox(height: 8),
-                            Text('MAP VISUALIZATION',
-                                style: textTheme.labelLarge),
+                            Text(
+                              'MAP VISUALIZATION',
+                              style: textTheme.labelLarge,
+                            ),
                             const SizedBox(height: 4),
                             Text(
                               'No tracked route data on this trip',
@@ -147,11 +155,7 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                 ),
               ),
             const SizedBox(height: BauhausDesign.space6),
-            _buildDecisionBanner(
-              context,
-              status: status,
-              updatedAt: updatedAt,
-            ),
+            _buildDecisionBanner(context, status: status, updatedAt: updatedAt),
             const SizedBox(height: BauhausDesign.space6),
 
             // Details Form
@@ -238,10 +242,10 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                         } else {
                           final message =
                               ref.read(adminMileageViewModelProvider).error ??
-                                  'Failed to reject trip';
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(message)),
-                          );
+                              'Failed to reject trip';
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text(message)));
                         }
                       },
                     ),
@@ -266,10 +270,10 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                         } else {
                           final message =
                               ref.read(adminMileageViewModelProvider).error ??
-                                  'Failed to approve trip';
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(message)),
-                          );
+                              'Failed to approve trip';
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text(message)));
                         }
                       },
                     ),
@@ -288,9 +292,9 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
       child: Text(
         text,
         style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-              color: BauhausDesign.neutral.withOpacity(0.6),
-              letterSpacing: 1.2,
-            ),
+          color: BauhausDesign.neutral.withOpacity(0.6),
+          letterSpacing: 1.2,
+        ),
       ),
     );
   }
@@ -385,7 +389,9 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
   }
 
   List<LatLng> _extractRoutePoints(
-      Map<String, dynamic>? tripData, dynamic tripModel) {
+    Map<String, dynamic>? tripData,
+    dynamic tripModel,
+  ) {
     final points = <LatLng>[];
 
     final route = tripData?['routePath'];
@@ -402,9 +408,11 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
       return _dedupeSequential(points);
     }
 
-    final startPoint = _parseCoordinateObject(tripData?['startCoordinates']) ??
+    final startPoint =
+        _parseCoordinateObject(tripData?['startCoordinates']) ??
         _tryParseCoordinateString(tripModel.startLocation as String?);
-    final endPoint = _parseCoordinateObject(tripData?['endCoordinates']) ??
+    final endPoint =
+        _parseCoordinateObject(tripData?['endCoordinates']) ??
         _tryParseCoordinateString(tripModel.endLocation as String?);
 
     if (startPoint != null) points.add(startPoint);

@@ -33,8 +33,10 @@ class _AdminCertificationRequirementsViewState
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        title: Text('Certification Requirements',
-            style: BauhausDesign.getTextTheme(context).headlineLarge),
+        title: Text(
+          'Certification Requirements',
+          style: BauhausDesign.getTextTheme(context).headlineLarge,
+        ),
         backgroundColor: BauhausDesign.surfaceLight,
         iconTheme: const IconThemeData(color: BauhausDesign.textDark),
         elevation: 0,
@@ -46,37 +48,42 @@ class _AdminCertificationRequirementsViewState
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showEditDialog(context),
         backgroundColor: BauhausDesign.primary,
-        label: Text(AppLocalizations.of(context)!.addButton,
-            style: BauhausDesign.getTextTheme(context)
-                .labelLarge
-                ?.copyWith(color: Colors.white)),
+        label: Text(
+          AppLocalizations.of(context)!.addButton,
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).labelLarge?.copyWith(color: Colors.white),
+        ),
         icon: const Icon(Icons.add, color: Colors.white),
       ),
       body: state.isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: BauhausDesign.primary))
+              child: CircularProgressIndicator(color: BauhausDesign.primary),
+            )
           : state.requirements.isEmpty
-              ? Center(
-                  child: Text(
-                    'No requirements found.',
-                    style: BauhausDesign.getTextTheme(context).bodyLarge,
-                  ),
-                )
-              : ListView.separated(
-                  padding: const EdgeInsets.all(BauhausDesign.space4),
-                  itemCount: state.requirements.length,
-                  separatorBuilder: (_, __) =>
-                      const SizedBox(height: BauhausDesign.space3),
-                  itemBuilder: (context, index) {
-                    final requirement = state.requirements[index];
-                    return _buildRequirementCard(context, requirement);
-                  },
-                ),
+          ? Center(
+              child: Text(
+                'No requirements found.',
+                style: BauhausDesign.getTextTheme(context).bodyLarge,
+              ),
+            )
+          : ListView.separated(
+              padding: const EdgeInsets.all(BauhausDesign.space4),
+              itemCount: state.requirements.length,
+              separatorBuilder: (_, __) =>
+                  const SizedBox(height: BauhausDesign.space3),
+              itemBuilder: (context, index) {
+                final requirement = state.requirements[index];
+                return _buildRequirementCard(context, requirement);
+              },
+            ),
     );
   }
 
   Widget _buildRequirementCard(
-      BuildContext context, CertificationRequirement requirement) {
+    BuildContext context,
+    CertificationRequirement requirement,
+  ) {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BauhausDesign.cardDecoration,
@@ -94,8 +101,9 @@ class _AdminCertificationRequirementsViewState
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: BauhausDesign.space2,
-                    vertical: BauhausDesign.space1),
+                  horizontal: BauhausDesign.space2,
+                  vertical: BauhausDesign.space1,
+                ),
                 decoration: BoxDecoration(
                   color: requirement.isActive
                       ? BauhausDesign.success
@@ -104,24 +112,26 @@ class _AdminCertificationRequirementsViewState
                 ),
                 child: Text(
                   requirement.isActive ? 'ACTIVE' : 'INACTIVE',
-                  style: BauhausDesign.getTextTheme(context)
-                      .labelLarge
-                      ?.copyWith(color: Colors.white, fontSize: 10),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).labelLarge?.copyWith(color: Colors.white, fontSize: 10),
                 ),
               ),
             ],
           ),
           if (requirement.description.isNotEmpty) ...[
             const SizedBox(height: BauhausDesign.space2),
-            Text(requirement.description,
-                style: BauhausDesign.getTextTheme(context).bodyMedium),
+            Text(
+              requirement.description,
+              style: BauhausDesign.getTextTheme(context).bodyMedium,
+            ),
           ],
           const SizedBox(height: BauhausDesign.space2),
           Text(
             requirement.isRequired ? 'Required' : 'Optional',
-            style: BauhausDesign.getTextTheme(context)
-                .labelLarge
-                ?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).labelLarge?.copyWith(color: BauhausDesign.textMuted),
           ),
           const SizedBox(height: BauhausDesign.space3),
           Row(
@@ -148,17 +158,20 @@ class _AdminCertificationRequirementsViewState
     );
   }
 
-  void _showEditDialog(BuildContext context,
-      [CertificationRequirement? requirement]) {
+  void _showEditDialog(
+    BuildContext context, [
+    CertificationRequirement? requirement,
+  ]) {
     showDialog(
       context: context,
-      builder: (context) =>
-          _RequirementDialog(requirement: requirement),
+      builder: (context) => _RequirementDialog(requirement: requirement),
     );
   }
 
   Future<void> _confirmDelete(
-      BuildContext context, CertificationRequirement requirement) async {
+    BuildContext context,
+    CertificationRequirement requirement,
+  ) async {
     final shouldDelete = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -191,8 +204,7 @@ class _RequirementDialog extends ConsumerStatefulWidget {
   const _RequirementDialog({this.requirement});
 
   @override
-  ConsumerState<_RequirementDialog> createState() =>
-      _RequirementDialogState();
+  ConsumerState<_RequirementDialog> createState() => _RequirementDialogState();
 }
 
 class _RequirementDialogState extends ConsumerState<_RequirementDialog> {
@@ -205,10 +217,12 @@ class _RequirementDialogState extends ConsumerState<_RequirementDialog> {
   @override
   void initState() {
     super.initState();
-    _nameController =
-        TextEditingController(text: widget.requirement?.name ?? '');
-    _descController =
-        TextEditingController(text: widget.requirement?.description ?? '');
+    _nameController = TextEditingController(
+      text: widget.requirement?.name ?? '',
+    );
+    _descController = TextEditingController(
+      text: widget.requirement?.description ?? '',
+    );
     _isRequired = widget.requirement?.isRequired ?? true;
     _isActive = widget.requirement?.isActive ?? true;
   }
@@ -222,8 +236,10 @@ class _RequirementDialogState extends ConsumerState<_RequirementDialog> {
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         side: const BorderSide(color: BauhausDesign.neutral, width: 2),
       ),
-      title: Text(isEdit ? 'Edit Requirement' : 'Add Requirement',
-          style: BauhausDesign.getTextTheme(context).headlineLarge),
+      title: Text(
+        isEdit ? 'Edit Requirement' : 'Add Requirement',
+        style: BauhausDesign.getTextTheme(context).headlineLarge,
+      ),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -232,8 +248,9 @@ class _RequirementDialogState extends ConsumerState<_RequirementDialog> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(context)!.titleLabel),
+                decoration: BauhausDesign.inputDecoration(
+                  '',
+                ).copyWith(labelText: AppLocalizations.of(context)!.titleLabel),
                 validator: (v) => v?.isEmpty == true
                     ? AppLocalizations.of(context)!.requiredValidation
                     : null,
@@ -242,7 +259,8 @@ class _RequirementDialogState extends ConsumerState<_RequirementDialog> {
               TextFormField(
                 controller: _descController,
                 decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(context)!.descriptionLabel),
+                  labelText: AppLocalizations.of(context)!.descriptionLabel,
+                ),
                 maxLines: 2,
               ),
               const SizedBox(height: BauhausDesign.space3),
@@ -266,10 +284,12 @@ class _RequirementDialogState extends ConsumerState<_RequirementDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(AppLocalizations.of(context)!.cancelButton,
-              style: BauhausDesign.getTextTheme(context)
-                  .labelLarge
-                  ?.copyWith(color: BauhausDesign.textDark)),
+          child: Text(
+            AppLocalizations.of(context)!.cancelButton,
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).labelLarge?.copyWith(color: BauhausDesign.textDark),
+          ),
         ),
         BauhausButton(
           text: AppLocalizations.of(context)!.saveProgressButton,
@@ -281,8 +301,9 @@ class _RequirementDialogState extends ConsumerState<_RequirementDialog> {
               'isRequired': _isRequired,
               'isActive': _isActive,
             };
-            final vm =
-                ref.read(certificationRequirementsViewModelProvider.notifier);
+            final vm = ref.read(
+              certificationRequirementsViewModelProvider.notifier,
+            );
             if (isEdit && widget.requirement != null) {
               await vm.updateRequirement(widget.requirement!.id, data);
             } else {
@@ -316,16 +337,12 @@ class _BauhausSwitchRow extends StatelessWidget {
         Expanded(
           child: Text(
             label,
-            style: BauhausDesign.getTextTheme(context)
-                .labelLarge
-                ?.copyWith(color: BauhausDesign.textDark),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).labelLarge?.copyWith(color: BauhausDesign.textDark),
           ),
         ),
-        BauhausSwitch(
-          value: value,
-          onChanged: onChanged,
-          variant: variant,
-        ),
+        BauhausSwitch(value: value, onChanged: onChanged, variant: variant),
       ],
     );
   }

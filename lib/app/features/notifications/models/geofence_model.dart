@@ -37,10 +37,7 @@ class GeofenceModel {
       'clientId': clientId,
       'name': name,
       'address': address,
-      'coordinates': {
-        'latitude': latitude,
-        'longitude': longitude,
-      },
+      'coordinates': {'latitude': latitude, 'longitude': longitude},
       'radius': radius,
       'isActive': isActive,
     };

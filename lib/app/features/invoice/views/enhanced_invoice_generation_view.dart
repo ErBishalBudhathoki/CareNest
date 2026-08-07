@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
- // StateProvider
+// StateProvider
 import 'package:carenest/app/core/providers/invoice_providers.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
@@ -113,8 +113,9 @@ class _EnhancedInvoiceGenerationViewState
   Future<void> _loadUseAdminPreference() async {
     try {
       await _prefs.init();
-      final stored =
-          _prefs.getBool(SharedPreferencesUtils.kUseAdminBankDetailsKey);
+      final stored = _prefs.getBool(
+        SharedPreferencesUtils.kUseAdminBankDetailsKey,
+      );
       if (stored != null) {
         setState(() => _useAdminBankDetails = stored);
       }
@@ -128,7 +129,9 @@ class _EnhancedInvoiceGenerationViewState
   Future<void> _persistUseAdminPreference(bool value) async {
     try {
       await _prefs.setBool(
-          SharedPreferencesUtils.kUseAdminBankDetailsKey, value);
+        SharedPreferencesUtils.kUseAdminBankDetailsKey,
+        value,
+      );
     } catch (e) {
       debugPrint('Failed to persist useAdminBankDetails preference: $e');
     }
@@ -142,7 +145,7 @@ class _EnhancedInvoiceGenerationViewState
       final firstEmployee = widget.selectedEmployeesAndClients!.first;
       organizationId =
           firstEmployee['employee']?['organizationId'] as String? ??
-              firstEmployee['organizationId'] as String?;
+          firstEmployee['organizationId'] as String?;
     }
     organizationId ??= widget.genKey;
     return organizationId;
@@ -210,8 +213,9 @@ class _EnhancedInvoiceGenerationViewState
 
         if (employeeEmail.isEmpty) continue;
 
-        final assignmentsResponse =
-            await apiMethod.getUserAssignments(employeeEmail);
+        final assignmentsResponse = await apiMethod.getUserAssignments(
+          employeeEmail,
+        );
         if (assignmentsResponse['success'] == true &&
             assignmentsResponse['assignments'] is List) {
           final assignmentsList =
@@ -311,13 +315,16 @@ class _EnhancedInvoiceGenerationViewState
                 ? data['source']?.toString().toLowerCase().trim()
                 : null;
             final resolvedPrice = extractResolvedPrice(
-                data is Map<String, dynamic> ? data : null);
-            final hasConfiguredItemRateSource = src == 'organization' ||
+              data is Map<String, dynamic> ? data : null,
+            );
+            final hasConfiguredItemRateSource =
+                src == 'organization' ||
                 src == 'client_specific' ||
                 src == 'client-specific' ||
                 src == 'fallback-base-rate';
             final hasResolvedRate = resolvedPrice > 0;
-            final hasUsableRate = hasConfiguredItemRateSource ||
+            final hasUsableRate =
+                hasConfiguredItemRateSource ||
                 hasResolvedRate ||
                 hasOrgFallbackBaseRate;
 
@@ -326,7 +333,8 @@ class _EnhancedInvoiceGenerationViewState
             }
 
             // For UI badges, treat configured org fallback as a concrete source.
-            _itemPricingSource[itemNumber] = hasOrgFallbackBaseRate &&
+            _itemPricingSource[itemNumber] =
+                hasOrgFallbackBaseRate &&
                     (src == null || src == 'ndis_default' || src == 'fallback')
                 ? 'fallback-base-rate'
                 : (src ?? 'missing');
@@ -357,8 +365,9 @@ class _EnhancedInvoiceGenerationViewState
           } catch (_) {}
         });
         if (overriddenItemNumbers.isNotEmpty) {
-          missingItems
-              .removeWhere((item) => overriddenItemNumbers.contains(item));
+          missingItems.removeWhere(
+            (item) => overriddenItemNumbers.contains(item),
+          );
         }
       }
 
@@ -389,7 +398,8 @@ class _EnhancedInvoiceGenerationViewState
               }
             } catch (e) {
               debugPrint(
-                  'Client-specific pricing check failed for $itemNumber (${client['clientEmail']}) : $e');
+                'Client-specific pricing check failed for $itemNumber (${client['clientEmail']}) : $e',
+              );
               final list =
                   missingClientByItem[itemNumber] ?? <Map<String, String>>[];
               list.add(client);
@@ -410,7 +420,8 @@ class _EnhancedInvoiceGenerationViewState
           final lookups = nameLookupItems.map((item) async {
             try {
               final details = await apiMethod.getSupportItemDetails(item);
-              final name = details?['supportItemName']?.toString() ??
+              final name =
+                  details?['supportItemName']?.toString() ??
                   details?['itemName']?.toString() ??
                   details?['description']?.toString();
               if (name != null && name.trim().isNotEmpty) {
@@ -503,9 +514,7 @@ class _EnhancedInvoiceGenerationViewState
     );
 
     return base.copyWith(
-      iconTheme: base.iconTheme.copyWith(
-        color: BauhausDesign.neoSignal,
-      ),
+      iconTheme: base.iconTheme.copyWith(color: BauhausDesign.neoSignal),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: BauhausDesign.neoPaper,
@@ -521,8 +530,10 @@ class _EnhancedInvoiceGenerationViewState
           fontSize: 11,
           fontWeight: FontWeight.w600,
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12.0,
+          vertical: 12.0,
+        ),
         border: defaultBorder,
         enabledBorder: defaultBorder,
         focusedBorder: focusedBorder,
@@ -710,8 +721,9 @@ class _EnhancedInvoiceGenerationViewState
   }) {
     return BauhausDesign.neoMonoStyle(
       context,
-      color:
-          muted ? BauhausDesign.neoInk.withOpacity(0.65) : BauhausDesign.neoInk,
+      color: muted
+          ? BauhausDesign.neoInk.withOpacity(0.65)
+          : BauhausDesign.neoInk,
       fontSize: fontSize,
       fontWeight: weight,
     );
@@ -727,15 +739,16 @@ class _EnhancedInvoiceGenerationViewState
     final Color fillColor = selected
         ? BauhausDesign.neoSignal
         : (enabled
-            ? BauhausDesign.neoPaper
-            : BauhausDesign.neoPaper.withOpacity(0.9));
-    final Color borderColor =
-        selected ? BauhausDesign.neoInk : BauhausDesign.neoInk.withOpacity(0.6);
+              ? BauhausDesign.neoPaper
+              : BauhausDesign.neoPaper.withOpacity(0.9));
+    final Color borderColor = selected
+        ? BauhausDesign.neoInk
+        : BauhausDesign.neoInk.withOpacity(0.6);
     final Color labelColor = selected
         ? BauhausDesign.neoPaper
         : (enabled
-            ? BauhausDesign.neoInk
-            : BauhausDesign.neoInk.withOpacity(0.65));
+              ? BauhausDesign.neoInk
+              : BauhausDesign.neoInk.withOpacity(0.65));
 
     return Expanded(
       child: InkWell(
@@ -811,8 +824,9 @@ class _EnhancedInvoiceGenerationViewState
               decoration: BoxDecoration(
                 color: BauhausDesign.neoDanger.withOpacity(0.1),
                 border: Border.all(
-                    color: BauhausDesign.neoInk,
-                    width: BauhausDesign.neoInnerBorderWidth),
+                  color: BauhausDesign.neoInk,
+                  width: BauhausDesign.neoInnerBorderWidth,
+                ),
               ),
               child: Row(
                 children: [
@@ -869,10 +883,11 @@ class _EnhancedInvoiceGenerationViewState
           Expanded(
             child: Text(
               l10n.selectedEmployeesInfo(
-                  totalEmployees,
-                  totalEmployees == 1 ? 'employee' : 'employees',
-                  totalClients,
-                  totalClients == 1 ? 'client' : 'clients'),
+                totalEmployees,
+                totalEmployees == 1 ? 'employee' : 'employees',
+                totalClients,
+                totalClients == 1 ? 'client' : 'clients',
+              ),
               style: BauhausDesign.neoMonoStyle(
                 context,
                 fontSize: 12,
@@ -984,10 +999,9 @@ class _EnhancedInvoiceGenerationViewState
                 Expanded(
                   child: Text(
                     l10n.invoiceTypeWarning,
-                    style:
-                        BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                              color: BauhausDesign.error,
-                            ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodySmall?.copyWith(color: BauhausDesign.error),
                   ),
                 ),
               ],
@@ -1051,10 +1065,7 @@ class _EnhancedInvoiceGenerationViewState
               Expanded(
                 child: Text(
                   l10n.taxRateLabel,
-                  style: _neoLabelStyle(
-                    fontSize: 12,
-                    weight: FontWeight.w800,
-                  ),
+                  style: _neoLabelStyle(fontSize: 12, weight: FontWeight.w800),
                 ),
               ),
               SizedBox(
@@ -1163,10 +1174,9 @@ class _EnhancedInvoiceGenerationViewState
               Expanded(
                 child: Text(
                   'Client invoices always use Organization Bank Details.',
-                  style:
-                      BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                 ),
               ),
             ],
@@ -1426,11 +1436,9 @@ class _EnhancedInvoiceGenerationViewState
                     const SizedBox(height: 4.0),
                     Text(
                       l10n.addFilesSubtitle,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
-                          ?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: BauhausDesign.space2),
@@ -1474,9 +1482,9 @@ class _EnhancedInvoiceGenerationViewState
                     const SizedBox(width: BauhausDesign.space2),
                     Text(
                       l10n.attachedFilesCountLabel(
-                          _additionalAttachments.length),
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
+                        _additionalAttachments.length,
+                      ),
+                      style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
                             color: BauhausDesign.textMuted,
                             fontWeight: FontWeight.w500,
@@ -1514,8 +1522,9 @@ class _EnhancedInvoiceGenerationViewState
                         Container(
                           padding: const EdgeInsets.all(8.0),
                           decoration: BoxDecoration(
-                            color: _getFileTypeColor(fileExtension)
-                                .withOpacity(0.1),
+                            color: _getFileTypeColor(
+                              fileExtension,
+                            ).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(4.0),
                           ),
                           child: Icon(
@@ -1533,18 +1542,14 @@ class _EnhancedInvoiceGenerationViewState
                                 fileName,
                                 style: BauhausDesign.getTextTheme(context)
                                     .bodyMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                    ?.copyWith(fontWeight: FontWeight.w500),
                                 overflow: TextOverflow.ellipsis,
                               ),
                               Text(
                                 fileExtension.toUpperCase(),
                                 style: BauhausDesign.getTextTheme(context)
                                     .bodySmall
-                                    ?.copyWith(
-                                      color: BauhausDesign.textMuted,
-                                    ),
+                                    ?.copyWith(color: BauhausDesign.textMuted),
                               ),
                             ],
                           ),
@@ -1592,9 +1597,9 @@ class _EnhancedInvoiceGenerationViewState
         children: [
           Text(
             l10n.priceOverrideSubtitle,
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textMuted,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
           ),
           const SizedBox(height: BauhausDesign.space4),
           if (_priceOverrides.isNotEmpty) ...[
@@ -1619,8 +1624,7 @@ class _EnhancedInvoiceGenerationViewState
                   Expanded(
                     child: Text(
                       l10n.priceOverrideApplied(_priceOverrides.length),
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
                             color: BauhausDesign.success,
                             fontWeight: FontWeight.w500,
@@ -1661,10 +1665,7 @@ class _EnhancedInvoiceGenerationViewState
               Expanded(
                 child: Text(
                   'Enable Recurring Billing', // TODO: Add to l10n
-                  style: _neoLabelStyle(
-                    fontSize: 12,
-                    weight: FontWeight.w700,
-                  ),
+                  style: _neoLabelStyle(fontSize: 12, weight: FontWeight.w700),
                 ),
               ),
               BauhausSwitch(
@@ -1684,7 +1685,9 @@ class _EnhancedInvoiceGenerationViewState
               items: const [
                 DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
                 DropdownMenuItem(
-                    value: 'fortnightly', child: Text('Fortnightly')),
+                  value: 'fortnightly',
+                  child: Text('Fortnightly'),
+                ),
                 DropdownMenuItem(value: 'monthly', child: Text('Monthly')),
                 DropdownMenuItem(value: 'quarterly', child: Text('Quarterly')),
                 DropdownMenuItem(value: 'annually', child: Text('Annually')),
@@ -1699,17 +1702,20 @@ class _EnhancedInvoiceGenerationViewState
     );
   }
 
-  Widget _buildGenerateSection(InvoiceGenerationState invoiceState,
-      String errorMessage, AppLocalizations l10n) {
+  Widget _buildGenerateSection(
+    InvoiceGenerationState invoiceState,
+    String errorMessage,
+    AppLocalizations l10n,
+  ) {
     final bool selectionPresent =
         widget.selectedEmployeesAndClients?.isNotEmpty == true;
     final bool invoiceTypeSelected = _invoiceType != null;
     final bool hasClientGatingIssues =
         _strictClientGating && _missingClientRatesByItem.isNotEmpty;
-    final bool canGenerate = selectionPresent &&
-        invoiceTypeSelected &&
-        !_hasMissingBaseRates;
-    final bool isLoading = invoiceState == InvoiceGenerationState.loading ||
+    final bool canGenerate =
+        selectionPresent && invoiceTypeSelected && !_hasMissingBaseRates;
+    final bool isLoading =
+        invoiceState == InvoiceGenerationState.loading ||
         _isValidatingPriceCaps;
     // Selected invoice period state
     // Defaults: null -> service will use its fallback
@@ -1812,8 +1818,9 @@ class _EnhancedInvoiceGenerationViewState
                         runSpacing: 4.0,
                         children: [
                           TextButton.icon(
-                            onPressed:
-                                _isCheckingRates ? null : _preflightRateCheck,
+                            onPressed: _isCheckingRates
+                                ? null
+                                : _preflightRateCheck,
                             icon: _isCheckingRates
                                 ? SizedBox(
                                     width: 16,
@@ -1821,17 +1828,18 @@ class _EnhancedInvoiceGenerationViewState
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
                                       valueColor: AlwaysStoppedAnimation<Color>(
-                                          _hasMissingBaseRates
-                                              ? BauhausDesign.error
-                                              : BauhausDesign.success),
+                                        _hasMissingBaseRates
+                                            ? BauhausDesign.error
+                                            : BauhausDesign.success,
+                                      ),
                                     ),
                                   )
                                 : const Icon(Icons.refresh),
                             label: Text(l10n.recheckRates),
                             style: TextButton.styleFrom(
                               foregroundColor: BauhausDesign.neoSignal,
-                              disabledForegroundColor:
-                                  BauhausDesign.neoInk.withOpacity(0.35),
+                              disabledForegroundColor: BauhausDesign.neoInk
+                                  .withOpacity(0.35),
                             ),
                           ),
                           TextButton.icon(
@@ -1842,8 +1850,8 @@ class _EnhancedInvoiceGenerationViewState
                             label: Text(l10n.viewMissingItems),
                             style: TextButton.styleFrom(
                               foregroundColor: BauhausDesign.neoSignal,
-                              disabledForegroundColor:
-                                  BauhausDesign.neoInk.withOpacity(0.35),
+                              disabledForegroundColor: BauhausDesign.neoInk
+                                  .withOpacity(0.35),
                             ),
                           ),
                           if (selectionPresent)
@@ -1855,8 +1863,8 @@ class _EnhancedInvoiceGenerationViewState
                               label: Text(l10n.setPriceOverridesButton),
                               style: TextButton.styleFrom(
                                 foregroundColor: BauhausDesign.neoSignal,
-                                disabledForegroundColor:
-                                    BauhausDesign.neoInk.withOpacity(0.35),
+                                disabledForegroundColor: BauhausDesign.neoInk
+                                    .withOpacity(0.35),
                               ),
                             ),
                           TextButton.icon(
@@ -1867,8 +1875,8 @@ class _EnhancedInvoiceGenerationViewState
                             label: Text(l10n.openPricingManagement),
                             style: TextButton.styleFrom(
                               foregroundColor: BauhausDesign.neoSignal,
-                              disabledForegroundColor:
-                                  BauhausDesign.neoInk.withOpacity(0.35),
+                              disabledForegroundColor: BauhausDesign.neoInk
+                                  .withOpacity(0.35),
                             ),
                           ),
                           TextButton.icon(
@@ -1879,8 +1887,8 @@ class _EnhancedInvoiceGenerationViewState
                             label: Text(l10n.setFallbackRate),
                             style: TextButton.styleFrom(
                               foregroundColor: BauhausDesign.neoSignal,
-                              disabledForegroundColor:
-                                  BauhausDesign.neoInk.withOpacity(0.35),
+                              disabledForegroundColor: BauhausDesign.neoInk
+                                  .withOpacity(0.35),
                             ),
                           ),
                         ],
@@ -1944,8 +1952,7 @@ class _EnhancedInvoiceGenerationViewState
                       onPressed: isLoading
                           ? null
                           : () async {
-                              final picked =
-                                  await showBauhausDateRangePicker(
+                              final picked = await showBauhausDateRangePicker(
                                 context: context,
                                 initialStart: startDateLocal,
                                 initialEnd: endDateLocal,
@@ -2058,9 +2065,7 @@ class _EnhancedInvoiceGenerationViewState
                   color: BauhausDesign.neoInk,
                   width: BauhausDesign.neoBorderWidth,
                 ),
-                boxShadow: const [
-                  BauhausDesign.shadowNeoButton,
-                ],
+                boxShadow: const [BauhausDesign.shadowNeoButton],
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -2124,9 +2129,9 @@ class _EnhancedInvoiceGenerationViewState
           if (generatedPdfs.isEmpty)
             Text(
               l10n.noInvoicesGenerated,
-              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textMuted,
-                  ),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
             )
           else
             ...generatedPdfs.asMap().entries.map((entry) {
@@ -2154,18 +2159,15 @@ class _EnhancedInvoiceGenerationViewState
                   ),
                   title: Text(
                     fileName,
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
-                        ?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                   ),
                   subtitle: Text(
                     l10n.tapToViewPdf,
-                    style:
-                        BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                              color: BauhausDesign.textMuted,
-                            ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -2201,24 +2203,18 @@ class _EnhancedInvoiceGenerationViewState
 
   Widget _buildFileTypeChip(String type) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 8.0,
-        vertical: 4.0,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
       decoration: BoxDecoration(
         color: BauhausDesign.neutral.withOpacity(0.1),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(
-          color: BauhausDesign.neutral,
-          width: 1,
-        ),
+        border: Border.all(color: BauhausDesign.neutral, width: 1),
       ),
       child: Text(
         type,
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: BauhausDesign.textMuted,
-              fontWeight: FontWeight.w600,
-            ),
+          color: BauhausDesign.textMuted,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -2288,9 +2284,7 @@ class _EnhancedInvoiceGenerationViewState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.errorPickingFiles(e.toString())),
-          ),
+          SnackBar(content: Text(l10n.errorPickingFiles(e.toString()))),
         );
       }
     }
@@ -2393,8 +2387,9 @@ class _EnhancedInvoiceGenerationViewState
           );
 
           // Get NDIS price cap
-          final supportItemDetails =
-              await apiMethod.getSupportItemDetails(itemNumber);
+          final supportItemDetails = await apiMethod.getSupportItemDetails(
+            itemNumber,
+          );
 
           // Use same logic as price_override_view.dart:
           // Prefer `customPrice` when custom pricing exists; otherwise fallback to `price`
@@ -2409,7 +2404,8 @@ class _EnhancedInvoiceGenerationViewState
           }
 
           debugPrint(
-              'NDIS Cap Validation: Item $itemNumber - customPrice: ${pricingData?['customPrice']}, price: ${pricingData?['price']}, resolved currentPrice: $currentPrice');
+            'NDIS Cap Validation: Item $itemNumber - customPrice: ${pricingData?['customPrice']}, price: ${pricingData?['price']}, resolved currentPrice: $currentPrice',
+          );
 
           double? ndisCapPrice;
           if (supportItemDetails != null &&
@@ -2425,7 +2421,8 @@ class _EnhancedInvoiceGenerationViewState
                   standardCaps[clientState] is num) {
                 ndisCapPrice = (standardCaps[clientState] as num).toDouble();
                 debugPrint(
-                    'NDIS Cap Validation: Found standard cap for $clientState: $ndisCapPrice');
+                  'NDIS Cap Validation: Found standard cap for $clientState: $ndisCapPrice',
+                );
               }
             }
 
@@ -2437,23 +2434,26 @@ class _EnhancedInvoiceGenerationViewState
                   priceCaps['highIntensity'] as Map<String, dynamic>;
               if (highIntensityCaps[clientState] != null &&
                   highIntensityCaps[clientState] is num) {
-                ndisCapPrice =
-                    (highIntensityCaps[clientState] as num).toDouble();
+                ndisCapPrice = (highIntensityCaps[clientState] as num)
+                    .toDouble();
                 debugPrint(
-                    'NDIS Cap Validation: Found highIntensity cap for $clientState: $ndisCapPrice');
+                  'NDIS Cap Validation: Found highIntensity cap for $clientState: $ndisCapPrice',
+                );
               }
             }
           }
 
           debugPrint(
-              'NDIS Cap Validation: Item $itemNumber - currentPrice: $currentPrice, ndisCapPrice: $ndisCapPrice, exceeds: ${ndisCapPrice != null && ndisCapPrice > 0 && currentPrice > ndisCapPrice}');
+            'NDIS Cap Validation: Item $itemNumber - currentPrice: $currentPrice, ndisCapPrice: $ndisCapPrice, exceeds: ${ndisCapPrice != null && ndisCapPrice > 0 && currentPrice > ndisCapPrice}',
+          );
 
           // Check if current price exceeds NDIS cap
           if (ndisCapPrice != null &&
               ndisCapPrice > 0 &&
               currentPrice > ndisCapPrice) {
             debugPrint(
-                'Item exceeds cap: $itemName - Current: $currentPrice, Cap: $ndisCapPrice');
+              'Item exceeds cap: $itemName - Current: $currentPrice, Cap: $ndisCapPrice',
+            );
             itemsExceedingCap.add({
               'itemNumber': itemNumber,
               'itemName': itemName,
@@ -2578,19 +2578,23 @@ class _EnhancedInvoiceGenerationViewState
                             // Items List
                             ...itemsExceedingCap.asMap().entries.map((entry) {
                               return _buildExceedingCapItem(
-                                  entry.value, entry.key);
+                                entry.value,
+                                entry.key,
+                              );
                             }),
                             const SizedBox(height: 24),
                             // Action Guide Box
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color:
-                                    BauhausDesign.neoSignal.withOpacity(0.08),
+                                color: BauhausDesign.neoSignal.withOpacity(
+                                  0.08,
+                                ),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color:
-                                      BauhausDesign.neoSignal.withOpacity(0.25),
+                                  color: BauhausDesign.neoSignal.withOpacity(
+                                    0.25,
+                                  ),
                                 ),
                               ),
                               child: Column(
@@ -2628,9 +2632,7 @@ class _EnhancedInvoiceGenerationViewState
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
                         border: Border(
-                          top: BorderSide(
-                            color: Colors.grey.withOpacity(0.1),
-                          ),
+                          top: BorderSide(color: Colors.grey.withOpacity(0.1)),
                         ),
                       ),
                       child: Row(
@@ -2673,18 +2675,14 @@ class _EnhancedInvoiceGenerationViewState
   Widget _buildActionOption(String text, IconData icon) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 16,
-          color: BauhausDesign.textMuted,
-        ),
+        Icon(icon, size: 16, color: BauhausDesign.textMuted),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
             text,
-            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                  color: BauhausDesign.textMuted,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
           ),
         ),
       ],
@@ -2706,9 +2704,9 @@ class _EnhancedInvoiceGenerationViewState
               item['itemName'] ?? '',
               item['itemNumber'] ?? '',
             ),
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 4),
           Text(
@@ -2716,9 +2714,9 @@ class _EnhancedInvoiceGenerationViewState
               item['clientName'] ?? l10n.unknownClient,
               item['clientState'] ?? '',
             ),
-            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                  color: BauhausDesign.textMuted,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
           ),
           const SizedBox(height: 8),
           Row(
@@ -2729,19 +2727,16 @@ class _EnhancedInvoiceGenerationViewState
                 children: [
                   Text(
                     l10n.currentPriceLabel,
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelSmall
-                        ?.copyWith(
-                          color: BauhausDesign.textMuted,
-                        ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
                   ),
                   Text(
                     l10n.priceDisplay(
                       l10n.currencySymbol,
                       (item['currentPrice'] as num).toStringAsFixed(2),
                     ),
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
+                    style: BauhausDesign.getTextTheme(context).bodyMedium
                         ?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: BauhausDesign.error,
@@ -2754,19 +2749,16 @@ class _EnhancedInvoiceGenerationViewState
                 children: [
                   Text(
                     l10n.ndisCapLabel,
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelSmall
-                        ?.copyWith(
-                          color: BauhausDesign.textMuted,
-                        ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
                   ),
                   Text(
                     l10n.priceDisplay(
                       l10n.currencySymbol,
                       (item['ndisCapPrice'] as num).toStringAsFixed(2),
                     ),
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
+                    style: BauhausDesign.getTextTheme(context).bodyMedium
                         ?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: BauhausDesign.success,
@@ -2779,19 +2771,16 @@ class _EnhancedInvoiceGenerationViewState
                 children: [
                   Text(
                     l10n.excessLabel,
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelSmall
-                        ?.copyWith(
-                          color: BauhausDesign.textMuted,
-                        ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
                   ),
                   Text(
                     l10n.priceDisplay(
                       l10n.currencySymbol,
                       (item['excessAmount'] as num).toStringAsFixed(2),
                     ),
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
+                    style: BauhausDesign.getTextTheme(context).bodyMedium
                         ?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: BauhausDesign.warning,
@@ -2827,8 +2816,9 @@ class _EnhancedInvoiceGenerationViewState
 
       // If items exceed cap, show warning dialog
       if (itemsExceedingCap.isNotEmpty) {
-        final shouldProceed =
-            await _showNdisPriceCapWarningDialog(itemsExceedingCap);
+        final shouldProceed = await _showNdisPriceCapWarningDialog(
+          itemsExceedingCap,
+        );
         if (!shouldProceed) {
           return; // User chose to go back to price override
         }
@@ -2858,12 +2848,13 @@ class _EnhancedInvoiceGenerationViewState
         final firstEmployee = widget.selectedEmployeesAndClients!.first;
         organizationId =
             firstEmployee['employee']?['organizationId'] as String? ??
-                firstEmployee['organizationId'] as String?;
+            firstEmployee['organizationId'] as String?;
       }
       // Fallback to genKey if organizationId is not found
       organizationId ??= widget.genKey;
-      final effectiveUseAdminBankDetails =
-          _invoiceType == 'client' ? true : _useAdminBankDetails;
+      final effectiveUseAdminBankDetails = _invoiceType == 'client'
+          ? true
+          : _useAdminBankDetails;
       debugPrint("Tax rate in UI: $_taxRate");
       final l10n = AppLocalizations.of(context)!;
       final messenger = ScaffoldMessenger.of(context);
@@ -2894,10 +2885,7 @@ class _EnhancedInvoiceGenerationViewState
         endDate: _selectedEndDate,
         invoiceType: _invoiceType,
         recurrence: _isRecurring
-            ? {
-                'isRecurring': true,
-                'frequency': _recurrenceFrequency,
-              }
+            ? {'isRecurring': true, 'frequency': _recurrenceFrequency}
             : null,
       );
 
@@ -2912,9 +2900,7 @@ class _EnhancedInvoiceGenerationViewState
         );
       } else {
         messenger.showSnackBar(
-          SnackBar(
-            content: Text(l10n.noInvoicesGenerated),
-          ),
+          SnackBar(content: Text(l10n.noInvoicesGenerated)),
         );
       }
     } catch (e) {
@@ -2939,9 +2925,7 @@ class _EnhancedInvoiceGenerationViewState
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.errorGeneratingInvoices(e.toString())),
-          ),
+          SnackBar(content: Text(l10n.errorGeneratingInvoices(e.toString()))),
         );
       }
     }
@@ -2968,8 +2952,9 @@ class _EnhancedInvoiceGenerationViewState
     final l10n = AppLocalizations.of(context);
     if (l10n == null)
       return '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}';
-    return DateFormat.yMd(Localizations.localeOf(context).toString())
-        .format(dt);
+    return DateFormat.yMd(
+      Localizations.localeOf(context).toString(),
+    ).format(dt);
   }
 
   Future<void> _openPriceOverrideView() async {
@@ -2986,8 +2971,9 @@ class _EnhancedInvoiceGenerationViewState
           if (employeeEmail.isNotEmpty) {
             // Get user assignments for this employee
             final apiMethod = ref.read(app_providers.apiMethodProvider);
-            final assignments =
-                await apiMethod.getUserAssignments(employeeEmail);
+            final assignments = await apiMethod.getUserAssignments(
+              employeeEmail,
+            );
 
             if (assignments['success'] == true &&
                 assignments['assignments'] != null) {
@@ -3156,7 +3142,9 @@ class _EnhancedInvoiceGenerationViewState
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 14),
+                      horizontal: 20,
+                      vertical: 14,
+                    ),
                     decoration: BauhausDesign.neoSectionHeaderDecoration(
                       backgroundColor: hasAnyMissing
                           ? BauhausDesign.neoHighlight
@@ -3212,15 +3200,17 @@ class _EnhancedInvoiceGenerationViewState
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: BauhausDesign.neoInk,
+                      horizontal: 20,
+                      vertical: 10,
                     ),
+                    decoration: BoxDecoration(color: BauhausDesign.neoInk),
                     child: Row(
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: hasAnyMissing
                                 ? BauhausDesign.neoDanger
@@ -3315,9 +3305,7 @@ class _EnhancedInvoiceGenerationViewState
                                 color: BauhausDesign.neoInk,
                                 width: BauhausDesign.neoInnerBorderWidth,
                               ),
-                              boxShadow: const [
-                                BauhausDesign.shadowHardSm,
-                              ],
+                              boxShadow: const [BauhausDesign.shadowHardSm],
                             ),
                             child: Row(
                               children: [
@@ -3389,9 +3377,7 @@ class _EnhancedInvoiceGenerationViewState
                                     color: BauhausDesign.neoInk,
                                     width: BauhausDesign.neoInnerBorderWidth,
                                   ),
-                                  boxShadow: const [
-                                    BauhausDesign.shadowHardXs,
-                                  ],
+                                  boxShadow: const [BauhausDesign.shadowHardXs],
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -3417,23 +3403,22 @@ class _EnhancedInvoiceGenerationViewState
                                                   Flexible(
                                                     child: Text(
                                                       itemNumber,
-                                                      style: BauhausDesign
-                                                          .neoMonoStyle(
-                                                        context,
-                                                        color: BauhausDesign
-                                                            .textDark,
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                      ),
+                                                      style:
+                                                          BauhausDesign.neoMonoStyle(
+                                                            context,
+                                                            color: BauhausDesign
+                                                                .textDark,
+                                                            fontSize: 13,
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                          ),
                                                     ),
                                                   ),
                                                   const SizedBox(width: 8),
                                                   SourceBadge(
                                                     source:
-                                                        _itemPricingSource[
-                                                                itemNumber] ??
-                                                            'fallback',
+                                                        _itemPricingSource[itemNumber] ??
+                                                        'fallback',
                                                     isSmall: true,
                                                     tooltip: l10n
                                                         .pricingSourceTooltip,
@@ -3443,19 +3428,18 @@ class _EnhancedInvoiceGenerationViewState
                                               const SizedBox(height: 3),
                                               Text(
                                                 _supportItemNames[itemNumber] ??
-                                                    l10n
-                                                        .supportItemNameUnavailable,
-                                                style: BauhausDesign
-                                                    .neoMonoStyle(
-                                                  context,
-                                                  color:
-                                                      BauhausDesign.textMuted,
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
+                                                    l10n.supportItemNameUnavailable,
+                                                style:
+                                                    BauhausDesign.neoMonoStyle(
+                                                      context,
+                                                      color: BauhausDesign
+                                                          .textMuted,
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
                                                 maxLines: 2,
-                                                overflow:
-                                                    TextOverflow.ellipsis,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             ],
                                           ),
@@ -3463,8 +3447,8 @@ class _EnhancedInvoiceGenerationViewState
                                         const SizedBox(width: 8),
                                         _neoSmallActionButton(
                                           label: l10n.addOrgRateButton,
-                                          onTap: () => _promptAddOrgBaseRate(
-                                              itemNumber),
+                                          onTap: () =>
+                                              _promptAddOrgBaseRate(itemNumber),
                                         ),
                                       ],
                                     ),
@@ -3496,9 +3480,7 @@ class _EnhancedInvoiceGenerationViewState
                                     color: BauhausDesign.neoInk,
                                     width: BauhausDesign.neoInnerBorderWidth,
                                   ),
-                                  boxShadow: const [
-                                    BauhausDesign.shadowHardXs,
-                                  ],
+                                  boxShadow: const [BauhausDesign.shadowHardXs],
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -3507,7 +3489,9 @@ class _EnhancedInvoiceGenerationViewState
                                     Container(
                                       width: double.infinity,
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 12),
+                                        horizontal: 16,
+                                        vertical: 12,
+                                      ),
                                       decoration: BoxDecoration(
                                         color: BauhausDesign.neoHighlight
                                             .withOpacity(0.12),
@@ -3534,29 +3518,29 @@ class _EnhancedInvoiceGenerationViewState
                                               children: [
                                                 Text(
                                                   itemNumber,
-                                                  style: BauhausDesign
-                                                      .neoMonoStyle(
-                                                    context,
-                                                    color: BauhausDesign
-                                                        .textDark,
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.w700,
-                                                  ),
+                                                  style:
+                                                      BauhausDesign.neoMonoStyle(
+                                                        context,
+                                                        color: BauhausDesign
+                                                            .textDark,
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                      ),
                                                 ),
                                                 const SizedBox(height: 2),
                                                 Text(
-                                                  _supportItemNames[
-                                                          itemNumber] ??
-                                                      l10n
-                                                          .supportItemNameUnavailable,
-                                                  style: BauhausDesign
-                                                      .neoMonoStyle(
-                                                    context,
-                                                    color: BauhausDesign
-                                                        .textMuted,
-                                                    fontSize: 10,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
+                                                  _supportItemNames[itemNumber] ??
+                                                      l10n.supportItemNameUnavailable,
+                                                  style:
+                                                      BauhausDesign.neoMonoStyle(
+                                                        context,
+                                                        color: BauhausDesign
+                                                            .textMuted,
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
                                                   maxLines: 2,
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -3566,9 +3550,9 @@ class _EnhancedInvoiceGenerationViewState
                                           ),
                                           _neoSmallActionButton(
                                             label: l10n.addOrgRateButton,
-                                            onTap: () =>
-                                                _promptAddOrgBaseRate(
-                                                    itemNumber),
+                                            onTap: () => _promptAddOrgBaseRate(
+                                              itemNumber,
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -3577,7 +3561,9 @@ class _EnhancedInvoiceGenerationViewState
                                     ...clients.map(
                                       (client) => Container(
                                         padding: const EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 10),
+                                          horizontal: 16,
+                                          vertical: 10,
+                                        ),
                                         decoration: BoxDecoration(
                                           border: Border(
                                             bottom: BorderSide(
@@ -3600,22 +3586,24 @@ class _EnhancedInvoiceGenerationViewState
                                                 client['clientName'] ??
                                                     client['clientEmail'] ??
                                                     l10n.unknownClient,
-                                                style: BauhausDesign
-                                                    .neoMonoStyle(
-                                                  context,
-                                                  color:
-                                                      BauhausDesign.textDark,
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
+                                                style:
+                                                    BauhausDesign.neoMonoStyle(
+                                                      context,
+                                                      color: BauhausDesign
+                                                          .textDark,
+                                                      fontSize: 11,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
                                               ),
                                             ),
                                             _neoSmallActionButton(
-                                              label:
-                                                  l10n.addClientRateButton,
+                                              label: l10n.addClientRateButton,
                                               onTap: () =>
                                                   _promptAddClientBaseRate(
-                                                      itemNumber, client),
+                                                    itemNumber,
+                                                    client,
+                                                  ),
                                               compact: true,
                                             ),
                                           ],
@@ -3643,8 +3631,9 @@ class _EnhancedInvoiceGenerationViewState
                             child: InkWell(
                               onTap: () => Navigator.pop(context),
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 14),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
                                 child: Center(
                                   child: Text(
                                     l10n.closeButton.toUpperCase(),
@@ -3759,10 +3748,7 @@ class _EnhancedInvoiceGenerationViewState
           ),
           decoration: BoxDecoration(
             color: BauhausDesign.neoSignal,
-            border: Border.all(
-              color: BauhausDesign.neoInk,
-              width: 1.5,
-            ),
+            border: Border.all(color: BauhausDesign.neoInk, width: 1.5),
           ),
           child: Text(
             label,
@@ -3816,9 +3802,7 @@ class _EnhancedInvoiceGenerationViewState
                 final price = double.tryParse(controller.text.trim());
                 if (price == null || price <= 0) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.invalidPriceError),
-                    ),
+                    SnackBar(content: Text(l10n.invalidPriceError)),
                   );
                   return;
                 }
@@ -3834,16 +3818,15 @@ class _EnhancedInvoiceGenerationViewState
                   if (mounted) {
                     if (dialogContext.mounted) Navigator.pop(dialogContext);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(l10n.baseRateSaveSuccess),
-                      ),
+                      SnackBar(content: Text(l10n.baseRateSaveSuccess)),
                     );
                     // Optimistically update local state to keep remaining items visible
                     setState(() {
                       _itemPricingSource[itemNumber] = 'organization';
                       _missingRateItems.removeWhere((i) => i == itemNumber);
                       _missingClientRatesByItem.remove(itemNumber);
-                      _hasMissingBaseRates = _missingRateItems.isNotEmpty ||
+                      _hasMissingBaseRates =
+                          _missingRateItems.isNotEmpty ||
                           _missingClientRatesByItem.isNotEmpty;
                     });
                     // Refresh pricing without clearing the existing list
@@ -3869,7 +3852,9 @@ class _EnhancedInvoiceGenerationViewState
 
   /// Prompt for entering a client-specific base rate and save it.
   Future<void> _promptAddClientBaseRate(
-      String itemNumber, Map<String, String> client) async {
+    String itemNumber,
+    Map<String, String> client,
+  ) async {
     final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController();
     final orgId = _resolveOrganizationId();
@@ -3882,11 +3867,9 @@ class _EnhancedInvoiceGenerationViewState
     if (!mounted) return;
 
     if (clientId.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.missingClientIdError),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.missingClientIdError)));
       return;
     }
 
@@ -3917,9 +3900,7 @@ class _EnhancedInvoiceGenerationViewState
                 final price = double.tryParse(controller.text.trim());
                 if (price == null || price <= 0) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.invalidPriceError),
-                    ),
+                    SnackBar(content: Text(l10n.invalidPriceError)),
                   );
                   return;
                 }
@@ -3936,9 +3917,7 @@ class _EnhancedInvoiceGenerationViewState
                   if (mounted) {
                     if (dialogContext.mounted) Navigator.pop(dialogContext);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(l10n.clientBaseRateSaveSuccess),
-                      ),
+                      SnackBar(content: Text(l10n.clientBaseRateSaveSuccess)),
                     );
                     // Optimistically update local state to keep remaining items visible
                     setState(() {
@@ -3946,14 +3925,16 @@ class _EnhancedInvoiceGenerationViewState
                       final list = _missingClientRatesByItem[itemNumber];
                       if (list != null) {
                         list.removeWhere(
-                            (e) => (e['clientId'] ?? '') == clientId);
+                          (e) => (e['clientId'] ?? '') == clientId,
+                        );
                         if (list.isEmpty) {
                           _missingClientRatesByItem.remove(itemNumber);
                         } else {
                           _missingClientRatesByItem[itemNumber] = list;
                         }
                       }
-                      _hasMissingBaseRates = _missingRateItems.isNotEmpty ||
+                      _hasMissingBaseRates =
+                          _missingRateItems.isNotEmpty ||
                           _missingClientRatesByItem.isNotEmpty;
                     });
                     // Refresh pricing without clearing the existing list
@@ -3963,8 +3944,9 @@ class _EnhancedInvoiceGenerationViewState
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content:
-                            Text(l10n.clientBaseRateSaveError(e.toString())),
+                        content: Text(
+                          l10n.clientBaseRateSaveError(e.toString()),
+                        ),
                       ),
                     );
                   }
@@ -3996,7 +3978,8 @@ class _EnhancedInvoiceGenerationViewState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-                result ? l10n.invoicesSentSuccess : l10n.invoicesSentError),
+              result ? l10n.invoicesSentSuccess : l10n.invoicesSentError,
+            ),
           ),
         );
       }
@@ -4004,9 +3987,7 @@ class _EnhancedInvoiceGenerationViewState
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.errorSendingInvoices(e.toString())),
-          ),
+          SnackBar(content: Text(l10n.errorSendingInvoices(e.toString()))),
         );
       }
     }
@@ -4024,7 +4005,8 @@ class _EnhancedInvoiceGenerationViewState
       if (index != -1 && index < state.invoices.length) {
         final invoiceData = state.invoices[index];
         debugPrint(
-            'Found invoice data for PDF $pdfPath at index $index. Extracting receipts...');
+          'Found invoice data for PDF $pdfPath at index $index. Extracting receipts...',
+        );
 
         // Extract receipts logic (similar to InvoiceListModel)
         try {
@@ -4085,24 +4067,21 @@ class _EnhancedInvoiceGenerationViewState
       // Remove duplicates
       receiptUrls = receiptUrls.toSet().toList();
       debugPrint(
-          'Passing ${receiptUrls.length} receipt URLs to PDF Viewer: $receiptUrls');
+        'Passing ${receiptUrls.length} receipt URLs to PDF Viewer: $receiptUrls',
+      );
 
       await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => PdfViewPage(
-            pdfPath: pdfPath,
-            receiptUrls: receiptUrls,
-          ),
+          builder: (context) =>
+              PdfViewPage(pdfPath: pdfPath, receiptUrls: receiptUrls),
         ),
       );
     } catch (e) {
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.errorViewingPdf(e.toString())),
-          ),
+          SnackBar(content: Text(l10n.errorViewingPdf(e.toString()))),
         );
       }
     }

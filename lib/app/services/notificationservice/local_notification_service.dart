@@ -20,8 +20,8 @@ class LocalNotificationService {
         const AndroidInitializationSettings('ic_notification');
 
     // Initialization settings for iOS
-    final DarwinInitializationSettings iosInitSettings =
-        DarwinInitializationSettings(
+    final DarwinInitializationSettings
+    iosInitSettings = DarwinInitializationSettings(
       requestAlertPermission: requestPermissions,
       requestBadgePermission: requestPermissions,
       requestSoundPermission: requestPermissions,
@@ -31,23 +31,26 @@ class LocalNotificationService {
     // Request notification permissions for Android 13+ (API level 33+)
     if (requestPermissions && Platform.isAndroid) {
       final AndroidFlutterLocalNotificationsPlugin? androidPlugin =
-          _notificationsPlugin.resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>();
+          _notificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin
+              >();
 
       if (androidPlugin != null) {
-        final bool? granted =
-            await androidPlugin.requestNotificationsPermission();
+        final bool? granted = await androidPlugin
+            .requestNotificationsPermission();
         debugPrint(
-            'DEBUG_LOCAL_NOTIF: Android notification permission granted: $granted');
+          'DEBUG_LOCAL_NOTIF: Android notification permission granted: $granted',
+        );
       }
     }
 
     // Combined initialization settings
     final InitializationSettings initializationSettings =
         InitializationSettings(
-      android: androidInitSettings,
-      iOS: iosInitSettings,
-    );
+          android: androidInitSettings,
+          iOS: iosInitSettings,
+        );
 
     // Initialize the plugin
     await _notificationsPlugin.initialize(
@@ -59,11 +62,14 @@ class LocalNotificationService {
     await _createNotificationChannels();
 
     debugPrint(
-        'DEBUG_LOCAL_NOTIF: LocalNotificationService initialized successfully');
+      'DEBUG_LOCAL_NOTIF: LocalNotificationService initialized successfully',
+    );
   }
 
   Future<void> createAndDisplayNotification(
-      NotificationModel notificationModel, Map<String, dynamic> payload) async {
+    NotificationModel notificationModel,
+    Map<String, dynamic> payload,
+  ) async {
     try {
       // Extract channelId from payload, default to 'timer_alerts'
       final String channelId = payload['channelId'] ?? 'timer_alerts';
@@ -81,10 +87,11 @@ class LocalNotificationService {
       debugPrint('\n--- PLUGIN STATUS CHECK ---');
       try {
         // Test if plugin is responsive
-        final pendingNotifications =
-            await _notificationsPlugin.pendingNotificationRequests();
+        final pendingNotifications = await _notificationsPlugin
+            .pendingNotificationRequests();
         debugPrint(
-            '✅ Plugin is responsive - Pending notifications: ${pendingNotifications.length}');
+          '✅ Plugin is responsive - Pending notifications: ${pendingNotifications.length}',
+        );
       } catch (e) {
         debugPrint('❌ Plugin may not be initialized properly: $e');
       }
@@ -92,18 +99,18 @@ class LocalNotificationService {
       // Use the actual channelId for Android notification details
       final AndroidNotificationDetails androidDetails =
           AndroidNotificationDetails(
-        channelId, // Use the dynamic channelId
-        _getChannelName(channelId),
-        channelDescription: _getChannelDescription(channelId),
-        importance: Importance.high,
-        priority: Priority.high,
-        fullScreenIntent: true,
-        category: AndroidNotificationCategory.alarm,
-        enableVibration: true,
-        playSound: true,
-        showWhen: true,
-        when: DateTime.now().millisecondsSinceEpoch,
-      );
+            channelId, // Use the dynamic channelId
+            _getChannelName(channelId),
+            channelDescription: _getChannelDescription(channelId),
+            importance: Importance.high,
+            priority: Priority.high,
+            fullScreenIntent: true,
+            category: AndroidNotificationCategory.alarm,
+            enableVibration: true,
+            playSound: true,
+            showWhen: true,
+            when: DateTime.now().millisecondsSinceEpoch,
+          );
 
       // Create iOS notification details
       const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
@@ -129,7 +136,8 @@ class LocalNotificationService {
       debugPrint('Final Title: ${notificationModel.title}');
       debugPrint('Final Body: ${notificationModel.body}');
       debugPrint(
-          'Android Details: Channel=$channelId, Priority=High, Sound=true');
+        'Android Details: Channel=$channelId, Priority=High, Sound=true',
+      );
       debugPrint('iOS Details: Alert=true, Badge=true, Sound=default');
       debugPrint('Payload JSON: ${jsonEncode(payload)}');
 
@@ -146,12 +154,15 @@ class LocalNotificationService {
 
       stopwatch.stop();
       debugPrint(
-          '✅ _notificationsPlugin.show() completed in ${stopwatch.elapsedMilliseconds}ms');
+        '✅ _notificationsPlugin.show() completed in ${stopwatch.elapsedMilliseconds}ms',
+      );
       debugPrint('✅ LOCAL NOTIFICATION DISPLAY ATTEMPT FINISHED');
       debugPrint(
-          '🔍 Check device notification tray/center for the notification');
+        '🔍 Check device notification tray/center for the notification',
+      );
       debugPrint(
-          '🔍 If not visible, check device notification settings and permissions');
+        '🔍 If not visible, check device notification settings and permissions',
+      );
       debugPrint('=== END LOCAL NOTIFICATION DISPLAY ===\n');
     } catch (e) {
       debugPrint('DEBUG_LOCAL_NOTIF: ❌ Error creating notification: $e');
@@ -212,10 +223,12 @@ class LocalNotificationService {
   }
 
   Future<void> onDidReceiveNotification(
-      NotificationResponse notificationResponse) async {
+    NotificationResponse notificationResponse,
+  ) async {
     // Handle notification tap
     debugPrint(
-        'DEBUG_LOCAL_NOTIF: Notification tapped with payload: ${notificationResponse.payload}');
+      'DEBUG_LOCAL_NOTIF: Notification tapped with payload: ${notificationResponse.payload}',
+    );
     if (notificationResponse.payload != null) {
       try {
         // Parse the payload (which should be a JSON string)
@@ -263,93 +276,96 @@ class LocalNotificationService {
 
     if (Platform.isAndroid) {
       final AndroidFlutterLocalNotificationsPlugin? androidPlugin =
-          _notificationsPlugin.resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>();
+          _notificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin
+              >();
 
       if (androidPlugin != null) {
         // Main notification channel for general notifications
         const AndroidNotificationChannel mainChannel =
             AndroidNotificationChannel(
-          'invoice',
-          'Invoice Notifications',
-          description: 'General notifications from the app',
-          importance: Importance.max,
-          playSound: true,
-          sound: null, // Use default system notification sound
-          enableVibration: true,
-          enableLights: true,
-          showBadge: true,
-        );
+              'invoice',
+              'Invoice Notifications',
+              description: 'General notifications from the app',
+              importance: Importance.max,
+              playSound: true,
+              sound: null, // Use default system notification sound
+              enableVibration: true,
+              enableLights: true,
+              showBadge: true,
+            );
 
         // Timer alerts channel for employee tracking notifications
         const AndroidNotificationChannel timerChannel =
             AndroidNotificationChannel(
-          'timer_alerts',
-          'Timer Alerts',
-          description: 'Notifications for timer events and reminders',
-          importance: Importance.max,
-          playSound: true,
-          sound: null, // Use default system notification sound
-          enableVibration: true,
-          enableLights: true,
-          showBadge: true,
-        );
+              'timer_alerts',
+              'Timer Alerts',
+              description: 'Notifications for timer events and reminders',
+              importance: Importance.max,
+              playSound: true,
+              sound: null, // Use default system notification sound
+              enableVibration: true,
+              enableLights: true,
+              showBadge: true,
+            );
 
         // Message notifications channel for general messaging
         const AndroidNotificationChannel messageChannel =
             AndroidNotificationChannel(
-          'message',
-          'Message Notifications',
-          description: 'Notifications for messages and general communications',
-          importance: Importance.max,
-          playSound: true,
-          sound: null, // Use default system notification sound
-          enableVibration: true,
-          enableLights: true,
-          showBadge: true,
-        );
+              'message',
+              'Message Notifications',
+              description:
+                  'Notifications for messages and general communications',
+              importance: Importance.max,
+              playSound: true,
+              sound: null, // Use default system notification sound
+              enableVibration: true,
+              enableLights: true,
+              showBadge: true,
+            );
 
         // Timesheet reminders channel
         const AndroidNotificationChannel timesheetChannel =
             AndroidNotificationChannel(
-          'timesheet_reminders',
-          'Timesheet Reminders',
-          description: 'Reminders to submit your timesheets',
-          importance: Importance.high,
-          playSound: true,
-          sound: null,
-          enableVibration: true,
-          enableLights: true,
-          showBadge: true,
-        );
+              'timesheet_reminders',
+              'Timesheet Reminders',
+              description: 'Reminders to submit your timesheets',
+              importance: Importance.high,
+              playSound: true,
+              sound: null,
+              enableVibration: true,
+              enableLights: true,
+              showBadge: true,
+            );
 
         // Expense reminders channel
         const AndroidNotificationChannel expenseChannel =
             AndroidNotificationChannel(
-          'expense_reminders',
-          'Expense Reminders',
-          description: 'Reminders to upload expense receipts',
-          importance: Importance.defaultImportance,
-          playSound: true,
-          sound: null,
-          enableVibration: true,
-          enableLights: true,
-          showBadge: true,
-        );
+              'expense_reminders',
+              'Expense Reminders',
+              description: 'Reminders to upload expense receipts',
+              importance: Importance.defaultImportance,
+              playSound: true,
+              sound: null,
+              enableVibration: true,
+              enableLights: true,
+              showBadge: true,
+            );
 
         // Emergency alerts channel — highest priority for broadcast alerts
         const AndroidNotificationChannel emergencyChannel =
             AndroidNotificationChannel(
-          'emergency_alerts',
-          'Emergency Alerts',
-          description: 'High-priority emergency broadcast alerts',
-          importance: Importance.max,
-          playSound: true,
-          sound: null,
-          enableVibration: true,
-          enableLights: true,
-          showBadge: true,
-        );
+              'emergency_alerts',
+              'Emergency Alerts',
+              description: 'High-priority emergency broadcast alerts',
+              importance: Importance.max,
+              playSound: true,
+              sound: null,
+              enableVibration: true,
+              enableLights: true,
+              showBadge: true,
+            );
 
         // Create the notification channels
         await androidPlugin.createNotificationChannel(mainChannel);
@@ -359,7 +375,8 @@ class LocalNotificationService {
         await androidPlugin.createNotificationChannel(expenseChannel);
         await androidPlugin.createNotificationChannel(emergencyChannel);
         debugPrint(
-            'DEBUG_LOCAL_NOTIF: Created notification channels: invoice, timer_alerts, message, timesheet_reminders, expense_reminders, emergency_alerts');
+          'DEBUG_LOCAL_NOTIF: Created notification channels: invoice, timer_alerts, message, timesheet_reminders, expense_reminders, emergency_alerts',
+        );
       }
     }
   }

@@ -23,12 +23,7 @@ abstract class InvoiceAnomaly with _$InvoiceAnomaly {
       _$InvoiceAnomalyFromJson(json);
 }
 
-enum AnomalySeverity {
-  low,
-  medium,
-  high,
-  critical,
-}
+enum AnomalySeverity { low, medium, high, critical }
 
 // ============================================================================
 // Invoice Validation Models
@@ -67,11 +62,7 @@ abstract class PaymentPrediction with _$PaymentPrediction {
       _$PaymentPredictionFromJson(json);
 }
 
-enum PaymentRiskLevel {
-  low,
-  medium,
-  high,
-}
+enum PaymentRiskLevel { low, medium, high }
 
 // ============================================================================
 // Auto-Generation Models

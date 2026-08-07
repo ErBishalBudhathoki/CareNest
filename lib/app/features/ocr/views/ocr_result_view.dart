@@ -36,9 +36,9 @@ class OcrResultView extends ConsumerWidget {
           children: [
             _buildSectionHeader('MERCHANT'),
             _buildBauhausInput(initialValue: result.merchant),
-            
+
             const SizedBox(height: 24),
-            
+
             Row(
               children: [
                 Expanded(
@@ -67,7 +67,7 @@ class OcrResultView extends ConsumerWidget {
             ),
 
             const SizedBox(height: 32),
-            
+
             _buildSectionHeader('RAW TEXT PREVIEW'),
             Container(
               width: double.infinity,
@@ -82,14 +82,16 @@ class OcrResultView extends ConsumerWidget {
             ),
 
             const SizedBox(height: 48),
-            
+
             SizedBox(
               width: double.infinity,
               height: 56,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF1D3557), // Navy
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0),
+                  ),
                   elevation: 0,
                 ),
                 onPressed: () {
@@ -146,7 +148,10 @@ class OcrResultView extends ConsumerWidget {
         decoration: InputDecoration(
           prefixText: prefix,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
         ),
       ),
     );

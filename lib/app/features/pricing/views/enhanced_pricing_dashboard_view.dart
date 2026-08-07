@@ -17,7 +17,8 @@ class EnhancedPricingDashboardView extends StatefulWidget {
 }
 
 class _EnhancedPricingDashboardViewState
-    extends State<EnhancedPricingDashboardView> with TickerProviderStateMixin {
+    extends State<EnhancedPricingDashboardView>
+    with TickerProviderStateMixin {
   late TabController _tabController;
   bool _isLoading = false;
   String _searchQuery = '';
@@ -60,7 +61,8 @@ class _EnhancedPricingDashboardViewState
     setState(() {
       _userEmail = sharedPrefs.getUserEmail();
       _userName = sharedPrefs.getString(
-          'First LastName'); // Using the key defined in SharedPreferencesUtils
+        'First LastName',
+      ); // Using the key defined in SharedPreferencesUtils
     });
   }
 
@@ -73,9 +75,7 @@ class _EnhancedPricingDashboardViewState
           _buildHorizontalStats(),
           _buildQuickActions(),
           _buildSearchAndFilter(),
-          Expanded(
-            child: _buildTabSection(),
-          ),
+          Expanded(child: _buildTabSection()),
         ],
       ),
     );
@@ -96,10 +96,7 @@ class _EnhancedPricingDashboardViewState
                 ),
                 child: IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(
-                    Icons.arrow_back_ios_new,
-                    size: 20,
-                  ),
+                  icon: const Icon(Icons.arrow_back_ios_new, size: 20),
                   color: const Color(0xFF475569),
                 ),
               ),
@@ -119,17 +116,16 @@ class _EnhancedPricingDashboardViewState
                     const SizedBox(height: 8),
                     Text(
                       AppLocalizations.of(context)!.pricingOverviewSubtitle,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                     ),
                   ],
                 ),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFF10B981).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
@@ -189,8 +185,9 @@ class _EnhancedPricingDashboardViewState
               child: _buildStatCard(
                 title: AppLocalizations.of(context)!.avgRateStat,
                 value: '\$85.00',
-                subtitle:
-                    AppLocalizations.of(context)!.vsLastMonthStatRange('5.2'),
+                subtitle: AppLocalizations.of(
+                  context,
+                )!.vsLastMonthStatRange('5.2'),
                 icon: Icons.trending_up,
                 color: const Color(0xFF10B981),
               ),
@@ -201,8 +198,9 @@ class _EnhancedPricingDashboardViewState
               child: _buildStatCard(
                 title: AppLocalizations.of(context)!.activeRatesStatLabel,
                 value: '156',
-                subtitle:
-                    AppLocalizations.of(context)!.percentageOfTotalStat('87.5'),
+                subtitle: AppLocalizations.of(
+                  context,
+                )!.percentageOfTotalStat('87.5'),
                 icon: Icons.check_circle,
                 color: const Color(0xFF3B82F6),
               ),
@@ -255,18 +253,10 @@ class _EnhancedPricingDashboardViewState
                   color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 20,
-                ),
+                child: Icon(icon, color: color, size: 20),
               ),
               const Spacer(),
-              Icon(
-                Icons.more_vert,
-                color: Colors.grey[400],
-                size: 16,
-              ),
+              Icon(Icons.more_vert, color: Colors.grey[400], size: 16),
             ],
           ),
           const SizedBox(height: 12),
@@ -294,10 +284,7 @@ class _EnhancedPricingDashboardViewState
           const SizedBox(height: 2),
           Text(
             subtitle,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[500],
-            ),
+            style: TextStyle(fontSize: 12, color: Colors.grey[500]),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -452,10 +439,7 @@ class _EnhancedPricingDashboardViewState
           Container(
             decoration: const BoxDecoration(
               border: Border(
-                bottom: BorderSide(
-                  color: AppColors.colorGrey300,
-                  width: 1,
-                ),
+                bottom: BorderSide(color: AppColors.colorGrey300, width: 1),
               ),
             ),
             child: TabBar(
@@ -527,7 +511,8 @@ class _EnhancedPricingDashboardViewState
           EnhancedDataCell(child: const Text('Personal Care')),
           EnhancedDataCell(child: const Text('\$85.00/hr')),
           EnhancedDataCell.status(
-              status: AppLocalizations.of(context)!.statusActive),
+            status: AppLocalizations.of(context)!.statusActive,
+          ),
           EnhancedDataCell(child: const Text('2 days ago')),
           EnhancedDataCell.actions(
             actions: [

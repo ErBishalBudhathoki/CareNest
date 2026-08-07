@@ -5,10 +5,7 @@ import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 class ComplianceAutomationDashboard extends StatefulWidget {
   final String? organizationId;
 
-  const ComplianceAutomationDashboard({
-    super.key,
-    this.organizationId,
-  });
+  const ComplianceAutomationDashboard({super.key, this.organizationId});
 
   @override
   State<ComplianceAutomationDashboard> createState() =>
@@ -35,9 +32,9 @@ class _ComplianceAutomationDashboardState
         title: Text(
           'COMPLIANCE AUTOMATION',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-                fontWeight: FontWeight.bold,
-              ),
+            color: BauhausDesign.surfaceWhite,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
       ),
@@ -176,10 +173,9 @@ class _ComplianceAutomationDashboardState
               children: [
                 Text(
                   label.toUpperCase(),
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.textDark,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).labelSmall?.copyWith(color: BauhausDesign.textDark),
                 ),
                 Icon(icon, color: color, size: 20),
               ],
@@ -187,11 +183,8 @@ class _ComplianceAutomationDashboardState
             const SizedBox(height: 8),
             Text(
               value,
-              style:
-                  BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-                        color: color,
-                        fontWeight: FontWeight.bold,
-                      ),
+              style: BauhausDesign.getTextTheme(context).headlineMedium
+                  ?.copyWith(color: color, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -241,18 +234,16 @@ class _ComplianceAutomationDashboardState
                     const SizedBox(height: 12),
                     Text(
                       title.toUpperCase(),
-                      style: BauhausDesign.getTextTheme(context)
-                          .titleMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).titleMedium?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       description,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
-                          ?.copyWith(
-                            color: BauhausDesign.textDark,
-                          ),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodySmall?.copyWith(color: BauhausDesign.textDark),
                     ),
                   ],
                 );
@@ -268,28 +259,28 @@ class _ComplianceAutomationDashboardState
                       children: [
                         Text(
                           title.toUpperCase(),
-                          style: BauhausDesign.getTextTheme(context)
-                              .titleMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
+                          style: BauhausDesign.getTextTheme(
+                            context,
+                          ).titleMedium?.copyWith(fontWeight: FontWeight.bold),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 4),
                         Text(
                           description,
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodySmall
-                              ?.copyWith(
-                                color: BauhausDesign.textDark,
-                              ),
+                          style: BauhausDesign.getTextTheme(
+                            context,
+                          ).bodySmall?.copyWith(color: BauhausDesign.textDark),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
                   ),
-                  const Icon(Icons.arrow_forward,
-                      color: BauhausDesign.textDark),
+                  const Icon(
+                    Icons.arrow_forward,
+                    color: BauhausDesign.textDark,
+                  ),
                 ],
               );
             },
@@ -320,9 +311,9 @@ class _ComplianceAutomationDashboardState
   }
 
   void _runComplianceScan() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Running compliance scan...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Running compliance scan...')));
   }
 
   void _viewExpiringDocuments() {

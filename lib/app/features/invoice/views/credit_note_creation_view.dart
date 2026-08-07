@@ -52,17 +52,19 @@ class _CreditNoteCreationViewState
 
     final amount = double.tryParse(_amountController.text);
     if (amount == null || amount <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid amount')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Invalid amount')));
       return;
     }
 
     if (amount > widget.balanceDue) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(
-                'Amount cannot exceed balance due (\$${widget.balanceDue.toStringAsFixed(2)})')),
+          content: Text(
+            'Amount cannot exceed balance due (\$${widget.balanceDue.toStringAsFixed(2)})',
+          ),
+        ),
       );
       return;
     }
@@ -83,9 +85,9 @@ class _CreditNoteCreationViewState
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
       }
     }
   }
@@ -97,9 +99,7 @@ class _CreditNoteCreationViewState
 
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
-      appBar: AppBarWidget(
-        title: 'Issue Credit Note',
-      ),
+      appBar: AppBarWidget(title: 'Issue Credit Note'),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(BauhausDesign.space4),
         child: Form(
@@ -119,28 +119,34 @@ class _CreditNoteCreationViewState
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Total Amount:',
-                            style:
-                                BauhausDesign.getTextTheme(context).bodyMedium),
-                        Text('\$${widget.totalAmount.toStringAsFixed(2)}',
-                            style: BauhausDesign.getTextTheme(context)
-                                .bodyMedium
-                                ?.copyWith(fontWeight: FontWeight.bold)),
+                        Text(
+                          'Total Amount:',
+                          style: BauhausDesign.getTextTheme(context).bodyMedium,
+                        ),
+                        Text(
+                          '\$${widget.totalAmount.toStringAsFixed(2)}',
+                          style: BauhausDesign.getTextTheme(
+                            context,
+                          ).bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                        ),
                       ],
                     ),
                     const SizedBox(height: BauhausDesign.space1),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Balance Due:',
-                            style:
-                                BauhausDesign.getTextTheme(context).bodyMedium),
-                        Text('\$${widget.balanceDue.toStringAsFixed(2)}',
-                            style: BauhausDesign.getTextTheme(context)
-                                .bodyMedium
-                                ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: BauhausDesign.error)),
+                        Text(
+                          'Balance Due:',
+                          style: BauhausDesign.getTextTheme(context).bodyMedium,
+                        ),
+                        Text(
+                          '\$${widget.balanceDue.toStringAsFixed(2)}',
+                          style: BauhausDesign.getTextTheme(context).bodyMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: BauhausDesign.error,
+                              ),
+                        ),
                       ],
                     ),
                   ],
@@ -164,8 +170,13 @@ class _CreditNoteCreationViewState
               BauhausTextField(
                 controller: _amountController,
                 label: 'Credit Amount',
-                prefixIcon: const Icon(Icons.attach_money, color: BauhausDesign.textMuted),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                prefixIcon: const Icon(
+                  Icons.attach_money,
+                  color: BauhausDesign.textMuted,
+                ),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 enabled: !_isFullRefund,
                 validator: (val) {
                   if (val == null || val.isEmpty) return 'Required';
@@ -177,7 +188,10 @@ class _CreditNoteCreationViewState
               BauhausTextField(
                 controller: _reasonController,
                 label: 'Reason',
-                prefixIcon: const Icon(Icons.notes, color: BauhausDesign.textMuted),
+                prefixIcon: const Icon(
+                  Icons.notes,
+                  color: BauhausDesign.textMuted,
+                ),
                 maxLines: 3,
                 validator: (val) =>
                     val == null || val.isEmpty ? 'Required' : null,

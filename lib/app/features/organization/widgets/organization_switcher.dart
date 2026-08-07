@@ -13,10 +13,11 @@ class OrganizationSwitcher extends ConsumerWidget {
     // We assume currentOrganization has an 'id' field if it's not null,
     // or we check SharedPreferences/State for current ID.
     // Ideally orgState.currentOrganization is populated.
-    
+
     // Fallback if currentOrganization is null (maybe just logged in)
     // We can use a simpler check or just show 'Select Organization'
-    final currentOrgName = orgState.currentOrganization?.name ?? 'Select Organization';
+    final currentOrgName =
+        orgState.currentOrganization?.name ?? 'Select Organization';
 
     return PopupMenuButton<String>(
       offset: const Offset(0, 40),
@@ -36,7 +37,10 @@ class OrganizationSwitcher extends ConsumerWidget {
               child: Center(
                 child: Text(
                   currentOrgName.isNotEmpty ? currentOrgName[0] : 'O',
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -53,11 +57,11 @@ class OrganizationSwitcher extends ConsumerWidget {
       itemBuilder: (context) {
         return [
           ...userOrgs.map((org) {
-             // org is a dynamic map from getUserOrganizations
-             final name = org['name'] as String;
-             final id = org['id'] as String;
-             
-             return PopupMenuItem<String>(
+            // org is a dynamic map from getUserOrganizations
+            final name = org['name'] as String;
+            final id = org['id'] as String;
+
+            return PopupMenuItem<String>(
               value: id,
               child: Row(
                 children: [
@@ -68,7 +72,10 @@ class OrganizationSwitcher extends ConsumerWidget {
                     child: Center(
                       child: Text(
                         name.isNotEmpty ? name[0] : 'O',
-                        style: const TextStyle(color: Colors.white, fontSize: 12),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ),

@@ -74,21 +74,25 @@ class _BauhausSignupViewState extends ConsumerState<BauhausSignupView> {
       await authService.sendEmailVerification();
 
       // 4. Sync with backend
-      final response = await apiMethod.post('firebase-auth/sync', body: {
-        'firebaseUid': credential.user!.uid,
-        'email': credential.user!.email,
-        'firstName': _firstNameController.text.trim(),
-        'lastName': _lastNameController.text.trim(),
-        'organizationCode': _orgCodeController.text.trim(),
-      });
+      final response = await apiMethod.post(
+        'firebase-auth/sync',
+        body: {
+          'firebaseUid': credential.user!.uid,
+          'email': credential.user!.email,
+          'firstName': _firstNameController.text.trim(),
+          'lastName': _lastNameController.text.trim(),
+          'organizationCode': _orgCodeController.text.trim(),
+        },
+      );
 
       if (response['success'] == true) {
         if (mounted) {
           // Show success message
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content:
-                  Text('Account created! Please verify your email and login.'),
+              content: Text(
+                'Account created! Please verify your email and login.',
+              ),
               backgroundColor: Colors.green,
             ),
           );
@@ -152,11 +156,11 @@ class _BauhausSignupViewState extends ConsumerState<BauhausSignupView> {
                     children: [
                       Text(
                         'JOIN US',
-                        style:
-                            Theme.of(context).textTheme.headlineLarge?.copyWith(
-                                  fontWeight: FontWeight.w900,
-                                  color: colorBlack,
-                                ),
+                        style: Theme.of(context).textTheme.headlineLarge
+                            ?.copyWith(
+                              fontWeight: FontWeight.w900,
+                              color: colorBlack,
+                            ),
                       ),
                       const SizedBox(height: 32),
                       if (_errorMessage != null)
@@ -170,7 +174,9 @@ class _BauhausSignupViewState extends ConsumerState<BauhausSignupView> {
                           child: Text(
                             _errorMessage!,
                             style: const TextStyle(
-                                color: colorRed, fontWeight: FontWeight.bold),
+                              color: colorRed,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       Row(
@@ -194,16 +200,18 @@ class _BauhausSignupViewState extends ConsumerState<BauhausSignupView> {
                       ),
                       const SizedBox(height: 16),
                       _buildBauhausTextField(
-                          controller: _emailController,
-                          label: 'EMAIL',
-                          icon: Icons.email_outlined,
-                          inputType: TextInputType.emailAddress),
+                        controller: _emailController,
+                        label: 'EMAIL',
+                        icon: Icons.email_outlined,
+                        inputType: TextInputType.emailAddress,
+                      ),
                       const SizedBox(height: 16),
                       _buildBauhausTextField(
-                          controller: _orgCodeController,
-                          label: 'ORGANIZATION CODE',
-                          icon: Icons.business_outlined,
-                          inputType: TextInputType.text),
+                        controller: _orgCodeController,
+                        label: 'ORGANIZATION CODE',
+                        icon: Icons.business_outlined,
+                        inputType: TextInputType.text,
+                      ),
                       const SizedBox(height: 16),
                       _buildBauhausTextField(
                         controller: _passwordController,
@@ -216,16 +224,17 @@ class _BauhausSignupViewState extends ConsumerState<BauhausSignupView> {
                       _buildPasswordValidationIndicators(),
                       const SizedBox(height: 16),
                       _buildBauhausTextField(
-                          controller: _confirmPasswordController,
-                          label: 'CONFIRM PASSWORD',
-                          icon: Icons.lock_outline,
-                          isObscure: true,
-                          validator: (val) {
-                            if (val != _passwordController.text) {
-                              return 'Passwords do not match';
-                            }
-                            return null;
-                          }),
+                        controller: _confirmPasswordController,
+                        label: 'CONFIRM PASSWORD',
+                        icon: Icons.lock_outline,
+                        isObscure: true,
+                        validator: (val) {
+                          if (val != _passwordController.text) {
+                            return 'Passwords do not match';
+                          }
+                          return null;
+                        },
+                      ),
                       const SizedBox(height: 32),
                       SizedBox(
                         width: double.infinity,
@@ -282,10 +291,7 @@ class _BauhausSignupViewState extends ConsumerState<BauhausSignupView> {
         const SizedBox(width: 8),
         Text(
           text,
-          style: TextStyle(
-            color: met ? colorGreen : colorRed,
-            fontSize: 12,
-          ),
+          style: TextStyle(color: met ? colorGreen : colorRed, fontSize: 12),
         ),
       ],
     );
@@ -334,7 +340,8 @@ class _BauhausSignupViewState extends ConsumerState<BauhausSignupView> {
               borderRadius: BorderRadius.zero,
             ),
           ),
-          validator: validator ??
+          validator:
+              validator ??
               (value) {
                 if (value == null || value.isEmpty) {
                   return '$label is required';

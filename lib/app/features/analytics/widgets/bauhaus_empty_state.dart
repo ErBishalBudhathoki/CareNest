@@ -35,13 +35,11 @@ class BauhausEmptyState extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               message.toUpperCase(),
-              style: BauhausDesign.getTextTheme(context)
-                  .titleMedium
-                  ?.copyWith(
-                    fontWeight: FontWeight.bold, 
-                    fontSize: 16,
-                    color: BauhausDesign.textDark, // Ensure visible text
-                  ),
+              style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: BauhausDesign.textDark, // Ensure visible text
+              ),
               textAlign: TextAlign.center,
             ),
           ],

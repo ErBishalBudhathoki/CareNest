@@ -28,7 +28,7 @@ class BauhausTimerControl extends StatelessWidget {
             color: BauhausDesign.textDark,
             offset: Offset(4, 4),
             blurRadius: 0,
-          )
+          ),
         ],
       ),
       child: Column(
@@ -58,8 +58,10 @@ class BauhausTimerControl extends StatelessWidget {
               children: [
                 // Digital Display
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 32,
+                  ),
                   decoration: BoxDecoration(
                     color: isRunning
                         ? BauhausDesign.success.withOpacity(0.1)
@@ -98,7 +100,9 @@ class BauhausTimerControl extends StatelessWidget {
                         elevation: 0,
                         shape: const RoundedRectangleBorder(), // Rectangle
                         side: const BorderSide(
-                            color: BauhausDesign.textDark, width: 3),
+                          color: BauhausDesign.textDark,
+                          width: 3,
+                        ),
                         padding: EdgeInsets.zero,
                       ),
                       onPressed: onToggle,
@@ -130,14 +134,18 @@ class BauhausTimerControl extends StatelessWidget {
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: BauhausDesign.warning.withOpacity(0.2),
-                      border:
-                          Border.all(color: BauhausDesign.warning, width: 2),
+                      border: Border.all(
+                        color: BauhausDesign.warning,
+                        width: 2,
+                      ),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.warning_amber_rounded,
-                            color: BauhausDesign.textDark),
+                        const Icon(
+                          Icons.warning_amber_rounded,
+                          color: BauhausDesign.textDark,
+                        ),
                         const SizedBox(width: 12),
                         Text(
                           "TIMER ACTIVE ELSEWHERE",

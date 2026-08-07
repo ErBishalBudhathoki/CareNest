@@ -60,14 +60,15 @@ class EmployeeStatsOverview extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: BauhausDesign.accent,
-                        border:
-                            Border.all(color: BauhausDesign.neutral, width: 2),
+                        border: Border.all(
+                          color: BauhausDesign.neutral,
+                          width: 2,
+                        ),
                         boxShadow: const [BauhausDesign.shadowHardXs],
                       ),
                       child: Text(
                         isLoading ? 'SYNCING' : 'LIVE',
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
+                        style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
                               color: BauhausDesign.textDark,
                               fontWeight: FontWeight.bold,
@@ -89,8 +90,7 @@ class EmployeeStatsOverview extends StatelessWidget {
                 const SizedBox(height: BauhausDesign.space3),
                 Text(
                   'TOTAL HEADCOUNT',
-                  style: BauhausDesign.getTextTheme(context)
-                      .labelSmall
+                  style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
                         color: BauhausDesign.textMuted,
                         letterSpacing: 1.0,
@@ -102,8 +102,7 @@ class EmployeeStatsOverview extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     total.toString(),
-                    style: BauhausDesign.getTextTheme(context)
-                        .displayMedium
+                    style: BauhausDesign.getTextTheme(context).displayMedium
                         ?.copyWith(
                           color: BauhausDesign.primary,
                           fontWeight: FontWeight.bold,
@@ -154,10 +153,7 @@ class EmployeeStatsOverview extends StatelessWidget {
                     accentColor: BauhausDesign.primary,
                   ),
                 ],
-              )
-                  .animate()
-                  .fadeIn(duration: 400.ms)
-                  .slideY(begin: 0.06, end: 0);
+              ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.06, end: 0);
             },
           ),
           const SizedBox(height: BauhausDesign.space4),
@@ -217,18 +213,18 @@ class _NeoStatTile extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Text(
                 value,
-                style: BauhausDesign.getTextTheme(context)
-                    .headlineLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).headlineLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: BauhausDesign.space1),
             Text(
               label.toUpperCase(),
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.textMuted,
-                    letterSpacing: 0.8,
-                  ),
+                color: BauhausDesign.textMuted,
+                letterSpacing: 0.8,
+              ),
             ),
           ],
         ),
@@ -274,9 +270,9 @@ class _NeoStatusStrip extends StatelessWidget {
             Expanded(
               child: Text(
                 'No employee activity yet',
-                style: BauhausDesign.getTextTheme(context)
-                    .bodyMedium
-                    ?.copyWith(color: BauhausDesign.textMuted),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
               ),
             ),
           ],
@@ -299,35 +295,26 @@ class _NeoStatusStrip extends StatelessWidget {
           Text(
             'STATUS STRIP',
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textMuted,
-                  letterSpacing: 0.8,
-                ),
+              color: BauhausDesign.textMuted,
+              letterSpacing: 0.8,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space2),
           Row(
             children: [
               Expanded(
                 flex: safeFlex(active),
-                child: Container(
-                  height: 10,
-                  color: BauhausDesign.success,
-                ),
+                child: Container(height: 10, color: BauhausDesign.success),
               ),
               const SizedBox(width: 2),
               Expanded(
                 flex: safeFlex(onBreak),
-                child: Container(
-                  height: 10,
-                  color: BauhausDesign.warning,
-                ),
+                child: Container(height: 10, color: BauhausDesign.warning),
               ),
               const SizedBox(width: 2),
               Expanded(
                 flex: safeFlex(offline),
-                child: Container(
-                  height: 10,
-                  color: BauhausDesign.textMuted,
-                ),
+                child: Container(height: 10, color: BauhausDesign.textMuted),
               ),
             ],
           ),
@@ -395,9 +382,9 @@ class _LegendChip extends StatelessWidget {
           const SizedBox(width: BauhausDesign.space1),
           Text(
             '$label $value',
-            style: BauhausDesign.getTextTheme(context)
-                .labelSmall
-                ?.copyWith(color: BauhausDesign.textDark),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).labelSmall?.copyWith(color: BauhausDesign.textDark),
           ),
         ],
       ),
@@ -419,8 +406,10 @@ class EmployeeFilterChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final totalCount =
-        statusCounts.values.fold<int>(0, (int sum, int count) => sum + count);
+    final totalCount = statusCounts.values.fold<int>(
+      0,
+      (int sum, int count) => sum + count,
+    );
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
@@ -430,9 +419,9 @@ class EmployeeFilterChips extends StatelessWidget {
           Text(
             'Filter by Status',
             style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space2),
           SingleChildScrollView(

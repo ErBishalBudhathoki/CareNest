@@ -45,10 +45,7 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
       return null;
     }
 
-    return {
-      'userEmail': userEmail,
-      'organizationId': organizationId,
-    };
+    return {'userEmail': userEmail, 'organizationId': organizationId};
   }
 
   double _dialogWidth(
@@ -71,8 +68,8 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
   }) async {
     final headerForeground =
         ThemeData.estimateBrightnessForColor(headerColor) == Brightness.dark
-            ? BauhausDesign.surfaceWhite
-            : BauhausDesign.textDark;
+        ? BauhausDesign.surfaceWhite
+        : BauhausDesign.textDark;
 
     final result = await showDialog<bool>(
       context: context,
@@ -80,8 +77,10 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
       builder: (dialogContext) {
         return Dialog(
           backgroundColor: Colors.transparent,
-          insetPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 24,
+          ),
           child: Container(
             width: _dialogWidth(dialogContext, maxWidth: 520),
             decoration: BoxDecoration(
@@ -101,17 +100,15 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
                   decoration: BoxDecoration(
                     color: headerColor,
                     border: const Border(
-                      bottom:
-                          BorderSide(color: BauhausDesign.neutral, width: 3),
+                      bottom: BorderSide(
+                        color: BauhausDesign.neutral,
+                        width: 3,
+                      ),
                     ),
                   ),
                   child: Row(
                     children: [
-                      Icon(
-                        icon,
-                        color: headerForeground,
-                        size: 22,
-                      ),
+                      Icon(icon, color: headerForeground, size: 22),
                       const SizedBox(width: BauhausDesign.space2),
                       Expanded(
                         child: Text(
@@ -132,11 +129,9 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
                   padding: const EdgeInsets.all(BauhausDesign.space4),
                   child: Text(
                     message,
-                    style: BauhausDesign.getTextTheme(dialogContext)
-                        .bodyMedium
-                        ?.copyWith(
-                          color: BauhausDesign.textDark,
-                        ),
+                    style: BauhausDesign.getTextTheme(
+                      dialogContext,
+                    ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
                   ),
                 ),
                 Padding(
@@ -195,8 +190,9 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
     final nameController = TextEditingController(text: business.businessName);
     final emailController = TextEditingController(text: business.businessEmail);
     final phoneController = TextEditingController(text: business.businessPhone);
-    final addressController =
-        TextEditingController(text: business.businessAddress);
+    final addressController = TextEditingController(
+      text: business.businessAddress,
+    );
     final cityController = TextEditingController(text: business.businessCity);
     final stateController = TextEditingController(text: business.businessState);
     final zipController = TextEditingController(text: business.businessZip);
@@ -211,8 +207,10 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
           builder: (context, setDialogState) {
             return Dialog(
               backgroundColor: Colors.transparent,
-              insetPadding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+              insetPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 20,
+              ),
               child: Container(
                 width: _dialogWidth(dialogContext, maxWidth: 760),
                 decoration: BoxDecoration(
@@ -233,7 +231,9 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
                         color: BauhausDesign.secondary,
                         border: Border(
                           bottom: BorderSide(
-                              color: BauhausDesign.neutral, width: 3),
+                            color: BauhausDesign.neutral,
+                            width: 3,
+                          ),
                         ),
                       ),
                       child: Row(
@@ -276,8 +276,8 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
                                 label: 'Business name',
                                 validator: (v) =>
                                     (v == null || v.trim().isEmpty)
-                                        ? 'Required'
-                                        : null,
+                                    ? 'Required'
+                                    : null,
                               ),
                               const SizedBox(height: BauhausDesign.space3),
                               BauhausTextField(
@@ -372,27 +372,32 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
 
                                       setDialogState(() => isSaving = true);
                                       try {
-                                        final response =
-                                            await viewModel.updateBusiness(
-                                          businessId: business.id!,
-                                          businessName:
-                                              nameController.text.trim(),
-                                          businessEmail:
-                                              emailController.text.trim(),
-                                          businessPhone:
-                                              phoneController.text.trim(),
-                                          businessAddress:
-                                              addressController.text.trim(),
-                                          businessCity:
-                                              cityController.text.trim(),
-                                          businessState:
-                                              stateController.text.trim(),
-                                          businessZip:
-                                              zipController.text.trim(),
-                                          userEmail: userContext['userEmail']!,
-                                          organizationId:
-                                              userContext['organizationId']!,
-                                        );
+                                        final response = await viewModel
+                                            .updateBusiness(
+                                              businessId: business.id!,
+                                              businessName: nameController.text
+                                                  .trim(),
+                                              businessEmail: emailController
+                                                  .text
+                                                  .trim(),
+                                              businessPhone: phoneController
+                                                  .text
+                                                  .trim(),
+                                              businessAddress: addressController
+                                                  .text
+                                                  .trim(),
+                                              businessCity: cityController.text
+                                                  .trim(),
+                                              businessState: stateController
+                                                  .text
+                                                  .trim(),
+                                              businessZip: zipController.text
+                                                  .trim(),
+                                              userEmail:
+                                                  userContext['userEmail']!,
+                                              organizationId:
+                                                  userContext['organizationId']!,
+                                            );
 
                                         if (!mounted) return;
                                         if (dialogContext.mounted) {
@@ -400,9 +405,10 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
                                         }
                                         final message =
                                             response['message']?.toString() ??
-                                                'Business updated successfully';
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
+                                            'Business updated successfully';
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           SnackBar(
                                             content: Text(message),
                                             backgroundColor:
@@ -411,11 +417,13 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
                                         );
                                       } catch (e) {
                                         if (!mounted) return;
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           SnackBar(
                                             content: Text(
-                                                'Failed to update business: $e'),
+                                              'Failed to update business: $e',
+                                            ),
                                             backgroundColor:
                                                 BauhausDesign.error,
                                           ),
@@ -423,7 +431,8 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
                                       } finally {
                                         if (mounted && dialogContext.mounted) {
                                           setDialogState(
-                                              () => isSaving = false);
+                                            () => isSaving = false,
+                                          );
                                         }
                                       }
                                     },
@@ -520,9 +529,9 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
         title: Text(
           l10n.businessesTitle,
           style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: BauhausDesign.textDark,
-              ),
+            fontWeight: FontWeight.bold,
+            color: BauhausDesign.textDark,
+          ),
         ),
         actions: [
           Padding(
@@ -547,9 +556,7 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
     final l10n = AppLocalizations.of(context)!;
 
     if (viewModel.status == BusinessListStatus.loading) {
-      return BauhausLoadingState(
-        message: l10n.loadingBusinesses,
-      );
+      return BauhausLoadingState(message: l10n.loadingBusinesses);
     }
 
     if (viewModel.status == BusinessListStatus.error) {
@@ -624,8 +631,7 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
                   children: [
                     Text(
                       business.businessName,
-                      style: BauhausDesign.getTextTheme(context)
-                          .titleMedium
+                      style: BauhausDesign.getTextTheme(context).titleMedium
                           ?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: BauhausDesign.textDark,
@@ -634,11 +640,9 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
                     SizedBox(height: BauhausDesign.space1),
                     Text(
                       business.businessEmail,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
-                          ?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                     ),
                   ],
                 ),
@@ -661,7 +665,10 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
           ),
           if (business.businessPhone.isNotEmpty)
             _buildInfoRow(
-                context, Icons.phone_outlined, business.businessPhone),
+              context,
+              Icons.phone_outlined,
+              business.businessPhone,
+            ),
           if (business.businessPhone.isNotEmpty)
             SizedBox(height: BauhausDesign.space2),
           if (business.businessAddress.isNotEmpty)
@@ -704,18 +711,14 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
   Widget _buildInfoRow(BuildContext context, IconData icon, String text) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 16,
-          color: BauhausDesign.textMuted,
-        ),
+        Icon(icon, size: 16, color: BauhausDesign.textMuted),
         SizedBox(width: BauhausDesign.space2),
         Expanded(
           child: Text(
             text,
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

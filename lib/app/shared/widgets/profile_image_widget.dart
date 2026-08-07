@@ -83,10 +83,7 @@ class ProfileImageWidget extends StatelessWidget {
           shape: shape,
           borderRadius: shape == BoxShape.rectangle ? borderRadius : null,
           color: surfaceColor ?? Colors.grey[100],
-          border: Border.all(
-            color: borderColor,
-            width: borderWidth,
-          ),
+          border: Border.all(color: borderColor, width: borderWidth),
           boxShadow: elevation > 0
               ? [
                   BoxShadow(
@@ -98,9 +95,7 @@ class ProfileImageWidget extends StatelessWidget {
               : null,
         ),
         child: shape == BoxShape.circle
-            ? ClipOval(
-                child: _buildImageContent(context),
-              )
+            ? ClipOval(child: _buildImageContent(context))
             : ClipRRect(
                 borderRadius: borderRadius ?? BorderRadius.zero,
                 child: _buildImageContent(context),
@@ -175,9 +170,7 @@ class ProfileImageWidget extends StatelessWidget {
       loadingBuilder: showLoading
           ? (context, child, loadingProgress) {
               if (loadingProgress == null) return child;
-              return ImageErrorHandler.buildLoadingWidget(
-                size: size,
-              );
+              return ImageErrorHandler.buildLoadingWidget(size: size);
             }
           : null,
       errorBuilder: (context, error, stackTrace) {
@@ -209,9 +202,7 @@ class ProfileImageWidget extends StatelessWidget {
       return errorBuilder!(context, error);
     }
 
-    return ImageErrorHandler.buildErrorWidget(
-      size: size,
-    );
+    return ImageErrorHandler.buildErrorWidget(size: size);
   }
 }
 
@@ -242,11 +233,11 @@ class EmployeeProfileImage extends ProfileImageWidget {
     super.size,
     super.onTap,
   }) : super(
-          imageData: profileImage,
-          borderColor: Colors.white,
-          borderWidth: 2.0,
-          elevation: 4.0,
-        );
+         imageData: profileImage,
+         borderColor: Colors.white,
+         borderWidth: 2.0,
+         elevation: 4.0,
+       );
 
   @override
   Widget build(BuildContext context) {
@@ -265,10 +256,7 @@ class EmployeeProfileImage extends ProfileImageWidget {
               decoration: BoxDecoration(
                 color: statusColor,
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.white,
-                  width: 1.5,
-                ),
+                border: Border.all(color: Colors.white, width: 1.5),
               ),
             ),
           ),
@@ -289,9 +277,9 @@ class AdminProfileImage extends ProfileImageWidget {
     super.size = 60.0,
     super.onTap,
   }) : super(
-          borderColor: Colors.white,
-          borderWidth: 3.0,
-          elevation: 6.0,
-          shadowColor: Colors.black38,
-        );
+         borderColor: Colors.white,
+         borderWidth: 3.0,
+         elevation: 6.0,
+         shadowColor: Colors.black38,
+       );
 }

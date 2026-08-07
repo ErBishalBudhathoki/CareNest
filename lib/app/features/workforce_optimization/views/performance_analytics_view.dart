@@ -8,10 +8,12 @@ class PerformanceAnalyticsView extends ConsumerStatefulWidget {
   const PerformanceAnalyticsView({super.key});
 
   @override
-  ConsumerState<PerformanceAnalyticsView> createState() => _PerformanceAnalyticsViewState();
+  ConsumerState<PerformanceAnalyticsView> createState() =>
+      _PerformanceAnalyticsViewState();
 }
 
-class _PerformanceAnalyticsViewState extends ConsumerState<PerformanceAnalyticsView> {
+class _PerformanceAnalyticsViewState
+    extends ConsumerState<PerformanceAnalyticsView> {
   @override
   void initState() {
     super.initState();
@@ -25,15 +27,19 @@ class _PerformanceAnalyticsViewState extends ConsumerState<PerformanceAnalyticsV
     final orgId = orgState.currentOrganization?.id;
     if (orgId != null) {
       final now = DateTime.now();
-      final startDate = now.subtract(const Duration(days: 30)).toIso8601String();
+      final startDate = now
+          .subtract(const Duration(days: 30))
+          .toIso8601String();
       final endDate = now.toIso8601String();
-      
-      ref.read(performanceAnalyticsViewModelProvider.notifier).getPerformanceAnalytics(
-        organizationId: orgId,
-        employeeId: 'all',
-        startDate: startDate,
-        endDate: endDate,
-      );
+
+      ref
+          .read(performanceAnalyticsViewModelProvider.notifier)
+          .getPerformanceAnalytics(
+            organizationId: orgId,
+            employeeId: 'all',
+            startDate: startDate,
+            endDate: endDate,
+          );
     }
   }
 
@@ -68,22 +74,22 @@ class _PerformanceAnalyticsViewState extends ConsumerState<PerformanceAnalyticsV
       body: state.isLoading
           ? const Center(child: CircularProgressIndicator())
           : state.error != null
-              ? _buildError(state.error!)
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildHeader(),
-                      const SizedBox(height: 24),
-                      _buildPerformanceMetrics(state),
-                      const SizedBox(height: 24),
-                      _buildTrendAnalysis(state),
-                      const SizedBox(height: 24),
-                      _buildActionButtons(),
-                    ],
-                  ),
-                ),
+          ? _buildError(state.error!)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(),
+                  const SizedBox(height: 24),
+                  _buildPerformanceMetrics(state),
+                  const SizedBox(height: 24),
+                  _buildTrendAnalysis(state),
+                  const SizedBox(height: 24),
+                  _buildActionButtons(),
+                ],
+              ),
+            ),
     );
   }
 
@@ -106,10 +112,7 @@ class _PerformanceAnalyticsViewState extends ConsumerState<PerformanceAnalyticsV
           Text(
             error,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFF666666),
-            ),
+            style: const TextStyle(fontSize: 14, color: Color(0xFF666666)),
           ),
         ],
       ),
@@ -165,10 +168,7 @@ class _PerformanceAnalyticsViewState extends ConsumerState<PerformanceAnalyticsV
                 SizedBox(height: 4),
                 Text(
                   'Track and predict performance',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.colorWhite,
-                  ),
+                  style: TextStyle(fontSize: 14, color: AppColors.colorWhite),
                 ),
               ],
             ),
@@ -277,10 +277,7 @@ class _PerformanceAnalyticsViewState extends ConsumerState<PerformanceAnalyticsV
               const SizedBox(width: 8),
               Text(
                 label,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFF666666),
-                ),
+                style: const TextStyle(fontSize: 12, color: Color(0xFF666666)),
               ),
             ],
           ),
@@ -309,7 +306,9 @@ class _PerformanceAnalyticsViewState extends ConsumerState<PerformanceAnalyticsV
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: isPositive ? AppColors.colorGreen : AppColors.colorRed,
+                    color: isPositive
+                        ? AppColors.colorGreen
+                        : AppColors.colorRed,
                   ),
                 ),
               ),
@@ -361,14 +360,16 @@ class _PerformanceAnalyticsViewState extends ConsumerState<PerformanceAnalyticsV
   Widget _buildTrendItem(dynamic data) {
     final score = data.overallScore ?? 0.0;
     final isPositive = score >= 0.7;
-    final color = isPositive ? AppColors.colorGreen : score >= 0.5 ? AppColors.colorOrange : AppColors.colorRed;
+    final color = isPositive
+        ? AppColors.colorGreen
+        : score >= 0.5
+        ? AppColors.colorOrange
+        : AppColors.colorRed;
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Color(0xFF1A1A1A), width: 1),
-        ),
+        border: Border(bottom: BorderSide(color: Color(0xFF1A1A1A), width: 1)),
       ),
       child: Row(
         children: [
@@ -401,10 +402,7 @@ class _PerformanceAnalyticsViewState extends ConsumerState<PerformanceAnalyticsV
                 const SizedBox(height: 4),
                 Text(
                   'Score: ${(score * 100).toStringAsFixed(0)}%',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: color,
-                  ),
+                  style: TextStyle(fontSize: 12, color: color),
                 ),
               ],
             ),
@@ -430,14 +428,15 @@ class _PerformanceAnalyticsViewState extends ConsumerState<PerformanceAnalyticsV
       child: Center(
         child: Column(
           children: [
-            const Icon(Icons.inbox_outlined, size: 48, color: Color(0xFF666666)),
+            const Icon(
+              Icons.inbox_outlined,
+              size: 48,
+              color: Color(0xFF666666),
+            ),
             const SizedBox(height: 12),
             Text(
               message,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Color(0xFF666666),
-              ),
+              style: const TextStyle(fontSize: 14, color: Color(0xFF666666)),
             ),
           ],
         ),

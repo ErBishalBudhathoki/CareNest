@@ -17,18 +17,13 @@ import 'client_invoice_detail_view.dart';
 class ClientPortalDashboard extends StatelessWidget {
   final String? clientId;
 
-  const ClientPortalDashboard({
-    super.key,
-    this.clientId,
-  });
+  const ClientPortalDashboard({super.key, this.clientId});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
-      body: ClientPortalDashboardBody(
-        clientId: clientId,
-      ),
+      body: ClientPortalDashboardBody(clientId: clientId),
     );
   }
 }
@@ -66,6 +61,7 @@ class _ClientPortalDashboardBodyState
     if (perms == null) return false;
     return check(perms);
   }
+
   static const List<String> _timePatterns = <String>[
     'HH:mm:ss',
     'H:mm:ss',
@@ -121,9 +117,9 @@ class _ClientPortalDashboardBodyState
     final normalizedUpper = raw.toUpperCase();
     if (RegExp(r'^\d{1,2}:\d{2}\s*[AP]M$').hasMatch(normalizedUpper)) {
       try {
-        final parsed = DateFormat('h:mm a').parseStrict(
-          normalizedUpper.replaceAll(RegExp(r'\s+'), ' '),
-        );
+        final parsed = DateFormat(
+          'h:mm a',
+        ).parseStrict(normalizedUpper.replaceAll(RegExp(r'\s+'), ' '));
         return DateTime(
           now.year,
           now.month,
@@ -163,7 +159,8 @@ class _ClientPortalDashboardBodyState
   }
 
   TodayAppointment? _getPrimaryAppointment(
-      List<TodayAppointment> appointments) {
+    List<TodayAppointment> appointments,
+  ) {
     if (appointments.isEmpty) return null;
 
     for (final appt in appointments) {
@@ -193,12 +190,16 @@ class _ClientPortalDashboardBodyState
   }
 
   void _showActionSnackBar(
-      BuildContext context, String message, bool isSuccess) {
+    BuildContext context,
+    String message,
+    bool isSuccess,
+  ) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor:
-            isSuccess ? BauhausDesign.success : BauhausDesign.error,
+        backgroundColor: isSuccess
+            ? BauhausDesign.success
+            : BauhausDesign.error,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
@@ -221,93 +222,89 @@ class _ClientPortalDashboardBodyState
     final content = state.isLoading
         ? const Center(child: BauhausLoadingState())
         : state.error != null && state.dashboard == null
-            ? Center(
-                child: BauhausErrorState(
-                  title: 'Error Loading Dashboard',
-                  message: state.error!,
-                  onRetry: () {
-                    if (widget.clientId != null) {
-                      ref
-                          .read(clientPortalViewModelProvider.notifier)
-                          .loadDashboard(widget.clientId!);
-                    }
-                  },
-                ),
-              )
-            : RefreshIndicator(
-                color: BauhausDesign.primary,
-                backgroundColor: BauhausDesign.surfaceWhite,
-                onRefresh: () async {
-                  if (widget.clientId != null) {
-                    await ref
-                        .read(clientPortalViewModelProvider.notifier)
-                        .loadDashboard(widget.clientId!);
-                    if (_perm((p) => p.viewServiceHistory)) {
-                      await ref
-                          .read(clientPortalViewModelProvider.notifier)
-                          .loadServiceHistory(
-                            widget.clientId!,
-                            silent: true,
-                          );
-                    }
-                  }
-                },
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(BauhausDesign.space4),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (widget.showHeroHeader) ...[
-                        _buildHeader(context),
-                        const SizedBox(height: BauhausDesign.space6),
-                      ],
-                      if (_perm((p) => p.manageFamily))
-                        _buildFamilyAccessSection(context),
-                      if (_perm((p) => p.manageFamily))
-                        const SizedBox(height: BauhausDesign.space6),
-                      if (_perm((p) => p.viewAppointments))
-                        _buildTodayAppointmentsSection(
-                            context, todayAppointments),
-                      if (_perm((p) => p.viewAppointments))
-                        const SizedBox(height: BauhausDesign.space6),
-                      if (_perm((p) => p.viewLocation))
-                        _buildWorkerLocationSection(
-                          context,
-                          todayAppointments,
-                          state,
-                        ),
-                      if (_perm((p) => p.viewLocation))
-                        const SizedBox(height: BauhausDesign.space6),
-                      if (_perm((p) => p.viewMessages))
-                        _buildMessagingSection(context, todayAppointments),
-                      if (_perm((p) => p.viewMessages))
-                        const SizedBox(height: BauhausDesign.space6),
-                      if (_perm((p) => p.approveServices))
-                        _buildFeedbackSection(context, todayAppointments),
-                      if (_perm((p) => p.approveServices))
-                        const SizedBox(height: BauhausDesign.space6),
-                      if (_perm((p) => p.viewInvoices))
-                        _buildInvoicesSection(context, invoicesState),
-                      if (_perm((p) => p.viewInvoices))
-                        const SizedBox(height: BauhausDesign.space6),
-                      if (_perm((p) => p.viewAppointments))
-                        _buildUpcomingAppointmentsSection(
-                          context,
-                          upcomingAppointments,
-                        ),
-                      if (_perm((p) => p.viewAppointments))
-                        const SizedBox(height: BauhausDesign.space6),
-                      if (_perm((p) => p.viewServiceHistory))
-                        _buildServiceHistorySection(context, serviceHistory),
-                      if (widget.footer != null) ...[
-                        const SizedBox(height: BauhausDesign.space6),
-                        widget.footer!,
-                      ],
-                    ],
-                  ),
-                ),
-              );
+        ? Center(
+            child: BauhausErrorState(
+              title: 'Error Loading Dashboard',
+              message: state.error!,
+              onRetry: () {
+                if (widget.clientId != null) {
+                  ref
+                      .read(clientPortalViewModelProvider.notifier)
+                      .loadDashboard(widget.clientId!);
+                }
+              },
+            ),
+          )
+        : RefreshIndicator(
+            color: BauhausDesign.primary,
+            backgroundColor: BauhausDesign.surfaceWhite,
+            onRefresh: () async {
+              if (widget.clientId != null) {
+                await ref
+                    .read(clientPortalViewModelProvider.notifier)
+                    .loadDashboard(widget.clientId!);
+                if (_perm((p) => p.viewServiceHistory)) {
+                  await ref
+                      .read(clientPortalViewModelProvider.notifier)
+                      .loadServiceHistory(widget.clientId!, silent: true);
+                }
+              }
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(BauhausDesign.space4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (widget.showHeroHeader) ...[
+                    _buildHeader(context),
+                    const SizedBox(height: BauhausDesign.space6),
+                  ],
+                  if (_perm((p) => p.manageFamily))
+                    _buildFamilyAccessSection(context),
+                  if (_perm((p) => p.manageFamily))
+                    const SizedBox(height: BauhausDesign.space6),
+                  if (_perm((p) => p.viewAppointments))
+                    _buildTodayAppointmentsSection(context, todayAppointments),
+                  if (_perm((p) => p.viewAppointments))
+                    const SizedBox(height: BauhausDesign.space6),
+                  if (_perm((p) => p.viewLocation))
+                    _buildWorkerLocationSection(
+                      context,
+                      todayAppointments,
+                      state,
+                    ),
+                  if (_perm((p) => p.viewLocation))
+                    const SizedBox(height: BauhausDesign.space6),
+                  if (_perm((p) => p.viewMessages))
+                    _buildMessagingSection(context, todayAppointments),
+                  if (_perm((p) => p.viewMessages))
+                    const SizedBox(height: BauhausDesign.space6),
+                  if (_perm((p) => p.approveServices))
+                    _buildFeedbackSection(context, todayAppointments),
+                  if (_perm((p) => p.approveServices))
+                    const SizedBox(height: BauhausDesign.space6),
+                  if (_perm((p) => p.viewInvoices))
+                    _buildInvoicesSection(context, invoicesState),
+                  if (_perm((p) => p.viewInvoices))
+                    const SizedBox(height: BauhausDesign.space6),
+                  if (_perm((p) => p.viewAppointments))
+                    _buildUpcomingAppointmentsSection(
+                      context,
+                      upcomingAppointments,
+                    ),
+                  if (_perm((p) => p.viewAppointments))
+                    const SizedBox(height: BauhausDesign.space6),
+                  if (_perm((p) => p.viewServiceHistory))
+                    _buildServiceHistorySection(context, serviceHistory),
+                  if (widget.footer != null) ...[
+                    const SizedBox(height: BauhausDesign.space6),
+                    widget.footer!,
+                  ],
+                ],
+              ),
+            ),
+          );
 
     if (!widget.useSafeArea) {
       return content;
@@ -339,8 +336,9 @@ class _ClientPortalDashboardBodyState
                     padding: const EdgeInsets.all(BauhausDesign.space3),
                     decoration: BoxDecoration(
                       color: BauhausDesign.warning.withOpacity(0.14),
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusSm),
+                      borderRadius: BorderRadius.circular(
+                        BauhausDesign.radiusSm,
+                      ),
                       border: Border.all(
                         color: BauhausDesign.warning.withOpacity(0.35),
                       ),
@@ -358,14 +356,14 @@ class _ClientPortalDashboardBodyState
                       children: [
                         Text(
                           'Share visibility without losing control',
-                          style: BauhausDesign.getTextTheme(context)
-                              .headlineMedium,
+                          style: BauhausDesign.getTextTheme(
+                            context,
+                          ).headlineMedium,
                         ),
                         const SizedBox(height: BauhausDesign.space1),
                         Text(
                           'Invite family members, manage permissions, and decide who can view appointments, messages, location, and service approvals.',
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodyMedium
+                          style: BauhausDesign.getTextTheme(context).bodyMedium
                               ?.copyWith(color: BauhausDesign.textMuted),
                         ),
                       ],
@@ -390,17 +388,16 @@ class _ClientPortalDashboardBodyState
                     ? () {
                         Navigator.of(context).pushNamed(
                           Routes.familyManagement,
-                          arguments: {
-                            'clientId': widget.clientId,
-                          },
+                          arguments: {'clientId': widget.clientId},
                         );
                       }
                     : null,
                 text: hasClientContext
                     ? 'MANAGE FAMILY ACCESS'
                     : 'CLIENT REQUIRED',
-                icon:
-                    hasClientContext ? Icons.arrow_forward : Icons.info_outline,
+                icon: hasClientContext
+                    ? Icons.arrow_forward
+                    : Icons.info_outline,
                 variant: BauhausActionVariant.warning,
                 isFullWidth: true,
               ),
@@ -420,17 +417,14 @@ class _ClientPortalDashboardBodyState
       decoration: BoxDecoration(
         color: BauhausDesign.surfaceWhite,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
-        border: Border.all(
-          color: BauhausDesign.neutral,
-          width: 1.2,
-        ),
+        border: Border.all(color: BauhausDesign.neutral, width: 1.2),
       ),
       child: Text(
         label,
         style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-              color: BauhausDesign.textDark,
-              fontWeight: FontWeight.w700,
-            ),
+          color: BauhausDesign.textDark,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }
@@ -528,11 +522,9 @@ class _ClientPortalDashboardBodyState
                   const SizedBox(height: BauhausDesign.space1),
                   Text(
                     'Newly assigned shifts will appear automatically.',
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
-                        ?.copyWith(
-                          color: BauhausDesign.textMuted,
-                        ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                   ),
                 ],
               ),
@@ -545,7 +537,9 @@ class _ClientPortalDashboardBodyState
   }
 
   Widget _buildAppointmentCard(
-      BuildContext context, TodayAppointment appointment) {
+    BuildContext context,
+    TodayAppointment appointment,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
       child: BauhausCard(
@@ -556,8 +550,9 @@ class _ClientPortalDashboardBodyState
               decoration: BoxDecoration(
                 color: BauhausDesign.success.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                border:
-                    Border.all(color: BauhausDesign.success.withOpacity(0.3)),
+                border: Border.all(
+                  color: BauhausDesign.success.withOpacity(0.3),
+                ),
               ),
               child: Icon(
                 Icons.access_time,
@@ -580,11 +575,9 @@ class _ClientPortalDashboardBodyState
                   ),
                   Text(
                     '${appointment.workerName} - ${appointment.serviceName}',
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
-                        ?.copyWith(
-                          color: BauhausDesign.textMuted,
-                        ),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: BauhausDesign.space1),
@@ -597,8 +590,9 @@ class _ClientPortalDashboardBodyState
                       color: appointment.status.toLowerCase() == 'completed'
                           ? BauhausDesign.neutral
                           : BauhausDesign.success,
-                      borderRadius:
-                          BorderRadius.circular(BauhausDesign.radiusXs),
+                      borderRadius: BorderRadius.circular(
+                        BauhausDesign.radiusXs,
+                      ),
                     ),
                     child: Text(
                       appointment.status.toUpperCase(),
@@ -661,7 +655,8 @@ class _ClientPortalDashboardBodyState
                   color: BauhausDesign.secondary.withOpacity(0.1),
                   shape: BoxShape.circle,
                   border: Border.all(
-                      color: BauhausDesign.secondary.withOpacity(0.3)),
+                    color: BauhausDesign.secondary.withOpacity(0.3),
+                  ),
                 ),
                 child: Icon(
                   Icons.location_on_outlined,
@@ -679,12 +674,13 @@ class _ClientPortalDashboardBodyState
               Text(
                 helperText,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: hasAppointment &&
-                              !hasVisibleLocation &&
-                              statusMessage.isNotEmpty
-                          ? BauhausDesign.error
-                          : BauhausDesign.textMuted,
-                    ),
+                  color:
+                      hasAppointment &&
+                          !hasVisibleLocation &&
+                          statusMessage.isNotEmpty
+                      ? BauhausDesign.error
+                      : BauhausDesign.textMuted,
+                ),
                 textAlign: TextAlign.center,
               ),
               if (state.workerLocation case final location?) ...[
@@ -696,16 +692,17 @@ class _ClientPortalDashboardBodyState
                     color: BauhausDesign.backgroundLight,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                     border: Border.all(
-                        color: BauhausDesign.neutral.withOpacity(0.3)),
+                      color: BauhausDesign.neutral.withOpacity(0.3),
+                    ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Last Visible Location',
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
-                            ?.copyWith(fontWeight: FontWeight.w600),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).labelLarge?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(height: BauhausDesign.space2),
                       Text(
@@ -716,8 +713,7 @@ class _ClientPortalDashboardBodyState
                       Text(
                         'Lat: ${location.latitude.toStringAsFixed(6)}, '
                         'Lng: ${location.longitude.toStringAsFixed(6)}',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
+                        style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
                               color: BauhausDesign.textMuted,
                               fontWeight: FontWeight.w600,
@@ -726,16 +722,16 @@ class _ClientPortalDashboardBodyState
                       if (location.distanceRemaining != null)
                         Text(
                           'Distance: ${location.distanceRemaining!.toStringAsFixed(2)} km',
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodySmall
-                              ?.copyWith(color: BauhausDesign.textMuted),
+                          style: BauhausDesign.getTextTheme(
+                            context,
+                          ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                         ),
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
                         'Updated: ${location.lastUpdated ?? location.timestamp}',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
-                            ?.copyWith(color: BauhausDesign.textMuted),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                       ),
                     ],
                   ),
@@ -747,10 +743,7 @@ class _ClientPortalDashboardBodyState
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                     child: PlatformMapWidget(
-                      center: LatLng(
-                        location.latitude,
-                        location.longitude,
-                      ),
+                      center: LatLng(location.latitude, location.longitude),
                       zoom: 16,
                       showMyLocation: false,
                       startMarker: LatLng(
@@ -770,8 +763,9 @@ class _ClientPortalDashboardBodyState
                             .getWorkerLocation(trackAppointment.appointmentId);
 
                         if (!mounted) return;
-                        final updatedState =
-                            ref.read(clientPortalViewModelProvider);
+                        final updatedState = ref.read(
+                          clientPortalViewModelProvider,
+                        );
                         final location = updatedState.workerLocation;
 
                         if (location != null) {
@@ -825,8 +819,9 @@ class _ClientPortalDashboardBodyState
                 decoration: BoxDecoration(
                   color: BauhausDesign.warning.withOpacity(0.1),
                   shape: BoxShape.circle,
-                  border:
-                      Border.all(color: BauhausDesign.warning.withOpacity(0.3)),
+                  border: Border.all(
+                    color: BauhausDesign.warning.withOpacity(0.3),
+                  ),
                 ),
                 child: Icon(
                   Icons.message_outlined,
@@ -845,9 +840,9 @@ class _ClientPortalDashboardBodyState
                 appointment != null
                     ? 'Connected to ${appointment.workerName} for today\'s scheduled service.'
                     : 'No assigned shift available for secure messaging.',
-                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.textMuted,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: BauhausDesign.space4),
@@ -901,8 +896,9 @@ class _ClientPortalDashboardBodyState
                 decoration: BoxDecoration(
                   color: BauhausDesign.accent.withOpacity(0.1),
                   shape: BoxShape.circle,
-                  border:
-                      Border.all(color: BauhausDesign.accent.withOpacity(0.3)),
+                  border: Border.all(
+                    color: BauhausDesign.accent.withOpacity(0.3),
+                  ),
                 ),
                 child: Icon(
                   Icons.star_outline,
@@ -921,9 +917,9 @@ class _ClientPortalDashboardBodyState
                 feedbackAppointment != null
                     ? 'Rate your completed service with ${feedbackAppointment.workerName}.'
                     : 'Feedback unlocks after a shift has finished.',
-                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.textMuted,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: BauhausDesign.space4),
@@ -956,9 +952,7 @@ class _ClientPortalDashboardBodyState
         const SizedBox(height: BauhausDesign.space3),
         invoicesState.when(
           loading: () => const BauhausCard(
-            child: Center(
-              child: BauhausLoadingState(showMessage: false),
-            ),
+            child: Center(child: BauhausLoadingState(showMessage: false)),
           ),
           error: (error, _) => BauhausCard(
             child: Column(
@@ -966,9 +960,9 @@ class _ClientPortalDashboardBodyState
               children: [
                 Text(
                   'Unable to load invoices.',
-                  style: BauhausDesign.getTextTheme(context)
-                      .bodyMedium
-                      ?.copyWith(color: BauhausDesign.error),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodyMedium?.copyWith(color: BauhausDesign.error),
                 ),
                 const SizedBox(height: BauhausDesign.space3),
                 BauhausActionButton(
@@ -993,10 +987,10 @@ class _ClientPortalDashboardBodyState
 
             return Column(
               children: invoices.take(3).map((invoice) {
-                final status =
-                    (invoice.workflow['status'] ?? 'pending').toString();
-                final total =
-                    (invoice.financialSummary['totalAmount'] ?? 0).toString();
+                final status = (invoice.workflow['status'] ?? 'pending')
+                    .toString();
+                final total = (invoice.financialSummary['totalAmount'] ?? 0)
+                    .toString();
 
                 return Padding(
                   padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
@@ -1016,8 +1010,9 @@ class _ClientPortalDashboardBodyState
                           padding: const EdgeInsets.all(BauhausDesign.space3),
                           decoration: BoxDecoration(
                             color: BauhausDesign.primary.withOpacity(0.1),
-                            borderRadius:
-                                BorderRadius.circular(BauhausDesign.radiusSm),
+                            borderRadius: BorderRadius.circular(
+                              BauhausDesign.radiusSm,
+                            ),
                             border: Border.all(
                               color: BauhausDesign.primary.withOpacity(0.3),
                             ),
@@ -1044,9 +1039,7 @@ class _ClientPortalDashboardBodyState
                                 'Total: $total',
                                 style: BauhausDesign.getTextTheme(context)
                                     .bodySmall
-                                    ?.copyWith(
-                                      color: BauhausDesign.textMuted,
-                                    ),
+                                    ?.copyWith(color: BauhausDesign.textMuted),
                               ),
                             ],
                           ),
@@ -1058,8 +1051,9 @@ class _ClientPortalDashboardBodyState
                           ),
                           decoration: BoxDecoration(
                             color: BauhausDesign.secondary,
-                            borderRadius:
-                                BorderRadius.circular(BauhausDesign.radiusXs),
+                            borderRadius: BorderRadius.circular(
+                              BauhausDesign.radiusXs,
+                            ),
                           ),
                           child: Text(
                             status.toUpperCase(),
@@ -1118,8 +1112,9 @@ class _ClientPortalDashboardBodyState
               decoration: BoxDecoration(
                 color: BauhausDesign.secondary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                border:
-                    Border.all(color: BauhausDesign.secondary.withOpacity(0.3)),
+                border: Border.all(
+                  color: BauhausDesign.secondary.withOpacity(0.3),
+                ),
               ),
               child: Icon(
                 Icons.calendar_today_outlined,
@@ -1134,25 +1129,21 @@ class _ClientPortalDashboardBodyState
                 children: [
                   Text(
                     appointment.date,
-                    style: BauhausDesign.getTextTheme(context)
-                        .labelLarge
-                        ?.copyWith(fontWeight: FontWeight.w600),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).labelLarge?.copyWith(fontWeight: FontWeight.w600),
                   ),
                   Text(
                     '${appointment.workerName} - ${appointment.serviceName}',
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodySmall
-                        ?.copyWith(color: BauhausDesign.textMuted),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
-            Icon(
-              Icons.chevron_right,
-              color: BauhausDesign.textMuted,
-              size: 20,
-            ),
+            Icon(Icons.chevron_right, color: BauhausDesign.textMuted, size: 20),
           ],
         ),
       ),
@@ -1187,8 +1178,9 @@ class _ClientPortalDashboardBodyState
               final rating = service.rating;
               final hasFeedback =
                   rating > 0 || (service.feedback ?? '').trim().isNotEmpty;
-              final buttonLabel =
-                  hasFeedback ? 'UPDATE FEEDBACK' : 'SUBMIT FEEDBACK';
+              final buttonLabel = hasFeedback
+                  ? 'UPDATE FEEDBACK'
+                  : 'SUBMIT FEEDBACK';
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
@@ -1198,23 +1190,23 @@ class _ClientPortalDashboardBodyState
                     children: [
                       Text(
                         service.serviceName,
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
-                            ?.copyWith(fontWeight: FontWeight.w700),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).labelLarge?.copyWith(fontWeight: FontWeight.w700),
                       ),
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
                         '${service.date} • ${service.startTime} - ${service.endTime}',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
-                            ?.copyWith(color: BauhausDesign.textMuted),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                       ),
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
                         'Worker: ${service.workerName}',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
-                            ?.copyWith(color: BauhausDesign.textMuted),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                       ),
                       const SizedBox(height: BauhausDesign.space2),
                       if (rating > 0)
@@ -1321,22 +1313,23 @@ class _ClientPortalDashboardBodyState
                   children: [
                     Text(
                       'Worker: ${appointment.workerName}',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
-                          ?.copyWith(fontWeight: FontWeight.w600),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: BauhausDesign.space1),
                     Text(
                       'Shift: ${appointment.startTime} - ${appointment.endTime}',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
-                          ?.copyWith(color: BauhausDesign.textMuted),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                     ),
                     const SizedBox(height: BauhausDesign.space4),
                     TextField(
                       controller: messageController,
-                      decoration:
-                          BauhausDesign.inputDecoration('Your message...'),
+                      decoration: BauhausDesign.inputDecoration(
+                        'Your message...',
+                      ),
                       maxLines: 5,
                     ),
                     const SizedBox(height: BauhausDesign.space5),
@@ -1360,24 +1353,26 @@ class _ClientPortalDashboardBodyState
                               final success = await ref
                                   .read(clientPortalViewModelProvider.notifier)
                                   .sendMessage({
-                                'clientId': widget.clientId,
-                                'appointmentId': appointment.appointmentId,
-                                'message': message,
-                                'messageType': 'text',
-                                'timestamp': DateTime.now().toIso8601String(),
-                              });
+                                    'clientId': widget.clientId,
+                                    'appointmentId': appointment.appointmentId,
+                                    'message': message,
+                                    'messageType': 'text',
+                                    'timestamp': DateTime.now()
+                                        .toIso8601String(),
+                                  });
 
                               if (!context.mounted) return;
 
                               Navigator.pop(context);
-                              final latestState =
-                                  ref.read(clientPortalViewModelProvider);
+                              final latestState = ref.read(
+                                clientPortalViewModelProvider,
+                              );
                               _showActionSnackBar(
                                 context,
                                 success
                                     ? 'Message sent securely.'
                                     : (latestState.error ??
-                                        'Unable to send message. Chat is available from 2 hours before shift start until 2 hours after shift end.'),
+                                          'Unable to send message. Chat is available from 2 hours before shift start until 2 hours after shift end.'),
                                 success,
                               );
                             },
@@ -1397,10 +1392,7 @@ class _ClientPortalDashboardBodyState
     );
   }
 
-  void _showFeedbackDialog(
-    BuildContext context,
-    TodayAppointment appointment,
-  ) {
+  void _showFeedbackDialog(BuildContext context, TodayAppointment appointment) {
     int rating = 5;
     final feedbackController = TextEditingController();
     bool isSubmitting = false;
@@ -1454,23 +1446,23 @@ class _ClientPortalDashboardBodyState
                     children: [
                       Text(
                         'Service: ${appointment.serviceName}',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium
-                            ?.copyWith(fontWeight: FontWeight.w600),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
                         'Worker: ${appointment.workerName}',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodySmall
-                            ?.copyWith(color: BauhausDesign.textMuted),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                       ),
                       const SizedBox(height: BauhausDesign.space4),
                       Text(
                         'Rate your service:',
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.w500),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodyLarge?.copyWith(fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(height: BauhausDesign.space4),
                       Container(
@@ -1479,10 +1471,12 @@ class _ClientPortalDashboardBodyState
                         ),
                         decoration: BoxDecoration(
                           color: BauhausDesign.backgroundLight,
-                          borderRadius:
-                              BorderRadius.circular(BauhausDesign.radiusSm),
+                          borderRadius: BorderRadius.circular(
+                            BauhausDesign.radiusSm,
+                          ),
                           border: Border.all(
-                              color: BauhausDesign.neutral.withOpacity(0.3)),
+                            color: BauhausDesign.neutral.withOpacity(0.3),
+                          ),
                         ),
                         child: FittedBox(
                           fit: BoxFit.scaleDown,
@@ -1492,8 +1486,9 @@ class _ClientPortalDashboardBodyState
                               return GestureDetector(
                                 onTap: () => setState(() => rating = index + 1),
                                 child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 6),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                  ),
                                   child: Icon(
                                     index < rating
                                         ? Icons.star
@@ -1511,7 +1506,8 @@ class _ClientPortalDashboardBodyState
                       TextField(
                         controller: feedbackController,
                         decoration: BauhausDesign.inputDecoration(
-                            'Additional comments...'),
+                          'Additional comments...',
+                        ),
                         maxLines: 4,
                       ),
                       const SizedBox(height: BauhausDesign.space5),
@@ -1534,33 +1530,39 @@ class _ClientPortalDashboardBodyState
 
                                 final success = await ref
                                     .read(
-                                        clientPortalViewModelProvider.notifier)
+                                      clientPortalViewModelProvider.notifier,
+                                    )
                                     .submitFeedback({
-                                  'clientId': widget.clientId,
-                                  'appointmentId': appointment.appointmentId,
-                                  'rating': rating,
-                                  'comments': feedbackController.text.trim(),
-                                  'timestamp': DateTime.now().toIso8601String(),
-                                });
+                                      'clientId': widget.clientId,
+                                      'appointmentId':
+                                          appointment.appointmentId,
+                                      'rating': rating,
+                                      'comments': feedbackController.text
+                                          .trim(),
+                                      'timestamp': DateTime.now()
+                                          .toIso8601String(),
+                                    });
 
                                 if (!mounted) return;
 
                                 Navigator.pop(context);
-                                final latestState =
-                                    ref.read(clientPortalViewModelProvider);
+                                final latestState = ref.read(
+                                  clientPortalViewModelProvider,
+                                );
                                 _showActionSnackBar(
                                   this.context,
                                   success
                                       ? 'Feedback submitted. Thank you.'
                                       : (latestState.error ??
-                                          'Feedback can only be submitted after service completion.'),
+                                            'Feedback can only be submitted after service completion.'),
                                   success,
                                 );
 
                                 if (success && widget.clientId != null) {
                                   ref
-                                      .read(clientPortalViewModelProvider
-                                          .notifier)
+                                      .read(
+                                        clientPortalViewModelProvider.notifier,
+                                      )
                                       .loadServiceHistory(
                                         widget.clientId!,
                                         silent: true,
@@ -1610,10 +1612,7 @@ class _ClientPortalDashboardBodyState
     );
   }
 
-  void _handleFeedbackTap(
-    BuildContext context,
-    TodayAppointment? appointment,
-  ) {
+  void _handleFeedbackTap(BuildContext context, TodayAppointment? appointment) {
     if (widget.clientId == null || widget.clientId!.isEmpty) {
       _showActionSnackBar(
         context,

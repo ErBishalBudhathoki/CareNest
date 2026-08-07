@@ -15,32 +15,28 @@ import 'package:carenest/app/core/providers/app_providers.dart'
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
-final organizationEmployeeRateSnapshotProvider =
-    FutureProvider.autoDispose.family<List<Map<String, dynamic>>, String>(
-  (ref, organizationId) async {
-    if (organizationId.trim().isEmpty) return const [];
-    final api = ref.read(app_providers.apiMethodProvider);
-    final response = await api.getOrganizationEmployees(organizationId);
-    final people = (response['employees'] as List<dynamic>? ?? const [])
-        .whereType<Map>()
-        .map((e) => Map<String, dynamic>.from(e))
-        .toList();
-    return people;
-  },
-);
+final organizationEmployeeRateSnapshotProvider = FutureProvider.autoDispose
+    .family<List<Map<String, dynamic>>, String>((ref, organizationId) async {
+      if (organizationId.trim().isEmpty) return const [];
+      final api = ref.read(app_providers.apiMethodProvider);
+      final response = await api.getOrganizationEmployees(organizationId);
+      final people = (response['employees'] as List<dynamic>? ?? const [])
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
+      return people;
+    });
 
-final pricingAnalyticsSnapshotProvider =
-    FutureProvider.autoDispose.family<PricingAnalytics?, String>(
-  (ref, organizationId) async {
-    if (organizationId.trim().isEmpty) return null;
-    try {
-      final repo = ref.read(pricingRepositoryProvider);
-      return await repo.fetchPricingAnalytics(organizationId: organizationId);
-    } catch (_) {
-      return null;
-    }
-  },
-);
+final pricingAnalyticsSnapshotProvider = FutureProvider.autoDispose
+    .family<PricingAnalytics?, String>((ref, organizationId) async {
+      if (organizationId.trim().isEmpty) return null;
+      try {
+        final repo = ref.read(pricingRepositoryProvider);
+        return await repo.fetchPricingAnalytics(organizationId: organizationId);
+      } catch (_) {
+        return null;
+      }
+    });
 
 class _PricingModuleInsight {
   final String badge;
@@ -90,49 +86,49 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
   late AnimationController _animationController;
 
   List<Map<String, dynamic>> _getPricingModules(BuildContext context) => [
-        {
-          'title': AppLocalizations.of(context)!.dashboardOverviewTitle,
-          'subtitle': AppLocalizations.of(context)!.dashboardOverviewSubtitle,
-          'icon': Icons.dashboard_outlined,
-          'color': BauhausDesign.secondary,
-          'route': 'dashboard',
-        },
-        {
-          'title': AppLocalizations.of(context)!.ndisPricingTitle,
-          'subtitle': AppLocalizations.of(context)!.ndisPricingSubtitle,
-          'icon': Icons.medical_services_outlined,
-          'color': BauhausDesign.success,
-          'route': 'ndis',
-        },
-        {
-          'title': AppLocalizations.of(context)!.serviceRatesTitle,
-          'subtitle': AppLocalizations.of(context)!.serviceRatesSubtitle,
-          'icon': Icons.rate_review_outlined,
-          'color': BauhausDesign.warning,
-          'route': 'service_rates',
-        },
-        {
-          'title': AppLocalizations.of(context)!.bulkOperationsTitle,
-          'subtitle': AppLocalizations.of(context)!.bulkOperationsSubtitle,
-          'icon': Icons.batch_prediction_outlined,
-          'color': BauhausDesign.info,
-          'route': 'bulk_operations',
-        },
-        {
-          'title': AppLocalizations.of(context)!.priceHistoryTitle,
-          'subtitle': AppLocalizations.of(context)!.priceHistorySubtitle,
-          'icon': Icons.history_outlined,
-          'color': BauhausDesign.primary,
-          'route': 'price_history',
-        },
-        {
-          'title': AppLocalizations.of(context)!.quickActionsTitle,
-          'subtitle': AppLocalizations.of(context)!.quickActionsSubtitle,
-          'icon': Icons.flash_on_outlined,
-          'color': BauhausDesign.primary,
-          'route': 'quick_actions',
-        },
-      ];
+    {
+      'title': AppLocalizations.of(context)!.dashboardOverviewTitle,
+      'subtitle': AppLocalizations.of(context)!.dashboardOverviewSubtitle,
+      'icon': Icons.dashboard_outlined,
+      'color': BauhausDesign.secondary,
+      'route': 'dashboard',
+    },
+    {
+      'title': AppLocalizations.of(context)!.ndisPricingTitle,
+      'subtitle': AppLocalizations.of(context)!.ndisPricingSubtitle,
+      'icon': Icons.medical_services_outlined,
+      'color': BauhausDesign.success,
+      'route': 'ndis',
+    },
+    {
+      'title': AppLocalizations.of(context)!.serviceRatesTitle,
+      'subtitle': AppLocalizations.of(context)!.serviceRatesSubtitle,
+      'icon': Icons.rate_review_outlined,
+      'color': BauhausDesign.warning,
+      'route': 'service_rates',
+    },
+    {
+      'title': AppLocalizations.of(context)!.bulkOperationsTitle,
+      'subtitle': AppLocalizations.of(context)!.bulkOperationsSubtitle,
+      'icon': Icons.batch_prediction_outlined,
+      'color': BauhausDesign.info,
+      'route': 'bulk_operations',
+    },
+    {
+      'title': AppLocalizations.of(context)!.priceHistoryTitle,
+      'subtitle': AppLocalizations.of(context)!.priceHistorySubtitle,
+      'icon': Icons.history_outlined,
+      'color': BauhausDesign.primary,
+      'route': 'price_history',
+    },
+    {
+      'title': AppLocalizations.of(context)!.quickActionsTitle,
+      'subtitle': AppLocalizations.of(context)!.quickActionsSubtitle,
+      'icon': Icons.flash_on_outlined,
+      'color': BauhausDesign.primary,
+      'route': 'quick_actions',
+    },
+  ];
 
   @override
   void initState() {
@@ -202,8 +198,10 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
       return price > 0 && !_isFallbackPricingSource(source);
     }).length;
 
-    final quotableItems =
-        ndisItems.whereType<NDISItem>().where((item) => item.isQuotable).length;
+    final quotableItems = ndisItems
+        .whereType<NDISItem>()
+        .where((item) => item.isQuotable)
+        .length;
 
     final coverage = totalItems > 0 ? (customEntries / totalItems) : 0.0;
 
@@ -215,7 +213,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
     final avgRate = configuredRateValues.isEmpty
         ? 0.0
         : configuredRateValues.reduce((a, b) => a + b) /
-            configuredRateValues.length;
+              configuredRateValues.length;
     final missingRates = (employees.length - configuredRates).clamp(0, 99999);
 
     final now = DateTime.now();
@@ -243,24 +241,28 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
     final dashboardStatus = violations > 0
         ? l10n.moduleStatusNeedsAction
         : l10n.moduleStatusHealthy;
-    final dashboardStatusColor =
-        violations > 0 ? BauhausDesign.warning : BauhausDesign.success;
+    final dashboardStatusColor = violations > 0
+        ? BauhausDesign.warning
+        : BauhausDesign.success;
 
     final ndisStatus = coverage < 0.2
         ? l10n.moduleStatusNeedsAction
         : l10n.moduleStatusHealthy;
-    final ndisStatusColor =
-        coverage < 0.2 ? BauhausDesign.warning : BauhausDesign.success;
+    final ndisStatusColor = coverage < 0.2
+        ? BauhausDesign.warning
+        : BauhausDesign.success;
 
     final ratesStatus = missingRates > 0
         ? l10n.moduleStatusNeedsAction
         : l10n.moduleStatusHealthy;
-    final ratesStatusColor =
-        missingRates > 0 ? BauhausDesign.warning : BauhausDesign.success;
+    final ratesStatusColor = missingRates > 0
+        ? BauhausDesign.warning
+        : BauhausDesign.success;
 
     final bulkCandidates = (totalItems - customEntries).clamp(0, 999999);
-    final recommendedBatchSize =
-        bulkCandidates == 0 ? 0 : ((bulkCandidates / 20).ceil()).clamp(25, 500);
+    final recommendedBatchSize = bulkCandidates == 0
+        ? 0
+        : ((bulkCandidates / 20).ceil()).clamp(25, 500);
 
     final historyFreshness = latestChange == null
         ? l10n.moduleNoTrackedChanges
@@ -278,8 +280,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
         primaryMetricValue: revenue > 0
             ? _formatCurrencyCompact(revenue)
             : _formatPercent(coverage * 100),
-        primaryMetricLabel:
-            revenue > 0 ? l10n.moduleMetricRevenue : l10n.moduleMetricCoverage,
+        primaryMetricLabel: revenue > 0
+            ? l10n.moduleMetricRevenue
+            : l10n.moduleMetricCoverage,
         secondaryMetricValue: _formatPercent(compliance),
         secondaryMetricLabel: l10n.moduleMetricCompliance,
         progress: (compliance / 100).clamp(0, 1),
@@ -325,10 +328,12 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
       ),
       'bulk_operations': _PricingModuleInsight(
         badge: l10n.moduleBadgeBulk,
-        statusLabel:
-            bulkCandidates > 0 ? l10n.moduleStatusReady : l10n.moduleStatusIdle,
-        statusColor:
-            bulkCandidates > 0 ? BauhausDesign.info : BauhausDesign.textMuted,
+        statusLabel: bulkCandidates > 0
+            ? l10n.moduleStatusReady
+            : l10n.moduleStatusIdle,
+        statusColor: bulkCandidates > 0
+            ? BauhausDesign.info
+            : BauhausDesign.textMuted,
         primaryMetricValue: bulkCandidates.toString(),
         primaryMetricLabel: l10n.moduleMetricBulkCandidates,
         secondaryMetricValue: recommendedBatchSize.toString(),
@@ -347,8 +352,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
         statusLabel: updatesLast7d > 0
             ? l10n.moduleStatusRecentlyUpdated
             : l10n.moduleStatusIdle,
-        statusColor:
-            updatesLast7d > 0 ? BauhausDesign.success : BauhausDesign.textMuted,
+        statusColor: updatesLast7d > 0
+            ? BauhausDesign.success
+            : BauhausDesign.textMuted,
         primaryMetricValue: updatesLast7d.toString(),
         primaryMetricLabel: l10n.moduleMetricWeeklyChanges,
         secondaryMetricValue: customEntries.toString(),
@@ -364,8 +370,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
         statusLabel: actionableCount > 0
             ? l10n.moduleStatusNeedsAction
             : l10n.moduleStatusReady,
-        statusColor:
-            actionableCount > 0 ? BauhausDesign.warning : BauhausDesign.success,
+        statusColor: actionableCount > 0
+            ? BauhausDesign.warning
+            : BauhausDesign.success,
         primaryMetricValue: actionableCount.toString(),
         primaryMetricLabel: l10n.moduleMetricActionableItems,
         secondaryMetricValue: _getPricingModules(context).length.toString(),
@@ -395,10 +402,8 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
         : const AsyncData<PricingAnalytics?>(null);
 
     final ndisItems = ndisItemsAsync.value ?? const <NDISItem>[];
-    final pricingLookup =
-        pricingLookupAsync.value ?? const <String, dynamic>{};
-    final employees =
-        employeesAsync.value ?? const <Map<String, dynamic>>[];
+    final pricingLookup = pricingLookupAsync.value ?? const <String, dynamic>{};
+    final employees = employeesAsync.value ?? const <Map<String, dynamic>>[];
     final analytics = analyticsAsync.value;
     final moduleInsights = _buildModuleInsights(
       l10n: AppLocalizations.of(context)!,
@@ -408,7 +413,8 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
       analytics: analytics,
     );
 
-    final isInsightsLoading = ndisItemsAsync.isLoading ||
+    final isInsightsLoading =
+        ndisItemsAsync.isLoading ||
         pricingLookupAsync.isLoading ||
         employeesAsync.isLoading ||
         analyticsAsync.isLoading;
@@ -443,7 +449,8 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
             final isSmallScreen = constraints.maxWidth < 600;
             return Padding(
               padding: EdgeInsets.all(
-                  isSmallScreen ? BauhausDesign.space4 : BauhausDesign.space6),
+                isSmallScreen ? BauhausDesign.space4 : BauhausDesign.space6,
+              ),
               child: Column(
                 children: [
                   Row(
@@ -473,9 +480,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              AppLocalizations.of(context)!
-                                  .pricingManagementTitle
-                                  .toUpperCase(),
+                              AppLocalizations.of(
+                                context,
+                              )!.pricingManagementTitle.toUpperCase(),
                               style: BauhausDesign.getTextTheme(context)
                                   .headlineMedium
                                   ?.copyWith(
@@ -492,17 +499,16 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                             if (!isSmallScreen) ...[
                               const SizedBox(height: BauhausDesign.space2),
                               Text(
-                                AppLocalizations.of(context)!
-                                    .pricingManagementDesc,
+                                AppLocalizations.of(
+                                  context,
+                                )!.pricingManagementDesc,
                                 style: BauhausDesign.getTextTheme(context)
                                     .labelLarge
-                                    ?.copyWith(
-                                      color: BauhausDesign.textMuted,
-                                    ),
+                                    ?.copyWith(color: BauhausDesign.textMuted),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                            ]
+                            ],
                           ],
                         ),
                       ),
@@ -538,9 +544,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                             AppLocalizations.of(context)!.manageAndOptimizeDesc,
                             style: BauhausDesign.getTextTheme(context)
                                 .bodyMedium
-                                ?.copyWith(
-                                  color: BauhausDesign.textMuted,
-                                ),
+                                ?.copyWith(color: BauhausDesign.textMuted),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -581,10 +585,10 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
       child: Text(
         AppLocalizations.of(context)!.systemActive.toUpperCase(),
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: BauhausDesign.surfaceWhite,
-              letterSpacing: 0.6,
-              fontWeight: FontWeight.w800,
-            ),
+          color: BauhausDesign.surfaceWhite,
+          letterSpacing: 0.6,
+          fontWeight: FontWeight.w800,
+        ),
       ),
     );
   }
@@ -595,8 +599,10 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
     final orgName = widget.organizationName;
 
     if (orgId == null || orgId.isEmpty || orgName == null || orgName.isEmpty) {
-      _showSnackBar(AppLocalizations.of(context)!.orgContextMissingError,
-          isError: true);
+      _showSnackBar(
+        AppLocalizations.of(context)!.orgContextMissingError,
+        isError: true,
+      );
       return;
     }
 
@@ -665,8 +671,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
             margin: const EdgeInsets.symmetric(vertical: BauhausDesign.space4),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
+              padding: const EdgeInsets.symmetric(
+                horizontal: BauhausDesign.space4,
+              ),
               child: Row(
                 children: statData.map((stat) {
                   return Padding(
@@ -689,8 +696,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
         } else {
           return Container(
             margin: const EdgeInsets.symmetric(vertical: BauhausDesign.space4),
-            padding:
-                const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
+            padding: const EdgeInsets.symmetric(
+              horizontal: BauhausDesign.space4,
+            ),
             child: Column(
               children: [
                 Row(
@@ -698,8 +706,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                     Expanded(
                       child: _buildStatCard(
                         title: statData[0]['title']! as String,
-                        value:
-                            isLoading ? '--' : statData[0]['value']! as String,
+                        value: isLoading
+                            ? '--'
+                            : statData[0]['value']! as String,
                         subtitle: statData[0]['subtitle']! as String,
                         icon: statData[0]['icon']! as IconData,
                         color: statData[0]['color']! as Color,
@@ -709,8 +718,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                     Expanded(
                       child: _buildStatCard(
                         title: statData[1]['title']! as String,
-                        value:
-                            isLoading ? '--' : statData[1]['value']! as String,
+                        value: isLoading
+                            ? '--'
+                            : statData[1]['value']! as String,
                         subtitle: statData[1]['subtitle']! as String,
                         icon: statData[1]['icon']! as IconData,
                         color: statData[1]['color']! as Color,
@@ -724,8 +734,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                     Expanded(
                       child: _buildStatCard(
                         title: statData[2]['title']! as String,
-                        value:
-                            isLoading ? '--' : statData[2]['value']! as String,
+                        value: isLoading
+                            ? '--'
+                            : statData[2]['value']! as String,
                         subtitle: statData[2]['subtitle']! as String,
                         icon: statData[2]['icon']! as IconData,
                         color: statData[2]['color']! as Color,
@@ -735,8 +746,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                     Expanded(
                       child: _buildStatCard(
                         title: statData[3]['title']! as String,
-                        value:
-                            isLoading ? '--' : statData[3]['value']! as String,
+                        value: isLoading
+                            ? '--'
+                            : statData[3]['value']! as String,
                         subtitle: statData[3]['subtitle']! as String,
                         icon: statData[3]['icon']! as IconData,
                         color: statData[3]['color']! as Color,
@@ -782,10 +794,10 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
             child: Text(
               title.toUpperCase(),
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.surfaceWhite,
-                    letterSpacing: 0.5,
-                    fontWeight: FontWeight.w800,
-                  ),
+                color: BauhausDesign.surfaceWhite,
+                letterSpacing: 0.5,
+                fontWeight: FontWeight.w800,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -804,9 +816,11 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                     width: BauhausDesign.borderThick,
                   ),
                 ),
-                child: Icon(icon,
-                    color: BauhausDesign.surfaceWhite,
-                    size: BauhausDesign.iconMd),
+                child: Icon(
+                  icon,
+                  color: BauhausDesign.surfaceWhite,
+                  size: BauhausDesign.iconMd,
+                ),
               ),
               const SizedBox(width: BauhausDesign.space3),
               Expanded(
@@ -815,8 +829,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                   children: [
                     Text(
                       value,
-                      style: BauhausDesign.getTextTheme(context)
-                          .headlineSmall
+                      style: BauhausDesign.getTextTheme(context).headlineSmall
                           ?.copyWith(
                             fontWeight: FontWeight.w900,
                             color: BauhausDesign.textDark,
@@ -827,8 +840,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                     const SizedBox(height: BauhausDesign.space1),
                     Text(
                       subtitle,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelSmall
+                      style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
                             color: BauhausDesign.textMuted,
                             fontWeight: FontWeight.w700,
@@ -908,9 +920,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                             AppLocalizations.of(context)!.chooseModuleDesc,
                             style: BauhausDesign.getTextTheme(context)
                                 .labelLarge
-                                ?.copyWith(
-                                  color: BauhausDesign.textMuted,
-                                ),
+                                ?.copyWith(color: BauhausDesign.textMuted),
                           ),
                         ],
                       ),
@@ -928,8 +938,8 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
               final cardHeight = crossAxisCount == 2
                   ? BauhausDesign.space16 * 4.8
                   : isCompact
-                      ? BauhausDesign.space16 * 5.4
-                      : BauhausDesign.space16 * 4.9;
+                  ? BauhausDesign.space16 * 5.4
+                  : BauhausDesign.space16 * 4.9;
               return GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -941,8 +951,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                 ),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: crossAxisCount,
-                  crossAxisSpacing:
-                      crossAxisCount == 1 ? 0 : BauhausDesign.space4,
+                  crossAxisSpacing: crossAxisCount == 1
+                      ? 0
+                      : BauhausDesign.space4,
                   mainAxisSpacing: BauhausDesign.space4,
                   mainAxisExtent: cardHeight,
                 ),
@@ -986,11 +997,13 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
     final l10n = AppLocalizations.of(context)!;
     final accentColor = (module['color'] as Color?) ?? BauhausDesign.secondary;
     final primaryMetricValue = isLoading ? '--' : insight.primaryMetricValue;
-    final secondaryMetricValue =
-        isLoading ? '--' : insight.secondaryMetricValue;
+    final secondaryMetricValue = isLoading
+        ? '--'
+        : insight.secondaryMetricValue;
     final progress = isLoading ? 0.0 : insight.progress.clamp(0.0, 1.0);
-    final progressLabel =
-        isLoading ? l10n.moduleNoDataYet : insight.progressLabel;
+    final progressLabel = isLoading
+        ? l10n.moduleNoDataYet
+        : insight.progressLabel;
     final keyInsight = isLoading ? l10n.moduleNoDataYet : insight.keyInsight;
 
     return GestureDetector(
@@ -1021,8 +1034,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                       ),
                       child: Text(
                         insight.badge.toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
+                        style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
                               color: BauhausDesign.surfaceWhite,
                               letterSpacing: 0.4,
@@ -1048,8 +1060,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                     ),
                     child: Text(
                       insight.statusLabel.toUpperCase(),
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelSmall
+                      style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
                             color: BauhausDesign.surfaceWhite,
                             fontWeight: FontWeight.w800,
@@ -1085,8 +1096,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                       children: [
                         Text(
                           module['title'].toString().toUpperCase(),
-                          style: BauhausDesign.getTextTheme(context)
-                              .labelLarge
+                          style: BauhausDesign.getTextTheme(context).labelLarge
                               ?.copyWith(
                                 color: BauhausDesign.textDark,
                                 fontWeight: FontWeight.w800,
@@ -1098,11 +1108,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                         const SizedBox(height: BauhausDesign.space1),
                         Text(
                           module['subtitle'].toString(),
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodySmall
-                              ?.copyWith(
-                                color: BauhausDesign.textMuted,
-                              ),
+                          style: BauhausDesign.getTextTheme(
+                            context,
+                          ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -1132,9 +1140,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
               const SizedBox(height: BauhausDesign.space2),
               Text(
                 progressLabel,
-                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                      color: BauhausDesign.textMuted,
-                    ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1179,8 +1187,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                       Expanded(
                         child: Text(
                           keyInsight,
-                          style: BauhausDesign.getTextTheme(context)
-                              .labelSmall
+                          style: BauhausDesign.getTextTheme(context).labelSmall
                               ?.copyWith(
                                 color: BauhausDesign.textDark,
                                 height: 1.25,
@@ -1211,8 +1218,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                       ),
                       child: Text(
                         l10n.open.toUpperCase(),
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelSmall
+                        style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
                               color: BauhausDesign.surfaceWhite,
                               fontWeight: FontWeight.w800,
@@ -1267,10 +1273,10 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
           Text(
             value,
             style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w900,
-                  height: 1.0,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w900,
+              height: 1.0,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -1278,9 +1284,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
           Text(
             label,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textMuted,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: BauhausDesign.textMuted,
+              fontWeight: FontWeight.w700,
+            ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -1332,8 +1338,10 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
         _showQuickActionsBottomSheet();
         return;
       default:
-        _showSnackBar(AppLocalizations.of(context)!.errorOccurred,
-            isError: true);
+        _showSnackBar(
+          AppLocalizations.of(context)!.errorOccurred,
+          isError: true,
+        );
         return;
     }
 
@@ -1346,9 +1354,10 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
           const end = Offset.zero;
           const curve = Curves.easeInOutCubic;
 
-          var tween = Tween(begin: begin, end: end).chain(
-            CurveTween(curve: curve),
-          );
+          var tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: curve));
 
           return SlideTransition(
             position: animation.drive(tween),
@@ -1374,9 +1383,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
       ),
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.6,
-        decoration: const BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
-        ),
+        decoration: const BoxDecoration(color: BauhausDesign.surfaceWhite),
         child: Column(
           children: [
             Container(
@@ -1397,18 +1404,19 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
               ),
               child: Text(
                 AppLocalizations.of(context)!.quickActionsTitle.toUpperCase(),
-                style:
-                    BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          color: BauhausDesign.surfaceWhite,
-                          letterSpacing: 0.5,
-                        ),
+                style: BauhausDesign.getTextTheme(context).headlineSmall
+                    ?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: BauhausDesign.surfaceWhite,
+                      letterSpacing: 0.5,
+                    ),
               ),
             ),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: BauhausDesign.space6),
+                  horizontal: BauhausDesign.space6,
+                ),
                 children: [
                   _buildQuickActionTile(
                     AppLocalizations.of(context)!.bulkPriceUpdateTitle,
@@ -1492,8 +1500,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                   children: [
                     Text(
                       title.toUpperCase(),
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelLarge
+                      style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w800,
@@ -1502,11 +1509,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                     const SizedBox(height: BauhausDesign.space1),
                     Text(
                       subtitle,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
-                          ?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                     ),
                   ],
                 ),

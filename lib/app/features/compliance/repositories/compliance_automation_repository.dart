@@ -14,9 +14,7 @@ class ComplianceAutomationRepository {
   }) async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
-      return await apiMethod.runComplianceScan(
-        organizationId: organizationId,
-      );
+      return await apiMethod.runComplianceScan(organizationId: organizationId);
     } catch (e) {
       debugPrint('Error running compliance scan: $e');
       return {'success': false, 'message': e.toString()};
@@ -29,9 +27,7 @@ class ComplianceAutomationRepository {
   }) async {
     try {
       final apiMethod = ref.read(apiMethodProvider);
-      return await apiMethod.getComplianceScore(
-        workerId: workerId,
-      );
+      return await apiMethod.getComplianceScore(workerId: workerId);
     } catch (e) {
       debugPrint('Error getting compliance score: $e');
       return {'success': false, 'message': e.toString()};
@@ -91,6 +87,7 @@ class ComplianceAutomationRepository {
 }
 
 /// Provider for compliance automation repository
-final complianceAutomationRepositoryProvider = Provider<ComplianceAutomationRepository>((ref) {
-  return ComplianceAutomationRepository(ref);
-});
+final complianceAutomationRepositoryProvider =
+    Provider<ComplianceAutomationRepository>((ref) {
+      return ComplianceAutomationRepository(ref);
+    });

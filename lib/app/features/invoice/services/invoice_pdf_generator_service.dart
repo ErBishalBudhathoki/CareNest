@@ -52,7 +52,8 @@ class InvoicePdfGenerator {
         }
 
         debugPrint(
-            'PDF Generator: Processing client: ${clientData['clientName']}');
+          'PDF Generator: Processing client: ${clientData['clientName']}',
+        );
 
         // Debug: Check if expenses data exists
         final expenses = clientData['expenses'] as List<dynamic>? ?? [];
@@ -62,10 +63,12 @@ class InvoicePdfGenerator {
           debugPrint('PDF Generator: All expenses: $expenses');
         }
         debugPrint(
-            'PDF Generator: _hasExpenses result: ${_hasExpenses(clientData)}');
+          'PDF Generator: _hasExpenses result: ${_hasExpenses(clientData)}',
+        );
         debugPrint('PDF Generator: clientData keys: ${clientData.keys}');
         debugPrint(
-            "PDF Generator: expenses key exists: ${clientData.containsKey('expenses')}");
+          "PDF Generator: expenses key exists: ${clientData.containsKey('expenses')}",
+        );
 
         // For regeneration/rebuild flows, keep persisted totals unchanged.
         // For normal generation flows, continue applying tax/total fixes.
@@ -79,36 +82,41 @@ class InvoicePdfGenerator {
         final invoiceNum = _getSafeString(clientData['invoiceNumber']);
         debugPrint('PDF Generator: invoiceNum: $invoiceNum');
         final String watermark = invoiceNum.isNotEmpty
-            ? InvoiceNumberGeneratorService.generateWatermark(invoiceNum)
-                .toString()
+            ? InvoiceNumberGeneratorService.generateWatermark(
+                invoiceNum,
+              ).toString()
             : '';
 
         // Build photo attachments section asynchronously if needed
         pw.Widget? photoAttachmentsSection;
         if (_hasPhotoAttachments(clientData, attachedPhotos)) {
           photoAttachmentsSection = await _buildPhotoAttachmentsSectionAsync(
-              clientData, attachedPhotos, photoDescription);
+            clientData,
+            attachedPhotos,
+            photoDescription,
+          );
         }
 
-        final invoiceTotalWidget =
-            await _buildInvoiceTotal(clientData, showTax, taxRate);
+        final invoiceTotalWidget = await _buildInvoiceTotal(
+          clientData,
+          showTax,
+          taxRate,
+        );
 
         pdf.addPage(
           pw.MultiPage(
             pageFormat: PdfPageFormat.a4.copyWith(
-                marginLeft: 15,
-                marginRight: 15,
-                marginTop: 35,
-                marginBottom: 25),
+              marginLeft: 15,
+              marginRight: 15,
+              marginTop: 35,
+              marginBottom: 25,
+            ),
             maxPages: 200,
             build: (pw.Context context) => [
               if (watermark.isNotEmpty)
                 pw.Text(
                   watermark,
-                  style: pw.TextStyle(
-                    fontSize: 0.1,
-                    color: PdfColors.white,
-                  ),
+                  style: pw.TextStyle(fontSize: 0.1, color: PdfColors.white),
                 ),
               _buildInvoiceHeader(clientData),
               pw.SizedBox(height: 24),
@@ -134,7 +142,9 @@ class InvoicePdfGenerator {
                   (uploadedAdditionalFileUrls != null &&
                       uploadedAdditionalFileUrls.isNotEmpty)) ...[
                 _buildDownloadLinksSection(
-                    uploadedPhotoUrls, uploadedAdditionalFileUrls),
+                  uploadedPhotoUrls,
+                  uploadedAdditionalFileUrls,
+                ),
                 pw.SizedBox(height: 24),
               ],
             ],
@@ -171,26 +181,31 @@ class InvoicePdfGenerator {
         if (additionalAttachments != null && additionalAttachments.isNotEmpty) {
           try {
             debugPrint(
-                'PDF Generator: Processing ${additionalAttachments.length} additional attachments');
+              'PDF Generator: Processing ${additionalAttachments.length} additional attachments',
+            );
 
             // Filter out unsupported files and log them
             final supportedAttachments = additionalAttachments.where((file) {
-              final isSupported =
-                  FileConversionService.isFileSupported(file.path);
+              final isSupported = FileConversionService.isFileSupported(
+                file.path,
+              );
               if (!isSupported) {
                 debugPrint(
-                    'PDF Generator: Skipping unsupported file: ${file.path}');
+                  'PDF Generator: Skipping unsupported file: ${file.path}',
+                );
               }
               return isSupported;
             }).toList();
 
             if (supportedAttachments.isNotEmpty) {
               debugPrint(
-                  'PDF Generator: Converting and merging ${supportedAttachments.length} supported attachments');
+                'PDF Generator: Converting and merging ${supportedAttachments.length} supported attachments',
+              );
               finalPdfFile = await _fileConversionService
                   .convertAndMergeWithInvoice(file, supportedAttachments);
               debugPrint(
-                  'PDF Generator: Successfully merged attachments. Final PDF: ${finalPdfFile.path}');
+                'PDF Generator: Successfully merged attachments. Final PDF: ${finalPdfFile.path}',
+              );
 
               // Delete the original invoice PDF since we now have the merged version
               try {
@@ -198,23 +213,27 @@ class InvoicePdfGenerator {
                 debugPrint('PDF Generator: Deleted original invoice PDF');
               } catch (e) {
                 debugPrint(
-                    'PDF Generator: Warning - Could not delete original PDF: $e');
+                  'PDF Generator: Warning - Could not delete original PDF: $e',
+                );
               }
             } else {
               debugPrint(
-                  'PDF Generator: No supported attachments found for conversion');
+                'PDF Generator: No supported attachments found for conversion',
+              );
             }
           } catch (e) {
             debugPrint('PDF Generator: Error processing attachments: $e');
             debugPrint(
-                'PDF Generator: Using original invoice PDF without attachments');
+              'PDF Generator: Using original invoice PDF without attachments',
+            );
             // Continue with the original PDF if attachment processing fails
           }
         }
 
         generatedPdfPaths.add(finalPdfFile.path);
         debugPrint(
-            'PDF Generator: Added final path to list: ${finalPdfFile.path}');
+          'PDF Generator: Added final path to list: ${finalPdfFile.path}',
+        );
       }
     } catch (e, st) {
       debugPrint('Error generating PDFs: $e');
@@ -223,7 +242,8 @@ class InvoicePdfGenerator {
     }
 
     debugPrint(
-        'PDF Generator: Completed. Generated ${generatedPdfPaths.length} PDFs');
+      'PDF Generator: Completed. Generated ${generatedPdfPaths.length} PDFs',
+    );
     debugPrint('PDF Generator: Paths: $generatedPdfPaths');
     return generatedPdfPaths;
   }
@@ -302,40 +322,48 @@ class InvoicePdfGenerator {
                 children: [
                   // Admin/Business name - left aligned (issuer)
                   pw.Text(
-                      _getSafeString(clientData['adminProfile']
-                              ?['businessName'] ??
-                          'Business'),
-                      style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    _getSafeString(
+                      clientData['adminProfile']?['businessName'] ?? 'Business',
+                    ),
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  ),
                   pw.SizedBox(height: 8),
                   // Key-value pairs with justified alignment
                   _buildAlignedKeyValue(
-                      'ABN:',
-                      _getSafeString(
-                        clientData['adminProfile']?['abn'] ??
-                            clientData['adminProfile']?['taxIdentifiers']
-                                ?['abn'] ??
-                            clientData['taxIdentifiers']?['abn'] ??
-                            'N/A',
-                      )),
-                  pw.SizedBox(height: 3),
-                  _buildAlignedKeyValue('Period Starting:',
-                      _getSafeString(clientData['startDate'] ?? 'N/A')),
-                  pw.SizedBox(height: 3),
-                  _buildAlignedKeyValue('Period Ending:',
-                      _getSafeString(clientData['endDate'] ?? 'N/A')),
-                  pw.SizedBox(height: 3),
-                  _buildAlignedKeyValue('Total Amount:',
-                      '\$${_getSafeDouble(clientData['total']).toStringAsFixed(2)}'),
+                    'ABN:',
+                    _getSafeString(
+                      clientData['adminProfile']?['abn'] ??
+                          clientData['adminProfile']?['taxIdentifiers']?['abn'] ??
+                          clientData['taxIdentifiers']?['abn'] ??
+                          'N/A',
+                    ),
+                  ),
                   pw.SizedBox(height: 3),
                   _buildAlignedKeyValue(
-                      'Hours Completed:',
-                      HoursFormatting.formatDecimalHours(
-                        _calculateTotalHours(clientData) > 0
-                            ? _calculateTotalHours(clientData)
-                            : _getSafeDouble(clientData['totalHours']),
-                        minDecimals: 2,
-                        maxDecimals: 4,
-                      )),
+                    'Period Starting:',
+                    _getSafeString(clientData['startDate'] ?? 'N/A'),
+                  ),
+                  pw.SizedBox(height: 3),
+                  _buildAlignedKeyValue(
+                    'Period Ending:',
+                    _getSafeString(clientData['endDate'] ?? 'N/A'),
+                  ),
+                  pw.SizedBox(height: 3),
+                  _buildAlignedKeyValue(
+                    'Total Amount:',
+                    '\$${_getSafeDouble(clientData['total']).toStringAsFixed(2)}',
+                  ),
+                  pw.SizedBox(height: 3),
+                  _buildAlignedKeyValue(
+                    'Hours Completed:',
+                    HoursFormatting.formatDecimalHours(
+                      _calculateTotalHours(clientData) > 0
+                          ? _calculateTotalHours(clientData)
+                          : _getSafeDouble(clientData['totalHours']),
+                      minDecimals: 2,
+                      maxDecimals: 4,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -344,9 +372,10 @@ class InvoicePdfGenerator {
         pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.end,
           children: [
-            pw.Text('INVOICE',
-                style:
-                    pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold)),
+            pw.Text(
+              'INVOICE',
+              style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold),
+            ),
           ],
         ),
       ],
@@ -371,10 +400,14 @@ class InvoicePdfGenerator {
 
   // Ensure tax-related totals are correct and stored back on the invoice data
   void _applyTaxFixesAndPersistableTotals(
-      Map<String, dynamic> clientData, bool showTax, double taxRate) {
+    Map<String, dynamic> clientData,
+    bool showTax,
+    double taxRate,
+  ) {
     try {
       debugPrint(
-          'Invoice PDF Generator _applyTaxFixesAndPersistableTotals: showTax=$showTax, taxRate=$taxRate');
+        'Invoice PDF Generator _applyTaxFixesAndPersistableTotals: showTax=$showTax, taxRate=$taxRate',
+      );
       // Calculate items subtotal with robust fallbacks
       final items = clientData['items'] as List<dynamic>? ?? [];
       double itemsSubtotal = 0.0;
@@ -395,31 +428,35 @@ class InvoicePdfGenerator {
       double expensesTotal = 0.0;
       for (final expense in expenses) {
         if (expense is Map<String, dynamic>) {
-          expensesTotal += _getSafeDouble(expense['totalAmount'] ??
-              expense['unitCost'] ??
-              expense['amount']);
+          expensesTotal += _getSafeDouble(
+            expense['totalAmount'] ?? expense['unitCost'] ?? expense['amount'],
+          );
         }
       }
 
       final double subtotal = itemsSubtotal + expensesTotal;
       final bool shouldApplyTax = showTax == true; // respect caller intent
-      final double effectiveTaxRate =
-          _getSafeDouble(taxRate); // Convert percentage to decimal
+      final double effectiveTaxRate = _getSafeDouble(
+        taxRate,
+      ); // Convert percentage to decimal
 
       // Tax applies ONLY to service items (itemsSubtotal).
       // Expenses/reimbursements are pass-through costs — taxing them would be
       // incorrect (the business is recovering money it already spent, not billing
       // for a new service). GST/tax is never charged on reimbursements.
       final double taxableBase = itemsSubtotal;
-      final double taxAmount =
-          shouldApplyTax ? taxableBase * effectiveTaxRate : 0.0;
+      final double taxAmount = shouldApplyTax
+          ? taxableBase * effectiveTaxRate
+          : 0.0;
       final double total = subtotal + taxAmount;
 
       // Write back into clientData so downstream save uses corrected values
-      clientData['itemsSubtotal'] =
-          double.parse(itemsSubtotal.toStringAsFixed(2));
-      clientData['expensesTotal'] =
-          double.parse(expensesTotal.toStringAsFixed(2));
+      clientData['itemsSubtotal'] = double.parse(
+        itemsSubtotal.toStringAsFixed(2),
+      );
+      clientData['expensesTotal'] = double.parse(
+        expensesTotal.toStringAsFixed(2),
+      );
       clientData['subtotal'] = double.parse(subtotal.toStringAsFixed(2));
       clientData['taxAmount'] = double.parse(taxAmount.toStringAsFixed(2));
       clientData['tax'] = clientData['taxAmount']; // PDF expects 'tax'
@@ -431,7 +468,8 @@ class InvoicePdfGenerator {
       clientData['includesTax'] = shouldApplyTax;
 
       debugPrint(
-          'PDF Generator: Applied tax fixes -> itemsSubtotal=$itemsSubtotal, expensesTotal=$expensesTotal, taxableBase=$taxableBase, subtotal=$subtotal, tax=$taxAmount (rate=$effectiveTaxRate), total=$total, showTax=$shouldApplyTax');
+        'PDF Generator: Applied tax fixes -> itemsSubtotal=$itemsSubtotal, expensesTotal=$expensesTotal, taxableBase=$taxableBase, subtotal=$subtotal, tax=$taxAmount (rate=$effectiveTaxRate), total=$total, showTax=$shouldApplyTax',
+      );
     } catch (e) {
       debugPrint('PDF Generator: Error applying tax fixes: $e');
     }
@@ -445,23 +483,28 @@ class InvoicePdfGenerator {
           child: pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              pw.Text('Bill To:',
-                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+              pw.Text(
+                'Bill To:',
+                style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+              ),
               pw.Text(_getSafeString(clientData['billTo']?['name'] ?? '')),
               pw.Text(_getSafeString(clientData['billTo']?['email'] ?? '')),
               pw.Text(_getSafeString(clientData['billTo']?['address'] ?? '')),
               pw.Text(_getSafeString(clientData['billTo']?['phone'] ?? '')),
-              if (_getSafeString(clientData['billTo']?['abn'] ?? '')
-                      .isNotEmpty &&
+              if (_getSafeString(
+                    clientData['billTo']?['abn'] ?? '',
+                  ).isNotEmpty &&
                   (_getSafeString(clientData['invoiceType'] ?? '') ==
                           'employee' ||
                       _getSafeString(clientData['invoiceType'] ?? '') ==
                           'client'))
                 pw.Text('ABN: ${_getSafeString(clientData['billTo']?['abn'])}'),
-              if (_getSafeString(clientData['billTo']?['businessName'] ?? '')
-                  .isNotEmpty)
+              if (_getSafeString(
+                clientData['billTo']?['businessName'] ?? '',
+              ).isNotEmpty)
                 pw.Text(
-                    '(${_getSafeString(clientData['billTo']?['businessName'])})')
+                  '(${_getSafeString(clientData['billTo']?['businessName'])})',
+                ),
             ],
           ),
         ),
@@ -470,10 +513,12 @@ class InvoicePdfGenerator {
             crossAxisAlignment: pw.CrossAxisAlignment.end,
             children: [
               pw.Text(
-                  'Invoice Number: ${_getSafeString(clientData['invoiceNumber'])}',
-                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                'Invoice Number: ${_getSafeString(clientData['invoiceNumber'])}',
+                style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+              ),
               pw.Text(
-                  'Job Title: ${_getSafeString(clientData['jobTitle'] ?? 'Personal Care Assistance')}'),
+                'Job Title: ${_getSafeString(clientData['jobTitle'] ?? 'Personal Care Assistance')}',
+              ),
             ],
           ),
         ),
@@ -553,11 +598,8 @@ class InvoicePdfGenerator {
       );
       final rateText =
           '\$${_getSafeDouble(item['rate'] ?? item['unitPrice']).toStringAsFixed(2)}';
-      final amountText = '\$${_getSafeDouble(
-        item['amount'] ??
-            item['total'] ??
-            (_getSafeDouble(item['hours']) * _getSafeDouble(item['rate'])),
-      ).toStringAsFixed(2)}';
+      final amountText =
+          '\$${_getSafeDouble(item['amount'] ?? item['total'] ?? (_getSafeDouble(item['hours']) * _getSafeDouble(item['rate']))).toStringAsFixed(2)}';
 
       rows.add([description, timeWorked, hoursText, rateText, amountText]);
     }
@@ -659,7 +701,8 @@ class InvoicePdfGenerator {
     if (item['itemCode'] != null) {
       final number = _getSafeString(item['itemCode']);
       final name = _getSafeString(
-          item['itemName'] ?? item['description'] ?? 'Invoice Item');
+        item['itemName'] ?? item['description'] ?? 'Invoice Item',
+      );
       return number.isNotEmpty ? '$number $name' : name;
     }
     return _getSafeString(item['itemName'] ?? item['description'] ?? '');
@@ -670,8 +713,9 @@ class InvoicePdfGenerator {
       return true;
     }
 
-    final itemCode = _getSafeString(item['itemCode'] ?? item['ndisItemNumber'])
-        .toUpperCase();
+    final itemCode = _getSafeString(
+      item['itemCode'] ?? item['ndisItemNumber'],
+    ).toUpperCase();
     if (itemCode == 'ALW-VEH' || itemCode == '07_001_0106_8_3') {
       return true;
     }
@@ -692,10 +736,7 @@ class InvoicePdfGenerator {
     final note = hasMileage
         ? 'Service hours are shown in the service table. Mileage is shown separately and billed by distance (km).'
         : 'Hours include seconds and are shown up to 4 decimals. Totals are Hours × Rate, rounded to 2 decimals.';
-    return pw.Text(
-      'Note: $note',
-      style: pw.TextStyle(fontSize: 8),
-    );
+    return pw.Text('Note: $note', style: pw.TextStyle(fontSize: 8));
   }
 
   /// Builds the totals section and resolves bank details for display.
@@ -707,18 +748,26 @@ class InvoicePdfGenerator {
   /// - If both employee and organization bank details are unavailable, throws
   ///   `Exception('BANK_DETAILS_REQUIRED')` for upstream UI to prompt user.
   Future<pw.Widget> _buildInvoiceTotal(
-      Map<String, dynamic> clientData, bool showTax, double taxRate) async {
+    Map<String, dynamic> clientData,
+    bool showTax,
+    double taxRate,
+  ) async {
     // Debug: Log tax-related values
     debugPrint(
-        'PDF Generator _buildInvoiceTotal: showTax=$showTax, taxRate=$taxRate');
+      'PDF Generator _buildInvoiceTotal: showTax=$showTax, taxRate=$taxRate',
+    );
     debugPrint(
-        'PDF Generator _buildInvoiceTotal: clientData["tax"]=${clientData['tax']}');
+      'PDF Generator _buildInvoiceTotal: clientData["tax"]=${clientData['tax']}',
+    );
     debugPrint(
-        'PDF Generator _buildInvoiceTotal: clientData["taxAmount"]=${clientData['taxAmount']}');
+      'PDF Generator _buildInvoiceTotal: clientData["taxAmount"]=${clientData['taxAmount']}',
+    );
     debugPrint(
-        'PDF Generator _buildInvoiceTotal: clientData["subtotal"]=${clientData['subtotal']}');
+      'PDF Generator _buildInvoiceTotal: clientData["subtotal"]=${clientData['subtotal']}',
+    );
     debugPrint(
-        'PDF Generator _buildInvoiceTotal: clientData["total"]=${clientData['total']}');
+      'PDF Generator _buildInvoiceTotal: clientData["total"]=${clientData['total']}',
+    );
 
     final itemsSubtotal = _getSafeDouble(clientData['itemsSubtotal']);
     final expensesTotal = _getSafeDouble(clientData['expensesTotal']);
@@ -743,30 +792,42 @@ class InvoicePdfGenerator {
               if (hasExpenses) _buildTotalRow('Expenses Total', expensesTotal),
               if (hasExpenses) pw.Divider(color: PdfColors.grey),
               _buildTotalRow(
-                  'Subtotal', _getSafeDouble(clientData['subtotal'])),
+                'Subtotal',
+                _getSafeDouble(clientData['subtotal']),
+              ),
               if (showTax)
-                _buildTotalRow('Tax (${_formatPercentage(taxRate)}%)',
-                    _getSafeDouble(clientData['taxAmount'])),
+                _buildTotalRow(
+                  'Tax (${_formatPercentage(taxRate)}%)',
+                  _getSafeDouble(clientData['taxAmount']),
+                ),
               pw.Divider(color: PdfColors.black),
-              _buildTotalRow('Total', _getSafeDouble(clientData['total']),
-                  isBold: true),
+              _buildTotalRow(
+                'Total',
+                _getSafeDouble(clientData['total']),
+                isBold: true,
+              ),
 
               // Superannuation Display (SCHADS/Employee Invoices)
               if (_getSafeDouble(clientData['superAmount']) > 0) ...[
                 pw.SizedBox(height: 5),
                 _buildTotalRow(
-                    'Superannuation (${_formatPercentage(_getSafeDouble(clientData['superRate']) > 0 ? _getSafeDouble(clientData['superRate']) : 0.12)}%)',
-                    _getSafeDouble(clientData['superAmount']),
-                    isBold: false),
-                pw.Text('(Paid to Super Fund)',
-                    style: pw.TextStyle(fontSize: 8, color: PdfColors.grey700)),
+                  'Superannuation (${_formatPercentage(_getSafeDouble(clientData['superRate']) > 0 ? _getSafeDouble(clientData['superRate']) : 0.12)}%)',
+                  _getSafeDouble(clientData['superAmount']),
+                  isBold: false,
+                ),
+                pw.Text(
+                  '(Paid to Super Fund)',
+                  style: pw.TextStyle(fontSize: 8, color: PdfColors.grey700),
+                ),
               ],
             ],
           ),
         ),
         pw.SizedBox(height: 30),
-        pw.Text('Bank Details:',
-            style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+        pw.Text(
+          'Bank Details:',
+          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+        ),
         pw.Text('Bank Name: $bankName'),
         pw.Text('Account Name: $accountName'),
         pw.Text('BSB: $bsb'),
@@ -788,7 +849,8 @@ class InvoicePdfGenerator {
   /// - Returns placeholder values ('N/A') when neither employee nor organization
   ///   bank details are available so PDF generation can still complete.
   Future<Map<String, String>> _resolveBankDetailsForClient(
-      Map<String, dynamic> clientData) async {
+    Map<String, dynamic> clientData,
+  ) async {
     final sharedUtils = SharedPreferencesUtils();
     await sharedUtils.init();
 
@@ -796,9 +858,7 @@ class InvoicePdfGenerator {
       clientData['organizationId'] ?? sharedUtils.getString('organizationId'),
     ).trim();
 
-    final inlineInvoice = _extractBankDetailsFromCandidates([
-      clientData,
-    ]);
+    final inlineInvoice = _extractBankDetailsFromCandidates([clientData]);
 
     final inlineEmployee = _extractBankDetailsFromCandidates([
       clientData['employeeDetails'],
@@ -886,7 +946,8 @@ class InvoicePdfGenerator {
 
     // Do not block PDF rendering when bank details are unavailable in client portal.
     debugPrint(
-        'Bank details unavailable for invoice PDF. Rendering with placeholders.');
+      'Bank details unavailable for invoice PDF. Rendering with placeholders.',
+    );
     return const {
       'bankName': 'N/A',
       'accountName': 'N/A',
@@ -915,8 +976,9 @@ class InvoicePdfGenerator {
 
       final Map<String, dynamic> orgMap = Map<String, dynamic>.from(rawOrg);
       final nestedOrg = orgMap['organization'];
-      final Map<String, dynamic> resolvedOrg =
-          nestedOrg is Map ? Map<String, dynamic>.from(nestedOrg) : orgMap;
+      final Map<String, dynamic> resolvedOrg = nestedOrg is Map
+          ? Map<String, dynamic>.from(nestedOrg)
+          : orgMap;
 
       return _extractBankDetailsFromCandidates([resolvedOrg]);
     } catch (e) {
@@ -950,7 +1012,8 @@ class InvoicePdfGenerator {
   }
 
   Map<String, String>? _extractBankDetailsFromCandidates(
-      List<dynamic> sources) {
+    List<dynamic> sources,
+  ) {
     final List<Map<String, dynamic>> maps = [];
     for (final source in sources) {
       if (source is Map) {
@@ -987,7 +1050,8 @@ class InvoicePdfGenerator {
         map['accountNumber'] ?? map['accountNo'] ?? map['account_number'],
       ).trim();
 
-      final isComplete = bankName.isNotEmpty &&
+      final isComplete =
+          bankName.isNotEmpty &&
           accountName.isNotEmpty &&
           bsb.isNotEmpty &&
           accountNumber.isNotEmpty;
@@ -1052,18 +1116,12 @@ class InvoicePdfGenerator {
   pw.Widget _buildTableHeader(String text) {
     return pw.Container(
       padding: pw.EdgeInsets.all(5),
-      child: pw.Text(
-        text,
-        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-      ),
+      child: pw.Text(text, style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
     );
   }
 
   pw.Widget _buildTableCell(String text) {
-    return pw.Container(
-      padding: pw.EdgeInsets.all(5),
-      child: pw.Text(text),
-    );
+    return pw.Container(padding: pw.EdgeInsets.all(5), child: pw.Text(text));
   }
 
   pw.Widget _buildNumericTableCell(String text) {
@@ -1105,14 +1163,8 @@ class InvoicePdfGenerator {
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
-          pw.Text(
-            key,
-            style: pw.TextStyle(fontWeight: pw.FontWeight.normal),
-          ),
-          pw.Text(
-            value,
-            style: pw.TextStyle(fontWeight: pw.FontWeight.normal),
-          ),
+          pw.Text(key, style: pw.TextStyle(fontWeight: pw.FontWeight.normal)),
+          pw.Text(value, style: pw.TextStyle(fontWeight: pw.FontWeight.normal)),
         ],
       ),
     );
@@ -1134,8 +1186,10 @@ class InvoicePdfGenerator {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Text('Approved Expenses',
-            style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
+        pw.Text(
+          'Approved Expenses',
+          style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+        ),
         pw.SizedBox(height: 10),
         pw.Table(
           border: pw.TableBorder.all(color: PdfColors.black),
@@ -1166,9 +1220,11 @@ class InvoicePdfGenerator {
               final expenseDate = _getSafeString(expense['date'] ?? '');
               final category = _getSafeString(expense['category'] ?? 'Other');
               final amount = _getSafeDouble(
-                  expense['totalAmount'] ?? expense['unitCost'] ?? 0.0);
-              final description =
-                  _getSafeString(expense['description'] ?? 'Expense');
+                expense['totalAmount'] ?? expense['unitCost'] ?? 0.0,
+              );
+              final description = _getSafeString(
+                expense['description'] ?? 'Expense',
+              );
 
               return pw.TableRow(
                 children: [
@@ -1189,7 +1245,8 @@ class InvoicePdfGenerator {
   /// Build receipt links cell for expense table
   pw.Widget _buildReceiptLinksCell(Map<String, dynamic> expense) {
     debugPrint(
-        'DEBUG_RECEIPT_LINKS: Processing expense: ${expense['description'] ?? 'Unknown'} - ${expense['amount'] ?? 'No amount'}');
+      'DEBUG_RECEIPT_LINKS: Processing expense: ${expense['description'] ?? 'Unknown'} - ${expense['amount'] ?? 'No amount'}',
+    );
     debugPrint('DEBUG_RECEIPT_LINKS: Full expense data: $expense');
 
     final receiptFiles = expense['receiptFiles'] as List<dynamic>? ?? [];
@@ -1227,7 +1284,8 @@ class InvoicePdfGenerator {
         final fullUrl = resolveToHttpUrl(cleanUrl);
         if (fullUrl != null) {
           debugPrint(
-              'DEBUG_RECEIPT_LINKS: Adding URL from receiptFiles: $fullUrl');
+            'DEBUG_RECEIPT_LINKS: Adding URL from receiptFiles: $fullUrl',
+          );
           allReceiptUrls.add(fullUrl);
         }
       }
@@ -1240,7 +1298,8 @@ class InvoicePdfGenerator {
         final fullUrl = resolveToHttpUrl(cleanUrl);
         if (fullUrl != null) {
           debugPrint(
-              'DEBUG_RECEIPT_LINKS: Adding URL from receiptPhotos: $fullUrl');
+            'DEBUG_RECEIPT_LINKS: Adding URL from receiptPhotos: $fullUrl',
+          );
           allReceiptUrls.add(fullUrl);
         }
       }
@@ -1269,7 +1328,8 @@ class InvoicePdfGenerator {
     if (allReceiptUrls.length == 1) {
       // Single receipt - create one download link
       debugPrint(
-          'DEBUG_RECEIPT_LINKS: Creating single receipt link for: ${allReceiptUrls.first}');
+        'DEBUG_RECEIPT_LINKS: Creating single receipt link for: ${allReceiptUrls.first}',
+      );
       return pw.Container(
         padding: const pw.EdgeInsets.all(4),
         child: pw.UrlLink(
@@ -1287,7 +1347,8 @@ class InvoicePdfGenerator {
     } else {
       // Multiple receipts - create numbered links
       debugPrint(
-          'DEBUG_RECEIPT_LINKS: Creating ${allReceiptUrls.length} receipt links');
+        'DEBUG_RECEIPT_LINKS: Creating ${allReceiptUrls.length} receipt links',
+      );
       return pw.Container(
         padding: const pw.EdgeInsets.all(4),
         child: pw.Column(
@@ -1328,19 +1389,22 @@ class InvoicePdfGenerator {
       if (response.statusCode == 200) {
         final bytes = response.bodyBytes;
         debugPrint(
-            'PDF Generator: Successfully downloaded image (${bytes.length} bytes)');
+          'PDF Generator: Successfully downloaded image (${bytes.length} bytes)',
+        );
 
         // Basic validation - check if it's a reasonable image size
         if (bytes.length < 100) {
           debugPrint(
-              'PDF Generator: Downloaded file too small to be a valid image');
+            'PDF Generator: Downloaded file too small to be a valid image',
+          );
           return null;
         }
 
         return bytes;
       } else {
         debugPrint(
-            'PDF Generator: Failed to download image. Status code: ${response.statusCode}');
+          'PDF Generator: Failed to download image. Status code: ${response.statusCode}',
+        );
         return null;
       }
     } catch (e) {
@@ -1351,14 +1415,20 @@ class InvoicePdfGenerator {
 
   /// Build UI photos section with embedded images
   Future<List<pw.Widget>> _buildUIPhotosSectionAsync(
-      List<File> uiPhotos, String? photoDescription) async {
+    List<File> uiPhotos,
+    String? photoDescription,
+  ) async {
     final widgets = <pw.Widget>[
-      pw.Text('Invoice Photos:',
-          style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+      pw.Text(
+        'Invoice Photos:',
+        style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
+      ),
       pw.SizedBox(height: 5),
       if (photoDescription != null && photoDescription.isNotEmpty)
-        pw.Text('Description: $photoDescription',
-            style: pw.TextStyle(fontStyle: pw.FontStyle.italic)),
+        pw.Text(
+          'Description: $photoDescription',
+          style: pw.TextStyle(fontStyle: pw.FontStyle.italic),
+        ),
       if (photoDescription != null && photoDescription.isNotEmpty)
         pw.SizedBox(height: 5),
     ];
@@ -1371,9 +1441,10 @@ class InvoicePdfGenerator {
         final image = pw.MemoryImage(imageBytes);
 
         widgets.addAll([
-          pw.Text('Photo ${i + 1}: ${photo.path.split('/').last}',
-              style:
-                  pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)),
+          pw.Text(
+            'Photo ${i + 1}: ${photo.path.split('/').last}',
+            style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+          ),
           pw.SizedBox(height: 5),
           pw.Container(
             height: 200,
@@ -1385,22 +1456,21 @@ class InvoicePdfGenerator {
             child: pw.ClipRRect(
               horizontalRadius: 4,
               verticalRadius: 4,
-              child: pw.Image(
-                image,
-                fit: pw.BoxFit.contain,
-              ),
+              child: pw.Image(image, fit: pw.BoxFit.contain),
             ),
           ),
           pw.SizedBox(height: 10),
         ]);
       } catch (e) {
         debugPrint(
-            'PDF Generator: Error loading local image ${photo.path}: $e');
+          'PDF Generator: Error loading local image ${photo.path}: $e',
+        );
         // Add error placeholder
         widgets.addAll([
           pw.Text(
-              'Photo ${i + 1}: ${photo.path.split('/').last} (Error loading image)',
-              style: pw.TextStyle(fontSize: 12, color: PdfColors.red)),
+            'Photo ${i + 1}: ${photo.path.split('/').last} (Error loading image)',
+            style: pw.TextStyle(fontSize: 12, color: PdfColors.red),
+          ),
           pw.SizedBox(height: 10),
         ]);
       }
@@ -1410,11 +1480,15 @@ class InvoicePdfGenerator {
   }
 
   /// Build download links section for uploaded attachments
-  pw.Widget _buildDownloadLinksSection(List<String>? uploadedPhotoUrls,
-      List<String>? uploadedAdditionalFileUrls) {
+  pw.Widget _buildDownloadLinksSection(
+    List<String>? uploadedPhotoUrls,
+    List<String>? uploadedAdditionalFileUrls,
+  ) {
     final widgets = <pw.Widget>[
-      pw.Text('Attachment Download Links',
-          style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
+      pw.Text(
+        'Attachment Download Links',
+        style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+      ),
       pw.SizedBox(height: 10),
     ];
 
@@ -1429,8 +1503,10 @@ class InvoicePdfGenerator {
     // Add photo download links
     if (uploadedPhotoUrls != null && uploadedPhotoUrls.isNotEmpty) {
       widgets.addAll([
-        pw.Text('Photo Attachments:',
-            style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+        pw.Text(
+          'Photo Attachments:',
+          style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
+        ),
         pw.SizedBox(height: 5),
       ]);
 
@@ -1464,14 +1540,17 @@ class InvoicePdfGenerator {
     if (uploadedAdditionalFileUrls != null &&
         uploadedAdditionalFileUrls.isNotEmpty) {
       widgets.addAll([
-        pw.Text('Additional File Attachments:',
-            style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+        pw.Text(
+          'Additional File Attachments:',
+          style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
+        ),
         pw.SizedBox(height: 5),
       ]);
 
       for (int i = 0; i < uploadedAdditionalFileUrls.length; i++) {
-        final resolvedUrl =
-            AppConfig.resolveResourceUrl(uploadedAdditionalFileUrls[i]);
+        final resolvedUrl = AppConfig.resolveResourceUrl(
+          uploadedAdditionalFileUrls[i],
+        );
         if (!(resolvedUrl.startsWith('http://') ||
             resolvedUrl.startsWith('https://'))) {
           continue;
@@ -1510,26 +1589,33 @@ class InvoicePdfGenerator {
 
   /// Check if there are any photo attachments (from UI only)
   bool _hasPhotoAttachments(
-      Map<String, dynamic> clientData, List<File>? attachedPhotos) {
+    Map<String, dynamic> clientData,
+    List<File>? attachedPhotos,
+  ) {
     return attachedPhotos != null && attachedPhotos.isNotEmpty;
   }
 
   /// Build photo attachments section combining UI photos (if any)
   Future<pw.Widget> _buildPhotoAttachmentsSectionAsync(
-      Map<String, dynamic> clientData,
-      List<File>? attachedPhotos,
-      String? photoDescription) async {
+    Map<String, dynamic> clientData,
+    List<File>? attachedPhotos,
+    String? photoDescription,
+  ) async {
     final uiPhotos = attachedPhotos ?? [];
 
     final widgets = <pw.Widget>[
-      pw.Text('Photo Attachments',
-          style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
+      pw.Text(
+        'Photo Attachments',
+        style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+      ),
       pw.SizedBox(height: 10),
     ];
 
     if (uiPhotos.isNotEmpty) {
-      final uiPhotoWidgets =
-          await _buildUIPhotosSectionAsync(uiPhotos, photoDescription);
+      final uiPhotoWidgets = await _buildUIPhotosSectionAsync(
+        uiPhotos,
+        photoDescription,
+      );
       widgets.addAll(uiPhotoWidgets);
     } else {
       widgets.add(pw.Text('No photos attached'));

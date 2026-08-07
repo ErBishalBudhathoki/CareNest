@@ -38,10 +38,7 @@ class PayrollRepository {
     // Assuming ApiMethod wraps http client.
     // For now, let's implement the call.
 
-    final body = {
-      'startDate': startDate,
-      'endDate': endDate,
-    };
+    final body = {'startDate': startDate, 'endDate': endDate};
 
     // Warning: standard _apiMethod.post might expect JSON response.
     // If exporting CSV, backend sends text/csv.

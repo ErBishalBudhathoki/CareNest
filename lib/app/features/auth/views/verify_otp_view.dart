@@ -12,10 +12,7 @@ import 'package:carenest/generated/l10n/app_localizations.dart';
 class VerifyOTPView extends ConsumerStatefulWidget {
   final String email;
 
-  const VerifyOTPView({
-    super.key,
-    required this.email,
-  });
+  const VerifyOTPView({super.key, required this.email});
 
   @override
   ConsumerState<VerifyOTPView> createState() => _VerifyOTPViewState();
@@ -34,8 +31,6 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
 
   @override
   Widget build(BuildContext context) {
-    
-
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -112,16 +107,16 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
         Text(
           'Enter reset code',
           style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-                color: BauhausDesign.textDark,
-                fontWeight: FontWeight.bold,
-              ),
+            color: BauhausDesign.textDark,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 12),
         Text(
           'We sent a 6-digit code to ${widget.email}.',
-          style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                color: BauhausDesign.textMuted,
-              ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).bodyLarge?.copyWith(color: BauhausDesign.textMuted),
           textAlign: TextAlign.center,
         ),
       ],
@@ -133,26 +128,20 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
       width: 50,
       height: 60,
       textStyle: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: BauhausDesign.textDark,
-          ),
+        fontWeight: FontWeight.bold,
+        color: BauhausDesign.textDark,
+      ),
       decoration: BoxDecoration(
         color: BauhausDesign.backgroundLight,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(
-          color: BauhausDesign.neutral,
-          width: 1,
-        ),
+        border: Border.all(color: BauhausDesign.neutral, width: 1),
       ),
     );
 
     final focusedPinTheme = defaultPinTheme.copyWith(
       decoration: defaultPinTheme.decoration!.copyWith(
         color: BauhausDesign.surfaceWhite,
-        border: Border.all(
-          color: BauhausDesign.primary,
-          width: 2,
-        ),
+        border: Border.all(color: BauhausDesign.primary, width: 2),
         boxShadow: [
           BoxShadow(
             color: BauhausDesign.primary.withOpacity(0.1),
@@ -165,15 +154,12 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
 
     final submittedPinTheme = defaultPinTheme.copyWith(
       textStyle: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: BauhausDesign.surfaceWhite,
-          ),
+        fontWeight: FontWeight.bold,
+        color: BauhausDesign.surfaceWhite,
+      ),
       decoration: defaultPinTheme.decoration!.copyWith(
         color: BauhausDesign.primary,
-        border: Border.all(
-          color: BauhausDesign.primary,
-          width: 2,
-        ),
+        border: Border.all(color: BauhausDesign.primary, width: 2),
       ),
     );
 
@@ -207,9 +193,9 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
       children: [
         Text(
           AppLocalizations.of(context)!.didntReceiveCode,
-          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.textMuted,
-              ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
         ),
         const SizedBox(height: 8),
         TextButton(
@@ -220,9 +206,9 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
           child: Text(
             AppLocalizations.of(context)!.resend,
             style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: BauhausDesign.primary,
-                ),
+              fontWeight: FontWeight.w600,
+              color: BauhausDesign.primary,
+            ),
           ),
         ),
       ],
@@ -263,8 +249,9 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
   Future<void> _resendOtp() async {
     setState(() => _isResending = true);
     try {
-      final response =
-          await ref.read(apiMethodProvider).sendOTP(widget.email.trim());
+      final response = await ref
+          .read(apiMethodProvider)
+          .sendOTP(widget.email.trim());
       if (!mounted) return;
 
       final success =
@@ -275,10 +262,11 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
             success
                 ? 'Password reset code sent.'
                 : (response['message']?.toString() ??
-                    AppLocalizations.of(context)!.somethingWentWrong),
+                      AppLocalizations.of(context)!.somethingWentWrong),
           ),
-          backgroundColor:
-              success ? BauhausDesign.success : BauhausDesign.error,
+          backgroundColor: success
+              ? BauhausDesign.success
+              : BauhausDesign.error,
         ),
       );
     } finally {

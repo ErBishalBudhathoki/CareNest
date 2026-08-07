@@ -41,32 +41,29 @@ class ComplianceAutomationState {
 }
 
 /// ViewModel for compliance automation
-class ComplianceAutomationViewModel extends Notifier<ComplianceAutomationState> {
+class ComplianceAutomationViewModel
+    extends Notifier<ComplianceAutomationState> {
   late final ComplianceAutomationRepository repository;
 
-  
   @override
   ComplianceAutomationState build() {
     final repository = ref.watch(complianceAutomationRepositoryProvider);
-    
+
     return ComplianceAutomationState();
   }
 
   /// Run compliance scan
   Future<void> runComplianceScan(String organizationId) async {
     state = state.copyWith(isLoading: true, error: null);
-    
+
     try {
       final response = await repository.runComplianceScan(
         organizationId: organizationId,
       );
-      
+
       if (response['success'] == true && response['data'] != null) {
         final scanResult = ComplianceScan.fromJson(response['data']);
-        state = state.copyWith(
-          isLoading: false,
-          scanResult: scanResult,
-        );
+        state = state.copyWith(isLoading: false, scanResult: scanResult);
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -75,31 +72,28 @@ class ComplianceAutomationViewModel extends Notifier<ComplianceAutomationState> 
       }
     } catch (e) {
       debugPrint('Error in runComplianceScan: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
   /// Get expiring documents
-  Future<void> getExpiringDocuments(String organizationId, {int? daysAhead}) async {
+  Future<void> getExpiringDocuments(
+    String organizationId, {
+    int? daysAhead,
+  }) async {
     state = state.copyWith(isLoading: true, error: null);
-    
+
     try {
       final response = await repository.getExpiringDocuments(
         organizationId: organizationId,
         daysAhead: daysAhead,
       );
-      
+
       if (response['success'] == true && response['data'] != null) {
         final documents = (response['data']['documents'] as List)
             .map((doc) => ExpiringDocument.fromJson(doc))
             .toList();
-        state = state.copyWith(
-          isLoading: false,
-          expiringDocuments: documents,
-        );
+        state = state.copyWith(isLoading: false, expiringDocuments: documents);
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -108,29 +102,23 @@ class ComplianceAutomationViewModel extends Notifier<ComplianceAutomationState> 
       }
     } catch (e) {
       debugPrint('Error in getExpiringDocuments: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
   /// Generate compliance report
   Future<void> generateReport(String organizationId, String reportType) async {
     state = state.copyWith(isLoading: true, error: null);
-    
+
     try {
       final response = await repository.generateComplianceReport(
         organizationId: organizationId,
         reportType: reportType,
       );
-      
+
       if (response['success'] == true && response['data'] != null) {
         final report = ComplianceReport.fromJson(response['data']);
-        state = state.copyWith(
-          isLoading: false,
-          report: report,
-        );
+        state = state.copyWith(isLoading: false, report: report);
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -139,29 +127,23 @@ class ComplianceAutomationViewModel extends Notifier<ComplianceAutomationState> 
       }
     } catch (e) {
       debugPrint('Error in generateReport: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
   /// Get compliance trends
   Future<void> getComplianceTrends(String organizationId, {int? months}) async {
     state = state.copyWith(isLoading: true, error: null);
-    
+
     try {
       final response = await repository.getComplianceTrends(
         organizationId: organizationId,
         months: months,
       );
-      
+
       if (response['success'] == true && response['data'] != null) {
         final trends = ComplianceTrends.fromJson(response['data']);
-        state = state.copyWith(
-          isLoading: false,
-          trends: trends,
-        );
+        state = state.copyWith(isLoading: false, trends: trends);
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -170,13 +152,13 @@ class ComplianceAutomationViewModel extends Notifier<ComplianceAutomationState> 
       }
     } catch (e) {
       debugPrint('Error in getComplianceTrends: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 }
 
 /// Provider for compliance automation viewmodel
-final complianceAutomationViewModelProvider = NotifierProvider<ComplianceAutomationViewModel, ComplianceAutomationState>(ComplianceAutomationViewModel.new);
+final complianceAutomationViewModelProvider =
+    NotifierProvider<ComplianceAutomationViewModel, ComplianceAutomationState>(
+      ComplianceAutomationViewModel.new,
+    );

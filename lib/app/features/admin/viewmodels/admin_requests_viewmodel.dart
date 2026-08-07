@@ -31,7 +31,11 @@ class AdminRequestsViewModel extends AsyncNotifier<List<RequestModel>> {
     );
 
     // Sort by date desc
-    requests.sort((a, b) => (b.createdAt ?? DateTime.now()).compareTo(a.createdAt ?? DateTime.now()));
+    requests.sort(
+      (a, b) => (b.createdAt ?? DateTime.now()).compareTo(
+        a.createdAt ?? DateTime.now(),
+      ),
+    );
     return requests;
   }
 
@@ -41,7 +45,11 @@ class AdminRequestsViewModel extends AsyncNotifier<List<RequestModel>> {
     state = await AsyncValue.guard(() => _fetchRequestsList(_user!));
   }
 
-  Future<bool> updateStatus(String requestId, RequestStatus status, {String? reason}) async {
+  Future<bool> updateStatus(
+    String requestId,
+    RequestStatus status, {
+    String? reason,
+  }) async {
     if (_user == null) return false;
     try {
       final success = await _repository.updateRequestStatus(
@@ -63,5 +71,5 @@ class AdminRequestsViewModel extends AsyncNotifier<List<RequestModel>> {
 
 final adminRequestsViewModelProvider =
     AsyncNotifierProvider<AdminRequestsViewModel, List<RequestModel>>(
-  AdminRequestsViewModel.new,
-);
+      AdminRequestsViewModel.new,
+    );

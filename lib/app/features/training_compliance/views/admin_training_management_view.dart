@@ -30,8 +30,10 @@ class _AdminTrainingManagementViewState
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.manageTrainingTitle,
-            style: BauhausDesign.getTextTheme(context).headlineLarge),
+        title: Text(
+          AppLocalizations.of(context)!.manageTrainingTitle,
+          style: BauhausDesign.getTextTheme(context).headlineLarge,
+        ),
         backgroundColor: BauhausDesign.surfaceLight,
         iconTheme: const IconThemeData(color: BauhausDesign.textDark),
         elevation: 0,
@@ -43,32 +45,35 @@ class _AdminTrainingManagementViewState
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddModuleDialog(context),
         backgroundColor: BauhausDesign.primary,
-        label: Text(AppLocalizations.of(context)!.addModuleButton,
-            style: BauhausDesign.getTextTheme(context)
-                .labelLarge
-                ?.copyWith(color: Colors.white)),
+        label: Text(
+          AppLocalizations.of(context)!.addModuleButton,
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).labelLarge?.copyWith(color: Colors.white),
+        ),
         icon: const Icon(Icons.add, color: Colors.white),
       ),
       body: state.isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: BauhausDesign.primary))
+              child: CircularProgressIndicator(color: BauhausDesign.primary),
+            )
           : state.modules.isEmpty
-              ? Center(
-                  child: Text(
-                    AppLocalizations.of(context)!.noModulesFound,
-                    style: BauhausDesign.getTextTheme(context).bodyLarge,
-                  ),
-                )
-              : ListView.separated(
-                  padding: const EdgeInsets.all(BauhausDesign.space4),
-                  itemCount: state.modules.length,
-                  separatorBuilder: (_, __) =>
-                      const SizedBox(height: BauhausDesign.space3),
-                  itemBuilder: (context, index) {
-                    final module = state.modules[index];
-                    return _buildModuleCard(context, module);
-                  },
-                ),
+          ? Center(
+              child: Text(
+                AppLocalizations.of(context)!.noModulesFound,
+                style: BauhausDesign.getTextTheme(context).bodyLarge,
+              ),
+            )
+          : ListView.separated(
+              padding: const EdgeInsets.all(BauhausDesign.space4),
+              itemCount: state.modules.length,
+              separatorBuilder: (_, __) =>
+                  const SizedBox(height: BauhausDesign.space3),
+              itemBuilder: (context, index) {
+                final module = state.modules[index];
+                return _buildModuleCard(context, module);
+              },
+            ),
     );
   }
 
@@ -89,29 +94,34 @@ class _AdminTrainingManagementViewState
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: BauhausDesign.space2,
-                    vertical: BauhausDesign.space1),
+                  horizontal: BauhausDesign.space2,
+                  vertical: BauhausDesign.space1,
+                ),
                 decoration: BoxDecoration(
                   color: BauhausDesign.neutral,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                 ),
                 child: Text(
                   module.contentType,
-                  style: BauhausDesign.getTextTheme(context)
-                      .labelLarge
-                      ?.copyWith(color: Colors.white, fontSize: 10),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).labelLarge?.copyWith(color: Colors.white, fontSize: 10),
                 ),
               ),
             ],
           ),
           const SizedBox(height: BauhausDesign.space2),
-          Text(module.description,
-              style: BauhausDesign.getTextTheme(context).bodyMedium),
+          Text(
+            module.description,
+            style: BauhausDesign.getTextTheme(context).bodyMedium,
+          ),
           const SizedBox(height: BauhausDesign.space2),
-          Text('${module.durationMinutes} minutes',
-              style: BauhausDesign.getTextTheme(context)
-                  .bodyMedium
-                  ?.copyWith(fontWeight: FontWeight.bold)),
+          Text(
+            '${module.durationMinutes} minutes',
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: BauhausDesign.space3),
           Row(
             children: [
@@ -152,8 +162,7 @@ class _AdminTrainingManagementViewState
     );
   }
 
-  void _showEditModuleDialog(
-      BuildContext context, TrainingModule module) {
+  void _showEditModuleDialog(BuildContext context, TrainingModule module) {
     showDialog(
       context: context,
       builder: (context) => EditTrainingModuleDialog(module: module),
@@ -161,7 +170,9 @@ class _AdminTrainingManagementViewState
   }
 
   Future<void> _confirmDeleteModule(
-      BuildContext context, TrainingModule module) async {
+    BuildContext context,
+    TrainingModule module,
+  ) async {
     final shouldDelete = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -188,7 +199,9 @@ class _AdminTrainingManagementViewState
   }
 
   Future<void> _showProgressDialog(
-      BuildContext context, TrainingModule module) async {
+    BuildContext context,
+    TrainingModule module,
+  ) async {
     if (module.id == null) return;
     final repo = ref.read(trainingComplianceRepositoryProvider);
     try {
@@ -200,8 +213,10 @@ class _AdminTrainingManagementViewState
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Training Progress',
-              style: BauhausDesign.getTextTheme(context).headlineLarge),
+          title: Text(
+            'Training Progress',
+            style: BauhausDesign.getTextTheme(context).headlineLarge,
+          ),
           content: SizedBox(
             width: 360,
             child: Column(
@@ -214,8 +229,10 @@ class _AdminTrainingManagementViewState
                 ),
                 const SizedBox(height: BauhausDesign.space3),
                 if (data.isEmpty)
-                  Text('No progress yet.',
-                      style: BauhausDesign.getTextTheme(context).bodyMedium)
+                  Text(
+                    'No progress yet.',
+                    style: BauhausDesign.getTextTheme(context).bodyMedium,
+                  )
                 else
                   SizedBox(
                     height: 240,
@@ -224,19 +241,22 @@ class _AdminTrainingManagementViewState
                       separatorBuilder: (_, __) => const Divider(),
                       itemBuilder: (context, index) {
                         final entry = Map<String, dynamic>.from(
-                            data[index] as Map);
+                          data[index] as Map,
+                        );
                         final user = entry['user'] as Map<String, dynamic>?;
                         final name = user == null
                             ? 'Unknown'
                             : '${user['firstName'] ?? ''} ${user['lastName'] ?? ''}'
-                                .trim();
+                                  .trim();
                         final email = user?['email'] ?? '';
                         final status = entry['status'] ?? 'not_started';
                         final progress = entry['progressPercentage'] ?? 0;
                         return ListTile(
                           title: Text(name.isEmpty ? email : name),
                           subtitle: Text(email),
-                          trailing: Text('${status.toString().toUpperCase()} • $progress%'),
+                          trailing: Text(
+                            '${status.toString().toUpperCase()} • $progress%',
+                          ),
                         );
                       },
                     ),
@@ -254,8 +274,9 @@ class _AdminTrainingManagementViewState
       );
     } catch (e) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 }
@@ -293,12 +314,15 @@ class _EditTrainingModuleDialogState
     super.initState();
     _titleController = TextEditingController(text: widget.module.title);
     _descController = TextEditingController(text: widget.module.description);
-    _durationController =
-        TextEditingController(text: widget.module.durationMinutes.toString());
-    _contentUrlController =
-        TextEditingController(text: widget.module.contentUrl ?? '');
-    _contentTextController =
-        TextEditingController(text: widget.module.contentText ?? '');
+    _durationController = TextEditingController(
+      text: widget.module.durationMinutes.toString(),
+    );
+    _contentUrlController = TextEditingController(
+      text: widget.module.contentUrl ?? '',
+    );
+    _contentTextController = TextEditingController(
+      text: widget.module.contentText ?? '',
+    );
     _contentType = widget.module.contentType;
   }
 
@@ -306,9 +330,10 @@ class _EditTrainingModuleDialogState
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final dialogWidth = screenWidth > 560 ? 520.0 : screenWidth - 32;
-    final dropdownTextStyle = BauhausDesign.getTextTheme(context)
-            .bodyMedium
-            ?.copyWith(color: BauhausDesign.textDark) ??
+    final dropdownTextStyle =
+        BauhausDesign.getTextTheme(
+          context,
+        ).bodyMedium?.copyWith(color: BauhausDesign.textDark) ??
         const TextStyle(color: BauhausDesign.textDark);
 
     return AlertDialog(
@@ -321,8 +346,10 @@ class _EditTrainingModuleDialogState
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         side: const BorderSide(color: BauhausDesign.neutral, width: 2),
       ),
-      title: Text(AppLocalizations.of(context)!.editButton,
-          style: BauhausDesign.getTextTheme(context).headlineLarge),
+      title: Text(
+        AppLocalizations.of(context)!.editButton,
+        style: BauhausDesign.getTextTheme(context).headlineLarge,
+      ),
       content: SizedBox(
         width: dialogWidth,
         child: SingleChildScrollView(
@@ -331,74 +358,81 @@ class _EditTrainingModuleDialogState
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-              TextFormField(
-                controller: _titleController,
-                decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(context)!.titleLabel),
-                validator: (v) => v?.isEmpty == true
-                    ? AppLocalizations.of(context)!.requiredValidation
-                    : null,
-              ),
-              const SizedBox(height: BauhausDesign.space3),
-              TextFormField(
-                controller: _descController,
-                decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(context)!.descriptionLabel),
-                validator: (v) => v?.isEmpty == true
-                    ? AppLocalizations.of(context)!.requiredValidation
-                    : null,
-                maxLines: 2,
-              ),
-              const SizedBox(height: BauhausDesign.space3),
-              DropdownButtonFormField<String>(
-                value: _contentType,
-                decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(context)!.contentTypeLabel),
-                dropdownColor: BauhausDesign.surfaceLight,
-                iconEnabledColor: BauhausDesign.textDark,
-                style: dropdownTextStyle,
-                items: ['Video', 'Text', 'Link']
-                    .map((t) => DropdownMenuItem(
+                TextFormField(
+                  controller: _titleController,
+                  decoration: BauhausDesign.inputDecoration('').copyWith(
+                    labelText: AppLocalizations.of(context)!.titleLabel,
+                  ),
+                  validator: (v) => v?.isEmpty == true
+                      ? AppLocalizations.of(context)!.requiredValidation
+                      : null,
+                ),
+                const SizedBox(height: BauhausDesign.space3),
+                TextFormField(
+                  controller: _descController,
+                  decoration: BauhausDesign.inputDecoration('').copyWith(
+                    labelText: AppLocalizations.of(context)!.descriptionLabel,
+                  ),
+                  validator: (v) => v?.isEmpty == true
+                      ? AppLocalizations.of(context)!.requiredValidation
+                      : null,
+                  maxLines: 2,
+                ),
+                const SizedBox(height: BauhausDesign.space3),
+                DropdownButtonFormField<String>(
+                  value: _contentType,
+                  decoration: BauhausDesign.inputDecoration('').copyWith(
+                    labelText: AppLocalizations.of(context)!.contentTypeLabel,
+                  ),
+                  dropdownColor: BauhausDesign.surfaceLight,
+                  iconEnabledColor: BauhausDesign.textDark,
+                  style: dropdownTextStyle,
+                  items: ['Video', 'Text', 'Link']
+                      .map(
+                        (t) => DropdownMenuItem(
                           value: t,
-                          child: Text(
-                            t,
-                            style: dropdownTextStyle,
-                          ),
-                        ))
-                    .toList(),
-                onChanged: (v) => setState(() => _contentType = v!),
-              ),
-              const SizedBox(height: BauhausDesign.space3),
-              if (_contentType == 'Video' || _contentType == 'Link')
-                TextFormField(
-                  controller: _contentUrlController,
-                  decoration: BauhausDesign.inputDecoration('').copyWith(
-                      labelText: AppLocalizations.of(context)!.contentUrlLabel),
-                  validator: (v) => v?.isEmpty == true
-                      ? AppLocalizations.of(context)!.requiredValidation
-                      : null,
+                          child: Text(t, style: dropdownTextStyle),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (v) => setState(() => _contentType = v!),
                 ),
-              if (_contentType == 'Text')
-                TextFormField(
-                  controller: _contentTextController,
-                  decoration: BauhausDesign.inputDecoration('').copyWith(
+                const SizedBox(height: BauhausDesign.space3),
+                if (_contentType == 'Video' || _contentType == 'Link')
+                  TextFormField(
+                    controller: _contentUrlController,
+                    decoration: BauhausDesign.inputDecoration('').copyWith(
+                      labelText: AppLocalizations.of(context)!.contentUrlLabel,
+                    ),
+                    validator: (v) => v?.isEmpty == true
+                        ? AppLocalizations.of(context)!.requiredValidation
+                        : null,
+                  ),
+                if (_contentType == 'Text')
+                  TextFormField(
+                    controller: _contentTextController,
+                    decoration: BauhausDesign.inputDecoration('').copyWith(
                       labelText: AppLocalizations.of(context)!.contentLabel(
-                          AppLocalizations.of(context)!.articleType)),
+                        AppLocalizations.of(context)!.articleType,
+                      ),
+                    ),
+                    validator: (v) => v?.isEmpty == true
+                        ? AppLocalizations.of(context)!.requiredValidation
+                        : null,
+                    maxLines: 4,
+                  ),
+                const SizedBox(height: BauhausDesign.space3),
+                TextFormField(
+                  controller: _durationController,
+                  decoration: BauhausDesign.inputDecoration('').copyWith(
+                    labelText: AppLocalizations.of(
+                      context,
+                    )!.durationMinutesLabel,
+                  ),
                   validator: (v) => v?.isEmpty == true
                       ? AppLocalizations.of(context)!.requiredValidation
                       : null,
-                  maxLines: 4,
                 ),
-              const SizedBox(height: BauhausDesign.space3),
-              TextFormField(
-                controller: _durationController,
-                decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText:
-                        AppLocalizations.of(context)!.durationMinutesLabel),
-                validator: (v) => v?.isEmpty == true
-                    ? AppLocalizations.of(context)!.requiredValidation
-                    : null,
-              ),
               ],
             ),
           ),
@@ -407,10 +441,12 @@ class _EditTrainingModuleDialogState
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(AppLocalizations.of(context)!.cancelButton,
-              style: BauhausDesign.getTextTheme(context)
-                  .labelLarge
-                  ?.copyWith(color: BauhausDesign.textDark)),
+          child: Text(
+            AppLocalizations.of(context)!.cancelButton,
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).labelLarge?.copyWith(color: BauhausDesign.textDark),
+          ),
         ),
         BauhausButton(
           text: AppLocalizations.of(context)!.saveProgressButton,
@@ -452,9 +488,10 @@ class _AddTrainingModuleDialogState
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final dialogWidth = screenWidth > 560 ? 520.0 : screenWidth - 32;
-    final dropdownTextStyle = BauhausDesign.getTextTheme(context)
-            .bodyMedium
-            ?.copyWith(color: BauhausDesign.textDark) ??
+    final dropdownTextStyle =
+        BauhausDesign.getTextTheme(
+          context,
+        ).bodyMedium?.copyWith(color: BauhausDesign.textDark) ??
         const TextStyle(color: BauhausDesign.textDark);
 
     return AlertDialog(
@@ -467,8 +504,10 @@ class _AddTrainingModuleDialogState
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         side: const BorderSide(color: BauhausDesign.neutral, width: 2),
       ),
-      title: Text(AppLocalizations.of(context)!.addModuleTitle,
-          style: BauhausDesign.getTextTheme(context).headlineLarge),
+      title: Text(
+        AppLocalizations.of(context)!.addModuleTitle,
+        style: BauhausDesign.getTextTheme(context).headlineLarge,
+      ),
       content: SizedBox(
         width: dialogWidth,
         child: SingleChildScrollView(
@@ -477,74 +516,81 @@ class _AddTrainingModuleDialogState
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-              TextFormField(
-                controller: _titleController,
-                decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(context)!.titleLabel),
-                validator: (v) => v?.isEmpty == true
-                    ? AppLocalizations.of(context)!.requiredValidation
-                    : null,
-              ),
-              const SizedBox(height: BauhausDesign.space3),
-              TextFormField(
-                controller: _descController,
-                decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(context)!.descriptionLabel),
-                validator: (v) => v?.isEmpty == true
-                    ? AppLocalizations.of(context)!.requiredValidation
-                    : null,
-                maxLines: 2,
-              ),
-              const SizedBox(height: BauhausDesign.space3),
-              DropdownButtonFormField<String>(
-                value: _contentType,
-                decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(context)!.contentTypeLabel),
-                dropdownColor: BauhausDesign.surfaceLight,
-                iconEnabledColor: BauhausDesign.textDark,
-                style: dropdownTextStyle,
-                items: ['Video', 'Text', 'Link']
-                    .map((t) => DropdownMenuItem(
+                TextFormField(
+                  controller: _titleController,
+                  decoration: BauhausDesign.inputDecoration('').copyWith(
+                    labelText: AppLocalizations.of(context)!.titleLabel,
+                  ),
+                  validator: (v) => v?.isEmpty == true
+                      ? AppLocalizations.of(context)!.requiredValidation
+                      : null,
+                ),
+                const SizedBox(height: BauhausDesign.space3),
+                TextFormField(
+                  controller: _descController,
+                  decoration: BauhausDesign.inputDecoration('').copyWith(
+                    labelText: AppLocalizations.of(context)!.descriptionLabel,
+                  ),
+                  validator: (v) => v?.isEmpty == true
+                      ? AppLocalizations.of(context)!.requiredValidation
+                      : null,
+                  maxLines: 2,
+                ),
+                const SizedBox(height: BauhausDesign.space3),
+                DropdownButtonFormField<String>(
+                  value: _contentType,
+                  decoration: BauhausDesign.inputDecoration('').copyWith(
+                    labelText: AppLocalizations.of(context)!.contentTypeLabel,
+                  ),
+                  dropdownColor: BauhausDesign.surfaceLight,
+                  iconEnabledColor: BauhausDesign.textDark,
+                  style: dropdownTextStyle,
+                  items: ['Video', 'Text', 'Link']
+                      .map(
+                        (t) => DropdownMenuItem(
                           value: t,
-                          child: Text(
-                            t,
-                            style: dropdownTextStyle,
-                          ),
-                        ))
-                    .toList(),
-                onChanged: (v) => setState(() => _contentType = v!),
-              ),
-              const SizedBox(height: BauhausDesign.space3),
-              if (_contentType == 'Video' || _contentType == 'Link')
-                TextFormField(
-                  controller: _contentUrlController,
-                  decoration: BauhausDesign.inputDecoration('').copyWith(
-                      labelText: AppLocalizations.of(context)!.contentUrlLabel),
-                  validator: (v) => v?.isEmpty == true
-                      ? AppLocalizations.of(context)!.requiredValidation
-                      : null,
+                          child: Text(t, style: dropdownTextStyle),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (v) => setState(() => _contentType = v!),
                 ),
-              if (_contentType == 'Text')
-                TextFormField(
-                  controller: _contentTextController,
-                  decoration: BauhausDesign.inputDecoration('').copyWith(
+                const SizedBox(height: BauhausDesign.space3),
+                if (_contentType == 'Video' || _contentType == 'Link')
+                  TextFormField(
+                    controller: _contentUrlController,
+                    decoration: BauhausDesign.inputDecoration('').copyWith(
+                      labelText: AppLocalizations.of(context)!.contentUrlLabel,
+                    ),
+                    validator: (v) => v?.isEmpty == true
+                        ? AppLocalizations.of(context)!.requiredValidation
+                        : null,
+                  ),
+                if (_contentType == 'Text')
+                  TextFormField(
+                    controller: _contentTextController,
+                    decoration: BauhausDesign.inputDecoration('').copyWith(
                       labelText: AppLocalizations.of(context)!.contentLabel(
-                          AppLocalizations.of(context)!.articleType)),
+                        AppLocalizations.of(context)!.articleType,
+                      ),
+                    ),
+                    validator: (v) => v?.isEmpty == true
+                        ? AppLocalizations.of(context)!.requiredValidation
+                        : null,
+                    maxLines: 4,
+                  ),
+                const SizedBox(height: BauhausDesign.space3),
+                TextFormField(
+                  controller: _durationController,
+                  decoration: BauhausDesign.inputDecoration('').copyWith(
+                    labelText: AppLocalizations.of(
+                      context,
+                    )!.durationMinutesLabel,
+                  ),
                   validator: (v) => v?.isEmpty == true
                       ? AppLocalizations.of(context)!.requiredValidation
                       : null,
-                  maxLines: 4,
                 ),
-              const SizedBox(height: BauhausDesign.space3),
-              TextFormField(
-                controller: _durationController,
-                decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText:
-                        AppLocalizations.of(context)!.durationMinutesLabel),
-                validator: (v) => v?.isEmpty == true
-                    ? AppLocalizations.of(context)!.requiredValidation
-                    : null,
-              ),
               ],
             ),
           ),
@@ -553,10 +599,12 @@ class _AddTrainingModuleDialogState
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(AppLocalizations.of(context)!.cancelButton,
-              style: BauhausDesign.getTextTheme(context)
-                  .labelLarge
-                  ?.copyWith(color: BauhausDesign.textDark)),
+          child: Text(
+            AppLocalizations.of(context)!.cancelButton,
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).labelLarge?.copyWith(color: BauhausDesign.textDark),
+          ),
         ),
         BauhausButton(
           text: AppLocalizations.of(context)!.createButton,

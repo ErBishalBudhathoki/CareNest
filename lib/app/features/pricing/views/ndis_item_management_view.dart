@@ -39,20 +39,20 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
   final Set<String> _selectedItemIds = {};
 
   List<String> _getCategories(BuildContext context) => [
-        AppLocalizations.of(context)!.coreSupport,
-        AppLocalizations.of(context)!.capacityBuilding,
-        AppLocalizations.of(context)!.capitalSupport,
-        AppLocalizations.of(context)!.supportCoordinationCategory,
-      ];
+    AppLocalizations.of(context)!.coreSupport,
+    AppLocalizations.of(context)!.capacityBuilding,
+    AppLocalizations.of(context)!.capitalSupport,
+    AppLocalizations.of(context)!.supportCoordinationCategory,
+  ];
 
   List<String> _getUnits(BuildContext context) => [
-        AppLocalizations.of(context)!.unitHour,
-        AppLocalizations.of(context)!.unitDay,
-        AppLocalizations.of(context)!.unitWeek,
-        AppLocalizations.of(context)!.unitMonth,
-        AppLocalizations.of(context)!.unitEach,
-        AppLocalizations.of(context)!.unitKilometer,
-      ];
+    AppLocalizations.of(context)!.unitHour,
+    AppLocalizations.of(context)!.unitDay,
+    AppLocalizations.of(context)!.unitWeek,
+    AppLocalizations.of(context)!.unitMonth,
+    AppLocalizations.of(context)!.unitEach,
+    AppLocalizations.of(context)!.unitKilometer,
+  ];
 
   // Mock data for NDIS items
   final List<Map<String, dynamic>> _ndisItems = [
@@ -147,15 +147,14 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
 
   List<Map<String, dynamic>> get _filteredItems {
     return _ndisItems.where((item) {
-      final matchesSearch = _searchQuery.isEmpty ||
-          item['name']
-              .toString()
-              .toLowerCase()
-              .contains(_searchQuery.toLowerCase()) ||
-          item['code']
-              .toString()
-              .toLowerCase()
-              .contains(_searchQuery.toLowerCase());
+      final matchesSearch =
+          _searchQuery.isEmpty ||
+          item['name'].toString().toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          ) ||
+          item['code'].toString().toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          );
       return matchesSearch;
     }).toList();
   }
@@ -167,9 +166,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
       body: CustomScrollView(
         slivers: [
           _buildModernAppBar(),
-          SliverToBoxAdapter(
-            child: _buildModernContent(),
-          ),
+          SliverToBoxAdapter(child: _buildModernContent()),
         ],
       ),
       floatingActionButton: _buildFloatingActionButton(),
@@ -185,17 +182,17 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
           AppLocalizations.of(context)!.ndisItemManagementTitle,
-          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-              ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).headlineMedium?.copyWith(color: BauhausDesign.surfaceWhite),
         ),
-        background: Container(
-          color: BauhausDesign.primary,
-        ),
+        background: Container(color: BauhausDesign.primary),
       ),
       leading: IconButton(
-        icon:
-            const Icon(Icons.arrow_back_ios, color: BauhausDesign.surfaceWhite),
+        icon: const Icon(
+          Icons.arrow_back_ios,
+          color: BauhausDesign.surfaceWhite,
+        ),
         onPressed: () => Navigator.pop(context),
       ),
       actions: [
@@ -231,8 +228,9 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
                 child: Center(
                   child: CircularProgressIndicator(
                     color: BauhausDesign.primary,
-                    semanticsLabel:
-                        AppLocalizations.of(context)!.loadingNdisItems,
+                    semanticsLabel: AppLocalizations.of(
+                      context,
+                    )!.loadingNdisItems,
                   ),
                 ),
               )
@@ -251,9 +249,9 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
                       const SizedBox(height: BauhausDesign.space3),
                       Text(
                         AppLocalizations.of(context)!.noNdisItemsFound,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium
-                            ?.copyWith(color: BauhausDesign.textMuted),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                       ),
                     ],
                   ),
@@ -271,15 +269,20 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
                 child: Row(
                   children: [
                     Text(
-                        AppLocalizations.of(context)!
-                            .selectedCount(_selectedItemIds.length.toString()),
-                        style: BauhausDesign.getTextTheme(context).bodyMedium),
+                      AppLocalizations.of(
+                        context,
+                      )!.selectedCount(_selectedItemIds.length.toString()),
+                      style: BauhausDesign.getTextTheme(context).bodyMedium,
+                    ),
                     const Spacer(),
                     IconButton(
-                      icon:
-                          const Icon(Icons.delete, color: BauhausDesign.error),
-                      tooltip:
-                          AppLocalizations.of(context)!.deleteSelectedAction,
+                      icon: const Icon(
+                        Icons.delete,
+                        color: BauhausDesign.error,
+                      ),
+                      tooltip: AppLocalizations.of(
+                        context,
+                      )!.deleteSelectedAction,
                       onPressed: _deleteSelectedItems,
                     ),
                   ],
@@ -318,49 +321,51 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
 
   Widget _buildSearchAndFilters() {
     return Container(
-      padding: const EdgeInsets.all(BauhausDesign.space5),
-      child: Column(
-        children: [
-          // Search bar
-          BauhausSearchBar(
-            controller: _searchController,
-            hintText: AppLocalizations.of(context)!.searchItemsHint,
-            onChanged: (value) {
-              setState(() {
-                _searchQuery = value;
-              });
-            },
-            onClear: () {
-              setState(() {
-                _searchQuery = '';
-              });
-            },
+          padding: const EdgeInsets.all(BauhausDesign.space5),
+          child: Column(
+            children: [
+              // Search bar
+              BauhausSearchBar(
+                controller: _searchController,
+                hintText: AppLocalizations.of(context)!.searchItemsHint,
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value;
+                  });
+                },
+                onClear: () {
+                  setState(() {
+                    _searchQuery = '';
+                  });
+                },
+              ),
+              const SizedBox(height: BauhausDesign.space4),
+              // Filter chips
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: _getCategories(context).map((category) {
+                    final isSelected = _selectedCategory == category;
+                    return Container(
+                      margin: const EdgeInsets.only(
+                        right: BauhausDesign.space3,
+                      ),
+                      child: BauhausChip(
+                        label: category,
+                        isSelected: isSelected,
+                        onTap: () {
+                          setState(() {
+                            _selectedCategory = isSelected ? '' : category;
+                          });
+                        },
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: BauhausDesign.space4),
-          // Filter chips
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: _getCategories(context).map((category) {
-                final isSelected = _selectedCategory == category;
-                return Container(
-                  margin: const EdgeInsets.only(right: BauhausDesign.space3),
-                  child: BauhausChip(
-                    label: category,
-                    isSelected: isSelected,
-                    onTap: () {
-                      setState(() {
-                        _selectedCategory = isSelected ? '' : category;
-                      });
-                    },
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-        ],
-      ),
-    )
+        )
         .animate(delay: 200.ms)
         .fadeIn(duration: 600.ms)
         .slideY(begin: -0.2, end: 0);
@@ -372,23 +377,35 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
     final filteredCount = _filteredItems.length;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: BauhausDesign.space5),
-      child: BauhausCard(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildStatItem(AppLocalizations.of(context)!.statTotal,
-                _ndisItems.length.toString(), BauhausDesign.info),
-            _buildStatItem(AppLocalizations.of(context)!.statActive,
-                activeItems.toString(), BauhausDesign.success),
-            _buildStatItem(AppLocalizations.of(context)!.statInactive,
-                inactiveItems.toString(), BauhausDesign.error),
-            _buildStatItem(AppLocalizations.of(context)!.statFiltered,
-                filteredCount.toString(), BauhausDesign.primary),
-          ],
-        ),
-      ),
-    )
+          margin: const EdgeInsets.symmetric(horizontal: BauhausDesign.space5),
+          child: BauhausCard(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildStatItem(
+                  AppLocalizations.of(context)!.statTotal,
+                  _ndisItems.length.toString(),
+                  BauhausDesign.info,
+                ),
+                _buildStatItem(
+                  AppLocalizations.of(context)!.statActive,
+                  activeItems.toString(),
+                  BauhausDesign.success,
+                ),
+                _buildStatItem(
+                  AppLocalizations.of(context)!.statInactive,
+                  inactiveItems.toString(),
+                  BauhausDesign.error,
+                ),
+                _buildStatItem(
+                  AppLocalizations.of(context)!.statFiltered,
+                  filteredCount.toString(),
+                  BauhausDesign.primary,
+                ),
+              ],
+            ),
+          ),
+        )
         .animate(delay: 300.ms)
         .fadeIn(duration: 600.ms)
         .scale(begin: const Offset(0.9, 0.9));
@@ -399,17 +416,17 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
       children: [
         Text(
           value,
-          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-                color: color,
-              ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).headlineMedium?.copyWith(color: color),
         ),
         const SizedBox(height: BauhausDesign.space1),
         Text(
           label,
           style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.textMuted,
-                fontSize: BauhausDesign.fontSm,
-              ),
+            color: BauhausDesign.textMuted,
+            fontSize: BauhausDesign.fontSm,
+          ),
         ),
       ],
     );
@@ -417,45 +434,45 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
 
   Widget _buildItemsList() {
     return Container(
-      margin: const EdgeInsets.all(BauhausDesign.space5),
-      child: ListView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: _filteredItems.length,
-        itemBuilder: (context, index) {
-          final item = _filteredItems[index];
-          final isSelected = _selectedItemIds.contains(item['id']);
-          return Semantics(
-            label: AppLocalizations.of(context)!.ndisItemCardSemantics,
-            child: GestureDetector(
-              onLongPress: () => setState(() {
-                if (isSelected) {
-                  _selectedItemIds.remove(item['id']);
-                } else {
-                  _selectedItemIds.add(item['id']);
-                }
-              }),
-              child: Row(
-                children: [
-                  BauhausCheckbox(
-                    value: isSelected,
-                    onChanged: (checked) => setState(() {
-                      if (checked == true) {
-                        _selectedItemIds.add(item['id']);
-                      } else {
-                        _selectedItemIds.remove(item['id']);
-                      }
-                    }),
-                    activeColor: BauhausDesign.primary,
+          margin: const EdgeInsets.all(BauhausDesign.space5),
+          child: ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _filteredItems.length,
+            itemBuilder: (context, index) {
+              final item = _filteredItems[index];
+              final isSelected = _selectedItemIds.contains(item['id']);
+              return Semantics(
+                label: AppLocalizations.of(context)!.ndisItemCardSemantics,
+                child: GestureDetector(
+                  onLongPress: () => setState(() {
+                    if (isSelected) {
+                      _selectedItemIds.remove(item['id']);
+                    } else {
+                      _selectedItemIds.add(item['id']);
+                    }
+                  }),
+                  child: Row(
+                    children: [
+                      BauhausCheckbox(
+                        value: isSelected,
+                        onChanged: (checked) => setState(() {
+                          if (checked == true) {
+                            _selectedItemIds.add(item['id']);
+                          } else {
+                            _selectedItemIds.remove(item['id']);
+                          }
+                        }),
+                        activeColor: BauhausDesign.primary,
+                      ),
+                      Expanded(child: _buildItemCard(item, index)),
+                    ],
                   ),
-                  Expanded(child: _buildItemCard(item, index)),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    )
+                ),
+              );
+            },
+          ),
+        )
         .animate(delay: 400.ms)
         .fadeIn(duration: 800.ms)
         .slideY(begin: 0.2, end: 0);
@@ -465,196 +482,208 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
     final isActive = item['isActive'] as bool;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
-      child: BauhausCard(
-        backgroundColor: isActive
-            ? BauhausDesign.surfaceWhite
-            : BauhausDesign.surfaceOffWhite,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+          padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
+          child: BauhausCard(
+            backgroundColor: isActive
+                ? BauhausDesign.surfaceWhite
+                : BauhausDesign.surfaceOffWhite,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: BauhausDesign.space2,
-                              vertical: BauhausDesign.space1,
-                            ),
-                            decoration: BoxDecoration(
-                              color: BauhausDesign.primary.withOpacity(0.1),
-                              borderRadius:
-                                  BorderRadius.circular(BauhausDesign.radiusSm),
-                            ),
-                            child: Text(
-                              item['code'],
-                              style: BauhausDesign.getTextTheme(context)
-                                  .labelSmall
-                                  ?.copyWith(
-                                    fontSize: BauhausDesign.fontXs,
-                                    fontWeight: FontWeight.w600,
-                                    color: BauhausDesign.primary,
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: BauhausDesign.space2,
+                                  vertical: BauhausDesign.space1,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: BauhausDesign.primary.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(
+                                    BauhausDesign.radiusSm,
                                   ),
+                                ),
+                                child: Text(
+                                  item['code'],
+                                  style: BauhausDesign.getTextTheme(context)
+                                      .labelSmall
+                                      ?.copyWith(
+                                        fontSize: BauhausDesign.fontXs,
+                                        fontWeight: FontWeight.w600,
+                                        color: BauhausDesign.primary,
+                                      ),
+                                ),
+                              ),
+                              const SizedBox(width: BauhausDesign.space2),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: BauhausDesign.space2,
+                                  vertical: BauhausDesign.space1,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isActive
+                                      ? BauhausDesign.success.withOpacity(0.1)
+                                      : BauhausDesign.textMuted.withOpacity(
+                                          0.1,
+                                        ),
+                                  borderRadius: BorderRadius.circular(
+                                    BauhausDesign.radiusSm,
+                                  ),
+                                ),
+                                child: Text(
+                                  isActive
+                                      ? AppLocalizations.of(context)!.statActive
+                                      : AppLocalizations.of(
+                                          context,
+                                        )!.statInactive,
+                                  style: BauhausDesign.getTextTheme(context)
+                                      .labelSmall
+                                      ?.copyWith(
+                                        fontSize: BauhausDesign.fontXxs,
+                                        fontWeight: FontWeight.w600,
+                                        color: isActive
+                                            ? BauhausDesign.success
+                                            : BauhausDesign.textMuted,
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: BauhausDesign.space2),
+                          Text(
+                            item['name'],
+                            style: BauhausDesign.getTextTheme(context)
+                                .labelLarge
+                                ?.copyWith(
+                                  color: isActive
+                                      ? BauhausDesign.textDark
+                                      : BauhausDesign.textMuted,
+                                ),
+                          ),
+                          const SizedBox(height: BauhausDesign.space1),
+                          Text(
+                            item['description'],
+                            style: BauhausDesign.getTextTheme(context)
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: BauhausDesign.textMuted,
+                                  fontSize: BauhausDesign.fontMd,
+                                ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          '\$${item['unitPrice'].toStringAsFixed(2)}',
+                          style: BauhausDesign.getTextTheme(context)
+                              .headlineMedium
+                              ?.copyWith(
+                                color: isActive
+                                    ? BauhausDesign.success
+                                    : BauhausDesign.textMuted,
+                              ),
+                        ),
+                        Text(
+                          AppLocalizations.of(
+                            context,
+                          )!.perUnit(item['unit'].toString()),
+                          style: BauhausDesign.getTextTheme(context).bodyMedium
+                              ?.copyWith(
+                                color: BauhausDesign.textMuted,
+                                fontSize: BauhausDesign.fontSm,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: BauhausDesign.space3),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        AppLocalizations.of(
+                          context,
+                        )!.categoryValueLabel(item['category'].toString()),
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
+                            ?.copyWith(
+                              color: BauhausDesign.textMuted,
+                              fontSize: BauhausDesign.fontSm,
+                              fontWeight: FontWeight.w500,
+                            ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    SizedBox(
+                      width: BauhausDesign.space16 + BauhausDesign.space6,
+                      child: Wrap(
+                        alignment: WrapAlignment.end,
+                        spacing: BauhausDesign.space1 / 2,
+                        children: [
+                          GestureDetector(
+                            onTap: () => _editItem(item),
+                            child: Container(
+                              width: BauhausDesign.space6,
+                              height: BauhausDesign.space6,
+                              alignment: Alignment.center,
+                              child: Icon(
+                                Icons.edit,
+                                size: BauhausDesign.fontMd,
+                                color: BauhausDesign.primary,
+                              ),
                             ),
                           ),
-                          const SizedBox(width: BauhausDesign.space2),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: BauhausDesign.space2,
-                              vertical: BauhausDesign.space1,
+                          GestureDetector(
+                            onTap: () => _toggleItemStatus(item),
+                            child: Container(
+                              width: BauhausDesign.space6,
+                              height: BauhausDesign.space6,
+                              alignment: Alignment.center,
+                              child: Icon(
+                                isActive
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                size: BauhausDesign.fontMd,
+                                color: isActive
+                                    ? BauhausDesign.accent
+                                    : BauhausDesign.success,
+                              ),
                             ),
-                            decoration: BoxDecoration(
-                              color: isActive
-                                  ? BauhausDesign.success.withOpacity(0.1)
-                                  : BauhausDesign.textMuted.withOpacity(0.1),
-                              borderRadius:
-                                  BorderRadius.circular(BauhausDesign.radiusSm),
-                            ),
-                            child: Text(
-                              isActive
-                                  ? AppLocalizations.of(context)!.statActive
-                                  : AppLocalizations.of(context)!.statInactive,
-                              style: BauhausDesign.getTextTheme(context)
-                                  .labelSmall
-                                  ?.copyWith(
-                                    fontSize: BauhausDesign.fontXxs,
-                                    fontWeight: FontWeight.w600,
-                                    color: isActive
-                                        ? BauhausDesign.success
-                                        : BauhausDesign.textMuted,
-                                  ),
+                          ),
+                          GestureDetector(
+                            onTap: () => _deleteItem(item),
+                            child: Container(
+                              width: BauhausDesign.space6,
+                              height: BauhausDesign.space6,
+                              alignment: Alignment.center,
+                              child: Icon(
+                                Icons.delete,
+                                size: BauhausDesign.fontMd,
+                                color: BauhausDesign.error,
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: BauhausDesign.space2),
-                      Text(
-                        item['name'],
-                        style: BauhausDesign.getTextTheme(context)
-                            .labelLarge
-                            ?.copyWith(
-                              color: isActive
-                                  ? BauhausDesign.textDark
-                                  : BauhausDesign.textMuted,
-                            ),
-                      ),
-                      const SizedBox(height: BauhausDesign.space1),
-                      Text(
-                        item['description'],
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium
-                            ?.copyWith(
-                              color: BauhausDesign.textMuted,
-                              fontSize: BauhausDesign.fontMd,
-                            ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      '\$${item['unitPrice'].toStringAsFixed(2)}',
-                      style: BauhausDesign.getTextTheme(context)
-                          .headlineMedium
-                          ?.copyWith(
-                            color: isActive
-                                ? BauhausDesign.success
-                                : BauhausDesign.textMuted,
-                          ),
-                    ),
-                    Text(
-                      AppLocalizations.of(context)!
-                          .perUnit(item['unit'].toString()),
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
-                          ?.copyWith(
-                            color: BauhausDesign.textMuted,
-                            fontSize: BauhausDesign.fontSm,
-                          ),
                     ),
                   ],
                 ),
               ],
             ),
-            const SizedBox(height: BauhausDesign.space3),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    AppLocalizations.of(context)!
-                        .categoryValueLabel(item['category'].toString()),
-                    style: BauhausDesign.getTextTheme(context)
-                        .bodyMedium
-                        ?.copyWith(
-                          color: BauhausDesign.textMuted,
-                          fontSize: BauhausDesign.fontSm,
-                          fontWeight: FontWeight.w500,
-                        ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                SizedBox(
-                  width: BauhausDesign.space16 + BauhausDesign.space6,
-                  child: Wrap(
-                    alignment: WrapAlignment.end,
-                    spacing: BauhausDesign.space1 / 2,
-                    children: [
-                      GestureDetector(
-                        onTap: () => _editItem(item),
-                        child: Container(
-                          width: BauhausDesign.space6,
-                          height: BauhausDesign.space6,
-                          alignment: Alignment.center,
-                          child: Icon(Icons.edit,
-                              size: BauhausDesign.fontMd,
-                              color: BauhausDesign.primary),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => _toggleItemStatus(item),
-                        child: Container(
-                          width: BauhausDesign.space6,
-                          height: BauhausDesign.space6,
-                          alignment: Alignment.center,
-                          child: Icon(
-                            isActive ? Icons.visibility_off : Icons.visibility,
-                            size: BauhausDesign.fontMd,
-                            color: isActive
-                                ? BauhausDesign.accent
-                                : BauhausDesign.success,
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => _deleteItem(item),
-                        child: Container(
-                          width: BauhausDesign.space6,
-                          height: BauhausDesign.space6,
-                          alignment: Alignment.center,
-                          child: Icon(Icons.delete,
-                              size: BauhausDesign.fontMd,
-                              color: BauhausDesign.error),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    )
+          ),
+        )
         .animate(delay: (index * 100).ms)
         .fadeIn(duration: 400.ms)
         .slideX(begin: 0.2, end: 0);
@@ -662,18 +691,18 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
 
   Widget _buildFloatingActionButton() {
     return FloatingActionButton.extended(
-      heroTag: "fab_add_item",
-      onPressed: () => _addNewItem(),
-      backgroundColor: BauhausDesign.primary,
-      icon: const Icon(Icons.add, color: BauhausDesign.surfaceWhite),
-      label: Text(
-        AppLocalizations.of(context)!.addItemAction,
-        style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+          heroTag: "fab_add_item",
+          onPressed: () => _addNewItem(),
+          backgroundColor: BauhausDesign.primary,
+          icon: const Icon(Icons.add, color: BauhausDesign.surfaceWhite),
+          label: Text(
+            AppLocalizations.of(context)!.addItemAction,
+            style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
               color: BauhausDesign.surfaceWhite,
               fontWeight: FontWeight.w600,
             ),
-      ),
-    )
+          ),
+        )
         .animate(delay: 600.ms)
         .scale(begin: const Offset(0.5, 0.5))
         .fadeIn(duration: 400.ms);
@@ -801,9 +830,9 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
                       ),
                       Text(
                         AppLocalizations.of(context)!.statActive,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium
-                            ?.copyWith(fontWeight: FontWeight.w500),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodyMedium?.copyWith(fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -849,10 +878,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: BauhausDesign.getTextTheme(context).labelLarge,
-        ),
+        Text(label, style: BauhausDesign.getTextTheme(context).labelLarge),
         const SizedBox(height: BauhausDesign.space2),
         TextField(
           controller: controller,
@@ -873,20 +899,14 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: BauhausDesign.getTextTheme(context).labelLarge,
-        ),
+        Text(label, style: BauhausDesign.getTextTheme(context).labelLarge),
         const SizedBox(height: BauhausDesign.space2),
         DropdownButtonFormField<String>(
           value: value,
           onChanged: onChanged,
           decoration: BauhausDesign.inputDecoration(''),
           items: items.map((item) {
-            return DropdownMenuItem(
-              value: item,
-              child: Text(item),
-            );
+            return DropdownMenuItem(value: item, child: Text(item));
           }).toList(),
         ),
       ],
@@ -984,8 +1004,9 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
           ),
         ),
         title: Text(AppLocalizations.of(context)!.deleteItemTitle),
-        content:
-            Text(AppLocalizations.of(context)!.deleteItemConfirm(item['name'])),
+        content: Text(
+          AppLocalizations.of(context)!.deleteItemConfirm(item['name']),
+        ),
         actions: [
           BauhausActionButton(
             text: AppLocalizations.of(context)!.cancelAction,
@@ -1013,9 +1034,9 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
       SnackBar(
         content: Text(
           message,
-          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-              ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
         ),
         backgroundColor: isError ? BauhausDesign.error : BauhausDesign.success,
         behavior: SnackBarBehavior.floating,
@@ -1039,8 +1060,11 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
           ),
         ),
         title: Text(AppLocalizations.of(context)!.deleteSelectedItemsTitle),
-        content: Text(AppLocalizations.of(context)!
-            .deleteSelectedItemsConfirm(_selectedItemIds.length.toString())),
+        content: Text(
+          AppLocalizations.of(
+            context,
+          )!.deleteSelectedItemsConfirm(_selectedItemIds.length.toString()),
+        ),
         actions: [
           BauhausActionButton(
             text: AppLocalizations.of(context)!.cancelAction,
@@ -1053,12 +1077,14 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
             onPressed: () {
               setState(() {
                 _ndisItems.removeWhere(
-                    (item) => _selectedItemIds.contains(item['id']));
+                  (item) => _selectedItemIds.contains(item['id']),
+                );
                 _selectedItemIds.clear();
               });
               Navigator.pop(context);
               _showSnackBar(
-                  AppLocalizations.of(context)!.selectedItemsDeletedSuccess);
+                AppLocalizations.of(context)!.selectedItemsDeletedSuccess,
+              );
             },
           ),
         ],

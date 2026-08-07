@@ -48,11 +48,10 @@ class QualityAssuranceState {
 class QualityAssuranceViewModel extends Notifier<QualityAssuranceState> {
   late final WorkforceRepository _repository;
 
-  
   @override
   QualityAssuranceState build() {
     final repository = ref.watch(workforceRepositoryProvider);
-    
+
     return QualityAssuranceState();
   }
 
@@ -81,10 +80,7 @@ class QualityAssuranceViewModel extends Notifier<QualityAssuranceState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -117,10 +113,7 @@ class QualityAssuranceViewModel extends Notifier<QualityAssuranceState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -153,10 +146,7 @@ class QualityAssuranceViewModel extends Notifier<QualityAssuranceState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -185,10 +175,7 @@ class QualityAssuranceViewModel extends Notifier<QualityAssuranceState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -219,10 +206,7 @@ class QualityAssuranceViewModel extends Notifier<QualityAssuranceState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -238,4 +222,7 @@ class QualityAssuranceViewModel extends Notifier<QualityAssuranceState> {
 }
 
 // Provider for QualityAssuranceViewModel
-final qualityAssuranceViewModelProvider = NotifierProvider<QualityAssuranceViewModel, QualityAssuranceState>(QualityAssuranceViewModel.new);
+final qualityAssuranceViewModelProvider =
+    NotifierProvider<QualityAssuranceViewModel, QualityAssuranceState>(
+      QualityAssuranceViewModel.new,
+    );

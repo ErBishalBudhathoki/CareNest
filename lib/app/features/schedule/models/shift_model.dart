@@ -63,7 +63,8 @@ class ShiftModel {
       organizationId: json['organizationId']?.toString() ?? '',
       startTime: _parseDateTime(json['startTime']) ?? DateTime.now(),
       endTime: _parseDateTime(json['endTime']) ?? DateTime.now(),
-      supportItems: (json['supportItems'] as List<dynamic>?)
+      supportItems:
+          (json['supportItems'] as List<dynamic>?)
               ?.map((e) => SupportItemModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
@@ -95,7 +96,8 @@ class ShiftModel {
       if (location != null) 'location': location!.toJson(),
       'status': status.value,
       'isRecurring': isRecurring,
-      if (recurringTemplateId != null) 'recurringTemplateId': recurringTemplateId,
+      if (recurringTemplateId != null)
+        'recurringTemplateId': recurringTemplateId,
       if (notes != null) 'notes': notes,
       'breakDuration': breakDuration,
     };
@@ -148,7 +150,8 @@ class ShiftModel {
 
   /// Calculate shift duration in hours (excluding break)
   double get durationHours {
-    final totalMinutes = endTime.difference(startTime).inMinutes - breakDuration;
+    final totalMinutes =
+        endTime.difference(startTime).inMinutes - breakDuration;
     return totalMinutes / 60.0;
   }
 
@@ -198,10 +201,7 @@ class ShiftLocation {
   final String type;
   final List<double> coordinates; // [longitude, latitude]
 
-  const ShiftLocation({
-    this.type = 'Point',
-    required this.coordinates,
-  });
+  const ShiftLocation({this.type = 'Point', required this.coordinates});
 
   double get longitude => coordinates.isNotEmpty ? coordinates[0] : 0;
   double get latitude => coordinates.length > 1 ? coordinates[1] : 0;
@@ -209,7 +209,8 @@ class ShiftLocation {
   factory ShiftLocation.fromJson(Map<String, dynamic> json) {
     return ShiftLocation(
       type: json['type']?.toString() ?? 'Point',
-      coordinates: (json['coordinates'] as List<dynamic>?)
+      coordinates:
+          (json['coordinates'] as List<dynamic>?)
               ?.map((e) => (e as num).toDouble())
               .toList() ??
           [0, 0],
@@ -217,10 +218,7 @@ class ShiftLocation {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'type': type,
-      'coordinates': coordinates,
-    };
+    return {'type': type, 'coordinates': coordinates};
   }
 
   factory ShiftLocation.fromLatLng(double latitude, double longitude) {
@@ -260,8 +258,10 @@ class SupportItemModel {
       'itemNumber': itemNumber,
       'itemName': itemName,
       if (unit != null) 'unit': unit,
-      if (supportCategoryNumber != null) 'supportCategoryNumber': supportCategoryNumber,
-      if (supportCategoryName != null) 'supportCategoryName': supportCategoryName,
+      if (supportCategoryNumber != null)
+        'supportCategoryNumber': supportCategoryNumber,
+      if (supportCategoryName != null)
+        'supportCategoryName': supportCategoryName,
     };
   }
 }

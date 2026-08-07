@@ -140,7 +140,7 @@ class NotificationNotifier extends Notifier<NotificationState> {
   // }
 
   // In: lib/features/notifications/providers/notification_provider.dart
-// Inside the NotificationNotifier class
+  // Inside the NotificationNotifier class
 
   /// This is the single, authoritative method for loading all notifications.
   /// It is called on provider initialization and on manual refresh (e.g., app resume).
@@ -182,7 +182,8 @@ class NotificationNotifier extends Notifier<NotificationState> {
       final surfaceNotificationsJson =
           prefs.getStringList('surface_notifications') ?? [];
       _notifDebugLog(
-          'DEBUG_PROVIDER (After Reload): Found ${surfaceNotificationsJson.length} new surface notifications.');
+        'DEBUG_PROVIDER (After Reload): Found ${surfaceNotificationsJson.length} new surface notifications.',
+      );
 
       final surfaceNotifications = surfaceNotificationsJson
           .map((jsonStr) {
@@ -197,10 +198,7 @@ class NotificationNotifier extends Notifier<NotificationState> {
           .toList();
 
       // 3. Merge the two lists into a single comprehensive list.
-      final allNotifications = [
-        ...appNotifications,
-        ...surfaceNotifications
-      ];
+      final allNotifications = [...appNotifications, ...surfaceNotifications];
 
       // 4. De-duplicate the list to prevent showing the same notification twice.
       // We use a Map with a unique key (the FCM message ID) to ensure each notification appears only once.
@@ -208,7 +206,8 @@ class NotificationNotifier extends Notifier<NotificationState> {
       final uniqueNotifications = <String, NotificationModel>{};
       for (final notification in allNotifications) {
         // Use the unique message ID from FCM for robust de-duplication. Fallback to the model's ID if not present.
-        final uniqueId = notification.data?['google.message_id'] as String? ??
+        final uniqueId =
+            notification.data?['google.message_id'] as String? ??
             notification.id;
         uniqueNotifications[uniqueId] = notification;
       }
@@ -235,7 +234,8 @@ class NotificationNotifier extends Notifier<NotificationState> {
       await _clearBackgroundNotifications();
 
       _notifDebugLog(
-          'DEBUG_PROVIDER: Notification refresh complete. Final list count: ${limitedNotifications.length}');
+        'DEBUG_PROVIDER: Notification refresh complete. Final list count: ${limitedNotifications.length}',
+      );
     } catch (e) {
       // If any error occurs during the process, update the state to show an error message in the UI.
       _notifDebugLog('FATAL ERROR in loadNotifications: $e');
@@ -300,15 +300,17 @@ class NotificationNotifier extends Notifier<NotificationState> {
   }
 
   Future<void> markAllAsRead() async {
-    final updatedNotifications =
-        state.notifications.map((n) => n.copyWith(isRead: true)).toList();
+    final updatedNotifications = state.notifications
+        .map((n) => n.copyWith(isRead: true))
+        .toList();
     state = state.copyWith(notifications: updatedNotifications);
     await _saveNotifications();
   }
 
   Future<void> deleteNotification(String notificationId) async {
-    final updatedNotifications =
-        state.notifications.where((n) => n.id != notificationId).toList();
+    final updatedNotifications = state.notifications
+        .where((n) => n.id != notificationId)
+        .toList();
     state = state.copyWith(notifications: updatedNotifications);
     await _saveNotifications();
   }
@@ -321,7 +323,10 @@ class NotificationNotifier extends Notifier<NotificationState> {
 
 // --- Providers remain the same ---
 
-final notificationProvider = NotifierProvider<NotificationNotifier, NotificationState>(NotificationNotifier.new);
+final notificationProvider =
+    NotifierProvider<NotificationNotifier, NotificationState>(
+      NotificationNotifier.new,
+    );
 
 final unreadNotificationCountProvider = Provider<int>((ref) {
   return ref.watch(notificationProvider).unreadCount;

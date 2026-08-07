@@ -22,19 +22,14 @@ class OptionMenuWidget extends StatelessWidget {
           padding: const EdgeInsets.all(12.0),
           child: Column(
             children: [
-              Icon(
-                iconSax,
-                color: const Color(0xFF667EEA),
-                size: 35,
+              Icon(iconSax, color: const Color(0xFF667EEA), size: 35),
+              const SizedBox(height: 8.0),
+              Text(
+                iconName,
+                style: const TextStyle(
+                  fontSize: 14,
+                ).copyWith(fontWeight: FontWeight.w900, fontFamily: 'Loto'),
               ),
-              const SizedBox(
-                height: 8.0,
-              ),
-              Text(iconName,
-                  style: const TextStyle(fontSize: 14).copyWith(
-                    fontWeight: FontWeight.w900,
-                    fontFamily: 'Loto',
-                  )),
             ],
           ),
         ),

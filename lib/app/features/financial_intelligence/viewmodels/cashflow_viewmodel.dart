@@ -42,11 +42,10 @@ class CashFlowState {
 class CashFlowViewModel extends Notifier<CashFlowState> {
   late final FinancialIntelligenceRepository _repository;
 
-  
   @override
   CashFlowState build() {
     final apiMethod = ref.read(app_providers.apiMethodProvider);
-    
+
     return CashFlowState();
   }
 
@@ -75,7 +74,8 @@ class CashFlowViewModel extends Notifier<CashFlowState> {
     state = state.copyWith(isLoading: true, error: null);
     try {
       final result = await _repository.getCurrentCashPosition(
-          organizationId: organizationId);
+        organizationId: organizationId,
+      );
       if (result['success'] == true) {
         state = state.copyWith(isLoading: false, position: result['position']);
       } else {
@@ -89,8 +89,9 @@ class CashFlowViewModel extends Notifier<CashFlowState> {
   Future<void> getAlerts(String organizationId) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final result =
-          await _repository.getCashFlowAlerts(organizationId: organizationId);
+      final result = await _repository.getCashFlowAlerts(
+        organizationId: organizationId,
+      );
       if (result['success'] == true) {
         state = state.copyWith(isLoading: false, alerts: result['alerts']);
       } else {
@@ -114,7 +115,9 @@ class CashFlowViewModel extends Notifier<CashFlowState> {
 
       if (result['success'] == true) {
         state = state.copyWith(
-            isLoading: false, optimization: result['optimization']);
+          isLoading: false,
+          optimization: result['optimization'],
+        );
       } else {
         state = state.copyWith(isLoading: false, error: result['message']);
       }
@@ -128,4 +131,5 @@ class CashFlowViewModel extends Notifier<CashFlowState> {
   }
 }
 
-final cashFlowViewModelProvider = NotifierProvider<CashFlowViewModel, CashFlowState>(CashFlowViewModel.new);
+final cashFlowViewModelProvider =
+    NotifierProvider<CashFlowViewModel, CashFlowState>(CashFlowViewModel.new);

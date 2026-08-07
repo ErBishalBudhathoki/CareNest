@@ -41,16 +41,10 @@ class CustomAppBar extends StatelessWidget {
         titleTextStyle: theme.textTheme.headlineMedium?.copyWith(
           color: Colors.grey[800],
         ),
-        title: ProfilePlaceholder(
-          firstName: firstName,
-          lastName: lastName,
-        ),
+        title: ProfilePlaceholder(firstName: firstName, lastName: lastName),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(
-              right: 24,
-              top: 4,
-            ),
+            padding: const EdgeInsets.only(right: 24, top: 4),
             child: CircleAvatar(
               radius: 27.5,
               child: ClipOval(
@@ -107,10 +101,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       actions: actions,
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(1.0),
-        child: Container(
-          color: Colors.grey.shade300,
-          height: 1.0,
-        ),
+        child: Container(color: Colors.grey.shade300, height: 1.0),
       ),
     );
   }

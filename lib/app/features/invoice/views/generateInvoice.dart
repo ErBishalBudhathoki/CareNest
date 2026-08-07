@@ -1,4 +1,5 @@
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/app/features/invoice/domain/models/invoice_line_item.dart';
 import 'package:carenest/app/features/invoice/domain/models/ndis_item.dart';
 import 'package:carenest/app/features/invoice/models/ndis_matcher.dart';
@@ -92,13 +93,17 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message,
-            style: BauhausDesign.getTextTheme(context).bodyMedium
-                ?.copyWith(color: BauhausDesign.surfaceWhite)),
+        content: Text(
+          message,
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+        ),
         backgroundColor: BauhausDesign.error,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd)),
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+        ),
         margin: const EdgeInsets.all(BauhausDesign.space4),
         duration: const Duration(seconds: 4),
       ),
@@ -114,28 +119,35 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
     });
 
     try {
-      final employeesResp =
-          await _apiMethod.getOrganizationEmployees(widget.organizationId);
+      final employeesResp = await _apiMethod.getOrganizationEmployees(
+        widget.organizationId,
+      );
       if (!mounted) return;
 
       if (employeesResp['success'] != true) {
         log.warning(
-            "Failed to fetch employees for org ${widget.organizationId}: ${employeesResp['message'] ?? 'Unknown API error'}");
-        setState(() => _statusMessage =
-            "Error fetching employees: ${employeesResp['message'] ?? 'Please try again.'}");
+          "Failed to fetch employees for org ${widget.organizationId}: ${employeesResp['message'] ?? 'Unknown API error'}",
+        );
+        setState(
+          () => _statusMessage =
+              "Error fetching employees: ${employeesResp['message'] ?? 'Please try again.'}",
+        );
         _isLoading = false;
         return;
       }
       if ((employeesResp['employees'] as List).isEmpty) {
         log.info(
-            "No employees found for organization ${widget.organizationId}");
+          "No employees found for organization ${widget.organizationId}",
+        );
         setState(
-            () => _statusMessage = 'No employees found in your organization.');
+          () => _statusMessage = 'No employees found in your organization.',
+        );
         _isLoading = false;
         return;
       }
-      final List<Map<String, dynamic>> employees =
-          List.from(employeesResp['employees']);
+      final List<Map<String, dynamic>> employees = List.from(
+        employeesResp['employees'],
+      );
       log.fine("Fetched ${employees.length} employees.");
 
       final selectedEmployee = await showDialog<Map<String, dynamic>>(
@@ -157,29 +169,36 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
 
       if (!mounted) return;
       setState(
-          () => _statusMessage = 'Fetching assignments for $_providerName...');
+        () => _statusMessage = 'Fetching assignments for $_providerName...',
+      );
 
-      final assignmentsResp =
-          await _apiMethod.getUserAssignments(_selectedEmployeeEmail!);
+      final assignmentsResp = await _apiMethod.getUserAssignments(
+        _selectedEmployeeEmail!,
+      );
       if (!mounted) return;
       if (assignmentsResp['success'] != true) {
         log.warning(
-            "Failed to fetch assignments for $_selectedEmployeeEmail: ${assignmentsResp['message'] ?? 'Unknown API error'}");
-        setState(() => _statusMessage =
-            "Error fetching client assignments: ${assignmentsResp['message'] ?? 'Please try again.'}");
+          "Failed to fetch assignments for $_selectedEmployeeEmail: ${assignmentsResp['message'] ?? 'Unknown API error'}",
+        );
+        setState(
+          () => _statusMessage =
+              "Error fetching client assignments: ${assignmentsResp['message'] ?? 'Please try again.'}",
+        );
         _isLoading = false;
         return;
       }
       if ((assignmentsResp['assignments'] as List).isEmpty) {
         log.info("No clients assigned to employee $_selectedEmployeeEmail");
         setState(
-            () => _statusMessage = 'No clients are assigned to this employee.');
+          () => _statusMessage = 'No clients are assigned to this employee.',
+        );
         _isLoading = false;
         return;
       }
       _clientAssignments = List.from(assignmentsResp['assignments']);
       log.fine(
-          "Fetched ${_clientAssignments.length} client assignments for $_selectedEmployeeEmail.");
+        "Fetched ${_clientAssignments.length} client assignments for $_selectedEmployeeEmail.",
+      );
 
       final selectedClient = await showDialog<Map<String, dynamic>>(
         context: context,
@@ -195,18 +214,22 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
       _selectedClientEmail = selectedClient['clientEmail'];
       final clientDetails =
           (selectedClient['clientDetails'] is Map<String, dynamic>)
-              ? selectedClient['clientDetails'] as Map<String, dynamic>
-              : <String, dynamic>{};
+          ? selectedClient['clientDetails'] as Map<String, dynamic>
+          : <String, dynamic>{};
       _clientName =
           '${clientDetails['clientFirstName'] ?? 'N/A'} ${clientDetails['clientLastName'] ?? 'N/A'}';
 
       // Extract the client ID from clientDetails for pricing lookup
       _selectedClientId = clientDetails['_id'];
       log.info(
-          "Selected Client: $_clientName ($_selectedClientEmail), ID: $_selectedClientId");
+        "Selected Client: $_clientName ($_selectedClientEmail), ID: $_selectedClientId",
+      );
 
       await _generateDataForPair(
-          _selectedEmployeeEmail!, _selectedClientEmail!, selectedClient);
+        _selectedEmployeeEmail!,
+        _selectedClientEmail!,
+        selectedClient,
+      );
     } catch (e, s) {
       log.severe("Error in _startAdminInvoiceFlow", e, s);
       if (mounted) {
@@ -226,26 +249,36 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Select Employee', style: BauhausDesign.getTextTheme(context).headlineMedium),
+            Text(
+              'Select Employee',
+              style: BauhausDesign.getTextTheme(context).headlineMedium,
+            ),
             const SizedBox(height: BauhausDesign.space4),
             SizedBox(
               height: 300,
               child: ListView.separated(
                 shrinkWrap: true,
                 itemCount: employees.length,
-                separatorBuilder: (_, __) => const Divider(
-                    height: 1, color: BauhausDesign.neutral),
+                separatorBuilder: (_, __) =>
+                    const Divider(height: 1, color: BauhausDesign.neutral),
                 itemBuilder: (context, index) {
                   final employee = employees[index];
                   return ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(
-                        '${employee['firstName']} ${employee['lastName']}',
-                        style: BauhausDesign.getTextTheme(context).bodyMedium
-                            ?.copyWith(fontWeight: FontWeight.w600)),
-                    subtitle: Text(employee['email'] ?? 'No email',
-                        style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: BauhausDesign.textMuted, fontSize: 12)),
+                      '${employee['firstName']} ${employee['lastName']}',
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: Text(
+                      employee['email'] ?? 'No email',
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
+                          ?.copyWith(
+                            color: BauhausDesign.textMuted,
+                            fontSize: 12,
+                          ),
+                    ),
                     onTap: () => Navigator.of(context).pop(employee),
                   );
                 },
@@ -274,40 +307,55 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Select Client', style: BauhausDesign.getTextTheme(context).headlineMedium),
+            Text(
+              'Select Client',
+              style: BauhausDesign.getTextTheme(context).headlineMedium,
+            ),
             const SizedBox(height: BauhausDesign.space4),
             SizedBox(
               height: 300,
               child: assignments.isEmpty
                   ? Center(
                       child: Text(
-                          "No clients found assigned to the selected employee.",
-                          textAlign: TextAlign.center,
-                          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                              color: BauhausDesign.textMuted)),
+                        "No clients found assigned to the selected employee.",
+                        textAlign: TextAlign.center,
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                      ),
                     )
                   : ListView.separated(
                       shrinkWrap: true,
                       itemCount: assignments.length,
                       separatorBuilder: (_, __) => const Divider(
-                          height: 1, color: BauhausDesign.neutral),
+                        height: 1,
+                        color: BauhausDesign.neutral,
+                      ),
                       itemBuilder: (context, index) {
                         final assignment = assignments[index];
-                        final details = (assignment['clientDetails']
+                        final details =
+                            (assignment['clientDetails']
                                 is Map<String, dynamic>)
                             ? assignment['clientDetails']
-                                as Map<String, dynamic>
+                                  as Map<String, dynamic>
                             : <String, dynamic>{};
                         return ListTile(
                           contentPadding: EdgeInsets.zero,
                           title: Text(
-                              '${details['clientFirstName'] ?? 'N/A'} ${details['clientLastName'] ?? 'N/A'}',
-                              style: BauhausDesign.getTextTheme(context).bodyMedium
-                                  ?.copyWith(fontWeight: FontWeight.w600)),
+                            '${details['clientFirstName'] ?? 'N/A'} ${details['clientLastName'] ?? 'N/A'}',
+                            style: BauhausDesign.getTextTheme(
+                              context,
+                            ).bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                          ),
                           subtitle: Text(
-                              details['clientEmail'] ?? 'No email provided',
-                              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                                  color: BauhausDesign.textMuted, fontSize: 12)),
+                            details['clientEmail'] ?? 'No email provided',
+                            style: BauhausDesign.getTextTheme(context)
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: BauhausDesign.textMuted,
+                                  fontSize: 12,
+                                ),
+                          ),
                           onTap: () => Navigator.of(context).pop(assignment),
                         );
                       },
@@ -328,11 +376,15 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
     );
   }
 
-  Future<void> _generateDataForPair(String employeeEmail, String clientEmail,
-      Map<String, dynamic> selectedClient) async {
+  Future<void> _generateDataForPair(
+    String employeeEmail,
+    String clientEmail,
+    Map<String, dynamic> selectedClient,
+  ) async {
     if (!mounted) return;
     log.info(
-        "--- Starting _generateDataForPair for Employee: $employeeEmail, Client: $clientEmail ---");
+      "--- Starting _generateDataForPair for Employee: $employeeEmail, Client: $clientEmail ---",
+    );
     setState(() {
       _isLoading = true; // Set loading true for this specific operation
       _statusMessage = 'Analyzing worked time...';
@@ -340,14 +392,21 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
 
     try {
       final workedTimeResp = await _apiMethod.getWorkedTime(
-          employeeEmail, clientEmail, widget.organizationId);
+        employeeEmail,
+        clientEmail,
+        widget.organizationId,
+      );
       if (!mounted) return;
 
       if (workedTimeResp['success'] != true) {
         log.warning(
-            "Worked time fetch failed or no records for $employeeEmail / $clientEmail: ${workedTimeResp['message']}");
-        setState(() => _statusMessage = workedTimeResp['message'] ??
-            'No worked time records for this selection.');
+          "Worked time fetch failed or no records for $employeeEmail / $clientEmail: ${workedTimeResp['message']}",
+        );
+        setState(
+          () => _statusMessage =
+              workedTimeResp['message'] ??
+              'No worked time records for this selection.',
+        );
         _isLoading = false;
         return;
       }
@@ -355,9 +414,12 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
       final List<dynamic> workedTimes = workedTimeResp['workedTimes'] ?? [];
       if (workedTimes.isEmpty) {
         log.info(
-            "Empty workedTimes list for $employeeEmail / $clientEmail. No line items to generate.");
-        setState(() => _statusMessage =
-            'No worked time records found for this client/employee combination.');
+          "Empty workedTimes list for $employeeEmail / $clientEmail. No line items to generate.",
+        );
+        setState(
+          () => _statusMessage =
+              'No worked time records found for this client/employee combination.',
+        );
         _isLoading = false;
         return;
       }
@@ -371,17 +433,23 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
 
       if (allDatesForHolidayCheck.isNotEmpty) {
         try {
-          _apiHolidays =
-              await _apiMethod.checkHolidaysSingle(allDatesForHolidayCheck);
+          _apiHolidays = await _apiMethod.checkHolidaysSingle(
+            allDatesForHolidayCheck,
+          );
           log.fine(
-              "Fetched API Holidays: $_apiHolidays for dates: $allDatesForHolidayCheck");
+            "Fetched API Holidays: $_apiHolidays for dates: $allDatesForHolidayCheck",
+          );
         } catch (e, s) {
           log.warning(
-              "Error fetching holidays: $e. Using empty holiday list.", e, s);
+            "Error fetching holidays: $e. Using empty holiday list.",
+            e,
+            s,
+          );
           _apiHolidays = [];
           if (mounted) {
             _showErrorSnackBar(
-                'Could not fetch holiday data. Proceeding without it.');
+              'Could not fetch holiday data. Proceeding without it.',
+            );
           }
         }
       } else {
@@ -394,16 +462,21 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
       log.info("Status: Generating invoice lines...");
 
       final workedDates = workedTimes
-          .map((r) =>
-              r['shiftDate'] != null ? DateTime.tryParse(r['shiftDate']) : null)
+          .map(
+            (r) => r['shiftDate'] != null
+                ? DateTime.tryParse(r['shiftDate'])
+                : null,
+          )
           .whereType<DateTime>()
           .toList();
 
       if (workedDates.isEmpty) {
         log.warning("No valid dates found in worked time records.");
         if (mounted) {
-          setState(() =>
-              _statusMessage = 'No valid dates found in worked time records.');
+          setState(
+            () =>
+                _statusMessage = 'No valid dates found in worked time records.',
+          );
           _isLoading = false;
         }
         return;
@@ -433,8 +506,13 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
         try {
           final datePart = DateTime.parse(dateStr);
           final timePart = DateFormat.jm().parseLoose(startTimeStr);
-          parsedShiftStart = DateTime(datePart.year, datePart.month,
-              datePart.day, timePart.hour, timePart.minute);
+          parsedShiftStart = DateTime(
+            datePart.year,
+            datePart.month,
+            datePart.day,
+            timePart.hour,
+            timePart.minute,
+          );
         } catch (e) {
           continue;
         }
@@ -445,8 +523,9 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
 
         if (assignedNdisItemNumber != null &&
             assignedNdisItemNumber.isNotEmpty) {
-          matchedNdisItem =
-              _ndisMatcher.getItemByNumber(assignedNdisItemNumber);
+          matchedNdisItem = _ndisMatcher.getItemByNumber(
+            assignedNdisItemNumber,
+          );
         }
 
         matchedNdisItem ??= _ndisMatcher.findBestMatch(
@@ -469,11 +548,13 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
       if (ndisItemNumbers.isNotEmpty) {
         setState(() => _statusMessage = 'Fetching pricing data...');
         log.info(
-            "Performing bulk pricing lookup for ${ndisItemNumbers.length} unique NDIS items");
+          "Performing bulk pricing lookup for ${ndisItemNumbers.length} unique NDIS items",
+        );
 
         try {
           log.info(
-              "DEBUG: Calling getBulkPricingLookup with organizationId: ${widget.organizationId}");
+            "DEBUG: Calling getBulkPricingLookup with organizationId: ${widget.organizationId}",
+          );
           log.info("DEBUG: NDIS items: ${ndisItemNumbers.toList()}");
           log.info("DEBUG: Client ID: $_selectedClientId");
 
@@ -491,13 +572,16 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
             final item01020 = bulkPricingData['01_020_0120_1_1'];
             log.info("DEBUG: Item 01_020_0120_1_1 data: $item01020");
             log.info(
-                "DEBUG: Item 01_020_0120_1_1 source: ${item01020?['source']}");
+              "DEBUG: Item 01_020_0120_1_1 source: ${item01020?['source']}",
+            );
             log.info(
-                "DEBUG: Item 01_020_0120_1_1 price: ${item01020?['price']}");
+              "DEBUG: Item 01_020_0120_1_1 price: ${item01020?['price']}",
+            );
           }
         } catch (e) {
           log.warning(
-              "Error in bulk pricing lookup: $e. Will use standard pricing.");
+            "Error in bulk pricing lookup: $e. Will use standard pricing.",
+          );
           bulkPricingData = {};
         }
       }
@@ -510,11 +594,13 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
         final startTimeStr = record['shiftStartTime']?.toString().trim() ?? '';
         final timeWorkedStr = record['timeWorked']?.toString().trim() ?? '';
         log.finer(
-            "\nProcessing Record: Date=$dateStr, StartTime=$startTimeStr, TimeWorked=$timeWorkedStr");
+          "\nProcessing Record: Date=$dateStr, StartTime=$startTimeStr, TimeWorked=$timeWorkedStr",
+        );
 
         if (dateStr == null || startTimeStr.isEmpty || timeWorkedStr.isEmpty) {
           log.fine(
-              "Skipping record due to missing data: Date: $dateStr, StartTime: $startTimeStr, TimeWorked: $timeWorkedStr");
+            "Skipping record due to missing data: Date: $dateStr, StartTime: $startTimeStr, TimeWorked: $timeWorkedStr",
+          );
           continue;
         }
 
@@ -522,19 +608,26 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
         try {
           final datePart = DateTime.parse(dateStr);
           final timePart = DateFormat.jm().parseLoose(startTimeStr);
-          parsedShiftStart = DateTime(datePart.year, datePart.month,
-              datePart.day, timePart.hour, timePart.minute);
+          parsedShiftStart = DateTime(
+            datePart.year,
+            datePart.month,
+            datePart.day,
+            timePart.hour,
+            timePart.minute,
+          );
           log.finest("  Parsed Shift Start: $parsedShiftStart");
         } catch (e) {
           log.warning(
-              "Error parsing shift start datetime: $dateStr $startTimeStr. Error: $e. Skipping record.");
+            "Error parsing shift start datetime: $dateStr $startTimeStr. Error: $e. Skipping record.",
+          );
           continue;
         }
 
         final double hours = _hoursFromTimeString(timeWorkedStr);
         if (hours <= 0) {
           log.finer(
-              "Skipping record with zero or negative hours: $timeWorkedStr for $dateStr");
+            "Skipping record with zero or negative hours: $timeWorkedStr for $dateStr",
+          );
           continue;
         }
 
@@ -543,7 +636,8 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
         String? preferredRegGroup;
         bool preferTTPProvider = false;
         log.finest(
-            "  Context for Matcher: isHighIntensity=$isHighIntensityShift, preferredCat=$preferredSupportCategory, preferredRegGrp=$preferredRegGroup, TTP=$preferTTPProvider");
+          "  Context for Matcher: isHighIntensity=$isHighIntensityShift, preferredCat=$preferredSupportCategory, preferredRegGrp=$preferredRegGroup, TTP=$preferTTPProvider",
+        );
 
         NDISItem? matchedNdisItem;
         final String? assignedNdisItemNumber =
@@ -551,14 +645,17 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
 
         if (assignedNdisItemNumber != null &&
             assignedNdisItemNumber.isNotEmpty) {
-          matchedNdisItem =
-              _ndisMatcher.getItemByNumber(assignedNdisItemNumber);
+          matchedNdisItem = _ndisMatcher.getItemByNumber(
+            assignedNdisItemNumber,
+          );
           if (matchedNdisItem != null) {
             log.fine(
-                "Using pre-assigned NDIS item: ${matchedNdisItem.itemNumber}");
+              "Using pre-assigned NDIS item: ${matchedNdisItem.itemNumber}",
+            );
           } else {
             log.warning(
-                "Pre-assigned NDIS item $assignedNdisItemNumber not found. Falling back to matcher.");
+              "Pre-assigned NDIS item $assignedNdisItemNumber not found. Falling back to matcher.",
+            );
           }
         }
 
@@ -573,11 +670,13 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
 
         if (matchedNdisItem != null) {
           log.fine(
-              "  MATCHER RESULT for $dateStr $startTimeStr: Found NDIS Item: ${matchedNdisItem.itemNumber} - ${matchedNdisItem.itemName}");
+            "  MATCHER RESULT for $dateStr $startTimeStr: Found NDIS Item: ${matchedNdisItem.itemNumber} - ${matchedNdisItem.itemName}",
+          );
           final description =
               '${matchedNdisItem.itemNumber} - ${matchedNdisItem.itemName}';
-          final String itemType =
-              matchedNdisItem.unit.toUpperCase() == 'E' ? 'item' : 'service';
+          final String itemType = matchedNdisItem.unit.toUpperCase() == 'E'
+              ? 'item'
+              : 'service';
 
           // Implement correct pricing logic as per user requirements
           double unitPrice = _kDefaultBaseRate; // Default base rate
@@ -588,7 +687,8 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
           final cachedPricing = bulkPricingData?[matchedNdisItem.itemNumber];
           log.info("DEBUG: Processing item ${matchedNdisItem.itemNumber}");
           log.info(
-              "DEBUG: Cached pricing for ${matchedNdisItem.itemNumber}: $cachedPricing");
+            "DEBUG: Cached pricing for ${matchedNdisItem.itemNumber}: $cachedPricing",
+          );
           log.info("DEBUG: Cached pricing source: ${cachedPricing?['source']}");
           log.info("DEBUG: Cached pricing price: ${cachedPricing?['price']}");
 
@@ -597,23 +697,27 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
             if (cachedPricing['source'] == 'client_specific' ||
                 cachedPricing['source'] == 'organization') {
               try {
-                double customPrice =
-                    double.parse(cachedPricing['price'].toString());
+                double customPrice = double.parse(
+                  cachedPricing['price'].toString(),
+                );
 
                 // Check for price cap warnings from backend
                 if (cachedPricing['priceCapWarning'] != null) {
                   log.warning(
-                      "Price cap warning for ${matchedNdisItem.itemNumber}: ${cachedPricing['priceCapWarning']}");
+                    "Price cap warning for ${matchedNdisItem.itemNumber}: ${cachedPricing['priceCapWarning']}",
+                  );
                 }
 
                 // Use custom pricing regardless of cap compliance (as per user requirement)
                 unitPrice = customPrice;
                 pricingSource = cachedPricing['source'] ?? 'custom';
                 log.info(
-                    "Using custom $pricingSource pricing for ${matchedNdisItem.itemNumber}: \$${unitPrice.toStringAsFixed(2)}");
+                  "Using custom $pricingSource pricing for ${matchedNdisItem.itemNumber}: \$${unitPrice.toStringAsFixed(2)}",
+                );
               } catch (e) {
                 log.warning(
-                    "Error parsing custom pricing for ${matchedNdisItem.itemNumber}: $e. Using base rate.");
+                  "Error parsing custom pricing for ${matchedNdisItem.itemNumber}: $e. Using base rate.",
+                );
                 unitPrice = _kDefaultBaseRate;
                 pricingSource = 'base_rate';
               }
@@ -627,14 +731,17 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
                 // Check for price cap warnings
                 if (cachedPricing['priceCapWarning'] != null) {
                   log.warning(
-                      "Price cap warning for ${matchedNdisItem.itemNumber}: ${cachedPricing['priceCapWarning']}");
+                    "Price cap warning for ${matchedNdisItem.itemNumber}: ${cachedPricing['priceCapWarning']}",
+                  );
                 }
 
                 log.info(
-                    "Using base rate pricing for ${matchedNdisItem.itemNumber}: \$${unitPrice.toStringAsFixed(2)}");
+                  "Using base rate pricing for ${matchedNdisItem.itemNumber}: \$${unitPrice.toStringAsFixed(2)}",
+                );
               } catch (e) {
                 log.warning(
-                    "Error parsing base rate pricing for ${matchedNdisItem.itemNumber}: $e. Using fallback base rate.");
+                  "Error parsing base rate pricing for ${matchedNdisItem.itemNumber}: $e. Using fallback base rate.",
+                );
                 unitPrice = _kDefaultBaseRate;
                 pricingSource = 'base_rate';
               }
@@ -643,65 +750,78 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
               unitPrice = _kDefaultBaseRate;
               pricingSource = 'base_rate';
               log.info(
-                  "No pricing found for ${matchedNdisItem.itemNumber}, using base rate fallback: \$${unitPrice.toStringAsFixed(2)}");
+                "No pricing found for ${matchedNdisItem.itemNumber}, using base rate fallback: \$${unitPrice.toStringAsFixed(2)}",
+              );
             }
           } else {
             // No cached pricing data available, use base rate
             unitPrice = _kDefaultBaseRate;
             pricingSource = 'base_rate';
             log.info(
-                "No pricing data available for ${matchedNdisItem.itemNumber}, using base rate: \$${unitPrice.toStringAsFixed(2)}");
+              "No pricing data available for ${matchedNdisItem.itemNumber}, using base rate: \$${unitPrice.toStringAsFixed(2)}",
+            );
           }
 
-          double quantity =
-              (matchedNdisItem.unit.toUpperCase() == 'H') ? hours : 1.0;
+          double quantity = (matchedNdisItem.unit.toUpperCase() == 'H')
+              ? hours
+              : 1.0;
 
           if (matchedNdisItem.type == "Unit Price = 0.1") {
             unitPrice = 1.0;
             if (matchedNdisItem.unit.toUpperCase() == 'E') quantity = 1.0;
           }
           log.finest(
-              "  Generated Line Item Details: Desc='$description', Qty=$quantity, Price=$unitPrice, Type='$itemType'");
+            "  Generated Line Item Details: Desc='$description', Qty=$quantity, Price=$unitPrice, Type='$itemType'",
+          );
 
           if (unitPrice > 0.0 ||
               matchedNdisItem.type != "Price Limited Supports" ||
               matchedNdisItem.type == "Unit Price = 0.1") {
-            generatedItems.add(InvoiceLineItem(
-              description: description,
-              quantity: quantity,
-              unitPrice: unitPrice,
-              type: itemType,
-              source: LineItemSource.ndisMatcherAlgorithm,
-            ));
+            generatedItems.add(
+              InvoiceLineItem(
+                description: description,
+                quantity: quantity,
+                unitPrice: unitPrice,
+                type: itemType,
+                source: LineItemSource.ndisMatcherAlgorithm,
+              ),
+            );
             log.finer("    ADDED: Line item from NDIS Matcher for $dateStr.");
           } else {
             log.warning(
-                "Matched Price Limited item ${matchedNdisItem.itemNumber} has an invalid price ($unitPrice). Shift: $parsedShiftStart. Using placeholder.");
-            generatedItems.add(InvoiceLineItem(
+              "Matched Price Limited item ${matchedNdisItem.itemNumber} has an invalid price ($unitPrice). Shift: $parsedShiftStart. Using placeholder.",
+            );
+            generatedItems.add(
+              InvoiceLineItem(
+                description:
+                    "Service on $dateStr (Review Pricing: ${matchedNdisItem.itemNumber})",
+                quantity: hours,
+                unitPrice: 0.0,
+                type: "service",
+                source: LineItemSource.manualPlaceholder,
+              ),
+            );
+          }
+        } else {
+          log.warning(
+            "No NDIS item found by matcher for shift on $dateStr at $startTimeStr ($hours hrs). Shift Start: $parsedShiftStart. Holidays: $_apiHolidays. Adding placeholder.",
+          );
+          generatedItems.add(
+            InvoiceLineItem(
               description:
-                  "Service on $dateStr (Review Pricing: ${matchedNdisItem.itemNumber})",
+                  "Manual Review Required: Shift $dateStr $startTimeStr ($hours hrs)",
               quantity: hours,
               unitPrice: 0.0,
               type: "service",
               source: LineItemSource.manualPlaceholder,
-            ));
-          }
-        } else {
-          log.warning(
-              "No NDIS item found by matcher for shift on $dateStr at $startTimeStr ($hours hrs). Shift Start: $parsedShiftStart. Holidays: $_apiHolidays. Adding placeholder.");
-          generatedItems.add(InvoiceLineItem(
-            description:
-                "Manual Review Required: Shift $dateStr $startTimeStr ($hours hrs)",
-            quantity: hours,
-            unitPrice: 0.0,
-            type: "service",
-            source: LineItemSource.manualPlaceholder,
-          ));
+            ),
+          );
         }
       }
 
       log.info(
-          "--- Finished _generateDataForPair. Total generated items: ${generatedItems.length} ---");
+        "--- Finished _generateDataForPair. Total generated items: ${generatedItems.length} ---",
+      );
       if (!mounted) return;
       setState(() {
         _lineItems = generatedItems;
@@ -732,7 +852,8 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
       List<String> parts = timeString.split(':');
       if (parts.length != 3) {
         log.warning(
-            "Invalid timeString format for hours: $timeString. Expected HH:MM:SS");
+          "Invalid timeString format for hours: $timeString. Expected HH:MM:SS",
+        );
         return 0.0;
       }
       int hours = int.tryParse(parts[0]) ?? 0;
@@ -770,7 +891,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
           'startDate': _startDate,
           'endDate': _endDate,
           'lineItems': _lineItems.map((item) => item.toJson()).toList(),
-        }
+        },
       ];
 
       // Use the enhanced invoice service to generate PDFs
@@ -797,15 +918,18 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
           _isLoading = false;
         });
         log.info("PDF generated successfully at $_pdfPath");
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
             content: const Text('Invoice PDF generated! Tap again to view.'),
             backgroundColor: BauhausDesign.success,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(BauhausDesign.radiusMd)),
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+            ),
             margin: const EdgeInsets.all(BauhausDesign.space4),
-            duration: const Duration(seconds: 4)));
+            duration: const Duration(seconds: 4),
+          ),
+        );
       } else {
         setState(() {
           _statusMessage = 'PDF generation returned no paths.';
@@ -835,10 +959,12 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const CircularProgressIndicator(
-                  color: BauhausDesign.primary),
+              const CircularProgressIndicator(color: BauhausDesign.primary),
               const SizedBox(height: BauhausDesign.space6),
-              Text(_statusMessage, style: BauhausDesign.getTextTheme(context).bodyLarge),
+              Text(
+                _statusMessage,
+                style: BauhausDesign.getTextTheme(context).bodyLarge,
+              ),
             ],
           ),
         ),
@@ -850,13 +976,14 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
       return Scaffold(
         backgroundColor: BauhausDesign.backgroundLight,
         appBar: AppBar(
-          title:
-              Text('Invoice Generated', style: BauhausDesign.getTextTheme(context).headlineMedium),
+          title: Text(
+            'Invoice Generated',
+            style: BauhausDesign.getTextTheme(context).headlineMedium,
+          ),
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back,
-                color: BauhausDesign.textDark),
+            icon: const Icon(Icons.arrow_back, color: BauhausDesign.textDark),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -867,13 +994,21 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.check_circle_outline,
-                      size: 64, color: BauhausDesign.success),
+                  Icon(
+                    Icons.check_circle_outline,
+                    size: 64,
+                    color: BauhausDesign.success,
+                  ),
                   const SizedBox(height: BauhausDesign.space4),
-                  Text('Success!', style: BauhausDesign.getTextTheme(context).headlineLarge),
+                  Text(
+                    'Success!',
+                    style: BauhausDesign.getTextTheme(context).headlineLarge,
+                  ),
                   const SizedBox(height: BauhausDesign.space2),
-                  Text('Invoice PDF is ready.',
-                      style: BauhausDesign.getTextTheme(context).bodyMedium),
+                  Text(
+                    'Invoice PDF is ready.',
+                    style: BauhausDesign.getTextTheme(context).bodyMedium,
+                  ),
                   const SizedBox(height: BauhausDesign.space6),
                   SizedBox(
                     width: double.infinity,
@@ -913,12 +1048,14 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        title: Text('Generate Invoice', style: BauhausDesign.getTextTheme(context).headlineMedium),
+        title: Text(
+          'Generate Invoice',
+          style: BauhausDesign.getTextTheme(context).headlineMedium,
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back,
-              color: BauhausDesign.textDark),
+          icon: const Icon(Icons.arrow_back, color: BauhausDesign.textDark),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -930,15 +1067,20 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Review Details', style: BauhausDesign.getTextTheme(context).headlineMedium),
+                  Text(
+                    'Review Details',
+                    style: BauhausDesign.getTextTheme(context).headlineMedium,
+                  ),
                   const Divider(color: BauhausDesign.neutral),
                   _buildDetailRow('Employee', _providerName),
                   _buildDetailRow('Client', _clientName),
                   _buildDetailRow('Period', '$_startDate to $_endDate'),
                   const SizedBox(height: BauhausDesign.space4),
                   // Invoice Type Selection
-                  Text('Invoice Type',
-                      style: BauhausDesign.getTextTheme(context).labelSmall),
+                  Text(
+                    'Invoice Type',
+                    style: BauhausDesign.getTextTheme(context).labelSmall,
+                  ),
                   const SizedBox(height: BauhausDesign.space1),
                   Row(
                     children: [
@@ -960,9 +1102,12 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
                     ],
                   ),
                   const SizedBox(height: BauhausDesign.space4),
-                  Text('Generated Lines: ${_lineItems.length}',
-                      style: BauhausDesign.getTextTheme(context).bodyMedium
-                          ?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(
+                    'Generated Lines: ${_lineItems.length}',
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                  ),
                 ],
               ),
             ),
@@ -1000,9 +1145,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
               ? BauhausDesign.primary.withOpacity(0.1)
               : Colors.transparent,
           border: Border.all(
-            color: isSelected
-                ? BauhausDesign.primary
-                : BauhausDesign.neutral,
+            color: isSelected ? BauhausDesign.primary : BauhausDesign.neutral,
           ),
           borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         ),
@@ -1034,17 +1177,22 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
 
   Widget _buildDetailRow(String label, String value) {
     return Padding(
-      padding:
-          const EdgeInsets.symmetric(vertical: BauhausDesign.space1),
+      padding: const EdgeInsets.symmetric(vertical: BauhausDesign.space1),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style: BauhausDesign.getTextTheme(context).bodyMedium
-                  ?.copyWith(color: BauhausDesign.textMuted)),
-          Text(value,
-              style: BauhausDesign.getTextTheme(context).bodyMedium
-                  ?.copyWith(fontWeight: FontWeight.w600)),
+          Text(
+            label,
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+          ),
+          Text(
+            value,
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+          ),
         ],
       ),
     );

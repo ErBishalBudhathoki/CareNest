@@ -14,11 +14,7 @@ class FamilyManagementView extends ConsumerStatefulWidget {
   final String? clientId;
   final String? clientName;
 
-  const FamilyManagementView({
-    super.key,
-    this.clientId,
-    this.clientName,
-  });
+  const FamilyManagementView({super.key, this.clientId, this.clientName});
 
   @override
   ConsumerState<FamilyManagementView> createState() =>
@@ -28,18 +24,15 @@ class FamilyManagementView extends ConsumerStatefulWidget {
 class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
   final Set<String> _activeMemberActions = <String>{};
 
-  DropdownMenuItem<String> _buildDropdownOption(
-    String value,
-    String label,
-  ) {
+  DropdownMenuItem<String> _buildDropdownOption(String value, String label) {
     return DropdownMenuItem(
       value: value,
       child: Text(
         label,
         style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-              color: BauhausDesign.textDark,
-              fontWeight: FontWeight.w600,
-            ),
+          color: BauhausDesign.textDark,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -120,9 +113,11 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
     return relationship
         .trim()
         .split(RegExp(r'[\s_-]+'))
-        .map((part) => part.isEmpty
-            ? part
-            : '${part[0].toUpperCase()}${part.substring(1).toLowerCase()}')
+        .map(
+          (part) => part.isEmpty
+              ? part
+              : '${part[0].toUpperCase()}${part.substring(1).toLowerCase()}',
+        )
         .join(' ');
   }
 
@@ -185,8 +180,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
   }
 
   Future<String> _resolveActorEmail() async {
-    final currentUser =
-        await ref.read(currentUserProvider.future).catchError((_) {
+    final currentUser = await ref.read(currentUserProvider.future).catchError((
+      _,
+    ) {
       return null;
     });
 
@@ -211,23 +207,18 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
     );
   }
 
-  Widget _buildNoticeBanner(
-    String message, {
-    bool isError = false,
-  }) {
+  Widget _buildNoticeBanner(String message, {bool isError = false}) {
     final accent = isError ? BauhausDesign.error : BauhausDesign.success;
-    final background =
-        isError ? const Color(0xFFFFE1E1) : const Color(0xFFE4F7E8);
+    final background = isError
+        ? const Color(0xFFFFE1E1)
+        : const Color(0xFFE4F7E8);
     final label = isError ? 'ERROR' : 'SUCCESS';
 
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         color: background,
-        border: Border.all(
-          color: BauhausDesign.textDark,
-          width: 2,
-        ),
+        border: Border.all(color: BauhausDesign.textDark, width: 2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,10 +232,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
             decoration: BoxDecoration(
               color: accent,
               border: Border(
-                bottom: BorderSide(
-                  color: BauhausDesign.textDark,
-                  width: 2,
-                ),
+                bottom: BorderSide(color: BauhausDesign.textDark, width: 2),
               ),
             ),
             child: Row(
@@ -259,12 +247,12 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                 const SizedBox(width: BauhausDesign.space2),
                 Text(
                   label,
-                  style:
-                      BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 0.8,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelLarge
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.8,
+                      ),
                 ),
               ],
             ),
@@ -274,9 +262,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
             child: Text(
               message,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],
@@ -336,10 +324,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
       ),
       child: Text(
         label,
-        style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-              color: foreground,
-              fontWeight: FontWeight.w700,
-            ),
+        style: BauhausDesign.getTextTheme(
+          context,
+        ).labelMedium?.copyWith(color: foreground, fontWeight: FontWeight.w700),
       ),
     );
   }
@@ -364,10 +351,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
       ),
       child: Text(
         label,
-        style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w700,
-            ),
+        style: BauhausDesign.getTextTheme(
+          context,
+        ).labelSmall?.copyWith(color: color, fontWeight: FontWeight.w700),
       ),
     );
   }
@@ -407,8 +393,10 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
         builder: (dialogContext, setDialogState) {
           return Dialog(
             backgroundColor: Colors.transparent,
-            insetPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            insetPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 20,
+            ),
             child: Container(
               constraints: const BoxConstraints(maxWidth: 640),
               decoration: BoxDecoration(
@@ -427,15 +415,16 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                     children: [
                       Text(
                         'INVITE FAMILY MEMBER',
-                        style: BauhausDesign.getTextTheme(dialogContext)
-                            .headlineMedium,
+                        style: BauhausDesign.getTextTheme(
+                          dialogContext,
+                        ).headlineMedium,
                       ),
                       const SizedBox(height: BauhausDesign.space2),
                       Text(
                         'Send a real account setup email so they can activate access with their own password.',
-                        style: BauhausDesign.getTextTheme(dialogContext)
-                            .bodyMedium
-                            ?.copyWith(color: BauhausDesign.textMuted),
+                        style: BauhausDesign.getTextTheme(
+                          dialogContext,
+                        ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                       ),
                       const SizedBox(height: BauhausDesign.space5),
                       BauhausTextField(
@@ -444,8 +433,8 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                         hintText: 'Enter family member name',
                         validator: (value) =>
                             (value == null || value.trim().isEmpty)
-                                ? 'Name is required'
-                                : null,
+                            ? 'Name is required'
+                            : null,
                       ),
                       const SizedBox(height: BauhausDesign.space4),
                       BauhausTextField(
@@ -476,7 +465,8 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                         ],
                         onChanged: (value) {
                           setDialogState(
-                              () => selectedRelationship = value ?? 'family');
+                            () => selectedRelationship = value ?? 'family',
+                          );
                         },
                       ),
                       const SizedBox(height: BauhausDesign.space4),
@@ -491,8 +481,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                         onChanged: (value) {
                           setDialogState(() {
                             selectedRole = value ?? 'family';
-                            draftPermissions =
-                                _permissionsForRole(selectedRole);
+                            draftPermissions = _permissionsForRole(
+                              selectedRole,
+                            );
                           });
                         },
                       ),
@@ -511,7 +502,8 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                         permissions: draftPermissions,
                         onChanged: (nextPermissions) {
                           setDialogState(
-                              () => draftPermissions = nextPermissions);
+                            () => draftPermissions = nextPermissions,
+                          );
                         },
                       ),
                       if (dialogError != null) ...[
@@ -522,8 +514,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                       LayoutBuilder(
                         builder: (context, constraints) {
                           final isCompact = constraints.maxWidth < 420;
-                          final buttonWidth =
-                              isCompact ? double.infinity : 168.0;
+                          final buttonWidth = isCompact
+                              ? double.infinity
+                              : 168.0;
 
                           final cancelButton = SizedBox(
                             width: buttonWidth,
@@ -535,8 +528,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                               isSmall: true,
                               onPressed: isSubmitting
                                   ? null
-                                  : () =>
-                                  Navigator.of(dialogContext).pop(),
+                                  : () => Navigator.of(dialogContext).pop(),
                             ),
                           );
 
@@ -544,8 +536,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                             width: buttonWidth,
                             child: BauhausActionButton(
                               text: isSubmitting ? 'Sending...' : 'Send Invite',
-                              icon:
-                                  isSubmitting ? null : Icons.send_rounded,
+                              icon: isSubmitting ? null : Icons.send_rounded,
                               variant: BauhausActionVariant.warning,
                               isFullWidth: true,
                               isSmall: true,
@@ -566,8 +557,10 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                                       final actorEmail =
                                           await _resolveActorEmail();
                                       await ref
-                                          .read(familyAccessViewModelProvider
-                                              .notifier)
+                                          .read(
+                                            familyAccessViewModelProvider
+                                                .notifier,
+                                          )
                                           .inviteFamilyMember(
                                             clientId: clientId,
                                             invitedBy: actorEmail,
@@ -578,8 +571,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                                             permissions: draftPermissions,
                                           );
 
-                                      final updatedState = ref
-                                          .read(familyAccessViewModelProvider);
+                                      final updatedState = ref.read(
+                                        familyAccessViewModelProvider,
+                                      );
                                       if (updatedState.error != null) {
                                         if (!mounted) return;
                                         setDialogState(() {
@@ -642,9 +636,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
         Text(
           label,
           style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-                color: BauhausDesign.textDark,
-                fontWeight: FontWeight.w600,
-              ),
+            color: BauhausDesign.textDark,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: BauhausDesign.space1),
         DropdownButtonFormField<String>(
@@ -678,9 +672,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
               child: Text(
                 label,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                      color: BauhausDesign.textDark,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
             const SizedBox(width: BauhausDesign.space3),
@@ -699,44 +693,32 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
         tile(
           'View appointments',
           permissions.viewAppointments,
-          permissions.copyWith(
-            viewAppointments: !permissions.viewAppointments,
-          ),
+          permissions.copyWith(viewAppointments: !permissions.viewAppointments),
         ),
         tile(
           'View documents',
           permissions.viewDocuments,
-          permissions.copyWith(
-            viewDocuments: !permissions.viewDocuments,
-          ),
+          permissions.copyWith(viewDocuments: !permissions.viewDocuments),
         ),
         tile(
           'View invoices',
           permissions.viewInvoices,
-          permissions.copyWith(
-            viewInvoices: !permissions.viewInvoices,
-          ),
+          permissions.copyWith(viewInvoices: !permissions.viewInvoices),
         ),
         tile(
           'View messages',
           permissions.viewMessages,
-          permissions.copyWith(
-            viewMessages: !permissions.viewMessages,
-          ),
+          permissions.copyWith(viewMessages: !permissions.viewMessages),
         ),
         tile(
           'Send messages',
           permissions.sendMessages,
-          permissions.copyWith(
-            sendMessages: !permissions.sendMessages,
-          ),
+          permissions.copyWith(sendMessages: !permissions.sendMessages),
         ),
         tile(
           'View live location',
           permissions.viewLocation,
-          permissions.copyWith(
-            viewLocation: !permissions.viewLocation,
-          ),
+          permissions.copyWith(viewLocation: !permissions.viewLocation),
         ),
         tile(
           'View service history',
@@ -748,16 +730,12 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
         tile(
           'Approve services',
           permissions.approveServices,
-          permissions.copyWith(
-            approveServices: !permissions.approveServices,
-          ),
+          permissions.copyWith(approveServices: !permissions.approveServices),
         ),
         tile(
           'Manage family access',
           permissions.manageFamily,
-          permissions.copyWith(
-            manageFamily: !permissions.manageFamily,
-          ),
+          permissions.copyWith(manageFamily: !permissions.manageFamily),
         ),
         tile(
           'Receive notifications',
@@ -784,8 +762,10 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
         builder: (dialogContext, setDialogState) {
           return Dialog(
             backgroundColor: Colors.transparent,
-            insetPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            insetPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 20,
+            ),
             child: Container(
               constraints: const BoxConstraints(maxWidth: 640),
               decoration: BoxDecoration(
@@ -801,15 +781,16 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                 children: [
                   Text(
                     'MANAGE PERMISSIONS',
-                    style: BauhausDesign.getTextTheme(dialogContext)
-                        .headlineMedium,
+                    style: BauhausDesign.getTextTheme(
+                      dialogContext,
+                    ).headlineMedium,
                   ),
                   const SizedBox(height: BauhausDesign.space2),
                   Text(
                     '${member.name} can only do what is explicitly enabled here.',
-                    style: BauhausDesign.getTextTheme(dialogContext)
-                        .bodyMedium
-                        ?.copyWith(color: BauhausDesign.textMuted),
+                    style: BauhausDesign.getTextTheme(
+                      dialogContext,
+                    ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                   ),
                   const SizedBox(height: BauhausDesign.space5),
                   Flexible(
@@ -818,7 +799,8 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                         permissions: draftPermissions,
                         onChanged: (nextPermissions) {
                           setDialogState(
-                              () => draftPermissions = nextPermissions);
+                            () => draftPermissions = nextPermissions,
+                          );
                         },
                       ),
                     ),
@@ -847,7 +829,8 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                                 final actorEmail = await _resolveActorEmail();
                                 await ref
                                     .read(
-                                        familyAccessViewModelProvider.notifier)
+                                      familyAccessViewModelProvider.notifier,
+                                    )
                                     .updatePermissions(
                                       memberId: member.id,
                                       clientId: clientId,
@@ -855,8 +838,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                                       permissions: draftPermissions,
                                     );
 
-                                final updatedState =
-                                    ref.read(familyAccessViewModelProvider);
+                                final updatedState = ref.read(
+                                  familyAccessViewModelProvider,
+                                );
                                 if (updatedState.error != null) {
                                   if (!mounted) return;
                                   setDialogState(() {
@@ -869,7 +853,8 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                                 if (!mounted) return;
                                 Navigator.of(dialogContext).pop();
                                 _showSnackBar(
-                                    'Permissions updated for ${member.name}');
+                                  'Permissions updated for ${member.name}',
+                                );
                               },
                       );
 
@@ -913,7 +898,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
   }
 
   Future<void> _confirmStatusChange(
-      FamilyMember member, String nextStatus) async {
+    FamilyMember member,
+    String nextStatus,
+  ) async {
     final clientId = _resolvedClientId;
     if (clientId == null) return;
 
@@ -926,8 +913,10 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
       builder: (dialogContext) => StatefulBuilder(
         builder: (dialogContext, setDialogState) => Dialog(
           backgroundColor: Colors.transparent,
-          insetPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 20,
+          ),
           child: Container(
             constraints: const BoxConstraints(maxWidth: 560),
             decoration: BoxDecoration(
@@ -943,17 +932,18 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
               children: [
                 Text(
                   isDeactivate ? 'DEACTIVATE ACCESS' : 'REACTIVATE ACCESS',
-                  style: BauhausDesign.getTextTheme(dialogContext)
-                      .headlineMedium,
+                  style: BauhausDesign.getTextTheme(
+                    dialogContext,
+                  ).headlineMedium,
                 ),
                 const SizedBox(height: BauhausDesign.space2),
                 Text(
                   isDeactivate
                       ? 'This will immediately stop ${member.name} from using their family access account.'
                       : 'This will re-enable ${member.name}\'s family access account.',
-                  style: BauhausDesign.getTextTheme(dialogContext)
-                      .bodyMedium
-                      ?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(
+                    dialogContext,
+                  ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                 ),
                 if (dialogError != null) ...[
                   const SizedBox(height: BauhausDesign.space4),
@@ -965,14 +955,14 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                     final confirmButton = BauhausActionButton(
                       text: isSubmitting
                           ? (isDeactivate
-                              ? 'Deactivating...'
-                              : 'Reactivating...')
+                                ? 'Deactivating...'
+                                : 'Reactivating...')
                           : (isDeactivate ? 'Deactivate' : 'Reactivate'),
                       icon: isSubmitting
                           ? null
                           : (isDeactivate
-                              ? Icons.block_rounded
-                              : Icons.restart_alt_rounded),
+                                ? Icons.block_rounded
+                                : Icons.restart_alt_rounded),
                       variant: isDeactivate
                           ? BauhausActionVariant.error
                           : BauhausActionVariant.success,
@@ -995,8 +985,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                                     updatedBy: actorEmail,
                                   );
 
-                              final updatedState =
-                                  ref.read(familyAccessViewModelProvider);
+                              final updatedState = ref.read(
+                                familyAccessViewModelProvider,
+                              );
                               if (updatedState.error != null) {
                                 if (!mounted) return;
                                 setDialogState(() {
@@ -1062,7 +1053,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
     _setActionInProgress(actionKey, true);
     try {
       final actorEmail = await _resolveActorEmail();
-      await ref.read(familyAccessViewModelProvider.notifier).inviteFamilyMember(
+      await ref
+          .read(familyAccessViewModelProvider.notifier)
+          .inviteFamilyMember(
             clientId: clientId,
             invitedBy: actorEmail,
             email: member.email,
@@ -1086,12 +1079,15 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
   }
 
   Widget _buildHeroCard(FamilyAccessState state, bool canManageMembers) {
-    final activeCount =
-        state.members.where((member) => member.status == 'active').length;
-    final pendingCount =
-        state.members.where((member) => member.status == 'pending').length;
-    final inactiveCount =
-        state.members.where((member) => member.status == 'inactive').length;
+    final activeCount = state.members
+        .where((member) => member.status == 'active')
+        .length;
+    final pendingCount = state.members
+        .where((member) => member.status == 'pending')
+        .length;
+    final inactiveCount = state.members
+        .where((member) => member.status == 'inactive')
+        .length;
 
     return BauhausCard(
       child: Column(
@@ -1126,11 +1122,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                     const SizedBox(height: BauhausDesign.space1),
                     Text(
                       'Every invite, permission change, activation, deactivation, and reactivation is stored in MongoDB and protected by authenticated access rules.',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
-                          ?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                     ),
                   ],
                 ),
@@ -1145,7 +1139,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
               _buildPermissionChip('Active $activeCount', true),
               _buildPermissionChip('Pending $pendingCount', pendingCount > 0),
               _buildPermissionChip(
-                  'Inactive $inactiveCount', inactiveCount > 0),
+                'Inactive $inactiveCount',
+                inactiveCount > 0,
+              ),
               _buildPermissionChip(
                 canManageMembers ? 'Manage Enabled' : 'View Only',
                 canManageMembers,
@@ -1157,8 +1153,10 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
     );
   }
 
-  Widget _buildMemberCard(FamilyMember member,
-      {required bool canManageMembers}) {
+  Widget _buildMemberCard(
+    FamilyMember member, {
+    required bool canManageMembers,
+  }) {
     final isInactive = member.status == 'inactive';
     final isPending = member.status == 'pending';
     final statusTone = isInactive
@@ -1180,13 +1178,8 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
             ),
             decoration: BoxDecoration(
               color: statusTone,
-              border: Border.all(
-                color: BauhausDesign.textDark,
-                width: 2,
-              ),
-              boxShadow: const [
-                BauhausDesign.shadowHard,
-              ],
+              border: Border.all(color: BauhausDesign.textDark, width: 2),
+              boxShadow: const [BauhausDesign.shadowHard],
             ),
             child: Row(
               children: [
@@ -1194,8 +1187,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                   isPending
                       ? 'INVITE PENDING'
                       : (isInactive ? 'ACCESS PAUSED' : 'ACCESS ACTIVE'),
-                  style: BauhausDesign.getTextTheme(context)
-                      .labelLarge
+                  style: BauhausDesign.getTextTheme(context).labelLarge
                       ?.copyWith(
                         color: BauhausDesign.textDark,
                         fontWeight: FontWeight.w900,
@@ -1221,8 +1213,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                 alignment: Alignment.center,
                 child: Text(
                   member.name.isEmpty ? '?' : member.name[0].toUpperCase(),
-                  style: BauhausDesign.getTextTheme(context)
-                      .headlineMedium
+                  style: BauhausDesign.getTextTheme(context).headlineMedium
                       ?.copyWith(
                         color: statusTone,
                         fontWeight: FontWeight.w900,
@@ -1236,8 +1227,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                   children: [
                     Text(
                       member.name,
-                      style: BauhausDesign.getTextTheme(context)
-                          .titleLarge
+                      style: BauhausDesign.getTextTheme(context).titleLarge
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w900,
@@ -1246,8 +1236,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                     const SizedBox(height: BauhausDesign.space1),
                     Text(
                       '${_relationshipLabel(member.relationship)} • ${_roleLabel(member.role)}',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
                             color: BauhausDesign.textMuted,
                             fontWeight: FontWeight.w700,
@@ -1269,10 +1258,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildInfoRow(
-                  icon: Icons.email_outlined,
-                  text: member.email,
-                ),
+                _buildInfoRow(icon: Icons.email_outlined, text: member.email),
                 if (member.updatedAt != null) ...[
                   const SizedBox(height: BauhausDesign.space2),
                   _buildInfoRow(
@@ -1288,10 +1274,10 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
           Text(
             'PERMISSION MATRIX',
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 0.8,
-                ),
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.8,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space3),
           Container(
@@ -1332,13 +1318,16 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                           : (constraints.maxWidth - BauhausDesign.space3) / 2,
                       child: BauhausActionButton(
                         text: isResending ? 'Resending...' : 'Resend Invite',
-                        icon: isResending ? null : Icons.mark_email_read_rounded,
+                        icon: isResending
+                            ? null
+                            : Icons.mark_email_read_rounded,
                         variant: BauhausActionVariant.warning,
                         textColor: BauhausDesign.textDark,
                         isSmall: true,
                         isLoading: isResending,
-                        onPressed:
-                            isResending ? null : () => _resendInvite(member),
+                        onPressed: isResending
+                            ? null
+                            : () => _resendInvite(member),
                       ),
                     ),
                   SizedBox(
@@ -1349,8 +1338,8 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                       text: isInactive
                           ? 'Reactivate'
                           : (isPending
-                              ? 'Deactivate Invite'
-                              : 'Deactivate Access'),
+                                ? 'Deactivate Invite'
+                                : 'Deactivate Access'),
                       icon: isInactive
                           ? Icons.restart_alt_rounded
                           : Icons.block_rounded,
@@ -1413,16 +1402,16 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
           children: [
             Text(
               'Family Access',
-              style: BauhausDesign.getTextTheme(context)
-                  .titleLarge
-                  ?.copyWith(color: BauhausDesign.textDark),
+              style: BauhausDesign.getTextTheme(
+                context,
+              ).titleLarge?.copyWith(color: BauhausDesign.textDark),
             ),
             if ((widget.clientName ?? '').trim().isNotEmpty)
               Text(
                 widget.clientName!.trim(),
-                style: BauhausDesign.getTextTheme(context)
-                    .bodySmall
-                    ?.copyWith(color: BauhausDesign.textMuted),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
               ),
           ],
         ),
@@ -1478,8 +1467,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                             ? 'Invite a family member to give them controlled access to appointments, messages, approvals, and live updates.'
                             : 'No family members have access for this client yet.',
                         icon: Icons.family_restroom_rounded,
-                        actionLabel:
-                            canManageMembers ? 'Invite Family Member' : null,
+                        actionLabel: canManageMembers
+                            ? 'Invite Family Member'
+                            : null,
                         onAction: canManageMembers ? _showInviteDialog : null,
                       ),
                     )

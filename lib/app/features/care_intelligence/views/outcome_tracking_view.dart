@@ -27,10 +27,9 @@ class _OutcomeTrackingViewState extends ConsumerState<OutcomeTrackingView> {
     const clientId = 'placeholder_client_id';
 
     if (orgId != null) {
-      ref.read(intelligenceViewModelProvider.notifier).predictCareNeeds(
-            clientId: clientId,
-            organizationId: orgId,
-          );
+      ref
+          .read(intelligenceViewModelProvider.notifier)
+          .predictCareNeeds(clientId: clientId, organizationId: orgId);
     }
   }
 
@@ -46,58 +45,58 @@ class _OutcomeTrackingViewState extends ConsumerState<OutcomeTrackingView> {
         title: Text(
           'OUTCOME INSIGHTS',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-                fontWeight: FontWeight.bold,
-              ),
+            color: BauhausDesign.surfaceWhite,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         elevation: 0,
       ),
       body: state.isLoading
           ? const Center(child: BauhausLoadingState())
           : state.error != null
-              ? Center(
-                  child: BauhausEmptyState(
-                    title: 'Error',
-                    message: state.error!,
-                    icon: Icons.error_outline,
-                    onAction: _loadData,
-                    actionLabel: 'RETRY',
+          ? Center(
+              child: BauhausEmptyState(
+                title: 'Error',
+                message: state.error!,
+                icon: Icons.error_outline,
+                onAction: _loadData,
+                actionLabel: 'RETRY',
+              ),
+            )
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  BauhausSectionHeader(title: 'OUTCOME PROGRESS'),
+                  const SizedBox(height: 16),
+                  _buildOutcomeSummaryCard(state),
+                  const SizedBox(height: 32),
+                  BauhausSectionHeader(title: 'KEY MILESTONES'),
+                  const SizedBox(height: 16),
+                  _buildMilestoneCard(
+                    title: 'MOBILITY IMPROVEMENT',
+                    progress: 0.75,
+                    status: 'On Track',
+                    color: BauhausDesign.success,
                   ),
-                )
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BauhausSectionHeader(title: 'OUTCOME PROGRESS'),
-                      const SizedBox(height: 16),
-                      _buildOutcomeSummaryCard(state),
-                      const SizedBox(height: 32),
-                      BauhausSectionHeader(title: 'KEY MILESTONES'),
-                      const SizedBox(height: 16),
-                      _buildMilestoneCard(
-                        title: 'MOBILITY IMPROVEMENT',
-                        progress: 0.75,
-                        status: 'On Track',
-                        color: BauhausDesign.success,
-                      ),
-                      const SizedBox(height: 16),
-                      _buildMilestoneCard(
-                        title: 'SOCIAL ENGAGEMENT',
-                        progress: 0.40,
-                        status: 'Action Needed',
-                        color: BauhausDesign.warning,
-                      ),
-                      const SizedBox(height: 16),
-                      _buildMilestoneCard(
-                        title: 'INDEPENDENT LIVING',
-                        progress: 0.90,
-                        status: 'Exceeding',
-                        color: BauhausDesign.primary,
-                      ),
-                    ],
+                  const SizedBox(height: 16),
+                  _buildMilestoneCard(
+                    title: 'SOCIAL ENGAGEMENT',
+                    progress: 0.40,
+                    status: 'Action Needed',
+                    color: BauhausDesign.warning,
                   ),
-                ),
+                  const SizedBox(height: 16),
+                  _buildMilestoneCard(
+                    title: 'INDEPENDENT LIVING',
+                    progress: 0.90,
+                    status: 'Exceeding',
+                    color: BauhausDesign.primary,
+                  ),
+                ],
+              ),
+            ),
     );
   }
 
@@ -110,15 +109,17 @@ class _OutcomeTrackingViewState extends ConsumerState<OutcomeTrackingView> {
           children: [
             Row(
               children: [
-                const Icon(Icons.auto_graph_outlined,
-                    color: BauhausDesign.secondary, size: 28),
+                const Icon(
+                  Icons.auto_graph_outlined,
+                  color: BauhausDesign.secondary,
+                  size: 28,
+                ),
                 const SizedBox(width: 12),
                 Text(
                   'OVERALL PROGRESS: 68%',
-                  style:
-                      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                            fontWeight: FontWeight.w900,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).titleMedium?.copyWith(fontWeight: FontWeight.w900),
                 ),
               ],
             ),
@@ -155,7 +156,10 @@ class _OutcomeTrackingViewState extends ConsumerState<OutcomeTrackingView> {
                 Text(
                   status.toUpperCase(),
                   style: TextStyle(
-                      color: color, fontSize: 10, fontWeight: FontWeight.bold),
+                    color: color,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -173,7 +177,9 @@ class _OutcomeTrackingViewState extends ConsumerState<OutcomeTrackingView> {
             Text(
               '${(progress * 100).toInt()}% completed',
               style: TextStyle(
-                  fontSize: 10, color: BauhausDesign.textDark.withOpacity(0.6)),
+                fontSize: 10,
+                color: BauhausDesign.textDark.withOpacity(0.6),
+              ),
             ),
           ],
         ),

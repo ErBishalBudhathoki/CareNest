@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/features/care_intelligence/models/care_intelligence_models.dart' hide Provider;
+import 'package:carenest/app/features/care_intelligence/models/care_intelligence_models.dart'
+    hide Provider;
 import 'package:carenest/app/features/care_intelligence/repositories/care_intelligence_repository.dart';
 import 'package:carenest/app/features/care_intelligence/viewmodels/intelligence_viewmodel.dart';
 
@@ -36,9 +37,11 @@ class CarePlanState {
       isLoading: isLoading ?? this.isLoading,
       carePlan: carePlan ?? this.carePlan,
       goals: goals ?? this.goals,
-      serviceRecommendations: serviceRecommendations ?? this.serviceRecommendations,
+      serviceRecommendations:
+          serviceRecommendations ?? this.serviceRecommendations,
       progress: progress ?? this.progress,
-      evidenceBasedRecommendations: evidenceBasedRecommendations ?? this.evidenceBasedRecommendations,
+      evidenceBasedRecommendations:
+          evidenceBasedRecommendations ?? this.evidenceBasedRecommendations,
       error: error,
     );
   }
@@ -48,11 +51,10 @@ class CarePlanState {
 class CarePlanViewModel extends Notifier<CarePlanState> {
   late final CareIntelligenceRepository _repository;
 
-  
   @override
   CarePlanState build() {
     final repository = ref.watch(careIntelligenceRepositoryProvider);
-    
+
     return CarePlanState();
   }
 
@@ -83,10 +85,7 @@ class CarePlanViewModel extends Notifier<CarePlanState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -117,10 +116,7 @@ class CarePlanViewModel extends Notifier<CarePlanState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -140,7 +136,8 @@ class CarePlanViewModel extends Notifier<CarePlanState> {
       if (result['success'] == true) {
         state = state.copyWith(
           isLoading: false,
-          serviceRecommendations: result['recommendations'] as List<ServiceRecommendation>,
+          serviceRecommendations:
+              result['recommendations'] as List<ServiceRecommendation>,
         );
       } else {
         state = state.copyWith(
@@ -149,10 +146,7 @@ class CarePlanViewModel extends Notifier<CarePlanState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -183,10 +177,7 @@ class CarePlanViewModel extends Notifier<CarePlanState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -217,10 +208,7 @@ class CarePlanViewModel extends Notifier<CarePlanState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -242,7 +230,8 @@ class CarePlanViewModel extends Notifier<CarePlanState> {
       if (result['success'] == true) {
         state = state.copyWith(
           isLoading: false,
-          evidenceBasedRecommendations: result['recommendations'] as Map<String, dynamic>?,
+          evidenceBasedRecommendations:
+              result['recommendations'] as Map<String, dynamic>?,
         );
       } else {
         state = state.copyWith(
@@ -251,10 +240,7 @@ class CarePlanViewModel extends Notifier<CarePlanState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -270,4 +256,5 @@ class CarePlanViewModel extends Notifier<CarePlanState> {
 }
 
 // Provider for CarePlanViewModel
-final carePlanViewModelProvider = NotifierProvider<CarePlanViewModel, CarePlanState>(CarePlanViewModel.new);
+final carePlanViewModelProvider =
+    NotifierProvider<CarePlanViewModel, CarePlanState>(CarePlanViewModel.new);

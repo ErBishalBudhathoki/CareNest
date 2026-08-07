@@ -20,7 +20,8 @@ abstract class TrainingModule with _$TrainingModule {
     @JsonKey(includeFromJson: false) TrainingProgress? userProgress,
   }) = _TrainingModule;
 
-  factory TrainingModule.fromJson(Map<String, dynamic> json) => _$TrainingModuleFromJson(json);
+  factory TrainingModule.fromJson(Map<String, dynamic> json) =>
+      _$TrainingModuleFromJson(json);
 }
 
 @freezed
@@ -34,5 +35,6 @@ abstract class TrainingProgress with _$TrainingProgress {
     DateTime? completedAt,
   }) = _TrainingProgress;
 
-  factory TrainingProgress.fromJson(Map<String, dynamic> json) => _$TrainingProgressFromJson(json);
+  factory TrainingProgress.fromJson(Map<String, dynamic> json) =>
+      _$TrainingProgressFromJson(json);
 }

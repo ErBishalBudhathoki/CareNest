@@ -53,8 +53,8 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
         final defaultRoleId = rolePermissions.containsKey(_selectedRoleId)
             ? _selectedRoleId
             : (roles.isNotEmpty
-                ? ((roles.first as Map)['id'] ?? 'admin').toString()
-                : 'admin');
+                  ? ((roles.first as Map)['id'] ?? 'admin').toString()
+                  : 'admin');
 
         setState(() {
           _roles = roles;
@@ -67,9 +67,7 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
         });
       } else {
         setState(() => _isLoading = false);
-        _showError(
-          AppLocalizations.of(context)!.requestFailed,
-        );
+        _showError(AppLocalizations.of(context)!.requestFailed);
       }
     } catch (_) {
       if (!mounted) return;
@@ -79,7 +77,10 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
   }
 
   Future<void> _updatePermission(
-      String roleId, String permission, bool isGranted) async {
+    String roleId,
+    String permission,
+    bool isGranted,
+  ) async {
     final current = List<String>.from(_rolePermissions[roleId] ?? <String>[]);
 
     if (isGranted) {
@@ -103,8 +104,9 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
       }
     } catch (_) {
       if (!mounted) return;
-      final reverted =
-          List<String>.from(_rolePermissions[roleId] ?? <String>[]);
+      final reverted = List<String>.from(
+        _rolePermissions[roleId] ?? <String>[],
+      );
       if (isGranted) {
         reverted.remove(permission);
       } else {
@@ -129,9 +131,9 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
         content: Text(
           message,
           style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.textDark,
-                fontWeight: FontWeight.w600,
-              ),
+            color: BauhausDesign.textDark,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );
@@ -158,14 +160,17 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
         ),
         child: SafeArea(
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
+            padding: const EdgeInsets.symmetric(
+              horizontal: BauhausDesign.space4,
+            ),
             child: Row(
               children: [
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.arrow_back,
-                      color: BauhausDesign.textDark),
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: BauhausDesign.textDark,
+                  ),
                 ),
                 const SizedBox(width: BauhausDesign.space2),
                 Expanded(
@@ -173,16 +178,18 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
                     AppLocalizations.of(context)!.roleManagementTitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: BauhausDesign.getTextTheme(context)
-                        .displaySmall
-                        ?.copyWith(color: BauhausDesign.textDark),
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).displaySmall?.copyWith(color: BauhausDesign.textDark),
                   ),
                 ),
                 IconButton(
                   tooltip: AppLocalizations.of(context)!.reloadAllTooltip,
                   onPressed: _fetchRoles,
-                  icon:
-                      const Icon(Icons.refresh, color: BauhausDesign.textDark),
+                  icon: const Icon(
+                    Icons.refresh,
+                    color: BauhausDesign.textDark,
+                  ),
                 ),
               ],
             ),
@@ -204,7 +211,10 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
         scrollDirection: Axis.horizontal,
         itemCount: _roles.length,
         separatorBuilder: (_, __) => const VerticalDivider(
-            width: 1, thickness: 1, color: BauhausDesign.neutral),
+          width: 1,
+          thickness: 1,
+          color: BauhausDesign.neutral,
+        ),
         itemBuilder: (context, index) {
           final role = _roles[index];
           final roleId = role['id']?.toString() ?? '';
@@ -212,24 +222,26 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
           final isSelected = roleId == _selectedRoleId;
 
           return Material(
-            color:
-                isSelected ? BauhausDesign.neutral : BauhausDesign.surfaceLight,
+            color: isSelected
+                ? BauhausDesign.neutral
+                : BauhausDesign.surfaceLight,
             child: InkWell(
               onTap: () => setState(() => _selectedRoleId = roleId),
               child: Container(
                 alignment: Alignment.center,
                 constraints: const BoxConstraints(minWidth: 120),
                 padding: const EdgeInsets.symmetric(
-                    horizontal: BauhausDesign.space4),
+                  horizontal: BauhausDesign.space4,
+                ),
                 child: Text(
                   roleName.toUpperCase(),
-                  style:
-                      BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                            color: isSelected
-                                ? BauhausDesign.surfaceLight
-                                : BauhausDesign.textDark,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  style: BauhausDesign.getTextTheme(context).labelLarge
+                      ?.copyWith(
+                        color: isSelected
+                            ? BauhausDesign.surfaceLight
+                            : BauhausDesign.textDark,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
               ),
             ),
@@ -252,16 +264,18 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
       ),
       child: Row(
         children: [
-          const Icon(Icons.admin_panel_settings,
-              color: BauhausDesign.secondary),
+          const Icon(
+            Icons.admin_panel_settings,
+            color: BauhausDesign.secondary,
+          ),
           const SizedBox(width: BauhausDesign.space3),
           Expanded(
             child: Text(
               'Role: ${_selectedRoleName()}',
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           Container(
@@ -270,16 +284,17 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
               vertical: BauhausDesign.space1,
             ),
             decoration: BoxDecoration(
-              color:
-                  isAdminRole ? BauhausDesign.warning : BauhausDesign.success,
+              color: isAdminRole
+                  ? BauhausDesign.warning
+                  : BauhausDesign.success,
               border: Border.all(color: BauhausDesign.neutral, width: 1),
             ),
             child: Text(
               isAdminRole ? 'LOCKED' : 'EDITABLE',
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w800,
-                  ),
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
         ],
@@ -293,9 +308,9 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
       return Center(
         child: Text(
           AppLocalizations.of(context)!.noData,
-          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.textMuted,
-              ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
         ),
       );
     }
@@ -314,8 +329,9 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
             color: BauhausDesign.surfaceLight,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
             border: Border.all(
-              color:
-                  isEnabled ? BauhausDesign.secondary : BauhausDesign.neutral,
+              color: isEnabled
+                  ? BauhausDesign.secondary
+                  : BauhausDesign.neutral,
               width: 2,
             ),
             boxShadow: const [BauhausDesign.shadowHardXs],
@@ -328,8 +344,7 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
                   children: [
                     Text(
                       permission,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w700,
@@ -340,11 +355,9 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
                       isEnabled
                           ? AppLocalizations.of(context)!.accessGranted
                           : AppLocalizations.of(context)!.accessDenied,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
-                          ?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                     ),
                   ],
                 ),

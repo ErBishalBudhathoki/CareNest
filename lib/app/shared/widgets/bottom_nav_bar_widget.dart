@@ -94,7 +94,8 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
       // Also get imageUrl from shared prefs if available, or we might need to fetch user data
       final sharedPrefs = SharedPreferencesUtils();
       await sharedPrefs.init();
-      final imageUrl = sharedPrefs.getString('profilePic') ??
+      final imageUrl =
+          sharedPrefs.getString('profilePic') ??
           sharedPrefs.getString('photoUrl');
 
       if (!mounted) return;
@@ -108,9 +109,7 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
   }
 
   List<Widget> _getScreens() {
-    final screens = <Widget>[
-      _buildHomeScreen(),
-    ];
+    final screens = <Widget>[_buildHomeScreen()];
 
     if (widget.role == UserRole.admin) {
       screens.add(AssignC2E());
@@ -157,10 +156,7 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
     final screens = _getScreens();
 
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: screens,
-      ),
+      body: IndexedStack(index: _selectedIndex, children: screens),
       bottomNavigationBar: _buildBottomBar(),
     );
   }
@@ -171,7 +167,9 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
         color: BauhausDesign.surfaceLight,
         border: Border(
           top: BorderSide(
-              color: BauhausDesign.neutral.withOpacity(0.2), width: 1),
+            color: BauhausDesign.neutral.withOpacity(0.2),
+            width: 1,
+          ),
         ),
       ),
       child: SafeArea(
@@ -190,30 +188,53 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
 
   List<Widget> _buildNavItems() {
     final items = <Widget>[
-      _buildNavItem(0, Icons.home, Icons.home_outlined, 'HOME',
-          BauhausDesign.primary, BauhausDesign.textLight),
+      _buildNavItem(
+        0,
+        Icons.home,
+        Icons.home_outlined,
+        'HOME',
+        BauhausDesign.primary,
+        BauhausDesign.textLight,
+      ),
     ];
 
     int indexOffset = 1;
     if (widget.role == UserRole.admin) {
-      items.add(_buildNavItem(1, Icons.how_to_reg, Icons.how_to_reg_outlined, 'ASSIGN',
-          BauhausDesign.accent, BauhausDesign.textDark));
+      items.add(
+        _buildNavItem(
+          1,
+          Icons.how_to_reg,
+          Icons.how_to_reg_outlined,
+          'ASSIGN',
+          BauhausDesign.accent,
+          BauhausDesign.textDark,
+        ),
+      );
       indexOffset = 2;
     }
 
-    items.add(_buildNavItem(
+    items.add(
+      _buildNavItem(
         indexOffset,
         Icons.settings,
         Icons.settings_outlined,
         'SETTINGS',
         BauhausDesign.neutral,
-        BauhausDesign.textLight));
+        BauhausDesign.textLight,
+      ),
+    );
 
     return items;
   }
 
-  Widget _buildNavItem(int index, IconData activeIcon, IconData inactiveIcon,
-      String label, Color activeBg, Color activeContent) {
+  Widget _buildNavItem(
+    int index,
+    IconData activeIcon,
+    IconData inactiveIcon,
+    String label,
+    Color activeBg,
+    Color activeContent,
+  ) {
     final isSelected = _selectedIndex == index;
 
     return GestureDetector(
@@ -226,7 +247,11 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
   }
 
   Widget _buildActiveItem(
-      IconData icon, String label, Color bgColor, Color contentColor) {
+    IconData icon,
+    String label,
+    Color bgColor,
+    Color contentColor,
+  ) {
     return Container(
       width: 72,
       padding: const EdgeInsets.symmetric(vertical: 6),

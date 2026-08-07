@@ -13,10 +13,7 @@ class CardLabelTextWidget extends StatelessWidget {
     final isSmallScreen = screenSize.height < 700;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: 8.0,
-        horizontal: 8.0,
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
       margin: const EdgeInsets.only(bottom: 8.0),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.1),
@@ -44,26 +41,34 @@ class CardLabelTextWidget extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: (isSmallScreen
-                          ? const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)
-                          : const TextStyle(fontSize: 14, fontWeight: FontWeight.w500))
-                      .copyWith(
-                    color: const Color(0xFF667EEA),
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.3,
-                  ),
+                  style:
+                      (isSmallScreen
+                              ? const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                )
+                              : const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ))
+                          .copyWith(
+                            color: const Color(0xFF667EEA),
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.3,
+                          ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   text,
-                  style: (isSmallScreen
-                          ? const TextStyle(fontSize: 14)
-                          : const TextStyle(fontSize: 16))
-                      .copyWith(
-                    color: const Color(0xFF1F2937),
-                    fontWeight: FontWeight.w500,
-                    height: 1.3,
-                  ),
+                  style:
+                      (isSmallScreen
+                              ? const TextStyle(fontSize: 14)
+                              : const TextStyle(fontSize: 16))
+                          .copyWith(
+                            color: const Color(0xFF1F2937),
+                            fontWeight: FontWeight.w500,
+                            height: 1.3,
+                          ),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                 ),

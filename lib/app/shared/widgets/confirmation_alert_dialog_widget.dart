@@ -39,21 +39,13 @@ class _ConfirmationAlertDialogState extends State<ConfirmationAlertDialog>
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.9,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.9, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
+    );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
 
     _animationController.forward();
   }
@@ -113,8 +105,7 @@ class _ConfirmationAlertDialogState extends State<ConfirmationAlertDialog>
                     // Title
                     Text(
                       widget.title,
-                      style: BauhausDesign.getTextTheme(context)
-                          .headlineSmall
+                      style: BauhausDesign.getTextTheme(context).headlineSmall
                           ?.copyWith(
                             color: BauhausDesign.textDark,
                             fontWeight: FontWeight.w700,
@@ -126,8 +117,7 @@ class _ConfirmationAlertDialogState extends State<ConfirmationAlertDialog>
                     // Content
                     Text(
                       widget.content,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyLarge
+                      style: BauhausDesign.getTextTheme(context).bodyLarge
                           ?.copyWith(
                             color: BauhausDesign.textDark, // Requested textDark
                             height: 1.5,
@@ -155,12 +145,12 @@ class _ConfirmationAlertDialogState extends State<ConfirmationAlertDialog>
                             text: widget.confirmText ?? 'Confirm',
                             onPressed: widget.confirmAction,
                             backgroundColor: widget.confirmColor,
-                            // If confirmColor is provided, we use it as background, 
-                            // otherwise variant defaults to primary in the widget logic 
+                            // If confirmColor is provided, we use it as background,
+                            // otherwise variant defaults to primary in the widget logic
                             // if we don't pass backgroundColor, but passing it explicitly overrides.
                             // If widget.confirmColor is null, let's stick to primary variant logic inside BauhausActionButton
                             // by not passing it if null, but here we can pass it.
-                            variant: BauhausActionVariant.primary, 
+                            variant: BauhausActionVariant.primary,
                             isFullWidth: true,
                           ),
                         ),

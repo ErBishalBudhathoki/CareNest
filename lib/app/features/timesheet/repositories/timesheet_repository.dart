@@ -7,7 +7,8 @@ import 'package:flutter/foundation.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 
 final timesheetRepositoryProvider = Provider(
-    (ref) => TimesheetRepository(ref.read(app_providers.apiMethodProvider)));
+  (ref) => TimesheetRepository(ref.read(app_providers.apiMethodProvider)),
+);
 
 class TimesheetRepository {
   final ApiMethod _apiMethod;

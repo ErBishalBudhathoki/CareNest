@@ -20,7 +20,8 @@ class AdminOnboardingDetailView extends ConsumerWidget {
       return const Scaffold(body: Center(child: Text('No record selected')));
     }
 
-    final name = '${user?['firstName'] ?? ''} ${user?['lastName'] ?? ''}'.trim();
+    final name = '${user?['firstName'] ?? ''} ${user?['lastName'] ?? ''}'
+        .trim();
 
     return Scaffold(
       appBar: AppBar(title: Text('Review: $name')),
@@ -31,15 +32,21 @@ class AdminOnboardingDetailView extends ConsumerWidget {
           children: [
             _buildStatusCard(record.status),
             const SizedBox(height: 24),
-            const Text('Documents', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text(
+              'Documents',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 16),
             if (state.selectedDocuments.isEmpty)
               const Text('No documents uploaded.')
             else
-              ...state.selectedDocuments.map((doc) => _buildDocumentTile(context, ref, doc)),
-            
+              ...state.selectedDocuments.map(
+                (doc) => _buildDocumentTile(context, ref, doc),
+              ),
+
             const SizedBox(height: 32),
-            if (record.status == 'submitted' || record.status == 'review_pending')
+            if (record.status == 'submitted' ||
+                record.status == 'review_pending')
               ElevatedButton(
                 onPressed: () => _finalize(context, ref, record.userId),
                 style: ElevatedButton.styleFrom(
@@ -58,12 +65,19 @@ class AdminOnboardingDetailView extends ConsumerWidget {
   Widget _buildStatusCard(String status) {
     Color color;
     switch (status) {
-      case 'completed': color = Colors.green; break;
-      case 'submitted': color = Colors.orange; break;
-      case 'rejected': color = Colors.red; break;
-      default: color = Colors.blue;
+      case 'completed':
+        color = Colors.green;
+        break;
+      case 'submitted':
+        color = Colors.orange;
+        break;
+      case 'rejected':
+        color = Colors.red;
+        break;
+      default:
+        color = Colors.blue;
     }
-    
+
     return Card(
       color: color.withOpacity(0.1),
       child: Padding(
@@ -72,20 +86,29 @@ class AdminOnboardingDetailView extends ConsumerWidget {
           children: [
             Icon(Icons.info_outline, color: color),
             const SizedBox(width: 16),
-            Text('Status: ${status.toUpperCase()}', style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+            Text(
+              'Status: ${status.toUpperCase()}',
+              style: TextStyle(color: color, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDocumentTile(BuildContext context, WidgetRef ref, EmployeeDocument doc) {
+  Widget _buildDocumentTile(
+    BuildContext context,
+    WidgetRef ref,
+    EmployeeDocument doc,
+  ) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
         leading: const Icon(Icons.description),
         title: Text(doc.type.toUpperCase()),
-        subtitle: Text('Status: ${doc.status}\nNumber: ${doc.documentNumber ?? "N/A"}'),
+        subtitle: Text(
+          'Status: ${doc.status}\nNumber: ${doc.documentNumber ?? "N/A"}',
+        ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -99,27 +122,40 @@ class AdminOnboardingDetailView extends ConsumerWidget {
               onPressed: () => _verifyDoc(context, ref, doc.id!, 'rejected'),
               tooltip: 'Reject',
             ),
-             // Could add view button to open URL
+            // Could add view button to open URL
           ],
         ),
         onTap: () {
-           // Open document URL
+          // Open document URL
         },
       ),
     );
   }
 
-  void _verifyDoc(BuildContext context, WidgetRef ref, String docId, String status) async {
-    await ref.read(adminOnboardingViewModelProvider.notifier).verifyDocument(docId, status);
+  void _verifyDoc(
+    BuildContext context,
+    WidgetRef ref,
+    String docId,
+    String status,
+  ) async {
+    await ref
+        .read(adminOnboardingViewModelProvider.notifier)
+        .verifyDocument(docId, status);
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Document $status')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Document $status')));
     }
   }
 
   void _finalize(BuildContext context, WidgetRef ref, String userId) async {
-    await ref.read(adminOnboardingViewModelProvider.notifier).finalizeOnboarding(userId);
+    await ref
+        .read(adminOnboardingViewModelProvider.notifier)
+        .finalizeOnboarding(userId);
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Onboarding Finalized')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Onboarding Finalized')));
       Navigator.of(context).pop();
     }
   }

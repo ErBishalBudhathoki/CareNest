@@ -28,7 +28,7 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
     'Personal / Carer\'s Leave',
     'Long Service Leave',
     'Unpaid Leave',
-    'Compassionate Leave'
+    'Compassionate Leave',
   ];
 
   @override
@@ -42,16 +42,20 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedLeaveType == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please select a leave type')));
+        const SnackBar(content: Text('Please select a leave type')),
+      );
       return;
     }
     if (_selectedDateRange == null) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Please select dates')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please select dates')));
       return;
     }
 
-    final viewModel = ref.read(leaveViewModelProvider(widget.userEmail).notifier);
+    final viewModel = ref.read(
+      leaveViewModelProvider(widget.userEmail).notifier,
+    );
     final success = await viewModel.submitRequest(
       leaveType: _selectedLeaveType!,
       startDate: _selectedDateRange!.start,
@@ -63,18 +67,27 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
     if (mounted) {
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Leave request submitted')));
+          const SnackBar(content: Text('Leave request submitted')),
+        );
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(ref.read(leaveViewModelProvider(widget.userEmail)).errorMessage ?? 'Failed to submit')));
+          SnackBar(
+            content: Text(
+              ref.read(leaveViewModelProvider(widget.userEmail)).errorMessage ??
+                  'Failed to submit',
+            ),
+          ),
+        );
       }
     }
   }
 
   Future<void> _calculateHours() async {
     if (_selectedDateRange != null) {
-      final viewModel = ref.read(leaveViewModelProvider(widget.userEmail).notifier);
+      final viewModel = ref.read(
+        leaveViewModelProvider(widget.userEmail).notifier,
+      );
       final hours = await viewModel.calculateLeaveHours(
         _selectedDateRange!.start,
         _selectedDateRange!.end,
@@ -119,13 +132,17 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
               const SizedBox(height: BauhausDesign.space1),
               DropdownButtonFormField<String>(
                 value: _selectedLeaveType,
-                decoration: BauhausDesign.inputDecoration(AppLocalizations.of(context)!.selectLeaveTypeHint),
+                decoration: BauhausDesign.inputDecoration(
+                  AppLocalizations.of(context)!.selectLeaveTypeHint,
+                ),
                 dropdownColor: BauhausDesign.surfaceWhite,
                 items: _leaveTypes.map((type) {
                   return DropdownMenuItem(
                     value: type,
-                    child: Text(type,
-                        style: BauhausDesign.getTextTheme(context).bodyMedium),
+                    child: Text(
+                      type,
+                      style: BauhausDesign.getTextTheme(context).bodyMedium,
+                    ),
                   );
                 }).toList(),
                 onChanged: (val) => setState(() => _selectedLeaveType = val),
@@ -160,8 +177,10 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
                   }
                 },
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 16,
+                  ),
                   decoration: BoxDecoration(
                     color: BauhausDesign.surfaceWhite,
                     border: Border.all(color: BauhausDesign.neutral, width: 1),
@@ -174,16 +193,17 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
                         _selectedDateRange == null
                             ? AppLocalizations.of(context)!.selectDateRangeLabel
                             : "${DateFormat('dd/MM/yyyy').format(_selectedDateRange!.start)} - ${DateFormat('dd/MM/yyyy').format(_selectedDateRange!.end)}",
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyMedium
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
                             ?.copyWith(
                               color: _selectedDateRange == null
                                   ? BauhausDesign.textMuted
                                   : BauhausDesign.textDark,
                             ),
                       ),
-                      const Icon(Icons.calendar_today,
-                          color: BauhausDesign.textMuted),
+                      const Icon(
+                        Icons.calendar_today,
+                        color: BauhausDesign.textMuted,
+                      ),
                     ],
                   ),
                 ),
@@ -193,8 +213,9 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
                 controller: _totalHoursController,
                 label: AppLocalizations.of(context)!.totalHoursEstimatedLabel,
                 hintText: "0.00",
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 validator: (val) {
                   if (val == null || val.isEmpty)
                     return 'Please enter total hours';
@@ -231,9 +252,9 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
   Widget _buildLabel(String label) {
     return Text(
       label,
-      style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+      style: BauhausDesign.getTextTheme(
+        context,
+      ).labelMedium?.copyWith(fontWeight: FontWeight.w600),
     );
   }
 }

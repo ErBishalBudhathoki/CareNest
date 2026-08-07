@@ -51,9 +51,13 @@ class ScheduleRepository {
   }
 
   Future<ShiftModel> updateShift(
-      String shiftId, Map<String, dynamic> updates) async {
-    final response =
-        await _apiMethod.put('schedule/shift/$shiftId', body: updates);
+    String shiftId,
+    Map<String, dynamic> updates,
+  ) async {
+    final response = await _apiMethod.put(
+      'schedule/shift/$shiftId',
+      body: updates,
+    );
 
     if (response['success'] == true) {
       return ShiftModel.fromJson(response['data']);
@@ -79,7 +83,8 @@ class ScheduleRepository {
     double? latitude,
     double? longitude,
   }) async {
-    String endpoint = 'schedule/recommendations?organizationId=$organizationId&'
+    String endpoint =
+        'schedule/recommendations?organizationId=$organizationId&'
         'startTime=${startTime.toIso8601String()}&'
         'endTime=${endTime.toIso8601String()}&';
 

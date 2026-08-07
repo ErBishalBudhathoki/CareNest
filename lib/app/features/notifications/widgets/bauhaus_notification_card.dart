@@ -67,16 +67,9 @@ class BauhausNotificationCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: themeColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-              border: Border.all(
-                color: themeColor,
-                width: 2,
-              ),
+              border: Border.all(color: themeColor, width: 2),
             ),
-            child: Icon(
-              icon,
-              color: themeColor,
-              size: 24,
-            ),
+            child: Icon(icon, color: themeColor, size: 24),
           ),
           const SizedBox(width: BauhausDesign.space4),
 
@@ -91,8 +84,7 @@ class BauhausNotificationCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         notification.title,
-                        style: BauhausDesign.getTextTheme(context)
-                            .bodyLarge
+                        style: BauhausDesign.getTextTheme(context).bodyLarge
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: BauhausDesign.textDark,
@@ -119,10 +111,9 @@ class BauhausNotificationCard extends StatelessWidget {
                 const SizedBox(height: BauhausDesign.space2),
                 Text(
                   notification.body,
-                  style:
-                      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                            color: BauhausDesign.textMuted,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
                 ),
                 const SizedBox(height: BauhausDesign.space3),
                 Row(
@@ -135,8 +126,7 @@ class BauhausNotificationCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       notification.timeAgo,
-                      style: BauhausDesign.getTextTheme(context)
-                          .labelSmall
+                      style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
                             color: BauhausDesign.textMuted,
                             fontWeight: FontWeight.bold,
@@ -183,15 +173,18 @@ class BauhausNotificationCard extends StatelessWidget {
               value: 'read',
               child: Row(
                 children: [
-                  const Icon(Icons.check_circle_outline,
-                      color: BauhausDesign.success, size: 18),
+                  const Icon(
+                    Icons.check_circle_outline,
+                    color: BauhausDesign.success,
+                    size: 18,
+                  ),
                   const SizedBox(width: 8),
-                  Text('Mark as read',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
-                          ?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          )),
+                  Text(
+                    'Mark as read',
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                  ),
                 ],
               ),
             ),
@@ -200,15 +193,18 @@ class BauhausNotificationCard extends StatelessWidget {
               value: 'delete',
               child: Row(
                 children: [
-                  const Icon(Icons.delete_outline,
-                      color: BauhausDesign.error, size: 18),
+                  const Icon(
+                    Icons.delete_outline,
+                    color: BauhausDesign.error,
+                    size: 18,
+                  ),
                   const SizedBox(width: 8),
-                  Text('Delete',
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodyMedium
-                          ?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          )),
+                  Text(
+                    'Delete',
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                  ),
                 ],
               ),
             ),

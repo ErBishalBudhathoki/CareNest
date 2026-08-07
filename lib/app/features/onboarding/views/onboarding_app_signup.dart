@@ -9,8 +9,7 @@ class OnboardingAppSignup extends StatefulWidget {
   const OnboardingAppSignup({super.key, required this.onNext});
 
   @override
-  State<OnboardingAppSignup> createState() =>
-      _OnboardingAppSignupState();
+  State<OnboardingAppSignup> createState() => _OnboardingAppSignupState();
 }
 
 class _OnboardingAppSignupState extends State<OnboardingAppSignup>
@@ -41,16 +40,13 @@ class _OnboardingAppSignupState extends State<OnboardingAppSignup>
         curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
       ),
     );
-    _headlineSlide = Tween<Offset>(
-      begin: const Offset(0, 0.1),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _entryCtrl,
-        curve: const Interval(0.0, 0.5,
-            curve: Curves.easeOutCubic),
-      ),
-    );
+    _headlineSlide =
+        Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _entryCtrl,
+            curve: const Interval(0.0, 0.5, curve: Curves.easeOutCubic),
+          ),
+        );
     _formOp = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _entryCtrl,
@@ -93,8 +89,7 @@ class _OnboardingAppSignupState extends State<OnboardingAppSignup>
       return;
     }
     if (password.length < 8) {
-      setState(
-          () => _passwordError = 'At least 8 characters');
+      setState(() => _passwordError = 'At least 8 characters');
       return;
     }
     widget.onNext();
@@ -123,8 +118,7 @@ class _OnboardingAppSignupState extends State<OnboardingAppSignup>
                 child: FadeTransition(
                   opacity: _headlineOp,
                   child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         OnboardingContent.signupHeadline,
@@ -134,8 +128,7 @@ class _OnboardingAppSignupState extends State<OnboardingAppSignup>
                           height: 1.2,
                         ),
                       ),
-                      const SizedBox(
-                          height: BauhausDesign.space3),
+                      const SizedBox(height: BauhausDesign.space3),
                       Text(
                         OnboardingContent.signupSubtext,
                         style: theme.bodyLarge?.copyWith(
@@ -157,19 +150,16 @@ class _OnboardingAppSignupState extends State<OnboardingAppSignup>
                       focusNode: _emailFocus,
                       label: 'Email',
                       hint: 'you@example.com',
-                      keyboardType:
-                          TextInputType.emailAddress,
+                      keyboardType: TextInputType.emailAddress,
                       error: _emailError,
                       onChanged: (_) {
                         if (_emailError != null) {
                           setState(() => _emailError = null);
                         }
                       },
-                      onSubmitted: (_) =>
-                          _passwordFocus.requestFocus(),
+                      onSubmitted: (_) => _passwordFocus.requestFocus(),
                     ),
-                    const SizedBox(
-                        height: BauhausDesign.space4),
+                    const SizedBox(height: BauhausDesign.space4),
                     _Field(
                       controller: _passwordCtrl,
                       focusNode: _passwordFocus,
@@ -179,8 +169,7 @@ class _OnboardingAppSignupState extends State<OnboardingAppSignup>
                       error: _passwordError,
                       onChanged: (_) {
                         if (_passwordError != null) {
-                          setState(
-                              () => _passwordError = null);
+                          setState(() => _passwordError = null);
                         }
                       },
                       onSubmitted: (_) => _submit(),
@@ -193,28 +182,25 @@ class _OnboardingAppSignupState extends State<OnboardingAppSignup>
                 opacity: _ctaOp,
                 child: Column(
                   children: [
-                    _BrutalistButton(
-                      label: 'Create Account',
-                      onTap: _submit,
-                    ),
-                    const SizedBox(
-                        height: BauhausDesign.space6),
+                    _BrutalistButton(label: 'Create Account', onTap: _submit),
+                    const SizedBox(height: BauhausDesign.space6),
                     Row(
                       children: [
                         Expanded(
-                            child: _SocialButton(
-                          label: 'Google',
-                          icon: Icons.g_mobiledata,
-                          onTap: widget.onNext,
-                        )),
-                        const SizedBox(
-                            width: BauhausDesign.space3),
+                          child: _SocialButton(
+                            label: 'Google',
+                            icon: Icons.g_mobiledata,
+                            onTap: widget.onNext,
+                          ),
+                        ),
+                        const SizedBox(width: BauhausDesign.space3),
                         Expanded(
-                            child: _SocialButton(
-                          label: 'Apple',
-                          icon: Icons.apple,
-                          onTap: widget.onNext,
-                        )),
+                          child: _SocialButton(
+                            label: 'Apple',
+                            icon: Icons.apple,
+                            onTap: widget.onNext,
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -253,8 +239,9 @@ class _Field extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor =
-        error != null ? BauhausDesign.error : BauhausDesign.neoInk;
+    final borderColor = error != null
+        ? BauhausDesign.error
+        : BauhausDesign.neoInk;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -283,14 +270,14 @@ class _Field extends StatelessWidget {
             keyboardType: keyboardType,
             onChanged: onChanged,
             onSubmitted: onSubmitted,
-            style: BauhausDesign.getTextTheme(context)
-                .bodyLarge
-                ?.copyWith(color: BauhausDesign.textDark),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyLarge?.copyWith(color: BauhausDesign.textDark),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: BauhausDesign.getTextTheme(context)
-                  .bodyLarge
-                  ?.copyWith(color: BauhausDesign.textMuted),
+              hintStyle: BauhausDesign.getTextTheme(
+                context,
+              ).bodyLarge?.copyWith(color: BauhausDesign.textMuted),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: BauhausDesign.space4,
                 vertical: BauhausDesign.space4,
@@ -339,8 +326,7 @@ class _SocialButton extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: BauhausDesign.surfaceWhite,
-          border:
-              Border.all(color: BauhausDesign.neoInk, width: 2),
+          border: Border.all(color: BauhausDesign.neoInk, width: 2),
           boxShadow: const [BauhausDesign.shadowHardSm],
         ),
         child: Row(
@@ -350,12 +336,10 @@ class _SocialButton extends StatelessWidget {
             const SizedBox(width: BauhausDesign.space2),
             Text(
               label,
-              style: BauhausDesign.getTextTheme(context)
-                  .labelLarge
-                  ?.copyWith(
-                    color: BauhausDesign.textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
+              style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                color: BauhausDesign.textDark,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ],
         ),
@@ -371,8 +355,7 @@ class _BrutalistButton extends StatefulWidget {
   const _BrutalistButton({required this.label, required this.onTap});
 
   @override
-  State<_BrutalistButton> createState() =>
-      _BrutalistButtonState();
+  State<_BrutalistButton> createState() => _BrutalistButtonState();
 }
 
 class _BrutalistButtonState extends State<_BrutalistButton>
@@ -388,12 +371,13 @@ class _BrutalistButtonState extends State<_BrutalistButton>
       vsync: this,
       duration: OnboardingDurations.buttonPress,
     );
-    _scale = Tween<double>(
-            begin: 1.0,
-            end: OnboardingButtonPress.scaleTarget)
-        .animate(CurvedAnimation(
+    _scale = Tween<double>(begin: 1.0, end: OnboardingButtonPress.scaleTarget)
+        .animate(
+          CurvedAnimation(
             parent: _ctrl,
-            curve: OnboardingCurves.buttonPressEase));
+            curve: OnboardingCurves.buttonPressEase,
+          ),
+        );
   }
 
   @override
@@ -433,13 +417,11 @@ class _BrutalistButtonState extends State<_BrutalistButton>
         child: AnimatedContainer(
           duration: OnboardingDurations.buttonPress,
           curve: OnboardingCurves.buttonPressEase,
-          padding: const EdgeInsets.symmetric(
-              vertical: BauhausDesign.space4),
+          padding: const EdgeInsets.symmetric(vertical: BauhausDesign.space4),
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: BauhausDesign.neoInk,
-            border: Border.all(
-                color: BauhausDesign.neoInk, width: 2.5),
+            border: Border.all(color: BauhausDesign.neoInk, width: 2.5),
             boxShadow: [
               BoxShadow(
                 color: const Color(0xFF000000),
@@ -450,13 +432,11 @@ class _BrutalistButtonState extends State<_BrutalistButton>
           ),
           child: Text(
             widget.label,
-            style: BauhausDesign.getTextTheme(context)
-                .labelLarge
-                ?.copyWith(
-                  color: BauhausDesign.surfaceWhite,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.5,
-                ),
+            style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+              color: BauhausDesign.surfaceWhite,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+            ),
           ),
         ),
       ),

@@ -58,11 +58,10 @@ class WorkforcePlanningState {
 class WorkforcePlanningViewModel extends Notifier<WorkforcePlanningState> {
   late final WorkforceRepository _repository;
 
-  
   @override
   WorkforcePlanningState build() {
     final repository = ref.watch(workforceRepositoryProvider);
-    
+
     return WorkforcePlanningState();
   }
 
@@ -96,10 +95,7 @@ class WorkforcePlanningViewModel extends Notifier<WorkforcePlanningState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -131,17 +127,12 @@ class WorkforcePlanningViewModel extends Notifier<WorkforcePlanningState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
   // Predict turnover
-  Future<void> predictTurnover({
-    required String organizationId,
-  }) async {
+  Future<void> predictTurnover({required String organizationId}) async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
@@ -162,10 +153,7 @@ class WorkforcePlanningViewModel extends Notifier<WorkforcePlanningState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -194,10 +182,7 @@ class WorkforcePlanningViewModel extends Notifier<WorkforcePlanningState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -213,4 +198,7 @@ class WorkforcePlanningViewModel extends Notifier<WorkforcePlanningState> {
 }
 
 // Provider for WorkforcePlanningViewModel
-final workforcePlanningViewModelProvider = NotifierProvider<WorkforcePlanningViewModel, WorkforcePlanningState>(WorkforcePlanningViewModel.new);
+final workforcePlanningViewModelProvider =
+    NotifierProvider<WorkforcePlanningViewModel, WorkforcePlanningState>(
+      WorkforcePlanningViewModel.new,
+    );

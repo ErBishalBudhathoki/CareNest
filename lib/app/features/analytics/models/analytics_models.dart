@@ -10,7 +10,7 @@ class FinancialMetric {
     required this.laborCost,
     required this.margin,
   });
-  
+
   factory FinancialMetric.fromJson(Map<String, dynamic> json) {
     return FinancialMetric(
       date: json['date'] ?? '',
@@ -35,7 +35,7 @@ class UtilizationMetric {
     required this.capacityHours,
     required this.utilizationRate,
   });
-  
+
   factory UtilizationMetric.fromJson(Map<String, dynamic> json) {
     return UtilizationMetric(
       employeeName: json['employeeName'] ?? 'Unknown',
@@ -68,7 +68,8 @@ class OvertimeMetric {
       employeeEmail: json['employeeEmail'] ?? '',
       totalHours: (json['totalHours'] as num?)?.toDouble() ?? 0.0,
       overtimeHours: (json['overtimeHours'] as num?)?.toDouble() ?? 0.0,
-      dailyBreakdown: (json['dailyBreakdown'] as List?)
+      dailyBreakdown:
+          (json['dailyBreakdown'] as List?)
               ?.map((e) => DailyOvertime.fromJson(e))
               .toList() ??
           [],
@@ -208,11 +209,13 @@ class ChurnPrediction {
       workerEmail: json['workerEmail'] ?? '',
       churnScore: (json['churnScore'] as num?)?.toDouble() ?? 0.0,
       riskLevel: json['riskLevel'] ?? 'low',
-      factors: (json['factors'] as List?)
+      factors:
+          (json['factors'] as List?)
               ?.map((e) => ChurnFactor.fromJson(e))
               .toList() ??
           [],
-      recommendations: (json['recommendations'] as List?)
+      recommendations:
+          (json['recommendations'] as List?)
               ?.map((e) => e.toString())
               .toList() ??
           [],
@@ -266,9 +269,11 @@ class DemandForecast {
     return DemandForecast(
       date: DateTime.tryParse(json['date'] ?? '') ?? DateTime.now(),
       serviceType: json['serviceType'] ?? 'All',
-      predictedAppointments: (json['predictedAppointments'] as num?)?.toDouble() ?? 0.0,
+      predictedAppointments:
+          (json['predictedAppointments'] as num?)?.toDouble() ?? 0.0,
       confidence: (json['confidence'] as num?)?.toDouble() ?? 0.0,
-      peakHours: (json['peakHours'] as List?)?.map((e) => e as int).toList() ?? [],
+      peakHours:
+          (json['peakHours'] as List?)?.map((e) => e as int).toList() ?? [],
       capacityRecommendation: json['capacityRecommendation'] ?? '',
     );
   }
@@ -299,11 +304,13 @@ class ComplianceRisk {
       organizationId: json['organizationId'] ?? '',
       overallScore: (json['overallScore'] as num?)?.toDouble() ?? 0.0,
       riskLevel: json['riskLevel'] ?? 'low',
-      issues: (json['issues'] as List?)
+      issues:
+          (json['issues'] as List?)
               ?.map((e) => ComplianceIssue.fromJson(e))
               .toList() ??
           [],
-      workerRisks: (json['workerRisks'] as List?)
+      workerRisks:
+          (json['workerRisks'] as List?)
               ?.map((e) => WorkerCompliance.fromJson(e))
               .toList() ??
           [],
@@ -361,9 +368,8 @@ class WorkerCompliance {
       workerId: json['workerId'] ?? '',
       workerName: json['workerName'] ?? 'Unknown',
       complianceScore: (json['complianceScore'] as num?)?.toDouble() ?? 0.0,
-      missingItems: (json['missingItems'] as List?)
-              ?.map((e) => e.toString())
-              .toList() ??
+      missingItems:
+          (json['missingItems'] as List?)?.map((e) => e.toString()).toList() ??
           [],
       expiringCount: json['expiringCount'] ?? 0,
     );
@@ -400,11 +406,13 @@ class ClientRisk {
       clientName: json['clientName'] ?? 'Unknown',
       riskScore: (json['riskScore'] as num?)?.toDouble() ?? 0.0,
       riskLevel: json['riskLevel'] ?? 'low',
-      factors: (json['factors'] as List?)
+      factors:
+          (json['factors'] as List?)
               ?.map((e) => RiskFactor.fromJson(e))
               .toList() ??
           [],
-      recommendations: (json['recommendations'] as List?)
+      recommendations:
+          (json['recommendations'] as List?)
               ?.map((e) => e.toString())
               .toList() ??
           [],
@@ -482,11 +490,13 @@ class ServiceDemandResult {
 
   factory ServiceDemandResult.fromJson(Map<String, dynamic> json) {
     return ServiceDemandResult(
-      predictions: (json['predictions'] as List?)
+      predictions:
+          (json['predictions'] as List?)
               ?.map((e) => ServiceDemandPrediction.fromJson(e))
               .toList() ??
           [],
-      recommendations: (json['recommendations'] as List?)
+      recommendations:
+          (json['recommendations'] as List?)
               ?.map((e) => e.toString())
               .toList() ??
           [],
@@ -518,7 +528,8 @@ class ScenarioResult {
       baseline: ScenarioMetrics.fromJson(json['baseline'] ?? {}),
       projected: ScenarioMetrics.fromJson(json['projected'] ?? {}),
       changes: ScenarioChanges.fromJson(json['changes'] ?? {}),
-      recommendations: (json['recommendations'] as List?)
+      recommendations:
+          (json['recommendations'] as List?)
               ?.map((e) => e.toString())
               .toList() ??
           [],
@@ -553,7 +564,8 @@ class ScenarioMetrics {
       workerCount: json['workerCount'] ?? 0,
       clientCount: json['clientCount'] ?? 0,
       utilizationRate: (json['utilizationRate'] as num?)?.toDouble() ?? 0.0,
-      avgRevenuePerClient: (json['avgRevenuePerClient'] as num?)?.toDouble() ?? 0.0,
+      avgRevenuePerClient:
+          (json['avgRevenuePerClient'] as num?)?.toDouble() ?? 0.0,
     );
   }
 }
@@ -578,9 +590,11 @@ class ScenarioChanges {
   factory ScenarioChanges.fromJson(Map<String, dynamic> json) {
     return ScenarioChanges(
       revenueChange: (json['revenueChange'] as num?)?.toDouble() ?? 0.0,
-      revenueChangePercent: (json['revenueChangePercent'] as num?)?.toDouble() ?? 0.0,
+      revenueChangePercent:
+          (json['revenueChangePercent'] as num?)?.toDouble() ?? 0.0,
       profitChange: (json['profitChange'] as num?)?.toDouble() ?? 0.0,
-      profitChangePercent: (json['profitChangePercent'] as num?)?.toDouble() ?? 0.0,
+      profitChangePercent:
+          (json['profitChangePercent'] as num?)?.toDouble() ?? 0.0,
       workerChange: json['workerChange'] ?? 0,
       clientChange: json['clientChange'] ?? 0,
     );
@@ -615,10 +629,8 @@ class AIRecommendation {
       priority: json['priority'] ?? 'medium',
       title: json['title'] ?? '',
       description: json['description'] ?? '',
-      actions: (json['actions'] as List?)
-              ?.map((e) => e.toString())
-              .toList() ??
-          [],
+      actions:
+          (json['actions'] as List?)?.map((e) => e.toString()).toList() ?? [],
       expectedImpact: json['expectedImpact'] ?? '',
       difficulty: json['difficulty'] ?? 'medium',
       timeframe: json['timeframe'] ?? '',

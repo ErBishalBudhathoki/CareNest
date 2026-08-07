@@ -61,11 +61,13 @@ class TeamViewModel extends Notifier<TeamState> {
 
       // Load users in the background (used for invite dialogs)
       debugPrint(
-          'TeamViewModel: Starting background load of organization users');
+        'TeamViewModel: Starting background load of organization users',
+      );
       final updatedUsers = await _repository.getOrganizationUsers();
       state = state.copyWith(availableUsers: updatedUsers);
       debugPrint(
-          'TeamViewModel: Loaded ${updatedUsers.length} available users');
+        'TeamViewModel: Loaded ${updatedUsers.length} available users',
+      );
     } catch (e) {
       debugPrint('TeamViewModel: Error in loadMyTeams: $e');
       state = state.copyWith(errorMessage: e.toString());
@@ -150,11 +152,17 @@ class TeamViewModel extends Notifier<TeamState> {
   // --- Broadcasts ---
 
   Future<void> sendBroadcast(
-      List<String> teamIds, String message, String type) async {
+    List<String> teamIds,
+    String message,
+    String type,
+  ) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
-      final broadcast =
-          await _repository.sendEmergencyBroadcast(teamIds, message, type);
+      final broadcast = await _repository.sendEmergencyBroadcast(
+        teamIds,
+        message,
+        type,
+      );
       state = state.copyWith(
         activeBroadcasts: [broadcast, ...state.activeBroadcasts],
         broadcastHistory: [broadcast, ...state.broadcastHistory],

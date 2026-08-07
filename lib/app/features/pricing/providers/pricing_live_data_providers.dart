@@ -99,107 +99,112 @@ bool _isEmployeeRecord(Map<String, dynamic> user) {
 
 final pricingOrgEmployeesProvider = FutureProvider.autoDispose
     .family<List<User>, String>((ref, organizationId) async {
-  if (organizationId.trim().isEmpty) return const [];
+      if (organizationId.trim().isEmpty) return const [];
 
-  final api = ref.read(app_providers.apiMethodProvider);
-  final response = await api.getOrganizationEmployees(organizationId);
-  final rawPeople = (response['employees'] as List<dynamic>? ?? const []);
+      final api = ref.read(app_providers.apiMethodProvider);
+      final response = await api.getOrganizationEmployees(organizationId);
+      final rawPeople = (response['employees'] as List<dynamic>? ?? const []);
 
-  return rawPeople
-      .whereType<Map>()
-      .map((e) => Map<String, dynamic>.from(e))
-      .where(_isEmployeeRecord)
-      .map(User.fromJson)
-      .toList()
-    ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
-});
+      return rawPeople
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .where(_isEmployeeRecord)
+          .map(User.fromJson)
+          .toList()
+        ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    });
 
 final pricingOrgAnalyticsProvider = FutureProvider.autoDispose
     .family<PricingAnalytics?, String>((ref, organizationId) async {
-  if (organizationId.trim().isEmpty) return null;
-  try {
-    final repo = ref.read(pricingRepositoryProvider);
-    return await repo.fetchPricingAnalytics(organizationId: organizationId);
-  } catch (_) {
-    return null;
-  }
-});
+      if (organizationId.trim().isEmpty) return null;
+      try {
+        final repo = ref.read(pricingRepositoryProvider);
+        return await repo.fetchPricingAnalytics(organizationId: organizationId);
+      } catch (_) {
+        return null;
+      }
+    });
 
 final pricingLiveRecordsProvider = FutureProvider.autoDispose
     .family<List<PricingLiveRecord>, String>((ref, organizationId) async {
-  if (organizationId.trim().isEmpty) return const [];
+      if (organizationId.trim().isEmpty) return const [];
 
-  final ndisItems = await ref.watch(ndisItemsProvider.future);
-  final pricingLookup =
-      await ref.watch(ndisPricingProvider(organizationId).future);
+      final ndisItems = await ref.watch(ndisItemsProvider.future);
+      final pricingLookup = await ref.watch(
+        ndisPricingProvider(organizationId).future,
+      );
 
-  final records = <PricingLiveRecord>[];
+      final records = <PricingLiveRecord>[];
 
-  for (final item in ndisItems) {
-    final raw = pricingLookup[item.itemNumber];
-    final map =
-        raw is Map ? Map<String, dynamic>.from(raw) : const <String, dynamic>{};
+      for (final item in ndisItems) {
+        final raw = pricingLookup[item.itemNumber];
+        final map = raw is Map
+            ? Map<String, dynamic>.from(raw)
+            : const <String, dynamic>{};
 
-    final source = map['source']?.toString() ?? 'ndis_default';
-    final customPriceRaw = pricingToDouble(
-        map['price'] ?? map['customPrice'] ?? map['fixedPrice']);
-    final customPrice = customPriceRaw > 0 ? customPriceRaw : null;
+        final source = map['source']?.toString() ?? 'ndis_default';
+        final customPriceRaw = pricingToDouble(
+          map['price'] ?? map['customPrice'] ?? map['fixedPrice'],
+        );
+        final customPrice = customPriceRaw > 0 ? customPriceRaw : null;
 
-    final capRaw = pricingToDouble(map['priceCap']);
-    final cap = capRaw > 0 ? capRaw : null;
+        final capRaw = pricingToDouble(map['priceCap']);
+        final cap = capRaw > 0 ? capRaw : null;
 
-    final statePrice = item.getApplicablePrice();
-    final isCustom = customPrice != null && !pricingIsFallbackSource(source);
+        final statePrice = item.getApplicablePrice();
+        final isCustom =
+            customPrice != null && !pricingIsFallbackSource(source);
 
-    records.add(
-      PricingLiveRecord(
-        supportItemNumber: item.itemNumber,
-        supportItemName:
-            map['supportItemName']?.toString().trim().isNotEmpty == true
+        records.add(
+          PricingLiveRecord(
+            supportItemNumber: item.itemNumber,
+            supportItemName:
+                map['supportItemName']?.toString().trim().isNotEmpty == true
                 ? map['supportItemName'].toString()
                 : item.itemName,
-        supportCategoryName: item.supportCategoryName,
-        registrationGroupName: item.registrationGroupName,
-        unit: item.unit,
-        source: source,
-        customPrice: customPrice,
-        standardPrice: statePrice,
-        priceCap: cap,
-        isCustom: isCustom,
-        isQuotable: item.isQuotable,
-        ndisCompliant:
-            map['ndisCompliant'] is bool ? map['ndisCompliant'] as bool : null,
-        exceedsNdisCap: map['exceedsNdisCap'] is bool
-            ? map['exceedsNdisCap'] as bool
-            : null,
-        createdAt: pricingParseDate(map['createdAt']),
-        updatedAt: pricingParseDate(map['updatedAt']),
-      ),
-    );
-  }
+            supportCategoryName: item.supportCategoryName,
+            registrationGroupName: item.registrationGroupName,
+            unit: item.unit,
+            source: source,
+            customPrice: customPrice,
+            standardPrice: statePrice,
+            priceCap: cap,
+            isCustom: isCustom,
+            isQuotable: item.isQuotable,
+            ndisCompliant: map['ndisCompliant'] is bool
+                ? map['ndisCompliant'] as bool
+                : null,
+            exceedsNdisCap: map['exceedsNdisCap'] is bool
+                ? map['exceedsNdisCap'] as bool
+                : null,
+            createdAt: pricingParseDate(map['createdAt']),
+            updatedAt: pricingParseDate(map['updatedAt']),
+          ),
+        );
+      }
 
-  records.sort((a, b) {
-    final ad = a.effectiveTimestamp;
-    final bd = b.effectiveTimestamp;
-    if (ad == null && bd == null) return 0;
-    if (ad == null) return 1;
-    if (bd == null) return -1;
-    return bd.compareTo(ad);
-  });
+      records.sort((a, b) {
+        final ad = a.effectiveTimestamp;
+        final bd = b.effectiveTimestamp;
+        if (ad == null && bd == null) return 0;
+        if (ad == null) return 1;
+        if (bd == null) return -1;
+        return bd.compareTo(ad);
+      });
 
-  return records;
-});
+      return records;
+    });
 
 final pricingOrgClientsProvider = FutureProvider.autoDispose
     .family<List<Map<String, dynamic>>, String>((ref, organizationId) async {
-  if (organizationId.trim().isEmpty) return const [];
-  final api = ref.read(app_providers.apiMethodProvider);
-  try {
-    return await api.getClientsByOrganizationId(organizationId);
-  } catch (_) {
-    return const [];
-  }
-});
+      if (organizationId.trim().isEmpty) return const [];
+      final api = ref.read(app_providers.apiMethodProvider);
+      try {
+        return await api.getClientsByOrganizationId(organizationId);
+      } catch (_) {
+        return const [];
+      }
+    });
 
 class PriceHistoryQuery {
   final String supportItemNumber;
@@ -224,11 +229,14 @@ class PriceHistoryQuery {
 
 final pricingDetailedHistoryProvider = FutureProvider.autoDispose
     .family<List<Map<String, dynamic>>, PriceHistoryQuery>((ref, query) async {
-  if (query.supportItemNumber.trim().isEmpty || query.clientId.trim().isEmpty) {
-    return const [];
-  }
-  final api = ref.read(app_providers.apiMethodProvider);
-  final rows =
-      await api.getPriceHistory(query.supportItemNumber, query.clientId);
-  return rows ?? const [];
-});
+      if (query.supportItemNumber.trim().isEmpty ||
+          query.clientId.trim().isEmpty) {
+        return const [];
+      }
+      final api = ref.read(app_providers.apiMethodProvider);
+      final rows = await api.getPriceHistory(
+        query.supportItemNumber,
+        query.clientId,
+      );
+      return rows ?? const [];
+    });

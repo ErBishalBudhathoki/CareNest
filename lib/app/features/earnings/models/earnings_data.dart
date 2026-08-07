@@ -19,7 +19,8 @@ class EarningsSummary {
       totalEarnings: (json['totalEarnings'] as num? ?? 0).toDouble(),
       payRate: (json['payRate'] as num? ?? 0).toDouble(),
       payType: json['payType'] ?? 'Hourly',
-      history: (json['history'] as List?)
+      history:
+          (json['history'] as List?)
               ?.map((e) => EarningsHistoryItem.fromJson(e))
               .toList() ??
           [],
@@ -32,7 +33,11 @@ class EarningsHistoryItem {
   final double hours;
   final double earnings;
 
-  EarningsHistoryItem({required this.date, required this.hours, required this.earnings});
+  EarningsHistoryItem({
+    required this.date,
+    required this.hours,
+    required this.earnings,
+  });
 
   factory EarningsHistoryItem.fromJson(Map<String, dynamic> json) {
     return EarningsHistoryItem(
@@ -58,7 +63,8 @@ class ProjectedEarnings {
     return ProjectedEarnings(
       projectedHours: (json['projectedHours'] as num? ?? 0).toDouble(),
       projectedEarnings: (json['projectedEarnings'] as num? ?? 0).toDouble(),
-      breakdown: (json['breakdown'] as List?)
+      breakdown:
+          (json['breakdown'] as List?)
               ?.map((e) => ProjectedItem.fromJson(e))
               .toList() ??
           [],
@@ -104,7 +110,8 @@ class EarningsPeriodHistory {
     return EarningsPeriodHistory(
       bucket: json['bucket'] ?? 'month',
       payRate: (json['payRate'] as num? ?? 0).toDouble(),
-      items: (json['items'] as List?)
+      items:
+          (json['items'] as List?)
               ?.map((e) => EarningsPeriodHistoryItem.fromJson(e))
               .toList() ??
           [],

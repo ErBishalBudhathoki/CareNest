@@ -5,10 +5,7 @@ import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 class SmartExpenseDashboard extends StatefulWidget {
   final String? organizationId;
 
-  const SmartExpenseDashboard({
-    super.key,
-    this.organizationId,
-  });
+  const SmartExpenseDashboard({super.key, this.organizationId});
 
   @override
   State<SmartExpenseDashboard> createState() => _SmartExpenseDashboardState();
@@ -32,9 +29,9 @@ class _SmartExpenseDashboardState extends State<SmartExpenseDashboard> {
         title: Text(
           'SMART EXPENSE MANAGEMENT',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                color: BauhausDesign.surfaceWhite,
-                fontWeight: FontWeight.bold,
-              ),
+            color: BauhausDesign.surfaceWhite,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
       ),
@@ -173,10 +170,9 @@ class _SmartExpenseDashboardState extends State<SmartExpenseDashboard> {
               children: [
                 Text(
                   label.toUpperCase(),
-                  style:
-                      BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                            color: BauhausDesign.textDark,
-                          ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).labelSmall?.copyWith(color: BauhausDesign.textDark),
                 ),
                 Icon(icon, color: color, size: 20),
               ],
@@ -184,11 +180,8 @@ class _SmartExpenseDashboardState extends State<SmartExpenseDashboard> {
             const SizedBox(height: 8),
             Text(
               value,
-              style:
-                  BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-                        color: color,
-                        fontWeight: FontWeight.bold,
-                      ),
+              style: BauhausDesign.getTextTheme(context).headlineMedium
+                  ?.copyWith(color: color, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -238,18 +231,16 @@ class _SmartExpenseDashboardState extends State<SmartExpenseDashboard> {
                     const SizedBox(height: 12),
                     Text(
                       title.toUpperCase(),
-                      style: BauhausDesign.getTextTheme(context)
-                          .titleMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).titleMedium?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       description,
-                      style: BauhausDesign.getTextTheme(context)
-                          .bodySmall
-                          ?.copyWith(
-                            color: BauhausDesign.textDark,
-                          ),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodySmall?.copyWith(color: BauhausDesign.textDark),
                     ),
                   ],
                 );
@@ -265,28 +256,28 @@ class _SmartExpenseDashboardState extends State<SmartExpenseDashboard> {
                       children: [
                         Text(
                           title.toUpperCase(),
-                          style: BauhausDesign.getTextTheme(context)
-                              .titleMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
+                          style: BauhausDesign.getTextTheme(
+                            context,
+                          ).titleMedium?.copyWith(fontWeight: FontWeight.bold),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 4),
                         Text(
                           description,
-                          style: BauhausDesign.getTextTheme(context)
-                              .bodySmall
-                              ?.copyWith(
-                                color: BauhausDesign.textDark,
-                              ),
+                          style: BauhausDesign.getTextTheme(
+                            context,
+                          ).bodySmall?.copyWith(color: BauhausDesign.textDark),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
                   ),
-                  const Icon(Icons.arrow_forward,
-                      color: BauhausDesign.textDark),
+                  const Icon(
+                    Icons.arrow_forward,
+                    color: BauhausDesign.textDark,
+                  ),
                 ],
               );
             },
@@ -303,21 +294,21 @@ class _SmartExpenseDashboardState extends State<SmartExpenseDashboard> {
   }
 
   void _categorizeExpense() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Categorizing expense...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Categorizing expense...')));
   }
 
   void _checkPolicy() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Checking expense policy...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Checking expense policy...')));
   }
 
   void _calculateMileage() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Calculating mileage...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Calculating mileage...')));
   }
 }
 

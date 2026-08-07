@@ -68,10 +68,7 @@ class RevenueChartWidget extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            SizedBox(
-              height: 200,
-              child: _buildChart(),
-            ),
+            SizedBox(height: 200, child: _buildChart()),
           ],
         ),
       ),
@@ -172,10 +169,7 @@ class RevenueChartWidget extends StatelessWidget {
     final spots = revenueData!.last7Days
         .asMap()
         .entries
-        .map((entry) => FlSpot(
-              entry.key.toDouble(),
-              entry.value.revenue,
-            ))
+        .map((entry) => FlSpot(entry.key.toDouble(), entry.value.revenue))
         .toList();
 
     return LineChart(
@@ -185,10 +179,7 @@ class RevenueChartWidget extends StatelessWidget {
           drawVerticalLine: false,
           horizontalInterval: 1000,
           getDrawingHorizontalLine: (value) {
-            return FlLine(
-              color: Colors.grey.withOpacity(0.1),
-              strokeWidth: 1,
-            );
+            return FlLine(color: Colors.grey.withOpacity(0.1), strokeWidth: 1);
           },
         ),
         titlesData: FlTitlesData(
@@ -279,9 +270,7 @@ class RevenueChartWidget extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: const Padding(
         padding: EdgeInsets.all(32),
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
+        child: Center(child: CircularProgressIndicator()),
       ),
     );
   }
@@ -297,10 +286,7 @@ class RevenueChartWidget extends StatelessWidget {
             children: [
               Icon(Icons.show_chart, size: 48, color: Colors.grey),
               SizedBox(height: 16),
-              Text(
-                'No revenue data',
-                style: TextStyle(color: Colors.grey),
-              ),
+              Text('No revenue data', style: TextStyle(color: Colors.grey)),
             ],
           ),
         ),

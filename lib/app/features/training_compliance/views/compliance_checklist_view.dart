@@ -31,8 +31,10 @@ class _ComplianceChecklistViewState
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.complianceChecklistsTitle,
-            style: BauhausDesign.getTextTheme(context).headlineLarge),
+        title: Text(
+          AppLocalizations.of(context)!.complianceChecklistsTitle,
+          style: BauhausDesign.getTextTheme(context).headlineLarge,
+        ),
         backgroundColor: BauhausDesign.surfaceLight,
         iconTheme: const IconThemeData(color: BauhausDesign.textDark),
         elevation: 0,
@@ -43,29 +45,32 @@ class _ComplianceChecklistViewState
       ),
       body: state.isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: BauhausDesign.primary))
+              child: CircularProgressIndicator(color: BauhausDesign.primary),
+            )
           : state.checklists.isEmpty
-              ? Center(
-                  child: Text(
-                    AppLocalizations.of(context)!.noChecklistsMessage,
-                    style: BauhausDesign.getTextTheme(context).bodyLarge,
-                  ),
-                )
-              : ListView.separated(
-                  padding: const EdgeInsets.all(BauhausDesign.space4),
-                  itemCount: state.checklists.length,
-                  separatorBuilder: (_, __) =>
-                      const SizedBox(height: BauhausDesign.space3),
-                  itemBuilder: (context, index) {
-                    final checklist = state.checklists[index];
-                    return _buildChecklistCard(context, checklist);
-                  },
-                ),
+          ? Center(
+              child: Text(
+                AppLocalizations.of(context)!.noChecklistsMessage,
+                style: BauhausDesign.getTextTheme(context).bodyLarge,
+              ),
+            )
+          : ListView.separated(
+              padding: const EdgeInsets.all(BauhausDesign.space4),
+              itemCount: state.checklists.length,
+              separatorBuilder: (_, __) =>
+                  const SizedBox(height: BauhausDesign.space3),
+              itemBuilder: (context, index) {
+                final checklist = state.checklists[index];
+                return _buildChecklistCard(context, checklist);
+              },
+            ),
     );
   }
 
   Widget _buildChecklistCard(
-      BuildContext context, ComplianceChecklist checklist) {
+    BuildContext context,
+    ComplianceChecklist checklist,
+  ) {
     final isCompleted = checklist.userStatus?.isCompleted ?? false;
     final totalItems = checklist.items.length;
     final completedItems =
@@ -84,8 +89,11 @@ class _ComplianceChecklistViewState
                 ),
               ),
               if (isCompleted)
-                const Icon(Icons.verified,
-                    color: BauhausDesign.success, size: 24),
+                const Icon(
+                  Icons.verified,
+                  color: BauhausDesign.success,
+                  size: 24,
+                ),
             ],
           ),
           const SizedBox(height: BauhausDesign.space2),
@@ -98,7 +106,8 @@ class _ComplianceChecklistViewState
             value: totalItems > 0 ? completedItems / totalItems : 0,
             backgroundColor: BauhausDesign.neutral.withOpacity(0.1),
             valueColor: AlwaysStoppedAnimation<Color>(
-                isCompleted ? BauhausDesign.success : BauhausDesign.accent),
+              isCompleted ? BauhausDesign.success : BauhausDesign.accent,
+            ),
             minHeight: 8,
             borderRadius: BorderRadius.zero,
           ),
@@ -109,14 +118,16 @@ class _ComplianceChecklistViewState
               text: isCompleted
                   ? AppLocalizations.of(context)!.viewButton
                   : AppLocalizations.of(context)!.startChecklistButton,
-              backgroundColor:
-                  isCompleted ? BauhausDesign.secondary : BauhausDesign.primary,
+              backgroundColor: isCompleted
+                  ? BauhausDesign.secondary
+                  : BauhausDesign.primary,
               onPressed: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) =>
-                            ChecklistDetailView(checklist: checklist)));
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChecklistDetailView(checklist: checklist),
+                  ),
+                );
               },
             ),
           ),
@@ -156,8 +167,10 @@ class _ChecklistDetailViewState extends ConsumerState<ChecklistDetailView> {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        title: Text(widget.checklist.title,
-            style: BauhausDesign.getTextTheme(context).headlineLarge),
+        title: Text(
+          widget.checklist.title,
+          style: BauhausDesign.getTextTheme(context).headlineLarge,
+        ),
         backgroundColor: BauhausDesign.surfaceLight,
         iconTheme: const IconThemeData(color: BauhausDesign.textDark),
         elevation: 0,

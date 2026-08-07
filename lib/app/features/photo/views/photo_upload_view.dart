@@ -40,16 +40,18 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
     _apiMethod = ref.read(apiMethodProvider);
   }
 
-  void _showSnackBar(
-      {required String message, required Color backgroundColor}) {
+  void _showSnackBar({
+    required String message,
+    required Color backgroundColor,
+  }) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           message,
-          style: BauhausDesign.getTextTheme(context)
-              .bodyMedium
-              ?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
         ),
         backgroundColor: backgroundColor,
         behavior: SnackBarBehavior.floating,
@@ -202,9 +204,9 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
         title: Text(
           'Profile Photo',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: BauhausDesign.textDark,
-              ),
+            fontWeight: FontWeight.w600,
+            color: BauhausDesign.textDark,
+          ),
         ),
         centerTitle: true,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
@@ -218,20 +220,25 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
           padding: const EdgeInsets.symmetric(horizontal: BauhausDesign.space6),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: BauhausDesign.space5),
-              _buildHeader(),
-              const SizedBox(height: BauhausDesign.space10),
-              _buildPhotoPreview(),
-              const SizedBox(height: BauhausDesign.space8),
-              _buildActionButtons(),
-              const SizedBox(height: BauhausDesign.space10),
-              _buildTipsCard(),
-              const SizedBox(height: BauhausDesign.space10),
-            ]
-                .animate(interval: 100.ms)
-                .fadeIn(duration: 400.ms, curve: Curves.easeOut)
-                .slideY(begin: 0.2, duration: 400.ms, curve: Curves.easeOut),
+            children:
+                [
+                      const SizedBox(height: BauhausDesign.space5),
+                      _buildHeader(),
+                      const SizedBox(height: BauhausDesign.space10),
+                      _buildPhotoPreview(),
+                      const SizedBox(height: BauhausDesign.space8),
+                      _buildActionButtons(),
+                      const SizedBox(height: BauhausDesign.space10),
+                      _buildTipsCard(),
+                      const SizedBox(height: BauhausDesign.space10),
+                    ]
+                    .animate(interval: 100.ms)
+                    .fadeIn(duration: 400.ms, curve: Curves.easeOut)
+                    .slideY(
+                      begin: 0.2,
+                      duration: 400.ms,
+                      curve: Curves.easeOut,
+                    ),
           ),
         ),
       ),
@@ -247,18 +254,17 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
           'Show Your Best Side',
           textAlign: TextAlign.center,
           style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: BauhausDesign.textDark,
-              ),
+            fontWeight: FontWeight.bold,
+            color: BauhausDesign.textDark,
+          ),
         ),
         const SizedBox(height: BauhausDesign.space3),
         Text(
           'A great photo builds trust and makes your profile stand out.',
           textAlign: TextAlign.center,
-          style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                color: BauhausDesign.textMuted,
-                height: 1.5,
-              ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).bodyLarge?.copyWith(color: BauhausDesign.textMuted, height: 1.5),
         ),
       ],
     );
@@ -305,15 +311,17 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
           Text(
             'Tap to Select',
             style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w500,
-                  color: BauhausDesign.primary,
-                ),
+              fontWeight: FontWeight.w500,
+              color: BauhausDesign.primary,
+            ),
           ),
         ],
       ),
-    )
-        .animate()
-        .scale(delay: 300.ms, duration: 400.ms, curve: Curves.elasticOut);
+    ).animate().scale(
+      delay: 300.ms,
+      duration: 400.ms,
+      curve: Curves.elasticOut,
+    );
   }
 
   Widget _buildImagePreview() {
@@ -326,12 +334,7 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
         boxShadow: const [BauhausDesign.shadowHard],
         border: Border.all(color: BauhausDesign.neutral, width: 2),
       ),
-      child: ClipOval(
-        child: Image.file(
-          _imageFile!,
-          fit: BoxFit.cover,
-        ),
-      ),
+      child: ClipOval(child: Image.file(_imageFile!, fit: BoxFit.cover)),
     );
   }
 
@@ -383,22 +386,27 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
               const SizedBox(width: BauhausDesign.space3),
               Text(
                 'A Few Quick Tips',
-                style:
-                    BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-                          color: BauhausDesign.textDark,
-                        ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).headlineSmall?.copyWith(color: BauhausDesign.textDark),
               ),
             ],
           ),
           const SizedBox(height: BauhausDesign.space4),
-          _buildTipRow(Icons.face_retouching_natural,
-              'Use a clear, recent photo of your face.'),
+          _buildTipRow(
+            Icons.face_retouching_natural,
+            'Use a clear, recent photo of your face.',
+          ),
           const SizedBox(height: BauhausDesign.space3),
-          _buildTipRow(Icons.wb_sunny_outlined,
-              'Find a spot with good, natural lighting.'),
+          _buildTipRow(
+            Icons.wb_sunny_outlined,
+            'Find a spot with good, natural lighting.',
+          ),
           const SizedBox(height: BauhausDesign.space3),
-          _buildTipRow(Icons.blur_off_outlined,
-              'A simple, uncluttered background works best.'),
+          _buildTipRow(
+            Icons.blur_off_outlined,
+            'A simple, uncluttered background works best.',
+          ),
         ],
       ),
     );
@@ -413,10 +421,9 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
         Expanded(
           child: Text(
             text,
-            style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                  color: BauhausDesign.textDark,
-                  height: 1.4,
-                ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyLarge?.copyWith(color: BauhausDesign.textDark, height: 1.4),
           ),
         ),
       ],

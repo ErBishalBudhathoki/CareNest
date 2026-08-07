@@ -148,14 +148,18 @@ class HomeRepository {
                 if (isInProgress) {
                   // Timer running past end → overtime; timer running within shift → in_progress; nothing running → overdue
                   final timerService = TimerService();
-                  final clientEmail =
-                      assignment['clientEmail']?.toString();
-                  final timerRunning = timerService.isRunning &&
+                  final clientEmail = assignment['clientEmail']?.toString();
+                  final timerRunning =
+                      timerService.isRunning &&
                       clientEmail != null &&
                       timerService.timerClientEmail == clientEmail;
 
-                  if (shiftEnd != null && effectiveEnd != null && effectiveEnd.isBefore(now)) {
-                    newAssignment['_shiftStatus'] = timerRunning ? 'overtime' : 'overdue';
+                  if (shiftEnd != null &&
+                      effectiveEnd != null &&
+                      effectiveEnd.isBefore(now)) {
+                    newAssignment['_shiftStatus'] = timerRunning
+                        ? 'overtime'
+                        : 'overdue';
                   } else {
                     newAssignment['_shiftStatus'] = 'in_progress';
                   }
