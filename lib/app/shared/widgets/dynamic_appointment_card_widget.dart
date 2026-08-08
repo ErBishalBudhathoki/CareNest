@@ -194,11 +194,11 @@ class _DynamicAppointmentCardWidgetState
   void initState() {
     super.initState();
     apiMethod = ref.read(app_providers.apiMethodProvider);
-    print("getFutureClientsData: ${widget.clientEmailList.toString()}");
+    debugPrint("getFutureClientsData: ${widget.clientEmailList.toString()}");
     for (var i = 0; i < widget.listLength; i++) {
-      print("getFutureClientsData: ${widget.clientEmailList[i]}");
+      debugPrint("getFutureClientsData: ${widget.clientEmailList[i]}");
     }
-    print(
+    debugPrint(
       "Dynamic: ${widget.currentUserEmail} ${widget.listLength.toString()}",
     );
     getFutureClientsData();
@@ -211,7 +211,7 @@ class _DynamicAppointmentCardWidgetState
     setState(() {
       setFutureClientsData = futureClientsData;
     });
-    print("Future Clients Data: $futureClientsData");
+    debugPrint("Future Clients Data: $futureClientsData");
     return [setFutureClientsData];
   }
 
@@ -227,9 +227,9 @@ class _DynamicAppointmentCardWidgetState
     debugPrint("Sorted client: $clients");
     setState(() {
       setAppointmentData = appointmentData;
-      print('DYCW ${appointmentData['data'][0]['startTimeList'][0]}');
+      debugPrint('DYCW ${appointmentData['data'][0]['startTimeList'][0]}');
     });
-    print("Appointment Data: ${appointmentData.length}");
+    debugPrint("Appointment Data: ${appointmentData.length}");
     return [appointmentData];
   }
 
@@ -239,11 +239,11 @@ class _DynamicAppointmentCardWidgetState
     final screenWidth = double.infinity;
     final screenHeight = screenSize.height;
     final cardHeight = screenHeight * 0.25;
-    print(
+    debugPrint(
       "Client email list: ${(widget.clientEmailList).length} ${widget.clientEmailList}\n",
     );
     setFutureClientsData.then((list) {
-      print('Length of setFutureClientsData: ${list.length}\n');
+      debugPrint('Length of setFutureClientsData: ${list.length}\n');
     });
     Future.delayed(const Duration(seconds: 1));
     return FutureBuilder<List<Patient>>(
@@ -529,7 +529,7 @@ class _DynamicAppointmentCardWidgetState
             },
           );
         } else if (snapshot.hasError) {
-          print(snapshot.error);
+          debugPrint(snapshot.error);
           return Container(
             height: MediaQuery.of(context).size.height * 0.35,
             margin: const EdgeInsets.symmetric(horizontal: _spacingMd),

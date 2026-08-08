@@ -1,6 +1,7 @@
 import 'package:carenest/app/features/worker/models/worker_dashboard_data.dart';
 import 'package:carenest/app/features/worker/repositories/worker_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 
 /// Worker Dashboard ViewModel Provider
 ///
@@ -66,8 +67,8 @@ class WorkerDashboardViewModel extends AsyncNotifier<WorkerDashboardData> {
       state = AsyncError(error, stackTrace);
 
       // Log error for debugging (in production, this would go to error tracking service)
-      print('Worker dashboard load error: $error');
-      print('Stack trace: $stackTrace');
+      debugPrint('Worker dashboard load error: $error');
+      debugPrint('Stack trace: $stackTrace');
     }
   }
 
@@ -91,7 +92,7 @@ class WorkerDashboardViewModel extends AsyncNotifier<WorkerDashboardData> {
       state = AsyncData(data);
     } catch (error) {
       // On error, keep current state (don't disrupt user if background refresh fails)
-      print('Silent refresh failed: $error');
+      debugPrint('Silent refresh failed: $error');
 
       // Optionally, you could show a snackbar here instead of changing state
     }

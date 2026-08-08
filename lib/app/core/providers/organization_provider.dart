@@ -4,6 +4,7 @@ import 'package:carenest/app/features/organization/models/organization_branding.
 import 'package:carenest/app/features/organization/repositories/organization_repository.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/core/providers/core_providers.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 
 // State class for Organization
 class OrganizationState {
@@ -100,7 +101,7 @@ class OrganizationNotifier extends Notifier<OrganizationState> {
         );
       }
     } catch (e) {
-      print('Failed to load branding: $e');
+      debugPrint('Failed to load branding: $e');
     }
   }
 
@@ -114,7 +115,7 @@ class OrganizationNotifier extends Notifier<OrganizationState> {
       await loadBranding(orgId);
       return true;
     } catch (e) {
-      print('Failed to update branding: $e');
+      debugPrint('Failed to update branding: $e');
       return false;
     }
   }
