@@ -1,5 +1,5 @@
 #include "Release.xcconfig"
 FLUTTER_FLAVOR=production
 FLUTTER_TARGET=lib/main_production.dart
-PRODUCT_BUNDLE_IDENTIFIER=com.CareNest.app
+PRODUCT_BUNDLE_IDENTIFIER=com.bishal.invoice
 DISPLAY_NAME=Carenest

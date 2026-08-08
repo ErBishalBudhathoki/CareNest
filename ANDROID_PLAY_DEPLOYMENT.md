@@ -12,6 +12,7 @@
 - **Versioning fixed end-to-end**: version name is parsed from `pubspec.yaml`, version code is `github.run_number`. No more reliance on the gitignored `android/local.properties` (commit `a8a3f99`).
 - **CI-only build + deploy-on-dispatch architecture**: push runs build/test/scan but never deploy; deployment only happens from an explicit `workflow_dispatch`.
 - **Secure credential handling**: keystore, signing config, `.env`, `google-services.json`, and the Play service key are passed as GitHub Actions secrets and written/cleaned on every run (never committed).
+- **App secrets removed from the binary (P0)**: `.env` is no longer a Flutter asset, so backend secrets (MongoDB, JWT, SMTP, EmailJS, Stripe, Xero) never ship in the APK/AAB/IPA. Only 3 non-secret values (production/dev base URL, universal link host) are injected at build time via `--dart-define` from `lib/config/build_config.dart`; invoice email is now sent by the backend via `POST /sendInvoiceEmail`.
 - **Play Console release note limit honored** (500 chars max) — trimmed note in commit `0226d94`.
 - **Successfully deployed**:
   - Internal track: `4.4.0` / code `155` (run `31204671313`)
@@ -39,7 +40,7 @@ git push (main/develop)  -->  security-scan -> test -> build-android [debug+rele
 workflow_dispatch (manual) -->  build-android -> deploy-android -> notify-failure
 ```
 
-- **`build-android`** (matrix debug/release): checks out, restores `.env` (`ENV_FILE`), writes
+- **`build-android`** (matrix debug/release): checks out, restores `.env` (`ENV_FILE`, used only to extract non-secret build defines), writes
   `google-services.json` for prod + dev, decodes `keystore.jks`, writes `key.properties`,
   builds:
   - release: `flutter build appbundle --release --flavor production --build-number=<run_number>`
@@ -115,7 +116,7 @@ curl -s -H "Authorization: Bearer $TOKEN" \
 | `ANDROID_KEYSTORE_PASSWORD` | keystore store password | `android/key.properties` (deleted after build) |
 | `ANDROID_KEY_ALIAS` | signing key alias | `android/key.properties` |
 | `ANDROID_KEY_PASSWORD` | signing key password | `android/key.properties` |
-| `ENV_FILE` | base64 of real `.env` (Firebase, URLs, etc.) | `./.env` |
+| `ENV_FILE` | base64 of real `.env` (Firebase, URLs, etc.) | `./.env` (only `PRODUCTION_URL`/`DEVELOPMENT_URL`/`UNIVERSAL_LINK_HOST` are read and passed via `--dart-define`; **not bundled into the app**) |
 | `GOOGLE_SERVICES_JSON` | production `google-services.json` | `android/app/google-services.json` |
 | `GOOGLE_SERVICES_JSON_DEV` | development `google-services.json` | `android/app/src/development/google-services.json` |
 | `GOOGLE_PLAY_API_KEY` | Fastlane service-account JSON (Play Console API access) | `android/fastlane/google-play-service-key.json` (deleted after deploy) |

@@ -26,7 +26,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io' show Platform;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:carenest/config/build_config.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
@@ -90,20 +90,8 @@ bool isDeepLinkHandled() {
 // Background handler is now defined in firebase_messaging_service.dart
 // This import will be used to register the handler
 
-Future<void> _loadEnvironmentConfig() async {
-  await dotenv.load(fileName: ".env");
-}
-
-String _envValue(String key, {String fallback = ''}) {
-  if (!dotenv.isInitialized) return fallback;
-  final value = dotenv.env[key];
-  if (value == null || value.trim().isEmpty) return fallback;
-  return value;
-}
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await _loadEnvironmentConfig();
 
   // Set the app flavor to production
   AppConfig.appFlavor = Flavor.production;
@@ -239,7 +227,7 @@ Future<void> _initializeAppCheck() async {
 
   try {
     await FirebaseAppCheck.instance.activate(
-      webProvider: ReCaptchaV3Provider(_envValue('RECAPTCHA_SITE_KEY')),
+      webProvider: ReCaptchaV3Provider(BuildConfig.recaptchaSiteKey),
       androidProvider: androidSelection.provider,
       appleProvider: AppleProvider.appAttest,
     );

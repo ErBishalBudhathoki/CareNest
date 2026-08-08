@@ -3,7 +3,7 @@ import 'package:carenest/app/features/auth/views/change_password_view.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:carenest/config/build_config.dart';
 
 /// Deep Link Handler
 /// Handles deep links for the application, particularly for organization signup links
@@ -15,10 +15,8 @@ class DeepLinkHandler {
   static const String _fallbackUniversalHost = 'bishalbudhathoki.com';
 
   static String? get _configuredUniversalHost {
-    if (!dotenv.isInitialized) return null;
-
-    final rawValue = dotenv.env['UNIVERSAL_LINK_HOST']?.trim();
-    if (rawValue == null || rawValue.isEmpty) return null;
+    final rawValue = BuildConfig.universalLinkHost.trim();
+    if (rawValue.isEmpty) return null;
 
     try {
       final normalizedValue = rawValue.contains('://')

@@ -233,10 +233,21 @@ jobs:
             echo "::warning::No Android keystore secret configured, skipping release build"
             exit 0
           fi
+
+          # Inject non-secret build config via --dart-define (values read from the
+          # restored .env file). Secrets are never passed here.
+          DEFINES=()
+          for key in PRODUCTION_URL DEVELOPMENT_URL UNIVERSAL_LINK_HOST; do
+            value=$(grep -m1 "^${key}=" .env 2>/dev/null | cut -d= -f2- | tr -d '[:space:]' || true)
+            if [ -n "$value" ]; then
+              DEFINES+=(--dart-define=$key=$value)
+            fi
+          done
+
           if [ "${{ matrix.build-type }}" == "release" ]; then
-            flutter build appbundle --release --flavor production --build-number=${{ github.run_number }}
+            flutter build appbundle --release --flavor production --build-number=${{ github.run_number }} "${DEFINES[@]}"
           else
-            flutter build apk --debug --flavor production
+            flutter build apk --debug --flavor production "${DEFINES[@]}"
           fi
 
       - name: Sign APK/AAB with apksigner (additional verification)

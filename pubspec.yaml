@@ -29,8 +29,6 @@ dependencies:
   uuid: ^4.5.1
   pdf: ^3.11.1
   permission_handler: ^13.0.0
-  mailer: ^7.2.0
-  flutter_dotenv: ^6.0.1
   page_view_dot_indicator: ^2.3.0
   flutter_email_sender: ^10.0.1
 
@@ -142,7 +140,6 @@ dependency_overrides:
 flutter:
   generate: true
   assets:
-    - .env
     - assets/images/client-profile.png
     - assets/images/placeholder_product.png
     - assets/images/invoice_banner.png
