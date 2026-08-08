@@ -21,26 +21,6 @@ class NotificationHandler extends ConsumerStatefulWidget {
 
   const NotificationHandler({super.key, required this.child});
 
-  @override
-  ConsumerState<NotificationHandler> createState() =>
-      _NotificationHandlerState();
-}
-
-class _NotificationHandlerState extends ConsumerState<NotificationHandler>
-    with WidgetsBindingObserver {
-  static const bool _enableNotificationDebugLogs = bool.fromEnvironment(
-    'ENABLE_NOTIFICATION_DEBUG_LOGS',
-    defaultValue: false,
-  );
-
-  late LocalNotificationService _localNotificationService;
-
-  void _debugLog(String message) {
-    if (kDebugMode && _enableNotificationDebugLogs) {
-      debugPrint(message);
-    }
-  }
-
   /// Requests notification permission if the user has not decided yet.
   /// Called after a successful login so the prompt appears at a
   /// context-appropriate moment rather than on cold app launch.
@@ -59,6 +39,26 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
       );
     } catch (e) {
       debugPrint('DEBUG_NOTIF_HANDLER: Permission request error: $e');
+    }
+  }
+
+  @override
+  ConsumerState<NotificationHandler> createState() =>
+      _NotificationHandlerState();
+}
+
+class _NotificationHandlerState extends ConsumerState<NotificationHandler>
+    with WidgetsBindingObserver {
+  static const bool _enableNotificationDebugLogs = bool.fromEnvironment(
+    'ENABLE_NOTIFICATION_DEBUG_LOGS',
+    defaultValue: false,
+  );
+
+  late LocalNotificationService _localNotificationService;
+
+  void _debugLog(String message) {
+    if (kDebugMode && _enableNotificationDebugLogs) {
+      debugPrint(message);
     }
   }
 
