@@ -4265,6 +4265,47 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
+  Future<Map<String, dynamic>> sendInvoiceEmail({
+    required String userEmail,
+    required String recipientEmail,
+    required String subject,
+    required String pdfBase64,
+    String fileName = 'invoice.pdf',
+    String invoiceText = '',
+  }) async {
+    try {
+      final headers = await _buildJsonHeaders(
+        includeAuth: true,
+        includeAppCheck: true,
+      );
+      final response = await http.post(
+        Uri.parse('${_baseUrl}sendInvoiceEmail'),
+        headers: headers,
+        body: jsonEncode({
+          'userEmail': userEmail,
+          'recipientEmail': recipientEmail,
+          'subject': subject,
+          'pdfBase64': pdfBase64,
+          'fileName': fileName,
+          'invoiceText': invoiceText,
+        }),
+      );
+      debugPrint('sendInvoiceEmail status: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        final result = json.decode(response.body);
+        if (result['success'] == true) {
+          return {'Success': true, 'messageId': result['messageId'] ?? ''};
+        }
+        return {'Error': result['message'] ?? 'Failed to send invoice email'};
+      }
+      debugPrint('sendInvoiceEmail failed: ${response.body}');
+      return {'Error': 'Failed to send invoice email (${response.statusCode})'};
+    } catch (e) {
+      debugPrint('Failed to send invoice email: $e');
+      return {'Error': 'Failed to send invoice email'};
+    }
+  }
+
   // Request Methods
   Future<Map<String, dynamic>> getRequests() async {
     try {
