@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesUtils {
@@ -40,6 +41,14 @@ class SharedPreferencesUtils {
   // New: Auth token key
   static const String _kAuthTokenKey = 'authToken';
 
+  // Auth token now lives in platform secure storage (Keychain/Keystore) via
+  // flutter_secure_storage, with an in-memory cache for the synchronous
+  // getAuthToken() read. The legacy SharedPreferences copy is migrated and
+  // then removed.
+  static const String _kLegacyAuthTokenKey = 'authToken';
+  static const FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+  String? _cachedAuthToken;
+
   /// Public key for storing date format preference (for ambiguous numeric dates)
   /// Allowed values: 'mdy' (US month-first), 'dmy' (day-first)
   static const String kDateFormatPreferenceKey = 'date_format_preference';
@@ -64,6 +73,10 @@ class SharedPreferencesUtils {
 
     try {
       _sharedPreferences = await SharedPreferences.getInstance();
+      // Load auth token from secure storage into the in-memory cache so the
+      // synchronous getAuthToken() read works after app restart. Also migrates
+      // any legacy SharedPreferences copy.
+      await _loadAuthTokenFromSecureStorage();
       _initCompleter!.complete();
       _initCompleter =
           null; // Reset to allow subsequent initializations in testing
@@ -281,7 +294,13 @@ class SharedPreferencesUtils {
   Future<void> clearAllUserData() async {
     await init();
     await _sharedPreferences!.clear(); // .clear() is simpler for logout
-    debugPrint("🗑️ All user data cleared from SharedPreferences.");
+    _cachedAuthToken = null;
+    try {
+      await _secureStorage.delete(key: _kAuthTokenKey);
+    } catch (e) {
+      debugPrint('⚠️ Error clearing secure storage: $e');
+    }
+    debugPrint("🗑️ All user data cleared from storage.");
   }
 
   // New: Token helpers
@@ -292,22 +311,53 @@ class SharedPreferencesUtils {
     if (normalized.toLowerCase().startsWith('bearer ')) {
       normalized = normalized.substring(7).trim();
     }
-    await _sharedPreferences!.setString(_kAuthTokenKey, normalized);
+    _cachedAuthToken = normalized;
+    await _secureStorage.write(key: _kAuthTokenKey, value: normalized);
+    // Remove the legacy plaintext copy (if any) from SharedPreferences.
+    await _sharedPreferences!.remove(_kLegacyAuthTokenKey);
     debugPrint(
-      "🔐 Auth token saved to SharedPreferences (normalized, length: ${normalized.length})",
+      "🔐 Auth token saved to secure storage (normalized, length: ${normalized.length})",
     );
   }
 
   String? getAuthToken() {
-    // Return trimmed token if stored
-    final t = _sharedPreferences?.getString(_kAuthTokenKey);
-    return t?.trim();
+    // Synchronous read backed by the in-memory cache (populated at init).
+    return _cachedAuthToken?.trim();
   }
 
   Future<void> clearAuthToken() async {
     if (_sharedPreferences == null) await init();
-    await _sharedPreferences!.remove(_kAuthTokenKey);
-    debugPrint("🔓 Auth token cleared from SharedPreferences");
+    _cachedAuthToken = null;
+    await _secureStorage.delete(key: _kAuthTokenKey);
+    await _sharedPreferences!.remove(_kLegacyAuthTokenKey);
+    debugPrint("🔓 Auth token cleared from secure storage");
+  }
+
+  /// Loads the token from secure storage into the cache. If secure storage is
+  /// empty but a legacy SharedPreferences copy exists, migrates it over.
+  Future<void> _loadAuthTokenFromSecureStorage() async {
+    try {
+      String? token;
+      try {
+        token = await _secureStorage.read(key: _kAuthTokenKey);
+      } catch (e) {
+        debugPrint('⚠️ Error reading secure storage: $e');
+      }
+      if (token == null || token.isEmpty) {
+        final legacy = _sharedPreferences?.getString(_kLegacyAuthTokenKey);
+        if (legacy != null && legacy.isNotEmpty) {
+          await _secureStorage.write(key: _kAuthTokenKey, value: legacy.trim());
+          await _sharedPreferences!.remove(_kLegacyAuthTokenKey);
+          debugPrint(
+            "🔐 Auth token migrated from SharedPreferences to secure storage",
+          );
+          token = legacy;
+        }
+      }
+      _cachedAuthToken = token?.trim();
+    } catch (e) {
+      debugPrint('⚠️ Auth token load failed: $e');
+    }
   }
 
   /// Saves the user's date format preference used for parsing ambiguous numeric dates.

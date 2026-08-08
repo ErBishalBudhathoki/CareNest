@@ -52,6 +52,7 @@ import 'package:carenest/app/features/timesheet/views/admin_payroll_export_view.
 import 'package:carenest/app/features/analytics/views/enhanced_predictive_insights_view.dart';
 import 'package:carenest/app/features/bulk_actions/views/bulk_actions_view.dart';
 import 'package:carenest/app/features/scheduling/views/auto_schedule_dashboard.dart';
+import 'package:carenest/app/features/invoice/views/invoice_ai_consent_view.dart';
 import 'package:carenest/app/features/invoice/views/invoice_ai_dashboard.dart';
 import 'package:carenest/app/features/compliance/views/compliance_automation_dashboard.dart';
 import 'package:carenest/app/features/expenses/views/smart_expense_dashboard.dart';
@@ -1496,13 +1497,29 @@ class _AdminDashboardViewControllerState
             title: 'Smart Invoicing',
             subtitle: 'AI error detection & payment predictions',
             color: BauhausDesign.primary,
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) =>
-                    InvoiceAIDashboard(organizationId: widget.organizationId),
-              ),
-            ),
+            onTap: () async {
+              final consented = await InvoiceAIConsentView.hasConsented();
+              if (!context.mounted) return;
+              if (consented) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => InvoiceAIDashboard(
+                      organizationId: widget.organizationId,
+                    ),
+                  ),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => InvoiceAIConsentView(
+                      organizationId: widget.organizationId,
+                    ),
+                  ),
+                );
+              }
+            },
           ),
           CommandAction(
             icon: const Icon(Icons.verified_user_outlined),

@@ -1,6 +1,7 @@
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/services/notificationservice/fcm_token_manager.dart';
+import 'package:carenest/app/shared/widgets/notification_handler_widget.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/services/firebase_auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -262,6 +263,9 @@ class LoginViewModel extends Notifier<int> {
           email: userData['email'] ?? credential.user!.email ?? '',
           organizationId: userData['organizationId'] ?? '',
         );
+
+        // Request notification permission now that the user is authenticated.
+        NotificationHandler.requestNotificationPermissionAfterLogin();
 
         _logSecurityEvent('login_successful', {
           'email': model.getSanitizedEmail(),

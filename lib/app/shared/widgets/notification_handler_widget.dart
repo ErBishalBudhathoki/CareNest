@@ -41,6 +41,35 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
     }
   }
 
+  /// Requests notification permission if the user has not decided yet.
+  /// Called after a successful login so the prompt appears at a
+  /// context-appropriate moment rather than on cold app launch.
+  static Future<void> requestNotificationPermissionAfterLogin() async {
+    try {
+      final settings = await FirebaseMessaging.instance
+          .getNotificationSettings();
+      if (settings.authorizationStatus != AuthorizationStatus.notDetermined) {
+        return;
+      }
+      await FirebaseMessaging.instance.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+        provisional: false,
+      );
+    } catch (e) {
+      debugPrint('DEBUG_NOTIF_HANDLER: Permission request error: $e');
+    }
+  }
+
+  /// True when the user has a stored auth session (token present in secure
+  /// storage / prefs). Used to defer the notification permission prompt until
+  /// after login instead of showing it on cold launch.
+  bool _isUserAuthenticated() {
+    final prefs = SharedPreferencesUtils();
+    return prefs.getAuthToken() != null && prefs.getAuthToken()!.isNotEmpty;
+  }
+
   void onDidReceiveNotification(
     NotificationResponse notificationResponse,
   ) async {
@@ -228,8 +257,13 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
         'DEBUG_NOTIF_HANDLER: Firebase permission status: ${settings.authorizationStatus}',
       );
 
-      // Step 4: Request permission if not yet determined (Android 13+ / iOS)
-      if (settings.authorizationStatus == AuthorizationStatus.notDetermined) {
+      // Step 4: Request permission ONLY for authenticated users. At cold
+      // launch (splash/login) there is no session yet, so we defer the system
+      // permission prompt to the first time the user signs in, which is the
+      // context-appropriate moment (instead of nagging on first open).
+      final isAuthenticated = _isUserAuthenticated();
+      if (settings.authorizationStatus == AuthorizationStatus.notDetermined &&
+          isAuthenticated) {
         final newSettings = await FirebaseMessaging.instance.requestPermission(
           alert: true,
           badge: true,
@@ -238,6 +272,11 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
         );
         _debugLog(
           'DEBUG_NOTIF_HANDLER: Permission requested — result: ${newSettings.authorizationStatus}',
+        );
+      } else if (settings.authorizationStatus ==
+          AuthorizationStatus.notDetermined) {
+        _debugLog(
+          'DEBUG_NOTIF_HANDLER: Deferring permission request until user is authenticated',
         );
       }
 
