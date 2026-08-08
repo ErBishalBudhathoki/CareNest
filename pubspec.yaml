@@ -127,7 +127,7 @@ flutter:
   generate: true
   assets:
     - assets/images/Invo.gif
-    - assets/images/splash_screen.gif
+    - assets/images/splash_screen.webp
     - assets/images/grid_pattern.png
     - assets/images/he_sitting_with_notebook.png
     - assets/images/she_with_phone.png

@@ -247,7 +247,7 @@ jobs:
           if [ "${{ matrix.build-type }}" == "release" ]; then
             flutter build appbundle --release --flavor production --build-number=${{ github.run_number }} "${DEFINES[@]}"
           else
-            flutter build apk --debug --flavor production "${DEFINES[@]}"
+            flutter build apk --debug --flavor production --target-platform android-arm64 "${DEFINES[@]}"
           fi
 
       - name: Sign APK/AAB with apksigner (additional verification)
