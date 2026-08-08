@@ -136,7 +136,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         width: double.infinity,
         height: double.infinity,
         child: Image.asset(
-          'assets/images/splash_screen.gif',
+          'assets/images/splash_screen.webp',
           fit: BoxFit.cover,
         ),
       ),
