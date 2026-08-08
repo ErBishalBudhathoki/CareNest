@@ -529,7 +529,7 @@ class _DynamicAppointmentCardWidgetState
             },
           );
         } else if (snapshot.hasError) {
-          debugPrint(snapshot.error);
+          debugPrint('Error loading future clients data: ${snapshot.error}');
           return Container(
             height: MediaQuery.of(context).size.height * 0.35,
             margin: const EdgeInsets.symmetric(horizontal: _spacingMd),
