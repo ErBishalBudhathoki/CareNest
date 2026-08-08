@@ -1,6 +1,7 @@
 import 'package:carenest/app/features/schedule/models/shift_model.dart';
 import 'package:carenest/app/features/expenses/models/expense_model.dart';
 import 'package:carenest/app/features/teams/models/team_models.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 
 /// Worker Dashboard Data Model
 /// Contains aggregated data for the worker dashboard view
@@ -68,9 +69,9 @@ class WorkerDashboardData {
       );
     } catch (e, stackTrace) {
       // Log error for debugging
-      print('Error parsing WorkerDashboardData: $e');
-      print('Stack trace: $stackTrace');
-      print('JSON received: $json');
+      debugPrint('Error parsing WorkerDashboardData: $e');
+      debugPrint('Stack trace: $stackTrace');
+      debugPrint('JSON received: $json');
 
       // Return empty dashboard data instead of throwing
       return const WorkerDashboardData();
@@ -88,14 +89,14 @@ class WorkerDashboardData {
             try {
               return ShiftModel.fromJson(e as Map<String, dynamic>);
             } catch (e) {
-              print('Error parsing shift: $e');
+              debugPrint('Error parsing shift: $e');
               return null;
             }
           })
           .whereType<ShiftModel>() // Filter out null values
           .toList();
     } catch (e) {
-      print('Error parsing shift list: $e');
+      debugPrint('Error parsing shift list: $e');
       return [];
     }
   }
@@ -107,7 +108,7 @@ class WorkerDashboardData {
     try {
       return ShiftModel.fromJson(shiftJson as Map<String, dynamic>);
     } catch (e) {
-      print('Error parsing shift: $e');
+      debugPrint('Error parsing shift: $e');
       return null;
     }
   }
@@ -123,14 +124,14 @@ class WorkerDashboardData {
             try {
               return ExpenseModel.fromJson(e as Map<String, dynamic>);
             } catch (e) {
-              print('Error parsing expense: $e');
+              debugPrint('Error parsing expense: $e');
               return null;
             }
           })
           .whereType<ExpenseModel>() // Filter out null values
           .toList();
     } catch (e) {
-      print('Error parsing expense list: $e');
+      debugPrint('Error parsing expense list: $e');
       return [];
     }
   }
@@ -146,14 +147,14 @@ class WorkerDashboardData {
             try {
               return WorkerLeaveBalance.fromJson(e as Map<String, dynamic>);
             } catch (e) {
-              print('Error parsing leave balance: $e');
+              debugPrint('Error parsing leave balance: $e');
               return null;
             }
           })
           .whereType<WorkerLeaveBalance>() // Filter out null values
           .toList();
     } catch (e) {
-      print('Error parsing leave balance list: $e');
+      debugPrint('Error parsing leave balance list: $e');
       return [];
     }
   }
@@ -169,14 +170,14 @@ class WorkerDashboardData {
             try {
               return EmergencyBroadcast.fromJson(e as Map<String, dynamic>);
             } catch (e) {
-              print('Error parsing emergency broadcast: $e');
+              debugPrint('Error parsing emergency broadcast: $e');
               return null;
             }
           })
           .whereType<EmergencyBroadcast>() // Filter out null values
           .toList();
     } catch (e) {
-      print('Error parsing emergency broadcast list: $e');
+      debugPrint('Error parsing emergency broadcast list: $e');
       return [];
     }
   }
@@ -259,7 +260,7 @@ class WorkerLeaveBalance {
       if (value is int) return DateTime.fromMillisecondsSinceEpoch(value);
       return null;
     } catch (e) {
-      print('Error parsing DateTime: $e, value: $value');
+      debugPrint('Error parsing DateTime: $e, value: $value');
       return null;
     }
   }

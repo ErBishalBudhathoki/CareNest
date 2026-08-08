@@ -3,6 +3,7 @@ import '../../../../backend/api_method.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import '../models/trip_model.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 
 final mileageRepositoryProvider = Provider<MileageRepository>((ref) {
   return MileageRepository(ref.read(app_providers.apiMethodProvider));
@@ -80,7 +81,7 @@ class MileageRepository {
       return [];
     } catch (e) {
       // Log error appropriately in a real app
-      print('Error fetching trips: $e');
+      debugPrint('Error fetching trips: $e');
       return [];
     }
   }
@@ -117,7 +118,7 @@ class MileageRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching client trips: $e');
+      debugPrint('Error fetching client trips: $e');
       return [];
     }
   }
@@ -129,7 +130,7 @@ class MileageRepository {
       return response != null &&
           (response['success'] == true || response['status'] == 201);
     } catch (e) {
-      print('Error saving trip: $e');
+      debugPrint('Error saving trip: $e');
       return false;
     }
   }
@@ -178,7 +179,7 @@ class MileageRepository {
 
       return clients;
     } catch (e) {
-      print('Error fetching assignable clients: $e');
+      debugPrint('Error fetching assignable clients: $e');
       return [];
     }
   }

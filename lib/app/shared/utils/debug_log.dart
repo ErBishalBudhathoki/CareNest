@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show debugPrint;
 
 /// DebugLog provides structured, timestamped debug logging for UI flows,
 /// network requests/responses, and error states. Logs are printed as JSON
@@ -138,7 +139,7 @@ class DebugLog {
     }
     // Print as JSON line for structured logs
     // Using print to avoid debugPrint truncation for very long lines
-    print(jsonEncode(entry));
+    debugPrint(jsonEncode(entry));
   }
 
   static String _ts() => DateTime.now().toIso8601String();

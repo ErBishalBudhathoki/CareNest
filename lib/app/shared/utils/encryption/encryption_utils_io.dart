@@ -36,11 +36,9 @@ class EncryptionUtils {
   }
 
   String encryptPasswordWithArgon2andSalt(String password, Uint8List salt) {
-    debugPrint("encryptPasswordWithArgon2andSalt: $password $salt");
     // Hash the password with Argon2 using recommended parameters
     Uint8List salts = salt.isEmpty ? generateSalt() : salt;
 
-    debugPrint("salttts: $salts");
     final parameters = Argon2Parameters(
       Argon2Parameters.ARGON2_i,
       salts,
@@ -63,11 +61,8 @@ class EncryptionUtils {
 
     var resultHex = result.toHexString();
     var saltHex = salts.toHexString();
-    debugPrint('Result: $resultHex');
-    debugPrint('Salt: $saltHex');
     // Combine hashed password and salt and store in the response
     var hashedPasswordWithSalt = '$resultHex$saltHex';
-    debugPrint("hashedPasswordWithSalt: $hashedPasswordWithSalt");
     return hashedPasswordWithSalt;
   }
 

@@ -3,6 +3,7 @@ import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import '../models/dashboard_models.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 
 class DashboardViewModel extends Notifier<DashboardState> {
   late final ApiMethod _apiMethod;
@@ -60,7 +61,7 @@ class DashboardViewModel extends Notifier<DashboardState> {
       }
       return null;
     } catch (e) {
-      print('Error fetching today summary: $e');
+      debugPrint('Error fetching today summary: $e');
       return null;
     }
   }
@@ -79,7 +80,7 @@ class DashboardViewModel extends Notifier<DashboardState> {
       }
       return null;
     } catch (e) {
-      print('Error fetching worker locations: $e');
+      debugPrint('Error fetching worker locations: $e');
       return null;
     }
   }
@@ -98,7 +99,7 @@ class DashboardViewModel extends Notifier<DashboardState> {
       }
       return null;
     } catch (e) {
-      print('Error fetching quick actions: $e');
+      debugPrint('Error fetching quick actions: $e');
       return null;
     }
   }
@@ -117,7 +118,7 @@ class DashboardViewModel extends Notifier<DashboardState> {
       }
       return null;
     } catch (e) {
-      print('Error fetching compliance alerts: $e');
+      debugPrint('Error fetching compliance alerts: $e');
       return null;
     }
   }
@@ -134,7 +135,7 @@ class DashboardViewModel extends Notifier<DashboardState> {
       }
       return null;
     } catch (e) {
-      print('Error fetching revenue comparison: $e');
+      debugPrint('Error fetching revenue comparison: $e');
       return null;
     }
   }

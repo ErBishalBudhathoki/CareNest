@@ -127,7 +127,7 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
 
     // Debug logging
     if (priceChanged || clientSpecificChanged) {
-      print(
+      debugPrint(
         'Item $id modification check: price=$currentPrice (was $originalPrice, changed=$priceChanged), clientSpecific=$currentClientSpecific (was $originalClientSpecific, changed=$clientSpecificChanged) -> modified=$isModified',
       );
     }

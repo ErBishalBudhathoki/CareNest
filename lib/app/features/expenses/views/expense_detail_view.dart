@@ -316,7 +316,7 @@ class ExpenseDetailView extends ConsumerWidget {
   }
 
   Widget _buildStatusBadge(BuildContext context, String status) {
-    print(status); // Debug print to ensure status is being read
+    debugPrint(status); // Debug print to ensure status is being read
     final l10n = AppLocalizations.of(context)!;
     BauhausChipVariant variant;
     String text;

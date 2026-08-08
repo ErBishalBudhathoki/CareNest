@@ -440,7 +440,7 @@ class _AddUpdateInvoicingEmailViewState
       _invoicingBusinessEmailPasswordController.text,
     );
     if (kDebugMode) {
-      print("Response: $ins");
+      debugPrint("Response: $ins");
     }
 
     final backendMessage = (ins['message'] ?? '').toString().trim();
@@ -451,7 +451,7 @@ class _AddUpdateInvoicingEmailViewState
 
     if (ins['success'] == true) {
       if (kDebugMode) {
-        print("Details added Successful ");
+        debugPrint("Details added Successful ");
       }
       return {
         'success': true,
@@ -476,7 +476,7 @@ class _AddUpdateInvoicingEmailViewState
     }
 
     if (kDebugMode) {
-      print("Details added Failed");
+      debugPrint("Details added Failed");
     }
     return {
       'success': false,

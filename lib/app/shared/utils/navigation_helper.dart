@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 
 class NavigationHelper {
   /// Opens the native maps application with directions to the specified address.
@@ -39,7 +40,7 @@ class NavigationHelper {
       }
     } catch (e) {
       // Log error if needed
-      print('Error launching maps: $e');
+      debugPrint('Error launching maps: $e');
     }
 
     return false;

@@ -167,7 +167,6 @@ class FcmTokenManager {
 
       debugPrint('✅ FCM Token retrieved successfully');
       debugPrint('Token Preview: ${currentToken.substring(0, 20)}...');
-      debugPrint('Full Token: $currentToken');
       debugPrint('Token Length: ${currentToken.length} characters');
 
       // Check if we need to send the token to the backend
