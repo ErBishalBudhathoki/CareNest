@@ -339,7 +339,13 @@ class SharedPreferencesUtils {
     try {
       String? token;
       try {
-        token = await _secureStorage.read(key: _kAuthTokenKey);
+        token = await _secureStorage
+            .read(key: _kAuthTokenKey)
+            .timeout(const Duration(seconds: 1));
+      } on TimeoutException {
+        debugPrint(
+          '⚠️ Secure storage read timed out; continuing without token',
+        );
       } catch (e) {
         debugPrint('⚠️ Error reading secure storage: $e');
       }
