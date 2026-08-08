@@ -4,15 +4,20 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform, debugPrint;
 import 'package:carenest/config/environment.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DefaultFirebaseOptions {
   static String _getEnv(String key, {String fallback = ''}) {
-    if (!dotenv.isInitialized) {
-      debugPrint('Warning: dotenv not initialized when reading $key');
-      return fallback;
+    switch (key) {
+      case 'FIREBASE_WEB_API_KEY':
+        return const String.fromEnvironment('FIREBASE_WEB_API_KEY');
+      case 'FIREBASE_ANDROID_API_KEY':
+        return const String.fromEnvironment('FIREBASE_ANDROID_API_KEY');
+      case 'FIREBASE_ANDROID_DEV_API_KEY':
+        return const String.fromEnvironment('FIREBASE_ANDROID_DEV_API_KEY');
+      case 'FIREBASE_IOS_API_KEY':
+        return const String.fromEnvironment('FIREBASE_IOS_API_KEY');
     }
-    return dotenv.env[key] ?? fallback;
+    return fallback;
   }
 
   static FirebaseOptions get currentPlatform {
