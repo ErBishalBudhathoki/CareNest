@@ -19,7 +19,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, kReleaseMode;
 import 'dart:io' show Platform;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/config/build_config.dart';
@@ -108,6 +108,10 @@ bool isDeepLinkHandled() {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (kReleaseMode) {
+    debugPrint = (String? message, {int? wrapWidth}) {};
+  }
+
   await SharedPreferencesUtils().init();
 
   const flutterFlavor = String.fromEnvironment('FLUTTER_APP_FLAVOR');
@@ -204,7 +208,6 @@ Future<void> _initializeFirebase() async {
       debugPrint(
         '✅ FCM Token available at startup: ${token.substring(0, 20)}...',
       );
-      debugPrint('Full FCM Token: $token');
     } else {
       debugPrint('❌ No FCM Token available at startup');
     }

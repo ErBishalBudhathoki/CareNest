@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../backend/api_method.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
+import 'package:flutter/foundation.dart' show debugPrint;
 
 final organizationRepositoryProvider = Provider<OrganizationRepository>((ref) {
   return OrganizationRepository(ref.read(app_providers.apiMethodProvider));
@@ -20,7 +21,7 @@ class OrganizationRepository {
       }
       return null;
     } catch (e) {
-      print('Error fetching organization: $e');
+      debugPrint('Error fetching organization: $e');
       return null;
     }
   }
@@ -36,7 +37,7 @@ class OrganizationRepository {
       );
       return response != null && response['success'] == true;
     } catch (e) {
-      print('Error updating organization: $e');
+      debugPrint('Error updating organization: $e');
       return false;
     }
   }
