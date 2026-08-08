@@ -26,7 +26,6 @@ import 'package:carenest/app/features/bulk_actions/views/bulk_actions_view.dart'
 import 'package:carenest/app/features/scheduling/views/shift_matching_view.dart';
 import 'package:carenest/app/features/scheduling/views/auto_schedule_dashboard.dart';
 import 'package:carenest/app/features/invoice/views/invoice_ai_consent_view.dart';
-import 'package:carenest/app/features/invoice/views/invoice_ai_dashboard.dart';
 import 'package:carenest/app/features/offline/views/offline_sync_dashboard.dart';
 import 'package:carenest/app/features/compliance/views/compliance_automation_dashboard.dart';
 import 'package:carenest/app/features/expenses/views/smart_expense_dashboard.dart';
