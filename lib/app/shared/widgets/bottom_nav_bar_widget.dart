@@ -36,6 +36,7 @@ class BottomNavBarWidget extends ConsumerStatefulWidget {
 
 class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
   int _selectedIndex = 0;
+  final Set<int> _visitedTabs = <int>{0};
   Uint8List? _photoData;
   String? _imageUrl;
   String _firstName = '';
@@ -45,6 +46,7 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
   void initState() {
     super.initState();
     _selectedIndex = _normalizeInitialIndex(widget.initialIndex);
+    _visitedTabs.add(_selectedIndex);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _loadUserData();
       // Ensure the role provider is fresh from the backend
@@ -109,24 +111,43 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
   }
 
   List<Widget> _getScreens() {
-    final screens = <Widget>[_buildHomeScreen()];
+    // Build lazily: only the initially-visited tab is built up front. Other
+    // tabs get built on first visit so their initState network calls are not
+    // fired at startup while sitting in the (eager) IndexedStack.
+    final screens = <Widget>[];
 
-    if (widget.role == UserRole.admin) {
-      screens.add(AssignC2E());
+    if (_visitedTabs.contains(0)) {
+      screens.add(_buildHomeScreen());
+    } else {
+      screens.add(const SizedBox.shrink());
     }
 
-    screens.add(
-      SettingsView(
-        organizationId: widget.organizationId,
-        organizationName: widget.organizationName,
-        organizationCode: widget.organizationCode,
-        userEmail: widget.email,
-        userName: '$_firstName $_lastName'.trim(),
-        photoData: _photoData,
-        imageUrl: _imageUrl,
-        currentDashboardRole: widget.role,
-      ),
-    );
+    final settingsIndex = widget.role == UserRole.admin ? 2 : 1;
+
+    if (widget.role == UserRole.admin) {
+      if (_visitedTabs.contains(1)) {
+        screens.add(AssignC2E());
+      } else {
+        screens.add(const SizedBox.shrink());
+      }
+    }
+
+    if (_visitedTabs.contains(settingsIndex)) {
+      screens.add(
+        SettingsView(
+          organizationId: widget.organizationId,
+          organizationName: widget.organizationName,
+          organizationCode: widget.organizationCode,
+          userEmail: widget.email,
+          userName: '$_firstName $_lastName'.trim(),
+          photoData: _photoData,
+          imageUrl: _imageUrl,
+          currentDashboardRole: widget.role,
+        ),
+      );
+    } else {
+      screens.add(const SizedBox.shrink());
+    }
 
     return screens;
   }
@@ -238,7 +259,10 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
     final isSelected = _selectedIndex == index;
 
     return GestureDetector(
-      onTap: () => setState(() => _selectedIndex = index),
+      onTap: () => setState(() {
+        _selectedIndex = index;
+        _visitedTabs.add(index);
+      }),
       behavior: HitTestBehavior.opaque,
       child: isSelected
           ? _buildActiveItem(activeIcon, label, activeBg, activeContent)
