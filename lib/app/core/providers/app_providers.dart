@@ -98,6 +98,9 @@ class PhotoDataState {
 
 class PhotoDataNotifier extends Notifier<PhotoDataState> {
   late final ApiMethod _apiMethod;
+  Future<void>? _fetchInFlight;
+  DateTime? _lastFetchAt;
+  static const Duration _fetchCooldown = Duration(seconds: 30);
 
   @override
   PhotoDataState build() {
@@ -109,6 +112,30 @@ class PhotoDataNotifier extends Notifier<PhotoDataState> {
     debugPrint(
       "\n=== PhotoDataNotifier.fetchPhotoData called for email: $email (force: $forceRefresh) ===",
     );
+
+    if (_fetchInFlight != null) {
+      debugPrint("fetchPhotoData: already in-flight, reusing");
+      return _fetchInFlight;
+    }
+    final now = DateTime.now();
+    if (!forceRefresh &&
+        _lastFetchAt != null &&
+        now.difference(_lastFetchAt!) < _fetchCooldown) {
+      debugPrint("fetchPhotoData: skipping (fetched "
+          "${now.difference(_lastFetchAt!).inSeconds}s ago)");
+      return;
+    }
+    _lastFetchAt = now;
+    _fetchInFlight = _fetchPhotoDataImpl(email, forceRefresh: forceRefresh);
+    try {
+      await _fetchInFlight;
+    } finally {
+      _fetchInFlight = null;
+    }
+  }
+
+  Future<void> _fetchPhotoDataImpl(String email,
+      {bool forceRefresh = false}) async {
 
     // If not forcing refresh, try to load from cache first for immediate display
     if (!forceRefresh) {
@@ -346,6 +373,9 @@ final userRoleProvider = NotifierProvider<UserRoleNotifier, UserRole>(
 class UserRoleNotifier extends Notifier<UserRole> {
   late final SharedPreferencesUtils _sharedPrefs;
   late final ApiMethod _apiMethod;
+  Future<void>? _refreshInFlight;
+  DateTime? _lastRefreshAt;
+  static const Duration _refreshCooldown = Duration(seconds: 30);
 
   @override
   UserRole build() {
@@ -364,6 +394,29 @@ class UserRoleNotifier extends Notifier<UserRole> {
   /// Re-syncs the user's role from the backend to ensure local state is fresh.
   /// Useful for handling role regressions or updates without forcing logout.
   Future<void> refreshRole() async {
+    if (_refreshInFlight != null) {
+      debugPrint('refreshRole: already in-flight, reusing');
+      return _refreshInFlight;
+    }
+    final now = DateTime.now();
+    if (_lastRefreshAt != null &&
+        now.difference(_lastRefreshAt!) < _refreshCooldown) {
+      debugPrint(
+        'refreshRole: skipping (refreshed '
+        '${now.difference(_lastRefreshAt!).inSeconds}s ago)',
+      );
+      return;
+    }
+    _lastRefreshAt = now;
+    _refreshInFlight = _doRefreshRole();
+    try {
+      await _refreshInFlight;
+    } finally {
+      _refreshInFlight = null;
+    }
+  }
+
+  Future<void> _doRefreshRole() async {
     final email = _sharedPrefs.getUserEmail();
     final firebaseUid = _sharedPrefs.getString('firebaseUid');
     final authToken = _sharedPrefs.getAuthToken();
