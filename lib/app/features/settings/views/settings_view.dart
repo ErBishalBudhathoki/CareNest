@@ -994,6 +994,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   }
 
   Future<void> _syncEmailVerificationToBackend(String firebaseUid) async {
+    if (!mounted) return;
     try {
       final apiMethod = ref.read(apiMethodProvider);
       final response = await apiMethod.syncEmailVerificationStatus(
