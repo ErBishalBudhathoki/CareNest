@@ -446,12 +446,6 @@ class _EditCertificationDialogState
 
   @override
   Widget build(BuildContext context) {
-    final requirementsState = ref.watch(
-      certificationRequirementsViewModelProvider,
-    );
-    final requirements = requirementsState.requirements
-        .where((req) => req.isActive)
-        .toList();
 
     return Dialog(
       insetPadding: const EdgeInsets.all(BauhausDesign.space4),
@@ -577,7 +571,8 @@ class _EditCertificationDialogState
                                   ? null
                                   : _numberController.text.trim(),
                             );
-                        if (mounted) Navigator.pop(context);
+                        if (!context.mounted) return;
+                        Navigator.pop(context);
                       },
                     ),
                   ),
@@ -655,7 +650,7 @@ class _UploadCertificationDialogState
                 const SizedBox(height: BauhausDesign.space4),
                 if (requirements.isNotEmpty) ...[
                   DropdownButtonFormField<String>(
-                    value: _selectedRequirementId,
+                    initialValue: _selectedRequirementId,
                     decoration: BauhausDesign.inputDecoration('').copyWith(
                       labelText: 'Certification Requirement (Optional)',
                     ),
@@ -759,7 +754,7 @@ class _UploadCertificationDialogState
                     padding: const EdgeInsets.all(BauhausDesign.space3),
                     decoration: BoxDecoration(
                       color: _selectedFile != null
-                          ? BauhausDesign.primary.withOpacity(0.1)
+                          ? BauhausDesign.primary.withValues(alpha: 0.1)
                           : BauhausDesign.backgroundLight,
                       border: Border.all(color: BauhausDesign.neutral),
                     ),

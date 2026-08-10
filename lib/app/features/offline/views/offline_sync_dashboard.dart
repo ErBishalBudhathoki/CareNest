@@ -189,7 +189,7 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
               height: 40,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: BauhausDesign.warning.withOpacity(0.1),
+                color: BauhausDesign.warning.withValues(alpha: 0.1),
                 border: Border.all(color: BauhausDesign.warning, width: 2),
               ),
               child: const Icon(
@@ -226,7 +226,7 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: BauhausDesign.warning.withOpacity(0.1),
+                color: BauhausDesign.warning.withValues(alpha: 0.1),
                 border: Border.all(color: BauhausDesign.warning, width: 1.5),
               ),
               child: Text(
@@ -271,8 +271,8 @@ class _StatusBar extends StatelessWidget {
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
         color: isOnline
-            ? BauhausDesign.success.withOpacity(0.06)
-            : BauhausDesign.warning.withOpacity(0.08),
+            ? BauhausDesign.success.withValues(alpha: 0.06)
+            : BauhausDesign.warning.withValues(alpha: 0.08),
         border: Border.all(
           color: isOnline ? BauhausDesign.success : BauhausDesign.warning,
           width: 2,

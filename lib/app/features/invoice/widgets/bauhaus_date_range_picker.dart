@@ -28,7 +28,7 @@ Future<DateTimeRange?> showBauhausDateRangePicker({
 }) async {
   return showDialog<DateTimeRange>(
     context: context,
-    barrierColor: _ink.withOpacity(0.55),
+    barrierColor: _ink.withValues(alpha: 0.55),
     builder: (_) => _BauhausDateRangePickerDialog(
       initialStart: initialStart,
       initialEnd: initialEnd,
@@ -48,7 +48,7 @@ Future<DateTime?> showBauhausDatePicker({
 }) async {
   return showDialog<DateTime>(
     context: context,
-    barrierColor: _ink.withOpacity(0.55),
+    barrierColor: _ink.withValues(alpha: 0.55),
     builder: (_) => _BauhausDatePickerDialog(
       initialDate: initialDate ?? DateTime.now(),
       firstDate: firstDate ?? DateTime(2000),
@@ -234,7 +234,7 @@ class _BauhausDateRangePickerDialogState
               width: 30,
               height: 30,
               decoration: BoxDecoration(
-                border: Border.all(color: _paper.withOpacity(0.5), width: 1.5),
+                border: Border.all(color: _paper.withValues(alpha: 0.5), width: 1.5),
               ),
               child: const Icon(Icons.close_rounded, color: _paper, size: 16),
             ),
@@ -258,7 +258,7 @@ class _BauhausDateRangePickerDialogState
       child: Row(
         children: [
           Expanded(child: _summaryCell('FROM', _start)),
-          Container(width: 1.5, height: 36, color: _paper.withOpacity(0.35)),
+          Container(width: 1.5, height: 36, color: _paper.withValues(alpha: 0.35)),
           Expanded(child: _summaryCell('TO', _end)),
         ],
       ),
@@ -275,7 +275,7 @@ class _BauhausDateRangePickerDialogState
           Text(
             label,
             style: GoogleFonts.robotoMono(
-              color: _paper.withOpacity(0.65),
+              color: _paper.withValues(alpha: 0.65),
               fontSize: 9,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
@@ -361,7 +361,7 @@ class _BauhausDateRangePickerDialogState
             child: Text(
               _dayAbbr(i),
               style: GoogleFonts.robotoMono(
-                color: isWeekend ? _danger : _ink.withOpacity(0.55),
+                color: isWeekend ? _danger : _ink.withValues(alpha: 0.55),
                 fontSize: 9,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1,
@@ -407,7 +407,7 @@ class _BauhausDateRangePickerDialogState
     final isWeekend = day.weekday >= 6;
 
     Color bg = Colors.transparent;
-    Color fg = isWeekend ? _danger.withOpacity(0.75) : _ink;
+    Color fg = isWeekend ? _danger.withValues(alpha: 0.75) : _ink;
 
     if (isEndpoint) {
       bg = _signal;
@@ -430,7 +430,7 @@ class _BauhausDateRangePickerDialogState
                   width: BauhausDesign.neoInnerBorderWidth,
                 )
               : inRange
-              ? Border.all(color: _signal.withOpacity(0.3), width: 1)
+              ? Border.all(color: _signal.withValues(alpha: 0.3), width: 1)
               : null,
           boxShadow: isEndpoint
               ? [
@@ -488,12 +488,12 @@ class _BauhausDateRangePickerDialogState
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: _start != null && _end != null
-            ? _highlight.withOpacity(0.18)
-            : _ink.withOpacity(0.06),
+            ? _highlight.withValues(alpha: 0.18)
+            : _ink.withValues(alpha: 0.06),
         border: Border.all(
           color: _start != null && _end != null
               ? _highlight
-              : _ink.withOpacity(0.25),
+              : _ink.withValues(alpha: 0.25),
           width: 1.5,
         ),
       ),
@@ -506,13 +506,13 @@ class _BauhausDateRangePickerDialogState
             size: 13,
             color: _start != null && _end != null
                 ? _highlight
-                : _ink.withOpacity(0.5),
+                : _ink.withValues(alpha: 0.5),
           ),
           const SizedBox(width: 6),
           Text(
             msg,
             style: GoogleFonts.robotoMono(
-              color: _ink.withOpacity(0.65),
+              color: _ink.withValues(alpha: 0.65),
               fontSize: 9,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.8,
@@ -584,7 +584,7 @@ class _BauhausDateRangePickerDialogState
               child: Container(
                 height: 44,
                 decoration: BoxDecoration(
-                  color: canConfirm ? _danger : _ink.withOpacity(0.25),
+                  color: canConfirm ? _danger : _ink.withValues(alpha: 0.25),
                   border: Border.all(
                     color: _ink,
                     width: BauhausDesign.neoBorderWidth,
@@ -605,14 +605,14 @@ class _BauhausDateRangePickerDialogState
                   children: [
                     Icon(
                       Icons.check_rounded,
-                      color: canConfirm ? _paper : _paper.withOpacity(0.45),
+                      color: canConfirm ? _paper : _paper.withValues(alpha: 0.45),
                       size: 16,
                     ),
                     const SizedBox(width: 6),
                     Text(
                       'CONFIRM PERIOD',
                       style: GoogleFonts.oswald(
-                        color: canConfirm ? _paper : _paper.withOpacity(0.45),
+                        color: canConfirm ? _paper : _paper.withValues(alpha: 0.45),
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
@@ -730,7 +730,7 @@ class _BauhausDatePickerDialogState extends State<_BauhausDatePickerDialog> {
               width: 30,
               height: 30,
               decoration: BoxDecoration(
-                border: Border.all(color: _paper.withOpacity(0.5), width: 1.5),
+                border: Border.all(color: _paper.withValues(alpha: 0.5), width: 1.5),
               ),
               child: const Icon(Icons.close_rounded, color: _paper, size: 16),
             ),
@@ -804,7 +804,7 @@ class _BauhausDatePickerDialogState extends State<_BauhausDatePickerDialog> {
             child: Text(
               abbr[i],
               style: GoogleFonts.robotoMono(
-                color: i >= 5 ? _danger : _ink.withOpacity(0.55),
+                color: i >= 5 ? _danger : _ink.withValues(alpha: 0.55),
                 fontSize: 9,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1,
@@ -873,7 +873,7 @@ class _BauhausDatePickerDialogState extends State<_BauhausDatePickerDialog> {
               style: GoogleFonts.oswald(
                 color: isSelected
                     ? _paper
-                    : (isWeekend ? _danger.withOpacity(0.75) : _ink),
+                    : (isWeekend ? _danger.withValues(alpha: 0.75) : _ink),
                 fontSize: 15,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
               ),

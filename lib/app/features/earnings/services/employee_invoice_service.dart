@@ -115,7 +115,6 @@ class EmployeeInvoiceService {
 
         final applicableRate = getRateForDate(item.date, isHoliday);
         final rates = user?.detailedRates;
-        final baseRate = user?.payRate ?? 0.0; // Unused variable
 
         // --- ALLOWANCES (Per Shift) ---
         // 1. Laundry
@@ -251,12 +250,13 @@ class EmployeeInvoiceService {
         } else {
           // No split needed (Weekend, Holiday, or under 8h)
           String itemName = l10n.standardHours;
-          if (isHoliday)
+          if (isHoliday) {
             itemName = l10n.publicHoliday;
-          else if (date.weekday == DateTime.sunday)
+          } else if (date.weekday == DateTime.sunday) {
             itemName = l10n.sundayRate;
-          else if (date.weekday == DateTime.saturday)
+          } else if (date.weekday == DateTime.saturday) {
             itemName = l10n.saturdayRate;
+          }
 
           items.add({
             'date': item.date,
@@ -274,7 +274,6 @@ class EmployeeInvoiceService {
 
       // --- VEHICLE ALLOWANCE LOGIC ---
       // 4. Process Trips for Reimbursement
-      double vehicleAllowanceTotal = 0;
       final vehicleRate = SchadsRateConstants.allowances['Vehicle'] ?? 0.99;
 
       for (final trip in trips) {
@@ -285,7 +284,6 @@ class EmployeeInvoiceService {
             trip.date.isAfter(startDate.subtract(const Duration(seconds: 1))) &&
             trip.date.isBefore(endDate.add(const Duration(seconds: 1)))) {
           final amount = trip.distance * vehicleRate;
-          vehicleAllowanceTotal += amount;
 
           items.add({
             'date': trip.date.toIso8601String().split('T')[0],
@@ -367,6 +365,7 @@ class EmployeeInvoiceService {
       );
 
       // 4. Open PDF
+      if (!context.mounted) return;
       if (paths.isNotEmpty) {
         await OpenFile.open(paths.first);
       } else {
@@ -375,6 +374,7 @@ class EmployeeInvoiceService {
         ).showSnackBar(SnackBar(content: Text(l10n.pdfGenerationFailed)));
       }
     } catch (e) {
+      if (!context.mounted) return;
       debugPrint('Error generating employee invoice: $e');
       ScaffoldMessenger.of(
         context,

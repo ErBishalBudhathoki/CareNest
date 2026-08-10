@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -254,12 +253,6 @@ class InvoicePdfGenerator {
     return value.toString();
   }
 
-  String _getSafeStringWithDefault(dynamic value, String defaultValue) {
-    if (value == null) return defaultValue;
-    if (value is String && value.isEmpty) return defaultValue;
-    return value.toString();
-  }
-
   // Format a tax rate (fraction) into a human-friendly percentage without over-rounding.
   // Examples: 0.135 -> "13.5", 0.10 -> "10", 0.0725 -> "7.25"
   String _formatPercentage(double rate) {
@@ -274,35 +267,6 @@ class InvoicePdfGenerator {
       return rounded1.toStringAsFixed(1);
     }
     return p.toStringAsFixed(2);
-  }
-
-  String _buildClientName(Map<String, dynamic> clientData) {
-    final firstName = _getSafeString(clientData['clientFirstName']).trim();
-    final lastName = _getSafeString(clientData['clientLastName']).trim();
-
-    if (firstName.isEmpty && lastName.isEmpty) {
-      return 'Client Name Not Available';
-    }
-
-    return '$firstName $lastName'.trim();
-  }
-
-  String _buildClientAddress(Map<String, dynamic> clientData) {
-    final address = _getSafeString(clientData['clientAddress']).trim();
-    final city = _getSafeString(clientData['clientCity']).trim();
-    final state = _getSafeString(clientData['clientState']).trim();
-    final zip = _getSafeString(clientData['clientZip']).trim();
-
-    List<String> addressParts = [];
-
-    if (address.isNotEmpty) addressParts.add(address);
-    if (city.isNotEmpty) addressParts.add(city);
-    if (state.isNotEmpty) addressParts.add(state);
-    if (zip.isNotEmpty) addressParts.add(zip);
-
-    return addressParts.isEmpty
-        ? 'Address Not Available'
-        : addressParts.join(', ');
   }
 
   pw.Widget _buildInvoiceHeader(Map<String, dynamic> clientData) {
@@ -1092,27 +1056,6 @@ class InvoicePdfGenerator {
     return '';
   }
 
-  String _extractAdminEmail(Map<String, dynamic> clientData) {
-    final adminProfile = clientData['adminProfile'];
-    final candidates = [
-      clientData['adminEmail'],
-      clientData['ownerEmail'],
-      if (adminProfile is Map) adminProfile['email'],
-      if (adminProfile is Map) adminProfile['userEmail'],
-      if (adminProfile is Map) adminProfile['adminEmail'],
-      if (adminProfile is Map) adminProfile['ownerEmail'],
-    ];
-
-    for (final candidate in candidates) {
-      final value = _getSafeString(candidate).trim();
-      if (value.contains('@')) {
-        return value;
-      }
-    }
-
-    return '';
-  }
-
   pw.Widget _buildTableHeader(String text) {
     return pw.Container(
       padding: pw.EdgeInsets.all(5),
@@ -1370,46 +1313,6 @@ class InvoicePdfGenerator {
           }).toList(),
         ),
       );
-    }
-  }
-
-  /// Download image from URL and return bytes
-  /// Returns null if download fails or image is invalid
-  /// Includes timeout to prevent hanging
-  Future<Uint8List?> _downloadImageFromUrl(String url) async {
-    try {
-      debugPrint('PDF Generator: Downloading image from URL: $url');
-
-      // Add timeout to prevent hanging
-      final response = await _api.getRawUrl(
-        url,
-        timeout: const Duration(seconds: 30),
-      );
-
-      if (response.statusCode == 200) {
-        final bytes = response.bodyBytes;
-        debugPrint(
-          'PDF Generator: Successfully downloaded image (${bytes.length} bytes)',
-        );
-
-        // Basic validation - check if it's a reasonable image size
-        if (bytes.length < 100) {
-          debugPrint(
-            'PDF Generator: Downloaded file too small to be a valid image',
-          );
-          return null;
-        }
-
-        return bytes;
-      } else {
-        debugPrint(
-          'PDF Generator: Failed to download image. Status code: ${response.statusCode}',
-        );
-        return null;
-      }
-    } catch (e) {
-      debugPrint('PDF Generator: Error downloading image from $url: $e');
-      return null;
     }
   }
 

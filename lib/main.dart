@@ -274,17 +274,17 @@ Future<void> _initializeAppCheck() async {
     final androidSelection =
         await AppCheckProviderResolver.resolveAndroidSelection();
 
-    if (androidSelection.provider == AndroidProvider.debug) {
+    if (androidSelection.provider is AndroidDebugProvider) {
       // Pin a stable debug token so reinstalls never generate a new one.
       await AppCheckProviderResolver.seedFixedDebugToken();
     }
 
     await FirebaseAppCheck.instance.activate(
-      webProvider: ReCaptchaV3Provider(BuildConfig.recaptchaSiteKey),
-      androidProvider: androidSelection.provider,
-      appleProvider: isDevelopmentFlavor
-          ? AppleProvider.debug
-          : AppleProvider.appAttest,
+      providerWeb: ReCaptchaV3Provider(BuildConfig.recaptchaSiteKey),
+      providerAndroid: androidSelection.provider,
+      providerApple: isDevelopmentFlavor
+          ? const AppleDebugProvider()
+          : const AppleAppAttestProvider(),
     );
 
     debugPrint('✅ App Check activated successfully');
@@ -294,7 +294,7 @@ Future<void> _initializeAppCheck() async {
       'Android Installer Package: ${androidSelection.installerPackage ?? "unknown"}',
     );
 
-    if (androidSelection.provider == AndroidProvider.debug) {
+    if (androidSelection.provider is AndroidDebugProvider) {
       final debugSecret = await AppCheckProviderResolver.getDebugSecret();
       debugPrint('');
       debugPrint(
@@ -332,7 +332,7 @@ Future<void> _initializeAppCheck() async {
       }
     } on FirebaseException catch (e) {
       debugPrint('❌ Error getting App Check token: ${e.message}');
-      if (androidSelection.provider == AndroidProvider.debug) {
+      if (androidSelection.provider is AndroidDebugProvider) {
         debugPrint(
           '   → Register debug secret printed earlier by DebugAppCheckProvider in Firebase Console',
         );

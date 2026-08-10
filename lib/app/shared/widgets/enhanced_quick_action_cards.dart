@@ -102,21 +102,21 @@ class _EnhancedQuickActionCardState extends State<EnhancedQuickActionCard>
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        widget.data.color.withOpacity(0.1),
-                        widget.data.color.withOpacity(0.1),
+                        widget.data.color.withValues(alpha: 0.1),
+                        widget.data.color.withValues(alpha: 0.1),
                       ],
                     ),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: widget.data.color.withOpacity(0.1),
+                    color: widget.data.color.withValues(alpha: 0.1),
                     spreadRadius: 1,
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
                 ],
                 border: Border.all(
-                  color: widget.data.color.withOpacity(0.1),
+                  color: widget.data.color.withValues(alpha: 0.1),
                   width: 1,
                 ),
               ),
@@ -188,7 +188,7 @@ class _EnhancedQuickActionCardState extends State<EnhancedQuickActionCard>
       width: 48,
       height: 48,
       decoration: BoxDecoration(
-        color: widget.data.color.withOpacity(0.1),
+        color: widget.data.color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(widget.data.icon, color: widget.data.color, size: 24),

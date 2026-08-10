@@ -35,7 +35,7 @@ class ShiftSuccessView extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(BauhausDesign.space3),
               decoration: BoxDecoration(
-                color: BauhausDesign.success.withOpacity(0.1),
+                color: BauhausDesign.success.withValues(alpha: 0.1),
                 border: Border.all(color: BauhausDesign.success, width: 2),
                 boxShadow: const [BauhausDesign.shadowHardXs],
               ),
@@ -91,7 +91,7 @@ class ShiftSuccessView extends StatelessWidget {
                   const SizedBox(height: BauhausDesign.space3),
                   Container(
                     height: 2,
-                    color: BauhausDesign.neutral.withOpacity(0.2),
+                    color: BauhausDesign.neutral.withValues(alpha: 0.2),
                   ),
                   const SizedBox(height: BauhausDesign.space3),
                   _buildDetailRow(
@@ -195,7 +195,7 @@ class ShiftSuccessView extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(BauhausDesign.space2),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             border: Border.all(color: color, width: 2),
           ),
           child: Icon(icon, color: color, size: 20),

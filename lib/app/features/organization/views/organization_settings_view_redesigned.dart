@@ -336,7 +336,7 @@ class _OrganizationSettingsRedesignedState
                             'Configure branding, integrations, and system preferences',
                             style: GoogleFonts.inter(
                               fontSize: BauhausDesign.fontSm,
-                              color: Colors.white.withOpacity(0.9),
+                              color: Colors.white.withValues(alpha: 0.9),
                             ),
                           ),
                         ],
@@ -499,7 +499,7 @@ class _OrganizationSettingsRedesignedState
         Switch(
           value: value,
           onChanged: onChanged,
-          activeColor: Theme.of(context).primaryColor,
+          activeThumbColor: Theme.of(context).primaryColor,
         ),
       ],
     );
@@ -591,7 +591,7 @@ class _SidebarItem extends StatelessWidget {
           vertical: BauhausDesign.space4,
         ),
         decoration: BoxDecoration(
-          color: isSelected ? activeColor.withOpacity(0.1) : Colors.transparent,
+          color: isSelected ? activeColor.withValues(alpha: 0.1) : Colors.transparent,
           border: Border(
             right: BorderSide(
               color: isSelected ? activeColor : Colors.transparent,

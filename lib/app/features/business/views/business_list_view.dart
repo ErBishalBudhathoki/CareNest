@@ -399,7 +399,7 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
                                                   userContext['organizationId']!,
                                             );
 
-                                        if (!mounted) return;
+                                        if (!mounted || !context.mounted) return;
                                         if (dialogContext.mounted) {
                                           Navigator.of(dialogContext).pop();
                                         }
@@ -416,7 +416,7 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
                                           ),
                                         );
                                       } catch (e) {
-                                        if (!mounted) return;
+                                        if (!mounted || !context.mounted) return;
                                         ScaffoldMessenger.of(
                                           context,
                                         ).showSnackBar(
@@ -615,7 +615,7 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
               Container(
                 padding: EdgeInsets.all(BauhausDesign.space3),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.primary.withOpacity(0.1),
+                  color: BauhausDesign.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 ),
                 child: Icon(
@@ -659,7 +659,7 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
           Padding(
             padding: EdgeInsets.symmetric(vertical: BauhausDesign.space4),
             child: Divider(
-              color: BauhausDesign.neutral.withOpacity(0.2),
+              color: BauhausDesign.neutral.withValues(alpha: 0.2),
               height: 1,
             ),
           ),
@@ -678,7 +678,7 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
               '${business.businessAddress}, ${business.businessCity}',
             ),
           SizedBox(height: BauhausDesign.space4),
-          Divider(color: BauhausDesign.neutral.withOpacity(0.2), height: 1),
+          Divider(color: BauhausDesign.neutral.withValues(alpha: 0.2), height: 1),
           SizedBox(height: BauhausDesign.space4),
           Row(
             children: [

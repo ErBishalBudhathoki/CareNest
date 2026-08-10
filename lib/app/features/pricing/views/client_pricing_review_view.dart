@@ -434,7 +434,7 @@ class _ClientPricingReviewViewState
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: BauhausDesign.secondary.withOpacity(0.1),
+                  color: BauhausDesign.secondary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 ),
                 child: Icon(Icons.person, color: BauhausDesign.secondary),
@@ -550,7 +550,7 @@ class _ClientPricingReviewViewState
   ) {
     return Material(
       color: isSelected
-          ? BauhausDesign.primary.withOpacity(0.1)
+          ? BauhausDesign.primary.withValues(alpha: 0.1)
           : Colors.transparent,
       child: InkWell(
         onTap: () => _loadClientSupportItems(client),
@@ -561,7 +561,7 @@ class _ClientPricingReviewViewState
           ),
           decoration: BoxDecoration(
             border: Border(
-              bottom: BorderSide(color: BauhausDesign.neutral.withOpacity(0.5)),
+              bottom: BorderSide(color: BauhausDesign.neutral.withValues(alpha: 0.5)),
               left: isSelected
                   ? const BorderSide(color: BauhausDesign.primary, width: 3)
                   : BorderSide.none,
@@ -761,7 +761,7 @@ class _ClientPricingReviewViewState
     return BauhausCard(
           margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
           padding: const EdgeInsets.all(BauhausDesign.space4),
-          borderColor: exceedsCap ? BauhausDesign.error.withOpacity(0.5) : null,
+          borderColor: exceedsCap ? BauhausDesign.error.withValues(alpha: 0.5) : null,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -837,7 +837,7 @@ class _ClientPricingReviewViewState
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.neutral.withOpacity(0.2),
+        color: BauhausDesign.neutral.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
       ),
       child: Row(
@@ -890,7 +890,7 @@ class _ClientPricingReviewViewState
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.neutral.withOpacity(0.2),
+        color: BauhausDesign.neutral.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
       ),
       child: Column(
@@ -1341,7 +1341,7 @@ class _ClientPricingDetailPageState
     return BauhausCard(
           margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
           padding: const EdgeInsets.all(BauhausDesign.space4),
-          borderColor: exceedsCap ? BauhausDesign.error.withOpacity(0.5) : null,
+          borderColor: exceedsCap ? BauhausDesign.error.withValues(alpha: 0.5) : null,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1594,27 +1594,5 @@ class _ClientPricingDetailPageState
         .animate(delay: Duration(milliseconds: index * 50))
         .fadeIn(duration: 300.ms)
         .slideY(begin: 0.1, end: 0);
-  }
-
-  Widget _buildPriceRowMobile(String label, String value, Color color) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-            color: BauhausDesign.textMuted,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: BauhausDesign.space1),
-        Text(
-          value,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).titleLarge?.copyWith(fontWeight: FontWeight.bold, color: color),
-        ),
-      ],
-    );
   }
 }

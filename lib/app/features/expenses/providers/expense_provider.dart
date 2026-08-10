@@ -32,7 +32,6 @@ class ExpenseNotifier extends Notifier<ExpenseState> {
 
   @override
   ExpenseState build() {
-    final repository = ref.watch(expenseRepositoryProvider);
 
     return ExpenseState(expenses: [], isLoading: false);
   }

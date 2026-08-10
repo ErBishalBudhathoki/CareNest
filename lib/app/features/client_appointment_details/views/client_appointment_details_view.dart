@@ -90,7 +90,7 @@ class ClientAppointmentDetailsView extends ConsumerWidget {
           Row(
             children: [
               CircleAvatar(
-                backgroundColor: BauhausDesign.primary.withOpacity(0.1),
+                backgroundColor: BauhausDesign.primary.withValues(alpha: 0.1),
                 radius: 24,
                 child: Text(
                   client.clientFirstName[0],
@@ -283,7 +283,7 @@ class ClientAppointmentDetailsView extends ConsumerWidget {
                   .map(
                     (c) => Chip(
                       label: Text(c),
-                      backgroundColor: BauhausDesign.warning.withOpacity(0.1),
+                      backgroundColor: BauhausDesign.warning.withValues(alpha: 0.1),
                       labelStyle: TextStyle(color: BauhausDesign.warning),
                     ),
                   )

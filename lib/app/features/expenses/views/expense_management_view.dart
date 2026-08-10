@@ -36,7 +36,6 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
   late AnimationController _animationController;
   late TabController _tabController;
   bool _isLoadingExpenses = false;
-  bool _expensesEmpty = false;
   bool _showOnboarding = true;
 
   final SharedPreferencesUtils _sharedPrefs = SharedPreferencesUtils();
@@ -141,11 +140,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
       await ref
           .read(expenseProvider.notifier)
           .fetchExpenses(widget.organizationId!);
-      final expenses = ref.read(expenseProvider).expenses;
 
       if (!mounted) return;
       setState(() {
-        _expensesEmpty = expenses.isEmpty;
         _isLoadingExpenses = false;
       });
     } catch (e) {
@@ -476,7 +473,6 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
       );
     }
 
-    final totalExpenses = expenses.length;
     final totalAmount = expenses.totalAmount;
     final approvedAmount = expenses.totalAmountByStatus('approved');
     final pendingAmount = expenses.totalAmountByStatus('pending');
@@ -625,7 +621,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               Container(
                 padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   border: Border.all(color: BauhausDesign.neutral, width: 1),
                 ),
                 child: Icon(icon, color: color, size: 20),
@@ -701,7 +697,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                currencyFormat.format(expense.amount ?? 0.0),
+                currencyFormat.format(expense.amount),
                 style: BauhausDesign.getTextTheme(
                   context,
                 ).labelLarge?.copyWith(color: BauhausDesign.success),
@@ -725,7 +721,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         border: Border.all(color: BauhausDesign.neutral, width: 2),
       ),
       child: Material(
@@ -741,7 +737,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: color.withValues(alpha: 0.1),
                     border: Border.all(color: BauhausDesign.neutral, width: 1),
                   ),
                   child: Icon(icon, color: color, size: 24),
@@ -911,7 +907,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                 ),
               ),
               Text(
-                currencyFormat.format(expense.amount ?? 0.0),
+                currencyFormat.format(expense.amount),
                 style: BauhausDesign.getTextTheme(
                   context,
                 ).headlineMedium?.copyWith(color: BauhausDesign.primary),
@@ -1042,7 +1038,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.primary.withOpacity(0.1),
+                    color: BauhausDesign.primary.withValues(alpha: 0.1),
                     border: Border.all(color: BauhausDesign.neutral),
                   ),
                   child: Icon(
@@ -1213,11 +1209,11 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               _buildTag(
                 label: 'PENDING APPROVAL',
                 icon: Icons.schedule,
-                background: BauhausDesign.warning.withOpacity(0.2),
+                background: BauhausDesign.warning.withValues(alpha: 0.2),
                 textColor: BauhausDesign.textDark,
               ),
               Text(
-                currencyFormat.format(expense.amount ?? 0.0),
+                currencyFormat.format(expense.amount),
                 style: BauhausDesign.getTextTheme(
                   context,
                 ).headlineMedium?.copyWith(color: BauhausDesign.success),
@@ -1480,7 +1476,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               _buildTag(
                 label: 'Monthly',
                 icon: Icons.repeat,
-                background: BauhausDesign.info.withOpacity(0.15),
+                background: BauhausDesign.info.withValues(alpha: 0.15),
                 textColor: BauhausDesign.info,
               ),
             ],
@@ -1496,7 +1492,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  currencyFormat.format(expense.amount ?? 0.0),
+                  currencyFormat.format(expense.amount),
                   style: BauhausDesign.getTextTheme(
                     context,
                   ).headlineMedium?.copyWith(color: BauhausDesign.primary),
@@ -1587,16 +1583,16 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
     Color textColor;
     switch (status.toLowerCase()) {
       case 'approved':
-        background = BauhausDesign.success.withOpacity(0.2);
+        background = BauhausDesign.success.withValues(alpha: 0.2);
         textColor = BauhausDesign.success;
         break;
       case 'pending':
       case 'pending approval':
-        background = BauhausDesign.warning.withOpacity(0.2);
+        background = BauhausDesign.warning.withValues(alpha: 0.2);
         textColor = BauhausDesign.textDark;
         break;
       case 'rejected':
-        background = BauhausDesign.error.withOpacity(0.2);
+        background = BauhausDesign.error.withValues(alpha: 0.2);
         textColor = BauhausDesign.error;
         break;
       default:
@@ -1874,7 +1870,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               Container(
                 padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   border: Border.all(color: BauhausDesign.neutral, width: 2),
                 ),
                 child: Icon(icon, color: color, size: 18),
@@ -1971,7 +1967,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                 width: 28,
                 height: 28,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.15),
+                  color: color.withValues(alpha: 0.15),
                   border: Border.all(color: BauhausDesign.neutral, width: 2),
                 ),
                 child: Icon(icon, size: 14, color: color),

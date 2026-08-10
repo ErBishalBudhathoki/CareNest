@@ -30,7 +30,6 @@ class EnhancedAuthDialog {
   // Animation durations for consistent timing
   static const Duration _dialogAnimationDuration = Duration(milliseconds: 400);
   static const Duration _iconAnimationDuration = Duration(milliseconds: 600);
-  static const Duration _buttonHoverDuration = Duration(milliseconds: 200);
 
   /// Build progressive message with contextual hints
   static String _buildProgressiveMessage({
@@ -943,6 +942,7 @@ class EnhancedAuthDialog {
 
     if (autoClose) {
       Future.delayed(autoCloseDuration, () {
+        if (!context.mounted) return;
         if (Navigator.of(context).canPop()) {
           Navigator.of(context).pop();
           onAction?.call();
@@ -1177,7 +1177,7 @@ class _ModernDialogState extends State<_ModernDialog>
             widget.message,
             textAlign: TextAlign.center,
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-              color: BauhausDesign.neutral.withOpacity(0.8),
+              color: BauhausDesign.neutral.withValues(alpha: 0.8),
               height: 1.5,
             ),
           ),

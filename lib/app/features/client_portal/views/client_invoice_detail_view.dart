@@ -168,7 +168,7 @@ class ClientInvoiceDetailView extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space3),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite.withOpacity(0.2),
+              color: BauhausDesign.surfaceWhite.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
             ),
             child: Icon(
@@ -197,7 +197,7 @@ class ClientInvoiceDetailView extends ConsumerWidget {
                   style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: BauhausDesign.surfaceWhite.withOpacity(0.9),
+                    color: BauhausDesign.surfaceWhite.withValues(alpha: 0.9),
                     letterSpacing: 1,
                   ),
                 ),
@@ -235,7 +235,7 @@ class ClientInvoiceDetailView extends ConsumerWidget {
                   'TOTAL AMOUNT',
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.surfaceWhite.withOpacity(0.7),
+                        color: BauhausDesign.surfaceWhite.withValues(alpha: 0.7),
                         letterSpacing: 1.5,
                       ),
                 ),
@@ -442,7 +442,7 @@ class ClientInvoiceDetailView extends ConsumerWidget {
                           Container(
                             padding: const EdgeInsets.all(BauhausDesign.space2),
                             decoration: BoxDecoration(
-                              color: BauhausDesign.primary.withOpacity(0.1),
+                              color: BauhausDesign.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(
                                 BauhausDesign.radiusSm,
                               ),
@@ -514,9 +514,9 @@ class ClientInvoiceDetailView extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.all(BauhausDesign.space2),
           decoration: BoxDecoration(
-            color: BauhausDesign.primary.withOpacity(0.1),
+            color: BauhausDesign.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-            border: Border.all(color: BauhausDesign.primary.withOpacity(0.3)),
+            border: Border.all(color: BauhausDesign.primary.withValues(alpha: 0.3)),
           ),
           child: Icon(icon, color: BauhausDesign.primary, size: 18),
         ),
@@ -618,10 +618,10 @@ class ClientInvoiceDetailView extends ConsumerWidget {
               vertical: BauhausDesign.space1,
             ),
             decoration: BoxDecoration(
-              color: BauhausDesign.secondary.withOpacity(0.1),
+              color: BauhausDesign.secondary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               border: Border.all(
-                color: BauhausDesign.secondary.withOpacity(0.3),
+                color: BauhausDesign.secondary.withValues(alpha: 0.3),
               ),
             ),
             child: Center(
@@ -825,6 +825,8 @@ class ClientInvoiceDetailView extends ConsumerWidget {
       clientInvoiceReceiptUrlsProvider(invoice.id).future,
     );
 
+    if (!context.mounted) return;
+
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -848,13 +850,15 @@ class ClientInvoiceDetailView extends ConsumerWidget {
 
     try {
       final box = context.findRenderObject() as RenderBox?;
-      await Share.shareXFiles(
-        [XFile(pdfResult['pdfPath'].toString())],
-        subject: 'Invoice ${invoice.invoiceNumber}',
-        text: 'Invoice ${invoice.invoiceNumber} PDF',
-        sharePositionOrigin: box != null
-            ? box.localToGlobal(Offset.zero) & box.size
-            : null,
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(pdfResult['pdfPath'].toString())],
+          subject: 'Invoice ${invoice.invoiceNumber}',
+          text: 'Invoice ${invoice.invoiceNumber} PDF',
+          sharePositionOrigin: box != null
+              ? box.localToGlobal(Offset.zero) & box.size
+              : null,
+        ),
       );
 
       if (!context.mounted) return;

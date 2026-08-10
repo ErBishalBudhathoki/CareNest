@@ -80,7 +80,7 @@ class _GradientBlobPainter extends CustomPainter {
     );
     final blobPaint = Paint()
       ..shader = RadialGradient(
-        colors: [const Color(0xFF7B64FD).withOpacity(0.1), Colors.transparent],
+        colors: [const Color(0xFF7B64FD).withValues(alpha: 0.1), Colors.transparent],
         radius: 1,
       ).createShader(Rect.fromCircle(center: blobCenter, radius: blobRadius));
     canvas.drawCircle(blobCenter, blobRadius, blobPaint);
@@ -101,8 +101,8 @@ class _GradientBlobPainter extends CustomPainter {
     final bottomPaint = Paint()
       ..shader = LinearGradient(
         colors: [
-          Colors.white.withOpacity(0.1),
-          Colors.grey[100]!.withOpacity(0.1),
+          Colors.white.withValues(alpha: 0.1),
+          Colors.grey[100]!.withValues(alpha: 0.1),
         ],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,

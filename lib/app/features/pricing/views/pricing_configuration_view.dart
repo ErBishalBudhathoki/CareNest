@@ -63,7 +63,6 @@ class _PricingConfigurationViewState
   late final ApiMethod _api;
   final TextEditingController _fallbackRateController = TextEditingController();
   double? _fallbackBaseRate;
-  bool _isFallbackLoading = false;
   bool _isSavingFallbackRate = false;
   String? _fallbackError;
 
@@ -1112,7 +1111,7 @@ class _PricingConfigurationViewState
           Expanded(
             flex: 3,
             child: DropdownButtonFormField<String>(
-              value: value,
+              initialValue: value,
               isDense: true,
               isExpanded: true,
               decoration: const InputDecoration(
@@ -1207,7 +1206,7 @@ class _PricingConfigurationViewState
             divisions: ((max - min) / 1).round(),
             onChanged: onChanged,
             activeColor: _accentRed,
-            inactiveColor: BauhausDesign.textMuted.withOpacity(0.3),
+            inactiveColor: BauhausDesign.textMuted.withValues(alpha: 0.3),
           ),
         ],
       ),
@@ -1433,10 +1432,12 @@ class _PricingConfigurationViewState
         didSave = true;
       }
 
+      if (!mounted) return;
       if (!didSave) {
         _showSnackBar(AppLocalizations.of(context)!.noChangesToSave);
       }
     } catch (e) {
+      if (!mounted) return;
       _showSnackBar(
         AppLocalizations.of(context)!.failedToSaveSettings(e.toString()),
       );
@@ -1558,7 +1559,6 @@ class _PricingConfigurationViewState
   Future<void> _loadFallbackBaseRate() async {
     final l10n = AppLocalizations.of(context)!;
     setState(() {
-      _isFallbackLoading = true;
       _fallbackError = null;
     });
     try {
@@ -1571,11 +1571,9 @@ class _PricingConfigurationViewState
           // No configured rate (e.g., 404). Keep UI clean and editable.
           _fallbackRateController.text = '';
         }
-        _isFallbackLoading = false;
       });
     } catch (e) {
       setState(() {
-        _isFallbackLoading = false;
         _fallbackError = l10n.failedLoadFallbackBaseRate(e.toString());
       });
     }

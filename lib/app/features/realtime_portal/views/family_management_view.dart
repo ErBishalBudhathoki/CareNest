@@ -281,30 +281,30 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
     switch (normalized) {
       case 'active':
         if (onDarkBackground) {
-          background = BauhausDesign.surfaceWhite.withOpacity(0.18);
+          background = BauhausDesign.surfaceWhite.withValues(alpha: 0.18);
           foreground = BauhausDesign.surfaceWhite;
         } else {
-          background = BauhausDesign.success.withOpacity(0.14);
+          background = BauhausDesign.success.withValues(alpha: 0.14);
           foreground = BauhausDesign.success;
         }
         label = 'Active';
         break;
       case 'inactive':
         if (onDarkBackground) {
-          background = BauhausDesign.surfaceWhite.withOpacity(0.18);
+          background = BauhausDesign.surfaceWhite.withValues(alpha: 0.18);
           foreground = BauhausDesign.surfaceWhite;
         } else {
-          background = BauhausDesign.error.withOpacity(0.14);
+          background = BauhausDesign.error.withValues(alpha: 0.14);
           foreground = BauhausDesign.error;
         }
         label = 'Inactive';
         break;
       default:
         if (onDarkBackground) {
-          background = BauhausDesign.textDark.withOpacity(0.30);
+          background = BauhausDesign.textDark.withValues(alpha: 0.30);
           foreground = BauhausDesign.surfaceWhite;
         } else {
-          background = BauhausDesign.warning.withOpacity(0.14);
+          background = BauhausDesign.warning.withValues(alpha: 0.14);
           foreground = BauhausDesign.warning;
         }
         label = 'Pending';
@@ -319,7 +319,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
         color: background,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
         border: Border.all(
-          color: foreground.withOpacity(onDarkBackground ? 0.5 : 0.35),
+          color: foreground.withValues(alpha: onDarkBackground ? 0.5 : 0.35),
         ),
       ),
       child: Text(
@@ -340,12 +340,12 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
       ),
       decoration: BoxDecoration(
         color: enabled
-            ? BauhausDesign.primary.withOpacity(0.12)
+            ? BauhausDesign.primary.withValues(alpha: 0.12)
             : BauhausDesign.surfaceWhite,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
         border: Border.all(
           color: enabled
-              ? BauhausDesign.primary.withOpacity(0.35)
+              ? BauhausDesign.primary.withValues(alpha: 0.35)
               : BauhausDesign.neutral,
         ),
       ),
@@ -445,8 +445,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                         validator: (value) {
                           final email = value?.trim() ?? '';
                           if (email.isEmpty) return 'Email is required';
-                          if (!email.contains('@'))
+                          if (!email.contains('@')) {
                             return 'Enter a valid email';
+                          }
                           return null;
                         },
                       ),
@@ -583,7 +584,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                                         return;
                                       }
 
-                                      if (!mounted) return;
+                                      if (!dialogContext.mounted) return;
                                       Navigator.of(dialogContext).pop();
                                       await _loadFamilyMembers();
                                       _showSnackBar(
@@ -642,7 +643,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
         ),
         const SizedBox(height: BauhausDesign.space1),
         DropdownButtonFormField<String>(
-          value: value,
+          initialValue: value,
           items: items,
           onChanged: onChanged,
           decoration: BauhausDesign.inputDecoration(''),
@@ -850,7 +851,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                                   return;
                                 }
 
-                                if (!mounted) return;
+                                if (!dialogContext.mounted) return;
                                 Navigator.of(dialogContext).pop();
                                 _showSnackBar(
                                   'Permissions updated for ${member.name}',
@@ -997,7 +998,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                                 return;
                               }
 
-                              if (!mounted) return;
+                              if (!dialogContext.mounted) return;
                               Navigator.of(dialogContext).pop();
                               _showSnackBar(
                                 nextStatus == 'inactive'
@@ -1099,10 +1100,10 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space3),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.warning.withOpacity(0.14),
+                  color: BauhausDesign.warning.withValues(alpha: 0.14),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(
-                    color: BauhausDesign.warning.withOpacity(0.35),
+                    color: BauhausDesign.warning.withValues(alpha: 0.35),
                   ),
                 ),
                 child: const Icon(

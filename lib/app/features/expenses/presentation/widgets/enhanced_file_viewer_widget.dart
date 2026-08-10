@@ -166,6 +166,7 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
             // For local files, try to open with open_file package
             try {
               final result = await OpenFile.open(filePath);
+              if (!context.mounted) return;
               if (result.type != ResultType.done) {
                 debugPrint('OpenFile result: ${result.message}');
                 _showErrorDialog(
@@ -175,6 +176,7 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
                 );
               }
             } catch (e) {
+              if (!context.mounted) return;
               debugPrint('Error opening local file: $e');
               _showErrorDialog(
                 context,
@@ -193,6 +195,7 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
           break;
       }
     } catch (e) {
+      if (!context.mounted) return;
       _showErrorDialog(
         context,
         'Error opening file',
@@ -247,9 +250,10 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
 
       // Check availability first
       final isAvailable = await _checkFileAvailability(ref, serverUrl);
+      if (!context.mounted) return;
 
       if (!isAvailable) {
-        if (dialogContext != null && Navigator.of(dialogContext!).canPop()) {
+        if (dialogContext != null && dialogContext!.mounted && Navigator.of(dialogContext!).canPop()) {
           Navigator.of(dialogContext!).pop();
           dialogContext = null;
         }
@@ -262,7 +266,7 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
       }
 
       // Update dialog text
-      if (dialogContext != null && Navigator.of(dialogContext!).canPop()) {
+      if (dialogContext != null && dialogContext!.mounted && Navigator.of(dialogContext!).canPop()) {
         Navigator.of(dialogContext!).pop();
         dialogContext = null;
       }
@@ -286,6 +290,7 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
 
       final apiMethod = ref.read(app_providers.apiMethodProvider);
       final response = await apiMethod.getRawUrl(serverUrl);
+      if (!context.mounted) return;
       debugPrint('DEBUG: HTTP response status: ${response.statusCode}');
       debugPrint(
         'DEBUG: Response content length: ${response.bodyBytes.length}',
@@ -307,7 +312,7 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
         );
 
         // Close loading dialog before opening file
-        if (dialogContext != null && Navigator.of(dialogContext!).canPop()) {
+        if (dialogContext != null && dialogContext!.mounted && Navigator.of(dialogContext!).canPop()) {
           Navigator.of(dialogContext!).pop();
           dialogContext = null;
         }
@@ -316,6 +321,7 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
 
         // Try to open with open_file package
         final result = await OpenFile.open(tempFile.path);
+        if (!context.mounted) return;
         debugPrint('DEBUG: OpenFile result type: ${result.type}');
         debugPrint('DEBUG: OpenFile result message: ${result.message}');
 
@@ -331,7 +337,7 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
         }
       } else {
         // Close loading dialog on error
-        if (dialogContext != null && Navigator.of(dialogContext!).canPop()) {
+        if (dialogContext != null && dialogContext!.mounted && Navigator.of(dialogContext!).canPop()) {
           Navigator.of(dialogContext!).pop();
           dialogContext = null;
         }
@@ -346,10 +352,11 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
         );
       }
     } catch (e) {
+      if (!context.mounted) return;
       debugPrint('DEBUG: Exception in _downloadAndOpenFile: $e');
 
       // Close loading dialog if still open
-      if (dialogContext != null && Navigator.of(dialogContext!).canPop()) {
+      if (dialogContext != null && dialogContext!.mounted && Navigator.of(dialogContext!).canPop()) {
         Navigator.of(dialogContext!).pop();
       }
 
@@ -432,9 +439,9 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
             Container(
               padding: EdgeInsets.all(8.0),
               decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.1),
+                color: Colors.red.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(4.0),
-                border: Border.all(color: Colors.red.withOpacity(0.1)),
+                border: Border.all(color: Colors.red.withValues(alpha: 0.1)),
               ),
               child: Text(
                 error,
@@ -503,7 +510,7 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: const Color(0xFF4CAF50).withOpacity(0.1),
+                color: const Color(0xFF4CAF50).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -552,12 +559,12 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: fileExists
-                          ? _getFileColor(filePath).withOpacity(0.1)
-                          : Colors.red.withOpacity(0.1),
+                          ? _getFileColor(filePath).withValues(alpha: 0.1)
+                          : Colors.red.withValues(alpha: 0.1),
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
@@ -572,8 +579,8 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: fileExists
-                                ? _getFileColor(filePath).withOpacity(0.1)
-                                : Colors.red.withOpacity(0.1),
+                                ? _getFileColor(filePath).withValues(alpha: 0.1)
+                                : Colors.red.withValues(alpha: 0.1),
                             borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(12),
                               topRight: Radius.circular(12),
@@ -794,16 +801,16 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
             'Tap to retry',
             style: const TextStyle(
               fontSize: 12,
-            ).copyWith(fontSize: 8, color: Colors.red.withOpacity(0.1)),
+            ).copyWith(fontSize: 8, color: Colors.red.withValues(alpha: 0.1)),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: Colors.red.withOpacity(0.1),
+              color: Colors.red.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4.0),
-              border: Border.all(color: Colors.red.withOpacity(0.1)),
+              border: Border.all(color: Colors.red.withValues(alpha: 0.1)),
             ),
             child: Text(
               'Server file',
@@ -937,6 +944,7 @@ class _FullScreenImageViewer extends StatelessWidget {
                           // Force reload by rebuilding the widget
                           Navigator.of(context).pop();
                           Future.delayed(const Duration(milliseconds: 100), () {
+                            if (!context.mounted) return;
                             Navigator.push(
                               context,
                               MaterialPageRoute(

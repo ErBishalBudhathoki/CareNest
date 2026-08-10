@@ -655,7 +655,7 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                                     userContext['organizationId']!,
                                               );
 
-                                        if (!mounted) return;
+                                        if (!mounted || !context.mounted) return;
                                         if (dialogContext.mounted) {
                                           Navigator.of(dialogContext).pop();
                                         }
@@ -685,7 +685,7 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                           await _loadClients();
                                         }
                                       } catch (e) {
-                                        if (!mounted) return;
+                                        if (!mounted || !context.mounted) return;
                                         ScaffoldMessenger.of(
                                           context,
                                         ).showSnackBar(
@@ -935,17 +935,17 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
 
     if (client.isActivated) {
       label = 'Activated';
-      backgroundColor = BauhausDesign.success.withOpacity(0.14);
+      backgroundColor = BauhausDesign.success.withValues(alpha: 0.14);
       foregroundColor = BauhausDesign.success;
       icon = Icons.verified_rounded;
     } else if (client.activationPending == true) {
       label = 'Pending';
-      backgroundColor = BauhausDesign.warning.withOpacity(0.14);
+      backgroundColor = BauhausDesign.warning.withValues(alpha: 0.14);
       foregroundColor = BauhausDesign.warning;
       icon = Icons.schedule_rounded;
     } else {
       label = 'Not Activated';
-      backgroundColor = BauhausDesign.neutral.withOpacity(0.14);
+      backgroundColor = BauhausDesign.neutral.withValues(alpha: 0.14);
       foregroundColor = BauhausDesign.textMuted;
       icon = Icons.person_outline_rounded;
     }
@@ -955,7 +955,7 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: foregroundColor.withOpacity(0.45)),
+        border: Border.all(color: foregroundColor.withValues(alpha: 0.45)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -1229,7 +1229,7 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                 Container(
                   padding: EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.secondary.withOpacity(0.1),
+                    color: BauhausDesign.secondary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                   ),
                   child: Icon(
@@ -1275,7 +1275,7 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
             Padding(
               padding: EdgeInsets.symmetric(vertical: BauhausDesign.space4),
               child: Divider(
-                color: BauhausDesign.neutral.withOpacity(0.2),
+                color: BauhausDesign.neutral.withValues(alpha: 0.2),
                 height: 1,
               ),
             ),
@@ -1307,7 +1307,7 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
               ),
             ],
             SizedBox(height: BauhausDesign.space4),
-            Divider(color: BauhausDesign.neutral.withOpacity(0.2), height: 1),
+            Divider(color: BauhausDesign.neutral.withValues(alpha: 0.2), height: 1),
             SizedBox(height: BauhausDesign.space4),
             if (isHistoryMode) ...[
               Row(
@@ -1370,7 +1370,7 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
             ],
             if (!isHistoryMode && !client.isActivated) ...[
               SizedBox(height: BauhausDesign.space4),
-              Divider(color: BauhausDesign.neutral.withOpacity(0.2), height: 1),
+              Divider(color: BauhausDesign.neutral.withValues(alpha: 0.2), height: 1),
               SizedBox(height: BauhausDesign.space4),
               Row(
                 children: [

@@ -119,14 +119,14 @@ class _BusinessIntelligenceViewState
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.colorPink, AppColors.colorPink.withOpacity(0.8)],
+          colors: [AppColors.colorPink, AppColors.colorPink.withValues(alpha: 0.8)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.colorPink.withOpacity(0.3),
+            color: AppColors.colorPink.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -138,7 +138,7 @@ class _BusinessIntelligenceViewState
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: AppColors.colorWhite.withOpacity(0.2),
+              color: AppColors.colorWhite.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Icon(
@@ -261,7 +261,7 @@ class _BusinessIntelligenceViewState
       decoration: BoxDecoration(
         color: AppColors.colorWhite,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.2), width: 2),
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 2),
         boxShadow: [
           BoxShadow(
             color: AppColors.colorShadow,
@@ -299,8 +299,8 @@ class _BusinessIntelligenceViewState
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                 decoration: BoxDecoration(
                   color: isPositive
-                      ? AppColors.colorGreen.withOpacity(0.1)
-                      : AppColors.colorRed.withOpacity(0.1),
+                      ? AppColors.colorGreen.withValues(alpha: 0.1)
+                      : AppColors.colorRed.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -371,7 +371,7 @@ class _BusinessIntelligenceViewState
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppColors.colorGreen.withOpacity(0.1),
+              color: AppColors.colorGreen.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Icon(
@@ -474,7 +474,7 @@ class _BusinessIntelligenceViewState
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: riskColor.withOpacity(0.1),
+              color: riskColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(Icons.person_outline, color: riskColor, size: 24),
@@ -503,7 +503,7 @@ class _BusinessIntelligenceViewState
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: riskColor.withOpacity(0.1),
+              color: riskColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(

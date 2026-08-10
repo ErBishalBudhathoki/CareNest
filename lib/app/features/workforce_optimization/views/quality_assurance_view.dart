@@ -119,7 +119,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
         gradient: LinearGradient(
           colors: [
             AppColors.colorOrange,
-            AppColors.colorOrange.withOpacity(0.8),
+            AppColors.colorOrange.withValues(alpha: 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -127,7 +127,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.colorOrange.withOpacity(0.3),
+            color: AppColors.colorOrange.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -139,7 +139,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: AppColors.colorWhite.withOpacity(0.2),
+              color: AppColors.colorWhite.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Icon(
@@ -216,7 +216,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(color: scoreColor, width: 8),
-                  color: scoreColor.withOpacity(0.1),
+                  color: scoreColor.withValues(alpha: 0.1),
                 ),
                 child: Center(
                   child: Text(
@@ -307,7 +307,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -380,14 +380,14 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
               children: [
                 _buildRiskMetric(
                   'Overall Risk',
-                  '${((state.riskAssessments.first.riskScore ?? 0) * 100).toStringAsFixed(0)}%',
-                  state.riskAssessments.first.riskScore ?? 0,
+                  '${(state.riskAssessments.first.riskScore * 100).toStringAsFixed(0)}%',
+                  state.riskAssessments.first.riskScore,
                 ),
                 const Divider(height: 32),
                 _buildRiskMetric(
                   'Risk Level',
-                  state.riskAssessments.first.riskLevel ?? 'Unknown',
-                  state.riskAssessments.first.riskScore ?? 0,
+                  state.riskAssessments.first.riskLevel,
+                  state.riskAssessments.first.riskScore,
                 ),
               ],
             ),

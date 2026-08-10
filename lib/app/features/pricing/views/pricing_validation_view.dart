@@ -1,4 +1,3 @@
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
@@ -23,7 +22,6 @@ class PricingValidationView extends StatefulWidget {
 class _PricingValidationViewState extends State<PricingValidationView>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  final bool _isLoading = false;
   String _searchQuery = '';
   String _selectedValidationType = 'All';
   String _selectedSeverity = 'All';
@@ -156,205 +154,6 @@ class _PricingValidationViewState extends State<PricingValidationView>
     );
   }
 
-  // This method is no longer used since we've moved to a simpler layout structure
-  // with AppBar directly in the Scaffold
-  Widget _buildAppBar() {
-    return Container(
-      height: 250,
-      color: AppColors.colorPrimary,
-      child: Column(
-        children: [
-          Container(
-            height: 200,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.colorPrimary,
-                  AppColors.colorPrimary.withOpacity(0.1),
-                ],
-              ),
-            ),
-            child: Stack(
-              children: [
-                Positioned(
-                  right: -50,
-                  top: -50,
-                  child: Container(
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.1),
-                    ),
-                  ),
-                ),
-                const Positioned(
-                  left: 25,
-                  bottom: 65,
-                  child: Icon(
-                    Icons.verified_user,
-                    size: 40,
-                    color: Colors.white70,
-                  ),
-                ),
-                Positioned(
-                  left: 80,
-                  bottom: 20,
-                  child: Text(
-                    AppLocalizations.of(context)!.pricingValidationTitle,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          TabBar(
-            controller: _tabController,
-            indicatorColor: Colors.white,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            tabs: [
-              Tab(text: AppLocalizations.of(context)!.tabValidationResults),
-              Tab(text: AppLocalizations.of(context)!.tabValidationRules),
-              Tab(text: AppLocalizations.of(context)!.tabReports),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  // This method is no longer used since we've moved to a simpler layout structure
-  Widget _buildStatCards() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildStatCard(
-              AppLocalizations.of(context)!.totalIssues,
-              '23',
-              Icons.error_outline,
-              Colors.red,
-              AppLocalizations.of(context)!.fromLastWeekStat('5'),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: _buildStatCard(
-              AppLocalizations.of(context)!.resolvedData,
-              '18',
-              Icons.check_circle_outline,
-              Colors.green,
-              AppLocalizations.of(context)!.resolutionRateStat('78'),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: _buildStatCard(
-              AppLocalizations.of(context)!.activeRules,
-              '12',
-              Icons.rule,
-              Colors.blue,
-              AppLocalizations.of(context)!.updatedTodayStat('3'),
-            ),
-          ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.3, end: 0);
-  }
-
-  Widget _buildStatCard(
-    String title,
-    String value,
-    IconData icon,
-    Color color,
-    String subtitle,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, color: color, size: 24),
-              const Spacer(),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // This method is no longer used since we've moved to a simpler layout structure
-  // with TabBarView directly in the Scaffold body
-  Widget _buildTabContent() {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: TabBarView(
-        controller: _tabController,
-        children: [
-          _buildValidationResultsTab(),
-          _buildValidationRulesTab(),
-          _buildReportsTab(),
-        ],
-      ),
-    );
-  }
-
   Widget _buildValidationResultsTab() {
     final filteredResults = _validationResults.where((result) {
       final matchesSearch = result['message'].toString().toLowerCase().contains(
@@ -428,7 +227,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
             children: [
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  value: _selectedValidationType,
+                  initialValue: _selectedValidationType,
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.typeLabel,
                     border: OutlineInputBorder(
@@ -483,7 +282,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
               const SizedBox(width: 16),
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  value: _selectedSeverity,
+                  initialValue: _selectedSeverity,
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.severityLabel,
                     border: OutlineInputBorder(
@@ -553,7 +352,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -565,7 +364,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: severityColor.withOpacity(0.1),
+            color: severityColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
@@ -593,7 +392,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: severityColor.withOpacity(0.1),
+                    color: severityColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -657,10 +456,10 @@ class _PricingValidationViewState extends State<PricingValidationView>
                                 ),
                                 decoration: BoxDecoration(
                                   color: result['status'] == 'Resolved'
-                                      ? Colors.green.withOpacity(0.1)
+                                      ? Colors.green.withValues(alpha: 0.1)
                                       : result['status'] == 'Under Review'
-                                      ? Colors.orange.withOpacity(0.1)
-                                      : Colors.red.withOpacity(0.1),
+                                      ? Colors.orange.withValues(alpha: 0.1)
+                                      : Colors.red.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Text(
@@ -723,10 +522,10 @@ class _PricingValidationViewState extends State<PricingValidationView>
                                 ),
                                 decoration: BoxDecoration(
                                   color: result['status'] == 'Resolved'
-                                      ? Colors.green.withOpacity(0.1)
+                                      ? Colors.green.withValues(alpha: 0.1)
                                       : result['status'] == 'Under Review'
-                                      ? Colors.orange.withOpacity(0.1)
-                                      : Colors.red.withOpacity(0.1),
+                                      ? Colors.orange.withValues(alpha: 0.1)
+                                      : Colors.red.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Text(
@@ -840,7 +639,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -868,8 +667,8 @@ class _PricingValidationViewState extends State<PricingValidationView>
                 ),
                 decoration: BoxDecoration(
                   color: isActive
-                      ? Colors.green.withOpacity(0.1)
-                      : Colors.grey.withOpacity(0.1),
+                      ? Colors.green.withValues(alpha: 0.1)
+                      : Colors.grey.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
@@ -1023,7 +822,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -1036,7 +835,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: color, size: 24),

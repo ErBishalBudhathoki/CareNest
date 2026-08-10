@@ -77,7 +77,6 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
           padding: const EdgeInsets.all(24),
           child: Consumer(
             builder: (context, ref, child) {
-              final isLoading = ref.watch(forgotPasswordViewModelProvider);
               final viewModel = ref.read(
                 forgotPasswordViewModelProvider.notifier,
               );
@@ -118,15 +117,15 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
                   width: 100,
                   height: 100,
                   decoration: BoxDecoration(
-                    color: BauhausDesign.secondary.withOpacity(0.1),
+                    color: BauhausDesign.secondary.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: BauhausDesign.secondary.withOpacity(0.3),
+                      color: BauhausDesign.secondary.withValues(alpha: 0.3),
                       width: 2,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: BauhausDesign.secondary.withOpacity(0.15),
+                        color: BauhausDesign.secondary.withValues(alpha: 0.15),
                         blurRadius: 20,
                         spreadRadius: 2,
                       ),

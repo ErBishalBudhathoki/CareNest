@@ -180,7 +180,7 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
             width: 80.0,
             height: 80.0,
             decoration: BoxDecoration(
-              color: BauhausDesign.success.withOpacity(0.1),
+              color: BauhausDesign.success.withValues(alpha: 0.1),
               border: Border.all(color: BauhausDesign.neutral, width: 1.5),
             ),
           ),
@@ -308,7 +308,7 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
         vertical: BauhausDesign.space2,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         border: Border.all(color: color, width: 2),
       ),
       child: Row(
@@ -316,7 +316,7 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space2),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               border: Border.all(color: color),
             ),
             child: Icon(icon, color: color, size: 20.0),
@@ -362,7 +362,7 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
             vertical: BauhausDesign.space2,
           ),
           decoration: BoxDecoration(
-            color: BauhausDesign.success.withOpacity(0.1),
+            color: BauhausDesign.success.withValues(alpha: 0.1),
             border: Border.all(color: BauhausDesign.success, width: 1.5),
           ),
           child: Text(

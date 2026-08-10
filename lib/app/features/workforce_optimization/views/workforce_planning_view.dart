@@ -135,14 +135,14 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.colorBlue, AppColors.colorBlue.withOpacity(0.8)],
+          colors: [AppColors.colorBlue, AppColors.colorBlue.withValues(alpha: 0.8)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.colorBlue.withOpacity(0.3),
+            color: AppColors.colorBlue.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -154,7 +154,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: AppColors.colorWhite.withOpacity(0.2),
+              color: AppColors.colorWhite.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Icon(
@@ -211,7 +211,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.colorGreen.withOpacity(0.1),
+                  color: AppColors.colorGreen.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
@@ -263,7 +263,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppColors.colorBlue.withOpacity(0.1),
+              color: AppColors.colorBlue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Icon(
@@ -375,7 +375,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: riskColor.withOpacity(0.1),
+              color: riskColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(Icons.person_outline, color: riskColor, size: 24),
@@ -404,7 +404,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: riskColor.withOpacity(0.1),
+              color: riskColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -468,7 +468,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          gap.skill ?? 'Unknown skill',
+                          gap.skill,
                           style: const TextStyle(
                             fontSize: 14,
                             color: AppColors.colorFontPrimary,
@@ -476,7 +476,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
                         ),
                       ),
                       Text(
-                        'Gap: ${gap.gap ?? 0}',
+                        'Gap: ${gap.gap}',
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,

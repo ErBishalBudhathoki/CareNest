@@ -182,7 +182,7 @@ class _EnhancedFileAttachmentWidgetState
           Container(
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-              color: BauhausDesign.primary.withOpacity(0.1),
+              color: BauhausDesign.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
               border: Border.all(color: BauhausDesign.primary),
             ),
@@ -238,7 +238,6 @@ class _EnhancedFileAttachmentWidgetState
         allowedExtensions: _allSupportedExtensions
             .map((e) => e.substring(1))
             .toList(),
-        allowMultiple: true,
       );
 
       if (result != null) {
@@ -392,9 +391,9 @@ class _EnhancedFileAttachmentWidgetState
         Container(
           padding: const EdgeInsets.all(8.0),
           decoration: BoxDecoration(
-            color: BauhausDesign.info.withOpacity(0.1),
+            color: BauhausDesign.info.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-            border: Border.all(color: BauhausDesign.info.withOpacity(0.1)),
+            border: Border.all(color: BauhausDesign.info.withValues(alpha: 0.1)),
           ),
           child: Row(
             children: [
@@ -496,7 +495,7 @@ class _EnhancedFileAttachmentWidgetState
                             child: Container(
                               padding: const EdgeInsets.all(4.0),
                               decoration: BoxDecoration(
-                                color: BauhausDesign.textDark.withOpacity(0.6),
+                                color: BauhausDesign.textDark.withValues(alpha: 0.6),
                                 borderRadius: const BorderRadius.only(
                                   bottomLeft: Radius.circular(
                                     BauhausDesign.radiusMd,

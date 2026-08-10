@@ -77,8 +77,9 @@ class ShiftAssignmentSuccessViewModel extends ChangeNotifier {
 
   /// Get formatted employee name (full name > email-derived > default)
   String getEmployeeName({String defaultName = 'Unknown Employee'}) {
-    if (_userFullName != null && _userFullName!.trim().isNotEmpty)
+    if (_userFullName != null && _userFullName!.trim().isNotEmpty) {
       return _userFullName!;
+    }
     if (_assignment?.userEmail.isEmpty ?? true) return defaultName;
     final email = _assignment!.userEmail;
     final atIndex = email.indexOf('@');
@@ -99,8 +100,9 @@ class ShiftAssignmentSuccessViewModel extends ChangeNotifier {
 
   /// Get formatted client name (full name > email-derived > default)
   String getClientName({String defaultName = 'Unknown Client'}) {
-    if (_clientFullName != null && _clientFullName!.trim().isNotEmpty)
+    if (_clientFullName != null && _clientFullName!.trim().isNotEmpty) {
       return _clientFullName!;
+    }
     if (_assignment?.clientEmail.isEmpty ?? true) return defaultName;
     final email = _assignment!.clientEmail;
     final atIndex = email.indexOf('@');

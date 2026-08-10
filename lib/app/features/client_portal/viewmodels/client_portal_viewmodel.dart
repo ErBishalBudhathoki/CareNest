@@ -54,7 +54,6 @@ class ClientPortalViewModel extends Notifier<ClientPortalState> {
 
   @override
   ClientPortalState build() {
-    final repository = ref.watch(clientPortalRepositoryProvider);
 
     return ClientPortalState();
   }

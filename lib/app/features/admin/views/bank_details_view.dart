@@ -677,7 +677,7 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: BauhausDesign.error.withOpacity(0.1),
+        color: BauhausDesign.error.withValues(alpha: 0.1),
         border: Border.all(color: BauhausDesign.error, width: 2),
       ),
       padding: const EdgeInsets.all(BauhausDesign.space3),
@@ -737,6 +737,7 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
           accountNumber: accountNumberController.text,
         );
 
+    if (!context.mounted) return;
     final currentState = ref.read(bankDetailsViewModelProvider(widget.scope));
     final flush = FlushBarWidget();
 

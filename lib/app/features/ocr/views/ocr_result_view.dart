@@ -136,7 +136,7 @@ class OcrResultView extends ConsumerWidget {
         border: Border.all(color: Colors.black, width: 2),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFF4A261).withOpacity(0.4), // Orange tint
+            color: const Color(0xFFF4A261).withValues(alpha: 0.4), // Orange tint
             offset: const Offset(4, 4),
             blurRadius: 0,
           ),

@@ -227,7 +227,7 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
                       fontSize: 14,
                     ),
                     hintStyle: TextStyle(
-                      color: BauhausDesign.textMuted.withOpacity(0.5),
+                      color: BauhausDesign.textMuted.withValues(alpha: 0.5),
                       fontSize: 16,
                     ),
                   ),
@@ -355,7 +355,7 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
           LinearProgressIndicator(
             value: strength / 4,
             valueColor: AlwaysStoppedAnimation<Color>(strengthColor),
-            backgroundColor: BauhausDesign.neutral.withOpacity(0.3),
+            backgroundColor: BauhausDesign.neutral.withValues(alpha: 0.3),
             minHeight: 3,
           ),
         ],

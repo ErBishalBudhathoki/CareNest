@@ -113,7 +113,7 @@ class _CarePlanBuilderViewState extends ConsumerState<CarePlanBuilderView> {
             Text(
               'Generated on: ${DateTime.now().toLocal().toString().split(' ')[0]}',
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.textDark.withOpacity(0.5),
+                color: BauhausDesign.textDark.withValues(alpha: 0.5),
               ),
             ),
             const SizedBox(height: 12),

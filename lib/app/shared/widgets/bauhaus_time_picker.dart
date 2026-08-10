@@ -16,7 +16,7 @@ Future<TimeOfDay?> showBauhausTimePicker({
 }) async {
   return showDialog<TimeOfDay>(
     context: context,
-    barrierColor: _ink.withOpacity(0.55),
+    barrierColor: _ink.withValues(alpha: 0.55),
     builder: (_) =>
         _BauhausTimePickerDialog(initialTime: initialTime ?? TimeOfDay.now()),
   );
@@ -123,7 +123,7 @@ class _BauhausTimePickerDialogState extends State<_BauhausTimePickerDialog> {
               width: 30,
               height: 30,
               decoration: BoxDecoration(
-                border: Border.all(color: _paper.withOpacity(0.5), width: 1.5),
+                border: Border.all(color: _paper.withValues(alpha: 0.5), width: 1.5),
               ),
               child: const Icon(Icons.close_rounded, color: _paper, size: 16),
             ),

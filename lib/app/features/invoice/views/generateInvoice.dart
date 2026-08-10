@@ -1142,7 +1142,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
         ),
         decoration: BoxDecoration(
           color: isSelected
-              ? BauhausDesign.primary.withOpacity(0.1)
+              ? BauhausDesign.primary.withValues(alpha: 0.1)
               : Colors.transparent,
           border: Border.all(
             color: isSelected ? BauhausDesign.primary : BauhausDesign.neutral,

@@ -156,25 +156,29 @@ class SchadsRateConstants {
     // Default logic for others
     // Simplified map for brevity, expanding based on the rates map above
     if (stream == 'Social & Community Services') {
-      if (level == 'Level 1')
+      if (level == 'Level 1') {
         return ['Pay Point 1', 'Pay Point 2', 'Pay Point 3'];
+      }
       if (level == 'Level 5' ||
           level == 'Level 6' ||
           level == 'Level 7' ||
-          level == 'Level 8')
+          level == 'Level 8') {
         return ['Pay Point 1', 'Pay Point 2', 'Pay Point 3'];
+      }
       return ['Pay Point 1', 'Pay Point 2', 'Pay Point 3', 'Pay Point 4'];
     }
 
     if (stream == 'Crisis Accommodation') {
-      if (level == 'Level 3' || level == 'Level 4')
+      if (level == 'Level 3' || level == 'Level 4') {
         return ['Pay Point 1', 'Pay Point 2', 'Pay Point 3'];
+      }
       return ['Pay Point 1', 'Pay Point 2', 'Pay Point 3', 'Pay Point 4'];
     }
 
     if (stream == 'Family Day Care') {
-      if (level == 'Level 5')
+      if (level == 'Level 5') {
         return ['Pay Point 1', 'Pay Point 2', 'Pay Point 3', 'Pay Point 4'];
+      }
       return ['Pay Point 1', 'Pay Point 2', 'Pay Point 3', 'Pay Point 4'];
     }
 

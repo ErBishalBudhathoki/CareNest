@@ -186,6 +186,7 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
 
       // Process each client assignment to extract employee, client, and NDIS item data
       for (final assignment in widget.clientAssignments) {
+        if (!mounted) return;
         final l10n = AppLocalizations.of(context)!;
         final userEmail =
             assignment['userEmail'] as String? ?? l10n.unknownEmployee;
@@ -446,9 +447,6 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
     await shared.init();
     final String? userEmail = shared.getString('userEmail');
     final String orgId = widget.organizationId;
-    final String? clientId = widget.clientId.isNotEmpty
-        ? widget.clientId
-        : null;
 
     if (userEmail == null || userEmail.isEmpty) {
       setState(() {
@@ -464,6 +462,7 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
     }
 
     for (final item in _lineItems) {
+      if (!mounted) return;
       final id = item['id'] as String;
       if (_isOverridden[id] == true) {
         final newPrice =
@@ -628,6 +627,7 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
           }
 
           if (result['success'] != true) {
+            if (!mounted) return;
             final l10n = AppLocalizations.of(context)!;
             failures[id] = (result['message']?.toString() ?? l10n.saveFailed);
             DebugLog.error(
@@ -660,6 +660,7 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
               : double.tryParse('${confirmPriceField ?? ''}');
           if (confirmedPrice == null ||
               (confirmedPrice - newPrice).abs() > 0.001) {
+            if (!mounted) return;
             final l10n = AppLocalizations.of(context)!;
             failures[id] = l10n.persistenceConfirmationFailed;
             DebugLog.error(
@@ -756,6 +757,7 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
       summary: {'appliedCount': overrides.length},
     );
 
+    if (!mounted) return;
     Navigator.pop(context, overrides);
   }
 
@@ -825,7 +827,7 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
               child: IgnorePointer(
                 ignoring: true,
                 child: Container(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   child: const Center(
                     child: CircularProgressIndicator(
                       color: BauhausDesign.primary,
@@ -918,7 +920,7 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: BauhausDesign.primary.withOpacity(0.1),
+                              color: BauhausDesign.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(
                                 BauhausDesign.radiusSm,
                               ),
@@ -947,7 +949,7 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: BauhausDesign.warning.withOpacity(0.1),
+                                color: BauhausDesign.warning.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(
                                   BauhausDesign.radiusSm,
                                 ),
@@ -1072,7 +1074,7 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                 padding: const EdgeInsets.all(BauhausDesign.space3),
                 decoration: BoxDecoration(
                   color: (_isClientSpecific[id] == true)
-                      ? BauhausDesign.success.withOpacity(0.05)
+                      ? BauhausDesign.success.withValues(alpha: 0.05)
                       : BauhausDesign.backgroundLight,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                   border: Border.all(
@@ -1122,7 +1124,7 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                           _updateOverrideStatus(id);
                         });
                       },
-                      activeColor: BauhausDesign.success,
+                      activeThumbColor: BauhausDesign.success,
                     ),
                   ],
                 ),
@@ -1220,7 +1222,7 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                 child: Container(
                   padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.error.withOpacity(0.1),
+                    color: BauhausDesign.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                     border: Border.all(color: BauhausDesign.error),
                   ),
@@ -1308,9 +1310,9 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: displayColor.withOpacity(0.1),
+        color: displayColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: displayColor.withOpacity(0.1)),
+        border: Border.all(color: displayColor.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1335,7 +1337,7 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   ),
                   child: Text(

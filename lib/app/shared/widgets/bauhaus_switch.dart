@@ -44,12 +44,12 @@ class _BauhausSwitchState extends State<BauhausSwitch>
   Color get _inactiveColor => BauhausDesign.surfaceWhite;
 
   Color get _trackBorderColor {
-    if (!widget.enabled) return BauhausDesign.neutral.withOpacity(0.3);
+    if (!widget.enabled) return BauhausDesign.neutral.withValues(alpha: 0.3);
     return BauhausDesign.neutral;
   }
 
   Color get _thumbBorderColor {
-    if (!widget.enabled) return BauhausDesign.neutral.withOpacity(0.5);
+    if (!widget.enabled) return BauhausDesign.neutral.withValues(alpha: 0.5);
     return BauhausDesign.neutral;
   }
 

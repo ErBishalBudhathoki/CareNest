@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/admin/viewmodels/mileage_settings_view_model.dart';
-import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class MileageSettingsView extends ConsumerStatefulWidget {
   const MileageSettingsView({super.key});
@@ -27,7 +26,6 @@ class _MileageSettingsViewState extends ConsumerState<MileageSettingsView> {
   Widget build(BuildContext context) {
     final viewModel = ref.watch(mileageSettingsViewModelProvider);
     final textTheme = BauhausDesign.getTextTheme(context);
-    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
@@ -139,7 +137,8 @@ class _MileageSettingsViewState extends ConsumerState<MileageSettingsView> {
                           await ref
                               .read(mileageSettingsViewModelProvider.notifier)
                               .updateRate(rate);
-                          if (mounted) Navigator.pop(context);
+                          if (!context.mounted) return;
+                          Navigator.pop(context);
                         }
                       },
                 style:

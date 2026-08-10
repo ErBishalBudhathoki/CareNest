@@ -375,9 +375,9 @@ class TimesheetHistoryView extends ConsumerWidget {
                         horizontal: BauhausDesign.space2,
                       ),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.surfaceOffWhite.withOpacity(0.3),
+                        color: BauhausDesign.surfaceOffWhite.withValues(alpha: 0.3),
                         border: Border.all(
-                          color: BauhausDesign.neutral.withOpacity(0.15),
+                          color: BauhausDesign.neutral.withValues(alpha: 0.15),
                           width: 1,
                         ),
                       ),
@@ -483,7 +483,7 @@ class TimesheetHistoryView extends ConsumerWidget {
             border: Border.all(
               color: hasWork
                   ? BauhausDesign.neutral
-                  : BauhausDesign.neutral.withOpacity(0.2),
+                  : BauhausDesign.neutral.withValues(alpha: 0.2),
               width: hasWork ? 1.5 : 1,
             ),
             boxShadow: hasWork ? const [BauhausDesign.shadowHardXs] : null,
@@ -538,9 +538,9 @@ class TimesheetHistoryView extends ConsumerWidget {
         vertical: BauhausDesign.space2,
       ),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceOffWhite.withOpacity(0.5),
+        color: BauhausDesign.surfaceOffWhite.withValues(alpha: 0.5),
         border: Border.all(
-          color: BauhausDesign.neutral.withOpacity(0.2),
+          color: BauhausDesign.neutral.withValues(alpha: 0.2),
           width: 1,
         ),
       ),

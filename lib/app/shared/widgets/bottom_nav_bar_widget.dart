@@ -188,7 +188,7 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
         color: BauhausDesign.surfaceLight,
         border: Border(
           top: BorderSide(
-            color: BauhausDesign.neutral.withOpacity(0.2),
+            color: BauhausDesign.neutral.withValues(alpha: 0.2),
             width: 1,
           ),
         ),

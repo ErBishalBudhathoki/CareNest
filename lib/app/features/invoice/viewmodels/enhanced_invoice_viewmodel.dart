@@ -64,7 +64,6 @@ class EnhancedInvoiceViewModel extends Notifier<EnhancedInvoiceState> {
         generatedPdfPaths: const [],
       );
       ref.read(generatedInvoicePathsProvider.notifier).state = const [];
-      taxRate ??= 0.0;
       final l10n = AppLocalizations.of(context)!;
       // Validate date range if provided
       if (startDate != null && endDate != null) {

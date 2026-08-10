@@ -190,7 +190,7 @@ class _MedicationManagementViewState
               borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
                 value: state.compliance!.overallCompliance,
-                backgroundColor: BauhausDesign.neutral.withOpacity(0.2),
+                backgroundColor: BauhausDesign.neutral.withValues(alpha: 0.2),
                 color: BauhausDesign.success,
                 minHeight: 12,
               ),

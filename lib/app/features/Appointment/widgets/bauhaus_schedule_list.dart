@@ -16,7 +16,7 @@ class BauhausScheduleList extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: BauhausDesign.surfaceLight,
-          border: Border.all(color: BauhausDesign.neutral.withOpacity(0.5)),
+          border: Border.all(color: BauhausDesign.neutral.withValues(alpha: 0.5)),
         ),
         child: Center(
           child: Text(

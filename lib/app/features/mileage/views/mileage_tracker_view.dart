@@ -271,7 +271,7 @@ class _EndTripDialogState extends State<_EndTripDialog> {
                 )
               else
                 DropdownButtonFormField<String>(
-                  value: _selectedClientId,
+                  initialValue: _selectedClientId,
                   decoration: BauhausDesign.inputDecoration('Select Client'),
                   dropdownColor: BauhausDesign.surfaceWhite,
                   items: widget.clients

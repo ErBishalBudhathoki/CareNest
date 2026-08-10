@@ -107,7 +107,7 @@ class BauhausErrorWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(BauhausDesign.space4),
               decoration: BoxDecoration(
-                color: BauhausDesign.error.withOpacity(0.1),
+                color: BauhausDesign.error.withValues(alpha: 0.1),
                 border: Border.all(color: BauhausDesign.error, width: 2),
               ),
               child: Icon(icon, size: 48, color: BauhausDesign.error),
@@ -168,7 +168,7 @@ class BauhausErrorWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.error.withOpacity(0.1),
+        color: BauhausDesign.error.withValues(alpha: 0.1),
         border: Border.all(color: BauhausDesign.error, width: 2),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),

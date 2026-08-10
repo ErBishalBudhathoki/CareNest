@@ -133,7 +133,7 @@ class _EnhancedPredictiveInsightsViewState
                 Container(
                   padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
-                    color: trendColor.withOpacity(0.1),
+                    color: trendColor.withValues(alpha: 0.1),
                     border: Border.all(color: trendColor, width: 2),
                   ),
                   child: Icon(trendIcon, color: trendColor, size: 32),
@@ -250,7 +250,7 @@ class _EnhancedPredictiveInsightsViewState
                           decoration: BoxDecoration(
                             color: _getConfidenceColor(
                               item.confidence,
-                            ).withOpacity(0.1),
+                            ).withValues(alpha: 0.1),
                             border: Border.all(
                               color: _getConfidenceColor(item.confidence),
                               width: 1,
@@ -323,7 +323,7 @@ class _EnhancedPredictiveInsightsViewState
                 Container(
                   padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.warning.withOpacity(0.1),
+                    color: BauhausDesign.warning.withValues(alpha: 0.1),
                     border: Border.all(color: BauhausDesign.warning, width: 2),
                   ),
                   child: const Icon(
@@ -385,7 +385,7 @@ class _EnhancedPredictiveInsightsViewState
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: riskColor.withOpacity(0.1),
+                            color: riskColor.withValues(alpha: 0.1),
                             border: Border.all(color: riskColor, width: 2),
                           ),
                           child: Center(
@@ -508,7 +508,7 @@ class _EnhancedPredictiveInsightsViewState
                       Container(
                         padding: const EdgeInsets.all(BauhausDesign.space2),
                         decoration: BoxDecoration(
-                          color: BauhausDesign.info.withOpacity(0.1),
+                          color: BauhausDesign.info.withValues(alpha: 0.1),
                           border: Border.all(
                             color: BauhausDesign.info,
                             width: 1,
@@ -652,7 +652,7 @@ class _EnhancedPredictiveInsightsViewState
                       Container(
                         padding: const EdgeInsets.all(BauhausDesign.space2),
                         decoration: BoxDecoration(
-                          color: BauhausDesign.info.withOpacity(0.1),
+                          color: BauhausDesign.info.withValues(alpha: 0.1),
                           border: Border.all(
                             color: BauhausDesign.info,
                             width: 1,
@@ -713,7 +713,7 @@ class _EnhancedPredictiveInsightsViewState
                     Container(
                       padding: const EdgeInsets.all(BauhausDesign.space3),
                       decoration: BoxDecoration(
-                        color: riskColor.withOpacity(0.1),
+                        color: riskColor.withValues(alpha: 0.1),
                         border: Border.all(color: riskColor, width: 2),
                       ),
                       child: Icon(
@@ -834,7 +834,7 @@ class _EnhancedPredictiveInsightsViewState
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: severityColor.withOpacity(0.1),
+                          color: severityColor.withValues(alpha: 0.1),
                           border: Border.all(color: severityColor, width: 2),
                         ),
                         child: Center(

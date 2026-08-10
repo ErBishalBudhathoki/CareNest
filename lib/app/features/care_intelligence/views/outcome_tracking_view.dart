@@ -168,7 +168,7 @@ class _OutcomeTrackingViewState extends ConsumerState<OutcomeTrackingView> {
               borderRadius: BorderRadius.circular(2),
               child: LinearProgressIndicator(
                 value: progress,
-                backgroundColor: BauhausDesign.neutral.withOpacity(0.1),
+                backgroundColor: BauhausDesign.neutral.withValues(alpha: 0.1),
                 color: color,
                 minHeight: 8,
               ),
@@ -178,7 +178,7 @@ class _OutcomeTrackingViewState extends ConsumerState<OutcomeTrackingView> {
               '${(progress * 100).toInt()}% completed',
               style: TextStyle(
                 fontSize: 10,
-                color: BauhausDesign.textDark.withOpacity(0.6),
+                color: BauhausDesign.textDark.withValues(alpha: 0.6),
               ),
             ),
           ],

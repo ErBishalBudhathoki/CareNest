@@ -306,7 +306,7 @@ class _DynamicAppointmentCardWidgetState
                                     vertical: _spacingSm,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: _primaryColor.withOpacity(0.1),
+                                    color: _primaryColor.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(
                                       _spacingLg,
                                     ),
@@ -422,7 +422,7 @@ class _DynamicAppointmentCardWidgetState
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: _primaryColor.withOpacity(0.3),
+                                        color: _primaryColor.withValues(alpha: 0.3),
                                         blurRadius: 12,
                                         offset: const Offset(0, 4),
                                       ),
@@ -505,7 +505,7 @@ class _DynamicAppointmentCardWidgetState
                       borderRadius: BorderRadius.circular(_spacingLg),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withValues(alpha: 0.2),
                           blurRadius: 8.0,
                           offset: const Offset(0, 2),
                         ),
@@ -520,7 +520,7 @@ class _DynamicAppointmentCardWidgetState
                         expansionFactor: 3,
                         spacing: 6.0,
                         activeDotColor: _primaryColor,
-                        dotColor: _primaryColor.withOpacity(0.1),
+                        dotColor: _primaryColor.withValues(alpha: 0.1),
                       ),
                     ),
                   ),
@@ -539,14 +539,14 @@ class _DynamicAppointmentCardWidgetState
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  _errorColor.withOpacity(0.1),
-                  _errorColor.withOpacity(0.1),
+                  _errorColor.withValues(alpha: 0.1),
+                  _errorColor.withValues(alpha: 0.1),
                 ],
               ),
-              border: Border.all(color: _errorColor.withOpacity(0.1), width: 1),
+              border: Border.all(color: _errorColor.withValues(alpha: 0.1), width: 1),
               boxShadow: [
                 BoxShadow(
-                  color: _errorColor.withOpacity(0.1),
+                  color: _errorColor.withValues(alpha: 0.1),
                   blurRadius: 12.0,
                   offset: const Offset(0, 6),
                 ),
@@ -587,7 +587,7 @@ class _DynamicAppointmentCardWidgetState
             color: _cardBackground,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 12.0,
                 offset: const Offset(0, 6),
               ),
@@ -599,7 +599,7 @@ class _DynamicAppointmentCardWidgetState
               Container(
                 padding: const EdgeInsets.all(_spacingLg),
                 decoration: BoxDecoration(
-                  color: _primaryColor.withOpacity(0.1),
+                  color: _primaryColor.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const CircularProgressIndicator(
@@ -636,7 +636,7 @@ class _DynamicAppointmentCardWidgetState
         isCompact ? _spacingSm : _spacingSm,
       ), // Reduced padding
       decoration: BoxDecoration(
-        color: _cardBorder.withOpacity(0.3),
+        color: _cardBorder.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(_spacingMd),
         border: Border.all(color: _cardBorder, width: 1),
       ),
@@ -646,7 +646,7 @@ class _DynamicAppointmentCardWidgetState
           Container(
             padding: EdgeInsets.all(isCompact ? 6 : 8),
             decoration: BoxDecoration(
-              color: _primaryColor.withOpacity(0.15),
+              color: _primaryColor.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(_spacingSm),
             ),
             child: Icon(

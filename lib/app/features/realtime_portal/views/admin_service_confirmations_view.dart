@@ -243,8 +243,8 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                   ),
                   decoration: BoxDecoration(
                     color: hasVerification
-                        ? BauhausDesign.success.withOpacity(0.2)
-                        : BauhausDesign.warning.withOpacity(0.2),
+                        ? BauhausDesign.success.withValues(alpha: 0.2)
+                        : BauhausDesign.warning.withValues(alpha: 0.2),
                     border: Border.all(
                       color: hasVerification
                           ? BauhausDesign.success
@@ -593,7 +593,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                                   ),
                                               decoration: BoxDecoration(
                                                 color: BauhausDesign.primaryBlue
-                                                    .withOpacity(0.1),
+                                                    .withValues(alpha: 0.1),
                                                 border: Border.all(
                                                   color:
                                                       BauhausDesign.primaryBlue,
@@ -655,7 +655,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    'Signature ID: ${confirmation.signatureId} • Secured: ${confirmation.timestamp != null ? DateFormat('yyyy-MM-dd HH:mm').format(confirmation.timestamp) : 'N/A'}',
+                                    'Signature ID: ${confirmation.signatureId} • Secured: ${DateFormat('yyyy-MM-dd HH:mm').format(confirmation.timestamp)}',
                                     style: GoogleFonts.shareTechMono(
                                       fontSize: 9,
                                       color: BauhausDesign.textMuted,
@@ -686,7 +686,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                     BauhausDesign.space4,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: BauhausDesign.warning.withOpacity(
+                                    color: BauhausDesign.warning.withValues(alpha: 
                                       0.1,
                                     ),
                                     border: Border.all(

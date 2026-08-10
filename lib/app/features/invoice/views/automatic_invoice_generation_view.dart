@@ -113,7 +113,7 @@ class _AutomaticInvoiceGenerationViewState
             widget.organizationName ??
                 AppLocalizations.of(context)!.organizationLabel,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: BauhausDesign.textDark.withOpacity(0.7),
+              color: BauhausDesign.textDark.withValues(alpha: 0.7),
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -617,7 +617,7 @@ class _AutomaticInvoiceGenerationViewState
         padding: const EdgeInsets.all(BauhausDesign.space3),
         decoration: BoxDecoration(
           color: selected
-              ? BauhausDesign.primary.withOpacity(0.08)
+              ? BauhausDesign.primary.withValues(alpha: 0.08)
               : BauhausDesign.surfaceWhite,
           border: Border.all(
             color: selected ? BauhausDesign.primary : BauhausDesign.neutral,
@@ -789,9 +789,9 @@ class _AutomaticInvoiceGenerationViewState
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: BauhausDesign.primary,
-              inactiveTrackColor: BauhausDesign.primary.withOpacity(0.1),
+              inactiveTrackColor: BauhausDesign.primary.withValues(alpha: 0.1),
               thumbColor: BauhausDesign.primary,
-              overlayColor: BauhausDesign.primary.withOpacity(0.1),
+              overlayColor: BauhausDesign.primary.withValues(alpha: 0.1),
             ),
             child: Slider(
               value: _taxRate,
@@ -844,7 +844,7 @@ class _AutomaticInvoiceGenerationViewState
               valueColor: const AlwaysStoppedAnimation<Color>(
                 BauhausDesign.primary,
               ),
-              backgroundColor: BauhausDesign.primary.withOpacity(0.1),
+              backgroundColor: BauhausDesign.primary.withValues(alpha: 0.1),
             ),
             const SizedBox(height: BauhausDesign.space4),
             Row(
@@ -902,7 +902,7 @@ class _AutomaticInvoiceGenerationViewState
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.success.withOpacity(0.1),
+                  color: BauhausDesign.success.withValues(alpha: 0.1),
                   border: Border.all(color: BauhausDesign.success, width: 2),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 ),
@@ -1038,7 +1038,7 @@ class _AutomaticInvoiceGenerationViewState
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: BoxDecoration(
-                  color: accent.withOpacity(0.1),
+                  color: accent.withValues(alpha: 0.1),
                   border: Border.all(color: accent, width: 2),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 ),
@@ -1181,6 +1181,8 @@ class _AutomaticInvoiceGenerationViewState
       await vm.fetchEmployees();
     }
 
+    if (!mounted) return;
+
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -1211,7 +1213,7 @@ class _AutomaticInvoiceGenerationViewState
                       Container(
                         padding: const EdgeInsets.all(BauhausDesign.space2),
                         decoration: BoxDecoration(
-                          color: BauhausDesign.primary.withOpacity(0.1),
+                          color: BauhausDesign.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(
                             BauhausDesign.radiusSm,
                           ),
@@ -1445,7 +1447,7 @@ class _AutomaticInvoiceGenerationViewState
                       Container(
                         padding: const EdgeInsets.all(BauhausDesign.space2),
                         decoration: BoxDecoration(
-                          color: BauhausDesign.primary.withOpacity(0.1),
+                          color: BauhausDesign.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(
                             BauhausDesign.radiusSm,
                           ),
@@ -1589,7 +1591,7 @@ class _AutomaticInvoiceGenerationViewState
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.primary.withOpacity(0.1),
+                  color: BauhausDesign.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(color: BauhausDesign.primary),
                 ),
@@ -1653,7 +1655,7 @@ class _AutomaticInvoiceGenerationViewState
                         Container(
                           padding: const EdgeInsets.all(8.0),
                           decoration: BoxDecoration(
-                            color: BauhausDesign.success.withOpacity(0.1),
+                            color: BauhausDesign.success.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(
                               BauhausDesign.radiusSm,
                             ),

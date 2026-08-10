@@ -131,7 +131,7 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
               _buildLabel(AppLocalizations.of(context)!.leaveTypeLabel),
               const SizedBox(height: BauhausDesign.space1),
               DropdownButtonFormField<String>(
-                value: _selectedLeaveType,
+                initialValue: _selectedLeaveType,
                 decoration: BauhausDesign.inputDecoration(
                   AppLocalizations.of(context)!.selectLeaveTypeHint,
                 ),
@@ -217,8 +217,9 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
                   decimal: true,
                 ),
                 validator: (val) {
-                  if (val == null || val.isEmpty)
+                  if (val == null || val.isEmpty) {
                     return 'Please enter total hours';
+                  }
                   return null;
                 },
               ),
@@ -229,8 +230,9 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
                 hintText: AppLocalizations.of(context)!.reasonHint,
                 maxLines: 3,
                 validator: (val) {
-                  if (val == null || val.isEmpty)
+                  if (val == null || val.isEmpty) {
                     return 'Please enter a reason';
+                  }
                   return null;
                 },
               ),

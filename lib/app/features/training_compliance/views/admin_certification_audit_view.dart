@@ -147,6 +147,7 @@ class _AdminCertificationAuditViewState
                     if (await canLaunchUrl(uri)) {
                       await launchUrl(uri);
                     } else {
+                      if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Could not launch file URL'),
