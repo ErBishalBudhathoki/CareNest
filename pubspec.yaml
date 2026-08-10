@@ -86,7 +86,7 @@ dependencies:
   logging: ^1.2.0
   device_info_plus: ^13.2.0 
   package_info_plus: ^10.2.1
-  archive: ^3.6.1
+  archive: ^4.0.9
   iconsax: ^0.0.8
   geocoding: ^5.0.0
   dio: ^5.4.0
