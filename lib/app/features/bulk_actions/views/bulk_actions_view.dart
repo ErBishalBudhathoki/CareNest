@@ -216,7 +216,7 @@ class _BulkTimesheetTabState extends State<_BulkTimesheetTab> {
           secondary: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: BauhausDesign.warning.withOpacity(0.2),
+              color: BauhausDesign.warning.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
@@ -640,7 +640,6 @@ class _BulkAssignmentTabState extends State<_BulkAssignmentTab> {
       itemCount: shifts.length,
       itemBuilder: (context, index) {
         final shift = shifts[index];
-        final id = shift['id'] as String;
 
         return ListTile(
           title: Text('${shift['service']} - ${shift['client']}'),
@@ -702,7 +701,6 @@ class _BulkMessagingTabState extends State<_BulkMessagingTab> {
   final _subjectController = TextEditingController();
   final _messageController = TextEditingController();
   final Set<String> _selectedChannels = {'push'};
-  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -902,7 +900,6 @@ class _BulkMessagingTabState extends State<_BulkMessagingTab> {
   }
 
   Future<void> _sendMessages() async {
-    setState(() => _isLoading = true);
     // TODO: Call repository method
     await Future.delayed(const Duration(seconds: 1));
     if (mounted) {
@@ -916,7 +913,6 @@ class _BulkMessagingTabState extends State<_BulkMessagingTab> {
         _selectedRecipients.clear();
         _subjectController.clear();
         _messageController.clear();
-        _isLoading = false;
       });
     }
   }
@@ -931,7 +927,6 @@ class _BulkMessagingTabState extends State<_BulkMessagingTab> {
 
     if (scheduledTime == null) return;
 
-    setState(() => _isLoading = true);
     // TODO: Call repository method
     await Future.delayed(const Duration(seconds: 1));
     if (mounted) {
@@ -947,7 +942,6 @@ class _BulkMessagingTabState extends State<_BulkMessagingTab> {
         _selectedRecipients.clear();
         _subjectController.clear();
         _messageController.clear();
-        _isLoading = false;
       });
     }
   }

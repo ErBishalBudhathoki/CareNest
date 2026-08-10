@@ -133,7 +133,7 @@ class BauhausStatCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(BauhausDesign.space1),
                       decoration: BoxDecoration(
-                        color: (iconColor ?? BauhausDesign.primary).withOpacity(
+                        color: (iconColor ?? BauhausDesign.primary).withValues(alpha: 
                           0.1,
                         ),
                         borderRadius: BorderRadius.circular(
@@ -155,7 +155,7 @@ class BauhausStatCard extends StatelessWidget {
                       child: isLoading
                           ? Container(
                               height: 18,
-                              color: BauhausDesign.neutral.withOpacity(0.1),
+                              color: BauhausDesign.neutral.withValues(alpha: 0.1),
                             )
                           : FittedBox(
                               fit: BoxFit.scaleDown,
@@ -191,7 +191,7 @@ class BauhausStatCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(BauhausDesign.space2),
                     decoration: BoxDecoration(
-                      color: (iconColor ?? BauhausDesign.primary).withOpacity(
+                      color: (iconColor ?? BauhausDesign.primary).withValues(alpha: 
                         0.1,
                       ),
                       borderRadius: BorderRadius.circular(
@@ -216,7 +216,7 @@ class BauhausStatCard extends StatelessWidget {
                         vertical: BauhausDesign.space1,
                       ),
                       decoration: BoxDecoration(
-                        color: changeColor.withOpacity(0.1),
+                        color: changeColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(
                           BauhausDesign.radiusSm,
                         ),
@@ -252,7 +252,7 @@ class BauhausStatCard extends StatelessWidget {
                 Container(
                   height: 24,
                   width: 80,
-                  color: BauhausDesign.neutral.withOpacity(0.1),
+                  color: BauhausDesign.neutral.withValues(alpha: 0.1),
                 )
               else
                 FittedBox(
@@ -310,16 +310,16 @@ class BauhausCheckbox extends StatelessWidget {
     return Theme(
       data: Theme.of(context).copyWith(
         checkboxTheme: CheckboxThemeData(
-          fillColor: MaterialStateProperty.resolveWith<Color?>((states) {
-            if (states.contains(MaterialState.disabled)) {
+          fillColor: WidgetStateProperty.resolveWith<Color?>((states) {
+            if (states.contains(WidgetState.disabled)) {
               return null;
             }
-            if (states.contains(MaterialState.selected)) {
+            if (states.contains(WidgetState.selected)) {
               return activeColor ?? BauhausDesign.primary;
             }
             return BauhausDesign.surfaceWhite;
           }),
-          checkColor: MaterialStateProperty.all(
+          checkColor: WidgetStateProperty.all(
             checkColor ?? BauhausDesign.surfaceWhite,
           ),
           side: const BorderSide(color: BauhausDesign.neutral, width: 1.5),
@@ -763,7 +763,7 @@ class BauhausActionButton extends StatelessWidget {
         ),
         boxShadow:
             isOutlined ||
-                backgroundColor == BauhausDesign.neutral.withOpacity(0.2)
+                backgroundColor == BauhausDesign.neutral.withValues(alpha: 0.2)
             ? [] // No shadow for outlined or disabled/neutral-ghost buttons
             : [BauhausDesign.shadowHard],
       ),
@@ -1037,7 +1037,7 @@ class BauhausActionTile extends StatelessWidget {
               height: 48,
               padding: const EdgeInsets.all(BauhausDesign.space2),
               decoration: BoxDecoration(
-                color: (color ?? BauhausDesign.primary).withOpacity(0.1),
+                color: (color ?? BauhausDesign.primary).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                 border: Border.all(color: BauhausDesign.neutral, width: 1),
               ),
@@ -1264,7 +1264,7 @@ class BauhausProgressIndicator extends StatelessWidget {
         Container(
           height: height,
           decoration: BoxDecoration(
-            color: BauhausDesign.neutral.withOpacity(0.3),
+            color: BauhausDesign.neutral.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
             border: Border.all(color: BauhausDesign.neutral, width: 1),
           ),

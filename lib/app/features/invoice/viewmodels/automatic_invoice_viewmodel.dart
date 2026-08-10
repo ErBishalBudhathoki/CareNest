@@ -279,6 +279,7 @@ class AutomaticInvoiceViewModel extends Notifier<AutomaticInvoiceState> {
 
       for (int i = 0; i < typesToGenerate.length; i++) {
         final currentType = typesToGenerate[i];
+        if (!context.mounted) break;
         final progressBase = 0.7 + (0.25 * i / typesToGenerate.length);
 
         state = state.copyWith(
@@ -328,6 +329,7 @@ class AutomaticInvoiceViewModel extends Notifier<AutomaticInvoiceState> {
 
       return allPdfPaths;
     } catch (e) {
+      if (!context.mounted) return const <String>[];
       final l10n = AppLocalizations.of(context)!;
       final errorMessage = _mapAutomaticInvoiceError(e, l10n);
       state = state.copyWith(

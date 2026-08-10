@@ -52,7 +52,7 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
           Text(
             widget.description,
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-              color: BauhausDesign.textDark.withOpacity(0.7),
+              color: BauhausDesign.textDark.withValues(alpha: 0.7),
             ),
           ),
           const SizedBox(height: 16),
@@ -96,7 +96,7 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
                   style: TextStyle(
                     color: isUploaded
                         ? Colors.green
-                        : BauhausDesign.textDark.withOpacity(0.6),
+                        : BauhausDesign.textDark.withValues(alpha: 0.6),
                   ),
                 ),
                 trailing: isUploaded
@@ -116,7 +116,7 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
                                 .read(onboardingViewModelProvider.notifier)
                                 .deleteDocument(uploadedDoc.id!);
                           } catch (e) {
-                            if (mounted) {
+                            if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text('Delete failed: $e')),
                               );
@@ -172,7 +172,7 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
               decoration: BoxDecoration(
                 color: BauhausDesign.surfaceWhite,
                 border: Border.all(
-                  color: BauhausDesign.neoInk.withOpacity(0.3),
+                  color: BauhausDesign.neoInk.withValues(alpha: 0.3),
                   width: 2,
                 ),
               ),

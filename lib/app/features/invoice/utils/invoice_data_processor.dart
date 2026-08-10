@@ -362,7 +362,7 @@ class InvoiceDataProcessor {
   /// - `invoiceType`: 'client' or 'employee' (affects rate calculation).
   Future<Map<String, dynamic>> processInvoiceData({
     required Map<String, dynamic> assignedClients,
-    required List<Map<String, dynamic>> lineItems,
+    List<Map<String, dynamic>>? lineItems,
     List<Map<String, dynamic>>? expenses,
     bool applyTax = true,
     double taxRate = 0.00,
@@ -543,8 +543,9 @@ class InvoiceDataProcessor {
     if (invoiceType == 'employee' && expenses != null && expenses.isNotEmpty) {
       final orphanExpenses = expenses.where((expense) {
         // Check date range
-        if (!_isExpenseDateInRange(expense['expenseDate'], startDate, endDate))
+        if (!_isExpenseDateInRange(expense['expenseDate'], startDate, endDate)) {
           return false;
+        }
 
         // Check approval status
         final approvalStatus = (expense['approvalStatus'] ?? '')
@@ -947,21 +948,26 @@ class InvoiceDataProcessor {
 
                       // Penalty Rate Upgrade Logic
                       if (matchNameLower.contains('saturday') &&
-                          !currentNameLower.contains('saturday'))
+                          !currentNameLower.contains('saturday')) {
                         shouldUpgrade = true;
+                      }
                       if (matchNameLower.contains('sunday') &&
-                          !currentNameLower.contains('sunday'))
+                          !currentNameLower.contains('sunday')) {
                         shouldUpgrade = true;
+                      }
                       if (matchNameLower.contains('public holiday') &&
-                          !currentNameLower.contains('public holiday'))
+                          !currentNameLower.contains('public holiday')) {
                         shouldUpgrade = true;
+                      }
                       if (matchNameLower.contains('evening') &&
                           !currentNameLower.contains('evening') &&
-                          !currentNameLower.contains('night'))
+                          !currentNameLower.contains('night')) {
                         shouldUpgrade = true;
+                      }
                       if (matchNameLower.contains('night') &&
-                          !currentNameLower.contains('night'))
+                          !currentNameLower.contains('night')) {
                         shouldUpgrade = true;
+                      }
 
                       // Specific check: If current is generic "Assistance With Self-Care" (often weekday)
                       // and we found a specific time-based one.

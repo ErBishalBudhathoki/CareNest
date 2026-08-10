@@ -90,7 +90,7 @@ class PredictiveInsightsViewModel extends Notifier<PredictiveInsightsState> {
 
     try {
       // Fetch all predictions in parallel
-      final results = await Future.wait([
+      await Future.wait([
         fetchRevenueForecast(),
         fetchChurnPredictions(),
         fetchDemandForecast(),

@@ -76,7 +76,7 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
         boxShadow: [
           if (_isSearchFocused)
             BoxShadow(
-              color: const Color(0xFF667EEA).withOpacity(0.1),
+              color: const Color(0xFF667EEA).withValues(alpha: 0.1),
               spreadRadius: 2,
               blurRadius: 8,
               offset: const Offset(0, 2),
@@ -192,7 +192,7 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
                   // Handle filter removal
                 },
                 side: BorderSide(
-                  color: const Color(0xFF667EEA).withOpacity(0.1),
+                  color: const Color(0xFF667EEA).withValues(alpha: 0.1),
                 ),
               );
             }).toList(),

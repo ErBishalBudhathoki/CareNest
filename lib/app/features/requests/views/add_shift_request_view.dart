@@ -53,7 +53,7 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space3),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.success.withOpacity(0.1),
+                  color: BauhausDesign.success.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -215,7 +215,7 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: BauhausDesign.neutral.withOpacity(0.3),
+                color: BauhausDesign.neutral.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -344,12 +344,12 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                         vertical: BauhausDesign.space2,
                       ),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.primary.withOpacity(0.1),
+                        color: BauhausDesign.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(
                           BauhausDesign.radiusSm,
                         ),
                         border: Border.all(
-                          color: BauhausDesign.primary.withOpacity(0.3),
+                          color: BauhausDesign.primary.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Text(
@@ -391,12 +391,12 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                         vertical: BauhausDesign.space2,
                       ),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.primary.withOpacity(0.1),
+                        color: BauhausDesign.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(
                           BauhausDesign.radiusSm,
                         ),
                         border: Border.all(
-                          color: BauhausDesign.primary.withOpacity(0.3),
+                          color: BauhausDesign.primary.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Text(
@@ -457,12 +457,12 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                         vertical: BauhausDesign.space2,
                       ),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.primary.withOpacity(0.1),
+                        color: BauhausDesign.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(
                           BauhausDesign.radiusSm,
                         ),
                         border: Border.all(
-                          color: BauhausDesign.primary.withOpacity(0.3),
+                          color: BauhausDesign.primary.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Text(
@@ -506,12 +506,12 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                         vertical: BauhausDesign.space2,
                       ),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.primary.withOpacity(0.1),
+                        color: BauhausDesign.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(
                           BauhausDesign.radiusSm,
                         ),
                         border: Border.all(
-                          color: BauhausDesign.primary.withOpacity(0.3),
+                          color: BauhausDesign.primary.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Text(
@@ -534,7 +534,7 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space3),
             decoration: BoxDecoration(
-              color: BauhausDesign.neutral.withOpacity(0.05),
+              color: BauhausDesign.neutral.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
             ),
             child: Row(

@@ -75,7 +75,7 @@ class EmployeeStatusCard extends StatelessWidget {
       height: 50,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: BauhausDesign.neutral.withOpacity(0.1),
+        color: BauhausDesign.neutral.withValues(alpha: 0.1),
         border: Border.all(color: _getStatusColor(), width: 2),
       ),
       child:
@@ -106,7 +106,7 @@ class EmployeeStatusCard extends StatelessWidget {
       height: 50.0,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: BauhausDesign.neutral.withOpacity(0.1),
+        color: BauhausDesign.neutral.withValues(alpha: 0.1),
       ),
       child: Icon(Icons.person, size: 30.0, color: BauhausDesign.textMuted),
     );

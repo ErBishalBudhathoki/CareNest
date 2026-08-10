@@ -43,13 +43,10 @@ class InvoiceNumberGeneratorService {
         year,
         month,
       );
-      final sequenceStr = sequence.toString().padLeft(4, '0');
 
       // Generate client code (3 chars from client name/ID)
-      final clientCode = _generateCode('$clientName$clientId', 3);
 
       // Generate employee code (3 chars from employee name/ID)
-      final employeeCode = _generateCode('$employeeName$employeeId', 3);
 
       // Construct the invoice number with INV prefix (clean format)
       // Format: INV + ORGYMNNCC (INV + ORG + Y + M + NN + CC) - Ultra compact with prefix
@@ -292,33 +289,6 @@ class InvoiceNumberGeneratorService {
 
       for (final digit in encoded.split('')) {
         result.write(zeroWidthChars[int.parse(digit)]);
-      }
-    }
-
-    return result.toString();
-  }
-
-  /// Decode zero-width characters back to string
-  static String _decodeFromZeroWidth(String input) {
-    const zeroWidthChars = [
-      '\u200B', // Zero Width Space = 0
-      '\u200C', // Zero Width Non-Joiner = 1
-      '\u200D', // Zero Width Joiner = 2
-      '\uFEFF', // Zero Width No-Break Space = 3
-    ];
-
-    final result = StringBuffer();
-    final chars = input.split('');
-
-    for (int i = 0; i < chars.length; i += 4) {
-      if (i + 3 < chars.length) {
-        final digits = chars
-            .sublist(i, i + 4)
-            .map((char) => zeroWidthChars.indexOf(char).toString())
-            .join('');
-
-        final charCode = int.parse(digits, radix: 4);
-        result.writeCharCode(charCode);
       }
     }
 

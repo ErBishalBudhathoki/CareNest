@@ -291,7 +291,7 @@ class _LoginViewState extends ConsumerState<LoginView>
                         color: BauhausDesign.primary,
                         fontWeight: FontWeight.w500,
                         decoration: TextDecoration.underline,
-                        decorationColor: BauhausDesign.primary.withOpacity(0.6),
+                        decorationColor: BauhausDesign.primary.withValues(alpha: 0.6),
                       ),
                 ),
               ),

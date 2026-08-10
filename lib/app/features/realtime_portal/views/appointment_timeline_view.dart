@@ -120,7 +120,6 @@ class AppointmentTimelineView extends ConsumerWidget {
     final timelineState = ref.watch(
       timelineAppointmentsProvider(resolvedClientId),
     );
-    final textTheme = BauhausDesign.getTextTheme(context);
 
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
@@ -338,7 +337,7 @@ class AppointmentTimelineView extends ConsumerWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: color.withOpacity(0.12),
+                            color: color.withValues(alpha: 0.12),
                             border: Border.all(color: color, width: 1.5),
                           ),
                           child: Text(
@@ -745,7 +744,7 @@ class AppointmentTimelineView extends ConsumerWidget {
                                                   ),
                                               decoration: BoxDecoration(
                                                 color: BauhausDesign.primaryBlue
-                                                    .withOpacity(0.1),
+                                                    .withValues(alpha: 0.1),
                                                 border: Border.all(
                                                   color:
                                                       BauhausDesign.primaryBlue,
@@ -807,7 +806,7 @@ class AppointmentTimelineView extends ConsumerWidget {
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    'Signature ID: ${confirmation.signatureId} • Secured: ${confirmation.timestamp != null ? DateFormat('yyyy-MM-dd HH:mm').format(confirmation.timestamp) : 'N/A'}',
+                                    'Signature ID: ${confirmation.signatureId} • Secured: ${DateFormat('yyyy-MM-dd HH:mm').format(confirmation.timestamp)}',
                                     style: GoogleFonts.shareTechMono(
                                       fontSize: 9,
                                       color: BauhausDesign.textMuted,
@@ -838,7 +837,7 @@ class AppointmentTimelineView extends ConsumerWidget {
                                     BauhausDesign.space4,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: BauhausDesign.warning.withOpacity(
+                                    color: BauhausDesign.warning.withValues(alpha: 
                                       0.1,
                                     ),
                                     border: Border.all(

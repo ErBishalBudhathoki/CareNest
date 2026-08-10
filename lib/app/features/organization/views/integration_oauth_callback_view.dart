@@ -232,7 +232,7 @@ class _IntegrationOAuthCallbackViewState
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontSm,
                           fontWeight: FontWeight.w400,
-                          color: BauhausDesign.textDark.withOpacity(0.7),
+                          color: BauhausDesign.textDark.withValues(alpha: 0.7),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -264,7 +264,7 @@ class _IntegrationOAuthCallbackViewState
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontSm,
                           fontWeight: FontWeight.w400,
-                          color: BauhausDesign.textDark.withOpacity(0.7),
+                          color: BauhausDesign.textDark.withValues(alpha: 0.7),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -274,7 +274,7 @@ class _IntegrationOAuthCallbackViewState
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontXs,
                           fontWeight: FontWeight.w400,
-                          color: BauhausDesign.textDark.withOpacity(0.5),
+                          color: BauhausDesign.textDark.withValues(alpha: 0.5),
                         ),
                         textAlign: TextAlign.center,
                       ),

@@ -200,7 +200,7 @@ class _OptionChip extends StatelessWidget {
           border: Border.all(
             color: isSelected
                 ? BauhausDesign.neoInk
-                : BauhausDesign.neoInk.withOpacity(0.6),
+                : BauhausDesign.neoInk.withValues(alpha: 0.6),
             width: isSelected ? 3.0 : 2.0,
           ),
           boxShadow: isSelected

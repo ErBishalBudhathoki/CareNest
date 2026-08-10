@@ -259,7 +259,7 @@ class AnalyticsDashboardView extends ConsumerWidget {
                           surface: BauhausDesign.surfaceWhite,
                           onSurface: BauhausDesign.textDark,
                         ),
-                        dialogBackgroundColor: BauhausDesign.surfaceWhite,
+                        dialogTheme: DialogThemeData(backgroundColor: BauhausDesign.surfaceWhite),
                       ),
                       child: child!,
                     );
@@ -404,24 +404,6 @@ class _DateFilterButton extends StatelessWidget {
   }
 }
 
-class _LoadingBlock extends StatelessWidget {
-  final double height;
-  const _LoadingBlock({required this.height});
-
-  @override
-  Widget build(BuildContext context) {
-    return BauhausContainer(
-      height: height,
-      child: Center(
-        child: CircularProgressIndicator(
-          color: BauhausDesign.primary,
-          strokeWidth: 4,
-        ),
-      ),
-    );
-  }
-}
-
 class _ErrorBlock extends StatelessWidget {
   final String error;
   final double height;
@@ -431,7 +413,7 @@ class _ErrorBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     return BauhausContainer(
       height: height,
-      color: BauhausDesign.error.withOpacity(0.1),
+      color: BauhausDesign.error.withValues(alpha: 0.1),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

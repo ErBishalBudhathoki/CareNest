@@ -124,14 +124,14 @@ class _PerformanceAnalyticsViewState
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.colorGreen, AppColors.colorGreen.withOpacity(0.8)],
+          colors: [AppColors.colorGreen, AppColors.colorGreen.withValues(alpha: 0.8)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.colorGreen.withOpacity(0.3),
+            color: AppColors.colorGreen.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -143,7 +143,7 @@ class _PerformanceAnalyticsViewState
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: AppColors.colorWhite.withOpacity(0.2),
+              color: AppColors.colorWhite.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Icon(
@@ -259,7 +259,7 @@ class _PerformanceAnalyticsViewState
       decoration: BoxDecoration(
         color: AppColors.colorWhite,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.2), width: 2),
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 2),
         boxShadow: [
           BoxShadow(
             color: AppColors.colorShadow,
@@ -297,8 +297,8 @@ class _PerformanceAnalyticsViewState
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: isPositive
-                      ? AppColors.colorGreen.withOpacity(0.1)
-                      : AppColors.colorRed.withOpacity(0.1),
+                      ? AppColors.colorGreen.withValues(alpha: 0.1)
+                      : AppColors.colorRed.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -377,7 +377,7 @@ class _PerformanceAnalyticsViewState
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(

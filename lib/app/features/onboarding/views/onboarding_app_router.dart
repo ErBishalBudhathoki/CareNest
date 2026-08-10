@@ -22,13 +22,10 @@ class _OnboardingAppRouterState extends State<OnboardingAppRouter>
   late final PageController _controller;
   late final AnimationController _progressCtrl;
   int _page = 0;
-  String _displayName = '';
+  final String _displayName = '';
 
   static const int _splash = 0;
   static const int _carousel = 1;
-  static const int _personalize = 2;
-  static const int _signup = 3;
-  static const int _complete = 4;
   static const int _totalSteps = 5;
 
   double _progressFor(int page) => (page + 1) / _totalSteps;
@@ -68,18 +65,6 @@ class _OnboardingAppRouterState extends State<OnboardingAppRouter>
       _progressFor(page),
       duration: OnboardingDurations.progressFill,
       curve: OnboardingCurves.progressEase,
-    );
-  }
-
-  void _onSignupComplete(String email) {
-    final name = email.split('@').first.replaceAll(RegExp(r'[^a-zA-Z]'), ' ');
-    final words = name.split(' ').where((w) => w.isNotEmpty);
-    _displayName = words.isNotEmpty
-        ? '${words.first[0].toUpperCase()}${words.first.substring(1)}'
-        : '';
-    _controller.nextPage(
-      duration: OnboardingDurations.pageTransition,
-      curve: OnboardingCurves.pageEase,
     );
   }
 

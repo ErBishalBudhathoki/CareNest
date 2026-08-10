@@ -72,7 +72,7 @@ class _TaxDetailsFormState extends ConsumerState<TaxDetailsForm> {
           ),
           const SizedBox(height: 6),
           DropdownButtonFormField<String>(
-            value: _taxScale,
+            initialValue: _taxScale,
             dropdownColor: BauhausDesign.surfaceWhite,
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
               color: BauhausDesign.textDark,

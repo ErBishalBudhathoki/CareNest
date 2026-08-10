@@ -65,7 +65,6 @@ class AiPredictionsTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(aiViewModelProvider);
-    final notifier = ref.read(aiViewModelProvider.notifier);
 
     if (state.isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -90,7 +89,7 @@ class AiPredictionsTab extends ConsumerWidget {
               label: Text(
                 '${(prediction.confidenceScore * 100).toInt()}% Conf',
               ),
-              backgroundColor: Colors.blue.withOpacity(0.1),
+              backgroundColor: Colors.blue.withValues(alpha: 0.1),
             ),
           ),
         );
@@ -105,7 +104,6 @@ class CalendarEventsTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(aiViewModelProvider);
-    final notifier = ref.read(aiViewModelProvider.notifier);
 
     return Column(
       children: [
@@ -160,7 +158,6 @@ class SnoozeRulesTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(aiViewModelProvider);
-    final notifier = ref.read(aiViewModelProvider.notifier);
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(

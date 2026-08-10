@@ -479,7 +479,7 @@ class _CareIntelligenceDashboardState
                         width: 68,
                         height: 68,
                         decoration: BoxDecoration(
-                          color: BauhausDesign.secondary.withOpacity(0.22),
+                          color: BauhausDesign.secondary.withValues(alpha: 0.22),
                           borderRadius: BorderRadius.circular(
                             BauhausDesign.radiusSm,
                           ),
@@ -496,7 +496,7 @@ class _CareIntelligenceDashboardState
                         width: 54,
                         height: 54,
                         decoration: BoxDecoration(
-                          color: BauhausDesign.accent.withOpacity(0.24),
+                          color: BauhausDesign.accent.withValues(alpha: 0.24),
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: BauhausDesign.neutral,
@@ -511,7 +511,7 @@ class _CareIntelligenceDashboardState
                         width: 42,
                         height: 42,
                         decoration: BoxDecoration(
-                          color: BauhausDesign.primary.withOpacity(0.2),
+                          color: BauhausDesign.primary.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(
                             BauhausDesign.radiusSm,
                           ),
@@ -604,7 +604,7 @@ class _CareIntelligenceDashboardState
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: accent.withOpacity(0.12),
+        color: accent.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         border: Border.all(color: BauhausDesign.neutral, width: 1.4),
       ),
@@ -741,7 +741,7 @@ class _CareIntelligenceDashboardState
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: step.accent.withOpacity(0.14),
+        color: step.accent.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         border: Border.all(color: BauhausDesign.neutral, width: 1.2),
       ),
@@ -869,7 +869,7 @@ class _CareIntelligenceDashboardState
                 height: 40,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: module.accent.withOpacity(0.2),
+                  color: module.accent.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(color: BauhausDesign.neutral),
                 ),
@@ -911,7 +911,7 @@ class _CareIntelligenceDashboardState
                   vertical: BauhausDesign.space1,
                 ),
                 decoration: BoxDecoration(
-                  color: module.accent.withOpacity(0.16),
+                  color: module.accent.withValues(alpha: 0.16),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(color: BauhausDesign.neutral),
                 ),
@@ -1028,7 +1028,7 @@ class _CareIntelligenceDashboardState
                     widthFactor: fill,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: signal.accent.withOpacity(0.75),
+                        color: signal.accent.withValues(alpha: 0.75),
                         borderRadius: BorderRadius.circular(
                           BauhausDesign.radiusSm,
                         ),
@@ -1080,7 +1080,7 @@ class _CareIntelligenceDashboardState
                     widthFactor: fill,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: signal.accent.withOpacity(0.75),
+                        color: signal.accent.withValues(alpha: 0.75),
                         borderRadius: BorderRadius.circular(
                           BauhausDesign.radiusSm,
                         ),
@@ -1188,7 +1188,7 @@ class _CareIntelligenceDashboardState
                     width: 2,
                     height: 62,
                     margin: const EdgeInsets.only(top: 2),
-                    color: BauhausDesign.neutral.withOpacity(0.35),
+                    color: BauhausDesign.neutral.withValues(alpha: 0.35),
                   ),
               ],
             ),
@@ -1198,7 +1198,7 @@ class _CareIntelligenceDashboardState
             child: Container(
               padding: const EdgeInsets.all(BauhausDesign.space3),
               decoration: BoxDecoration(
-                color: alert.accent.withOpacity(0.12),
+                color: alert.accent.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 border: Border.all(color: BauhausDesign.neutral, width: 1.2),
               ),
@@ -1263,7 +1263,7 @@ class _CareIntelligenceDashboardState
                       vertical: BauhausDesign.space1,
                     ),
                     decoration: BoxDecoration(
-                      color: alert.accent.withOpacity(0.18),
+                      color: alert.accent.withValues(alpha: 0.18),
                       borderRadius: BorderRadius.circular(
                         BauhausDesign.radiusSm,
                       ),
@@ -1373,7 +1373,7 @@ class _CareIntelligenceDashboardState
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.error.withOpacity(0.12),
+        color: BauhausDesign.error.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         border: Border.all(color: BauhausDesign.neutral, width: 1.2),
       ),
@@ -1616,7 +1616,7 @@ class _CareIntelligenceDashboardState
         vertical: BauhausDesign.space1,
       ),
       decoration: BoxDecoration(
-        color: accent.withOpacity(0.16),
+        color: accent.withValues(alpha: 0.16),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         border: Border.all(color: BauhausDesign.neutral, width: 1.1),
       ),
@@ -1742,7 +1742,7 @@ class _CanvasTag extends StatelessWidget {
         vertical: BauhausDesign.space2,
       ),
       decoration: BoxDecoration(
-        color: accent.withOpacity(0.16),
+        color: accent.withValues(alpha: 0.16),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         border: Border.all(color: BauhausDesign.neutral, width: 1),
       ),

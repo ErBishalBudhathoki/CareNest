@@ -798,8 +798,8 @@ class EarningsDashboardView extends ConsumerWidget {
                         show: true,
                         gradient: LinearGradient(
                           colors: [
-                            Colors.redAccent.withOpacity(0.2),
-                            Colors.red.shade900.withOpacity(0.8),
+                            Colors.redAccent.withValues(alpha: 0.2),
+                            Colors.red.shade900.withValues(alpha: 0.8),
                           ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,

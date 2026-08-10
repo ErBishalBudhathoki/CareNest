@@ -87,7 +87,7 @@ class _ConfirmationAlertDialogState extends State<ConfirmationAlertDialog>
                       height: 64,
                       decoration: BoxDecoration(
                         color: (widget.confirmColor ?? BauhausDesign.primary)
-                            .withOpacity(0.1),
+                            .withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: widget.confirmColor ?? BauhausDesign.primary,

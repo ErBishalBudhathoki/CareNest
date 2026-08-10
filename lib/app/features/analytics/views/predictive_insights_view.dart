@@ -67,7 +67,7 @@ class PredictiveInsightsView extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
-                    color: trendColor.withOpacity(0.1),
+                    color: trendColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                   ),
                   child: Icon(trendIcon, color: trendColor, size: 32),

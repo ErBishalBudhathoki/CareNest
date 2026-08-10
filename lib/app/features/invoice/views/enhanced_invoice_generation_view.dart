@@ -520,13 +520,13 @@ class _EnhancedInvoiceGenerationViewState
         fillColor: BauhausDesign.neoPaper,
         labelStyle: BauhausDesign.neoMonoStyle(
           context,
-          color: BauhausDesign.neoInk.withOpacity(0.85),
+          color: BauhausDesign.neoInk.withValues(alpha: 0.85),
           fontSize: 12,
           fontWeight: FontWeight.w700,
         ),
         hintStyle: BauhausDesign.neoMonoStyle(
           context,
-          color: BauhausDesign.neoInk.withOpacity(0.55),
+          color: BauhausDesign.neoInk.withValues(alpha: 0.55),
           fontSize: 11,
           fontWeight: FontWeight.w600,
         ),
@@ -541,35 +541,35 @@ class _EnhancedInvoiceGenerationViewState
         focusedErrorBorder: errorBorder,
       ),
       switchTheme: SwitchThemeData(
-        thumbColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.disabled)) {
-            return BauhausDesign.neoPaper.withOpacity(0.65);
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return BauhausDesign.neoPaper.withValues(alpha: 0.65);
           }
           return BauhausDesign.neoPaper;
         }),
-        trackColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.disabled)) {
-            return BauhausDesign.neoInk.withOpacity(0.2);
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return BauhausDesign.neoInk.withValues(alpha: 0.2);
           }
-          if (states.contains(MaterialState.selected)) {
+          if (states.contains(WidgetState.selected)) {
             return BauhausDesign.neoSignal;
           }
           return BauhausDesign.neoPaper;
         }),
-        trackOutlineColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.disabled)) {
-            return BauhausDesign.neoInk.withOpacity(0.3);
+        trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return BauhausDesign.neoInk.withValues(alpha: 0.3);
           }
           return BauhausDesign.neoInk;
         }),
-        trackOutlineWidth: MaterialStateProperty.all(2.0),
+        trackOutlineWidth: WidgetStateProperty.all(2.0),
       ),
       radioTheme: RadioThemeData(
-        fillColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.disabled)) {
-            return BauhausDesign.neoInk.withOpacity(0.35);
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return BauhausDesign.neoInk.withValues(alpha: 0.35);
           }
-          if (states.contains(MaterialState.selected)) {
+          if (states.contains(WidgetState.selected)) {
             return BauhausDesign.neoSignal;
           }
           return BauhausDesign.neoInk;
@@ -722,7 +722,7 @@ class _EnhancedInvoiceGenerationViewState
     return BauhausDesign.neoMonoStyle(
       context,
       color: muted
-          ? BauhausDesign.neoInk.withOpacity(0.65)
+          ? BauhausDesign.neoInk.withValues(alpha: 0.65)
           : BauhausDesign.neoInk,
       fontSize: fontSize,
       fontWeight: weight,
@@ -740,15 +740,15 @@ class _EnhancedInvoiceGenerationViewState
         ? BauhausDesign.neoSignal
         : (enabled
               ? BauhausDesign.neoPaper
-              : BauhausDesign.neoPaper.withOpacity(0.9));
+              : BauhausDesign.neoPaper.withValues(alpha: 0.9));
     final Color borderColor = selected
         ? BauhausDesign.neoInk
-        : BauhausDesign.neoInk.withOpacity(0.6);
+        : BauhausDesign.neoInk.withValues(alpha: 0.6);
     final Color labelColor = selected
         ? BauhausDesign.neoPaper
         : (enabled
               ? BauhausDesign.neoInk
-              : BauhausDesign.neoInk.withOpacity(0.65));
+              : BauhausDesign.neoInk.withValues(alpha: 0.65));
 
     return Expanded(
       child: InkWell(
@@ -813,7 +813,7 @@ class _EnhancedInvoiceGenerationViewState
             l10n.enhancedInvoiceSubtitle,
             style: BauhausDesign.neoMonoStyle(
               context,
-              color: BauhausDesign.neoInk.withOpacity(0.72),
+              color: BauhausDesign.neoInk.withValues(alpha: 0.72),
             ),
           ),
           if (widget.selectedEmployeesAndClients == null ||
@@ -822,7 +822,7 @@ class _EnhancedInvoiceGenerationViewState
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: BauhausDesign.neoDanger.withOpacity(0.1),
+                color: BauhausDesign.neoDanger.withValues(alpha: 0.1),
                 border: Border.all(
                   color: BauhausDesign.neoInk,
                   width: BauhausDesign.neoInnerBorderWidth,
@@ -950,7 +950,7 @@ class _EnhancedInvoiceGenerationViewState
                     l10n.invoiceTypeSubtitle,
                     style: BauhausDesign.neoMonoStyle(
                       context,
-                      color: BauhausDesign.neoInk.withOpacity(0.65),
+                      color: BauhausDesign.neoInk.withValues(alpha: 0.65),
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1039,7 +1039,7 @@ class _EnhancedInvoiceGenerationViewState
                     l10n.includeTaxSubtitle,
                     style: BauhausDesign.neoMonoStyle(
                       context,
-                      color: BauhausDesign.neoInk.withOpacity(0.65),
+                      color: BauhausDesign.neoInk.withValues(alpha: 0.65),
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1120,7 +1120,7 @@ class _EnhancedInvoiceGenerationViewState
                     l10n.bankDetailsSubtitle,
                     style: BauhausDesign.neoMonoStyle(
                       context,
-                      color: BauhausDesign.neoInk.withOpacity(0.65),
+                      color: BauhausDesign.neoInk.withValues(alpha: 0.65),
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1212,7 +1212,7 @@ class _EnhancedInvoiceGenerationViewState
                 l10n.includeExpensesSubtitle,
                 style: BauhausDesign.neoMonoStyle(
                   context,
-                  color: BauhausDesign.neoInk.withOpacity(0.65),
+                  color: BauhausDesign.neoInk.withValues(alpha: 0.65),
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                 ),
@@ -1259,7 +1259,7 @@ class _EnhancedInvoiceGenerationViewState
                 l10n.allowPriceOverrideSubtitle,
                 style: BauhausDesign.neoMonoStyle(
                   context,
-                  color: BauhausDesign.neoInk.withOpacity(0.65),
+                  color: BauhausDesign.neoInk.withValues(alpha: 0.65),
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                 ),
@@ -1353,7 +1353,7 @@ class _EnhancedInvoiceGenerationViewState
             Container(
               padding: const EdgeInsets.all(BauhausDesign.space2),
               decoration: BoxDecoration(
-                color: BauhausDesign.secondary.withOpacity(0.1),
+                color: BauhausDesign.secondary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               ),
               child: const Icon(
@@ -1380,7 +1380,7 @@ class _EnhancedInvoiceGenerationViewState
                     l10n.additionalFilesSubtitle,
                     style: BauhausDesign.neoMonoStyle(
                       context,
-                      color: BauhausDesign.neoInk.withOpacity(0.65),
+                      color: BauhausDesign.neoInk.withValues(alpha: 0.65),
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1396,12 +1396,12 @@ class _EnhancedInvoiceGenerationViewState
           width: double.infinity,
           decoration: BoxDecoration(
             border: Border.all(
-              color: BauhausDesign.accent.withOpacity(0.45),
+              color: BauhausDesign.accent.withValues(alpha: 0.45),
               width: 2,
               style: BorderStyle.solid,
             ),
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            color: BauhausDesign.accent.withOpacity(0.1),
+            color: BauhausDesign.accent.withValues(alpha: 0.1),
           ),
           child: Material(
             color: Colors.transparent,
@@ -1415,7 +1415,7 @@ class _EnhancedInvoiceGenerationViewState
                     Container(
                       padding: const EdgeInsets.all(BauhausDesign.space4),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.accent.withOpacity(0.12),
+                        color: BauhausDesign.accent.withValues(alpha: 0.12),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -1462,10 +1462,10 @@ class _EnhancedInvoiceGenerationViewState
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space4),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite.withOpacity(0.1),
+              color: BauhausDesign.surfaceWhite.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
               border: Border.all(
-                color: BauhausDesign.neutral.withOpacity(0.1),
+                color: BauhausDesign.neutral.withValues(alpha: 0.1),
                 width: 1,
               ),
             ),
@@ -1511,7 +1511,7 @@ class _EnhancedInvoiceGenerationViewState
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: BauhausDesign.textDark.withOpacity(0.05),
+                          color: BauhausDesign.textDark.withValues(alpha: 0.05),
                           blurRadius: 4,
                           offset: const Offset(0, 1),
                         ),
@@ -1524,7 +1524,7 @@ class _EnhancedInvoiceGenerationViewState
                           decoration: BoxDecoration(
                             color: _getFileTypeColor(
                               fileExtension,
-                            ).withOpacity(0.1),
+                            ).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(4.0),
                           ),
                           child: Icon(
@@ -1556,7 +1556,7 @@ class _EnhancedInvoiceGenerationViewState
                         ),
                         Container(
                           decoration: BoxDecoration(
-                            color: BauhausDesign.error.withOpacity(0.1),
+                            color: BauhausDesign.error.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: IconButton(
@@ -1606,10 +1606,10 @@ class _EnhancedInvoiceGenerationViewState
             Container(
               padding: const EdgeInsets.all(BauhausDesign.space4),
               decoration: BoxDecoration(
-                color: BauhausDesign.success.withOpacity(0.1),
+                color: BauhausDesign.success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                 border: Border.all(
-                  color: BauhausDesign.success.withOpacity(0.1),
+                  color: BauhausDesign.success.withValues(alpha: 0.1),
                   width: 1,
                 ),
               ),
@@ -1678,7 +1678,7 @@ class _EnhancedInvoiceGenerationViewState
           if (_isRecurring) ...[
             const SizedBox(height: BauhausDesign.space4),
             DropdownButtonFormField<String>(
-              value: _recurrenceFrequency,
+              initialValue: _recurrenceFrequency,
               decoration: InputDecoration(
                 labelText: 'Frequency', // TODO: Add to l10n
               ),
@@ -1710,8 +1710,6 @@ class _EnhancedInvoiceGenerationViewState
     final bool selectionPresent =
         widget.selectedEmployeesAndClients?.isNotEmpty == true;
     final bool invoiceTypeSelected = _invoiceType != null;
-    final bool hasClientGatingIssues =
-        _strictClientGating && _missingClientRatesByItem.isNotEmpty;
     final bool canGenerate =
         selectionPresent && invoiceTypeSelected && !_hasMissingBaseRates;
     final bool isLoading =
@@ -1749,8 +1747,8 @@ class _EnhancedInvoiceGenerationViewState
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: _hasMissingBaseRates
-                  ? BauhausDesign.neoDanger.withOpacity(0.08)
-                  : BauhausDesign.neoSignal.withOpacity(0.08),
+                  ? BauhausDesign.neoDanger.withValues(alpha: 0.08)
+                  : BauhausDesign.neoSignal.withValues(alpha: 0.08),
               border: Border.all(
                 color: BauhausDesign.neoInk,
                 width: BauhausDesign.neoInnerBorderWidth,
@@ -1806,7 +1804,7 @@ class _EnhancedInvoiceGenerationViewState
                         style: BauhausDesign.neoMonoStyle(
                           context,
                           fontSize: 11,
-                          color: BauhausDesign.neoInk.withOpacity(0.75),
+                          color: BauhausDesign.neoInk.withValues(alpha: 0.75),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -1839,7 +1837,7 @@ class _EnhancedInvoiceGenerationViewState
                             style: TextButton.styleFrom(
                               foregroundColor: BauhausDesign.neoSignal,
                               disabledForegroundColor: BauhausDesign.neoInk
-                                  .withOpacity(0.35),
+                                  .withValues(alpha: 0.35),
                             ),
                           ),
                           TextButton.icon(
@@ -1851,7 +1849,7 @@ class _EnhancedInvoiceGenerationViewState
                             style: TextButton.styleFrom(
                               foregroundColor: BauhausDesign.neoSignal,
                               disabledForegroundColor: BauhausDesign.neoInk
-                                  .withOpacity(0.35),
+                                  .withValues(alpha: 0.35),
                             ),
                           ),
                           if (selectionPresent)
@@ -1864,7 +1862,7 @@ class _EnhancedInvoiceGenerationViewState
                               style: TextButton.styleFrom(
                                 foregroundColor: BauhausDesign.neoSignal,
                                 disabledForegroundColor: BauhausDesign.neoInk
-                                    .withOpacity(0.35),
+                                    .withValues(alpha: 0.35),
                               ),
                             ),
                           TextButton.icon(
@@ -1876,7 +1874,7 @@ class _EnhancedInvoiceGenerationViewState
                             style: TextButton.styleFrom(
                               foregroundColor: BauhausDesign.neoSignal,
                               disabledForegroundColor: BauhausDesign.neoInk
-                                  .withOpacity(0.35),
+                                  .withValues(alpha: 0.35),
                             ),
                           ),
                           TextButton.icon(
@@ -1888,7 +1886,7 @@ class _EnhancedInvoiceGenerationViewState
                             style: TextButton.styleFrom(
                               foregroundColor: BauhausDesign.neoSignal,
                               disabledForegroundColor: BauhausDesign.neoInk
-                                  .withOpacity(0.35),
+                                  .withValues(alpha: 0.35),
                             ),
                           ),
                         ],
@@ -1915,7 +1913,7 @@ class _EnhancedInvoiceGenerationViewState
                               style: BauhausDesign.neoMonoStyle(
                                 context,
                                 fontSize: 11,
-                                color: BauhausDesign.neoInk.withOpacity(0.75),
+                                color: BauhausDesign.neoInk.withValues(alpha: 0.75),
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -1980,7 +1978,7 @@ class _EnhancedInvoiceGenerationViewState
                     Icon(
                       Icons.calendar_today_rounded,
                       size: 18,
-                      color: BauhausDesign.neoInk.withOpacity(0.6),
+                      color: BauhausDesign.neoInk.withValues(alpha: 0.6),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
@@ -1991,7 +1989,7 @@ class _EnhancedInvoiceGenerationViewState
                         style: BauhausDesign.neoMonoStyle(
                           context,
                           fontSize: 12,
-                          color: BauhausDesign.neoInk.withOpacity(0.72),
+                          color: BauhausDesign.neoInk.withValues(alpha: 0.72),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -2060,7 +2058,7 @@ class _EnhancedInvoiceGenerationViewState
               decoration: BoxDecoration(
                 color: canGenerate
                     ? BauhausDesign.neoDanger
-                    : BauhausDesign.neoInk.withOpacity(0.35),
+                    : BauhausDesign.neoInk.withValues(alpha: 0.35),
                 border: Border.all(
                   color: BauhausDesign.neoInk,
                   width: BauhausDesign.neoBorderWidth,
@@ -2107,7 +2105,7 @@ class _EnhancedInvoiceGenerationViewState
               'Generating invoices and PDFs. Please wait...',
               style: BauhausDesign.neoMonoStyle(
                 context,
-                color: BauhausDesign.neoInk.withOpacity(0.7),
+                color: BauhausDesign.neoInk.withValues(alpha: 0.7),
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
               ),
@@ -2148,7 +2146,7 @@ class _EnhancedInvoiceGenerationViewState
                   leading: Container(
                     padding: const EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
-                      color: BauhausDesign.success.withOpacity(0.1),
+                      color: BauhausDesign.success.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                     child: const Icon(
@@ -2205,7 +2203,7 @@ class _EnhancedInvoiceGenerationViewState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
       decoration: BoxDecoration(
-        color: BauhausDesign.neutral.withOpacity(0.1),
+        color: BauhausDesign.neutral.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         border: Border.all(color: BauhausDesign.neutral, width: 1),
       ),
@@ -2269,7 +2267,6 @@ class _EnhancedInvoiceGenerationViewState
     final l10n = AppLocalizations.of(context)!;
     try {
       FilePickerResult? result = await FilePicker.pickFiles(
-        allowMultiple: true,
         type: FileType.custom,
         allowedExtensions: ['pdf', 'doc', 'docx', 'txt', 'jpg', 'jpeg', 'png'],
       );
@@ -2497,15 +2494,15 @@ class _EnhancedInvoiceGenerationViewState
               child: Container(
                 constraints: const BoxConstraints(maxWidth: 500),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.85),
+                  color: Colors.white.withValues(alpha: 0.85),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.5),
+                    color: Colors.white.withValues(alpha: 0.5),
                     width: 1.5,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 20,
                       spreadRadius: 5,
                     ),
@@ -2521,10 +2518,10 @@ class _EnhancedInvoiceGenerationViewState
                         horizontal: 24,
                       ),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.error.withOpacity(0.1),
+                        color: BauhausDesign.error.withValues(alpha: 0.1),
                         border: Border(
                           bottom: BorderSide(
-                            color: BauhausDesign.error.withOpacity(0.1),
+                            color: BauhausDesign.error.withValues(alpha: 0.1),
                           ),
                         ),
                       ),
@@ -2533,7 +2530,7 @@ class _EnhancedInvoiceGenerationViewState
                           Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: BauhausDesign.error.withOpacity(0.1),
+                              color: BauhausDesign.error.withValues(alpha: 0.1),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
@@ -2587,12 +2584,12 @@ class _EnhancedInvoiceGenerationViewState
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: BauhausDesign.neoSignal.withOpacity(
+                                color: BauhausDesign.neoSignal.withValues(alpha: 
                                   0.08,
                                 ),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: BauhausDesign.neoSignal.withOpacity(
+                                  color: BauhausDesign.neoSignal.withValues(alpha: 
                                     0.25,
                                   ),
                                 ),
@@ -2632,7 +2629,7 @@ class _EnhancedInvoiceGenerationViewState
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
                         border: Border(
-                          top: BorderSide(color: Colors.grey.withOpacity(0.1)),
+                          top: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
                         ),
                       ),
                       child: Row(
@@ -2697,7 +2694,7 @@ class _EnhancedInvoiceGenerationViewState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (index > 0) Divider(color: BauhausDesign.error.withOpacity(0.1)),
+          if (index > 0) Divider(color: BauhausDesign.error.withValues(alpha: 0.1)),
           if (index > 0) const SizedBox(height: 8),
           Text(
             l10n.itemInfoTemplate(
@@ -2950,8 +2947,9 @@ class _EnhancedInvoiceGenerationViewState
 
   String _formatDate(DateTime dt) {
     final l10n = AppLocalizations.of(context);
-    if (l10n == null)
+    if (l10n == null) {
       return '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}';
+    }
     return DateFormat.yMd(
       Localizations.localeOf(context).toString(),
     ).format(dt);
@@ -3128,9 +3126,9 @@ class _EnhancedInvoiceGenerationViewState
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: BauhausDesign.neoInk.withOpacity(0.3),
+                          color: BauhausDesign.neoInk.withValues(alpha: 0.3),
                           border: Border.all(
-                            color: BauhausDesign.neoInk.withOpacity(0.15),
+                            color: BauhausDesign.neoInk.withValues(alpha: 0.15),
                             width: 0.5,
                           ),
                         ),
@@ -3216,7 +3214,7 @@ class _EnhancedInvoiceGenerationViewState
                                 ? BauhausDesign.neoDanger
                                 : BauhausDesign.success,
                             border: Border.all(
-                              color: BauhausDesign.neoPaper.withOpacity(0.4),
+                              color: BauhausDesign.neoPaper.withValues(alpha: 0.4),
                               width: 1,
                             ),
                           ),
@@ -3239,7 +3237,7 @@ class _EnhancedInvoiceGenerationViewState
                               _ratesCheckMessage,
                               style: BauhausDesign.neoMonoStyle(
                                 context,
-                                color: BauhausDesign.neoPaper.withOpacity(0.7),
+                                color: BauhausDesign.neoPaper.withValues(alpha: 0.7),
                                 fontSize: 10,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -3254,7 +3252,7 @@ class _EnhancedInvoiceGenerationViewState
                                   : 'All items have valid pricing',
                               style: BauhausDesign.neoMonoStyle(
                                 context,
-                                color: BauhausDesign.neoPaper.withOpacity(0.7),
+                                color: BauhausDesign.neoPaper.withValues(alpha: 0.7),
                                 fontSize: 10,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -3300,7 +3298,7 @@ class _EnhancedInvoiceGenerationViewState
                           Container(
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: BauhausDesign.success.withOpacity(0.08),
+                              color: BauhausDesign.success.withValues(alpha: 0.08),
                               border: Border.all(
                                 color: BauhausDesign.neoInk,
                                 width: BauhausDesign.neoInnerBorderWidth,
@@ -3494,11 +3492,11 @@ class _EnhancedInvoiceGenerationViewState
                                       ),
                                       decoration: BoxDecoration(
                                         color: BauhausDesign.neoHighlight
-                                            .withOpacity(0.12),
+                                            .withValues(alpha: 0.12),
                                         border: Border(
                                           bottom: BorderSide(
                                             color: BauhausDesign.neoInk
-                                                .withOpacity(0.3),
+                                                .withValues(alpha: 0.3),
                                             width: 1,
                                           ),
                                         ),
@@ -3568,7 +3566,7 @@ class _EnhancedInvoiceGenerationViewState
                                           border: Border(
                                             bottom: BorderSide(
                                               color: BauhausDesign.neoInk
-                                                  .withOpacity(0.1),
+                                                  .withValues(alpha: 0.1),
                                               width: 1,
                                             ),
                                           ),
@@ -3680,7 +3678,7 @@ class _EnhancedInvoiceGenerationViewState
         Expanded(
           child: Container(
             height: 1.5,
-            color: BauhausDesign.neoInk.withOpacity(0.15),
+            color: BauhausDesign.neoInk.withValues(alpha: 0.15),
           ),
         ),
       ],

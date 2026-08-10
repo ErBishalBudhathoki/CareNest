@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../../../shared/constants/bauhaus_design.dart';
@@ -37,7 +36,6 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
 
   late stt.SpeechToText _speechToText;
   bool _speechEnabled = false;
-  late SharedPreferences _prefs;
   String accumulatedText = '';
   bool _isInitialized = false;
   bool _isSaving = false;
@@ -52,7 +50,6 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
 
   Future<void> _initializeServices() async {
     try {
-      _prefs = await SharedPreferences.getInstance();
       final isAvailable = await _speechToText.initialize();
       if (mounted) {
         setState(() {
@@ -108,7 +105,7 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? BauhausDesign.textLight : BauhausDesign.textDark;
     final hintColor = isDark
-        ? BauhausDesign.textLight.withOpacity(0.4)
+        ? BauhausDesign.textLight.withValues(alpha: 0.4)
         : BauhausDesign.textMuted;
 
     return Scaffold(
@@ -202,7 +199,7 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: (!_isInitialized || !_speechEnabled || _isSaving)
-                        ? BauhausDesign.neutral.withOpacity(0.3)
+                        ? BauhausDesign.neutral.withValues(alpha: 0.3)
                         : BauhausDesign.primary,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                     border: Border.all(color: BauhausDesign.neutral, width: 2),

@@ -282,8 +282,8 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                   // Assignment Info Card
                   BauhausCard(
                     padding: const EdgeInsets.all(BauhausDesign.space4),
-                    backgroundColor: BauhausDesign.primary.withOpacity(0.05),
-                    borderColor: BauhausDesign.primary.withOpacity(0.1),
+                    backgroundColor: BauhausDesign.primary.withValues(alpha: 0.05),
+                    borderColor: BauhausDesign.primary.withValues(alpha: 0.1),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

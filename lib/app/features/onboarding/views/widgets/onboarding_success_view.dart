@@ -31,7 +31,7 @@ class OnboardingSuccessView extends StatelessWidget {
                 height: 80,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: data.color.withOpacity(0.08),
+                  color: data.color.withValues(alpha: 0.08),
                   border: Border.all(color: data.color, width: 3),
                 ),
                 child: Icon(data.icon, size: 40, color: data.color),
@@ -72,7 +72,7 @@ class OnboardingSuccessView extends StatelessWidget {
                           child: Text(
                             s,
                             style: theme.bodyMedium?.copyWith(
-                              color: BauhausDesign.textDark.withOpacity(0.7),
+                              color: BauhausDesign.textDark.withValues(alpha: 0.7),
                               height: 1.45,
                             ),
                           ),

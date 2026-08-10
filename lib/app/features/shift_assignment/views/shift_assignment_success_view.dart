@@ -39,7 +39,6 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
   late ShiftAssignmentSuccessViewModel _viewModel;
   late AnimationController _surfaceController;
   late AnimationController _actionButtonController;
-  late Animation<double> _surfaceAnimation;
   late Animation<double> _actionButtonAnimation;
   bool _showShifts = false;
 
@@ -125,10 +124,6 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
     _actionButtonController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
-    );
-
-    _surfaceAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _surfaceController, curve: Curves.easeOut),
     );
 
     _actionButtonAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -358,7 +353,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
             Container(
               width: 2,
               height: 34.0,
-              color: BauhausDesign.neutral.withOpacity(0.3),
+              color: BauhausDesign.neutral.withValues(alpha: 0.3),
             ),
             Expanded(
               child: _buildStatItem(
@@ -622,6 +617,7 @@ ${AppLocalizations.of(context)!.assignmentId}: ${assignment.assignmentId}
     final organizationName = sharedPrefs.getString('organizationName');
     final organizationCode = sharedPrefs.getString('organizationCode');
 
+    if (!mounted) return;
     Navigator.of(context).pushNamed(
       Routes.assignmentList,
       arguments: {
@@ -645,6 +641,7 @@ ${AppLocalizations.of(context)!.assignmentId}: ${assignment.assignmentId}
     final organizationName = sharedPrefs.getString('organizationName');
     final organizationCode = sharedPrefs.getString('organizationCode');
 
+    if (!mounted) return;
     Navigator.of(context).pushNamedAndRemoveUntil(
       Routes.bottomNavBar,
       (route) => false,

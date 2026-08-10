@@ -202,7 +202,7 @@ class _NeoStatTile extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(BauhausDesign.space1),
               decoration: BoxDecoration(
-                color: accentColor.withOpacity(0.15),
+                color: accentColor.withValues(alpha: 0.15),
                 border: Border.all(color: BauhausDesign.neutral, width: 2),
               ),
               child: Icon(icon, size: 16, color: accentColor),

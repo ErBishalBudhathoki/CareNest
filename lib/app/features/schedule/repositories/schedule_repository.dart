@@ -23,8 +23,9 @@ class ScheduleRepository {
     String? clientEmail,
   }) async {
     String endpoint = 'schedule/shifts/$organizationId?';
-    if (startDate != null)
+    if (startDate != null) {
       endpoint += 'startDate=${startDate.toIso8601String()}&';
+    }
     if (endDate != null) endpoint += 'endDate=${endDate.toIso8601String()}&';
     if (status != null) endpoint += 'status=$status&';
     if (employeeEmail != null) endpoint += 'employeeEmail=$employeeEmail&';

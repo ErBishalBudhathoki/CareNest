@@ -111,7 +111,7 @@ class _BauhausChangePasswordViewState
                     padding: const EdgeInsets.all(16),
                     margin: const EdgeInsets.only(bottom: 24),
                     decoration: BoxDecoration(
-                      color: colorRed.withOpacity(0.1),
+                      color: colorRed.withValues(alpha: 0.1),
                       border: Border.all(color: colorRed),
                     ),
                     child: const Text(
@@ -145,8 +145,9 @@ class _BauhausChangePasswordViewState
                   icon: Icons.lock_reset,
                   isObscure: true,
                   validator: (val) {
-                    if (val != _newPasswordController.text)
+                    if (val != _newPasswordController.text) {
                       return 'Passwords do not match';
+                    }
                     return null;
                   },
                 ),

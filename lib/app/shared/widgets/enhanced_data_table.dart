@@ -177,12 +177,12 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
         color: row.selected
-            ? const Color(0xFF667EEA).withOpacity(0.1)
+            ? const Color(0xFF667EEA).withValues(alpha: 0.1)
             : Colors.white,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: row.selected
-              ? const Color(0xFF667EEA).withOpacity(0.1)
+              ? const Color(0xFF667EEA).withValues(alpha: 0.1)
               : const Color(0xFFE0E0E0),
         ),
       ),
@@ -372,9 +372,9 @@ class EnhancedDataCell {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 4),
         decoration: BoxDecoration(
-          color: (color ?? statusColor).withOpacity(0.1),
+          color: (color ?? statusColor).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: (color ?? statusColor).withOpacity(0.1)),
+          border: Border.all(color: (color ?? statusColor).withValues(alpha: 0.1)),
         ),
         child: Text(
           status,

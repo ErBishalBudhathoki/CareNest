@@ -145,7 +145,7 @@ class OvertimeHeatmap extends StatelessWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: BauhausDesign.error.withOpacity(0.1),
+                              color: BauhausDesign.error.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(color: BauhausDesign.error),
                             ),

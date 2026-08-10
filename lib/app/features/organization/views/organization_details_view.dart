@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:carenest/app/features/auth/services/session_timeout_service.dart';
 import 'package:carenest/app/features/organization/views/organization_edit_view.dart';
@@ -63,7 +62,6 @@ class _OrganizationDetailsViewState
   // Map controllers
   final MapController _mapController = MapController();
   google_maps.GoogleMapController? _googleMapController;
-  apple_maps.AppleMapController? _appleMapController;
 
   @override
   void dispose() {
@@ -155,22 +153,6 @@ class _OrganizationDetailsViewState
       return null;
     }
     return DateTime.tryParse(text);
-  }
-
-  bool get _ownerEmailVerified {
-    final backendValue = _organization?['ownerEmailVerified'];
-    if (backendValue is bool) {
-      return backendValue;
-    }
-
-    final currentUser = FirebaseAuth.instance.currentUser;
-    final currentEmail = _normalizedString(currentUser?.email);
-    final ownerEmail = _ownerEmail;
-
-    return currentUser?.emailVerified == true &&
-        currentEmail != null &&
-        ownerEmail != null &&
-        currentEmail.toLowerCase() == ownerEmail.toLowerCase();
   }
 
   bool get _organizationVerified {
@@ -292,8 +274,8 @@ class _OrganizationDetailsViewState
         padding: const EdgeInsets.all(BauhausDesign.space3),
         decoration: BoxDecoration(
           color: isVerified
-              ? BauhausDesign.success.withOpacity(0.12)
-              : BauhausDesign.accent.withOpacity(0.18),
+              ? BauhausDesign.success.withValues(alpha: 0.12)
+              : BauhausDesign.accent.withValues(alpha: 0.18),
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         ),
         child: Column(
@@ -563,10 +545,12 @@ $appLink
         : const Rect.fromLTWH(0, 0, 1, 1);
 
     try {
-      await Share.share(
-        shareText,
-        subject: '${l10n.joinOrganization} ${widget.organizationName}',
-        sharePositionOrigin: shareOrigin,
+      await SharePlus.instance.share(
+        ShareParams(
+          text: shareText,
+          subject: '${l10n.joinOrganization} ${widget.organizationName}',
+          sharePositionOrigin: shareOrigin,
+        ),
       );
     } catch (e) {
       debugPrint('Error sharing organization invite: $e');
@@ -1017,7 +1001,7 @@ $appLink
                         title: AppLocalizations.of(context)!.generalInformation,
                         icon: Icons.info_outline,
                         iconColor: BauhausDesign.primary,
-                        iconBackgroundColor: BauhausDesign.primary.withOpacity(
+                        iconBackgroundColor: BauhausDesign.primary.withValues(alpha: 
                           0.1,
                         ),
                         children: [
@@ -1059,7 +1043,7 @@ $appLink
                         title: AppLocalizations.of(context)!.contactDetails,
                         icon: Icons.contact_phone_outlined,
                         iconColor: BauhausDesign.accent,
-                        iconBackgroundColor: BauhausDesign.accent.withOpacity(
+                        iconBackgroundColor: BauhausDesign.accent.withValues(alpha: 
                           0.16,
                         ),
                         children: [
@@ -1108,7 +1092,7 @@ $appLink
                           icon: Icons.account_balance_outlined,
                           iconColor: BauhausDesign.warning,
                           iconBackgroundColor: BauhausDesign.warning
-                              .withOpacity(0.1),
+                              .withValues(alpha: 0.1),
                           trailing: Builder(
                             builder: (context) {
                               final isVerified = bank['isVerified'] == true;
@@ -1119,15 +1103,15 @@ $appLink
                                 ),
                                 decoration: BoxDecoration(
                                   color: isVerified
-                                      ? BauhausDesign.success.withOpacity(0.1)
-                                      : BauhausDesign.error.withOpacity(0.1),
+                                      ? BauhausDesign.success.withValues(alpha: 0.1)
+                                      : BauhausDesign.error.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(
                                     BauhausDesign.radiusSm,
                                   ),
                                   border: Border.all(
                                     color: isVerified
-                                        ? BauhausDesign.success.withOpacity(0.5)
-                                        : BauhausDesign.error.withOpacity(0.5),
+                                        ? BauhausDesign.success.withValues(alpha: 0.5)
+                                        : BauhausDesign.error.withValues(alpha: 0.5),
                                   ),
                                 ),
                                 child: Row(
@@ -1202,7 +1186,7 @@ $appLink
                           icon: Icons.medical_services_outlined,
                           iconColor: BauhausDesign.secondary,
                           iconBackgroundColor: BauhausDesign.secondary
-                              .withOpacity(0.12),
+                              .withValues(alpha: 0.12),
                           children: [
                             if (ndis['isRegistered'] == true) ...[
                               Builder(
@@ -1471,7 +1455,7 @@ $appLink
                         subtitle,
                         style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
-                              color: BauhausDesign.surfaceWhite.withOpacity(
+                              color: BauhausDesign.surfaceWhite.withValues(alpha: 
                                 0.85,
                               ),
                             ),
@@ -1784,9 +1768,7 @@ $appLink
 
     if (Platform.isIOS) {
       return apple_maps.AppleMap(
-        onMapCreated: (apple_maps.AppleMapController controller) {
-          _appleMapController = controller;
-        },
+        onMapCreated: (apple_maps.AppleMapController controller) {},
         initialCameraPosition: apple_maps.CameraPosition(
           target: apple_maps.LatLng(
             _organizationLocation!.latitude,
@@ -1957,7 +1939,7 @@ $appLink
                       decoration: BoxDecoration(
                         color:
                             iconBackgroundColor ??
-                            accentColor.withOpacity(0.15),
+                            accentColor.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(
                           BauhausDesign.radiusSm,
                         ),
@@ -2358,7 +2340,7 @@ class _MapGridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.black.withOpacity(0.05)
+      ..color = Colors.black.withValues(alpha: 0.05)
       ..strokeWidth = 1;
 
     const gridSize = 20.0;

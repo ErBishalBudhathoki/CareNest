@@ -54,10 +54,12 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
 
     // Initialize controllers if not editing and values differ (simple sync)
     if (!_isEditing) {
-      if (_distanceController.text.isEmpty)
+      if (_distanceController.text.isEmpty) {
         _distanceController.text = trip.distance.toString();
-      if (_clientIdController.text.isEmpty)
+      }
+      if (_clientIdController.text.isEmpty) {
         _clientIdController.text = trip.clientId ?? '';
+      }
     }
 
     return Scaffold(
@@ -119,7 +121,7 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                         showMyLocation: false,
                       )
                     : Container(
-                        color: BauhausDesign.neutral.withOpacity(0.08),
+                        color: BauhausDesign.neutral.withValues(alpha: 0.08),
                         alignment: Alignment.center,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -231,7 +233,7 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                         final success = await ref
                             .read(adminMileageViewModelProvider.notifier)
                             .updateTripStatus(trip.id, 'REJECTED');
-                        if (!mounted) return;
+                        if (!context.mounted) return;
                         if (success) {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -259,7 +261,7 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                         final success = await ref
                             .read(adminMileageViewModelProvider.notifier)
                             .updateTripStatus(trip.id, 'APPROVED');
-                        if (!mounted) return;
+                        if (!context.mounted) return;
                         if (success) {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -292,7 +294,7 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
       child: Text(
         text,
         style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-          color: BauhausDesign.neutral.withOpacity(0.6),
+          color: BauhausDesign.neutral.withValues(alpha: 0.6),
           letterSpacing: 1.2,
         ),
       ),

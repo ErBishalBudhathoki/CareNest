@@ -295,105 +295,6 @@ class EnhancedInvoiceService {
     return null;
   }
 
-  /// Derive an inclusive period [earliest, latest] from all dates present
-  /// in `assignedClients`. Considers worked times and assignment schedules.
-  /// Returns a tuple as a `Map` with keys `start` and `end`.
-  Map<String, DateTime?> _derivePeriodFromAssignedClients(
-    Map<String, dynamic>? assignedClients,
-  ) {
-    if (assignedClients == null) {
-      return {'start': null, 'end': null};
-    }
-
-    DateTime? derivedStart;
-    DateTime? derivedEnd;
-
-    void considerDate(String? dateStr) {
-      final parsed = _tryParseDateFlexible(dateStr);
-      if (parsed != null) {
-        final d = DateTime(parsed.year, parsed.month, parsed.day);
-        if (derivedStart == null || d.isBefore(derivedStart!)) {
-          derivedStart = d;
-        }
-        if (derivedEnd == null || d.isAfter(derivedEnd!)) {
-          derivedEnd = d;
-        }
-      }
-    }
-
-    try {
-      // Current structure: assignedClients['clients'] is a List<Map>
-      final clients = assignedClients['clients'] as List<dynamic>? ?? [];
-      for (final c in clients) {
-        if (c is! Map<String, dynamic>) continue;
-
-        // Worked times
-        final workedTimeData = c['workedTimeData'] as Map<String, dynamic>?;
-        final workedTimes =
-            workedTimeData?['workedTimes'] as List<dynamic>? ?? [];
-        for (final wt in workedTimes) {
-          if (wt is Map<String, dynamic>) {
-            final schedule =
-                wt['correspondingSchedule'] as Map<String, dynamic>?;
-            considerDate(schedule?['date'] as String?);
-          }
-        }
-
-        // Assignments
-        final assignments = c['assignments'] as List<dynamic>? ?? [];
-        for (final assignment in assignments) {
-          if (assignment is! Map<String, dynamic>) continue;
-
-          // dateList entries
-          final dateList = (assignment['dateList'] as List<dynamic>? ?? [])
-              .whereType<String>()
-              .toList();
-          for (final ds in dateList) {
-            considerDate(ds);
-          }
-
-          // schedule entries
-          final schedule = assignment['schedule'] as List<dynamic>? ?? [];
-          for (final s in schedule) {
-            if (s is Map<String, dynamic>) {
-              considerDate(s['date'] as String?);
-            }
-          }
-        }
-      }
-
-      // Legacy structure: assignedClients['userDocs']
-      final userDocs = assignedClients['userDocs'] as List<dynamic>? ?? [];
-      for (final userDocItem in userDocs) {
-        if (userDocItem is! Map<String, dynamic>) continue;
-        final docs = userDocItem['docs'] as List<dynamic>? ?? [];
-        for (final doc in docs) {
-          if (doc is! Map<String, dynamic>) continue;
-          final assignments = doc['assignments'] as List<dynamic>? ?? [];
-          for (final assignment in assignments) {
-            if (assignment is! Map<String, dynamic>) continue;
-            final dateList = (assignment['dateList'] as List<dynamic>? ?? [])
-                .whereType<String>()
-                .toList();
-            for (final ds in dateList) {
-              considerDate(ds);
-            }
-            final schedule = assignment['schedule'] as List<dynamic>? ?? [];
-            for (final s in schedule) {
-              if (s is Map<String, dynamic>) {
-                considerDate(s['date'] as String?);
-              }
-            }
-          }
-        }
-      }
-    } catch (e) {
-      debugPrint('EnhancedInvoiceService: Error deriving period: $e');
-    }
-
-    return {'start': derivedStart, 'end': derivedEnd};
-  }
-
   /// Generate invoices with enhanced pricing integration
   /// Enhanced with better validation, pricing metadata, and detailed logging.
   ///
@@ -708,8 +609,8 @@ class EnhancedInvoiceService {
 
               final resolved = await periodService
                   .resolvePeriodForEmployeeClient(
-                    employeeEmail: userEmail ?? 'unknown@example.com',
-                    clientEmail: clientEmail ?? 'unknown@example.com',
+                    employeeEmail: userEmail,
+                    clientEmail: clientEmail,
                     itemDates: itemDates,
                   );
 
@@ -954,6 +855,7 @@ class EnhancedInvoiceService {
         ref.read(invoiceGenerationStateProvider.notifier).state =
             InvoiceGenerationState.pricePrompting;
 
+        if (!context.mounted) return const <String>[];
         final resolutions = await PricePromptManager.handleMultiplePrompts(
           context: context,
           prompts: missingPricePrompts,
@@ -1259,7 +1161,7 @@ class EnhancedInvoiceService {
               ? candidate
               : (client['employeeName']?.toString() ?? '');
           billed = {
-            'name': (resolvedName ?? '').toString().isNotEmpty
+            'name': resolvedName.toString().isNotEmpty
                 ? resolvedName
                 : (ed['email'] ?? client['employeeEmail'] ?? ''),
             'email': ed['email'] ?? client['employeeEmail'] ?? '',
@@ -1361,6 +1263,7 @@ class EnhancedInvoiceService {
 
       return updatedPdfPaths ?? pdfPaths;
     } catch (e) {
+      if (!context.mounted) return const <String>[];
       // Enhanced error handling with platform-specific checks
       final l10n = AppLocalizations.of(context);
       String errorMsg = 'Error generating invoices';
@@ -2091,7 +1994,7 @@ class EnhancedInvoiceService {
                   'unit': item['unit'] as String? ?? 'unit',
                   'priceCap': priceCap,
                   'suggestedPrice': suggestedPrice,
-                  'priceHistory': priceHistory ?? [],
+                  'priceHistory': priceHistory,
                   'hasCustomPricing':
                       suggestedPrice != null &&
                       suggestedPrice > 0 &&
@@ -2813,8 +2716,6 @@ class EnhancedInvoiceService {
     String genKey,
   ) async {
     try {
-      bool isLoading = true;
-      String errorMessage = '';
 
       // Validate inputs
       if (pdfPath.isEmpty) {
@@ -3501,8 +3402,9 @@ class EnhancedInvoiceService {
         if ((actualWorkedTime <= 0.0) && correspondingSchedule != null) {
           actualWorkedTime =
               scheduledHours - (breakTime > 0 ? breakTime : scheduleBreakHours);
-          if (actualWorkedTime < 0)
+          if (actualWorkedTime < 0) {
             actualWorkedTime = 0.0; // Ensure non-negative
+          }
         } else if (actualWorkedTime < 0) {
           actualWorkedTime = 0.0; // Ensure non-negative
         }
@@ -3575,9 +3477,9 @@ class EnhancedInvoiceService {
       final List<Map<String, dynamic>> enhancedWorkedTimes =
           bestByScheduleKey.values.toList()..sort((a, b) {
             final aDate =
-                _normalizeDateOnly(a['correspondingSchedule']?['date']) ?? '';
+                _normalizeDateOnly(a['correspondingSchedule']?['date']);
             final bDate =
-                _normalizeDateOnly(b['correspondingSchedule']?['date']) ?? '';
+                _normalizeDateOnly(b['correspondingSchedule']?['date']);
             final byDate = aDate.compareTo(bDate);
             if (byDate != 0) return byDate;
             final ai = _coerceInt(a['shiftIndex'], defaultValue: 9999);

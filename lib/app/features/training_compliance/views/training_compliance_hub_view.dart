@@ -105,7 +105,7 @@ class TrainingComplianceHubView extends ConsumerWidget {
                         width: 42,
                         height: 42,
                         decoration: BoxDecoration(
-                          color: color.withOpacity(0.14),
+                          color: color.withValues(alpha: 0.14),
                           border: Border.all(color: color, width: 2),
                         ),
                         child: Icon(icon, size: 22, color: color),

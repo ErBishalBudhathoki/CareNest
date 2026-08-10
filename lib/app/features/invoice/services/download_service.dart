@@ -3,7 +3,6 @@ import 'package:carenest/app/core/utils/media_store_plugin.dart';
 import 'package:archive/archive_io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
@@ -15,7 +14,6 @@ class DownloadService {
     String zipFilePath = "";
     debugPrint("Perm: $perm");
     if (perm) {
-      const storage = FlutterSecureStorage();
       final downloadsDirectory = await getDownloadPathForPlatform();
 
       // Create a ZIP encoder
@@ -29,7 +27,6 @@ class DownloadService {
         debugPrint("fileName: $fileName");
 
         try {
-          final data = await file.readAsBytes();
           encoder.addFile(file);
         } on PlatformException catch (e) {
           debugPrint("Error while adding file to ZIP: $e");
@@ -41,9 +38,12 @@ class DownloadService {
       encoder.close();
 
       try {
-        await Share.shareXFiles([
-          XFile(zipFilePath, mimeType: 'application/zip'),
-        ], subject: 'Invoices');
+        await SharePlus.instance.share(
+          ShareParams(
+            files: [XFile(zipFilePath, mimeType: 'application/zip')],
+            subject: 'Invoices',
+          ),
+        );
       } on PlatformException catch (e) {
         debugPrint("Error while sharing ZIP file: $e");
       } catch (e) {

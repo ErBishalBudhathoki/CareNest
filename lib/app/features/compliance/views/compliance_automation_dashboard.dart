@@ -21,7 +21,6 @@ class _ComplianceAutomationDashboardState
   final String _riskLevel = 'low';
   final int _expiringDocs = 3;
   final int _criticalIssues = 0;
-  final int _warnings = 2;
 
   @override
   Widget build(BuildContext context) {
@@ -211,7 +210,7 @@ class _ComplianceAutomationDashboardState
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   border: Border.all(color: color, width: 2),
                 ),
                 child: Icon(icon, color: color, size: 24),

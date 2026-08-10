@@ -51,7 +51,6 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
   List<String> _selectedAllowances = [];
 
   User? _selectedUser;
-  bool _isSaving = false;
   String? _rateWarning; // To show validation warning
   void Function(VoidCallback fn)? _dialogSetState;
 
@@ -126,7 +125,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
       }
 
       _selectedEmploymentType = user.employmentType ?? 'Permanent';
-      _selectedAllowances = user.activeAllowances ?? [];
+      _selectedAllowances = user.activeAllowances;
 
       final rates = user.detailedRates;
       _saturdayRateController.text = rates?.saturdayRate.toString() ?? '';
@@ -141,7 +140,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
 
       bool hasZeroRates = false;
       if (rates != null) {
-        if ((rates.saturdayRate ?? 0) <= 0 || (rates.sundayRate ?? 0) <= 0) {
+        if (rates.saturdayRate <= 0 || rates.sundayRate <= 0) {
           hasZeroRates = true;
         }
       }
@@ -241,7 +240,6 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
     final baseRate = double.tryParse(_baseRateController.text);
     if (baseRate == null) return;
 
-    setState(() => _isSaving = true);
     // Use rootNavigator: true because showDialog defaults to root navigator
     // This ensures we pop the dialog, not the screen behind it if nested navigators are involved
     Navigator.of(context, rootNavigator: true).pop();
@@ -295,8 +293,6 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
           ),
         );
       }
-    } finally {
-      if (mounted) setState(() => _isSaving = false);
     }
   }
 
@@ -323,34 +319,6 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
     // Ensure we always recalculate if employment type changes, even if we didn't find a base rate
     // This fixes the issue where changing to "Casual" didn't update penalties if classification was incomplete
     _calculateSchadsRates();
-  }
-
-  void _validateBaseRate() {
-    if (_selectedStream != null &&
-        _selectedLevel != null &&
-        _selectedPayPoint != null) {
-      final key = '$_selectedStream - $_selectedLevel - $_selectedPayPoint';
-      final awardRate = SchadsRateConstants.rates[key];
-      if (awardRate != null) {
-        final current = double.tryParse(_baseRateController.text) ?? 0;
-        double minRate = awardRate;
-        if (_selectedEmploymentType == 'Casual') {
-          minRate = awardRate * 1.25;
-        }
-
-        if (current < minRate) {
-          _updateUi(() {
-            _rateWarning = AppLocalizations.of(
-              context,
-            )!.rateBelowAwardWarning(minRate.toStringAsFixed(2));
-          });
-        } else {
-          _updateUi(() {
-            _rateWarning = null;
-          });
-        }
-      }
-    }
   }
 
   void _showEditDialog() {
@@ -470,7 +438,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
               l10n.classificationEmploymentSection.toUpperCase(),
             ),
             DropdownButtonFormField<String>(
-              value: _selectedStream,
+              initialValue: _selectedStream,
               decoration: InputDecoration(
                 labelText: l10n.streamLabel,
                 border: const OutlineInputBorder(
@@ -499,7 +467,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: _selectedEmploymentType,
+              initialValue: _selectedEmploymentType,
               decoration: InputDecoration(
                 labelText: l10n.employmentTypeLabel,
                 border: const OutlineInputBorder(
@@ -529,7 +497,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
               children: [
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: _selectedLevel,
+                    initialValue: _selectedLevel,
                     decoration: InputDecoration(
                       helperText: _selectedStream == null
                           ? l10n.selectStreamFirstHint
@@ -574,7 +542,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                 const SizedBox(width: 16),
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: _selectedPayPoint,
+                    initialValue: _selectedPayPoint,
                     decoration: InputDecoration(
                       helperText:
                           (_selectedStream == null || _selectedLevel == null)
@@ -624,7 +592,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                 padding: const EdgeInsets.only(bottom: 16),
                 child: Container(
                   padding: const EdgeInsets.all(8),
-                  color: Colors.red.withOpacity(0.1),
+                  color: Colors.red.withValues(alpha: 0.1),
                   child: Row(
                     children: [
                       const Icon(Icons.warning, color: Colors.red, size: 16),
@@ -657,7 +625,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                 Expanded(
                   flex: 1,
                   child: DropdownButtonFormField<String>(
-                    value: _payType,
+                    initialValue: _payType,
                     decoration: InputDecoration(
                       labelText: l10n.payTypeLabel,
                       border: const OutlineInputBorder(
@@ -865,10 +833,12 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
       ),
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       validator: (value) {
-        if (value == null || value.isEmpty)
+        if (value == null || value.isEmpty) {
           return AppLocalizations.of(context)!.requiredField;
-        if (double.tryParse(value) == null)
+        }
+        if (double.tryParse(value) == null) {
           return AppLocalizations.of(context)!.invalidValue;
+        }
         return null;
       },
     );

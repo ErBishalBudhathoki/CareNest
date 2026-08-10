@@ -68,7 +68,9 @@ class PayrollExportViewModel extends AsyncNotifier<void> {
 
       // Share the file (which opens the share sheet or allows opening in compatible apps)
       // This is better than open_file for CSVs on mobile as it gives more options
-      await Share.shareXFiles([XFile(file.path)], text: 'Payroll Export');
+      await SharePlus.instance.share(
+        ShareParams(files: [XFile(file.path)], text: 'Payroll Export'),
+      );
     } catch (e) {
       throw Exception('Failed to save file: $e');
     }

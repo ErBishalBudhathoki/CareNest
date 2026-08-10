@@ -87,7 +87,9 @@ class GeofenceService {
   Future<void> _updateLocation() async {
     try {
       final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       );
 
       _lastPosition = position;
@@ -205,7 +207,9 @@ class GeofenceService {
       if (!hasPermission) return null;
 
       return await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       );
     } catch (e) {
       debugPrint('Error getting current position: $e');

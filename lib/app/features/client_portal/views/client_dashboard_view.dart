@@ -166,8 +166,8 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
                       padding: const EdgeInsets.all(BauhausDesign.space2),
                       decoration: BoxDecoration(
                         color: widget.isFamilyViewer
-                            ? BauhausDesign.warning.withOpacity(0.1)
-                            : BauhausDesign.primary.withOpacity(0.1),
+                            ? BauhausDesign.warning.withValues(alpha: 0.1)
+                            : BauhausDesign.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(
                           BauhausDesign.radiusSm,
                         ),
@@ -226,7 +226,7 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
                         await SessionTimeoutService().logoutAndClearSession(
                           reason: 'manual_logout_from_client_portal',
                         );
-                        if (!mounted) return;
+                        if (!context.mounted) return;
                         Navigator.of(context).pushNamedAndRemoveUntil(
                           Routes.login,
                           (route) => false,
@@ -429,7 +429,7 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
                   Container(
                     padding: const EdgeInsets.all(BauhausDesign.space3),
                     decoration: BoxDecoration(
-                      color: BauhausDesign.neoHighlight.withOpacity(0.1),
+                      color: BauhausDesign.neoHighlight.withValues(alpha: 0.1),
                       border: Border.all(
                         color: BauhausDesign.neoHighlight,
                         width: 2,

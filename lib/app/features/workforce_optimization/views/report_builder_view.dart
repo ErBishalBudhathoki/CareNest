@@ -63,7 +63,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
         gradient: LinearGradient(
           colors: [
             AppColors.colorSecondary,
-            AppColors.colorSecondary.withOpacity(0.8),
+            AppColors.colorSecondary.withValues(alpha: 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -71,7 +71,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.colorSecondary.withOpacity(0.3),
+            color: AppColors.colorSecondary.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -83,7 +83,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: AppColors.colorWhite.withOpacity(0.2),
+              color: AppColors.colorWhite.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Icon(
@@ -218,26 +218,28 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
               ),
             ],
           ),
-          child: Column(
-            children: formats.map((format) {
-              return RadioListTile<String>(
-                value: format,
-                groupValue: _selectedFormat,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedFormat = value!;
-                  });
-                },
-                title: Text(
-                  format,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppColors.colorFontPrimary,
+          child: RadioGroup<String>(
+            groupValue: _selectedFormat,
+            onChanged: (value) {
+              setState(() {
+                _selectedFormat = value!;
+              });
+            },
+            child: Column(
+              children: formats.map((format) {
+                return RadioListTile<String>(
+                  value: format,
+                  title: Text(
+                    format,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.colorFontPrimary,
+                    ),
                   ),
-                ),
-                activeColor: AppColors.colorPrimary,
-              );
-            }).toList(),
+                  activeColor: AppColors.colorPrimary,
+                );
+              }).toList(),
+            ),
           ),
         ),
       ],
@@ -277,26 +279,28 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
               ),
             ],
           ),
-          child: Column(
-            children: periods.map((period) {
-              return RadioListTile<String>(
-                value: period,
-                groupValue: _selectedPeriod,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedPeriod = value!;
-                  });
-                },
-                title: Text(
-                  period,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppColors.colorFontPrimary,
+          child: RadioGroup<String>(
+            groupValue: _selectedPeriod,
+            onChanged: (value) {
+              setState(() {
+                _selectedPeriod = value!;
+              });
+            },
+            child: Column(
+              children: periods.map((period) {
+                return RadioListTile<String>(
+                  value: period,
+                  title: Text(
+                    period,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.colorFontPrimary,
+                    ),
                   ),
-                ),
-                activeColor: AppColors.colorPrimary,
-              );
-            }).toList(),
+                  activeColor: AppColors.colorPrimary,
+                );
+              }).toList(),
+            ),
           ),
         ),
       ],
@@ -384,7 +388,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
         decoration: BoxDecoration(
           color: AppColors.colorWhite,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.2), width: 2),
+          border: Border.all(color: color.withValues(alpha: 0.2), width: 2),
           boxShadow: [
             BoxShadow(
               color: AppColors.colorShadow,
@@ -400,7 +404,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: color, size: 24),

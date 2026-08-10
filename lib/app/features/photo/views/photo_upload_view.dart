@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,7 +23,6 @@ class PhotoUploadScreen extends ConsumerStatefulWidget {
 class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
   // State variables
   File? _imageFile;
-  Uint8List? _updatedPhotoBytes;
   bool _isLoading = false;
 
   // Services and Utils
@@ -87,11 +85,11 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
             lockAspectRatio: true,
             hideBottomControls:
                 true, // Hide bottom controls to avoid navigation bar interference
-            statusBarColor: BauhausDesign.primary,
+            statusBarLight: false,
             activeControlsWidgetColor: BauhausDesign.primary,
             cropFrameColor: BauhausDesign.primary,
-            cropGridColor: BauhausDesign.primary.withOpacity(0.5),
-            dimmedLayerColor: Colors.black.withOpacity(0.8),
+            cropGridColor: BauhausDesign.primary.withValues(alpha: 0.5),
+            dimmedLayerColor: Colors.black.withValues(alpha: 0.8),
             showCropGrid: true,
             // Additional settings to prevent navigation bar interference
             cropFrameStrokeWidth: 3,
@@ -113,10 +111,8 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
       await SystemUIService.showSystemUI();
 
       if (croppedFile != null) {
-        final bytes = await croppedFile.readAsBytes();
         setState(() {
           _imageFile = File(croppedFile.path);
-          _updatedPhotoBytes = bytes;
         });
       }
     } catch (e) {
@@ -291,10 +287,10 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
       height: 220,
       width: 220,
       decoration: BoxDecoration(
-        color: BauhausDesign.primary.withOpacity(0.05),
+        color: BauhausDesign.primary.withValues(alpha: 0.05),
         shape: BoxShape.circle,
         border: Border.all(
-          color: BauhausDesign.primary.withOpacity(0.5),
+          color: BauhausDesign.primary.withValues(alpha: 0.5),
           width: 2,
           style: BorderStyle.solid, // Replaced DottedBorder
         ),

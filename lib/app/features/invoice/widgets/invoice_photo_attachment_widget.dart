@@ -140,11 +140,11 @@ class _InvoicePhotoAttachmentWidgetState
             lockAspectRatio: false,
             hideBottomControls:
                 true, // Hide bottom controls to avoid navigation bar interference
-            statusBarColor: BauhausDesign.primary,
+            statusBarLight: false,
             activeControlsWidgetColor: BauhausDesign.primary,
             cropFrameColor: BauhausDesign.primary,
-            cropGridColor: BauhausDesign.primary.withOpacity(0.1),
-            dimmedLayerColor: Colors.black.withOpacity(0.1),
+            cropGridColor: BauhausDesign.primary.withValues(alpha: 0.1),
+            dimmedLayerColor: Colors.black.withValues(alpha: 0.1),
             showCropGrid: true,
             // Additional settings to prevent navigation bar interference
             cropFrameStrokeWidth: 3,
@@ -270,7 +270,7 @@ class _InvoicePhotoAttachmentWidgetState
       leading: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: BauhausDesign.primary.withOpacity(0.1),
+          color: BauhausDesign.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(icon, color: BauhausDesign.primary, size: 24),
@@ -386,7 +386,7 @@ class _InvoicePhotoAttachmentWidgetState
               child: DottedBorder(
                 options: RoundedRectDottedBorderOptions(
                   radius: const Radius.circular(8),
-                  color: BauhausDesign.primary.withOpacity(0.3),
+                  color: BauhausDesign.primary.withValues(alpha: 0.3),
                   strokeWidth: 2,
                   dashPattern: const [8, 4],
                 ),
@@ -394,7 +394,7 @@ class _InvoicePhotoAttachmentWidgetState
                   height: 80,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: BauhausDesign.primary.withOpacity(0.05),
+                    color: BauhausDesign.primary.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: _isLoading

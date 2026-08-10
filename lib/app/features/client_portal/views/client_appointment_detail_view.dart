@@ -133,7 +133,7 @@ class ClientAppointmentDetailView extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space4),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite.withOpacity(0.2),
+              color: BauhausDesign.surfaceWhite.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -148,7 +148,7 @@ class ClientAppointmentDetailView extends ConsumerWidget {
             style: GoogleFonts.inter(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: BauhausDesign.surfaceWhite.withOpacity(0.8),
+              color: BauhausDesign.surfaceWhite.withValues(alpha: 0.8),
               letterSpacing: 1.5,
             ),
           ),
@@ -227,10 +227,10 @@ class ClientAppointmentDetailView extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.primary.withOpacity(0.1),
+                  color: BauhausDesign.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(
-                    color: BauhausDesign.primary.withOpacity(0.3),
+                    color: BauhausDesign.primary.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Icon(
@@ -334,10 +334,10 @@ class ClientAppointmentDetailView extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.warning.withOpacity(0.1),
+                  color: BauhausDesign.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(
-                    color: BauhausDesign.warning.withOpacity(0.3),
+                    color: BauhausDesign.warning.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Icon(
@@ -391,10 +391,10 @@ class ClientAppointmentDetailView extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.secondary.withOpacity(0.1),
+                  color: BauhausDesign.secondary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(
-                    color: BauhausDesign.secondary.withOpacity(0.3),
+                    color: BauhausDesign.secondary.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Icon(
@@ -420,7 +420,7 @@ class ClientAppointmentDetailView extends ConsumerWidget {
             decoration: BoxDecoration(
               color: BauhausDesign.backgroundLight,
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-              border: Border.all(color: BauhausDesign.neutral.withOpacity(0.3)),
+              border: Border.all(color: BauhausDesign.neutral.withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [
@@ -463,10 +463,10 @@ class ClientAppointmentDetailView extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.neutral.withOpacity(0.1),
+                  color: BauhausDesign.neutral.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(
-                    color: BauhausDesign.neutral.withOpacity(0.3),
+                    color: BauhausDesign.neutral.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Icon(
@@ -492,7 +492,7 @@ class ClientAppointmentDetailView extends ConsumerWidget {
             decoration: BoxDecoration(
               color: BauhausDesign.backgroundLight,
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-              border: Border.all(color: BauhausDesign.neutral.withOpacity(0.3)),
+              border: Border.all(color: BauhausDesign.neutral.withValues(alpha: 0.3)),
             ),
             child: Text(
               appointment.notes!,
@@ -653,7 +653,7 @@ class ClientAppointmentDetailView extends ConsumerWidget {
                 color: BauhausDesign.backgroundLight,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                 border: Border.all(
-                  color: BauhausDesign.neutral.withOpacity(0.3),
+                  color: BauhausDesign.neutral.withValues(alpha: 0.3),
                 ),
               ),
               child: Text(

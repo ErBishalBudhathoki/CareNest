@@ -63,7 +63,7 @@ class _TaxSuperFormState extends ConsumerState<TaxSuperForm> {
           ),
           const SizedBox(height: BauhausDesign.space4),
           DropdownButtonFormField<String>(
-            value: _taxScale,
+            initialValue: _taxScale,
             decoration: InputDecoration(
               labelText: 'Tax Scale',
               labelStyle: const TextStyle(color: BauhausDesign.textDark),

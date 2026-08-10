@@ -93,7 +93,9 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
 
     await _speechToText.listen(
       onResult: _onSpeechResult,
-      listenMode: stt.ListenMode.confirmation,
+      listenOptions: stt.SpeechListenOptions(
+        listenMode: stt.ListenMode.confirmation,
+      ),
     );
 
     if (mounted) setState(() {});
@@ -375,9 +377,9 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: BauhausDesign.error.withOpacity(0.08),
+        color: BauhausDesign.error.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.error.withOpacity(0.3)),
+        border: Border.all(color: BauhausDesign.error.withValues(alpha: 0.3)),
       ),
       child: Text(
         message,
@@ -488,14 +490,14 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
               children: [
                 _buildStatusChip(
                   label: command.detectedIntent,
-                  backgroundColor: BauhausDesign.primary.withOpacity(0.08),
+                  backgroundColor: BauhausDesign.primary.withValues(alpha: 0.08),
                   foregroundColor: BauhausDesign.primary,
                 ),
                 _buildStatusChip(
                   label: command.executed ? 'Executed' : 'Needs attention',
                   backgroundColor: command.executed
-                      ? BauhausDesign.success.withOpacity(0.08)
-                      : BauhausDesign.warning.withOpacity(0.08),
+                      ? BauhausDesign.success.withValues(alpha: 0.08)
+                      : BauhausDesign.warning.withValues(alpha: 0.08),
                   foregroundColor: command.executed
                       ? BauhausDesign.success
                       : BauhausDesign.warning,
@@ -511,8 +513,8 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
                       ? 'Agent'
                       : 'Fallback',
                   backgroundColor: command.executionMode == 'agent'
-                      ? BauhausDesign.secondary.withOpacity(0.12)
-                      : BauhausDesign.neutral.withOpacity(0.3),
+                      ? BauhausDesign.secondary.withValues(alpha: 0.12)
+                      : BauhausDesign.neutral.withValues(alpha: 0.3),
                   foregroundColor: BauhausDesign.textDark,
                 ),
               ],
@@ -607,7 +609,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
         color: foregroundColor,
         fontWeight: FontWeight.w700,
       ),
-      side: BorderSide(color: foregroundColor.withOpacity(0.15)),
+      side: BorderSide(color: foregroundColor.withValues(alpha: 0.15)),
     );
   }
 

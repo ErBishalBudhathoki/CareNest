@@ -155,7 +155,7 @@ class _NdisItemSelectionViewState extends ConsumerState<NdisItemSelectionView> {
                                       ),
                                       decoration: BoxDecoration(
                                         color: BauhausDesign.primary
-                                            .withOpacity(0.1),
+                                            .withValues(alpha: 0.1),
                                         borderRadius: BorderRadius.circular(
                                           BauhausDesign.radiusXs,
                                         ),

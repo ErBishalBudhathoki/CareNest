@@ -105,7 +105,6 @@ class GeofenceMonitor {
   bool _hasArrived = false;
   bool _hasDeparted = false;
   bool _hasNotifiedLate = false;
-  Position? _lastPosition;
 
   GeofenceMonitor({
     required this.appointmentId,
@@ -137,7 +136,6 @@ class GeofenceMonitor {
   }
 
   void _handlePositionUpdate(Position position) {
-    _lastPosition = position;
 
     final distance = Geolocator.distanceBetween(
       position.latitude,

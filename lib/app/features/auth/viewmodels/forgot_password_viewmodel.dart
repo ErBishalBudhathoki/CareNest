@@ -54,12 +54,14 @@ class ForgotPasswordViewModel extends Notifier<bool> {
       if (isSuccess) {
         await onSuccess(msg);
       } else {
+        if (!context.mounted) return;
         await showWarningDialog(
           context,
           msg['message']?.toString() ?? "Error Sending OTP!",
         );
       }
     } catch (e) {
+      if (!context.mounted) return;
       debugPrint(e.toString());
       ScaffoldMessenger.of(
         context,

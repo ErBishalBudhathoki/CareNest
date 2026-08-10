@@ -149,12 +149,12 @@ class BauhausDesign {
     return BoxDecoration(
       color: backgroundColor ?? neoPaper,
       border: Border.all(
-        color: neoInk.withOpacity(0.78),
+        color: neoInk.withValues(alpha: 0.78),
         width: neoBorderWidth,
       ),
       boxShadow: [
         BoxShadow(
-          color: neoInk.withOpacity(0.48),
+          color: neoInk.withValues(alpha: 0.48),
           offset: const Offset(8, 8),
           blurRadius: 0,
           spreadRadius: 0,
@@ -167,7 +167,7 @@ class BauhausDesign {
     return BoxDecoration(
       color: backgroundColor ?? neoPaper,
       border: Border.all(
-        color: neoInk.withOpacity(0.58),
+        color: neoInk.withValues(alpha: 0.58),
         width: neoInnerBorderWidth,
       ),
     );

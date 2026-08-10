@@ -61,7 +61,6 @@ class IntelligenceViewModel extends Notifier<IntelligenceState> {
 
   @override
   IntelligenceState build() {
-    final repository = ref.watch(careIntelligenceRepositoryProvider);
 
     return IntelligenceState();
   }

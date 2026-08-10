@@ -71,7 +71,7 @@ class BauhausActionBlock extends StatelessWidget {
               Text(
                 subtitle,
                 style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                  color: textColor.withOpacity(0.8),
+                  color: textColor.withValues(alpha: 0.8),
                   fontWeight: FontWeight.w500,
                 ),
                 maxLines: 2,
@@ -155,7 +155,7 @@ class BauhausWideActionBlock extends StatelessWidget {
                       subtitle,
                       style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
-                            color: textColor.withOpacity(0.8),
+                            color: textColor.withValues(alpha: 0.8),
                             fontWeight: FontWeight.w500,
                           ),
                     ),
@@ -166,10 +166,10 @@ class BauhausWideActionBlock extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceLight.withOpacity(0.3),
+                  color: BauhausDesign.surfaceLight.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusXs),
                   border: Border.all(
-                    color: textColor.withOpacity(0.3),
+                    color: textColor.withValues(alpha: 0.3),
                     width: 1.5,
                   ),
                 ),

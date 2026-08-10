@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/workforce_optimization/models/workforce_models.dart';
 import 'package:carenest/app/features/workforce_optimization/repositories/workforce_repository.dart';
-import 'package:carenest/app/features/workforce_optimization/viewmodels/workforce_planning_viewmodel.dart';
 
 // State class for Quality Assurance
 class QualityAssuranceState {
@@ -50,7 +49,6 @@ class QualityAssuranceViewModel extends Notifier<QualityAssuranceState> {
 
   @override
   QualityAssuranceState build() {
-    final repository = ref.watch(workforceRepositoryProvider);
 
     return QualityAssuranceState();
   }

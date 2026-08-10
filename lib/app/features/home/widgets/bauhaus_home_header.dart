@@ -193,7 +193,7 @@ class _AnimatedRefreshButtonState extends State<_AnimatedRefreshButton> {
           padding: const EdgeInsets.symmetric(horizontal: BauhausDesign.space2),
           decoration: BoxDecoration(
             color: _isPressed
-                ? BauhausDesign.neutral.withOpacity(0.1)
+                ? BauhausDesign.neutral.withValues(alpha: 0.1)
                 : BauhausDesign.surfaceWhite,
             border: Border.all(color: BauhausDesign.textDark, width: 2),
           ),

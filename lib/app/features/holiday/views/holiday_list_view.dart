@@ -328,7 +328,7 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
                       Container(
                         padding: const EdgeInsets.all(BauhausDesign.space3),
                         decoration: BoxDecoration(
-                          color: BauhausDesign.primary.withOpacity(0.1),
+                          color: BauhausDesign.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(
                             BauhausDesign.radiusMd,
                           ),
@@ -461,7 +461,7 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
         final Color dateCircleColor = isToday
             ? BauhausDesign.primary
             : (isUpcoming
-                  ? BauhausDesign.secondary.withOpacity(0.9)
+                  ? BauhausDesign.secondary.withValues(alpha: 0.9)
                   : BauhausDesign.surfaceOffWhite);
         final Color dateTextColor = (isToday || isUpcoming)
             ? BauhausDesign.surfaceWhite
@@ -480,7 +480,7 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
                     color: dateCircleColor,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: BauhausDesign.textDark.withOpacity(0.65),
+                      color: BauhausDesign.textDark.withValues(alpha: 0.65),
                       width: 2,
                     ),
                   ),

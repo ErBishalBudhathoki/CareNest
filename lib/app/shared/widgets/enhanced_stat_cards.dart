@@ -159,7 +159,7 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
                         colors: [
                           widget.data.surfaceColor ?? Colors.white,
                           (widget.data.surfaceColor ?? Colors.white)
-                              .withOpacity(0.1),
+                              .withValues(alpha: 0.1),
                         ],
                       ),
                   borderRadius: BorderRadius.circular(16),
@@ -173,7 +173,7 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
                   border: widget.data.showBorder
                       ? Border.all(
                           color: (widget.data.color ?? const Color(0xFFE0E0E0))
-                              .withOpacity(0.1),
+                              .withValues(alpha: 0.1),
                           width: 1,
                         )
                       : null,
@@ -289,7 +289,7 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: (widget.data.color ?? const Color(0xFF667EEA)).withOpacity(0.1),
+        color: (widget.data.color ?? const Color(0xFF667EEA)).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(
@@ -323,7 +323,7 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(

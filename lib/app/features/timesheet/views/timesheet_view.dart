@@ -436,7 +436,7 @@ class _TotalPanel extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
-                    color: BauhausDesign.textDark.withOpacity(0.7),
+                    color: BauhausDesign.textDark.withValues(alpha: 0.7),
                     letterSpacing: 1.2,
                   ),
                 ),
@@ -518,7 +518,7 @@ class _WeeklyProgressBar extends StatelessWidget {
           Container(
             height: 10,
             decoration: BoxDecoration(
-              color: BauhausDesign.neutral.withOpacity(0.1),
+              color: BauhausDesign.neutral.withValues(alpha: 0.1),
               border: Border.all(color: BauhausDesign.neutral, width: 1),
             ),
             child: FractionallySizedBox(
@@ -578,7 +578,7 @@ class _DayCard extends StatelessWidget {
                   ? BauhausDesign.primary
                   : (hasWork
                         ? BauhausDesign.secondary
-                        : BauhausDesign.neutral.withOpacity(0.2)),
+                        : BauhausDesign.neutral.withValues(alpha: 0.2)),
             ),
             // ── Date column ──
             Container(
@@ -616,7 +616,7 @@ class _DayCard extends StatelessWidget {
             // ── Vertical divider ──
             Container(
               width: 1.5,
-              color: BauhausDesign.neutral.withOpacity(0.3),
+              color: BauhausDesign.neutral.withValues(alpha: 0.3),
             ),
             // ── Content ──
             Expanded(
@@ -649,9 +649,9 @@ class _DayCard extends StatelessWidget {
         Container(
           height: 8,
           decoration: BoxDecoration(
-            color: BauhausDesign.neutral.withOpacity(0.08),
+            color: BauhausDesign.neutral.withValues(alpha: 0.08),
             border: Border.all(
-              color: BauhausDesign.neutral.withOpacity(0.3),
+              color: BauhausDesign.neutral.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -747,7 +747,7 @@ class _DayCard extends StatelessWidget {
           Container(
             width: 8,
             height: 1.5,
-            color: BauhausDesign.neutral.withOpacity(0.3),
+            color: BauhausDesign.neutral.withValues(alpha: 0.3),
           ),
           const SizedBox(width: BauhausDesign.space2),
           Text(
@@ -763,7 +763,7 @@ class _DayCard extends StatelessWidget {
           Container(
             width: 8,
             height: 1.5,
-            color: BauhausDesign.neutral.withOpacity(0.3),
+            color: BauhausDesign.neutral.withValues(alpha: 0.3),
           ),
         ],
       ),
@@ -828,7 +828,7 @@ class _EmptyWeekState extends StatelessWidget {
         decoration: BoxDecoration(
           color: BauhausDesign.surfaceWhite,
           border: Border.all(
-            color: BauhausDesign.neutral.withOpacity(0.3),
+            color: BauhausDesign.neutral.withValues(alpha: 0.3),
             width: 1.5,
           ),
         ),

@@ -280,7 +280,6 @@ class _InvoiceCard extends StatelessWidget {
     final dueDate = invoice.financialSummary['dueDate'];
     final statusColors = _getStatusColors(status);
     final bgColor = statusColors[0];
-    final textColor = statusColors[1];
 
     return BauhausCard(
       onTap: () {
@@ -423,7 +422,7 @@ class _InvoiceCard extends StatelessWidget {
                     color: BauhausDesign.backgroundLight,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                     border: Border.all(
-                      color: BauhausDesign.neutral.withOpacity(0.3),
+                      color: BauhausDesign.neutral.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(

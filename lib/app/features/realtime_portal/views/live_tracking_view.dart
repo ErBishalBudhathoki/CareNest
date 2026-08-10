@@ -158,7 +158,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black.withValues(alpha: 0.08),
                     blurRadius: 18,
                     offset: const Offset(0, 8),
                   ),
@@ -283,7 +283,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 10,
                           offset: const Offset(0, -2),
                         ),
@@ -311,7 +311,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.colorPrimary.withOpacity(0.1),
+                color: AppColors.colorPrimary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(

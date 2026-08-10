@@ -390,7 +390,7 @@ class _BauhausSectionHeader extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: BauhausDesign.fontMd,
                     fontWeight: FontWeight.w400,
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                   ),
                 ),
               ],
@@ -575,11 +575,11 @@ class _BauhausPrimaryButton extends StatelessWidget {
       decoration: BoxDecoration(
         color: isEnabled
             ? BauhausDesign.primary
-            : BauhausDesign.neutral.withOpacity(0.1),
+            : BauhausDesign.neutral.withValues(alpha: 0.1),
         border: Border.all(
           color: isEnabled
               ? BauhausDesign.neutral
-              : BauhausDesign.neutral.withOpacity(0.3),
+              : BauhausDesign.neutral.withValues(alpha: 0.3),
           width: 2,
         ),
         boxShadow: isEnabled ? [BauhausDesign.shadowHard] : [],
@@ -609,7 +609,7 @@ class _BauhausPrimaryButton extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                       color: isEnabled
                           ? Colors.white
-                          : BauhausDesign.textDark.withOpacity(0.3),
+                          : BauhausDesign.textDark.withValues(alpha: 0.3),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -636,7 +636,7 @@ class _BauhausSecondaryButton extends StatelessWidget {
         border: Border.all(
           color: isEnabled
               ? BauhausDesign.neutral
-              : BauhausDesign.neutral.withOpacity(0.3),
+              : BauhausDesign.neutral.withValues(alpha: 0.3),
           width: 2,
         ),
         boxShadow: isEnabled ? [BauhausDesign.shadowHardSm] : [],
@@ -657,7 +657,7 @@ class _BauhausSecondaryButton extends StatelessWidget {
                 fontWeight: FontWeight.w600,
                 color: isEnabled
                     ? BauhausDesign.textDark
-                    : BauhausDesign.textDark.withOpacity(0.3),
+                    : BauhausDesign.textDark.withValues(alpha: 0.3),
               ),
               textAlign: TextAlign.center,
             ),
@@ -825,7 +825,7 @@ class _BauhausContactChannelIndicator extends StatelessWidget {
       padding: const EdgeInsets.all(BauhausDesign.space2),
       decoration: BoxDecoration(
         color: isActive
-            ? BauhausDesign.success.withOpacity(0.1)
+            ? BauhausDesign.success.withValues(alpha: 0.1)
             : BauhausDesign.surfaceWhite,
         border: Border.all(
           color: isActive ? BauhausDesign.success : BauhausDesign.neutral,
@@ -876,7 +876,7 @@ class _BauhausCommunicationCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space4),
             decoration: BoxDecoration(
-              color: BauhausDesign.warning.withOpacity(0.1),
+              color: BauhausDesign.warning.withValues(alpha: 0.1),
               border: Border(
                 bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
               ),
@@ -1009,7 +1009,7 @@ class _BauhausCommunicationCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: BauhausDesign.surfaceWhite,
             border: Border.all(
-              color: BauhausDesign.neutral.withOpacity(0.5),
+              color: BauhausDesign.neutral.withValues(alpha: 0.5),
               width: 1,
             ),
           ),

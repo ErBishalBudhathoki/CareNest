@@ -298,7 +298,7 @@ class _AdvancedPayrollDashboardState
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.error.withOpacity(0.14),
+        color: BauhausDesign.error.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         border: Border.all(color: BauhausDesign.neutral, width: 1.2),
       ),
@@ -347,7 +347,7 @@ class _AdvancedPayrollDashboardState
                   width: 52,
                   height: 52,
                   decoration: BoxDecoration(
-                    color: BauhausDesign.success.withOpacity(0.16),
+                    color: BauhausDesign.success.withValues(alpha: 0.16),
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                     border: Border.all(
                       color: BauhausDesign.neutral,
@@ -508,7 +508,7 @@ class _AdvancedPayrollDashboardState
         vertical: BauhausDesign.space2,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.18),
+        color: color.withValues(alpha: 0.18),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
         border: Border.all(color: BauhausDesign.neutral, width: 1),
       ),
@@ -881,7 +881,7 @@ class _AdvancedPayrollDashboardState
         vertical: BauhausDesign.space2,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.16),
+        color: color.withValues(alpha: 0.16),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
         border: Border.all(color: BauhausDesign.neutral, width: 1),
       ),
@@ -971,7 +971,7 @@ class _AdvancedPayrollDashboardState
               width: 42,
               height: 42,
               decoration: BoxDecoration(
-                color: action.accent.withOpacity(0.16),
+                color: action.accent.withValues(alpha: 0.16),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                 border: Border.all(color: BauhausDesign.neutral, width: 1.1),
               ),
@@ -1197,7 +1197,7 @@ class _AdvancedPayrollDashboardState
                 vertical: BauhausDesign.space1,
               ),
               decoration: BoxDecoration(
-                color: BauhausDesign.success.withOpacity(0.16),
+                color: BauhausDesign.success.withValues(alpha: 0.16),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                 border: Border.all(color: BauhausDesign.neutral, width: 1),
               ),

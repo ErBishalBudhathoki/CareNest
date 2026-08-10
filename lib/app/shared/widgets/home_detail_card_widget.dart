@@ -122,12 +122,12 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: widget.gradientStartColor.withOpacity(0.3),
+                            color: widget.gradientStartColor.withValues(alpha: 0.3),
                             blurRadius: _elevationAnimation.value,
                             offset: Offset(0, _elevationAnimation.value / 2),
                           ),
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: _elevationAnimation.value / 2,
                             offset: const Offset(0, 2),
                           ),
@@ -145,8 +145,8 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                         gradient: LinearGradient(
                           colors: _isHovered
                               ? [
-                                  BauhausDesign.surfaceWhite.withOpacity(0.1),
-                                  BauhausDesign.surfaceWhite.withOpacity(0.05),
+                                  BauhausDesign.surfaceWhite.withValues(alpha: 0.1),
+                                  BauhausDesign.surfaceWhite.withValues(alpha: 0.05),
                                 ]
                               : [Colors.transparent, Colors.transparent],
                           begin: Alignment.topLeft,
@@ -191,14 +191,14 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
+                                    color: Colors.black.withValues(alpha: 0.1),
                                     blurRadius: 8,
                                     offset: const Offset(0, 4),
                                   ),
                                 ],
                               ),
                               child: Material(
-                                color: BauhausDesign.surfaceWhite.withOpacity(
+                                color: BauhausDesign.surfaceWhite.withValues(alpha: 
                                   0.95,
                                 ),
                                 borderRadius: BorderRadius.circular(
@@ -210,9 +210,9 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                                     BauhausDesign.radiusMd,
                                   ),
                                   splashColor: widget.gradientStartColor
-                                      .withOpacity(0.2),
+                                      .withValues(alpha: 0.2),
                                   highlightColor: widget.gradientStartColor
-                                      .withOpacity(0.1),
+                                      .withValues(alpha: 0.1),
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
                                       vertical: BauhausDesign.space3,
@@ -270,7 +270,7 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
+                                color: Colors.black.withValues(alpha: 0.1),
                                 blurRadius: 20,
                                 offset: Offset(
                                   0,
@@ -301,7 +301,7 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                                     gradient: LinearGradient(
                                       colors: [
                                         Colors.transparent,
-                                        BauhausDesign.surfaceWhite.withOpacity(
+                                        BauhausDesign.surfaceWhite.withValues(alpha: 
                                           0.1,
                                         ),
                                         Colors.transparent,
@@ -317,7 +317,7 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                                 )
                                 .shimmer(
                                   duration: 2000.ms,
-                                  color: BauhausDesign.surfaceWhite.withOpacity(
+                                  color: BauhausDesign.surfaceWhite.withValues(alpha: 
                                     0.3,
                                   ),
                                 ),

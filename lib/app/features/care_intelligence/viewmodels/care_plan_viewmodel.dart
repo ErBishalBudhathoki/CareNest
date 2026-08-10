@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/care_intelligence/models/care_intelligence_models.dart'
     hide Provider;
 import 'package:carenest/app/features/care_intelligence/repositories/care_intelligence_repository.dart';
-import 'package:carenest/app/features/care_intelligence/viewmodels/intelligence_viewmodel.dart';
 
 // State class for Care Plan
 class CarePlanState {
@@ -53,7 +52,6 @@ class CarePlanViewModel extends Notifier<CarePlanState> {
 
   @override
   CarePlanState build() {
-    final repository = ref.watch(careIntelligenceRepositoryProvider);
 
     return CarePlanState();
   }

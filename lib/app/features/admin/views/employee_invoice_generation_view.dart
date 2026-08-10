@@ -387,8 +387,6 @@ class _EmployeeInvoiceGenerationViewState
     );
   }
 
-  bool get _canGenerate => _validationResult.isValid;
-
   Future<void> _pickDateRange() async {
     final initial =
         _dateRange ??
@@ -965,7 +963,7 @@ class _EmployeeInvoiceGenerationViewState
                         Text(
                           email,
                           style: GoogleFonts.robotoMono(
-                            color: _neoBlack.withOpacity(0.6),
+                            color: _neoBlack.withValues(alpha: 0.6),
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),
@@ -1055,7 +1053,7 @@ class _EmployeeInvoiceGenerationViewState
                 subtitle: Text(
                   employee.email,
                   style: GoogleFonts.robotoMono(
-                    color: _neoBlack.withOpacity(0.6),
+                    color: _neoBlack.withValues(alpha: 0.6),
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
@@ -1224,7 +1222,7 @@ class _EmployeeInvoiceGenerationViewState
                 Text(
                   subtitle,
                   style: GoogleFonts.robotoMono(
-                    color: _neoBlack.withOpacity(0.6),
+                    color: _neoBlack.withValues(alpha: 0.6),
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
                   ),
@@ -1238,8 +1236,9 @@ class _EmployeeInvoiceGenerationViewState
   }
 
   Widget _buildEmployeeClientsList(_EmployeeInvoiceEmployeeState employee) {
-    if (employee.isLoadingClients)
+    if (employee.isLoadingClients) {
       return _buildNeoHintBox('LOADING CLIENTS...');
+    }
     if (employee.clients.isEmpty) {
       return _buildNeoHintBox('NO CLIENTS FOUND.');
     }
@@ -1270,7 +1269,7 @@ class _EmployeeInvoiceGenerationViewState
                     (e) => e.copyWith(selectedClientEmail: email),
                   ),
             child: Container(
-              color: isSelected ? _neoBlack.withOpacity(0.05) : null,
+              color: isSelected ? _neoBlack.withValues(alpha: 0.05) : null,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
@@ -1282,7 +1281,7 @@ class _EmployeeInvoiceGenerationViewState
                           (name.isNotEmpty ? name : 'UNKNOWN').toUpperCase(),
                           style: GoogleFonts.oswald(
                             color: isDisabled
-                                ? _neoBlack.withOpacity(0.4)
+                                ? _neoBlack.withValues(alpha: 0.4)
                                 : _neoBlack,
                             fontSize: 14,
                             fontWeight: isSelected
@@ -1294,8 +1293,8 @@ class _EmployeeInvoiceGenerationViewState
                           email,
                           style: GoogleFonts.robotoMono(
                             color: isDisabled
-                                ? _neoBlack.withOpacity(0.3)
-                                : _neoBlack.withOpacity(0.6),
+                                ? _neoBlack.withValues(alpha: 0.3)
+                                : _neoBlack.withValues(alpha: 0.6),
                             fontSize: 10,
                           ),
                         ),
@@ -1336,7 +1335,7 @@ class _EmployeeInvoiceGenerationViewState
       child: Text(
         text,
         style: GoogleFonts.robotoMono(
-          color: _neoBlack.withOpacity(0.7),
+          color: _neoBlack.withValues(alpha: 0.7),
           fontSize: 12,
           fontWeight: FontWeight.w600,
         ),
@@ -1438,7 +1437,7 @@ class _EmployeeInvoiceGenerationViewState
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                      color: _neoRed.withOpacity(0.6),
+                      color: _neoRed.withValues(alpha: 0.6),
                       border: Border.all(color: _neoWhite, width: 1.5),
                     ),
                     child: Text(
@@ -1583,7 +1582,7 @@ class _EmployeeInvoiceGenerationViewState
           if (selected.isEmpty)
             Text(
               'No employees selected',
-              style: GoogleFonts.robotoMono(color: _neoBlack.withOpacity(0.6)),
+              style: GoogleFonts.robotoMono(color: _neoBlack.withValues(alpha: 0.6)),
             )
           else
             ...selected.asMap().entries.map((entry) {
@@ -1620,7 +1619,7 @@ class _EmployeeInvoiceGenerationViewState
                             TextSpan(
                               text: ': $clientLabel',
                               style: TextStyle(
-                                color: _neoBlack.withOpacity(0.7),
+                                color: _neoBlack.withValues(alpha: 0.7),
                               ),
                             ),
                           ],
@@ -1761,7 +1760,7 @@ class _EmployeeInvoiceGenerationViewState
                   Text(
                     subtitle,
                     style: GoogleFonts.robotoMono(
-                      color: _neoBlack.withOpacity(0.6),
+                      color: _neoBlack.withValues(alpha: 0.6),
                       fontSize: 10,
                     ),
                   ),
@@ -1824,7 +1823,7 @@ class _EmployeeInvoiceGenerationViewState
                 Text(
                   'DATE RANGE',
                   style: GoogleFonts.oswald(
-                    color: _neoWhite.withOpacity(0.8),
+                    color: _neoWhite.withValues(alpha: 0.8),
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
@@ -1842,7 +1841,7 @@ class _EmployeeInvoiceGenerationViewState
                 Text(
                   'to $endText',
                   style: GoogleFonts.oswald(
-                    color: _neoWhite.withOpacity(0.9),
+                    color: _neoWhite.withValues(alpha: 0.9),
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
                   ),
@@ -1890,7 +1889,7 @@ class _EmployeeInvoiceGenerationViewState
           subtitle: Text(
             'ADMIN BANK DETAILS WILL NOT BE USED.',
             style: GoogleFonts.robotoMono(
-              color: _neoBlack.withOpacity(0.5),
+              color: _neoBlack.withValues(alpha: 0.5),
               fontSize: 10,
               fontWeight: FontWeight.w700,
             ),
@@ -2017,7 +2016,7 @@ class _EmployeeInvoiceGenerationViewState
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 20),
             decoration: BoxDecoration(
-              color: canGenerate ? _neoRed : _neoBlack.withOpacity(0.35),
+              color: canGenerate ? _neoRed : _neoBlack.withValues(alpha: 0.35),
               border: Border.all(color: _neoBlack, width: _neoBorderWidth),
               boxShadow: const [
                 BoxShadow(
@@ -2065,7 +2064,7 @@ class _EmployeeInvoiceGenerationViewState
           Text(
             'Building invoices and generating PDFs. Please wait...',
             style: GoogleFonts.robotoMono(
-              color: _neoBlack.withOpacity(0.7),
+              color: _neoBlack.withValues(alpha: 0.7),
               fontSize: 11,
               fontWeight: FontWeight.w600,
             ),
@@ -2153,7 +2152,7 @@ class _EmployeeInvoiceGenerationViewState
                           Text(
                             size,
                             style: GoogleFonts.robotoMono(
-                              color: _neoBlack.withOpacity(0.5),
+                              color: _neoBlack.withValues(alpha: 0.5),
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                             ),
@@ -2211,48 +2210,6 @@ class _EmployeeInvoiceGenerationViewState
     );
   }
 
-  Widget _bauhausPanel({
-    required String title,
-    required Color color,
-    required Widget child,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-        border: Border.all(color: BauhausDesign.neutral, width: 2.5),
-        boxShadow: const [BauhausDesign.shadowHard],
-      ),
-      padding: const EdgeInsets.all(BauhausDesign.space4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: BauhausDesign.space3,
-              vertical: BauhausDesign.space2,
-            ),
-            decoration: BoxDecoration(
-              color: BauhausDesign.surfaceLight,
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
-            ),
-            child: Text(
-              title.toUpperCase(),
-              style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                color: BauhausDesign.textDark,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 0.8,
-              ),
-            ),
-          ),
-          const SizedBox(height: BauhausDesign.space4),
-          child,
-        ],
-      ),
-    );
-  }
-
   Widget _hintBox(String text) {
     return Container(
       width: double.infinity,
@@ -2272,23 +2229,4 @@ class _EmployeeInvoiceGenerationViewState
     );
   }
 
-  Widget _errorInlineBox(String text) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: BauhausDesign.space2),
-      padding: const EdgeInsets.all(BauhausDesign.space3),
-      decoration: BoxDecoration(
-        color: BauhausDesign.error,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
-      ),
-      child: Text(
-        text,
-        style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-          color: BauhausDesign.surfaceLight,
-          fontWeight: FontWeight.w800,
-        ),
-      ),
-    );
-  }
 }

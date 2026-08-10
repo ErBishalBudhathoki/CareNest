@@ -102,7 +102,13 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
                 : const [BauhausDesign.shadowHardXs],
             border: Border.all(color: BauhausDesign.neutral, width: 2),
           ),
-          transform: Matrix4.identity()..scale(_isHovered ? 1.02 : 1.0),
+          transform: Matrix4.identity()
+            ..scaleByDouble(
+              _isHovered ? 1.02 : 1.0,
+              _isHovered ? 1.02 : 1.0,
+              _isHovered ? 1.02 : 1.0,
+              1.0,
+            ),
           child: Padding(
             padding: const EdgeInsets.all(BauhausDesign.space2),
             child: Column(
@@ -132,7 +138,7 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
             vertical: BauhausDesign.space1,
           ),
           decoration: BoxDecoration(
-            color: BauhausDesign.primary.withOpacity(0.1),
+            color: BauhausDesign.primary.withValues(alpha: 0.1),
             border: Border.all(color: BauhausDesign.primary, width: 1.5),
           ),
           child: Text(
@@ -206,7 +212,7 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
         Container(
           padding: const EdgeInsets.all(BauhausDesign.space2),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             border: Border.all(color: color, width: 1.5),
           ),
           child: Icon(icon, color: color, size: isCompact ? 16.0 : 18.0),
@@ -242,7 +248,7 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space2),
       decoration: BoxDecoration(
-        color: BauhausDesign.success.withOpacity(0.1),
+        color: BauhausDesign.success.withValues(alpha: 0.1),
         border: Border.all(color: BauhausDesign.success, width: 1.5),
       ),
       child: Row(

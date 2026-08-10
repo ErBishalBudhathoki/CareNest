@@ -140,7 +140,7 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
               surface: BauhausDesign.surfaceWhite,
               onSurface: BauhausDesign.textDark,
             ),
-            dialogBackgroundColor: BauhausDesign.surfaceWhite,
+            dialogTheme: DialogThemeData(backgroundColor: BauhausDesign.surfaceWhite),
           ),
           child: child!,
         );
@@ -686,7 +686,7 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                         Container(
                           padding: const EdgeInsets.all(BauhausDesign.space3),
                           decoration: BoxDecoration(
-                            color: BauhausDesign.warning.withOpacity(0.12),
+                            color: BauhausDesign.warning.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(
                               BauhausDesign.radiusSm,
                             ),
@@ -769,7 +769,7 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                                 value: _isRegistered,
                                 onChanged: (val) =>
                                     setState(() => _isRegistered = val),
-                                activeColor: BauhausDesign.primary,
+                                activeThumbColor: BauhausDesign.primary,
                               ),
                             ],
                           ),
@@ -939,7 +939,7 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                         l10n.tapToChangeLogo,
                         style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
-                              color: BauhausDesign.surfaceWhite.withOpacity(
+                              color: BauhausDesign.surfaceWhite.withValues(alpha: 
                                 0.85,
                               ),
                             ),
@@ -1071,7 +1071,7 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: accentColor.withOpacity(0.12),
+                        color: accentColor.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(
                           BauhausDesign.radiusSm,
                         ),
@@ -1106,18 +1106,6 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
     );
   }
 
-  Widget _buildDropdownField(String label, TextEditingController controller) {
-    // Simple mock dropdown using TextField with icon for now
-    return BauhausTextField(
-      label: label,
-      controller: controller,
-      suffixIcon: const Icon(
-        Icons.keyboard_arrow_down,
-        color: BauhausDesign.textMuted,
-      ),
-    );
-  }
-
   bool get _isAbnLikelyValid {
     final digitsOnly = _abnController.text.replaceAll(RegExp(r'\D'), '');
     return digitsOnly.length == 11;
@@ -1130,7 +1118,7 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: (isValid ? BauhausDesign.success : BauhausDesign.warning)
-            .withOpacity(0.12),
+            .withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         border: Border.all(color: BauhausDesign.neutral),
       ),

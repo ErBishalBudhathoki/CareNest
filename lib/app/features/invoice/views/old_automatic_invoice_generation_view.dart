@@ -357,7 +357,7 @@ class _AutomaticInvoiceGenerationViewState
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: BauhausDesign.secondary,
+            activeThumbColor: BauhausDesign.secondary,
           ),
         ],
       ),

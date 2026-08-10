@@ -108,7 +108,7 @@ class _AdminFamilyManagementViewState
           Text(
             'Managing Access For:',
             style: textTheme.labelSmall?.copyWith(
-              color: BauhausDesign.textDark.withOpacity(0.6),
+              color: BauhausDesign.textDark.withValues(alpha: 0.6),
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -173,7 +173,7 @@ class _AdminFamilyManagementViewState
                   Text(
                     member.email,
                     style: TextStyle(
-                      color: BauhausDesign.textDark.withOpacity(0.6),
+                      color: BauhausDesign.textDark.withValues(alpha: 0.6),
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                     ),
@@ -214,9 +214,9 @@ class _AdminFamilyManagementViewState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: color.withOpacity(0.5), width: 1),
+        border: Border.all(color: color.withValues(alpha: 0.5), width: 1),
       ),
       child: Text(
         label,
@@ -261,7 +261,7 @@ class _AdminFamilyManagementViewState
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: _selectedRelation,
+              initialValue: _selectedRelation,
               decoration: const InputDecoration(
                 labelText: 'Relationship',
                 border: OutlineInputBorder(),

@@ -50,7 +50,6 @@ class SmartExpenseViewModel extends Notifier<SmartExpenseState> {
 
   @override
   SmartExpenseState build() {
-    final repository = ref.watch(smartExpenseRepositoryProvider);
 
     return SmartExpenseState();
   }

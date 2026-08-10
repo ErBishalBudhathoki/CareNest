@@ -118,7 +118,7 @@ class _ResourceAllocationViewState
         gradient: LinearGradient(
           colors: [
             AppColors.colorPurple,
-            AppColors.colorPurple.withOpacity(0.8),
+            AppColors.colorPurple.withValues(alpha: 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -126,7 +126,7 @@ class _ResourceAllocationViewState
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.colorPurple.withOpacity(0.3),
+            color: AppColors.colorPurple.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -138,7 +138,7 @@ class _ResourceAllocationViewState
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: AppColors.colorWhite.withOpacity(0.2),
+              color: AppColors.colorWhite.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Icon(
@@ -236,7 +236,7 @@ class _ResourceAllocationViewState
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon, color: color, size: 24),
@@ -313,7 +313,7 @@ class _ResourceAllocationViewState
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppColors.colorPurple.withOpacity(0.1),
+              color: AppColors.colorPurple.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Icon(

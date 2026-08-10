@@ -516,7 +516,7 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
             color: BauhausDesign.backgroundLight,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
             border: Border.all(
-              color: BauhausDesign.neutral.withOpacity(0.3),
+              color: BauhausDesign.neutral.withValues(alpha: 0.3),
               width: 1.5,
             ),
           ),
@@ -602,7 +602,7 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
             border: Border.all(
               color: isSelected
                   ? BauhausDesign.accent
-                  : BauhausDesign.neutral.withOpacity(0.3),
+                  : BauhausDesign.neutral.withValues(alpha: 0.3),
               width: isSelected ? 2 : 1.5,
             ),
             boxShadow: isSelected ? const [BauhausDesign.shadowHardXs] : null,
@@ -648,7 +648,7 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
                       style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
                             color: isSelected
-                                ? Colors.white.withOpacity(0.9)
+                                ? Colors.white.withValues(alpha: 0.9)
                                 : BauhausDesign.neutral, // White when selected
                             fontSize: 12,
                           ),
@@ -668,7 +668,7 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
                   border: Border.all(
                     color: isSelected
                         ? BauhausDesign.neutral
-                        : BauhausDesign.neutral.withOpacity(0.5),
+                        : BauhausDesign.neutral.withValues(alpha: 0.5),
                     width: 1.5,
                   ),
                 ),
@@ -716,7 +716,7 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
         ),
         boxShadow: [
           BoxShadow(
-            color: BauhausDesign.neutral.withOpacity(0.1),
+            color: BauhausDesign.neutral.withValues(alpha: 0.1),
             blurRadius: 0,
             offset: const Offset(0, -4),
           ),
@@ -789,7 +789,7 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
             icon: Icons.arrow_forward_rounded,
             backgroundColor: hasSelectedClients
                 ? BauhausDesign.primary
-                : BauhausDesign.neutral.withOpacity(0.3),
+                : BauhausDesign.neutral.withValues(alpha: 0.3),
             textColor: hasSelectedClients
                 ? BauhausDesign.surfaceLight
                 : BauhausDesign.neutral,
@@ -807,7 +807,7 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
         vertical: BauhausDesign.space1,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         border: Border.all(color: color, width: 1.5),
       ),

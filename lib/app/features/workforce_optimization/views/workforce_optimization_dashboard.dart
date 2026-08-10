@@ -545,7 +545,7 @@ class _WorkforceOptimizationDashboardState
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: accent.withOpacity(0.12),
+        color: accent.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         border: Border.all(color: BauhausDesign.neutral, width: 1.3),
       ),
@@ -661,7 +661,7 @@ class _WorkforceOptimizationDashboardState
             height: 36,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: metric.accent.withOpacity(0.18),
+              color: metric.accent.withValues(alpha: 0.18),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               border: Border.all(color: BauhausDesign.neutral),
             ),
@@ -773,7 +773,7 @@ class _WorkforceOptimizationDashboardState
               vertical: BauhausDesign.space2,
             ),
             decoration: BoxDecoration(
-              color: lane.accent.withOpacity(0.16),
+              color: lane.accent.withValues(alpha: 0.16),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
               border: Border.all(color: BauhausDesign.neutral, width: 1.2),
             ),
@@ -830,7 +830,7 @@ class _WorkforceOptimizationDashboardState
                 height: 34,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: module.accent.withOpacity(0.2),
+                  color: module.accent.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(color: BauhausDesign.neutral),
                 ),
@@ -946,7 +946,7 @@ class _WorkforceOptimizationDashboardState
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(vertical: BauhausDesign.space1),
       decoration: BoxDecoration(
-        color: accent.withOpacity(0.18),
+        color: accent.withValues(alpha: 0.18),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         border: Border.all(color: BauhausDesign.neutral, width: 1),
       ),
@@ -989,7 +989,7 @@ class _WorkforceOptimizationDashboardState
       height: 36,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: accent.withOpacity(opacity),
+        color: accent.withValues(alpha: opacity),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         border: Border.all(color: BauhausDesign.neutral, width: 1),
       ),
@@ -1038,7 +1038,7 @@ class _WorkforceOptimizationDashboardState
                               : BauhausDesign.space4,
                         ),
                         height: 1,
-                        color: BauhausDesign.neutral.withOpacity(0.25),
+                        color: BauhausDesign.neutral.withValues(alpha: 0.25),
                       ),
                   ],
                 ],
@@ -1161,7 +1161,7 @@ class _WorkforceOptimizationDashboardState
                   vertical: BauhausDesign.space1,
                 ),
                 decoration: BoxDecoration(
-                  color: log.accent.withOpacity(0.16),
+                  color: log.accent.withValues(alpha: 0.16),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(color: BauhausDesign.neutral),
                 ),
@@ -1205,7 +1205,7 @@ class _WorkforceOptimizationDashboardState
                   vertical: BauhausDesign.space1,
                 ),
                 decoration: BoxDecoration(
-                  color: log.accent.withOpacity(0.16),
+                  color: log.accent.withValues(alpha: 0.16),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(color: BauhausDesign.neutral),
                 ),
@@ -1281,7 +1281,7 @@ class _WorkforceOptimizationDashboardState
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.error.withOpacity(0.12),
+        color: BauhausDesign.error.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         border: Border.all(color: BauhausDesign.neutral, width: 1.2),
       ),
@@ -1574,7 +1574,7 @@ class _WorkforceOptimizationDashboardState
         vertical: BauhausDesign.space1,
       ),
       decoration: BoxDecoration(
-        color: accent.withOpacity(0.16),
+        color: accent.withValues(alpha: 0.16),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         border: Border.all(color: BauhausDesign.neutral, width: 1.1),
       ),
@@ -1606,7 +1606,7 @@ class _WorkforceOptimizationDashboardState
             vertical: BauhausDesign.space2,
           ),
           decoration: BoxDecoration(
-            color: accent.withOpacity(0.14),
+            color: accent.withValues(alpha: 0.14),
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
             border: Border.all(color: BauhausDesign.neutral, width: 1.2),
           ),

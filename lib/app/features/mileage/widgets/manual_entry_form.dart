@@ -98,7 +98,7 @@ class ManualEntryForm extends StatelessWidget {
           )
         else
           DropdownButtonFormField<String>(
-            value: state.selectedClientId,
+            initialValue: state.selectedClientId,
             decoration: BauhausDesign.inputDecoration(
               'Select Client',
             ).copyWith(filled: true, fillColor: BauhausDesign.surfaceLight),

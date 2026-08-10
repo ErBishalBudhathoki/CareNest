@@ -23,12 +23,12 @@ class FirebaseAuthService {
   Future<void> initializeAppCheck() async {
     try {
       await _appCheck.activate(
-        androidProvider: kDebugMode
-            ? AndroidProvider.debug
-            : AndroidProvider.playIntegrity,
-        appleProvider: kDebugMode
-            ? AppleProvider.debug
-            : AppleProvider.appAttest,
+        providerAndroid: kDebugMode
+            ? const AndroidDebugProvider()
+            : const AndroidPlayIntegrityProvider(),
+        providerApple: kDebugMode
+            ? const AppleDebugProvider()
+            : const AppleAppAttestProvider(),
       );
       debugPrint('✅ Firebase App Check initialized');
     } catch (e) {

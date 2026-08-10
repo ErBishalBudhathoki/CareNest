@@ -129,7 +129,9 @@ class MileageController extends Notifier<MileageState> {
 
       // 2. Get Current Position
       final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       );
 
       // 3. Save to Local Storage
@@ -203,7 +205,9 @@ class MileageController extends Notifier<MileageState> {
 
       // 1. Get End Position
       final endPosition = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       );
 
       final points = List<Position>.from(state.routePoints);
@@ -362,7 +366,7 @@ class MileageController extends Notifier<MileageState> {
         return true;
       } else {
         // API Error
-        final message = response == null ? null : response['message'];
+        final message = response['message'];
         throw Exception(message?.toString() ?? 'API failed');
       }
     } catch (e) {

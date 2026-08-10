@@ -54,7 +54,7 @@ class BauhausActionCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(BauhausDesign.space2),
                       decoration: BoxDecoration(
-                        color: actionColor.withOpacity(0.2), // Light tint
+                        color: actionColor.withValues(alpha: 0.2), // Light tint
                         border: Border.all(
                           color: actionColor, // Bold color border
                           width: 2,

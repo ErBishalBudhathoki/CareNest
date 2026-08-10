@@ -28,7 +28,6 @@ class _BauhausBrandingSectionState
   late Color _primaryColor;
   late Color _secondaryColor;
   String? _logoUrl;
-  bool _isSaving = false;
 
   @override
   void initState() {
@@ -49,15 +48,11 @@ class _BauhausBrandingSectionState
   }
 
   Future<void> _saveBrandSettings() async {
-    setState(() {
-      _isSaving = true;
-    });
-
     try {
       final primaryHex =
-          '#${_primaryColor.value.toRadixString(16).substring(2)}';
+          '#${_primaryColor.toARGB32().toRadixString(16).substring(2)}';
       final secondaryHex =
-          '#${_secondaryColor.value.toRadixString(16).substring(2)}';
+          '#${_secondaryColor.toARGB32().toRadixString(16).substring(2)}';
 
       if (!_isValidHex(primaryHex) || !_isValidHex(secondaryHex)) {
         throw Exception('Invalid color format');
@@ -109,12 +104,6 @@ class _BauhausBrandingSectionState
             backgroundColor: BauhausDesign.error,
           ),
         );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSaving = false;
-        });
       }
     }
   }
@@ -433,7 +422,7 @@ class _BauhausColorFieldState extends State<_BauhausColorField> {
                   child: Container(
                     width: 20,
                     height: 20,
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.3),
                   ),
                 ),
                 Positioned(
@@ -442,7 +431,7 @@ class _BauhausColorFieldState extends State<_BauhausColorField> {
                   child: Container(
                     width: 15,
                     height: 15,
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withValues(alpha: 0.2),
                   ),
                 ),
               ],
@@ -479,7 +468,7 @@ class _BauhausColorFieldState extends State<_BauhausColorField> {
                         ),
                       ),
                       child: Text(
-                        '#${widget.color.value.toRadixString(16).substring(2).toUpperCase()}',
+                        '#${widget.color.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontXs,
                           fontWeight: FontWeight.w500,
@@ -636,22 +625,22 @@ class _BauhausColorVariationRow extends StatelessWidget {
         Row(
           children: [
             _BauhausColorSwatch(
-              color: baseColor.withOpacity(0.8),
+              color: baseColor.withValues(alpha: 0.8),
               label: '80%',
             ),
             const SizedBox(width: BauhausDesign.space2),
             _BauhausColorSwatch(
-              color: baseColor.withOpacity(0.6),
+              color: baseColor.withValues(alpha: 0.6),
               label: '60%',
             ),
             const SizedBox(width: BauhausDesign.space2),
             _BauhausColorSwatch(
-              color: baseColor.withOpacity(0.4),
+              color: baseColor.withValues(alpha: 0.4),
               label: '40%',
             ),
             const SizedBox(width: BauhausDesign.space2),
             _BauhausColorSwatch(
-              color: baseColor.withOpacity(0.2),
+              color: baseColor.withValues(alpha: 0.2),
               label: '20%',
             ),
           ],
@@ -981,7 +970,7 @@ class _BauhausLogoSectionState extends State<_BauhausLogoSection> {
           decoration: BoxDecoration(
             color: BauhausDesign.surfaceOffWhite,
             border: Border.all(
-              color: BauhausDesign.textMuted.withOpacity(0.3),
+              color: BauhausDesign.textMuted.withValues(alpha: 0.3),
               width: 2,
               style: BorderStyle.solid,
             ),
@@ -1108,13 +1097,13 @@ class _BauhausBrandPreviewCard extends StatelessWidget {
                 Container(
                   width: 24,
                   height: 24,
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   child: logoUrl != null
                       ? Image.network(logoUrl!, fit: BoxFit.contain)
                       : Icon(
                           Icons.business,
                           size: 16,
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                         ),
                 ),
                 const SizedBox(width: BauhausDesign.space3),
@@ -1247,11 +1236,11 @@ class _BauhausPrimaryButton extends StatelessWidget {
       decoration: BoxDecoration(
         color: isEnabled
             ? theme.primaryColor
-            : BauhausDesign.neutral.withOpacity(0.1),
+            : BauhausDesign.neutral.withValues(alpha: 0.1),
         border: Border.all(
           color: isEnabled
               ? BauhausDesign.neutral
-              : BauhausDesign.neutral.withOpacity(0.3),
+              : BauhausDesign.neutral.withValues(alpha: 0.3),
           width: 2,
         ),
         boxShadow: isEnabled ? [BauhausDesign.shadowHard] : [],
@@ -1272,7 +1261,7 @@ class _BauhausPrimaryButton extends StatelessWidget {
                 fontWeight: FontWeight.w600,
                 color: isEnabled
                     ? Colors.white
-                    : BauhausDesign.textDark.withOpacity(0.3),
+                    : BauhausDesign.textDark.withValues(alpha: 0.3),
               ),
               textAlign: TextAlign.center,
             ),
@@ -1300,7 +1289,7 @@ class _BauhausSecondaryButton extends StatelessWidget {
         border: Border.all(
           color: isEnabled
               ? BauhausDesign.neutral
-              : BauhausDesign.neutral.withOpacity(0.3),
+              : BauhausDesign.neutral.withValues(alpha: 0.3),
           width: 2,
         ),
         boxShadow: isEnabled
@@ -1330,7 +1319,7 @@ class _BauhausSecondaryButton extends StatelessWidget {
                 fontWeight: FontWeight.w600,
                 color: isEnabled
                     ? BauhausDesign.textDark
-                    : BauhausDesign.textDark.withOpacity(0.3),
+                    : BauhausDesign.textDark.withValues(alpha: 0.3),
               ),
               textAlign: TextAlign.center,
             ),

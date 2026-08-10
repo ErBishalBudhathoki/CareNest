@@ -777,7 +777,7 @@ class _TeamCardState extends ConsumerState<_TeamCard>
         border: Border.all(color: BauhausDesign.neutral, width: 2),
         boxShadow: [
           BoxShadow(
-            color: _expanded ? _accent.withOpacity(0.85) : Colors.black,
+            color: _expanded ? _accent.withValues(alpha: 0.85) : Colors.black,
             offset: const Offset(5, 5),
             blurRadius: 0,
           ),
@@ -892,7 +892,7 @@ class _TeamCardState extends ConsumerState<_TeamCard>
               children: [
                 Container(
                   height: 1,
-                  color: BauhausDesign.neutral.withOpacity(0.18),
+                  color: BauhausDesign.neutral.withValues(alpha: 0.18),
                 ),
                 if (widget.team.members.isEmpty)
                   Padding(
@@ -1320,7 +1320,7 @@ class _MemberRow extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: BauhausDesign.neutral.withOpacity(0.14),
+            color: BauhausDesign.neutral.withValues(alpha: 0.14),
             width: 1,
           ),
         ),
@@ -1366,7 +1366,7 @@ class _MemberRow extends StatelessWidget {
           const SizedBox(width: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-            color: roleColor.withOpacity(0.12),
+            color: roleColor.withValues(alpha: 0.12),
             child: Text(
               member.role.toUpperCase(),
               style: GoogleFonts.inter(
@@ -1412,7 +1412,7 @@ class _HistoryTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: BauhausDesign.neutral.withOpacity(0.08),
+              color: BauhausDesign.neutral.withValues(alpha: 0.08),
             ),
             child: const Icon(
               Icons.history,
@@ -1453,7 +1453,7 @@ class _HistoryTile extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: BauhausDesign.surfaceWhite,
-              border: Border.all(color: BauhausDesign.neutral.withOpacity(0.2)),
+              border: Border.all(color: BauhausDesign.neutral.withValues(alpha: 0.2)),
             ),
             child: Text(
               '$ackCount ACK',
@@ -1484,7 +1484,7 @@ class _BroadcastTile extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: BauhausDesign.primary.withOpacity(0.2),
+            color: BauhausDesign.primary.withValues(alpha: 0.2),
             width: 1,
           ),
         ),

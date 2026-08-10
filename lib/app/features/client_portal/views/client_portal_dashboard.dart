@@ -335,12 +335,12 @@ class _ClientPortalDashboardBodyState
                   Container(
                     padding: const EdgeInsets.all(BauhausDesign.space3),
                     decoration: BoxDecoration(
-                      color: BauhausDesign.warning.withOpacity(0.14),
+                      color: BauhausDesign.warning.withValues(alpha: 0.14),
                       borderRadius: BorderRadius.circular(
                         BauhausDesign.radiusSm,
                       ),
                       border: Border.all(
-                        color: BauhausDesign.warning.withOpacity(0.35),
+                        color: BauhausDesign.warning.withValues(alpha: 0.35),
                       ),
                     ),
                     child: const Icon(
@@ -444,7 +444,7 @@ class _ClientPortalDashboardBodyState
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space3),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite.withOpacity(0.2),
+              color: BauhausDesign.surfaceWhite.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
             ),
             child: Icon(
@@ -471,7 +471,7 @@ class _ClientPortalDashboardBodyState
                   'Real-time updates for your assigned services',
                   style: GoogleFonts.inter(
                     fontSize: 14,
-                    color: BauhausDesign.surfaceWhite.withOpacity(0.9),
+                    color: BauhausDesign.surfaceWhite.withValues(alpha: 0.9),
                   ),
                 ),
               ],
@@ -505,7 +505,7 @@ class _ClientPortalDashboardBodyState
                   Container(
                     padding: const EdgeInsets.all(BauhausDesign.space4),
                     decoration: BoxDecoration(
-                      color: BauhausDesign.neutral.withOpacity(0.1),
+                      color: BauhausDesign.neutral.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -548,10 +548,10 @@ class _ClientPortalDashboardBodyState
             Container(
               padding: const EdgeInsets.all(BauhausDesign.space3),
               decoration: BoxDecoration(
-                color: BauhausDesign.success.withOpacity(0.1),
+                color: BauhausDesign.success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                 border: Border.all(
-                  color: BauhausDesign.success.withOpacity(0.3),
+                  color: BauhausDesign.success.withValues(alpha: 0.3),
                 ),
               ),
               child: Icon(
@@ -652,10 +652,10 @@ class _ClientPortalDashboardBodyState
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space4),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.secondary.withOpacity(0.1),
+                  color: BauhausDesign.secondary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: BauhausDesign.secondary.withOpacity(0.3),
+                    color: BauhausDesign.secondary.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Icon(
@@ -692,7 +692,7 @@ class _ClientPortalDashboardBodyState
                     color: BauhausDesign.backgroundLight,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                     border: Border.all(
-                      color: BauhausDesign.neutral.withOpacity(0.3),
+                      color: BauhausDesign.neutral.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Column(
@@ -762,7 +762,7 @@ class _ClientPortalDashboardBodyState
                             .read(clientPortalViewModelProvider.notifier)
                             .getWorkerLocation(trackAppointment.appointmentId);
 
-                        if (!mounted) return;
+                        if (!context.mounted) return;
                         final updatedState = ref.read(
                           clientPortalViewModelProvider,
                         );
@@ -817,10 +817,10 @@ class _ClientPortalDashboardBodyState
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space4),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.warning.withOpacity(0.1),
+                  color: BauhausDesign.warning.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: BauhausDesign.warning.withOpacity(0.3),
+                    color: BauhausDesign.warning.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Icon(
@@ -894,10 +894,10 @@ class _ClientPortalDashboardBodyState
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space4),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.accent.withOpacity(0.1),
+                  color: BauhausDesign.accent.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: BauhausDesign.accent.withOpacity(0.3),
+                    color: BauhausDesign.accent.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Icon(
@@ -1009,12 +1009,12 @@ class _ClientPortalDashboardBodyState
                         Container(
                           padding: const EdgeInsets.all(BauhausDesign.space3),
                           decoration: BoxDecoration(
-                            color: BauhausDesign.primary.withOpacity(0.1),
+                            color: BauhausDesign.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(
                               BauhausDesign.radiusSm,
                             ),
                             border: Border.all(
-                              color: BauhausDesign.primary.withOpacity(0.3),
+                              color: BauhausDesign.primary.withValues(alpha: 0.3),
                             ),
                           ),
                           child: const Icon(
@@ -1110,10 +1110,10 @@ class _ClientPortalDashboardBodyState
             Container(
               padding: const EdgeInsets.all(BauhausDesign.space3),
               decoration: BoxDecoration(
-                color: BauhausDesign.secondary.withOpacity(0.1),
+                color: BauhausDesign.secondary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                 border: Border.all(
-                  color: BauhausDesign.secondary.withOpacity(0.3),
+                  color: BauhausDesign.secondary.withValues(alpha: 0.3),
                 ),
               ),
               child: Icon(
@@ -1259,330 +1259,6 @@ class _ClientPortalDashboardBodyState
             ),
           ),
       ],
-    );
-  }
-
-  void _showMessageDialog(BuildContext context, TodayAppointment appointment) {
-    final messageController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        backgroundColor: BauhausDesign.surfaceWhite,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          side: const BorderSide(color: BauhausDesign.neutral, width: 2),
-        ),
-        child: Container(
-          width: double.maxFinite,
-          constraints: const BoxConstraints(maxWidth: 400),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(BauhausDesign.space4),
-                decoration: BoxDecoration(
-                  color: BauhausDesign.warning,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(BauhausDesign.radiusMd),
-                    topRight: Radius.circular(BauhausDesign.radiusMd),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.message_outlined, color: BauhausDesign.textDark),
-                    const SizedBox(width: BauhausDesign.space3),
-                    Text(
-                      'SEND MESSAGE',
-                      style: GoogleFonts.oswald(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: BauhausDesign.textDark,
-                        letterSpacing: 1,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(BauhausDesign.space5),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Worker: ${appointment.workerName}',
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).bodyMedium?.copyWith(fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(height: BauhausDesign.space1),
-                    Text(
-                      'Shift: ${appointment.startTime} - ${appointment.endTime}',
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
-                    ),
-                    const SizedBox(height: BauhausDesign.space4),
-                    TextField(
-                      controller: messageController,
-                      decoration: BauhausDesign.inputDecoration(
-                        'Your message...',
-                      ),
-                      maxLines: 5,
-                    ),
-                    const SizedBox(height: BauhausDesign.space5),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: BauhausActionButton(
-                            onPressed: () => Navigator.pop(context),
-                            text: 'CANCEL',
-                            variant: BauhausActionVariant.ghost,
-                            textColor: BauhausDesign.neutral,
-                          ),
-                        ),
-                        const SizedBox(width: BauhausDesign.space3),
-                        Expanded(
-                          child: BauhausActionButton(
-                            onPressed: () async {
-                              final message = messageController.text.trim();
-                              if (message.isEmpty) return;
-
-                              final success = await ref
-                                  .read(clientPortalViewModelProvider.notifier)
-                                  .sendMessage({
-                                    'clientId': widget.clientId,
-                                    'appointmentId': appointment.appointmentId,
-                                    'message': message,
-                                    'messageType': 'text',
-                                    'timestamp': DateTime.now()
-                                        .toIso8601String(),
-                                  });
-
-                              if (!context.mounted) return;
-
-                              Navigator.pop(context);
-                              final latestState = ref.read(
-                                clientPortalViewModelProvider,
-                              );
-                              _showActionSnackBar(
-                                context,
-                                success
-                                    ? 'Message sent securely.'
-                                    : (latestState.error ??
-                                          'Unable to send message. Chat is available from 2 hours before shift start until 2 hours after shift end.'),
-                                success,
-                              );
-                            },
-                            text: 'SEND',
-                            variant: BauhausActionVariant.warning,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showFeedbackDialog(BuildContext context, TodayAppointment appointment) {
-    int rating = 5;
-    final feedbackController = TextEditingController();
-    bool isSubmitting = false;
-
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => Dialog(
-          backgroundColor: BauhausDesign.surfaceWhite,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            side: const BorderSide(color: BauhausDesign.neutral, width: 2),
-          ),
-          child: Container(
-            width: double.maxFinite,
-            constraints: const BoxConstraints(maxWidth: 400),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(BauhausDesign.space4),
-                  decoration: BoxDecoration(
-                    color: BauhausDesign.accent,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(BauhausDesign.radiusMd),
-                      topRight: Radius.circular(BauhausDesign.radiusMd),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.star, color: BauhausDesign.textDark),
-                      const SizedBox(width: BauhausDesign.space3),
-                      Text(
-                        'SERVICE FEEDBACK',
-                        style: GoogleFonts.oswald(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: BauhausDesign.textDark,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(BauhausDesign.space5),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Service: ${appointment.serviceName}',
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodyMedium?.copyWith(fontWeight: FontWeight.w600),
-                      ),
-                      const SizedBox(height: BauhausDesign.space1),
-                      Text(
-                        'Worker: ${appointment.workerName}',
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
-                      ),
-                      const SizedBox(height: BauhausDesign.space4),
-                      Text(
-                        'Rate your service:',
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodyLarge?.copyWith(fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(height: BauhausDesign.space4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: BauhausDesign.space4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: BauhausDesign.backgroundLight,
-                          borderRadius: BorderRadius.circular(
-                            BauhausDesign.radiusSm,
-                          ),
-                          border: Border.all(
-                            color: BauhausDesign.neutral.withOpacity(0.3),
-                          ),
-                        ),
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: List.generate(5, (index) {
-                              return GestureDetector(
-                                onTap: () => setState(() => rating = index + 1),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                  ),
-                                  child: Icon(
-                                    index < rating
-                                        ? Icons.star
-                                        : Icons.star_border,
-                                    color: BauhausDesign.accent,
-                                    size: 40,
-                                  ),
-                                ),
-                              );
-                            }),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: BauhausDesign.space4),
-                      TextField(
-                        controller: feedbackController,
-                        decoration: BauhausDesign.inputDecoration(
-                          'Additional comments...',
-                        ),
-                        maxLines: 4,
-                      ),
-                      const SizedBox(height: BauhausDesign.space5),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: BauhausActionButton(
-                              onPressed: () => Navigator.pop(context),
-                              text: 'CANCEL',
-                              variant: BauhausActionVariant.ghost,
-                              textColor: BauhausDesign.neutral,
-                            ),
-                          ),
-                          const SizedBox(width: BauhausDesign.space3),
-                          Expanded(
-                            child: BauhausActionButton(
-                              onPressed: () async {
-                                if (isSubmitting) return;
-                                setState(() => isSubmitting = true);
-
-                                final success = await ref
-                                    .read(
-                                      clientPortalViewModelProvider.notifier,
-                                    )
-                                    .submitFeedback({
-                                      'clientId': widget.clientId,
-                                      'appointmentId':
-                                          appointment.appointmentId,
-                                      'rating': rating,
-                                      'comments': feedbackController.text
-                                          .trim(),
-                                      'timestamp': DateTime.now()
-                                          .toIso8601String(),
-                                    });
-
-                                if (!mounted) return;
-
-                                Navigator.pop(context);
-                                final latestState = ref.read(
-                                  clientPortalViewModelProvider,
-                                );
-                                _showActionSnackBar(
-                                  this.context,
-                                  success
-                                      ? 'Feedback submitted. Thank you.'
-                                      : (latestState.error ??
-                                            'Feedback can only be submitted after service completion.'),
-                                  success,
-                                );
-
-                                if (success && widget.clientId != null) {
-                                  ref
-                                      .read(
-                                        clientPortalViewModelProvider.notifier,
-                                      )
-                                      .loadServiceHistory(
-                                        widget.clientId!,
-                                        silent: true,
-                                      );
-                                }
-                              },
-                              text: isSubmitting ? 'SUBMITTING...' : 'SUBMIT',
-                              variant: BauhausActionVariant.primary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 

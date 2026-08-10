@@ -57,7 +57,7 @@ class ThemeSettingsView extends ConsumerWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: BauhausDesign.accent.withOpacity(0.1),
+                      color: BauhausDesign.accent.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: BauhausDesign.accent),
                     ),
@@ -143,7 +143,7 @@ class ThemeSettingsView extends ConsumerWidget {
           border: Border.all(
             color: isSelected
                 ? BauhausDesign.primary
-                : BauhausDesign.neutral.withOpacity(0.3),
+                : BauhausDesign.neutral.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1.5,
           ),
           boxShadow: isSelected
@@ -158,7 +158,7 @@ class ThemeSettingsView extends ConsumerWidget {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? BauhausDesign.primary.withOpacity(0.1)
+                    ? BauhausDesign.primary.withValues(alpha: 0.1)
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(8),
               ),

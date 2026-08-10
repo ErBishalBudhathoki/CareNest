@@ -106,7 +106,7 @@ class _TrainingModulesViewState extends ConsumerState<TrainingModulesView> {
               Icon(
                 Icons.timer,
                 size: 16,
-                color: BauhausDesign.textDark.withOpacity(0.7),
+                color: BauhausDesign.textDark.withValues(alpha: 0.7),
               ),
               const SizedBox(width: 4),
               Text(
@@ -199,7 +199,7 @@ class TrainingDetailView extends ConsumerWidget {
                       ? Icons.play_circle_fill
                       : Icons.article,
                   size: 64,
-                  color: BauhausDesign.textDark.withOpacity(0.5),
+                  color: BauhausDesign.textDark.withValues(alpha: 0.5),
                 ),
               ),
             ),

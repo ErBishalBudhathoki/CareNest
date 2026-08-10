@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/care_intelligence/repositories/care_intelligence_repository.dart';
-import 'package:carenest/app/features/care_intelligence/viewmodels/intelligence_viewmodel.dart';
 
 // State class for Health Monitoring
 class HealthMonitoringState {
@@ -46,7 +45,6 @@ class HealthMonitoringViewModel extends Notifier<HealthMonitoringState> {
 
   @override
   HealthMonitoringState build() {
-    final repository = ref.watch(careIntelligenceRepositoryProvider);
 
     return HealthMonitoringState();
   }

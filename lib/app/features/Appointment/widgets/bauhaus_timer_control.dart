@@ -64,8 +64,8 @@ class BauhausTimerControl extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: isRunning
-                        ? BauhausDesign.success.withOpacity(0.1)
-                        : BauhausDesign.neutral.withOpacity(0.1),
+                        ? BauhausDesign.success.withValues(alpha: 0.1)
+                        : BauhausDesign.neutral.withValues(alpha: 0.1),
                     border: Border.all(
                       color: isRunning
                           ? BauhausDesign.success
@@ -133,7 +133,7 @@ class BauhausTimerControl extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: BauhausDesign.warning.withOpacity(0.2),
+                      color: BauhausDesign.warning.withValues(alpha: 0.2),
                       border: Border.all(
                         color: BauhausDesign.warning,
                         width: 2,

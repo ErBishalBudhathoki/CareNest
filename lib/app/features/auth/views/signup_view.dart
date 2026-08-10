@@ -416,30 +416,37 @@ class _SignUpViewState extends ConsumerState<SignUpView>
         const SizedBox(height: 16),
         BauhausCard(
           backgroundColor: BauhausDesign.backgroundLight,
-          borderColor: BauhausDesign.primary.withOpacity(0.2),
+          borderColor: BauhausDesign.primary.withValues(alpha: 0.2),
           padding: EdgeInsets.zero,
-          child: Column(
-            children: [
-              _buildRoleOption(
-                signupViewModel,
-                'normal',
-                AppLocalizations.of(context)!.normalUser,
-                AppLocalizations.of(context)!.normalUserDesc,
-                Iconsax.user,
-              ),
-              Container(
-                height: 1,
-                color: BauhausDesign.neutral.withOpacity(0.1),
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-              ),
-              _buildRoleOption(
-                signupViewModel,
-                'admin',
-                AppLocalizations.of(context)!.administrator,
-                AppLocalizations.of(context)!.administratorDesc,
-                Iconsax.crown,
-              ),
-            ],
+          child: RadioGroup<String>(
+            groupValue: signupViewModel.model.selectedRole,
+            onChanged: (newValue) {
+              signupViewModel.model.selectedRole = newValue!;
+              signupViewModel.notifyListeners();
+            },
+            child: Column(
+              children: [
+                _buildRoleOption(
+                  signupViewModel,
+                  'normal',
+                  AppLocalizations.of(context)!.normalUser,
+                  AppLocalizations.of(context)!.normalUserDesc,
+                  Iconsax.user,
+                ),
+                Container(
+                  height: 1,
+                  color: BauhausDesign.neutral.withValues(alpha: 0.1),
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                ),
+                _buildRoleOption(
+                  signupViewModel,
+                  'admin',
+                  AppLocalizations.of(context)!.administrator,
+                  AppLocalizations.of(context)!.administratorDesc,
+                  Iconsax.crown,
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -469,15 +476,15 @@ class _SignUpViewState extends ConsumerState<SignUpView>
               height: 48,
               decoration: BoxDecoration(
                 color: isSelected
-                    ? BauhausDesign.primary.withOpacity(0.1)
-                    : BauhausDesign.neutral.withOpacity(0.05),
+                    ? BauhausDesign.primary.withValues(alpha: 0.1)
+                    : BauhausDesign.neutral.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
               ),
               child: Icon(
                 icon,
                 color: isSelected
                     ? BauhausDesign.primary
-                    : BauhausDesign.neutral.withOpacity(0.5),
+                    : BauhausDesign.neutral.withValues(alpha: 0.5),
                 size: 24,
               ),
             ),
@@ -506,11 +513,6 @@ class _SignUpViewState extends ConsumerState<SignUpView>
             ),
             Radio<String>(
               value: value,
-              groupValue: signupViewModel.model.selectedRole,
-              onChanged: (newValue) {
-                signupViewModel.model.selectedRole = newValue!;
-                signupViewModel.notifyListeners();
-              },
               activeColor: BauhausDesign.primary,
             ),
           ],
@@ -533,7 +535,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
         const SizedBox(height: 16),
         BauhausCard(
           backgroundColor: BauhausDesign.surfaceWhite,
-          borderColor: BauhausDesign.secondary.withOpacity(0.2),
+          borderColor: BauhausDesign.secondary.withValues(alpha: 0.2),
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
@@ -622,7 +624,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
         const SizedBox(height: 16),
         BauhausCard(
           backgroundColor: BauhausDesign.surfaceWhite,
-          borderColor: BauhausDesign.neutral.withOpacity(0.2),
+          borderColor: BauhausDesign.neutral.withValues(alpha: 0.2),
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
@@ -794,6 +796,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
         try {
           showAlertDialog(context);
           final response = await signupViewModel.signup(context, _formKey);
+          if (!mounted) return;
           Navigator.pop(context);
 
           if (response.success) {
@@ -819,6 +822,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
         } catch (e, stackTrace) {
           debugPrint("Exception caught in _handleSignup: $e");
           debugPrint("Stack trace: $stackTrace");
+          if (!mounted) return;
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

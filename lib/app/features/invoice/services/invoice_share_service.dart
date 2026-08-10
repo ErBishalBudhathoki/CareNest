@@ -81,12 +81,15 @@ class InvoiceShareService {
       if (result['success'] == true &&
           shareableLink != null &&
           shareableLink.isNotEmpty) {
-        await Share.share(
-          'Invoice ${invoice.invoiceNumber}\n'
-          'Amount: \$${invoice.totalAmount.toStringAsFixed(2)}\n'
-          'Due Date: ${invoice.dueDate.toString().split(' ')[0]}\n\n'
-          'View invoice: $shareableLink',
-          subject: 'Invoice ${invoice.invoiceNumber}',
+        await SharePlus.instance.share(
+          ShareParams(
+            text:
+                'Invoice ${invoice.invoiceNumber}\n'
+                'Amount: \$${invoice.totalAmount.toStringAsFixed(2)}\n'
+                'Due Date: ${invoice.dueDate.toString().split(' ')[0]}\n\n'
+                'View invoice: $shareableLink',
+            subject: 'Invoice ${invoice.invoiceNumber}',
+          ),
         );
 
         return {
@@ -157,10 +160,12 @@ class InvoiceShareService {
       }
 
       // Share the PDF file directly
-      await Share.shareXFiles(
-        [XFile(pdfFile.path)],
-        text: text,
-        subject: subject,
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(pdfFile.path)],
+          text: text,
+          subject: subject,
+        ),
       );
 
       return {

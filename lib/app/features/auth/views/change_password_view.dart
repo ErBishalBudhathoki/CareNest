@@ -462,7 +462,7 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
                         subtitle,
                         style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
-                              color: BauhausDesign.surfaceWhite.withOpacity(
+                              color: BauhausDesign.surfaceWhite.withValues(alpha: 
                                 0.92,
                               ),
                             ),

@@ -211,7 +211,7 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color: BauhausDesign.neutral.withOpacity(0.2),
+                  color: BauhausDesign.neutral.withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
@@ -282,10 +282,10 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space3),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.secondary.withOpacity(0.1),
+                  color: BauhausDesign.secondary.withValues(alpha: 0.1),
                   border: Border(
                     bottom: BorderSide(
-                      color: BauhausDesign.neutral.withOpacity(0.1),
+                      color: BauhausDesign.neutral.withValues(alpha: 0.1),
                     ),
                   ),
                 ),
@@ -351,14 +351,14 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
                         decoration: BoxDecoration(
                           color: _getStatusColor(
                             shift['status'],
-                          ).withOpacity(0.1),
+                          ).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(
                             BauhausDesign.radiusSm,
                           ),
                           border: Border.all(
                             color: _getStatusColor(
                               shift['status'],
-                            ).withOpacity(0.3),
+                            ).withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(

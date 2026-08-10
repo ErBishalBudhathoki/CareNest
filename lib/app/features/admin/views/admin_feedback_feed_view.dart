@@ -129,10 +129,10 @@ class _FeedbackCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.primary.withOpacity(0.1),
+                  color: BauhausDesign.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(
-                    color: BauhausDesign.primary.withOpacity(0.3),
+                    color: BauhausDesign.primary.withValues(alpha: 0.3),
                   ),
                 ),
                 child: const Icon(

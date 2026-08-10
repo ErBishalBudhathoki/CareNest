@@ -185,7 +185,7 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
               margin: const EdgeInsets.only(bottom: BauhausDesign.space4),
               padding: const EdgeInsets.all(BauhausDesign.space3),
               decoration: BoxDecoration(
-                color: BauhausDesign.warning.withOpacity(0.1),
+                color: BauhausDesign.warning.withValues(alpha: 0.1),
                 border: Border.all(color: BauhausDesign.warning, width: 1.5),
               ),
               child: Text(
@@ -254,7 +254,7 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
             Text(
               l10n.totalAmountLabel,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.surfaceWhite.withOpacity(0.9),
+                color: BauhausDesign.surfaceWhite.withValues(alpha: 0.9),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -557,6 +557,8 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
       context,
     );
 
+    if (!mounted) return;
+
     if (shareMethod != null) {
       final invoiceService = ref.read(invoiceManagementServiceProvider);
       final shareService = InvoiceShareService(
@@ -579,6 +581,8 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
         organizationId: widget.organizationId,
         method: shareMethod,
       );
+
+      if (!mounted) return;
 
       // Show loading and show result
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -633,6 +637,8 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
       },
     );
 
+    if (!mounted) return;
+
     if (confirmed == true) {
       // Show loading indicator
       ScaffoldMessenger.of(context).showSnackBar(
@@ -647,6 +653,8 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
         await ref
             .read(invoiceDetailViewModelProvider.notifier)
             .deleteInvoice(invoice.id, widget.organizationId);
+
+        if (!mounted) return;
 
         // Hide loading and show success
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -701,6 +709,8 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
         widget.organizationId,
       );
 
+      if (!mounted) return;
+
       // Hide loading
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
@@ -744,6 +754,7 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
         );
       }
     } catch (e) {
+      if (!mounted) return;
       // Hide loading and show error
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
 

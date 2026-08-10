@@ -91,19 +91,19 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.blue.withOpacity(0.1),
+                    color: Colors.blue.withValues(alpha: 0.1),
                     blurRadius: _elevationAnimation.value,
                     offset: Offset(0, _elevationAnimation.value / 2),
                     spreadRadius: 2,
                   ),
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: _elevationAnimation.value * 2,
                     offset: Offset(0, _elevationAnimation.value),
                   ),
                 ],
                 border: Border.all(
-                  color: Colors.blue.withOpacity(0.1),
+                  color: Colors.blue.withValues(alpha: 0.1),
                   width: 1,
                 ),
               ),
@@ -122,7 +122,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                           shape: BoxShape.circle,
                           gradient: RadialGradient(
                             colors: [
-                              Colors.blue.withOpacity(0.1),
+                              Colors.blue.withValues(alpha: 0.1),
                               Colors.transparent,
                             ],
                           ),
@@ -173,7 +173,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.blue.withOpacity(0.1),
+                color: Colors.blue.withValues(alpha: 0.1),
                 blurRadius: 12,
                 offset: const Offset(0, 6),
               ),
@@ -237,7 +237,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.orange.withOpacity(0.1),
+                  color: Colors.orange.withValues(alpha: 0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -301,9 +301,9 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [color.withOpacity(0.1), color.withOpacity(0.1)],
+          colors: [color.withValues(alpha: 0.1), color.withValues(alpha: 0.1)],
         ),
-        border: Border.all(color: color.withOpacity(0.1), width: 1),
+        border: Border.all(color: color.withValues(alpha: 0.1), width: 1),
       ),
       child: Column(
         children: [
@@ -315,11 +315,11 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [color.withOpacity(0.1), color],
+                colors: [color.withValues(alpha: 0.1), color],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   blurRadius: 6,
                   offset: const Offset(0, 3),
                 ),
@@ -356,7 +356,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
           end: Alignment.bottomRight,
           colors: [Colors.blue.shade50, Colors.indigo.shade50],
         ),
-        border: Border.all(color: Colors.blue.withOpacity(0.1), width: 1),
+        border: Border.all(color: Colors.blue.withValues(alpha: 0.1), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -414,8 +414,8 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Colors.blue.withOpacity(0.1),
-                            Colors.blue.withOpacity(0.1),
+                            Colors.blue.withValues(alpha: 0.1),
+                            Colors.blue.withValues(alpha: 0.1),
                           ],
                         ),
                       ),
@@ -491,7 +491,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
         border: Border.all(color: Colors.grey.shade200, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),

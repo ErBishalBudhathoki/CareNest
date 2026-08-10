@@ -47,7 +47,6 @@ class ComplianceAutomationViewModel
 
   @override
   ComplianceAutomationState build() {
-    final repository = ref.watch(complianceAutomationRepositoryProvider);
 
     return ComplianceAutomationState();
   }

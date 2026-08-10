@@ -319,7 +319,7 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
                   width: isCompact ? 40 : 44,
                   height: isCompact ? 40 : 44,
                   decoration: BoxDecoration(
-                    color: foreground.withOpacity(0.14),
+                    color: foreground.withValues(alpha: 0.14),
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                     border: Border.all(color: BauhausDesign.neutral),
                   ),
@@ -354,7 +354,7 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
                       Text(
                         l10n.addBusinessDesc,
                         style: BauhausDesign.getTextTheme(context).bodySmall
-                            ?.copyWith(color: foreground.withOpacity(0.92)),
+                            ?.copyWith(color: foreground.withValues(alpha: 0.92)),
                         maxLines: isCompact ? 3 : 4,
                         overflow: TextOverflow.ellipsis,
                       ),

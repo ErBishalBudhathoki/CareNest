@@ -269,12 +269,14 @@ class _PdfViewPageState extends State<PdfViewPage> {
     setState(() => _isSharing = true);
     try {
       final box = context.findRenderObject() as RenderBox?;
-      await Share.shareXFiles(
-        [XFile(widget.pdfPath)],
-        subject: 'Invoice PDF',
-        sharePositionOrigin: box != null
-            ? box.localToGlobal(Offset.zero) & box.size
-            : null,
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(widget.pdfPath)],
+          subject: 'Invoice PDF',
+          sharePositionOrigin: box != null
+              ? box.localToGlobal(Offset.zero) & box.size
+              : null,
+        ),
       );
     } catch (e) {
       if (mounted) {
@@ -299,12 +301,14 @@ class _PdfViewPageState extends State<PdfViewPage> {
     try {
       if (Platform.isIOS) {
         final box = context.findRenderObject() as RenderBox?;
-        await Share.shareXFiles(
-          [XFile(widget.pdfPath)],
-          subject: 'Invoice PDF',
-          sharePositionOrigin: box != null
-              ? box.localToGlobal(Offset.zero) & box.size
-              : null,
+        await SharePlus.instance.share(
+          ShareParams(
+            files: [XFile(widget.pdfPath)],
+            subject: 'Invoice PDF',
+            sharePositionOrigin: box != null
+                ? box.localToGlobal(Offset.zero) & box.size
+                : null,
+          ),
         );
 
         if (mounted) {

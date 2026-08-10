@@ -211,8 +211,9 @@ class ExpenseModel {
     if (value is Map) {
       final dateValue = value['\$date'];
       if (dateValue is String) return DateTime.tryParse(dateValue);
-      if (dateValue is int)
+      if (dateValue is int) {
         return DateTime.fromMillisecondsSinceEpoch(dateValue);
+      }
       if (dateValue is Map && dateValue['\$numberLong'] != null) {
         final parsed = int.tryParse(dateValue['\$numberLong'].toString());
         if (parsed != null) return DateTime.fromMillisecondsSinceEpoch(parsed);

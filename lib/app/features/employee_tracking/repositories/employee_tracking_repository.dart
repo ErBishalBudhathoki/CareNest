@@ -136,7 +136,6 @@ class EmployeeTrackingRepository {
         }
 
         // Second pass: assign unique display names
-        final Map<String, int> userNameCounters = {};
         for (final entry in nameSource) {
           if (entry is! Map) continue;
           final userEmail = entry['userEmail'] ?? '';

@@ -76,9 +76,9 @@ class BauhausActionCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: color.withOpacity(0.2), width: 1),
+                  border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
                 ),
                 child: Icon(icon, color: color, size: 20),
               ),
@@ -174,10 +174,10 @@ class BauhausChartWidget extends StatelessWidget {
             height: height,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: primaryColor.withOpacity(0.05),
+              color: primaryColor.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
               border: Border.all(
-                color: primaryColor.withOpacity(0.1),
+                color: primaryColor.withValues(alpha: 0.1),
                 width: 1,
               ),
             ),
@@ -188,7 +188,7 @@ class BauhausChartWidget extends StatelessWidget {
                   Icon(
                     _getChartIcon(),
                     size: 48,
-                    color: primaryColor.withOpacity(0.2),
+                    color: primaryColor.withValues(alpha: 0.2),
                   ),
                   const SizedBox(height: BauhausDesign.space2),
                   Text(
@@ -196,7 +196,7 @@ class BauhausChartWidget extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: BauhausDesign.getTextTheme(
                       context,
-                    ).bodySmall?.copyWith(color: primaryColor.withOpacity(0.5)),
+                    ).bodySmall?.copyWith(color: primaryColor.withValues(alpha: 0.5)),
                   ),
                 ],
               ),
@@ -265,7 +265,7 @@ class BauhausActivityItem extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                 border: Border.all(color: color, width: 1.5),
               ),
@@ -334,12 +334,12 @@ class BauhausLoadingSkeleton extends StatelessWidget {
           width: width,
           height: height,
           decoration: BoxDecoration(
-            color: BauhausDesign.neutral.withOpacity(0.3),
+            color: BauhausDesign.neutral.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(borderRadius),
           ),
         )
         .animate(onPlay: (controller) => controller.repeat())
-        .shimmer(duration: 1500.ms, color: Colors.white.withOpacity(0.5));
+        .shimmer(duration: 1500.ms, color: Colors.white.withValues(alpha: 0.5));
   }
 }
 

@@ -32,7 +32,6 @@ class _ExpensePhotoAttachmentWidgetState
   final ImagePicker _picker = ImagePicker();
   final TextEditingController _descriptionController = TextEditingController();
   List<File> _selectedPhotos = [];
-  bool _isLoading = false;
 
   @override
   void initState() {
@@ -60,8 +59,6 @@ class _ExpensePhotoAttachmentWidgetState
       return;
     }
 
-    setState(() => _isLoading = true);
-
     try {
       if (source == ImageSource.gallery) {
         // For gallery, allow multiple selection
@@ -79,8 +76,6 @@ class _ExpensePhotoAttachmentWidgetState
           ),
         );
       }
-    } finally {
-      setState(() => _isLoading = false);
     }
   }
 
@@ -144,11 +139,11 @@ class _ExpensePhotoAttachmentWidgetState
             lockAspectRatio: false,
             hideBottomControls:
                 true, // Hide bottom controls to avoid navigation bar interference
-            statusBarColor: BauhausDesign.primary,
+            statusBarLight: false,
             activeControlsWidgetColor: BauhausDesign.primary,
             cropFrameColor: BauhausDesign.primary,
-            cropGridColor: BauhausDesign.primary.withOpacity(0.1),
-            dimmedLayerColor: Colors.black.withOpacity(0.1),
+            cropGridColor: BauhausDesign.primary.withValues(alpha: 0.1),
+            dimmedLayerColor: Colors.black.withValues(alpha: 0.1),
             showCropGrid: true,
             // Additional settings to prevent navigation bar interference
             cropFrameStrokeWidth: 3,
@@ -260,9 +255,9 @@ class _ExpensePhotoAttachmentWidgetState
       child: Container(
         padding: EdgeInsets.all(20.0),
         decoration: BoxDecoration(
-          color: BauhausDesign.primary.withOpacity(0.1),
+          color: BauhausDesign.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          border: Border.all(color: BauhausDesign.primary.withOpacity(0.1)),
+          border: Border.all(color: BauhausDesign.primary.withValues(alpha: 0.1)),
         ),
         child: Column(
           children: [
@@ -350,7 +345,7 @@ class _ExpensePhotoAttachmentWidgetState
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 border: Border.all(
-                  color: BauhausDesign.primary.withOpacity(0.1),
+                  color: BauhausDesign.primary.withValues(alpha: 0.1),
                 ),
               ),
               child: Stack(
@@ -401,10 +396,10 @@ class _ExpensePhotoAttachmentWidgetState
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
           border: Border.all(
-            color: BauhausDesign.primary.withOpacity(0.1),
+            color: BauhausDesign.primary.withValues(alpha: 0.1),
             style: BorderStyle.solid,
           ),
-          color: BauhausDesign.primary.withOpacity(0.1),
+          color: BauhausDesign.primary.withValues(alpha: 0.1),
         ),
         child: Material(
           color: Colors.transparent,

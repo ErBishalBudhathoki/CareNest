@@ -413,7 +413,7 @@ class _AdminDashboardViewControllerState
                         vertical: 10,
                       ),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.success.withOpacity(0.08),
+                        color: BauhausDesign.success.withValues(alpha: 0.08),
                         border: Border.all(
                           color: BauhausDesign.neutral,
                           width: 1.5,
@@ -1047,91 +1047,6 @@ class _AdminDashboardViewControllerState
     );
   }
 
-  Widget _buildEnhancedStatsCard(
-    IconData icon,
-    String value,
-    String title,
-    Color color,
-    int index,
-  ) {
-    return Container(
-          width: 140,
-          margin: const EdgeInsets.only(right: 16),
-          decoration: BoxDecoration(
-            color: BauhausDesign.surfaceLight,
-            borderRadius: BorderRadius.circular(
-              BauhausDesign.radiusMd,
-            ), // Less rounded for Bauhaus
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
-            boxShadow: const [BauhausDesign.shadowHard],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(BauhausDesign.space4),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: color, // Solid color
-                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                    border: Border.all(
-                      color: BauhausDesign.neutral,
-                      width: 1.5,
-                    ),
-                    boxShadow: const [BauhausDesign.shadowHardSm],
-                  ),
-                  child: Icon(
-                    icon,
-                    color: BauhausDesign.surfaceLight,
-                    size: 18,
-                  ), // White icon
-                ),
-                const SizedBox(height: BauhausDesign.space2),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          value,
-                          style: BauhausDesign.getTextTheme(context).titleMedium
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: BauhausDesign.neutral, // High contrast
-                                letterSpacing: -0.5,
-                              ),
-                          maxLines: 1,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        title,
-                        style: BauhausDesign.getTextTheme(context).labelSmall
-                            ?.copyWith(
-                              color: BauhausDesign.neutral,
-                              height: 1.1,
-                              fontWeight: FontWeight.w600,
-                            ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        )
-        .animate(delay: (index * 150).ms)
-        .scale(begin: const Offset(0.8, 0.8), curve: Curves.easeOutQuart)
-        .fadeIn(duration: 600.ms, curve: Curves.easeOutQuart);
-  }
-
   Widget _buildFeaturedActionsSliver(Map<String, dynamic> businessStats) {
     return SliverToBoxAdapter(
       child: AnimatedBuilder(
@@ -1499,7 +1414,7 @@ class _AdminDashboardViewControllerState
             color: BauhausDesign.primary,
             onTap: () async {
               final consented = await InvoiceAIConsentView.hasConsented();
-              if (!context.mounted) return;
+              if (!mounted) return;
               if (consented) {
                 Navigator.push(
                   context,
@@ -1767,6 +1682,7 @@ class _AdminDashboardViewControllerState
 
   Future<void> _navigateToBankDetails() async {
     await _sharedPrefs.init();
+    if (!mounted) return;
     final userRole = _sharedPrefs.getRole();
     if (userRole == UserRole.admin) {
       Navigator.of(context, rootNavigator: true).pushNamed(Routes.bankDetails);
@@ -1946,6 +1862,7 @@ class _AdminDashboardViewControllerState
 
   Future<void> _navigateToEmailSettings() async {
     final currentKey = await _checkEmailKey(widget.email);
+    if (!mounted) return;
     if (currentKey == 'add' || currentKey == 'error') {
       await Navigator.push(
         context,
@@ -2093,10 +2010,10 @@ class _AdminDashboardViewControllerState
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.secondary.withOpacity(0.1),
+                    color: BauhausDesign.secondary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
                     border: Border.all(
-                      color: BauhausDesign.surfaceWhite.withOpacity(0.1),
+                      color: BauhausDesign.surfaceWhite.withValues(alpha: 0.1),
                       width: 1,
                     ),
                     boxShadow: const [...BauhausDesign.shadowSm],
@@ -2107,7 +2024,7 @@ class _AdminDashboardViewControllerState
                       Container(
                         padding: const EdgeInsets.all(3),
                         decoration: BoxDecoration(
-                          color: BauhausDesign.surfaceWhite.withOpacity(0.1),
+                          color: BauhausDesign.surfaceWhite.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(
                             BauhausDesign.radiusMd,
                           ),
@@ -2160,9 +2077,9 @@ Widget _buildQuickStat(
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     decoration: BoxDecoration(
-      color: BauhausDesign.surfaceWhite.withOpacity(0.1),
+      color: BauhausDesign.surfaceWhite.withValues(alpha: 0.1),
       borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-      border: Border.all(color: BauhausDesign.surfaceWhite.withOpacity(0.1)),
+      border: Border.all(color: BauhausDesign.surfaceWhite.withValues(alpha: 0.1)),
     ),
     child: Row(
       mainAxisSize: MainAxisSize.min,
@@ -2181,7 +2098,7 @@ Widget _buildQuickStat(
         Text(
           label,
           style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-            color: BauhausDesign.surfaceWhite.withOpacity(0.8),
+            color: BauhausDesign.surfaceWhite.withValues(alpha: 0.8),
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),

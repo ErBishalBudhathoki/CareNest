@@ -30,7 +30,6 @@ class LoginViewModel extends Notifier<int> {
   bool isLoading = false;
   String? _deviceId;
   String? _deviceInfo;
-  Map<String, dynamic>? _securityContext;
   DateTime? _lastLoginAttempt;
 
   static const int maxAttemptsPerMinute = 3;
@@ -76,12 +75,6 @@ class LoginViewModel extends Notifier<int> {
         _deviceInfo = 'iOS ${iosInfo.systemVersion} (${iosInfo.model})';
       }
 
-      _securityContext = {
-        'platform': Platform.operatingSystem,
-        'deviceId': _deviceId,
-        'deviceInfo': _deviceInfo,
-        'timestamp': DateTime.now().toIso8601String(),
-      };
     } catch (e) {
       debugPrint('Error initializing security context: $e');
     }

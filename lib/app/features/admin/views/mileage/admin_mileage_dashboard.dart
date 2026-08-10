@@ -308,7 +308,7 @@ class AdminMileageDashboard extends ConsumerWidget {
                                               decoration: BoxDecoration(
                                                 color: _getStatusColor(
                                                   trip.status,
-                                                ).withOpacity(0.18),
+                                                ).withValues(alpha: 0.18),
                                                 border: Border.all(
                                                   color: BauhausDesign.neutral,
                                                   width: 1.2,

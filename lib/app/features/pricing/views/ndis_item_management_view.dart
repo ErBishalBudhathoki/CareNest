@@ -504,7 +504,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
                                   vertical: BauhausDesign.space1,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: BauhausDesign.primary.withOpacity(0.1),
+                                  color: BauhausDesign.primary.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(
                                     BauhausDesign.radiusSm,
                                   ),
@@ -528,8 +528,8 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
                                 ),
                                 decoration: BoxDecoration(
                                   color: isActive
-                                      ? BauhausDesign.success.withOpacity(0.1)
-                                      : BauhausDesign.textMuted.withOpacity(
+                                      ? BauhausDesign.success.withValues(alpha: 0.1)
+                                      : BauhausDesign.textMuted.withValues(alpha: 
                                           0.1,
                                         ),
                                   borderRadius: BorderRadius.circular(
@@ -902,7 +902,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
         Text(label, style: BauhausDesign.getTextTheme(context).labelLarge),
         const SizedBox(height: BauhausDesign.space2),
         DropdownButtonFormField<String>(
-          value: value,
+          initialValue: value,
           onChanged: onChanged,
           decoration: BauhausDesign.inputDecoration(''),
           items: items.map((item) {

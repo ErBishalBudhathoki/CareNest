@@ -60,7 +60,6 @@ class _OnboardingAppCarouselState extends State<OnboardingAppCarousel>
 
   @override
   Widget build(BuildContext context) {
-    final theme = BauhausDesign.getTextTheme(context);
 
     return Scaffold(
       backgroundColor: BauhausDesign.background,

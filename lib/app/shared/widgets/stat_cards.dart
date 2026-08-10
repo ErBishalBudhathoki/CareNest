@@ -164,7 +164,7 @@ class StatCard extends StatelessWidget {
       height: 48,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: (data.color ?? BauhausDesign.neutral).withOpacity(0.1),
+        color: (data.color ?? BauhausDesign.neutral).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         border: Border.all(color: BauhausDesign.neutral, width: 1),
       ),

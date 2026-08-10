@@ -65,7 +65,7 @@ class BauhausNotificationCard extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: themeColor.withOpacity(0.1),
+              color: themeColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
               border: Border.all(color: themeColor, width: 2),
             ),

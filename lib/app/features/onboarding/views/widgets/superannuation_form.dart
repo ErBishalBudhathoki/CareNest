@@ -95,7 +95,7 @@ class _SuperannuationFormState extends ConsumerState<SuperannuationForm> {
               decoration: BoxDecoration(
                 color: BauhausDesign.surfaceWhite,
                 border: Border.all(
-                  color: BauhausDesign.neoInk.withOpacity(0.3),
+                  color: BauhausDesign.neoInk.withValues(alpha: 0.3),
                   width: 2,
                 ),
               ),
@@ -368,7 +368,7 @@ class _Option extends StatelessWidget {
           border: Border.all(
             color: isSelected
                 ? BauhausDesign.neoInk
-                : BauhausDesign.neoInk.withOpacity(0.5),
+                : BauhausDesign.neoInk.withValues(alpha: 0.5),
             width: isSelected ? 2.5 : 2,
           ),
           boxShadow: isSelected ? const [BauhausDesign.shadowHardSm] : const [],

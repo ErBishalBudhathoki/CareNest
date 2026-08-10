@@ -135,7 +135,7 @@ class _AdminRequestsDashboardViewState
                 indicatorSize: TabBarIndicatorSize.tab,
                 dividerColor: Colors.transparent,
                 indicator: BoxDecoration(
-                  color: BauhausDesign.secondary.withOpacity(0.1),
+                  color: BauhausDesign.secondary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(color: BauhausDesign.neutral, width: 1.5),
                 ),
@@ -229,7 +229,7 @@ class _AdminRequestsDashboardViewState
                   width: double.infinity,
                   padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.neutral.withOpacity(0.05),
+                    color: BauhausDesign.neutral.withValues(alpha: 0.05),
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(BauhausDesign.radiusMd - 1),
                       topRight: Radius.circular(BauhausDesign.radiusMd - 1),
@@ -297,7 +297,7 @@ class _AdminRequestsDashboardViewState
                           child: Container(
                             padding: const EdgeInsets.all(BauhausDesign.space2),
                             decoration: BoxDecoration(
-                              color: BauhausDesign.neutral.withOpacity(0.05),
+                              color: BauhausDesign.neutral.withValues(alpha: 0.05),
                               borderRadius: BorderRadius.circular(
                                 BauhausDesign.radiusSm,
                               ),

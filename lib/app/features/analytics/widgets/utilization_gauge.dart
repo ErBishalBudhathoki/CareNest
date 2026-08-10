@@ -93,7 +93,7 @@ class UtilizationGauge extends StatelessWidget {
           const SizedBox(height: 8),
           LinearProgressIndicator(
             value: (avgUtilization / 100).clamp(0.0, 1.0),
-            backgroundColor: BauhausDesign.neutral.withOpacity(0.1),
+            backgroundColor: BauhausDesign.neutral.withValues(alpha: 0.1),
             color: statusColor,
             minHeight: 12,
             borderRadius: BorderRadius.circular(6),
@@ -133,7 +133,7 @@ class UtilizationGauge extends StatelessWidget {
                             Container(
                               height: 8,
                               decoration: BoxDecoration(
-                                color: BauhausDesign.neutral.withOpacity(0.1),
+                                color: BauhausDesign.neutral.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),

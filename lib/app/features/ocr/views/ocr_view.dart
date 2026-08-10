@@ -101,7 +101,7 @@ class OcrView extends ConsumerWidget {
           borderRadius: BorderRadius.circular(0), // Sharp corners for Bauhaus
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               offset: const Offset(8, 8), // Hard shadow
               blurRadius: 0,
             ),
@@ -118,7 +118,7 @@ class OcrView extends ConsumerWidget {
                 height: 80,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                 ),
               ),
             ),
@@ -147,7 +147,7 @@ class OcrView extends ConsumerWidget {
 
   Widget _buildBauhausLoader(Size size) {
     return Container(
-      color: Colors.white.withOpacity(0.9),
+      color: Colors.white.withValues(alpha: 0.9),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -385,7 +385,7 @@ class _FinancialIntelligenceDashboardState
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.error.withOpacity(0.14),
+        color: BauhausDesign.error.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         border: Border.all(color: BauhausDesign.neutral, width: 1.2),
       ),
@@ -437,7 +437,7 @@ class _FinancialIntelligenceDashboardState
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: BauhausDesign.accent.withOpacity(0.2),
+                color: BauhausDesign.accent.withValues(alpha: 0.2),
                 borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(BauhausDesign.radiusLg),
                   bottomLeft: Radius.circular(BauhausDesign.radiusMd),
@@ -452,7 +452,7 @@ class _FinancialIntelligenceDashboardState
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: BauhausDesign.secondary.withOpacity(0.18),
+                color: BauhausDesign.secondary.withValues(alpha: 0.18),
                 borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(BauhausDesign.radiusMd),
                   bottomLeft: Radius.circular(BauhausDesign.radiusLg),
@@ -645,7 +645,7 @@ class _FinancialIntelligenceDashboardState
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: metric.accent.withOpacity(0.12),
+        color: metric.accent.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         border: Border.all(color: BauhausDesign.neutral, width: 1.2),
       ),
@@ -750,7 +750,7 @@ class _FinancialIntelligenceDashboardState
                           horizontal: BauhausDesign.space2,
                         ),
                         height: 1,
-                        color: BauhausDesign.neutral.withOpacity(0.22),
+                        color: BauhausDesign.neutral.withValues(alpha: 0.22),
                       ),
                   ],
                 ],
@@ -881,7 +881,7 @@ class _FinancialIntelligenceDashboardState
                   vertical: BauhausDesign.space1,
                 ),
                 decoration: BoxDecoration(
-                  color: row.accent.withOpacity(0.16),
+                  color: row.accent.withValues(alpha: 0.16),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(color: BauhausDesign.neutral),
                 ),
@@ -940,7 +940,7 @@ class _FinancialIntelligenceDashboardState
                   vertical: BauhausDesign.space1,
                 ),
                 decoration: BoxDecoration(
-                  color: row.accent.withOpacity(0.16),
+                  color: row.accent.withValues(alpha: 0.16),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(color: BauhausDesign.neutral),
                 ),
@@ -1094,7 +1094,7 @@ class _FinancialIntelligenceDashboardState
               vertical: BauhausDesign.space2,
             ),
             decoration: BoxDecoration(
-              color: lane.accent.withOpacity(0.16),
+              color: lane.accent.withValues(alpha: 0.16),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
               border: Border.all(color: BauhausDesign.neutral, width: 1.2),
             ),
@@ -1137,7 +1137,7 @@ class _FinancialIntelligenceDashboardState
                 height: 36,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: module.accent.withOpacity(0.2),
+                  color: module.accent.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(color: BauhausDesign.neutral),
                 ),
@@ -1298,7 +1298,7 @@ class _FinancialIntelligenceDashboardState
                     widthFactor: ratio,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: point.accent.withOpacity(0.76),
+                        color: point.accent.withValues(alpha: 0.76),
                         borderRadius: BorderRadius.circular(
                           BauhausDesign.radiusSm,
                         ),
@@ -1336,7 +1336,7 @@ class _FinancialIntelligenceDashboardState
                   widthFactor: ratio,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: point.accent.withOpacity(0.76),
+                      color: point.accent.withValues(alpha: 0.76),
                       borderRadius: BorderRadius.circular(
                         BauhausDesign.radiusSm,
                       ),
@@ -1407,7 +1407,7 @@ class _FinancialIntelligenceDashboardState
       width: 320,
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: item.accent.withOpacity(0.12),
+        color: item.accent.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         border: Border.all(color: BauhausDesign.neutral, width: 1.2),
       ),
@@ -1469,7 +1469,7 @@ class _FinancialIntelligenceDashboardState
                   vertical: BauhausDesign.space1,
                 ),
                 decoration: BoxDecoration(
-                  color: item.accent.withOpacity(0.2),
+                  color: item.accent.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(color: BauhausDesign.neutral),
                 ),
@@ -1507,7 +1507,7 @@ class _FinancialIntelligenceDashboardState
             vertical: BauhausDesign.space2,
           ),
           decoration: BoxDecoration(
-            color: accent.withOpacity(0.14),
+            color: accent.withValues(alpha: 0.14),
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
             border: Border.all(color: BauhausDesign.neutral, width: 1.2),
           ),
@@ -1541,7 +1541,7 @@ class _FinancialIntelligenceDashboardState
         vertical: BauhausDesign.space1,
       ),
       decoration: BoxDecoration(
-        color: accent.withOpacity(0.16),
+        color: accent.withValues(alpha: 0.16),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         border: Border.all(color: BauhausDesign.neutral, width: 1.1),
       ),
@@ -2079,7 +2079,7 @@ class _KpiChip extends StatelessWidget {
         vertical: BauhausDesign.space2,
       ),
       decoration: BoxDecoration(
-        color: accent.withOpacity(0.16),
+        color: accent.withValues(alpha: 0.16),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         border: Border.all(color: BauhausDesign.neutral, width: 1),
       ),

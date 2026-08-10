@@ -424,8 +424,9 @@ class UserRoleNotifier extends Notifier<UserRole> {
     if (email == null ||
         email.isEmpty ||
         firebaseUid == null ||
-        authToken == null)
+        authToken == null) {
       return;
+    }
 
     try {
       // API expects the raw token, not the 'Bearer ' prefixed one

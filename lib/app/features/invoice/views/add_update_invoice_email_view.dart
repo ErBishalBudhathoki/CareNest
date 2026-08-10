@@ -269,7 +269,7 @@ class _AddUpdateInvoicingEmailViewState
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space4),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.info.withOpacity(0.1),
+                  color: BauhausDesign.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.zero,
                   border: Border.all(color: BauhausDesign.info, width: 2),
                 ),

@@ -246,9 +246,9 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: accentColor.withOpacity(0.12),
+                    color: accentColor.withValues(alpha: 0.12),
                     border: Border.all(
-                      color: accentColor.withOpacity(0.4),
+                      color: accentColor.withValues(alpha: 0.4),
                       width: 1.5,
                     ),
                   ),
@@ -520,7 +520,7 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
         : BauhausDesign.neutral;
 
     final String statusLabel = req.status.toUpperCase();
-    final Color statusBg = statusColor.withOpacity(0.10);
+    final Color statusBg = statusColor.withValues(alpha: 0.10);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
@@ -653,7 +653,7 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral.withOpacity(0.3)),
+        border: Border.all(color: BauhausDesign.neutral.withValues(alpha: 0.3)),
       ),
       child: const Center(child: BauhausLoadingState(showMessage: false)),
     );

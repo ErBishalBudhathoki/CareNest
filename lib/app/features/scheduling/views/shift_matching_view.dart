@@ -15,8 +15,6 @@ class ShiftMatchingView extends ConsumerStatefulWidget {
 }
 
 class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
-  String? _selectedShiftId;
-  final _criteriaController = MatchingCriteria();
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +52,7 @@ class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: BauhausDesign.primary.withOpacity(0.1),
+                                  color: BauhausDesign.primary.withValues(alpha: 0.1),
                                   border: Border.all(
                                     color: BauhausDesign.primary,
                                     width: 2,
@@ -107,7 +105,7 @@ class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
                       child: Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: BauhausDesign.error.withOpacity(0.1),
+                          color: BauhausDesign.error.withValues(alpha: 0.1),
                           border: Border.all(
                             color: BauhausDesign.error,
                             width: 2,
@@ -223,7 +221,7 @@ class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: matchColor.withOpacity(0.1),
+                    color: matchColor.withValues(alpha: 0.1),
                     border: Border.all(color: matchColor, width: 2),
                   ),
                   child: Text(
@@ -266,7 +264,7 @@ class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.warning.withOpacity(0.1),
+                  color: BauhausDesign.warning.withValues(alpha: 0.1),
                   border: Border.all(color: BauhausDesign.warning),
                 ),
                 child: Column(

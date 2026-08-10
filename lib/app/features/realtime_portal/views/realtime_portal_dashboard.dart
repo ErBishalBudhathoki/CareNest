@@ -412,7 +412,7 @@ class _RealtimePortalDashboardState
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.error.withOpacity(0.14),
+        color: BauhausDesign.error.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         border: Border.all(color: BauhausDesign.neutral, width: 1.2),
       ),
@@ -488,7 +488,7 @@ class _RealtimePortalDashboardState
             Text(
               'Organization Context: $_loadedOrgId • ${clientState.clients.length} clients fetched',
               style: textTheme.bodySmall?.copyWith(
-                color: BauhausDesign.textDark.withOpacity(0.6),
+                color: BauhausDesign.textDark.withValues(alpha: 0.6),
                 fontSize: 10,
                 fontFamily: 'Courier',
                 fontWeight: FontWeight.w600,
@@ -606,7 +606,7 @@ class _RealtimePortalDashboardState
                           leading: CircleAvatar(
                             backgroundColor: isSelected
                                 ? BauhausDesign.primary
-                                : BauhausDesign.neutral.withOpacity(0.3),
+                                : BauhausDesign.neutral.withValues(alpha: 0.3),
                             child: Text(
                               client.displayName.isNotEmpty
                                   ? client.displayName[0].toUpperCase()
@@ -687,7 +687,7 @@ class _RealtimePortalDashboardState
           vertical: BauhausDesign.space2,
         ),
         decoration: BoxDecoration(
-          color: accent.withOpacity(0.1),
+          color: accent.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
           border: Border.all(
             color: onTap != null ? accent : BauhausDesign.neutral,
@@ -739,7 +739,7 @@ class _RealtimePortalDashboardState
                   width: 52,
                   height: 52,
                   decoration: BoxDecoration(
-                    color: BauhausDesign.accent.withOpacity(0.18),
+                    color: BauhausDesign.accent.withValues(alpha: 0.18),
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                     border: Border.all(
                       color: BauhausDesign.neutral,
@@ -782,8 +782,8 @@ class _RealtimePortalDashboardState
                   ),
                   decoration: BoxDecoration(
                     color: hasLiveSignal
-                        ? BauhausDesign.success.withOpacity(0.18)
-                        : BauhausDesign.warning.withOpacity(0.2),
+                        ? BauhausDesign.success.withValues(alpha: 0.18)
+                        : BauhausDesign.warning.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(
                       BauhausDesign.radiusFull,
                     ),
@@ -1004,7 +1004,7 @@ class _RealtimePortalDashboardState
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: module.module.accent.withOpacity(0.15),
+                      color: module.module.accent.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(
                         BauhausDesign.radiusSm,
                       ),
@@ -1046,7 +1046,7 @@ class _RealtimePortalDashboardState
                 width: double.infinity,
                 padding: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: BoxDecoration(
-                  color: module.badgeColor.withOpacity(0.16),
+                  color: module.badgeColor.withValues(alpha: 0.16),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(color: BauhausDesign.neutral, width: 1),
                 ),
@@ -1117,7 +1117,7 @@ class _RealtimePortalDashboardState
                         width: 30,
                         height: 30,
                         decoration: BoxDecoration(
-                          color: entries[i].accent.withOpacity(0.16),
+                          color: entries[i].accent.withValues(alpha: 0.16),
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: BauhausDesign.neutral,
@@ -1134,7 +1134,7 @@ class _RealtimePortalDashboardState
                         Container(
                           width: 2,
                           height: 34,
-                          color: BauhausDesign.neutral.withOpacity(0.35),
+                          color: BauhausDesign.neutral.withValues(alpha: 0.35),
                         ),
                     ],
                   ),
@@ -1187,7 +1187,7 @@ class _RealtimePortalDashboardState
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.warning.withOpacity(0.2),
+        color: BauhausDesign.warning.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         border: Border.all(color: BauhausDesign.neutral, width: 1.2),
       ),
