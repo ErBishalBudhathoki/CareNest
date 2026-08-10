@@ -1,6 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/core/providers/app_providers.dart'
-    as app_providers;
 import '../repositories/financial_intelligence_repository.dart';
 
 class BillingAutomationState {
@@ -44,7 +42,6 @@ class BillingAutomationViewModel extends Notifier<BillingAutomationState> {
 
   @override
   BillingAutomationState build() {
-    final apiMethod = ref.read(app_providers.apiMethodProvider);
 
     return BillingAutomationState();
   }

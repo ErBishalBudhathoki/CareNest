@@ -801,8 +801,9 @@ class _QuickExpenseCaptureViewState
   int? _scoreLineForTotal(String lower) {
     if (lower.contains('invoice total')) return 100;
     if (lower.contains('grand total')) return 95;
-    if (lower.contains('amount due') || lower.contains('amount payable'))
+    if (lower.contains('amount due') || lower.contains('amount payable')) {
       return 90;
+    }
     if (lower.contains('balance due') || lower.contains('total due')) return 85;
     if (lower.contains('total') && !lower.contains('subtotal')) return 80;
     if (lower.contains('subtotal') || lower.contains('sub total')) return 30;

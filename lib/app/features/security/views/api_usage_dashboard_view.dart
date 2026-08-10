@@ -111,6 +111,7 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
 
       final results = await Future.wait(futures);
 
+      if (!mounted) return;
       // Check for errors among the first three critical calls
       String? firstError;
       for (int i = 0; i < 3; i++) {

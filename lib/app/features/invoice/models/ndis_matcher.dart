@@ -381,10 +381,11 @@ class NDISMatcher {
         // Standard intensity shift
         if (!itemIsHI) {
           score += 20; // Prefer standard items
-        } else if (itemNameLower.contains("standard"))
+        } else if (itemNameLower.contains("standard")) {
           score += 15; // Explicitly "standard"
-        else
+        } else {
           score -= 10; // Penalize HI item for standard shift
+        }
       }
 
       // 4. TTP Preference

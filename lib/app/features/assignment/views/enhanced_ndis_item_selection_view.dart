@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -893,10 +894,10 @@ class _EnhancedNdisItemSelectionViewState
                 Container(
                   padding: const EdgeInsets.all(BauhausDesign.space4),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.primary.withOpacity(0.1),
+                    color: BauhausDesign.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                     border: Border.all(
-                      color: BauhausDesign.primary.withOpacity(0.2),
+                      color: BauhausDesign.primary.withValues(alpha: 0.2),
                     ),
                   ),
                   child: Row(
@@ -951,7 +952,7 @@ class _EnhancedNdisItemSelectionViewState
                         )
                       : ListView.builder(
                           controller: _listScrollController,
-                          cacheExtent: 1200,
+                          scrollCacheExtent: ScrollCacheExtent.pixels(1200),
                           itemCount: _filteredNdisItems.length,
                           itemBuilder: (context, index) {
                             final item = _filteredNdisItems[index];
@@ -1015,8 +1016,8 @@ class _EnhancedNdisItemSelectionViewState
                                 ),
                                 decoration: BoxDecoration(
                                   color: currentPrice != cappedPrice
-                                      ? BauhausDesign.warning.withOpacity(0.1)
-                                      : BauhausDesign.success.withOpacity(0.1),
+                                      ? BauhausDesign.warning.withValues(alpha: 0.1)
+                                      : BauhausDesign.success.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(
                                     BauhausDesign.radiusPill,
                                   ),
@@ -1369,7 +1370,7 @@ class _EnhancedNdisItemSelectionViewState
                       fontWeight: FontWeight.w700,
                     ),
                 hintStyle: BauhausDesign.getTextTheme(context).bodyMedium
-                    ?.copyWith(color: BauhausDesign.textDark.withOpacity(0.96)),
+                    ?.copyWith(color: BauhausDesign.textDark.withValues(alpha: 0.96)),
                 helperStyle: BauhausDesign.getTextTheme(context).labelMedium
                     ?.copyWith(
                       color: BauhausDesign.textDark,
@@ -1387,7 +1388,7 @@ class _EnhancedNdisItemSelectionViewState
               width: double.infinity,
               padding: const EdgeInsets.all(BauhausDesign.space2),
               decoration: BoxDecoration(
-                color: BauhausDesign.warning.withOpacity(0.12),
+                color: BauhausDesign.warning.withValues(alpha: 0.12),
                 border: Border.all(color: BauhausDesign.warning, width: 2),
               ),
               child: Text(
@@ -1661,7 +1662,7 @@ class _EnhancedNdisItemSelectionViewState
         vertical: BauhausDesign.space2,
       ),
       decoration: BoxDecoration(
-        color: accent.withOpacity(0.12),
+        color: accent.withValues(alpha: 0.12),
         border: Border.all(color: accent, width: 2),
       ),
       child: Column(

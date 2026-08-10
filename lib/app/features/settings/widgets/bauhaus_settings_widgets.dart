@@ -119,7 +119,7 @@ class BauhausProfileCard extends StatelessWidget {
                   (isEmailVerified
                           ? BauhausDesign.success
                           : BauhausDesign.warning)
-                      .withOpacity(0.12),
+                      .withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               border: Border.all(
                 color: isEmailVerified
@@ -369,7 +369,7 @@ class BauhausSettingsTile extends StatelessWidget {
                         subtitle,
                         style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
-                              color: BauhausDesign.textDark.withOpacity(0.8),
+                              color: BauhausDesign.textDark.withValues(alpha: 0.8),
                               fontWeight: FontWeight.w500,
                             ),
                       ),
@@ -380,7 +380,7 @@ class BauhausSettingsTile extends StatelessWidget {
                 Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 16,
-                  color: BauhausDesign.neutral.withOpacity(0.4),
+                  color: BauhausDesign.neutral.withValues(alpha: 0.4),
                 ),
               ],
             ),

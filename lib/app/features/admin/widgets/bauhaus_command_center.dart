@@ -341,7 +341,7 @@ class _BauhausCategoryCard extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         border: Border(
-          bottom: BorderSide(color: Colors.black.withOpacity(0.18), width: 1),
+          bottom: BorderSide(color: Colors.black.withValues(alpha: 0.18), width: 1),
         ),
       ),
       child: Padding(
@@ -355,9 +355,9 @@ class _BauhausCategoryCard extends StatelessWidget {
               width: 38,
               height: 38,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.18),
+                color: Colors.white.withValues(alpha: 0.18),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.35),
+                  color: Colors.white.withValues(alpha: 0.35),
                   width: 1.5,
                 ),
               ),
@@ -385,7 +385,7 @@ class _BauhausCategoryCard extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                     ),
                   ),
                 ],
@@ -397,9 +397,9 @@ class _BauhausCategoryCard extends StatelessWidget {
                 vertical: BauhausDesign.space1,
               ),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.18),
+                color: Colors.white.withValues(alpha: 0.18),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.32),
+                  color: Colors.white.withValues(alpha: 0.32),
                   width: 1,
                 ),
               ),
@@ -432,10 +432,10 @@ class _BauhausCategoryCard extends StatelessWidget {
               vertical: 4,
             ),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
               border: Border(
                 bottom: BorderSide(
-                  color: BauhausDesign.neutral.withOpacity(0.2),
+                  color: BauhausDesign.neutral.withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
@@ -455,10 +455,10 @@ class _BauhausCategoryCard extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(BauhausDesign.space3),
               decoration: BoxDecoration(
-                color: BauhausDesign.warning.withOpacity(0.08),
+                color: BauhausDesign.warning.withValues(alpha: 0.08),
                 border: Border(
                   bottom: BorderSide(
-                    color: BauhausDesign.warning.withOpacity(0.35),
+                    color: BauhausDesign.warning.withValues(alpha: 0.35),
                     width: 1,
                   ),
                 ),
@@ -470,7 +470,7 @@ class _BauhausCategoryCard extends StatelessWidget {
                     width: 34,
                     height: 34,
                     decoration: BoxDecoration(
-                      color: BauhausDesign.warning.withOpacity(0.14),
+                      color: BauhausDesign.warning.withValues(alpha: 0.14),
                       border: Border.all(
                         color: BauhausDesign.warning,
                         width: 1.5,
@@ -620,9 +620,9 @@ class _BauhausGridActionCard extends StatelessWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: action.color.withOpacity(0.14),
+                        color: action.color.withValues(alpha: 0.14),
                         border: Border.all(
-                          color: action.color.withOpacity(0.55),
+                          color: action.color.withValues(alpha: 0.55),
                           width: 1.4,
                         ),
                       ),
@@ -641,7 +641,7 @@ class _BauhausGridActionCard extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: (action.statusColor ?? BauhausDesign.warning)
-                              .withOpacity(0.12),
+                              .withValues(alpha: 0.12),
                           border: Border.all(
                             color: action.statusColor ?? BauhausDesign.warning,
                             width: 1,
@@ -710,7 +710,7 @@ class _BauhausGridActionCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: action.color,
                     border: Border.all(
-                      color: BauhausDesign.neutral.withOpacity(0.25),
+                      color: BauhausDesign.neutral.withValues(alpha: 0.25),
                       width: 0.5,
                     ),
                   ),

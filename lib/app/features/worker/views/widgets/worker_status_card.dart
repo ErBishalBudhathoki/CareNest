@@ -15,7 +15,7 @@ class WorkerStatusCard extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BauhausTheme.blockDecoration.copyWith(
         color: isClockedIn
-            ? BauhausTheme.yellow.withOpacity(0.2)
+            ? BauhausTheme.yellow.withValues(alpha: 0.2)
             : BauhausTheme.white,
         border: Border.all(
           color: isClockedIn ? BauhausTheme.yellow : BauhausTheme.black,

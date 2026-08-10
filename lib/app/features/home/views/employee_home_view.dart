@@ -924,7 +924,7 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral.withOpacity(0.3)),
+        border: Border.all(color: BauhausDesign.neutral.withValues(alpha: 0.3)),
       ),
       child: const Center(child: BauhausLoadingState(showMessage: false)),
     );

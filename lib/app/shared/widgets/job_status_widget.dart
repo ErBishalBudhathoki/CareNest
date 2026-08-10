@@ -88,7 +88,7 @@ class _JobStatusWidgetState extends ConsumerState<JobStatusWidget> {
       return Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: BauhausTheme.red.withOpacity(0.1),
+          color: BauhausTheme.red.withValues(alpha: 0.1),
           border: Border.all(color: BauhausTheme.red),
         ),
         child: Row(
@@ -105,7 +105,7 @@ class _JobStatusWidgetState extends ConsumerState<JobStatusWidget> {
       return Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: BauhausTheme.blue.withOpacity(0.1),
+          color: BauhausTheme.blue.withValues(alpha: 0.1),
           border: Border.all(color: BauhausTheme.blue),
         ),
         child: Column(

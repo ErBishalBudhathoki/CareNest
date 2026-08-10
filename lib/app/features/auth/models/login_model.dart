@@ -227,34 +227,6 @@ class LoginModel extends ChangeNotifier implements VisibilityToggleModel {
     return !suspiciousDomains.contains(domain);
   }
 
-  /// Check if password is commonly used
-  bool _isCommonPassword(String password) {
-    final commonPasswords = [
-      'password',
-      '123456',
-      '123456789',
-      'qwerty',
-      'abc123',
-      'password123',
-      'admin',
-      'letmein',
-      'welcome',
-      'monkey',
-      '1234567890',
-      'password1',
-      '123123',
-      'admin123',
-      'root',
-      'user',
-      'test',
-      'guest',
-      'demo',
-      'sample',
-    ];
-
-    return commonPasswords.contains(password.toLowerCase());
-  }
-
   /// Update overall validation state
   void _updateValidationState() {
     _isValid = _hasValidEmail && _hasSecurePassword;

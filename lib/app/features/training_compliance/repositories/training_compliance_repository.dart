@@ -161,8 +161,9 @@ class TrainingComplianceRepository {
   }) async {
     String endpoint = '$_basePath/certifications';
     final queryParams = <String, String>{};
-    if (status != null)
+    if (status != null) {
       queryParams['status'] = _toBackendCertificationStatus(status);
+    }
     if (userId != null) queryParams['userId'] = userId;
     final orgId = await _resolveOrganizationId(organizationId);
     if (orgId != null) queryParams['organizationId'] = orgId;

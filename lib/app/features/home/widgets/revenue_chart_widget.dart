@@ -36,7 +36,7 @@ class RevenueChartWidget extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: BauhausColors.accentGreen.withOpacity(0.1),
+                    color: BauhausColors.accentGreen.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
@@ -120,9 +120,9 @@ class RevenueChartWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
+        color: color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,7 +179,7 @@ class RevenueChartWidget extends StatelessWidget {
           drawVerticalLine: false,
           horizontalInterval: 1000,
           getDrawingHorizontalLine: (value) {
-            return FlLine(color: Colors.grey.withOpacity(0.1), strokeWidth: 1);
+            return FlLine(color: Colors.grey.withValues(alpha: 0.1), strokeWidth: 1);
           },
         ),
         titlesData: FlTitlesData(
@@ -256,7 +256,7 @@ class RevenueChartWidget extends StatelessWidget {
             ),
             belowBarData: BarAreaData(
               show: true,
-              color: BauhausColors.accentGreen.withOpacity(0.1),
+              color: BauhausColors.accentGreen.withValues(alpha: 0.1),
             ),
           ),
         ],

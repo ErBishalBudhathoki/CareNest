@@ -167,7 +167,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
         BauhausActionButton(
           icon: Icons.refresh,
           onPressed: () => _refreshData(),
-          backgroundColor: BauhausDesign.surfaceWhite.withOpacity(0.2),
+          backgroundColor: BauhausDesign.surfaceWhite.withValues(alpha: 0.2),
           textColor: BauhausDesign.surfaceWhite,
           variant: BauhausActionVariant.ghost,
         ),
@@ -175,7 +175,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
         BauhausActionButton(
           icon: Icons.filter_list,
           onPressed: () => _showFilterBottomSheet(),
-          backgroundColor: BauhausDesign.surfaceWhite.withOpacity(0.2),
+          backgroundColor: BauhausDesign.surfaceWhite.withValues(alpha: 0.2),
           textColor: BauhausDesign.surfaceWhite,
           variant: BauhausActionVariant.ghost,
         ),
@@ -186,7 +186,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
         indicatorColor: BauhausDesign.surfaceWhite,
         indicatorWeight: 3,
         labelColor: BauhausDesign.surfaceWhite,
-        unselectedLabelColor: BauhausDesign.surfaceWhite.withOpacity(0.7),
+        unselectedLabelColor: BauhausDesign.surfaceWhite.withValues(alpha: 0.7),
         labelStyle: BauhausDesign.getTextTheme(
           context,
         ).bodyMedium?.copyWith(fontWeight: FontWeight.w600),
@@ -1055,58 +1055,6 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
     );
   }
 
-  Widget _buildQuickActionCard(
-    String title,
-    IconData icon,
-    Color color,
-    VoidCallback onTap,
-  ) {
-    return GestureDetector(
-          onTap: onTap,
-          child: Container(
-            padding: const EdgeInsets.all(BauhausDesign.space4),
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
-              boxShadow: const [BauhausDesign.shadowHard],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(BauhausDesign.space2),
-                  decoration: BoxDecoration(
-                    color: BauhausDesign.surfaceWhite.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(
-                      BauhausDesign.radiusFull,
-                    ),
-                  ),
-                  child: Icon(
-                    icon,
-                    color: BauhausDesign.surfaceWhite,
-                    size: 24,
-                  ),
-                ),
-                const SizedBox(height: BauhausDesign.space2),
-                Text(
-                  title,
-                  style: BauhausDesign.getTextTheme(context).bodyMedium
-                      ?.copyWith(
-                        color: BauhausDesign.surfaceWhite,
-                        fontWeight: FontWeight.w600,
-                      ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-        )
-        .animate()
-        .fadeIn(duration: 300.ms)
-        .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0));
-  }
-
   Widget _buildActionTile({
     required double width,
     required String title,
@@ -1231,7 +1179,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
         vertical: BauhausDesign.space1,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         border: Border.all(color: color, width: 2),
       ),

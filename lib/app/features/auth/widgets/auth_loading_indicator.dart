@@ -110,7 +110,7 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
         return Opacity(
           opacity: _fadeAnimation.value,
           child: Container(
-            color: BauhausDesign.textDark.withOpacity(0.1),
+            color: BauhausDesign.textDark.withValues(alpha: 0.1),
             child: Center(
               child: Container(
                 padding: const EdgeInsets.all(32),

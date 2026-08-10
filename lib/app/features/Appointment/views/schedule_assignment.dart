@@ -83,7 +83,6 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
 
   // NDIS Item Selection
   NDISItem? _selectedNdisItem;
-  String? _selectedNdisItemNumber;
   final TextEditingController _searchController = TextEditingController();
 
   // Custom pricing variables (for global selection)
@@ -278,7 +277,6 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
     final initialNdisItem = _buildInitialNdisItem(widget.initialNdisItem);
     if (initialNdisItem != null) {
       _selectedNdisItem = initialNdisItem;
-      _selectedNdisItemNumber = initialNdisItem.itemNumber;
     }
   }
 
@@ -730,7 +728,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.secondary.withOpacity(0.1),
+                  color: BauhausDesign.secondary.withValues(alpha: 0.1),
                   border: Border.all(color: BauhausDesign.neutral, width: 1),
                 ),
                 child: Icon(
@@ -769,8 +767,9 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                     }
                     if (endTimeList.length > index) endTimeList.removeAt(index);
                     if (breakList.length > index) breakList.removeAt(index);
-                    if (ndisItemList.length > index)
+                    if (ndisItemList.length > index) {
                       ndisItemList.removeAt(index);
+                    }
                     if (highIntensityList.length > index) {
                       highIntensityList.removeAt(index);
                     }
@@ -807,7 +806,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
               'EEEE, MMMM d, y',
             ).format(DateFormat('yyyy-MM-dd').parse(dateList[index])),
             iconColor: BauhausDesign.primary,
-            backgroundColor: BauhausDesign.primary.withOpacity(0.1),
+            backgroundColor: BauhausDesign.primary.withValues(alpha: 0.1),
           ),
           const SizedBox(height: BauhausDesign.space3),
           Row(
@@ -844,7 +843,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                 : AppLocalizations.of(context)!.selectNdisServiceItem,
             iconColor: _ndisError != null ? BauhausDesign.error : null,
             backgroundColor: _ndisError != null
-                ? BauhausDesign.error.withOpacity(0.1)
+                ? BauhausDesign.error.withValues(alpha: 0.1)
                 : null,
           ),
           if (_ndisError != null)
@@ -909,7 +908,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
               child: Container(
                 padding: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: _panelDecoration(
-                  color: BauhausDesign.success.withOpacity(0.08),
+                  color: BauhausDesign.success.withValues(alpha: 0.08),
                   borderColor: BauhausDesign.success,
                   borderWidth: 1.5,
                 ),
@@ -980,7 +979,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
   }) {
     final effectiveIconColor = iconColor ?? BauhausDesign.primary;
     final effectiveBackgroundColor =
-        backgroundColor ?? BauhausDesign.primary.withOpacity(0.1);
+        backgroundColor ?? BauhausDesign.primary.withValues(alpha: 0.1);
     return Container(
       padding: const EdgeInsets.symmetric(
         vertical: BauhausDesign.space3,
@@ -1070,10 +1069,11 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
         await _returnToAdminDashboard();
-        return false;
       },
       child: Scaffold(
         key: _scaffoldKey,
@@ -1173,7 +1173,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
             action: Container(
               padding: const EdgeInsets.all(BauhausDesign.space2),
               decoration: BoxDecoration(
-                color: BauhausDesign.primary.withOpacity(0.1),
+                color: BauhausDesign.primary.withValues(alpha: 0.1),
                 border: Border.all(color: BauhausDesign.neutral, width: 1),
               ),
               child: Icon(
@@ -1209,7 +1209,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space2),
             decoration: BoxDecoration(
-              color: BauhausDesign.primary.withOpacity(0.1),
+              color: BauhausDesign.primary.withValues(alpha: 0.1),
               border: Border.all(color: BauhausDesign.neutral, width: 1),
             ),
             child: Icon(icon, color: BauhausDesign.primary, size: 18),
@@ -1254,7 +1254,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
             action: Container(
               padding: const EdgeInsets.all(BauhausDesign.space2),
               decoration: BoxDecoration(
-                color: BauhausDesign.secondary.withOpacity(0.1),
+                color: BauhausDesign.secondary.withValues(alpha: 0.1),
                 border: Border.all(color: BauhausDesign.neutral, width: 1),
               ),
               child: Icon(
@@ -1310,7 +1310,6 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                   setState(() {
                     _clearValidationErrors();
                     _selectedNdisItem = result.ndisItem;
-                    _selectedNdisItemNumber = result.ndisItem.itemNumber;
                     _searchController.text =
                         '${result.ndisItem.itemNumber} - ${result.ndisItem.itemName}';
 
@@ -1343,7 +1342,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                 vertical: BauhausDesign.space2,
               ),
               decoration: BoxDecoration(
-                color: BauhausDesign.primary.withOpacity(0.1),
+                color: BauhausDesign.primary.withValues(alpha: 0.1),
                 border: Border.all(color: BauhausDesign.primary, width: 1.5),
               ),
               child: Row(
@@ -1368,7 +1367,6 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                     onTap: () {
                       setState(() {
                         _selectedNdisItem = null;
-                        _selectedNdisItemNumber = null;
                         _searchController.clear();
                       });
                     },
@@ -1593,7 +1591,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
             margin: const EdgeInsets.only(bottom: BauhausDesign.space4),
             padding: const EdgeInsets.all(BauhausDesign.space3),
             decoration: _panelDecoration(
-              color: BauhausDesign.error.withOpacity(0.08),
+              color: BauhausDesign.error.withValues(alpha: 0.08),
               borderColor: BauhausDesign.error,
             ),
             child: Column(
@@ -1661,7 +1659,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
             isLoading: _isSubmitting,
             isFullWidth: true,
             backgroundColor: dateList.isEmpty
-                ? BauhausDesign.neutral.withOpacity(0.2)
+                ? BauhausDesign.neutral.withValues(alpha: 0.2)
                 : BauhausDesign.primary,
             textColor: dateList.isEmpty
                 ? BauhausDesign.textMuted

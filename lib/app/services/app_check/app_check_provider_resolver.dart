@@ -13,7 +13,7 @@ class AndroidAppCheckSelection {
     this.installerPackage,
   });
 
-  final AndroidProvider provider;
+  final AndroidAppCheckProvider provider;
   final String label;
   final String reason;
   final String? installerPackage;
@@ -35,7 +35,7 @@ class AppCheckProviderResolver {
 
     if (kIsWeb || !Platform.isAndroid) {
       return const AndroidAppCheckSelection(
-        provider: AndroidProvider.debug,
+        provider: AndroidDebugProvider(),
         label: 'Debug',
         reason: 'Non-Android platform fallback',
       );
@@ -43,7 +43,7 @@ class AppCheckProviderResolver {
 
     if (isDevelopmentFlavor) {
       return const AndroidAppCheckSelection(
-        provider: AndroidProvider.debug,
+        provider: AndroidDebugProvider(),
         label: 'Debug',
         reason: 'Development flavor',
       );
@@ -54,7 +54,7 @@ class AppCheckProviderResolver {
 
     if (kReleaseMode && isPlayStoreInstall) {
       return AndroidAppCheckSelection(
-        provider: AndroidProvider.playIntegrity,
+        provider: AndroidPlayIntegrityProvider(),
         label: 'Play Integrity',
         reason: 'Production release installed from Google Play',
         installerPackage: installerPackage,
@@ -62,7 +62,7 @@ class AppCheckProviderResolver {
     }
 
     return AndroidAppCheckSelection(
-      provider: AndroidProvider.debug,
+      provider: AndroidDebugProvider(),
       label: 'Debug',
       reason: kReleaseMode
           ? 'Production release installed outside Google Play'

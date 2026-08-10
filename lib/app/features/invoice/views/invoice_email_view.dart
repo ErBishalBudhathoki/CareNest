@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:carenest/app/shared/widgets/button_widget.dart';
 
 import 'package:flutter/material.dart';
 import 'package:carenest/backend/api_method.dart';
@@ -26,13 +25,7 @@ class InvoicingEmailView extends ConsumerStatefulWidget {
 }
 
 class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
-  final _formKey = GlobalKey<FormState>(debugLabel: 'invoice_email_form_key');
-  final _scaffoldKey = GlobalKey<ScaffoldState>(
-    debugLabel: 'invoice_email_scaffold_key',
-  );
   var initialData = {};
-  final bool _isLoading = true;
-  final _passwordController = TextEditingController();
   late final ApiMethod apiMethod;
   final passwordVisibleNotifier = ValueNotifier<bool>(true);
 
@@ -267,26 +260,6 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildAddInvoicingEmailButton(String organisationName) {
-    return ButtonWidget(
-      buttonText: 'Add Invoicing Email Detail',
-      buttonColor: BauhausDesign.secondary,
-      textColor: BauhausDesign.surfaceLight,
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => AddUpdateInvoicingEmailView(
-              widget.email,
-              widget.genKey,
-              organisationName,
-            ),
-          ),
-        );
-      },
     );
   }
 

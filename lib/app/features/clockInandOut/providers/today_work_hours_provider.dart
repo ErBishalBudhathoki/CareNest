@@ -1,7 +1,6 @@
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/features/timesheet/viewmodels/timesheet_viewmodel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 /// Returns today's total work hours as a double (e.g. 4.8).
 ///
@@ -9,7 +8,6 @@ import 'package:intl/intl.dart';
 /// running timer's elapsed seconds. Reacts to changes in both sources.
 final todayWorkHoursProvider = FutureProvider.family
     .autoDispose<double, String>((ref, email) async {
-      final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
       final entries = ref.watch(timesheetViewModelProvider(email)).value ?? [];
       final timerService = ref.watch(timerServiceProvider);

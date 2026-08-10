@@ -83,15 +83,15 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
           width: 120,
           height: 120,
           decoration: BoxDecoration(
-            color: BauhausDesign.accent.withOpacity(0.1),
+            color: BauhausDesign.accent.withValues(alpha: 0.1),
             shape: BoxShape.circle,
             border: Border.all(
-              color: BauhausDesign.accent.withOpacity(0.3),
+              color: BauhausDesign.accent.withValues(alpha: 0.3),
               width: 2,
             ),
             boxShadow: [
               BoxShadow(
-                color: BauhausDesign.accent.withOpacity(0.15),
+                color: BauhausDesign.accent.withValues(alpha: 0.15),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -144,7 +144,7 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
         border: Border.all(color: BauhausDesign.primary, width: 2),
         boxShadow: [
           BoxShadow(
-            color: BauhausDesign.primary.withOpacity(0.1),
+            color: BauhausDesign.primary.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

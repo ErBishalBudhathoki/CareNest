@@ -120,7 +120,7 @@ class _ScheduleDashboardScreenState
             'status': 'approved',
           });
 
-          if (mounted) {
+          if (context.mounted) {
             if (result['success'] == true) {
               Navigator.of(context).pop();
               _loadShifts();
@@ -462,7 +462,7 @@ class _ScheduleDashboardScreenState
               vertical: 2,
             ),
             decoration: BoxDecoration(
-              color: BauhausDesign.accent.withOpacity(0.2),
+              color: BauhausDesign.accent.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               border: Border.all(color: BauhausDesign.accent),
             ),
@@ -821,7 +821,7 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                 Container(
                   padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.error.withOpacity(0.1),
+                    color: BauhausDesign.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                     border: Border.all(color: BauhausDesign.error),
                   ),
@@ -845,7 +845,7 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                 )
               else
                 DropdownButtonFormField<String>(
-                  value: _selectedClientEmail,
+                  initialValue: _selectedClientEmail,
                   decoration:
                       BauhausDesign.inputDecoration(
                         AppLocalizations.of(context)!.clientEmailLabel,
@@ -896,7 +896,7 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
               const SizedBox(height: BauhausDesign.space4),
               if (!_isFetchingData) ...[
                 DropdownButtonFormField<String>(
-                  value: _selectedEmployeeEmail,
+                  initialValue: _selectedEmployeeEmail,
                   decoration:
                       BauhausDesign.inputDecoration(
                         'Assign Employee (Optional)',

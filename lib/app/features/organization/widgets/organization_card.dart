@@ -22,7 +22,7 @@ class OrganizationCard extends ConsumerWidget {
       onTap: onTap,
       child: BauhausContainer(
         color: isSelected
-            ? BauhausDesign.primaryRed.withOpacity(0.1)
+            ? BauhausDesign.primaryRed.withValues(alpha: 0.1)
             : BauhausDesign.surfaceWhite,
         padding: const EdgeInsets.all(BauhausDesign.space3),
         child: Column(
@@ -106,7 +106,7 @@ class OrganizationCard extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         border: Border.all(color: color),
       ),
       child: Text(

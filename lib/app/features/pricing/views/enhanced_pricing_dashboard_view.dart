@@ -1,4 +1,3 @@
-import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/shared/widgets/enhanced_data_table.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
@@ -21,17 +20,13 @@ class _EnhancedPricingDashboardViewState
     with TickerProviderStateMixin {
   late TabController _tabController;
   bool _isLoading = false;
-  String _searchQuery = '';
   final List<String> _activeFilters = [];
-  String? _userEmail;
-  String? _userName;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _loadDashboardData();
-    _loadUserData();
   }
 
   @override
@@ -51,18 +46,6 @@ class _EnhancedPricingDashboardViewState
 
     setState(() {
       _isLoading = false;
-    });
-  }
-
-  /// Load user data from SharedPreferences
-  Future<void> _loadUserData() async {
-    final sharedPrefs = SharedPreferencesUtils();
-    await sharedPrefs.init(); // Ensure SharedPreferences is initialized
-    setState(() {
-      _userEmail = sharedPrefs.getUserEmail();
-      _userName = sharedPrefs.getString(
-        'First LastName',
-      ); // Using the key defined in SharedPreferencesUtils
     });
   }
 
@@ -127,7 +110,7 @@ class _EnhancedPricingDashboardViewState
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withOpacity(0.1),
+                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -236,7 +219,7 @@ class _EnhancedPricingDashboardViewState
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -250,7 +233,7 @@ class _EnhancedPricingDashboardViewState
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, color: color, size: 20),
@@ -392,11 +375,6 @@ class _EnhancedPricingDashboardViewState
       padding: const EdgeInsets.all(AppDimens.paddingLarge),
       child: EnhancedSearchFilterBar(
         searchHint: AppLocalizations.of(context)!.searchPricingRulesHint,
-        onSearchChanged: (query) {
-          setState(() {
-            _searchQuery = query;
-          });
-        },
         filterOptions: filterOptions,
         onFilterChanged: (filter) {
           if (filter != null) {
@@ -561,23 +539,6 @@ class _EnhancedPricingDashboardViewState
     return Center(
       child: Text(AppLocalizations.of(context)!.configurationsContent),
     );
-  }
-
-  // Navigation methods
-  void _navigateToRevenue() {
-    // Navigate to revenue details
-  }
-
-  void _navigateToClients() {
-    // Navigate to clients
-  }
-
-  void _navigateToInvoices() {
-    // Navigate to invoices
-  }
-
-  void _navigateToRates() {
-    // Navigate to rates
   }
 
   void _navigateToAddRate() {

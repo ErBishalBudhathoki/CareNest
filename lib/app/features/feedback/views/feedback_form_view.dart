@@ -163,7 +163,7 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
             Container(
               padding: const EdgeInsets.all(BauhausDesign.space5),
               decoration: BoxDecoration(
-                color: BauhausDesign.success.withOpacity(0.1),
+                color: BauhausDesign.success.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
                 border: Border.all(color: BauhausDesign.success, width: 2),
               ),
@@ -339,7 +339,7 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
             Container(
               padding: const EdgeInsets.all(BauhausDesign.space3),
               decoration: BoxDecoration(
-                color: BauhausDesign.accent.withOpacity(0.1),
+                color: BauhausDesign.accent.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                 border: Border.all(color: BauhausDesign.accent),
               ),

@@ -118,6 +118,8 @@ class _BauhausIntegrationsSectionState
         }
       });
 
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -127,6 +129,8 @@ class _BauhausIntegrationsSectionState
         ),
       );
     } catch (e) {
+      if (!mounted) return;
+
       setState(() {
         _errorMessage =
             'Failed to ${currentStatus ? 'disconnect' : 'connect'} $integrationName: ${e.toString()}';
@@ -185,6 +189,8 @@ class _BauhausIntegrationsSectionState
         integrationType: integrationKey,
       );
 
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -194,6 +200,8 @@ class _BauhausIntegrationsSectionState
         ),
       );
     } catch (e) {
+      if (!mounted) return;
+
       setState(() {
         _errorMessage = 'Failed to sync $integrationName: ${e.toString()}';
       });
@@ -235,6 +243,8 @@ class _BauhausIntegrationsSectionState
       final isSuccess =
           result['connected'] == true || result['success'] == true;
 
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -249,6 +259,8 @@ class _BauhausIntegrationsSectionState
         ),
       );
     } catch (e) {
+      if (!mounted) return;
+
       setState(() {
         _errorMessage = 'Failed to test $integrationName: ${e.toString()}';
       });
@@ -284,6 +296,8 @@ class _BauhausIntegrationsSectionState
             'integrations.$integrationKey.useCustomCredentials':
                 settings['useCustom'],
           });
+
+          if (!context.mounted) return;
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -357,7 +371,7 @@ class _BauhausIntegrationsSectionState
                             style: GoogleFonts.inter(
                               fontSize: BauhausDesign.fontSm,
                               fontWeight: FontWeight.w400,
-                              color: BauhausDesign.textDark.withOpacity(0.7),
+                              color: BauhausDesign.textDark.withValues(alpha: 0.7),
                             ),
                           ),
                         ],
@@ -516,7 +530,7 @@ class _BauhausIntegrationsSectionState
                 Container(
                   padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.error.withOpacity(0.1),
+                    color: BauhausDesign.error.withValues(alpha: 0.1),
                     border: Border.all(color: BauhausDesign.error, width: 2),
                   ),
                   child: Text(
@@ -581,7 +595,7 @@ class _BauhausIntegrationCategory extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: BauhausDesign.fontXs,
                     fontWeight: FontWeight.w600,
-                    color: BauhausDesign.textDark.withOpacity(0.7),
+                    color: BauhausDesign.textDark.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -592,7 +606,7 @@ class _BauhausIntegrationCategory extends StatelessWidget {
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: BauhausDesign.neutral.withOpacity(0.5),
+                    color: BauhausDesign.neutral.withValues(alpha: 0.5),
                     width: 1,
                   ),
                 ),
@@ -666,7 +680,7 @@ class _BauhausIntegrationItem extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontXs,
                           fontWeight: FontWeight.w400,
-                          color: BauhausDesign.textDark.withOpacity(0.6),
+                          color: BauhausDesign.textDark.withValues(alpha: 0.6),
                         ),
                       ),
                     ],
@@ -683,7 +697,7 @@ class _BauhausIntegrationItem extends StatelessWidget {
                         right: BauhausDesign.space2,
                       ),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.neutral.withOpacity(0.3),
+                        color: BauhausDesign.neutral.withValues(alpha: 0.3),
                         border: Border.all(
                           color: BauhausDesign.neutral,
                           width: 1,
@@ -692,7 +706,7 @@ class _BauhausIntegrationItem extends StatelessWidget {
                       child: Icon(
                         Icons.settings,
                         size: 14,
-                        color: BauhausDesign.textDark.withOpacity(0.7),
+                        color: BauhausDesign.textDark.withValues(alpha: 0.7),
                       ),
                     ),
                   ),
@@ -779,8 +793,8 @@ class _IntegrationActionButton extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: onPressed != null
-              ? color.withOpacity(0.1)
-              : BauhausDesign.neutral.withOpacity(0.3),
+              ? color.withValues(alpha: 0.1)
+              : BauhausDesign.neutral.withValues(alpha: 0.3),
           border: Border.all(
             color: onPressed != null ? color : BauhausDesign.neutral,
             width: 1,
@@ -794,7 +808,7 @@ class _IntegrationActionButton extends StatelessWidget {
               size: 12,
               color: onPressed != null
                   ? color
-                  : BauhausDesign.textDark.withOpacity(0.5),
+                  : BauhausDesign.textDark.withValues(alpha: 0.5),
             ),
             const SizedBox(width: 4),
             Text(
@@ -804,7 +818,7 @@ class _IntegrationActionButton extends StatelessWidget {
                 fontWeight: FontWeight.w700,
                 color: onPressed != null
                     ? color
-                    : BauhausDesign.textDark.withOpacity(0.5),
+                    : BauhausDesign.textDark.withValues(alpha: 0.5),
               ),
             ),
           ],
@@ -964,7 +978,7 @@ class _BauhausStatusMetric extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         border: Border.all(color: color, width: 1),
       ),
       child: Column(
@@ -975,7 +989,7 @@ class _BauhausStatusMetric extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: BauhausDesign.fontXs,
               fontWeight: FontWeight.w600,
-              color: BauhausDesign.textDark.withOpacity(0.7),
+              color: BauhausDesign.textDark.withValues(alpha: 0.7),
               letterSpacing: 0.5,
             ),
           ),
@@ -1100,7 +1114,7 @@ class _IntegrationSettingsDialogState
                   Container(
                     padding: const EdgeInsets.all(BauhausDesign.space3),
                     decoration: BoxDecoration(
-                      color: BauhausDesign.info.withOpacity(0.1),
+                      color: BauhausDesign.info.withValues(alpha: 0.1),
                       border: Border.all(color: BauhausDesign.info, width: 1),
                     ),
                     child: Row(
@@ -1117,7 +1131,7 @@ class _IntegrationSettingsDialogState
                             style: GoogleFonts.inter(
                               fontSize: BauhausDesign.fontXs,
                               fontWeight: FontWeight.w400,
-                              color: BauhausDesign.textDark.withOpacity(0.8),
+                              color: BauhausDesign.textDark.withValues(alpha: 0.8),
                             ),
                           ),
                         ),
@@ -1211,7 +1225,7 @@ class _IntegrationSettingsDialogState
                           hintText: 'Enter your OAuth Client ID',
                           hintStyle: GoogleFonts.inter(
                             fontSize: BauhausDesign.fontSm,
-                            color: BauhausDesign.textDark.withOpacity(0.4),
+                            color: BauhausDesign.textDark.withValues(alpha: 0.4),
                           ),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.all(
@@ -1253,7 +1267,7 @@ class _IntegrationSettingsDialogState
                           hintText: 'Enter your OAuth Client Secret',
                           hintStyle: GoogleFonts.inter(
                             fontSize: BauhausDesign.fontSm,
-                            color: BauhausDesign.textDark.withOpacity(0.4),
+                            color: BauhausDesign.textDark.withValues(alpha: 0.4),
                           ),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.all(
@@ -1269,7 +1283,7 @@ class _IntegrationSettingsDialogState
                               _showClientSecret
                                   ? Icons.visibility_off
                                   : Icons.visibility,
-                              color: BauhausDesign.textDark.withOpacity(0.6),
+                              color: BauhausDesign.textDark.withValues(alpha: 0.6),
                               size: 20,
                             ),
                           ),

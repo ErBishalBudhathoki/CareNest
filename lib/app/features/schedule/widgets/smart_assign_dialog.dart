@@ -146,7 +146,7 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space2),
             decoration: BoxDecoration(
-              color: BauhausDesign.accent.withOpacity(0.15),
+              color: BauhausDesign.accent.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               border: Border.all(color: BauhausDesign.accent, width: 1.5),
               boxShadow: const [BauhausDesign.shadowHardXs],
@@ -192,7 +192,7 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space4),
             decoration: BoxDecoration(
-              color: BauhausDesign.error.withOpacity(0.1),
+              color: BauhausDesign.error.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
               border: Border.all(color: BauhausDesign.error),
             ),
@@ -230,7 +230,7 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space4),
             decoration: BoxDecoration(
-              color: BauhausDesign.secondary.withOpacity(0.1),
+              color: BauhausDesign.secondary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
               border: Border.all(color: BauhausDesign.secondary),
             ),
@@ -288,7 +288,7 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
         duration: const Duration(milliseconds: 150),
         decoration: BoxDecoration(
           color: isSelected
-              ? BauhausDesign.primary.withOpacity(0.05)
+              ? BauhausDesign.primary.withValues(alpha: 0.05)
               : BauhausDesign.surfaceLight,
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
           border: Border.all(
@@ -309,13 +309,13 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
                   color: rank == 0
                       ? BauhausDesign.accent
                       : rank == 1
-                      ? BauhausDesign.neutral.withOpacity(0.3)
+                      ? BauhausDesign.neutral.withValues(alpha: 0.3)
                       : BauhausDesign.backgroundLight,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(
                     color: rank == 0
                         ? BauhausDesign.neutral
-                        : BauhausDesign.neutral.withOpacity(0.5),
+                        : BauhausDesign.neutral.withValues(alpha: 0.5),
                     width: 1,
                   ),
                 ),
@@ -340,7 +340,7 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: _getScoreColor(rec.matchScore).withOpacity(0.15),
+                  color: _getScoreColor(rec.matchScore).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(
                     color: _getScoreColor(rec.matchScore),
@@ -376,7 +376,7 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
                           Icon(
                             Icons.place,
                             size: 12,
-                            color: BauhausDesign.neutral.withOpacity(0.7),
+                            color: BauhausDesign.neutral.withValues(alpha: 0.7),
                           ),
                           const SizedBox(width: 2),
                           Text(
@@ -405,7 +405,7 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
                       Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: BauhausDesign.accent.withOpacity(0.1),
+                          color: BauhausDesign.accent.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Row(
@@ -480,7 +480,7 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
             borderRadius: BorderRadius.circular(2),
             child: LinearProgressIndicator(
               value: score / 100,
-              backgroundColor: BauhausDesign.neutral.withOpacity(0.2),
+              backgroundColor: BauhausDesign.neutral.withValues(alpha: 0.2),
               valueColor: AlwaysStoppedAnimation<Color>(color),
             ),
           ),

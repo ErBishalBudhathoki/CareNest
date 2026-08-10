@@ -46,8 +46,9 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
     // Sanitize range start
     _rangeStart = widget.initialStartDate;
     if (_rangeStart != null) {
-      if (_rangeStart!.isBefore(widget.firstDate))
+      if (_rangeStart!.isBefore(widget.firstDate)) {
         _rangeStart = widget.firstDate;
+      }
       if (_rangeStart!.isAfter(widget.lastDate)) _rangeStart = widget.lastDate;
     }
 
@@ -453,7 +454,7 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
                     calendarStyle: CalendarStyle(
                       isTodayHighlighted: false,
                       outsideDaysVisible: false,
-                      rangeHighlightColor: selectionColor.withOpacity(0.2),
+                      rangeHighlightColor: selectionColor.withValues(alpha: 0.2),
                       rangeStartDecoration: const BoxDecoration(
                         color: selectionColor,
                         shape: BoxShape.rectangle,

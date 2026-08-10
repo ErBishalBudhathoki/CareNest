@@ -380,7 +380,7 @@ class _EditTrainingModuleDialogState
                 ),
                 const SizedBox(height: BauhausDesign.space3),
                 DropdownButtonFormField<String>(
-                  value: _contentType,
+                  initialValue: _contentType,
                   decoration: BauhausDesign.inputDecoration('').copyWith(
                     labelText: AppLocalizations.of(context)!.contentTypeLabel,
                   ),
@@ -538,7 +538,7 @@ class _AddTrainingModuleDialogState
                 ),
                 const SizedBox(height: BauhausDesign.space3),
                 DropdownButtonFormField<String>(
-                  value: _contentType,
+                  initialValue: _contentType,
                   decoration: BauhausDesign.inputDecoration('').copyWith(
                     labelText: AppLocalizations.of(context)!.contentTypeLabel,
                   ),

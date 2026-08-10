@@ -101,12 +101,11 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
     final result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: const ['csv'],
-      withData: true,
     );
 
     if (result == null || result.files.isEmpty) return;
-    final bytes = result.files.first.bytes;
-    if (bytes == null || bytes.isEmpty) return;
+    final bytes = await result.files.first.readAsBytes();
+    if (bytes.isEmpty) return;
 
     final csvText = utf8.decode(bytes, allowMalformed: true);
     final rows = _parseCsvRows(csvText);

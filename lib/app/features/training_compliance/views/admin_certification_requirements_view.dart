@@ -309,7 +309,8 @@ class _RequirementDialogState extends ConsumerState<_RequirementDialog> {
             } else {
               await vm.createRequirement(data);
             }
-            if (mounted) Navigator.pop(context);
+            if (!context.mounted) return;
+            Navigator.pop(context);
           },
         ),
       ],

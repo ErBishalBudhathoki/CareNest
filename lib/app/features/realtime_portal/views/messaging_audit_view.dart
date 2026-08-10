@@ -134,7 +134,6 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(messagingViewModelProvider);
-    final textTheme = BauhausDesign.getTextTheme(context);
     final isViewingChat = state.activeConversation != null;
 
     return Scaffold(
@@ -449,11 +448,11 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
                         decoration: BoxDecoration(
                           color: isClient
                               ? BauhausDesign.surfaceWhite
-                              : BauhausDesign.neutral.withOpacity(0.1),
+                              : BauhausDesign.neutral.withValues(alpha: 0.1),
                           border: Border.all(
                             color: isClient
                                 ? BauhausDesign.neutral
-                                : BauhausDesign.neutral.withOpacity(0.5),
+                                : BauhausDesign.neutral.withValues(alpha: 0.5),
                             width: 1.5,
                           ),
                           boxShadow: isClient

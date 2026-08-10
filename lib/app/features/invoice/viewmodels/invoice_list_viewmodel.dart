@@ -122,16 +122,6 @@ class InvoiceListViewModel extends Notifier<InvoiceListState> {
 
       if (result['success'] == true) {
         // Update local state
-        final updatedInvoices = state.invoices.map((invoice) {
-          if (invoice.id == invoiceId) {
-            // We need to create a copy with new status.
-            // Assuming InvoiceListModel has copyWith or we re-fetch.
-            // Since InvoiceListModel is likely immutable and might not have copyWith exposed cleanly,
-            // we will reload the list for simplicity and data consistency.
-            return invoice;
-          }
-          return invoice;
-        }).toList();
 
         // Actually, let's just reload to get fresh data
         loadInvoices(organizationId);

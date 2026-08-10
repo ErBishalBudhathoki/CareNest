@@ -25,7 +25,7 @@ class GlassCard extends StatelessWidget {
         colorOpacity: 0.06,
         child: Material(
           elevation: elevation,
-          color: theme.colorScheme.surface.withOpacity(0.1),
+          color: theme.colorScheme.surface.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(32),
           shadowColor: Colors.black26,
           child: Padding(

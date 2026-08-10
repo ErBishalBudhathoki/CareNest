@@ -171,7 +171,7 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
                       right: 0,
                       child: Container(
                         height: 150,
-                        color: colorBlue.withOpacity(0.16),
+                        color: colorBlue.withValues(alpha: 0.16),
                       ),
                     ),
 
@@ -213,7 +213,7 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
                                   padding: const EdgeInsets.all(12),
                                   margin: const EdgeInsets.only(bottom: 24),
                                   decoration: BoxDecoration(
-                                    color: colorRed.withOpacity(0.1),
+                                    color: colorRed.withValues(alpha: 0.1),
                                     border: Border.all(color: colorRed),
                                   ),
                                   child: Text(

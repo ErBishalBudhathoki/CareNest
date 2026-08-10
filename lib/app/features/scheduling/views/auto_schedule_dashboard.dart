@@ -45,7 +45,7 @@ class AutoScheduleDashboard extends ConsumerWidget {
                         final leadingIcon = Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: BauhausDesign.secondary.withOpacity(0.1),
+                            color: BauhausDesign.secondary.withValues(alpha: 0.1),
                             border: Border.all(
                               color: BauhausDesign.secondary,
                               width: 2,

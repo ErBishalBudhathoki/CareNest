@@ -120,7 +120,7 @@ class _RiskAssessmentViewState extends ConsumerState<RiskAssessmentView> {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: riskColor.withOpacity(0.1),
+                color: riskColor.withValues(alpha: 0.1),
                 border: Border.all(color: riskColor, width: 3),
                 shape: BoxShape.circle,
               ),
@@ -151,7 +151,7 @@ class _RiskAssessmentViewState extends ConsumerState<RiskAssessmentView> {
                     'Based on recent incident patterns and health indicators.',
                     style: BauhausDesign.getTextTheme(context).bodySmall
                         ?.copyWith(
-                          color: BauhausDesign.textDark.withOpacity(0.7),
+                          color: BauhausDesign.textDark.withValues(alpha: 0.7),
                         ),
                   ),
                 ],
@@ -217,7 +217,7 @@ class _RiskAssessmentViewState extends ConsumerState<RiskAssessmentView> {
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             border: Border.all(color: color, width: 2),
           ),
           child: Icon(icon, color: color),

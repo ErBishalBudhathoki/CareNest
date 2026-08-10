@@ -60,7 +60,6 @@ class WorkforcePlanningViewModel extends Notifier<WorkforcePlanningState> {
 
   @override
   WorkforcePlanningState build() {
-    final repository = ref.watch(workforceRepositoryProvider);
 
     return WorkforcePlanningState();
   }

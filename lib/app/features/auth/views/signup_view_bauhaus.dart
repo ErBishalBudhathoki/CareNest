@@ -131,7 +131,6 @@ class _BauhausSignupViewState extends ConsumerState<BauhausSignupView> {
   Widget build(BuildContext context) {
     const colorRed = Color(0xFFD62D24);
     const colorBlue = Color(0xFF1E5AA8);
-    const colorYellow = Color(0xFFFFD100);
     const colorBlack = Color(0xFF1A1A1A);
 
     return Scaffold(
@@ -168,7 +167,7 @@ class _BauhausSignupViewState extends ConsumerState<BauhausSignupView> {
                           padding: const EdgeInsets.all(12),
                           margin: const EdgeInsets.only(bottom: 24),
                           decoration: BoxDecoration(
-                            color: colorRed.withOpacity(0.1),
+                            color: colorRed.withValues(alpha: 0.1),
                             border: Border.all(color: colorRed),
                           ),
                           child: Text(

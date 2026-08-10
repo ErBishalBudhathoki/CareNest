@@ -122,8 +122,9 @@ class EarningsRepository {
   ]) async {
     final body = {'rate': rate, 'type': type};
 
-    if (classificationLevel != null)
+    if (classificationLevel != null) {
       body['classificationLevel'] = classificationLevel;
+    }
     if (payPoint != null) body['payPoint'] = payPoint;
     if (stream != null) body['stream'] = stream;
     if (employmentType != null) body['employmentType'] = employmentType;

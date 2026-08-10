@@ -386,7 +386,7 @@ class NotificationSettingsView extends ConsumerWidget {
                         enabledThumbRadius: 10,
                       ),
                       activeTrackColor: BauhausDesign.secondary,
-                      inactiveTrackColor: BauhausDesign.neutral.withOpacity(
+                      inactiveTrackColor: BauhausDesign.neutral.withValues(alpha: 
                         0.2,
                       ),
                       thumbColor: BauhausDesign.accent,
@@ -496,7 +496,7 @@ class NotificationSettingsView extends ConsumerWidget {
       width: 34,
       height: 34,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
+        color: color.withValues(alpha: 0.12),
         border: Border.all(color: color, width: 2),
       ),
       child: Icon(icon, size: 18, color: color),

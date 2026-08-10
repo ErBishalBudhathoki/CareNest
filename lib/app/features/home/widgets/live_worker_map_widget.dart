@@ -37,7 +37,7 @@ class LiveWorkerMapWidget extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: BauhausColors.primaryYellow.withOpacity(0.1),
+                    color: BauhausColors.primaryYellow.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
@@ -131,7 +131,7 @@ class LiveWorkerMapWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 4,
                           ),
                         ],
@@ -213,9 +213,9 @@ class LiveWorkerMapWidget extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.05),
+              color: statusColor.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: statusColor.withOpacity(0.2)),
+              border: Border.all(color: statusColor.withValues(alpha: 0.2)),
             ),
             child: Row(
               children: [
@@ -260,7 +260,7 @@ class LiveWorkerMapWidget extends StatelessWidget {
                 ),
                 Icon(
                   Icons.chevron_right,
-                  color: statusColor.withOpacity(0.5),
+                  color: statusColor.withValues(alpha: 0.5),
                   size: 18,
                 ),
               ],

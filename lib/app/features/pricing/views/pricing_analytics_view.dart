@@ -22,37 +22,7 @@ class PricingAnalyticsView extends StatefulWidget {
 class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  final String _selectedPeriod = 'Last 30 Days';
   String _selectedMetric = 'Revenue';
-  final bool _isLoading = false;
-
-  // Mock analytics data
-  final Map<String, dynamic> _analyticsData = {
-    'revenue': {
-      'total': 125000.0,
-      'change': 12.5,
-      'trend': 'up',
-      'data': [85000, 92000, 88000, 95000, 102000, 108000, 125000],
-    },
-    'averageRate': {
-      'total': 85.50,
-      'change': -2.3,
-      'trend': 'down',
-      'data': [87.2, 86.8, 87.5, 86.2, 85.9, 85.1, 85.5],
-    },
-    'utilizationRate': {
-      'total': 78.5,
-      'change': 5.2,
-      'trend': 'up',
-      'data': [72, 74, 76, 75, 77, 79, 78.5],
-    },
-    'profitMargin': {
-      'total': 23.8,
-      'change': 1.8,
-      'trend': 'up',
-      'data': [21.5, 22.1, 21.8, 22.5, 23.2, 23.5, 23.8],
-    },
-  };
 
   final List<Map<String, dynamic>> _topServices = [
     {
@@ -191,7 +161,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withOpacity(0.1),
+                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -296,7 +266,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -310,7 +280,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, color: color, size: 20),
@@ -353,149 +323,6 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
     );
   }
 
-  Widget _buildKPICards() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: _buildKPICard(
-                  AppLocalizations.of(context)!.totalRevenue,
-                  '\$${(_analyticsData['revenue']['total'] as double).toStringAsFixed(0)}',
-                  '${_analyticsData['revenue']['change']}%',
-                  _analyticsData['revenue']['trend'] == 'up',
-                  Icons.attach_money,
-                  Colors.green,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildKPICard(
-                  AppLocalizations.of(context)!.avgRate,
-                  '\$${(_analyticsData['averageRate']['total'] as double).toStringAsFixed(2)}',
-                  '${_analyticsData['averageRate']['change']}%',
-                  _analyticsData['averageRate']['trend'] == 'up',
-                  Icons.trending_up,
-                  Colors.blue,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildKPICard(
-                  AppLocalizations.of(context)!.utilization,
-                  '${(_analyticsData['utilizationRate']['total'] as double).toStringAsFixed(1)}%',
-                  '${_analyticsData['utilizationRate']['change']}%',
-                  _analyticsData['utilizationRate']['trend'] == 'up',
-                  Icons.schedule,
-                  Colors.orange,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildKPICard(
-                  AppLocalizations.of(context)!.profitMargin,
-                  '${(_analyticsData['profitMargin']['total'] as double).toStringAsFixed(1)}%',
-                  '${_analyticsData['profitMargin']['change']}%',
-                  _analyticsData['profitMargin']['trend'] == 'up',
-                  Icons.pie_chart,
-                  Colors.purple,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.3, end: 0);
-  }
-
-  Widget _buildKPICard(
-    String title,
-    String value,
-    String change,
-    bool isPositive,
-    IconData icon,
-    Color color,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, color: color, size: 24),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: (isPositive ? Colors.green : Colors.red).withOpacity(
-                    0.1,
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      isPositive ? Icons.arrow_upward : Icons.arrow_downward,
-                      size: 12,
-                      color: isPositive ? Colors.green : Colors.red,
-                    ),
-                    const SizedBox(width: 2),
-                    Text(
-                      change,
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
-                        color: isPositive ? Colors.green : Colors.red,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildTabContent() {
     return Container(
       margin: const EdgeInsets.all(16),
@@ -504,7 +331,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 10,
             offset: const Offset(0, 2),
@@ -685,7 +512,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -721,7 +548,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: (isPositive ? Colors.green : Colors.red).withOpacity(
+                  color: (isPositive ? Colors.green : Colors.red).withValues(alpha: 
                     0.1,
                   ),
                   borderRadius: BorderRadius.circular(12),
@@ -822,7 +649,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -849,7 +676,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: trendColor.withOpacity(0.1),
+                  color: trendColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(

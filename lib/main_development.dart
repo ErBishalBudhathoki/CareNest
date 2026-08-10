@@ -223,9 +223,9 @@ Future<void> _initializeAppCheck() async {
     await AppCheckProviderResolver.seedFixedDebugToken();
 
     await FirebaseAppCheck.instance.activate(
-      webProvider: ReCaptchaV3Provider(BuildConfig.recaptchaSiteKey),
-      androidProvider: AndroidProvider.debug,
-      appleProvider: AppleProvider.debug,
+      providerWeb: ReCaptchaV3Provider(BuildConfig.recaptchaSiteKey),
+      providerAndroid: const AndroidDebugProvider(),
+      providerApple: const AppleDebugProvider(),
     );
 
     debugPrint('✅ App Check activated successfully');

@@ -212,7 +212,7 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
         onChanged: _filterUsers,
         decoration: InputDecoration(
           hintText: 'Search employees...',
-          hintStyle: TextStyle(color: BauhausDesign.textMuted.withOpacity(0.5)),
+          hintStyle: TextStyle(color: BauhausDesign.textMuted.withValues(alpha: 0.5)),
           filled: false,
           fillColor: Colors.transparent,
           prefixIcon: Icon(Icons.search, color: BauhausDesign.textMuted),

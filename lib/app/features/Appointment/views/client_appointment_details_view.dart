@@ -269,7 +269,7 @@ class _ClientAndAppointmentDetailsState
       await sharedPrefs.init();
       final organizationId = sharedPrefs.getString('organizationId');
 
-      var stopTime = await apiMethod.stopTimer(
+      await apiMethod.stopTimer(
         userEmail: widget.userEmail,
         organizationId: organizationId,
       );
@@ -369,6 +369,8 @@ class _ClientAndAppointmentDetailsState
       try {
         // Get fresh data before showing dialog
         await _loadClientData();
+
+        if (!mounted) return;
 
         if (clientAndAppointmentData['data'] == null ||
             clientAndAppointmentData['data']['assignedClient'] == null) {
@@ -1010,7 +1012,7 @@ class _ClientAndAppointmentDetailsState
                 ),
                 const SizedBox(height: BauhausDesign.space4),
                 DropdownButtonFormField<String>(
-                  value: urgency,
+                  initialValue: urgency,
                   dropdownColor: BauhausDesign.surfaceWhite,
                   iconEnabledColor: BauhausDesign.neutral,
                   style: GoogleFonts.roboto(
@@ -1144,6 +1146,7 @@ class _ClientAndAppointmentDetailsState
                                 details['ndisItem'] = shift['ndisItem'];
                               }
 
+                              if (!context.mounted) return;
                               Navigator.pop(context);
 
                               try {
@@ -1156,7 +1159,7 @@ class _ClientAndAppointmentDetailsState
                                     );
 
                                 if (response['success'] == true) {
-                                  if (mounted) {
+                                  if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text('Swap offer created!'),
@@ -1164,7 +1167,7 @@ class _ClientAndAppointmentDetailsState
                                     );
                                   }
                                 } else {
-                                  if (mounted) {
+                                  if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
@@ -1298,7 +1301,7 @@ class _ClientAndAppointmentDetailsState
     rows.add(
       TableRow(
         decoration: BoxDecoration(
-          color: BauhausDesign.primary.withOpacity(0.1),
+          color: BauhausDesign.primary.withValues(alpha: 0.1),
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(BauhausDesign.radiusSm),
             topRight: Radius.circular(BauhausDesign.radiusSm),
@@ -1456,7 +1459,7 @@ class _ClientAndAppointmentDetailsState
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space3),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.primary.withOpacity(0.1),
+                  color: BauhausDesign.primary.withValues(alpha: 0.1),
                   border: Border.all(color: BauhausDesign.primary, width: 2),
                 ),
                 child: const Icon(
@@ -1500,7 +1503,7 @@ class _ClientAndAppointmentDetailsState
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space3),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.primary.withOpacity(0.1),
+                  color: BauhausDesign.primary.withValues(alpha: 0.1),
                   border: Border.all(color: BauhausDesign.primary, width: 2),
                 ),
                 child: const Icon(
@@ -1853,8 +1856,8 @@ class _ClientAndAppointmentDetailsState
                   padding: const EdgeInsets.all(BauhausDesign.space1),
                   decoration: BoxDecoration(
                     color: isAttended
-                        ? BauhausDesign.success.withOpacity(0.1)
-                        : BauhausDesign.error.withOpacity(0.1),
+                        ? BauhausDesign.success.withValues(alpha: 0.1)
+                        : BauhausDesign.error.withValues(alpha: 0.1),
                     border: Border.all(
                       color: isAttended
                           ? BauhausDesign.success
@@ -2276,6 +2279,7 @@ class _ClientAndAppointmentDetailsState
                         if (success) {
                           timerService.setTimerClientEmail(widget.clientEmail);
                           // Show success message
+                          if (!mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Timer started successfully'),

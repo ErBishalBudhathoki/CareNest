@@ -55,6 +55,7 @@ class ExpenseDetailView extends ConsumerWidget {
                   ),
                 ),
               ).then((updated) {
+                if (!context.mounted) return;
                 if (updated == true) {
                   Navigator.pop(
                     context,

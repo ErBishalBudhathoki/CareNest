@@ -53,7 +53,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: BauhausDesign.neutral.withOpacity(0.3),
+                  color: BauhausDesign.neutral.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -189,7 +189,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
               preferredSize: const Size.fromHeight(1),
               child: Container(
                 height: 1,
-                color: BauhausDesign.neutral.withOpacity(0.2),
+                color: BauhausDesign.neutral.withValues(alpha: 0.2),
               ),
             ),
           ),
@@ -443,18 +443,18 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
     switch (request.status.name.toLowerCase()) {
       case 'approved':
         statusColor = BauhausDesign.success;
-        statusBgColor = BauhausDesign.success.withOpacity(0.1);
+        statusBgColor = BauhausDesign.success.withValues(alpha: 0.1);
         statusIcon = Icons.check_circle;
         break;
       case 'rejected':
       case 'declined':
         statusColor = BauhausDesign.error;
-        statusBgColor = BauhausDesign.error.withOpacity(0.1);
+        statusBgColor = BauhausDesign.error.withValues(alpha: 0.1);
         statusIcon = Icons.cancel;
         break;
       default:
         statusColor = BauhausDesign.warning;
-        statusBgColor = BauhausDesign.warning.withOpacity(0.1);
+        statusBgColor = BauhausDesign.warning.withValues(alpha: 0.1);
         statusIcon = Icons.hourglass_empty;
     }
 
@@ -509,7 +509,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                   Container(
                     padding: const EdgeInsets.all(BauhausDesign.space2),
                     decoration: BoxDecoration(
-                      color: BauhausDesign.primary.withOpacity(0.1),
+                      color: BauhausDesign.primary.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -546,7 +546,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                 decoration: BoxDecoration(
                   color: statusBgColor,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-                  border: Border.all(color: statusColor.withOpacity(0.2)),
+                  border: Border.all(color: statusColor.withValues(alpha: 0.2)),
                 ),
                 child: Row(
                   children: [
@@ -589,7 +589,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
               padding: const EdgeInsets.all(BauhausDesign.space2),
               width: double.infinity,
               decoration: BoxDecoration(
-                color: BauhausDesign.neutral.withOpacity(0.05),
+                color: BauhausDesign.neutral.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               ),
               child: Text(

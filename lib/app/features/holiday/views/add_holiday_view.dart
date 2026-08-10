@@ -51,7 +51,7 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen> {
               surface: BauhausDesign.surfaceWhite,
               onSurface: BauhausDesign.textDark,
             ),
-            dialogBackgroundColor: BauhausDesign.surfaceWhite,
+            dialogTheme: DialogThemeData(backgroundColor: BauhausDesign.surfaceWhite),
           ),
           child: child!,
         );
@@ -100,7 +100,7 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen> {
                     Container(
                       padding: const EdgeInsets.all(BauhausDesign.space3),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.secondary.withOpacity(0.1),
+                        color: BauhausDesign.secondary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(
                           BauhausDesign.radiusMd,
                         ),

@@ -110,10 +110,11 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
         await _returnToAdminDashboard();
-        return false;
       },
       child: Scaffold(
         key: _scaffoldKey,
@@ -179,7 +180,7 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
           Text(
             'for ${widget.userName}',
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-              color: BauhausDesign.surfaceWhite.withOpacity(0.7),
+              color: BauhausDesign.surfaceWhite.withValues(alpha: 0.7),
             ),
           ),
         ],
@@ -279,7 +280,7 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
                           width: 50,
                           height: 50,
                           decoration: BoxDecoration(
-                            color: BauhausDesign.primary.withOpacity(0.1),
+                            color: BauhausDesign.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(25),
                             border: Border.all(
                               color: BauhausDesign.primary,
@@ -354,7 +355,7 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
             Navigator.of(dialogContext).pop();
             // Add a small delay to ensure dialog is fully closed before navigation
             Future.delayed(const Duration(milliseconds: 100), () {
-              // if (mounted) {
+              if (!mounted) return;
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -370,7 +371,6 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
                   ),
                 ),
               );
-              // }
             });
           },
         );

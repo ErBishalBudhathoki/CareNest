@@ -339,12 +339,6 @@ class _NdisPricingManagementViewState
         normalized == 'ndis_default';
   }
 
-  bool _isClientSpecificSource(String? source) {
-    if (source == null) return false;
-    final normalized = source.toLowerCase().trim();
-    return normalized == 'client_specific' || normalized == 'client-specific';
-  }
-
   double? _toPositiveDouble(dynamic value) {
     if (value is num && value > 0) return value.toDouble();
     if (value is String) {
@@ -539,36 +533,6 @@ class _NdisPricingManagementViewState
 
     // No configured billable rate.
     return 0.0;
-  }
-
-  /// Get pricing source description for display
-  String _getPricingSource(NDISItem item) {
-    final pricingData = _pricingData[item.itemNumber];
-    final customPricing =
-        pricingData?['customPricing'] as Map<String, dynamic>?;
-    if (customPricing != null) {
-      final source = customPricing['source']?.toString();
-
-      if (_isFallbackSource(source)) {
-        return AppLocalizations.of(context)!.sourceFallbackBaseRate;
-      }
-
-      if (_extractResolvedPrice(customPricing) != null) {
-        final isClientSpecific =
-            customPricing['clientId'] != null ||
-            _isClientSpecificSource(source);
-        return isClientSpecific
-            ? AppLocalizations.of(context)!.clientSpecificRate
-            : AppLocalizations.of(context)!.organizationRate;
-      }
-    }
-
-    if (_fallbackBaseRate != null && _fallbackBaseRate! > 0) {
-      return AppLocalizations.of(context)!.sourceFallbackBaseRate;
-    }
-
-    // No configured pricing source found.
-    return AppLocalizations.of(context)!.missingBaseRate;
   }
 
   double? _resolveStatePrice(dynamic capValue, String targetState) {
@@ -870,12 +834,6 @@ class _NdisPricingManagementViewState
     return false;
   }
 
-  bool _isTtpItem(NDISItem item) {
-    final number = item.itemNumber.trim().toUpperCase();
-    final name = item.itemName.trim().toUpperCase();
-    return number.endsWith('_T') || name.contains('TTP');
-  }
-
   /// Toggle price override section for an item
   void _togglePriceOverride(String itemNumber) {
     setState(() {
@@ -966,6 +924,8 @@ class _NdisPricingManagementViewState
         );
       }
 
+      if (!mounted) return;
+
       if (result['success'] == true) {
         // Update local pricing data
         setState(() {
@@ -994,45 +954,14 @@ class _NdisPricingManagementViewState
         );
       }
     } catch (e) {
+      if (!mounted) return;
+
       log.severe("Failed to save custom pricing: $e");
       _showSnackBar(AppLocalizations.of(context)!.errorOccurred, isError: true);
     } finally {
       setState(() {
         _isSavingPrice[item.itemNumber] = false;
       });
-    }
-  }
-
-  /// Remove custom pricing for an NDIS item
-  Future<void> _removeCustomPricing(NDISItem item) async {
-    if (widget.organizationId == null) return;
-
-    try {
-      final result = await _apiMethod.removeCustomPricing(
-        widget.organizationId!,
-        item.itemNumber,
-      );
-
-      if (result['success'] == true) {
-        // Update local pricing data
-        setState(() {
-          _pricingData[item.itemNumber] = {
-            ..._pricingData[item.itemNumber] ?? {},
-            'customPricing': null,
-          };
-          _showPriceOverride[item.itemNumber] = false;
-        });
-
-        _showSnackBar(AppLocalizations.of(context)!.customPricingRemoved);
-      } else {
-        _showSnackBar(
-          result['message'] ?? AppLocalizations.of(context)!.errorOccurred,
-          isError: true,
-        );
-      }
-    } catch (e) {
-      log.severe("Failed to remove custom pricing: $e");
-      _showSnackBar(AppLocalizations.of(context)!.errorOccurred, isError: true);
     }
   }
 

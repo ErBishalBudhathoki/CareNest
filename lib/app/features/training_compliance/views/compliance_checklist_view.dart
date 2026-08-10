@@ -104,7 +104,7 @@ class _ComplianceChecklistViewState
           const SizedBox(height: BauhausDesign.space3),
           LinearProgressIndicator(
             value: totalItems > 0 ? completedItems / totalItems : 0,
-            backgroundColor: BauhausDesign.neutral.withOpacity(0.1),
+            backgroundColor: BauhausDesign.neutral.withValues(alpha: 0.1),
             valueColor: AlwaysStoppedAnimation<Color>(
               isCompleted ? BauhausDesign.success : BauhausDesign.accent,
             ),
@@ -199,7 +199,7 @@ class _ChecklistDetailViewState extends ConsumerState<ChecklistDetailView> {
                   decoration: BoxDecoration(
                     color: BauhausDesign.surfaceLight,
                     border: Border.all(
-                      color: BauhausDesign.neutral.withOpacity(0.15),
+                      color: BauhausDesign.neutral.withValues(alpha: 0.15),
                     ),
                   ),
                   child: Row(

@@ -167,7 +167,7 @@ class _CommunicationHubDashboardState
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
               color: isSelected
                   ? BauhausDesign.surfaceWhite
-                  : BauhausDesign.textDark.withOpacity(0.7),
+                  : BauhausDesign.textDark.withValues(alpha: 0.7),
               fontWeight: FontWeight.w900,
               letterSpacing: 1.2,
             ),
@@ -233,7 +233,7 @@ class _CommunicationHubDashboardState
               width: 52,
               height: 52,
               decoration: BoxDecoration(
-                color: BauhausDesign.secondary.withOpacity(0.1),
+                color: BauhausDesign.secondary.withValues(alpha: 0.1),
                 border: Border.all(color: BauhausDesign.neutral, width: 2),
                 boxShadow: const [BauhausDesign.shadowHardXs],
               ),
@@ -253,7 +253,7 @@ class _CommunicationHubDashboardState
             subtitle: Text(
               conversation.lastMessage,
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                color: BauhausDesign.textDark.withOpacity(0.6),
+                color: BauhausDesign.textDark.withValues(alpha: 0.6),
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -1035,7 +1035,7 @@ class _CommunicationHubDashboardState
                                         'timestamp': DateTime.now()
                                             .toIso8601String(),
                                       });
-                                  if (mounted) {
+                                  if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
@@ -1146,7 +1146,7 @@ class _CommunicationHubDashboardState
                         message.sentAt,
                         style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
-                              color: BauhausDesign.textDark.withOpacity(0.7),
+                              color: BauhausDesign.textDark.withValues(alpha: 0.7),
                             ),
                       ),
                     );
@@ -1212,7 +1212,7 @@ class _CommsBroadcastTile extends StatelessWidget {
                   style: BauhausDesign.getTextTheme(context).bodySmall
                       ?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: BauhausDesign.textDark.withOpacity(0.7),
+                        color: BauhausDesign.textDark.withValues(alpha: 0.7),
                       ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -1262,12 +1262,13 @@ class _CommsBroadcastHistoryTile extends StatelessWidget {
     final now = DateTime.now();
     final diff = now.difference(broadcast.createdAt);
     String timeAgo;
-    if (diff.inDays > 0)
+    if (diff.inDays > 0) {
       timeAgo = '${diff.inDays}d ago';
-    else if (diff.inHours > 0)
+    } else if (diff.inHours > 0) {
       timeAgo = '${diff.inHours}h ago';
-    else
+    } else {
       timeAgo = '${diff.inMinutes}m ago';
+    }
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -1293,7 +1294,7 @@ class _CommsBroadcastHistoryTile extends StatelessWidget {
               Text(
                 timeAgo,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textDark.withOpacity(0.6),
+                  color: BauhausDesign.textDark.withValues(alpha: 0.6),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -1318,7 +1319,7 @@ class _CommsBroadcastHistoryTile extends StatelessWidget {
                 broadcast.group,
                 style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
                   fontSize: 10,
-                  color: BauhausDesign.textDark.withOpacity(0.7),
+                  color: BauhausDesign.textDark.withValues(alpha: 0.7),
                 ),
               ),
               const Spacer(),
