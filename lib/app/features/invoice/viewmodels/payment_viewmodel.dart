@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/payment_repository.dart';
 import '../services/stripe_payment_service.dart';
-import '../services/recurring_payment_service.dart';
 
 final paymentViewModelProvider = AsyncNotifierProvider<PaymentViewModel, void>(
   PaymentViewModel.new,

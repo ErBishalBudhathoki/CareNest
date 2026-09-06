@@ -111,8 +111,8 @@ class PaymentRepository {
         'invoiceId': invoiceId,
         'frequency': frequency,
         'consentAccepted': consentAccepted,
-        if (consentIp != null) 'consentIp': consentIp,
-        if (consentUserAgent != null) 'consentUserAgent': consentUserAgent,
+        'consentIp': ?consentIp,
+        'consentUserAgent': ?consentUserAgent,
       },
     );
   }
