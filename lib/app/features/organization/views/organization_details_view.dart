@@ -24,7 +24,6 @@ import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:carenest/app/features/invoice/repositories/payment_repository.dart';
-import 'package:carenest/app/features/invoice/viewmodels/payment_viewmodel.dart';
 
 class OrganizationDetailsView extends ConsumerStatefulWidget {
   final String? organizationId;
