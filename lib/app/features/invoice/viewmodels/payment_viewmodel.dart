@@ -1,13 +1,41 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/payment_repository.dart';
+import '../services/stripe_payment_service.dart';
+import '../services/recurring_payment_service.dart';
 
 final paymentViewModelProvider = AsyncNotifierProvider<PaymentViewModel, void>(
   PaymentViewModel.new,
 );
 
+final stripeConnectStatusProvider = FutureProvider.autoDispose
+    .family<bool, String>((ref, organizationId) async {
+      final result = await ref
+          .watch(paymentRepositoryProvider)
+          .getStripeConnectStatus(organizationId);
+      if (result['success'] != true) {
+        throw Exception(result['message'] ?? 'Failed to check Stripe status');
+      }
+      return result['detailsSubmitted'] == true &&
+          result['chargesEnabled'] == true &&
+          result['payoutsEnabled'] == true;
+    });
+
+final organizationSubscriptionProvider = FutureProvider.autoDispose
+    .family<String, String>((ref, organizationId) async {
+      final result = await ref
+          .watch(paymentRepositoryProvider)
+          .getSubscriptionStatus(organizationId);
+      if (result['success'] != true) {
+        throw Exception(result['message'] ?? 'Failed to check subscription status');
+      }
+      return result['status'] as String? ?? 'none';
+    });
+
 class PaymentViewModel extends AsyncNotifier<void> {
   late final PaymentRepository _repository;
+  final StripePaymentService _stripePaymentService =
+      const StripePaymentService();
 
   @override
   FutureOr<void> build() {
@@ -15,29 +43,34 @@ class PaymentViewModel extends AsyncNotifier<void> {
     return null;
   }
 
-  Future<void> createPaymentIntent({
+  Future<void> payInvoice({
     required String invoiceId,
-    required double amount,
-    required String currency,
-    required String clientEmail,
+    required String organizationId,
   }) async {
     state = const AsyncLoading();
     try {
       final result = await _repository.createPaymentIntent(
         invoiceId: invoiceId,
-        amount: amount,
-        currency: currency,
-        clientEmail: clientEmail,
+        organizationId: organizationId,
       );
 
-      if (result['clientSecret'] != null) {
-        state = const AsyncData(null);
-        // In a real app, we would return the clientSecret to the UI to initialize Stripe Elements
-      } else {
+      final clientSecret = result['clientSecret'] as String?;
+      final publishableKey = result['publishableKey'] as String?;
+      final connectedAccountId = result['connectedAccountId'] as String?;
+      if (clientSecret == null ||
+          publishableKey == null ||
+          connectedAccountId == null) {
         throw Exception(result['message'] ?? 'Failed to create payment intent');
       }
+      await _stripePaymentService.presentInvoicePaymentSheet(
+        clientSecret: clientSecret,
+        publishableKey: publishableKey,
+        connectedAccountId: connectedAccountId,
+      );
+      state = const AsyncData(null);
     } catch (e, st) {
       state = AsyncError(e, st);
+      rethrow;
     }
   }
 
@@ -82,7 +115,7 @@ class PaymentViewModel extends AsyncNotifier<void> {
     }
   }
 
-  Future<String?> createOnboardingLink(String organizationId) async {
+  Future<String> createOnboardingLink(String organizationId) async {
     try {
       final result = await _repository.createStripeOnboardingLink(
         organizationId,
@@ -90,9 +123,11 @@ class PaymentViewModel extends AsyncNotifier<void> {
       if (result['success'] == true && result['url'] != null) {
         return result['url'] as String;
       }
-      return null;
-    } catch (e) {
-      return null;
+      throw Exception(
+        result['message'] ?? 'Failed to generate Stripe onboarding link',
+      );
+    } catch (error, stackTrace) {
+      Error.throwWithStackTrace(error, stackTrace);
     }
   }
 }

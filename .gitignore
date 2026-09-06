@@ -305,6 +305,15 @@ test*.js
 *.spec.js
 test/
 tests/
+!test/
+test/*
+!test/app/
+test/app/*
+!test/app/features/
+test/app/features/*
+!test/app/features/invoice/
+test/app/features/invoice/*
+!test/app/features/invoice/payment_repository_test.dart
 check_test_user.js
 update_test_user.js
 
