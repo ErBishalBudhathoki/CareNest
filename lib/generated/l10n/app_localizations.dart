@@ -12920,6 +12920,293 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter ZIP code'**
   String get zipCodeRequired;
+
+  /// AppBar title for the payment settings screen
+  ///
+  /// In en, this message translates to:
+  /// **'PAYMENT SETTINGS'**
+  String get paymentSettingsTitle;
+
+  /// Label for the Stripe payout account status card
+  ///
+  /// In en, this message translates to:
+  /// **'Stripe payout account'**
+  String get paymentSettingsStripePayoutTitle;
+
+  /// Description of the Stripe Connect flow
+  ///
+  /// In en, this message translates to:
+  /// **'Link your bank account to receive payments directly from clients. We use Stripe Connect to ensure secure and compliant payouts for your NDIS business.'**
+  String get paymentSettingsStripePayoutSubtitle;
+
+  /// Badge shown when the Stripe account is fully connected
+  ///
+  /// In en, this message translates to:
+  /// **'CONNECTED'**
+  String get paymentSettingsConnected;
+
+  /// Badge shown when the Stripe account is not fully connected
+  ///
+  /// In en, this message translates to:
+  /// **'ACTION NEEDED'**
+  String get paymentSettingsActionNeeded;
+
+  /// Title shown when the Stripe account is fully connected
+  ///
+  /// In en, this message translates to:
+  /// **'ACCOUNT CONNECTED'**
+  String get paymentSettingsAccountConnectedTitle;
+
+  /// Title shown when the Stripe account is not connected
+  ///
+  /// In en, this message translates to:
+  /// **'NOT CONNECTED'**
+  String get paymentSettingsNotConnectedTitle;
+
+  /// Description of an active Stripe account
+  ///
+  /// In en, this message translates to:
+  /// **'Your Stripe account is active and ready to receive payouts.'**
+  String get paymentSettingsActiveDesc;
+
+  /// Call to action to connect Stripe
+  ///
+  /// In en, this message translates to:
+  /// **'Connect your account to start accepting payments.'**
+  String get paymentSettingsConnectDesc;
+
+  /// Button label to start Stripe Connect onboarding
+  ///
+  /// In en, this message translates to:
+  /// **'CONNECT WITH STRIPE'**
+  String get paymentSettingsConnectButton;
+
+  /// Button to open the Stripe dashboard
+  ///
+  /// In en, this message translates to:
+  /// **'VIEW STRIPE DASHBOARD'**
+  String get paymentSettingsViewDashboardButton;
+
+  /// Error shown when the organization cannot be loaded
+  ///
+  /// In en, this message translates to:
+  /// **'Organization data is unavailable'**
+  String get paymentSettingsErrorOrgMissing;
+
+  /// Error shown when the Stripe URL cannot be opened
+  ///
+  /// In en, this message translates to:
+  /// **'Could not launch Stripe'**
+  String get paymentSettingsErrorLaunch;
+
+  /// Message shown when the dashboard link is not implemented
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard link is not available yet'**
+  String get paymentSettingsDashboardNotImplemented;
+
+  /// Section title for linking an existing Stripe account
+  ///
+  /// In en, this message translates to:
+  /// **'Connect existing Stripe account'**
+  String get paymentSettingsExistingAccountTitle;
+
+  /// Explanation of the existing account flow
+  ///
+  /// In en, this message translates to:
+  /// **'Link an existing Stripe account to receive invoice payments directly from your clients. This is optional and only used when your organization already has a Stripe account.'**
+  String get paymentSettingsExistingAccountSubtitle;
+
+  /// Button to start OAuth for an existing Stripe account
+  ///
+  /// In en, this message translates to:
+  /// **'LINK EXISTING ACCOUNT'**
+  String get paymentSettingsLinkExistingButton;
+
+  /// Error when the OAuth URL could not be generated
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to start the Stripe OAuth flow'**
+  String get paymentSettingsOAuthStartFailed;
+
+  /// Title for the organization subscription screen
+  ///
+  /// In en, this message translates to:
+  /// **'SUBSCRIPTION'**
+  String get subscriptionTitle;
+
+  /// Description of the organization subscription
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock every CareNest feature for your organization with a monthly subscription. The subscription covers your whole organization, and one payment activates all team members.'**
+  String get subscriptionDescription;
+
+  /// Price and interval for the monthly plan
+  ///
+  /// In en, this message translates to:
+  /// **'AUD 9.99 per month'**
+  String get subscriptionPricePerMonth;
+
+  /// First feature bullet
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited invoice generation and client management'**
+  String get subscriptionFeature1;
+
+  /// Second feature bullet
+  ///
+  /// In en, this message translates to:
+  /// **'Stripe payouts directly to your organization\'s bank account'**
+  String get subscriptionFeature2;
+
+  /// Third feature bullet
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring invoice consent and automatic charges'**
+  String get subscriptionFeature3;
+
+  /// Fourth feature bullet
+  ///
+  /// In en, this message translates to:
+  /// **'Email and PDF delivery of invoices and receipts'**
+  String get subscriptionFeature4;
+
+  /// Button to start the subscription purchase
+  ///
+  /// In en, this message translates to:
+  /// **'SUBSCRIBE NOW'**
+  String get subscriptionBuyButton;
+
+  /// Button to restore an existing subscription
+  ///
+  /// In en, this message translates to:
+  /// **'Restore purchases'**
+  String get subscriptionRestoreButton;
+
+  /// Button to open store subscription management
+  ///
+  /// In en, this message translates to:
+  /// **'Manage subscription'**
+  String get subscriptionManageButton;
+
+  /// Warning shown before the store products exist
+  ///
+  /// In en, this message translates to:
+  /// **'The subscription product is not yet available. The app-store product IDs have not been created. Placeholder IDs are shown below for configuration:'**
+  String get subscriptionProductPlaceholder;
+
+  /// Placeholder for the iOS subscription product ID
+  ///
+  /// In en, this message translates to:
+  /// **'iOS product ID: YOUR_IOS_MONTHLY_PRODUCT_ID'**
+  String get subscriptionIosPlaceholder;
+
+  /// Placeholder for the Android subscription product ID
+  ///
+  /// In en, this message translates to:
+  /// **'Android product ID: YOUR_ANDROID_MONTHLY_PRODUCT_ID'**
+  String get subscriptionAndroidPlaceholder;
+
+  /// Shown when the organization has an active subscription
+  ///
+  /// In en, this message translates to:
+  /// **'Your subscription is active'**
+  String get subscriptionStatusActive;
+
+  /// Shown when the subscription is in a grace period
+  ///
+  /// In en, this message translates to:
+  /// **'Your subscription is in a grace period'**
+  String get subscriptionStatusGrace;
+
+  /// Shown when the subscription has expired
+  ///
+  /// In en, this message translates to:
+  /// **'Your subscription has expired'**
+  String get subscriptionStatusExpired;
+
+  /// Shown when there is no subscription
+  ///
+  /// In en, this message translates to:
+  /// **'No subscription on file'**
+  String get subscriptionStatusUnknown;
+
+  /// Generic error for subscription verification
+  ///
+  /// In en, this message translates to:
+  /// **'Could not verify your subscription. Please try again later.'**
+  String get subscriptionError;
+
+  /// Title for the recurring payment consent dialog
+  ///
+  /// In en, this message translates to:
+  /// **'RECURRING PAYMENT'**
+  String get recurringPaymentTitle;
+
+  /// Consent text shown before the client accepts recurring payments
+  ///
+  /// In en, this message translates to:
+  /// **'I authorise {orgName} to charge my saved payment method on the {frequency} cadence to pay CareNest invoice {invoiceNumber} ({amount}). I can cancel at any time before the next scheduled charge.'**
+  String recurringPaymentSubtitle(
+    String orgName,
+    String frequency,
+    String invoiceNumber,
+    String amount,
+  );
+
+  /// Frequency label for weekly cadence
+  ///
+  /// In en, this message translates to:
+  /// **'weekly'**
+  String get recurringPaymentFrequencyWeekly;
+
+  /// Frequency label for fortnightly cadence
+  ///
+  /// In en, this message translates to:
+  /// **'fortnightly'**
+  String get recurringPaymentFrequencyFortnightly;
+
+  /// Frequency label for monthly cadence
+  ///
+  /// In en, this message translates to:
+  /// **'monthly'**
+  String get recurringPaymentFrequencyMonthly;
+
+  /// Checkbox the client must tick before accepting
+  ///
+  /// In en, this message translates to:
+  /// **'I understand and agree to the recurring-payment terms'**
+  String get recurringPaymentConsentCheckbox;
+
+  /// Button to accept the recurring-payment consent
+  ///
+  /// In en, this message translates to:
+  /// **'ACCEPT AND SAVE'**
+  String get recurringPaymentAcceptButton;
+
+  /// Button to cancel the consent dialog
+  ///
+  /// In en, this message translates to:
+  /// **'CANCEL'**
+  String get recurringPaymentCancelButton;
+
+  /// Error when the recurring agreement cannot be created
+  ///
+  /// In en, this message translates to:
+  /// **'Could not set up recurring payments. Please try again later.'**
+  String get recurringPaymentError;
+
+  /// Confirmation shown after the agreement is created
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring-payment consent is ready. The client can open the link to save their payment method.'**
+  String get recurringPaymentSetupReady;
+
+  /// Instruction to open the Stripe setup URL
+  ///
+  /// In en, this message translates to:
+  /// **'Open this link in your browser: {url}'**
+  String recurringPaymentSetupUrlHint(String url);
 }
 
 class _AppLocalizationsDelegate
