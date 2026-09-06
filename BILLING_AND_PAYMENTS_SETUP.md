@@ -65,13 +65,13 @@ The backend must call the Apple App Store Server API and the Google Play Develop
 APPLE_APP_BUNDLE_ID=com.bishal.invoice
 APPLE_ISSUER_ID=your_issuer_id
 APPLE_KEY_ID=your_key_id
-APPLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----...\n-----END PRIVATE KEY-----"
+APPLE_PRIVATE_KEY=<paste the key contents via your secrets manager — never into the repo>
 APPLE_ENVIRONMENT=production   # or sandbox
 
 # Google Play
 GOOGLE_PLAY_PACKAGE_NAME=com.bishal.invoice
 GOOGLE_PLAY_CLIENT_EMAIL=your_service_account@project.iam.gserviceaccount.com
-GOOGLE_PLAY_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----...\n-----END PRIVATE KEY-----"
+GOOGLE_PLAY_PRIVATE_KEY=<paste the key contents via your secrets manager — never into the repo>
 ```
 
 > **Never commit the private keys to git.** Use your deployment secrets manager.

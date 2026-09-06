@@ -126,7 +126,7 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
     final statusText = status?.when(
       data: (value) => value,
       loading: () => null,
-      error: (_, __) => null,
+      error: (_, _) => null,
     );
     Color color = BauhausDesign.warning;
     String text = l10n.subscriptionStatusUnknown;

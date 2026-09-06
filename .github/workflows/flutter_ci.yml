@@ -43,6 +43,10 @@ jobs:
       # Install Dependencies
       - run: flutter pub get
 
+      # Regenerate localization classes from ARB files so `flutter analyze`
+      # sees the current keys (generated sources are committed but can lag).
+      - run: flutter gen-l10n
+
       # Generate .env from example so the declared asset exists in CI
       - run: cp .env.example .env
 
