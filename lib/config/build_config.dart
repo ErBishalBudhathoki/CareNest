@@ -31,4 +31,13 @@ class BuildConfig {
   static const String recaptchaSiteKey = String.fromEnvironment(
     'RECAPTCHA_SITE_KEY',
   );
+
+  /// Store subscription IDs are public identifiers, injected after products
+  /// are created in App Store Connect and Google Play Console.
+  static const String iosMonthlySubscriptionId = String.fromEnvironment(
+    'IOS_MONTHLY_SUBSCRIPTION_ID',
+  );
+  static const String androidMonthlySubscriptionId = String.fromEnvironment(
+    'ANDROID_MONTHLY_SUBSCRIPTION_ID',
+  );
 }

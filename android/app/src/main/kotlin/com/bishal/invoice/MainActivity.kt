@@ -11,11 +11,11 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.google.firebase.FirebaseApp
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
-class MainActivity: FlutterActivity() {
+class MainActivity: FlutterFragmentActivity() {
     private val systemUiChannel = "com.bishal.invoice/system_ui"
     private val appCheckChannel = "com.bishal.invoice/app_check"
     private val debugSecretKey = "com.google.firebase.appcheck.debug.DEBUG_SECRET"

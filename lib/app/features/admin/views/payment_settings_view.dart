@@ -5,16 +5,46 @@ import 'package:carenest/app/core/providers/organization_provider.dart';
 import 'package:carenest/app/features/invoice/viewmodels/payment_viewmodel.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
-class PaymentSettingsView extends ConsumerWidget {
+class PaymentSettingsView extends ConsumerStatefulWidget {
   const PaymentSettingsView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PaymentSettingsView> createState() =>
+      _PaymentSettingsViewState();
+}
+
+class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
+    with WidgetsBindingObserver {
+  String? _organizationId;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && _organizationId != null) {
+      ref.invalidate(stripeConnectStatusProvider(_organizationId!));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final organizationState = ref.watch(organizationProvider);
     final organization = organizationState.currentOrganization;
-    final isConnected =
-        organization?.stripeAccountId != null &&
-        organization!.stripeAccountId!.isNotEmpty;
+    _organizationId = organization?.id;
+    final connectStatus = organization == null
+        ? null
+        : ref.watch(stripeConnectStatusProvider(organization.id));
+    final isConnected = connectStatus?.asData?.value == true;
 
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
@@ -170,9 +200,7 @@ class PaymentSettingsView extends ConsumerWidget {
                   if (!isConnected)
                     InkWell(
                       onTap: () async {
-                        debugPrint('Connect with Stripe tapped');
                         if (organization == null) {
-                          debugPrint('Organization is null');
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Error: Organization data missing'),
@@ -180,49 +208,22 @@ class PaymentSettingsView extends ConsumerWidget {
                           );
                           return;
                         }
-                        debugPrint('Organization ID: ${organization.id}');
                         try {
                           final url = await ref
                               .read(paymentViewModelProvider.notifier)
                               .createOnboardingLink(organization.id);
-                          debugPrint('Stripe Onboarding URL: $url');
-                          if (url != null) {
-                            final uri = Uri.parse(url);
-                            if (await canLaunchUrl(uri)) {
-                              debugPrint('Launching URL: $url');
-                              await launchUrl(
+                          final uri = Uri.tryParse(url);
+                          if (uri == null ||
+                              !await launchUrl(
                                 uri,
                                 mode: LaunchMode.externalApplication,
-                              );
-                            } else {
-                              debugPrint('Could not launch URL: $url');
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Could not launch Stripe URL',
-                                    ),
-                                  ),
-                                );
-                              }
-                            }
-                          } else {
-                            debugPrint('Onboarding URL is null');
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Failed to generate onboarding link',
-                                  ),
-                                ),
-                              );
-                            }
+                              )) {
+                            throw Exception('Could not launch Stripe URL');
                           }
                         } catch (e) {
-                          debugPrint('Error launching Stripe: $e');
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Error: $e')),
+                              SnackBar(content: Text(e.toString())),
                             );
                           }
                         }

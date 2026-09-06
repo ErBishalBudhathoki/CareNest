@@ -14,17 +14,13 @@ class PaymentRepository {
 
   Future<Map<String, dynamic>> createPaymentIntent({
     required String invoiceId,
-    required double amount,
-    required String currency,
-    required String clientEmail,
+    required String organizationId,
   }) async {
     final response = await _api.post(
       'api/payments/create-intent',
       body: {
         'invoiceId': invoiceId,
-        'amount': amount,
-        'currency': currency,
-        'clientEmail': clientEmail,
+        'organizationId': organizationId,
       },
     );
     return response;
@@ -63,9 +59,78 @@ class PaymentRepository {
     String organizationId,
   ) async {
     final response = await _api.post(
-      'api/payments/stripe/onboarding',
+      'api/payments/onboarding-link',
       body: {'organizationId': organizationId},
     );
     return response;
+  }
+
+  Future<Map<String, dynamic>> getStripeConnectStatus(
+    String organizationId,
+  ) async {
+    return _api.get(
+      'api/payments/connect-status?organizationId=${Uri.encodeQueryComponent(organizationId)}',
+    );
+  }
+
+  Future<Map<String, dynamic>> getSubscriptionStatus(
+    String organizationId,
+  ) async {
+    return _api.get(
+      'api/billing/entitlements?organizationId=${Uri.encodeQueryComponent(organizationId)}',
+    );
+  }
+
+  Future<Map<String, dynamic>> createHostedCheckoutGrant({
+    required String organizationId,
+    required String invoiceId,
+    int ttlMinutes = 1440,
+  }) async {
+    return _api.post(
+      'api/billing/hosted-checkout/grant',
+      body: {
+        'organizationId': organizationId,
+        'invoiceId': invoiceId,
+        'ttlMinutes': ttlMinutes,
+      },
+    );
+  }
+
+  Future<Map<String, dynamic>> createRecurringAgreement({
+    required String organizationId,
+    required String invoiceId,
+    required String frequency,
+    required bool consentAccepted,
+    String? consentIp,
+    String? consentUserAgent,
+  }) async {
+    return _api.post(
+      'api/billing/recurring-agreements',
+      body: {
+        'organizationId': organizationId,
+        'invoiceId': invoiceId,
+        'frequency': frequency,
+        'consentAccepted': consentAccepted,
+        if (consentIp != null) 'consentIp': consentIp,
+        if (consentUserAgent != null) 'consentUserAgent': consentUserAgent,
+      },
+    );
+  }
+
+  Future<Map<String, dynamic>> cancelRecurringAgreement({
+    required String organizationId,
+    required String agreementId,
+    String? reason,
+  }) async {
+    return _api.delete(
+      'api/billing/recurring-agreements/$agreementId?organizationId=${Uri.encodeQueryComponent(organizationId)}&reason=${Uri.encodeQueryComponent(reason ?? 'Canceled from app')}',
+    );
+  }
+
+  Future<Map<String, dynamic>> startStripeOAuth(String organizationId) async {
+    return _api.post(
+      'api/billing/connect/oauth/start',
+      body: {'organizationId': organizationId},
+    );
   }
 }

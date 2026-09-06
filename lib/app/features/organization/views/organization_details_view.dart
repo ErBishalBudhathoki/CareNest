@@ -23,6 +23,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:carenest/app/features/invoice/viewmodels/payment_viewmodel.dart';
 
 class OrganizationDetailsView extends ConsumerStatefulWidget {
   final String? organizationId;
@@ -1084,6 +1085,12 @@ $appLink
                       if (!isEmployee) ...[
                         const SizedBox(height: BauhausDesign.space4),
 
+                        // Stripe existing-account link
+                        if (!isEmployee) ...[
+                          const SizedBox(height: BauhausDesign.space4),
+                          _buildStripeConnectSection(context, l10n),
+                        ],
+
                         // Banking Details
                         _buildSectionCard(
                           context,
@@ -1890,6 +1897,72 @@ $appLink
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildStripeConnectSection(BuildContext context, AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.all(BauhausDesign.space4),
+      decoration: BauhausDesign.neoCardDecoration(
+        backgroundColor: BauhausDesign.surfaceLight,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l10n.paymentSettingsExistingAccountTitle,
+            style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+              color: BauhausDesign.textDark,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: BauhausDesign.space2),
+          Text(
+            l10n.paymentSettingsExistingAccountSubtitle,
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+              color: BauhausDesign.textMuted,
+            ),
+          ),
+          const SizedBox(height: BauhausDesign.space4),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () async {
+                final organizationId = _organization?['id'] as String?;
+                if (organizationId == null) return;
+                try {
+                  final result = await ref
+                      .read(paymentRepositoryProvider)
+                      .startStripeOAuth(organizationId);
+                  final url = result['url'] as String?;
+                  if (url == null) {
+                    throw StateError(l10n.paymentSettingsOAuthStartFailed);
+                  }
+                  final uri = Uri.parse(url);
+                  if (await canLaunchUrl(uri)) {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  } else {
+                    throw StateError(l10n.paymentSettingsErrorLaunch);
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(e.toString())),
+                    );
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: BauhausDesign.secondary,
+                foregroundColor: BauhausDesign.surfaceLight,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+              ),
+              child: Text(l10n.paymentSettingsLinkExistingButton),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -3328,5 +3328,205 @@
   "yesterday": "Yesterday",
   "zipCode": "Zip Code",
   "zipCodeHint": "ZIP Code",
-  "zipCodeRequired": "Please enter ZIP code"
+  "zipCodeRequired": "Please enter ZIP code",
+
+  "paymentSettingsTitle": "PAYMENT SETTINGS",
+  "@paymentSettingsTitle": {
+    "description": "AppBar title for the payment settings screen"
+  },
+  "paymentSettingsStripePayoutTitle": "Stripe payout account",
+  "@paymentSettingsStripePayoutTitle": {
+    "description": "Label for the Stripe payout account status card"
+  },
+  "paymentSettingsStripePayoutSubtitle": "Link your bank account to receive payments directly from clients. We use Stripe Connect to ensure secure and compliant payouts for your NDIS business.",
+  "@paymentSettingsStripePayoutSubtitle": {
+    "description": "Description of the Stripe Connect flow"
+  },
+  "paymentSettingsConnected": "CONNECTED",
+  "@paymentSettingsConnected": {
+    "description": "Badge shown when the Stripe account is fully connected"
+  },
+  "paymentSettingsActionNeeded": "ACTION NEEDED",
+  "@paymentSettingsActionNeeded": {
+    "description": "Badge shown when the Stripe account is not fully connected"
+  },
+  "paymentSettingsAccountConnectedTitle": "ACCOUNT CONNECTED",
+  "@paymentSettingsAccountConnectedTitle": {
+    "description": "Title shown when the Stripe account is fully connected"
+  },
+  "paymentSettingsNotConnectedTitle": "NOT CONNECTED",
+  "@paymentSettingsNotConnectedTitle": {
+    "description": "Title shown when the Stripe account is not connected"
+  },
+  "paymentSettingsActiveDesc": "Your Stripe account is active and ready to receive payouts.",
+  "@paymentSettingsActiveDesc": {
+    "description": "Description of an active Stripe account"
+  },
+  "paymentSettingsConnectDesc": "Connect your account to start accepting payments.",
+  "@paymentSettingsConnectDesc": {
+    "description": "Call to action to connect Stripe"
+  },
+  "paymentSettingsConnectButton": "CONNECT WITH STRIPE",
+  "@paymentSettingsConnectButton": {
+    "description": "Button label to start Stripe Connect onboarding"
+  },
+  "paymentSettingsViewDashboardButton": "VIEW STRIPE DASHBOARD",
+  "@paymentSettingsViewDashboardButton": {
+    "description": "Button to open the Stripe dashboard"
+  },
+  "paymentSettingsErrorOrgMissing": "Organization data is unavailable",
+  "@paymentSettingsErrorOrgMissing": {
+    "description": "Error shown when the organization cannot be loaded"
+  },
+  "paymentSettingsErrorLaunch": "Could not launch Stripe",
+  "@paymentSettingsErrorLaunch": {
+    "description": "Error shown when the Stripe URL cannot be opened"
+  },
+  "paymentSettingsDashboardNotImplemented": "Dashboard link is not available yet",
+  "@paymentSettingsDashboardNotImplemented": {
+    "description": "Message shown when the dashboard link is not implemented"
+  },
+  "paymentSettingsExistingAccountTitle": "Connect existing Stripe account",
+  "@paymentSettingsExistingAccountTitle": {
+    "description": "Section title for linking an existing Stripe account"
+  },
+  "paymentSettingsExistingAccountSubtitle": "Link an existing Stripe account to receive invoice payments directly from your clients. This is optional and only used when your organization already has a Stripe account.",
+  "@paymentSettingsExistingAccountSubtitle": {
+    "description": "Explanation of the existing account flow"
+  },
+  "paymentSettingsLinkExistingButton": "LINK EXISTING ACCOUNT",
+  "@paymentSettingsLinkExistingButton": {
+    "description": "Button to start OAuth for an existing Stripe account"
+  },
+  "paymentSettingsOAuthStartFailed": "Failed to start the Stripe OAuth flow",
+  "@paymentSettingsOAuthStartFailed": {
+    "description": "Error when the OAuth URL could not be generated"
+  },
+
+  "subscriptionTitle": "SUBSCRIPTION",
+  "@subscriptionTitle": {
+    "description": "Title for the organization subscription screen"
+  },
+  "subscriptionDescription": "Unlock every CareNest feature for your organization with a monthly subscription. The subscription covers your whole organization, and one payment activates all team members.",
+  "@subscriptionDescription": {
+    "description": "Description of the organization subscription"
+  },
+  "subscriptionPricePerMonth": "AUD 9.99 per month",
+  "@subscriptionPricePerMonth": {
+    "description": "Price and interval for the monthly plan"
+  },
+  "subscriptionFeature1": "Unlimited invoice generation and client management",
+  "@subscriptionFeature1": {
+    "description": "First feature bullet"
+  },
+  "subscriptionFeature2": "Stripe payouts directly to your organization's bank account",
+  "@subscriptionFeature2": {
+    "description": "Second feature bullet"
+  },
+  "subscriptionFeature3": "Recurring invoice consent and automatic charges",
+  "@subscriptionFeature3": {
+    "description": "Third feature bullet"
+  },
+  "subscriptionFeature4": "Email and PDF delivery of invoices and receipts",
+  "@subscriptionFeature4": {
+    "description": "Fourth feature bullet"
+  },
+  "subscriptionBuyButton": "SUBSCRIBE NOW",
+  "@subscriptionBuyButton": {
+    "description": "Button to start the subscription purchase"
+  },
+  "subscriptionRestoreButton": "Restore purchases",
+  "@subscriptionRestoreButton": {
+    "description": "Button to restore an existing subscription"
+  },
+  "subscriptionManageButton": "Manage subscription",
+  "@subscriptionManageButton": {
+    "description": "Button to open store subscription management"
+  },
+  "subscriptionProductPlaceholder": "The subscription product is not yet available. The app-store product IDs have not been created. Placeholder IDs are shown below for configuration:",
+  "@subscriptionProductPlaceholder": {
+    "description": "Warning shown before the store products exist"
+  },
+  "subscriptionIosPlaceholder": "iOS product ID: YOUR_IOS_MONTHLY_PRODUCT_ID",
+  "@subscriptionIosPlaceholder": {
+    "description": "Placeholder for the iOS subscription product ID"
+  },
+  "subscriptionAndroidPlaceholder": "Android product ID: YOUR_ANDROID_MONTHLY_PRODUCT_ID",
+  "@subscriptionAndroidPlaceholder": {
+    "description": "Placeholder for the Android subscription product ID"
+  },
+  "subscriptionStatusActive": "Your subscription is active",
+  "@subscriptionStatusActive": {
+    "description": "Shown when the organization has an active subscription"
+  },
+  "subscriptionStatusGrace": "Your subscription is in a grace period",
+  "@subscriptionStatusGrace": {
+    "description": "Shown when the subscription is in a grace period"
+  },
+  "subscriptionStatusExpired": "Your subscription has expired",
+  "@subscriptionStatusExpired": {
+    "description": "Shown when the subscription has expired"
+  },
+  "subscriptionStatusUnknown": "No subscription on file",
+  "@subscriptionStatusUnknown": {
+    "description": "Shown when there is no subscription"
+  },
+  "subscriptionError": "Could not verify your subscription. Please try again later.",
+  "@subscriptionError": {
+    "description": "Generic error for subscription verification"
+  },
+
+  "recurringPaymentTitle": "RECURRING PAYMENT",
+  "@recurringPaymentTitle": {
+    "description": "Title for the recurring payment consent dialog"
+  },
+  "recurringPaymentSubtitle": "I authorise {orgName} to charge my saved payment method on the {frequency} cadence to pay CareNest invoice {invoiceNumber} ({amount}). I can cancel at any time before the next scheduled charge.",
+  "@recurringPaymentSubtitle": {
+    "description": "Consent text shown before the client accepts recurring payments",
+    "placeholders": {
+      "orgName": { "type": "String" },
+      "frequency": { "type": "String" },
+      "invoiceNumber": { "type": "String" },
+      "amount": { "type": "String" }
+    }
+  },
+  "recurringPaymentFrequencyWeekly": "weekly",
+  "@recurringPaymentFrequencyWeekly": {
+    "description": "Frequency label for weekly cadence"
+  },
+  "recurringPaymentFrequencyFortnightly": "fortnightly",
+  "@recurringPaymentFrequencyFortnightly": {
+    "description": "Frequency label for fortnightly cadence"
+  },
+  "recurringPaymentFrequencyMonthly": "monthly",
+  "@recurringPaymentFrequencyMonthly": {
+    "description": "Frequency label for monthly cadence"
+  },
+  "recurringPaymentConsentCheckbox": "I understand and agree to the recurring-payment terms",
+  "@recurringPaymentConsentCheckbox": {
+    "description": "Checkbox the client must tick before accepting"
+  },
+  "recurringPaymentAcceptButton": "ACCEPT AND SAVE",
+  "@recurringPaymentAcceptButton": {
+    "description": "Button to accept the recurring-payment consent"
+  },
+  "recurringPaymentCancelButton": "CANCEL",
+  "@recurringPaymentCancelButton": {
+    "description": "Button to cancel the consent dialog"
+  },
+  "recurringPaymentError": "Could not set up recurring payments. Please try again later.",
+  "@recurringPaymentError": {
+    "description": "Error when the recurring agreement cannot be created"
+  },
+  "recurringPaymentSetupReady": "Recurring-payment consent is ready. The client can open the link to save their payment method.",
+  "@recurringPaymentSetupReady": {
+    "description": "Confirmation shown after the agreement is created"
+  },
+  "recurringPaymentSetupUrlHint": "Open this link in your browser: {url}",
+  "@recurringPaymentSetupUrlHint": {
+    "description": "Instruction to open the Stripe setup URL",
+    "placeholders": {
+      "url": { "type": "String" }
+    }
+  }
 }

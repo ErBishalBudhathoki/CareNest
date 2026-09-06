@@ -4,6 +4,8 @@ import 'package:carenest/app/features/analytics/theme/bauhaus_theme.dart';
 import '../../models/invoice_model.dart';
 import '../../models/payment_info.dart';
 import '../../viewmodels/payment_viewmodel.dart';
+import 'package:carenest/app/core/providers/organization_provider.dart';
+import 'package:carenest/app/features/invoice/services/recurring_payment_service.dart';
 
 class PaymentActionsWidget extends ConsumerWidget {
   final InvoiceModel invoice;
@@ -56,14 +58,40 @@ class PaymentActionsWidget extends ConsumerWidget {
                   child: _BauhausButton(
                     label: 'PAY NOW',
                     color: BauhausTheme.blue,
-                    onTap: () {
-                      // Trigger Stripe Payment Flow
-                      // ref.read(paymentViewModelProvider.notifier).createPaymentIntent(...)
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Starting Payment Flow...'),
-                        ),
-                      );
+                    onTap: () async {
+                      final organization = ref
+                          .read(organizationProvider)
+                          .currentOrganization;
+                      if (organization == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Organization data is unavailable'),
+                          ),
+                        );
+                        return;
+                      }
+
+                      try {
+                        await ref
+                            .read(paymentViewModelProvider.notifier)
+                            .payInvoice(
+                              invoiceId: invoiceId,
+                              organizationId: organization.id,
+                            );
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Payment submitted successfully'),
+                            ),
+                          );
+                        }
+                      } catch (error) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(error.toString())),
+                          );
+                        }
+                      }
                     },
                   ),
                 ),
@@ -79,6 +107,29 @@ class PaymentActionsWidget extends ConsumerWidget {
                   ),
                 ),
               ],
+            ),
+          const SizedBox(height: 12),
+          if (!isPaid && invoice.recurrence?.isRecurring == true)
+            SizedBox(
+              width: double.infinity,
+              child: _BauhausButton(
+                label: 'SET UP RECURRING PAYMENT',
+                color: BauhausTheme.blue,
+                onTap: () {
+                  final organization = ref
+                      .read(organizationProvider)
+                      .currentOrganization;
+                  if (organization == null) return;
+                  showDialog(
+                    context: context,
+                    builder: (context) => RecurringConsentDialog(
+                      invoice: invoice,
+                      invoiceId: invoiceId,
+                      organizationId: organization.id,
+                    ),
+                  );
+                },
+              ),
             ),
           const SizedBox(height: 12),
           Align(
