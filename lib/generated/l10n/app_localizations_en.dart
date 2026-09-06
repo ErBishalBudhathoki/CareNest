@@ -6988,4 +6988,175 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get zipCodeRequired => 'Please enter ZIP code';
+
+  @override
+  String get paymentSettingsTitle => 'PAYMENT SETTINGS';
+
+  @override
+  String get paymentSettingsStripePayoutTitle => 'Stripe payout account';
+
+  @override
+  String get paymentSettingsStripePayoutSubtitle =>
+      'Link your bank account to receive payments directly from clients. We use Stripe Connect to ensure secure and compliant payouts for your NDIS business.';
+
+  @override
+  String get paymentSettingsConnected => 'CONNECTED';
+
+  @override
+  String get paymentSettingsActionNeeded => 'ACTION NEEDED';
+
+  @override
+  String get paymentSettingsAccountConnectedTitle => 'ACCOUNT CONNECTED';
+
+  @override
+  String get paymentSettingsNotConnectedTitle => 'NOT CONNECTED';
+
+  @override
+  String get paymentSettingsActiveDesc =>
+      'Your Stripe account is active and ready to receive payouts.';
+
+  @override
+  String get paymentSettingsConnectDesc =>
+      'Connect your account to start accepting payments.';
+
+  @override
+  String get paymentSettingsConnectButton => 'CONNECT WITH STRIPE';
+
+  @override
+  String get paymentSettingsViewDashboardButton => 'VIEW STRIPE DASHBOARD';
+
+  @override
+  String get paymentSettingsErrorOrgMissing =>
+      'Organization data is unavailable';
+
+  @override
+  String get paymentSettingsErrorLaunch => 'Could not launch Stripe';
+
+  @override
+  String get paymentSettingsDashboardNotImplemented =>
+      'Dashboard link is not available yet';
+
+  @override
+  String get paymentSettingsExistingAccountTitle =>
+      'Connect existing Stripe account';
+
+  @override
+  String get paymentSettingsExistingAccountSubtitle =>
+      'Link an existing Stripe account to receive invoice payments directly from your clients. This is optional and only used when your organization already has a Stripe account.';
+
+  @override
+  String get paymentSettingsLinkExistingButton => 'LINK EXISTING ACCOUNT';
+
+  @override
+  String get paymentSettingsOAuthStartFailed =>
+      'Failed to start the Stripe OAuth flow';
+
+  @override
+  String get subscriptionTitle => 'SUBSCRIPTION';
+
+  @override
+  String get subscriptionDescription =>
+      'Unlock every CareNest feature for your organization with a monthly subscription. The subscription covers your whole organization, and one payment activates all team members.';
+
+  @override
+  String get subscriptionPricePerMonth => 'AUD 9.99 per month';
+
+  @override
+  String get subscriptionFeature1 =>
+      'Unlimited invoice generation and client management';
+
+  @override
+  String get subscriptionFeature2 =>
+      'Stripe payouts directly to your organization\'s bank account';
+
+  @override
+  String get subscriptionFeature3 =>
+      'Recurring invoice consent and automatic charges';
+
+  @override
+  String get subscriptionFeature4 =>
+      'Email and PDF delivery of invoices and receipts';
+
+  @override
+  String get subscriptionBuyButton => 'SUBSCRIBE NOW';
+
+  @override
+  String get subscriptionRestoreButton => 'Restore purchases';
+
+  @override
+  String get subscriptionManageButton => 'Manage subscription';
+
+  @override
+  String get subscriptionProductPlaceholder =>
+      'The subscription product is not yet available. The app-store product IDs have not been created. Placeholder IDs are shown below for configuration:';
+
+  @override
+  String get subscriptionIosPlaceholder =>
+      'iOS product ID: YOUR_IOS_MONTHLY_PRODUCT_ID';
+
+  @override
+  String get subscriptionAndroidPlaceholder =>
+      'Android product ID: YOUR_ANDROID_MONTHLY_PRODUCT_ID';
+
+  @override
+  String get subscriptionStatusActive => 'Your subscription is active';
+
+  @override
+  String get subscriptionStatusGrace =>
+      'Your subscription is in a grace period';
+
+  @override
+  String get subscriptionStatusExpired => 'Your subscription has expired';
+
+  @override
+  String get subscriptionStatusUnknown => 'No subscription on file';
+
+  @override
+  String get subscriptionError =>
+      'Could not verify your subscription. Please try again later.';
+
+  @override
+  String get recurringPaymentTitle => 'RECURRING PAYMENT';
+
+  @override
+  String recurringPaymentSubtitle(
+    String orgName,
+    String frequency,
+    String invoiceNumber,
+    String amount,
+  ) {
+    return 'I authorise $orgName to charge my saved payment method on the $frequency cadence to pay CareNest invoice $invoiceNumber ($amount). I can cancel at any time before the next scheduled charge.';
+  }
+
+  @override
+  String get recurringPaymentFrequencyWeekly => 'weekly';
+
+  @override
+  String get recurringPaymentFrequencyFortnightly => 'fortnightly';
+
+  @override
+  String get recurringPaymentFrequencyMonthly => 'monthly';
+
+  @override
+  String get recurringPaymentConsentCheckbox =>
+      'I understand and agree to the recurring-payment terms';
+
+  @override
+  String get recurringPaymentAcceptButton => 'ACCEPT AND SAVE';
+
+  @override
+  String get recurringPaymentCancelButton => 'CANCEL';
+
+  @override
+  String get recurringPaymentError =>
+      'Could not set up recurring payments. Please try again later.';
+
+  @override
+  String get recurringPaymentSetupReady =>
+      'Recurring-payment consent is ready. The client can open the link to save their payment method.';
+
+  @override
+  String recurringPaymentSetupUrlHint(String url) {
+    return 'Open this link in your browser: $url';
+  }
 }
