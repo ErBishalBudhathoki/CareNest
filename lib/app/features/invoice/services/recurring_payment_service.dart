@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:carenest/app/features/invoice/repositories/payment_repository.dart';
-import 'package:carenest/app/features/invoice/viewmodels/payment_viewmodel.dart';
 import 'package:carenest/app/features/invoice/models/invoice_model.dart';
 import 'package:carenest/app/features/analytics/theme/bauhaus_theme.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
