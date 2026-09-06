@@ -7,6 +7,7 @@ import 'package:carenest/app/features/invoice/repositories/payment_repository.da
 import 'package:carenest/app/features/invoice/viewmodels/payment_viewmodel.dart';
 import 'package:carenest/app/features/invoice/models/invoice_model.dart';
 import 'package:carenest/app/features/analytics/theme/bauhaus_theme.dart';
+import 'package:carenest/app/core/providers/organization_provider.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class RecurringPaymentService {
