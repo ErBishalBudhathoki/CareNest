@@ -126,6 +126,8 @@ dependency_overrides:
     path: third_party/google_mlkit_text_recognition
   map_launcher:
     path: third_party/map_launcher
+  permission_handler_android:
+    path: third_party/permission_handler_android
   # Server-only pin: avoid jni native build on aarch64 container
   path_provider_android: 2.2.23
 
