@@ -952,7 +952,7 @@ class _EnhancedNdisItemSelectionViewState
                         )
                       : ListView.builder(
                           controller: _listScrollController,
-                          scrollCacheExtent: ScrollCacheExtent.pixels(1200),
+                          cacheExtent: 1200,
                           itemCount: _filteredNdisItems.length,
                           itemBuilder: (context, index) {
                             final item = _filteredNdisItems[index];
