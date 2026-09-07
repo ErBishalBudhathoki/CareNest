@@ -47,22 +47,21 @@ Example:
 4.2.5+47 -> 4.2.6+48
 ```
 
-### Major update
+### Sync with Google Play Console (Recommended if version code desyncs)
 
 ```bash
-./update_version.sh --major
+./update_version.sh --sync-play
 ```
 
 Behavior:
+- queries Google Play Console track `internal` for the highest existing versionCode
+- sets local `versionCode` to `highest + 1`
 
-- increments minor
-- resets patch to `0`
-- increments version code
-
-Example:
+### Explicit version code or version
 
 ```bash
-4.2.6+48 -> 4.3.0+49
+./update_version.sh --set-code 171
+./update_version.sh --set 4.4.4+171
 ```
 
 ## Internal Testing Release
