@@ -21,6 +21,9 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- Required for Google Play Billing (in-app purchases and subscriptions) -->
+    <uses-permission android:name="com.android.vending.BILLING" />
+
     <!-- Your existing queries are preserved -->
     <queries>
         <intent>

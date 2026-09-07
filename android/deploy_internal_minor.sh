@@ -44,7 +44,8 @@ echo ""
 echo "Step 2/3: Build production AAB"
 (
   cd "$PROJECT_ROOT"
-  flutter build appbundle --flavor production -t lib/main_production.dart --release
+  flutter build appbundle --flavor production -t lib/main_production.dart --release \
+    --dart-define=ANDROID_MONTHLY_SUBSCRIPTION_ID=carenest_monthly
 )
 
 if [[ ! -f "$AAB_PATH" ]]; then
