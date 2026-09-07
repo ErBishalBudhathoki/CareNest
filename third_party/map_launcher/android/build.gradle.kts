@@ -25,6 +25,9 @@ plugins {
     id("com.android.library")
 }
 
+// Apply Kotlin Android plugin via legacy classpath (declared in buildscript above)
+apply(plugin = "org.jetbrains.kotlin.android")
+
 android {
     namespace = "dev.fluttered.map_launcher"
 
@@ -68,4 +71,11 @@ android {
 dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.mockito:mockito-core:5.0.0")
+}
+
+// Align Kotlin JVM target with Java compileOptions (both must be 17)
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
 }
