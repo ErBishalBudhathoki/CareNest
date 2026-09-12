@@ -87,14 +87,18 @@ echo "Step 1/3: Minor version bump"
 "$SCRIPT_DIR/update_version.sh" --minor
 STEP_COMPLETED="version_bumped"
 
-# ── Step 2: Build production AAB ───────────────────────────────────────────────
+# ── Step 2: Build production AAB for Internal Testing ──────────────────────────
+# Google Play Console requires the production package ID (com.bishal.invoice),
+# so we build with --flavor production -t lib/main_production.dart.
+# However, internal testing MUST ALWAYS communicate exclusively with the dev backend!
+# We therefore inject DEVELOPMENT_URL into both PRODUCTION_URL and DEVELOPMENT_URL.
 echo ""
-echo "Step 2/3: Build production AAB"
+echo "Step 2/3: Build AAB for Internal Testing (connecting to dev backend: $DEVELOPMENT_URL)"
 (
   cd "$PROJECT_ROOT"
   flutter build appbundle --flavor production -t lib/main_production.dart --release \
     --dart-define=ANDROID_MONTHLY_SUBSCRIPTION_ID=carenest_monthly \
-    --dart-define=PRODUCTION_URL="$PRODUCTION_URL" \
+    --dart-define=PRODUCTION_URL="$DEVELOPMENT_URL" \
     --dart-define=DEVELOPMENT_URL="$DEVELOPMENT_URL"
 )
 
