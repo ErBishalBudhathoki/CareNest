@@ -142,6 +142,7 @@ Format: `MAJOR.MINOR.PATCH+VERSION_CODE`
 | 4.4.4+172 | Internal | First build with URL injected via `--dart-define` |
 | 4.4.4+173 | Internal | URLs sourced from `.env` via deploy script |
 | 4.4.6+174 | Internal | `.env`-driven URL — no hardcoded URLs anywhere |
+| 4.4.7+175 | Internal | Injects `DEVELOPMENT_URL` from `.env`; connects strictly to dev backend |
 
 ---
 
