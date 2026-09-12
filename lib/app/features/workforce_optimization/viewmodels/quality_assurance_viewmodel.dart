@@ -49,7 +49,7 @@ class QualityAssuranceViewModel extends Notifier<QualityAssuranceState> {
 
   @override
   QualityAssuranceState build() {
-
+    _repository = ref.watch(workforceRepositoryProvider);
     return QualityAssuranceState();
   }
 

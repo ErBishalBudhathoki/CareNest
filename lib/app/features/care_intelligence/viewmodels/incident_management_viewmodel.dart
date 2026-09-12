@@ -50,7 +50,7 @@ class IncidentManagementViewModel extends Notifier<IncidentManagementState> {
 
   @override
   IncidentManagementState build() {
-
+    _repository = ref.watch(careIntelligenceRepositoryProvider);
     return IncidentManagementState();
   }
 

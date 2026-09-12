@@ -54,7 +54,7 @@ class RiskPredictionViewModel extends Notifier<RiskPredictionState> {
 
   @override
   RiskPredictionState build() {
-
+    _repository = ref.watch(careIntelligenceRepositoryProvider);
     return RiskPredictionState();
   }
 

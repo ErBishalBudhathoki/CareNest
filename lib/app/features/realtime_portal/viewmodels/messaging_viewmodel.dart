@@ -56,7 +56,7 @@ class MessagingViewModel extends Notifier<MessagingState> {
 
   @override
   MessagingState build() {
-
+    _repository = ref.watch(realtimePortalRepositoryProvider);
     return MessagingState();
   }
 

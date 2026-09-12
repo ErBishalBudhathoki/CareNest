@@ -38,7 +38,7 @@ class BudgetManagementViewModel extends Notifier<BudgetManagementState> {
 
   @override
   BudgetManagementState build() {
-
+    _repository = ref.watch(financialIntelligenceRepositoryProvider);
     return BudgetManagementState();
   }
 

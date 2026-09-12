@@ -54,7 +54,7 @@ class MedicationViewModel extends Notifier<MedicationState> {
 
   @override
   MedicationState build() {
-
+    _repository = ref.watch(careIntelligenceRepositoryProvider);
     return MedicationState();
   }
 
