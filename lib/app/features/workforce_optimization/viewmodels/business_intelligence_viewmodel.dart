@@ -55,7 +55,7 @@ class BusinessIntelligenceViewModel
 
   @override
   BusinessIntelligenceState build() {
-
+    _repository = ref.watch(workforceRepositoryProvider);
     return BusinessIntelligenceState();
   }
 

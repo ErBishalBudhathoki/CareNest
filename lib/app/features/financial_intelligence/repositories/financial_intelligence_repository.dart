@@ -1,4 +1,12 @@
 import 'package:carenest/backend/api_method.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart';
+
+final financialIntelligenceRepositoryProvider =
+    Provider<FinancialIntelligenceRepository>((ref) {
+      final apiMethod = ref.watch(apiMethodProvider);
+      return FinancialIntelligenceRepository(apiMethod);
+    });
 
 /// Financial Intelligence Repository
 /// Handles all API communication for Phase 10 - Advanced Financial Intelligence

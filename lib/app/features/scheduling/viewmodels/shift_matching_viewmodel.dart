@@ -45,7 +45,7 @@ class ShiftMatchingViewModel extends Notifier<ShiftMatchingState> {
 
   @override
   ShiftMatchingState build() {
-
+    _repository = ref.watch(schedulingRepositoryProvider);
     return ShiftMatchingState();
   }
 

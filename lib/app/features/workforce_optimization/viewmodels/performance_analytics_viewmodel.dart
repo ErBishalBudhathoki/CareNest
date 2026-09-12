@@ -46,7 +46,7 @@ class PerformanceAnalyticsViewModel
 
   @override
   PerformanceAnalyticsState build() {
-
+    _repository = ref.watch(workforceRepositoryProvider);
     return PerformanceAnalyticsState();
   }
 

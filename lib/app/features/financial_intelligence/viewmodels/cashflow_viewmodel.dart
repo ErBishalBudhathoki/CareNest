@@ -42,7 +42,7 @@ class CashFlowViewModel extends Notifier<CashFlowState> {
 
   @override
   CashFlowState build() {
-
+    _repository = ref.watch(financialIntelligenceRepositoryProvider);
     return CashFlowState();
   }
 

@@ -1,6 +1,13 @@
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/features/realtime_portal/models/realtime_portal_models.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart';
+
+final realtimePortalRepositoryProvider = Provider<RealtimePortalRepository>((ref) {
+  final apiMethod = ref.watch(apiMethodProvider);
+  return RealtimePortalRepository(apiMethod);
+});
 
 class RealtimePortalRepository {
   final ApiMethod _apiMethod;

@@ -45,7 +45,7 @@ class ResourceAllocationViewModel extends Notifier<ResourceAllocationState> {
 
   @override
   ResourceAllocationState build() {
-
+    _repository = ref.watch(workforceRepositoryProvider);
     return ResourceAllocationState();
   }
 

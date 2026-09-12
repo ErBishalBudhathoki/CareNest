@@ -38,7 +38,7 @@ class PaymentProcessingViewModel extends Notifier<PaymentProcessingState> {
 
   @override
   PaymentProcessingState build() {
-
+    _repository = ref.watch(financialIntelligenceRepositoryProvider);
     return PaymentProcessingState();
   }
 
