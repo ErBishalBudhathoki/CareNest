@@ -42,7 +42,7 @@ class FinancialAnalyticsViewModel extends Notifier<FinancialAnalyticsState> {
 
   @override
   FinancialAnalyticsState build() {
-
+    _repository = ref.watch(financialIntelligenceRepositoryProvider);
     return FinancialAnalyticsState();
   }
 

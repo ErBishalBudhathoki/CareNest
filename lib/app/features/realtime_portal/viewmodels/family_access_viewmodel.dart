@@ -49,7 +49,7 @@ class FamilyAccessViewModel extends Notifier<FamilyAccessState> {
 
   @override
   FamilyAccessState build() {
-
+    _repository = ref.watch(realtimePortalRepositoryProvider);
     return FamilyAccessState();
   }
 

@@ -97,7 +97,7 @@ class CommunicationViewModel extends Notifier<CommunicationState> {
 
   @override
   CommunicationState build() {
-
+    _repository = ref.watch(communicationRepositoryProvider);
     return CommunicationState();
   }
 

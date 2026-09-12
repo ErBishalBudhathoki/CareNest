@@ -1,5 +1,12 @@
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/features/scheduling/models/shift_matching_models.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart';
+
+final schedulingRepositoryProvider = Provider<SchedulingRepository>((ref) {
+  final apiMethod = ref.watch(apiMethodProvider);
+  return SchedulingRepository(apiMethod);
+});
 
 class SchedulingRepository {
   final ApiMethod _apiMethod;

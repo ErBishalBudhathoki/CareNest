@@ -52,7 +52,7 @@ class CarePlanViewModel extends Notifier<CarePlanState> {
 
   @override
   CarePlanState build() {
-
+    _repository = ref.watch(careIntelligenceRepositoryProvider);
     return CarePlanState();
   }
 

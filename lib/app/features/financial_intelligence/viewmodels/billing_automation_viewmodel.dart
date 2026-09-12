@@ -42,7 +42,7 @@ class BillingAutomationViewModel extends Notifier<BillingAutomationState> {
 
   @override
   BillingAutomationState build() {
-
+    _repository = ref.watch(financialIntelligenceRepositoryProvider);
     return BillingAutomationState();
   }
 

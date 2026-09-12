@@ -48,7 +48,7 @@ class AdvancedPayrollViewModel extends Notifier<AdvancedPayrollState> {
 
   @override
   AdvancedPayrollState build() {
-
+    _repository = ref.watch(advancedPayrollRepositoryProvider);
     return AdvancedPayrollState();
   }
 

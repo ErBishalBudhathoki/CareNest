@@ -10,12 +10,12 @@ final clientPortalViewModelProvider =
 const Object _stateUnset = Object();
 
 class ClientPortalState {
-  late final bool isLoading;
-  late final String? error;
-  late final ClientDashboard? dashboard;
-  late final WorkerLocation? workerLocation;
-  late final AppointmentStatus? appointmentStatus;
-  late final List<ServiceHistory> serviceHistory;
+  final bool isLoading;
+  final String? error;
+  final ClientDashboard? dashboard;
+  final WorkerLocation? workerLocation;
+  final AppointmentStatus? appointmentStatus;
+  final List<ServiceHistory> serviceHistory;
 
   ClientPortalState({
     this.isLoading = false,
@@ -54,7 +54,7 @@ class ClientPortalViewModel extends Notifier<ClientPortalState> {
 
   @override
   ClientPortalState build() {
-
+    _repository = ref.watch(clientPortalRepositoryProvider);
     return ClientPortalState();
   }
 

@@ -45,7 +45,7 @@ class HealthMonitoringViewModel extends Notifier<HealthMonitoringState> {
 
   @override
   HealthMonitoringState build() {
-
+    _repository = ref.watch(careIntelligenceRepositoryProvider);
     return HealthMonitoringState();
   }
 

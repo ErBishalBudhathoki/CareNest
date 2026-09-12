@@ -38,7 +38,7 @@ class ComplianceViewModel extends Notifier<ComplianceState> {
 
   @override
   ComplianceState build() {
-
+    _repository = ref.watch(financialIntelligenceRepositoryProvider);
     return ComplianceState();
   }
 

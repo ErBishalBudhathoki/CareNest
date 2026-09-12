@@ -44,7 +44,7 @@ class RevenueForecastingViewModel extends Notifier<RevenueForecastingState> {
 
   @override
   RevenueForecastingState build() {
-
+    _repository = ref.watch(financialIntelligenceRepositoryProvider);
     return RevenueForecastingState();
   }
 

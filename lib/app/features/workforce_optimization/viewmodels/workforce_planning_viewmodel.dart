@@ -1,13 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/workforce_optimization/models/workforce_models.dart';
 import 'package:carenest/app/features/workforce_optimization/repositories/workforce_repository.dart';
-import 'package:carenest/app/core/providers/app_providers.dart'
-    as app_providers;
 
-// Provider for WorkforceRepository
-final workforceRepositoryProvider = Provider<WorkforceRepository>((ref) {
-  return WorkforceRepository(ref.read(app_providers.apiMethodProvider));
-});
 
 // State class for Workforce Planning
 class WorkforcePlanningState {
@@ -60,7 +54,7 @@ class WorkforcePlanningViewModel extends Notifier<WorkforcePlanningState> {
 
   @override
   WorkforcePlanningState build() {
-
+    _repository = ref.watch(workforceRepositoryProvider);
     return WorkforcePlanningState();
   }
 

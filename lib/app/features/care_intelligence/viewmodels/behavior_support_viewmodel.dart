@@ -44,7 +44,7 @@ class BehaviorSupportViewModel extends Notifier<BehaviorSupportState> {
 
   @override
   BehaviorSupportState build() {
-
+    _repository = ref.watch(careIntelligenceRepositoryProvider);
     return BehaviorSupportState();
   }
 

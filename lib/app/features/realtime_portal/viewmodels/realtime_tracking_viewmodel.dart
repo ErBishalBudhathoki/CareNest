@@ -59,7 +59,7 @@ class RealtimeTrackingViewModel extends Notifier<RealtimeTrackingState> {
 
   @override
   RealtimeTrackingState build() {
-
+    _repository = ref.watch(realtimePortalRepositoryProvider);
     return RealtimeTrackingState();
   }
 

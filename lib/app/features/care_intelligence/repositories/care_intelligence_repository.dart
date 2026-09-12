@@ -1,5 +1,15 @@
 import 'package:carenest/backend/api_method.dart';
-import 'package:carenest/app/features/care_intelligence/models/care_intelligence_models.dart';
+import 'package:carenest/app/features/care_intelligence/models/care_intelligence_models.dart'
+    hide Provider;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+
+final careIntelligenceRepositoryProvider =
+    Provider<CareIntelligenceRepository>((ref) {
+      return CareIntelligenceRepository(
+        ref.watch(app_providers.apiMethodProvider),
+      );
+    });
 
 class CareIntelligenceRepository {
   final ApiMethod _apiMethod;
