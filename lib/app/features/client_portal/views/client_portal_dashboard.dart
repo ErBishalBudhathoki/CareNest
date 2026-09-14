@@ -987,8 +987,7 @@ class _ClientPortalDashboardBodyState
 
             return Column(
               children: invoices.take(3).map((invoice) {
-                final status = (invoice.workflow['status'] ?? 'pending')
-                    .toString();
+                final status = invoice.displayStatus;
                 final total = (invoice.financialSummary['totalAmount'] ?? 0)
                     .toString();
 
@@ -1014,7 +1013,9 @@ class _ClientPortalDashboardBodyState
                               BauhausDesign.radiusSm,
                             ),
                             border: Border.all(
-                              color: BauhausDesign.primary.withValues(alpha: 0.3),
+                              color: BauhausDesign.primary.withValues(
+                                alpha: 0.3,
+                              ),
                             ),
                           ),
                           child: const Icon(

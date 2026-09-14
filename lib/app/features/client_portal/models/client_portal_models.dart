@@ -212,6 +212,42 @@ abstract class ClientInvoice with _$ClientInvoice {
       _$ClientInvoiceFromJson(json);
 }
 
+/// Display status for client-facing invoice lists.
+///
+/// `paid` always wins: if the client pays (with or without approving or
+/// disputing first), the invoice is labelled PAID. Remaining states fall back
+/// to the workflow status.
+extension ClientInvoiceStatusX on ClientInvoice {
+  String get displayStatus {
+    final paymentStatus =
+        (payment?['status'] ?? workflow['paymentStatus'] ?? '')
+            .toString()
+            .trim()
+            .toLowerCase();
+    final workflowStatus = (workflow['status'] ?? '')
+        .toString()
+        .trim()
+        .toLowerCase();
+
+    if (paymentStatus == 'paid' || workflowStatus == 'paid') return 'paid';
+    if (paymentStatus == 'partial') return 'partial';
+    if (paymentStatus == 'refunded') return 'refunded';
+    if (paymentStatus == 'cancelled') return 'cancelled';
+    if (workflowStatus == 'disputed') return 'disputed';
+    if (paymentStatus == 'overdue' || workflowStatus == 'overdue') {
+      return 'overdue';
+    }
+    if (workflowStatus == 'approved') return 'approved';
+    if (workflowStatus == 'pending_approval' ||
+        workflowStatus == 'pending' ||
+        workflowStatus == 'generated' ||
+        workflowStatus == 'draft') {
+      return 'pending';
+    }
+    return workflowStatus.isEmpty ? 'pending' : workflowStatus;
+  }
+}
+
 @freezed
 abstract class AppointmentParams with _$AppointmentParams {
   const factory AppointmentParams({
