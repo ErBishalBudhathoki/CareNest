@@ -363,8 +363,9 @@ class _ClientPortalDashboardBodyState
                         const SizedBox(height: BauhausDesign.space1),
                         Text(
                           'Invite family members, manage permissions, and decide who can view appointments, messages, location, and service approvals.',
-                          style: BauhausDesign.getTextTheme(context).bodyMedium
-                              ?.copyWith(color: BauhausDesign.textMuted),
+                          style: BauhausDesign.getTextTheme(
+                            context,
+                          ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
                         ),
                       ],
                     ),
@@ -511,7 +512,7 @@ class _ClientPortalDashboardBodyState
                     child: Icon(
                       Icons.event_busy_outlined,
                       size: 40,
-                      color: BauhausDesign.textMuted,
+                      color: BauhausDesign.textDark,
                     ),
                   ),
                   const SizedBox(height: BauhausDesign.space3),
@@ -524,7 +525,7 @@ class _ClientPortalDashboardBodyState
                     'Newly assigned shifts will appear automatically.',
                     style: BauhausDesign.getTextTheme(
                       context,
-                    ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                    ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
                   ),
                 ],
               ),
@@ -577,7 +578,7 @@ class _ClientPortalDashboardBodyState
                     '${appointment.workerName} - ${appointment.serviceName}',
                     style: BauhausDesign.getTextTheme(
                       context,
-                    ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                    ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: BauhausDesign.space1),
@@ -679,7 +680,7 @@ class _ClientPortalDashboardBodyState
                           !hasVisibleLocation &&
                           statusMessage.isNotEmpty
                       ? BauhausDesign.error
-                      : BauhausDesign.textMuted,
+                      : BauhausDesign.textDark,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -715,7 +716,7 @@ class _ClientPortalDashboardBodyState
                         'Lng: ${location.longitude.toStringAsFixed(6)}',
                         style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
-                              color: BauhausDesign.textMuted,
+                              color: BauhausDesign.textDark,
                               fontWeight: FontWeight.w600,
                             ),
                       ),
@@ -724,14 +725,14 @@ class _ClientPortalDashboardBodyState
                           'Distance: ${location.distanceRemaining!.toStringAsFixed(2)} km',
                           style: BauhausDesign.getTextTheme(
                             context,
-                          ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                          ).bodySmall?.copyWith(color: BauhausDesign.textDark),
                         ),
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
                         'Updated: ${location.lastUpdated ?? location.timestamp}',
                         style: BauhausDesign.getTextTheme(
                           context,
-                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                        ).bodySmall?.copyWith(color: BauhausDesign.textDark),
                       ),
                     ],
                   ),
@@ -842,7 +843,7 @@ class _ClientPortalDashboardBodyState
                     : 'No assigned shift available for secure messaging.',
                 style: BauhausDesign.getTextTheme(
                   context,
-                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: BauhausDesign.space4),
@@ -919,7 +920,7 @@ class _ClientPortalDashboardBodyState
                     : 'Feedback unlocks after a shift has finished.',
                 style: BauhausDesign.getTextTheme(
                   context,
-                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: BauhausDesign.space4),
@@ -1040,7 +1041,7 @@ class _ClientPortalDashboardBodyState
                                 'Total: $total',
                                 style: BauhausDesign.getTextTheme(context)
                                     .bodySmall
-                                    ?.copyWith(color: BauhausDesign.textMuted),
+                                    ?.copyWith(color: BauhausDesign.textDark),
                               ),
                             ],
                           ),
@@ -1138,13 +1139,13 @@ class _ClientPortalDashboardBodyState
                     '${appointment.workerName} - ${appointment.serviceName}',
                     style: BauhausDesign.getTextTheme(
                       context,
-                    ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                    ).bodySmall?.copyWith(color: BauhausDesign.textDark),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: BauhausDesign.textMuted, size: 20),
+            Icon(Icons.chevron_right, color: BauhausDesign.textDark, size: 20),
           ],
         ),
       ),
@@ -1200,14 +1201,14 @@ class _ClientPortalDashboardBodyState
                         '${service.date} • ${service.startTime} - ${service.endTime}',
                         style: BauhausDesign.getTextTheme(
                           context,
-                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                        ).bodySmall?.copyWith(color: BauhausDesign.textDark),
                       ),
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
                         'Worker: ${service.workerName}',
                         style: BauhausDesign.getTextTheme(
                           context,
-                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                        ).bodySmall?.copyWith(color: BauhausDesign.textDark),
                       ),
                       const SizedBox(height: BauhausDesign.space2),
                       if (rating > 0)
