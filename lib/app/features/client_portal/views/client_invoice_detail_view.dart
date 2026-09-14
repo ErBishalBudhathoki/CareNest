@@ -16,16 +16,50 @@ import 'package:share_plus/share_plus.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import '../viewmodels/client_invoice_viewmodel.dart';
 import '../models/client_portal_models.dart';
+import '../repositories/client_portal_repository.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class ClientInvoiceDetailView extends ConsumerWidget {
+class ClientInvoiceDetailView extends ConsumerStatefulWidget {
   final String invoiceId;
 
   const ClientInvoiceDetailView({super.key, required this.invoiceId});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final invoiceState = ref.watch(clientInvoiceDetailProvider(invoiceId));
+  ConsumerState<ClientInvoiceDetailView> createState() =>
+      _ClientInvoiceDetailViewState();
+}
+
+class _ClientInvoiceDetailViewState
+    extends ConsumerState<ClientInvoiceDetailView>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // The payment link opens an external browser; refresh when the client
+    // returns so a completed payment is reflected.
+    if (state == AppLifecycleState.resumed) {
+      ref.invalidate(clientInvoiceDetailProvider(widget.invoiceId));
+      ref.invalidate(clientInvoicesProvider);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final invoiceState = ref.watch(
+      clientInvoiceDetailProvider(widget.invoiceId),
+    );
     final actionState = ref.watch(invoiceActionsViewModelProvider);
 
     ref.listen<AsyncValue<void>>(invoiceActionsViewModelProvider, (
@@ -44,7 +78,7 @@ class ClientInvoiceDetailView extends ConsumerWidget {
             ),
           ),
         );
-        ref.invalidate(clientInvoiceDetailProvider(invoiceId));
+        ref.invalidate(clientInvoiceDetailProvider(widget.invoiceId));
         ref.invalidate(clientInvoicesProvider);
       }
       if (next.hasError) {
@@ -93,7 +127,7 @@ class ClientInvoiceDetailView extends ConsumerWidget {
             title: 'Error Loading Invoice',
             message: e.toString(),
             onRetry: () =>
-                ref.invalidate(clientInvoiceDetailProvider(invoiceId)),
+                ref.invalidate(clientInvoiceDetailProvider(widget.invoiceId)),
           ),
         ),
       ),
@@ -125,6 +159,10 @@ class ClientInvoiceDetailView extends ConsumerWidget {
               _buildStatusHeader(context, invoice, status),
               const SizedBox(height: BauhausDesign.space4),
               _buildAmountCard(context, invoice),
+              if (_shouldShowPayButton(invoice)) ...[
+                const SizedBox(height: BauhausDesign.space4),
+                _buildPayCard(context, ref, invoice),
+              ],
               const SizedBox(height: BauhausDesign.space4),
               _buildInfoCard(context, invoice),
               const SizedBox(height: BauhausDesign.space4),
@@ -235,7 +273,9 @@ class ClientInvoiceDetailView extends ConsumerWidget {
                   'TOTAL AMOUNT',
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.surfaceWhite.withValues(alpha: 0.7),
+                        color: BauhausDesign.surfaceWhite.withValues(
+                          alpha: 0.7,
+                        ),
                         letterSpacing: 1.5,
                       ),
                 ),
@@ -442,7 +482,9 @@ class ClientInvoiceDetailView extends ConsumerWidget {
                           Container(
                             padding: const EdgeInsets.all(BauhausDesign.space2),
                             decoration: BoxDecoration(
-                              color: BauhausDesign.primary.withValues(alpha: 0.1),
+                              color: BauhausDesign.primary.withValues(
+                                alpha: 0.1,
+                              ),
                               borderRadius: BorderRadius.circular(
                                 BauhausDesign.radiusSm,
                               ),
@@ -516,7 +558,9 @@ class ClientInvoiceDetailView extends ConsumerWidget {
           decoration: BoxDecoration(
             color: BauhausDesign.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-            border: Border.all(color: BauhausDesign.primary.withValues(alpha: 0.3)),
+            border: Border.all(
+              color: BauhausDesign.primary.withValues(alpha: 0.3),
+            ),
           ),
           child: Icon(icon, color: BauhausDesign.primary, size: 18),
         ),
@@ -740,6 +784,144 @@ class ClientInvoiceDetailView extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  double _outstandingBalance(ClientInvoice invoice) {
+    final total = _toDouble(invoice.financialSummary['totalAmount']);
+    final paid = _toDouble(invoice.payment?['paidAmount']);
+    final balance = total - paid;
+    return balance > 0 ? balance : 0;
+  }
+
+  bool _isInvoicePaid(ClientInvoice invoice) {
+    final paymentStatus =
+        (invoice.payment?['status'] ?? invoice.workflow['paymentStatus'] ?? '')
+            .toString()
+            .toLowerCase();
+    if (paymentStatus == 'paid') return true;
+    return _outstandingBalance(invoice) <= 0;
+  }
+
+  bool _shouldShowPayButton(ClientInvoice invoice) {
+    final workflowStatus = (invoice.workflow['status'] ?? '')
+        .toString()
+        .toLowerCase();
+    if (workflowStatus == 'cancelled' ||
+        workflowStatus == 'disputed' ||
+        workflowStatus == 'draft') {
+      return false;
+    }
+    return !_isInvoicePaid(invoice);
+  }
+
+  Widget _buildPayCard(
+    BuildContext context,
+    WidgetRef ref,
+    ClientInvoice invoice,
+  ) {
+    final balance = _outstandingBalance(invoice);
+    return BauhausCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(BauhausDesign.space2),
+                decoration: BoxDecoration(
+                  color: BauhausDesign.success.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                  border: Border.all(color: BauhausDesign.neutral),
+                ),
+                child: const Icon(
+                  Icons.lock_outline,
+                  color: BauhausDesign.success,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: BauhausDesign.space3),
+              Expanded(
+                child: Text(
+                  'PAY ONLINE',
+                  style: BauhausDesign.getTextTheme(context).labelLarge
+                      ?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.0,
+                      ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: BauhausDesign.space3),
+          Text(
+            'Amount due: \$${balance.toStringAsFixed(2)}',
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: BauhausDesign.space1),
+          Text(
+            'Secure card payment. You will be redirected to Stripe to complete payment.',
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+          ),
+          const SizedBox(height: BauhausDesign.space4),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () => _startInvoicePayment(context, ref, invoice),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: BauhausDesign.success,
+                foregroundColor: BauhausDesign.surfaceWhite,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                ),
+              ),
+              icon: const Icon(Icons.payment),
+              label: const Text('PAY NOW'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _startInvoicePayment(
+    BuildContext context,
+    WidgetRef ref,
+    ClientInvoice invoice,
+  ) async {
+    try {
+      final repository = ref.read(clientPortalRepositoryProvider);
+      final result = await repository.getInvoicePaymentLink(invoice.id);
+      final data = result['data'];
+      final url = data is Map ? (data['paymentLinkUrl']?.toString() ?? '') : '';
+      if (url.isEmpty) {
+        final reason = data is Map ? data['reason']?.toString() : null;
+        throw StateError(
+          reason == 'organization_not_connected'
+              ? 'Online payment is not available for this invoice yet.'
+              : 'A payment link is not available for this invoice.',
+        );
+      }
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        throw StateError('Could not open the payment page.');
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: BauhausDesign.error,
+          ),
+        );
+      }
+    }
   }
 
   void _showDisputeDialog(

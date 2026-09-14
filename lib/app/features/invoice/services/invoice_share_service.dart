@@ -161,11 +161,7 @@ class InvoiceShareService {
 
       // Share the PDF file directly
       await SharePlus.instance.share(
-        ShareParams(
-          files: [XFile(pdfFile.path)],
-          text: text,
-          subject: subject,
-        ),
+        ShareParams(files: [XFile(pdfFile.path)], text: text, subject: subject),
       );
 
       return {
@@ -1161,6 +1157,22 @@ Your Invoice Team
         if (stored != null) useAdminBankDetails = stored;
       } catch (_) {}
 
+      // Inject the online payment link so regenerated PDFs carry a
+      // "Pay online" URL matching the issued invoice.
+      final paymentLinkUrl = _extractPaymentLinkUrl(
+        invoiceData is Map ? Map<String, dynamic>.from(invoiceData) : const {},
+      );
+      if (paymentLinkUrl.isNotEmpty) {
+        final clients = pdfGenerationData['clients'];
+        if (clients is List) {
+          for (final client in clients) {
+            if (client is Map) {
+              client['paymentLinkUrl'] = paymentLinkUrl;
+            }
+          }
+        }
+      }
+
       final pdfPaths = await _pdfGenerator.generatePdfs(
         pdfGenerationData,
         showTax: shouldShowTax,
@@ -1204,6 +1216,14 @@ Your Invoice Team
         'message': 'Error regenerating PDF: ${e.toString()}',
       };
     }
+  }
+
+  String _extractPaymentLinkUrl(Map<String, dynamic> invoiceData) {
+    final payment = invoiceData['payment'];
+    if (payment is Map) {
+      return (payment['paymentLinkUrl'] ?? '').toString().trim();
+    }
+    return '';
   }
 
   Map<String, dynamic>? _extractSnapshotClient(

@@ -350,6 +350,18 @@ class ClientPortalRepository {
     }
   }
 
+  /// Get (or create) a hosted Stripe payment link for an invoice.
+  Future<Map<String, dynamic>> getInvoicePaymentLink(String invoiceId) async {
+    try {
+      final apiMethod = ref.read(apiMethodProvider);
+      return await apiMethod.post(
+        'client-portal/invoices/$invoiceId/payment-link',
+      );
+    } catch (e) {
+      return {'success': false, 'message': 'Error fetching payment link: $e'};
+    }
+  }
+
   /// Approve invoice (for existing client portal views)
   Future<void> approveInvoice(String invoiceId) async {
     try {
