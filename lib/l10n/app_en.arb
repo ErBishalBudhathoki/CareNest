@@ -2914,6 +2914,7 @@
   "statusLabel": "Status",
   "statusOverdue": "Overdue",
   "statusPaid": "Paid",
+  "statusPartial": "Partially Paid",
   "statusPending": "Pending",
   "statusPendingShift": "Pending",
   "statusRejected": "Rejected",

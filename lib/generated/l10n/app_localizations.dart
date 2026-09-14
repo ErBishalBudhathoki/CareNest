@@ -11175,6 +11175,12 @@ abstract class AppLocalizations {
   /// **'Paid'**
   String get statusPaid;
 
+  /// No description provided for @statusPartial.
+  ///
+  /// In en, this message translates to:
+  /// **'Partially Paid'**
+  String get statusPartial;
+
   /// No description provided for @statusPending.
   ///
   /// In en, this message translates to:

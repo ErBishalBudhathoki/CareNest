@@ -6071,6 +6071,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statusPaid => 'Paid';
 
   @override
+  String get statusPartial => 'Partially Paid';
+
+  @override
   String get statusPending => 'Pending';
 
   @override

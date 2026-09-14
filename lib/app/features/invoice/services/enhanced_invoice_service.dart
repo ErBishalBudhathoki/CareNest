@@ -4230,8 +4230,22 @@ class EnhancedInvoiceService {
               response['data']?['invoiceId']?.toString() ?? '';
           final paymentLinkUrl =
               response['data']?['paymentLinkUrl']?.toString() ?? '';
+          final paymentLinkReason = response['data']?['paymentLinkReason']
+              ?.toString();
+          final paymentLinkDetail = response['data']?['paymentLinkDetail']
+              ?.toString();
           if (paymentLinkUrl.isNotEmpty) {
             _invoices[i]['paymentLinkUrl'] = paymentLinkUrl;
+            debugPrint(
+              'Stripe payment link created for invoice $backendInvoiceId: '
+              '$paymentLinkUrl',
+            );
+          } else {
+            debugPrint(
+              'Stripe payment link NOT created for invoice $backendInvoiceId '
+              '($backendInvoiceNumber): reason=$paymentLinkReason '
+              'detail=$paymentLinkDetail',
+            );
           }
           savedInvoiceMeta[i] = {
             'invoiceId': backendInvoiceId,
