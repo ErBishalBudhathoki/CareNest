@@ -2716,7 +2716,6 @@ class EnhancedInvoiceService {
     String genKey,
   ) async {
     try {
-
       // Validate inputs
       if (pdfPath.isEmpty) {
         throw ArgumentError('PDF path cannot be empty');
@@ -3474,18 +3473,17 @@ class EnhancedInvoiceService {
         );
       }
 
-      final List<Map<String, dynamic>> enhancedWorkedTimes =
-          bestByScheduleKey.values.toList()..sort((a, b) {
-            final aDate =
-                _normalizeDateOnly(a['correspondingSchedule']?['date']);
-            final bDate =
-                _normalizeDateOnly(b['correspondingSchedule']?['date']);
-            final byDate = aDate.compareTo(bDate);
-            if (byDate != 0) return byDate;
-            final ai = _coerceInt(a['shiftIndex'], defaultValue: 9999);
-            final bi = _coerceInt(b['shiftIndex'], defaultValue: 9999);
-            return ai.compareTo(bi);
-          });
+      final List<Map<String, dynamic>>
+      enhancedWorkedTimes = bestByScheduleKey.values.toList()
+        ..sort((a, b) {
+          final aDate = _normalizeDateOnly(a['correspondingSchedule']?['date']);
+          final bDate = _normalizeDateOnly(b['correspondingSchedule']?['date']);
+          final byDate = aDate.compareTo(bDate);
+          if (byDate != 0) return byDate;
+          final ai = _coerceInt(a['shiftIndex'], defaultValue: 9999);
+          final bi = _coerceInt(b['shiftIndex'], defaultValue: 9999);
+          return ai.compareTo(bi);
+        });
 
       for (final entry in enhancedWorkedTimes) {
         entry.remove('__qualityScore');
@@ -3828,6 +3826,7 @@ class EnhancedInvoiceService {
     bool useAdminBankDetails = false,
   }) async {
     final savedInvoiceIndexes = <int>[];
+    final savedInvoiceMeta = <int, Map<String, dynamic>>{};
 
     try {
       if (organizationId == null || organizationId.isEmpty) {
@@ -4224,6 +4223,20 @@ class EnhancedInvoiceService {
               'Using persisted backend invoice number: $backendInvoiceNumber',
             );
           }
+
+          // Capture the Stripe payment link returned by the backend so the
+          // regenerated PDF can embed a "Pay online" URL.
+          final backendInvoiceId =
+              response['data']?['invoiceId']?.toString() ?? '';
+          final paymentLinkUrl =
+              response['data']?['paymentLinkUrl']?.toString() ?? '';
+          if (paymentLinkUrl.isNotEmpty) {
+            _invoices[i]['paymentLinkUrl'] = paymentLinkUrl;
+          }
+          savedInvoiceMeta[i] = {
+            'invoiceId': backendInvoiceId,
+            'paymentLinkUrl': paymentLinkUrl,
+          };
           savedInvoiceIndexes.add(i);
         } else {
           final errorMessage =
@@ -4318,10 +4331,52 @@ class EnhancedInvoiceService {
       debugPrint(
         'Successfully regenerated ${updatedPdfPaths.length} PDFs with backend invoice numbers',
       );
+
+      // Persist the regenerated PDFs (which now include the payment link) so
+      // later downloads/emails served by the backend also carry the link.
+      await _reuploadLinkedInvoicePdfs(
+        savedInvoiceIndexes: savedInvoiceIndexes,
+        savedInvoiceMeta: savedInvoiceMeta,
+        pdfPaths: updatedPdfPaths,
+        organizationId: organizationId,
+      );
+
       return _dedupePdfPaths(updatedPdfPaths);
     } catch (e) {
       debugPrint('Error regenerating PDFs with backend invoice numbers: $e');
       return _dedupePdfPaths(pdfPaths);
+    }
+  }
+
+  /// Re-uploads regenerated PDFs that embed a payment link back to the
+  /// backend so the stored artifact matches what the user sees.
+  Future<void> _reuploadLinkedInvoicePdfs({
+    required List<int> savedInvoiceIndexes,
+    required Map<int, Map<String, dynamic>> savedInvoiceMeta,
+    required List<String> pdfPaths,
+    required String? organizationId,
+  }) async {
+    if (organizationId == null || organizationId.isEmpty) return;
+
+    for (var k = 0; k < savedInvoiceIndexes.length; k++) {
+      if (k >= pdfPaths.length) break;
+      final index = savedInvoiceIndexes[k];
+      final meta = savedInvoiceMeta[index];
+      final invoiceId = meta?['invoiceId']?.toString() ?? '';
+      final paymentLinkUrl = meta?['paymentLinkUrl']?.toString() ?? '';
+      if (invoiceId.isEmpty || paymentLinkUrl.isEmpty) continue;
+
+      try {
+        final pdfBase64 = await _encodePdfAsBase64(pdfPaths[k]);
+        if (pdfBase64 == null || pdfBase64.isEmpty) continue;
+        await _apiMethod.post(
+          'invoices/$invoiceId/pdf',
+          body: {'organizationId': organizationId, 'pdfBase64': pdfBase64},
+        );
+        debugPrint('Re-uploaded invoice PDF with payment link: $invoiceId');
+      } catch (e) {
+        debugPrint('Failed to re-upload invoice PDF for $invoiceId: $e');
+      }
     }
   }
 }

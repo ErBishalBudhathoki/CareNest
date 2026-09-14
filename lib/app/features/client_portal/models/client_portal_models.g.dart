@@ -299,6 +299,7 @@ _ClientInvoice _$ClientInvoiceFromJson(Map<String, dynamic> json) =>
       workflow: json['workflow'] as Map<String, dynamic>,
       financialSummary: json['financialSummary'] as Map<String, dynamic>,
       lineItems: json['lineItems'] as List<dynamic>?,
+      payment: json['payment'] as Map<String, dynamic>?,
     );
 
 Map<String, dynamic> _$ClientInvoiceToJson(_ClientInvoice instance) =>
@@ -308,6 +309,7 @@ Map<String, dynamic> _$ClientInvoiceToJson(_ClientInvoice instance) =>
       'workflow': instance.workflow,
       'financialSummary': instance.financialSummary,
       'lineItems': instance.lineItems,
+      'payment': instance.payment,
     };
 
 _AppointmentParams _$AppointmentParamsFromJson(Map<String, dynamic> json) =>

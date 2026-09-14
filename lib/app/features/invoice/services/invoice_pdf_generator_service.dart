@@ -796,8 +796,52 @@ class InvoicePdfGenerator {
         pw.Text('Account Name: $accountName'),
         pw.Text('BSB: $bsb'),
         pw.Text('Account Number: $accountNumber'),
+        if (_payOnlineUrl(clientData).isNotEmpty) ...[
+          pw.SizedBox(height: 20),
+          pw.Container(
+            padding: pw.EdgeInsets.all(10),
+            decoration: pw.BoxDecoration(
+              border: pw.Border.all(color: PdfColors.grey400),
+            ),
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text(
+                  'Pay online',
+                  style: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
+                pw.SizedBox(height: 4),
+                pw.UrlLink(
+                  destination: _payOnlineUrl(clientData),
+                  child: pw.Text(
+                    _payOnlineUrl(clientData),
+                    style: pw.TextStyle(
+                      fontSize: 9,
+                      color: PdfColors.blue700,
+                      decoration: pw.TextDecoration.underline,
+                    ),
+                  ),
+                ),
+                pw.SizedBox(height: 4),
+                pw.Text(
+                  'Secure card payment. Amount payable: \$${_getSafeDouble(clientData['total']).toStringAsFixed(2)}',
+                  style: pw.TextStyle(fontSize: 9, color: PdfColors.grey700),
+                ),
+              ],
+            ),
+          ),
+        ],
       ],
     );
+  }
+
+  /// Returns the Stripe payment link embedded for this invoice, if any.
+  String _payOnlineUrl(Map<String, dynamic> clientData) {
+    final raw = clientData['paymentLinkUrl'] ?? clientData['payment_link_url'];
+    return _getSafeString(raw).trim();
   }
 
   /// Resolve bank details to print on the invoice.

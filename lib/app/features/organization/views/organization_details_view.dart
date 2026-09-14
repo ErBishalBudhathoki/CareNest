@@ -45,7 +45,8 @@ class OrganizationDetailsView extends ConsumerStatefulWidget {
 }
 
 class _OrganizationDetailsViewState
-    extends ConsumerState<OrganizationDetailsView> {
+    extends ConsumerState<OrganizationDetailsView>
+    with WidgetsBindingObserver {
   late final ApiMethod _api;
   final ScrollController _scrollController = ScrollController();
   bool _loading = false;
@@ -67,6 +68,7 @@ class _OrganizationDetailsViewState
   @override
   void dispose() {
     // Dispose resources
+    WidgetsBinding.instance.removeObserver(this);
     _scrollController.dispose();
     _mapController.dispose();
     _googleMapController?.dispose();
@@ -76,9 +78,20 @@ class _OrganizationDetailsViewState
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _api = ref.read(app_providers.apiMethodProvider);
     if ((widget.organizationId ?? '').isNotEmpty) {
       _loadOrganization();
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // The Stripe Connect flow opens an external browser. Reload silently when
+    // the user returns so a newly linked account (and its Connected badge)
+    // shows up without a manual reopen.
+    if (state == AppLifecycleState.resumed && mounted) {
+      _loadOrganization(forceRefresh: true, silent: true);
     }
   }
 
@@ -408,9 +421,14 @@ class _OrganizationDetailsViewState
     );
   }
 
-  Future<void> _loadOrganization({bool forceRefresh = false}) async {
+  Future<void> _loadOrganization({
+    bool forceRefresh = false,
+    bool silent = false,
+  }) async {
     if (widget.organizationId == null) return;
-    setState(() => _loading = true);
+    if (!silent) {
+      setState(() => _loading = true);
+    }
     try {
       final resp = await _api.getOrganizationDetails(
         widget.organizationId!,
@@ -452,7 +470,7 @@ class _OrganizationDetailsViewState
     } catch (e) {
       debugPrint('Error loading organization: $e');
     } finally {
-      if (mounted) setState(() => _loading = false);
+      if (!silent && mounted) setState(() => _loading = false);
     }
   }
 
@@ -1002,8 +1020,8 @@ $appLink
                         title: AppLocalizations.of(context)!.generalInformation,
                         icon: Icons.info_outline,
                         iconColor: BauhausDesign.primary,
-                        iconBackgroundColor: BauhausDesign.primary.withValues(alpha: 
-                          0.1,
+                        iconBackgroundColor: BauhausDesign.primary.withValues(
+                          alpha: 0.1,
                         ),
                         children: [
                           _buildDetailRow(
@@ -1044,8 +1062,8 @@ $appLink
                         title: AppLocalizations.of(context)!.contactDetails,
                         icon: Icons.contact_phone_outlined,
                         iconColor: BauhausDesign.accent,
-                        iconBackgroundColor: BauhausDesign.accent.withValues(alpha: 
-                          0.16,
+                        iconBackgroundColor: BauhausDesign.accent.withValues(
+                          alpha: 0.16,
                         ),
                         children: [
                           _buildVerificationCallout(),
@@ -1086,10 +1104,9 @@ $appLink
                         const SizedBox(height: BauhausDesign.space4),
 
                         // Stripe existing-account link
-                        if (!isEmployee) ...[
-                          const SizedBox(height: BauhausDesign.space4),
-                          _buildStripeConnectSection(context, l10n),
-                        ],
+                        _buildStripeConnectSection(context, l10n),
+
+                        const SizedBox(height: BauhausDesign.space4),
 
                         // Banking Details
                         _buildSectionCard(
@@ -1098,8 +1115,9 @@ $appLink
                           title: AppLocalizations.of(context)!.bankDetailsTitle,
                           icon: Icons.account_balance_outlined,
                           iconColor: BauhausDesign.warning,
-                          iconBackgroundColor: BauhausDesign.warning
-                              .withValues(alpha: 0.1),
+                          iconBackgroundColor: BauhausDesign.warning.withValues(
+                            alpha: 0.1,
+                          ),
                           trailing: Builder(
                             builder: (context) {
                               final isVerified = bank['isVerified'] == true;
@@ -1110,15 +1128,23 @@ $appLink
                                 ),
                                 decoration: BoxDecoration(
                                   color: isVerified
-                                      ? BauhausDesign.success.withValues(alpha: 0.1)
-                                      : BauhausDesign.error.withValues(alpha: 0.1),
+                                      ? BauhausDesign.success.withValues(
+                                          alpha: 0.1,
+                                        )
+                                      : BauhausDesign.error.withValues(
+                                          alpha: 0.1,
+                                        ),
                                   borderRadius: BorderRadius.circular(
                                     BauhausDesign.radiusSm,
                                   ),
                                   border: Border.all(
                                     color: isVerified
-                                        ? BauhausDesign.success.withValues(alpha: 0.5)
-                                        : BauhausDesign.error.withValues(alpha: 0.5),
+                                        ? BauhausDesign.success.withValues(
+                                            alpha: 0.5,
+                                          )
+                                        : BauhausDesign.error.withValues(
+                                            alpha: 0.5,
+                                          ),
                                   ),
                                 ),
                                 child: Row(
@@ -1462,8 +1488,8 @@ $appLink
                         subtitle,
                         style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
-                              color: BauhausDesign.surfaceWhite.withValues(alpha: 
-                                0.85,
+                              color: BauhausDesign.surfaceWhite.withValues(
+                                alpha: 0.85,
                               ),
                             ),
                       ),
@@ -1901,70 +1927,131 @@ $appLink
     );
   }
 
-  Widget _buildStripeConnectSection(BuildContext context, AppLocalizations l10n) {
-    return Container(
-      padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: BauhausDesign.neoCardDecoration(
-        backgroundColor: BauhausDesign.surfaceLight,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            l10n.paymentSettingsExistingAccountTitle,
-            style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-              color: BauhausDesign.textDark,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: BauhausDesign.space2),
-          Text(
-            l10n.paymentSettingsExistingAccountSubtitle,
-            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-              color: BauhausDesign.textMuted,
-            ),
-          ),
-          const SizedBox(height: BauhausDesign.space4),
+  Widget _buildStripeConnectSection(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) {
+    final stripeAccountId = (_organization?['stripeAccountId'] as String?)
+        ?.trim();
+    final isConnected = stripeAccountId != null && stripeAccountId.isNotEmpty;
+
+    return _buildSectionCard(
+      context,
+      title: l10n.paymentSettingsExistingAccountTitle,
+      icon: Icons.payments_outlined,
+      iconColor: BauhausDesign.secondary,
+      iconBackgroundColor: BauhausDesign.secondary.withValues(alpha: 0.12),
+      trailing: isConnected ? _buildStripeConnectedBadge(context, l10n) : null,
+      children: [
+        Text(
+          isConnected
+              ? l10n.paymentSettingsActiveDesc
+              : l10n.paymentSettingsExistingAccountSubtitle,
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+        ),
+        const SizedBox(height: BauhausDesign.space4),
+        if (isConnected)
+          _buildStripeAccountIdRow(context, l10n, stripeAccountId)
+        else
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () async {
-                final organizationId = _organization?['id'] as String?;
-                if (organizationId == null) return;
-                try {
-                  final result = await ref
-                      .read(paymentRepositoryProvider)
-                      .startStripeOAuth(organizationId);
-                  final url = result['url'] as String?;
-                  if (url == null) {
-                    throw StateError(l10n.paymentSettingsOAuthStartFailed);
-                  }
-                  final uri = Uri.parse(url);
-                  if (await canLaunchUrl(uri)) {
-                    await launchUrl(uri, mode: LaunchMode.externalApplication);
-                  } else {
-                    throw StateError(l10n.paymentSettingsErrorLaunch);
-                  }
-                } catch (e) {
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(e.toString())),
-                    );
-                  }
-                }
-              },
+              onPressed: () => _startStripeOAuth(context, l10n),
               style: ElevatedButton.styleFrom(
                 backgroundColor: BauhausDesign.secondary,
                 foregroundColor: BauhausDesign.surfaceLight,
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                ),
               ),
               child: Text(l10n.paymentSettingsLinkExistingButton),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildStripeConnectedBadge(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: BauhausDesign.success.withValues(alpha: 0.1),
+        border: Border.all(color: BauhausDesign.success.withValues(alpha: 0.5)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.check_circle,
+            size: 12,
+            color: BauhausDesign.success,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            l10n.paymentSettingsConnected,
+            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+              color: BauhausDesign.success,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildStripeAccountIdRow(
+    BuildContext context,
+    AppLocalizations l10n,
+    String stripeAccountId,
+  ) {
+    return _buildDetailRow(
+      context,
+      l10n.paymentSettingsStripePayoutTitle.toUpperCase(),
+      stripeAccountId,
+      showCopy: true,
+    );
+  }
+
+  Future<void> _startStripeOAuth(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) async {
+    final organizationId = _organization?['id'] as String?;
+    if (organizationId == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.paymentSettingsErrorOrgMissing)),
+        );
+      }
+      return;
+    }
+    try {
+      final result = await ref
+          .read(paymentRepositoryProvider)
+          .startStripeOAuth(organizationId);
+      final url = result['url'] as String?;
+      if (url == null) {
+        throw StateError(l10n.paymentSettingsOAuthStartFailed);
+      }
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        throw StateError(l10n.paymentSettingsErrorLaunch);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    }
   }
 
   Widget _buildSectionCard(

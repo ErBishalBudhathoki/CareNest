@@ -205,6 +205,7 @@ abstract class ClientInvoice with _$ClientInvoice {
     required Map<String, dynamic> workflow,
     required Map<String, dynamic> financialSummary,
     List<dynamic>? lineItems,
+    Map<String, dynamic>? payment,
   }) = _ClientInvoice;
 
   factory ClientInvoice.fromJson(Map<String, dynamic> json) =>
