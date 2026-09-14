@@ -443,7 +443,11 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
 
     return BauhausCard(
       padding: EdgeInsets.zero, // Widget has its own padding/decoration
-      child: PaymentActionsWidget(invoice: invoiceModel, invoiceId: invoice.id),
+      child: PaymentActionsWidget(
+        invoice: invoiceModel,
+        invoiceId: invoice.id,
+        invoiceType: invoice.invoiceType,
+      ),
     );
   }
 
