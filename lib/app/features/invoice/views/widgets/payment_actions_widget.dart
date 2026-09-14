@@ -10,11 +10,13 @@ import 'package:carenest/app/features/invoice/services/recurring_payment_service
 class PaymentActionsWidget extends ConsumerWidget {
   final InvoiceModel invoice;
   final String invoiceId;
+  final String invoiceType;
 
   const PaymentActionsWidget({
     super.key,
     required this.invoice,
     required this.invoiceId,
+    this.invoiceType = 'client',
   });
 
   @override
@@ -51,51 +53,56 @@ class PaymentActionsWidget extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 24),
+          // "PAY NOW" (native Stripe sheet) is only meaningful for employee
+          // invoices. Client invoices are paid by the client via the payment
+          // link / client portal, so we don't offer it to the org admin here.
           if (!isPaid)
             Row(
               children: [
-                Expanded(
-                  child: _BauhausButton(
-                    label: 'PAY NOW',
-                    color: BauhausTheme.blue,
-                    onTap: () async {
-                      final organization = ref
-                          .read(organizationProvider)
-                          .currentOrganization;
-                      if (organization == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Organization data is unavailable'),
-                          ),
-                        );
-                        return;
-                      }
-
-                      try {
-                        await ref
-                            .read(paymentViewModelProvider.notifier)
-                            .payInvoice(
-                              invoiceId: invoiceId,
-                              organizationId: organization.id,
-                            );
-                        if (context.mounted) {
+                if (invoiceType.toLowerCase() == 'employee') ...[
+                  Expanded(
+                    child: _BauhausButton(
+                      label: 'PAY NOW',
+                      color: BauhausTheme.blue,
+                      onTap: () async {
+                        final organization = ref
+                            .read(organizationProvider)
+                            .currentOrganization;
+                        if (organization == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Payment submitted successfully'),
+                              content: Text('Organization data is unavailable'),
                             ),
                           );
+                          return;
                         }
-                      } catch (error) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(error.toString())),
-                          );
+
+                        try {
+                          await ref
+                              .read(paymentViewModelProvider.notifier)
+                              .payInvoice(
+                                invoiceId: invoiceId,
+                                organizationId: organization.id,
+                              );
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Payment submitted successfully'),
+                              ),
+                            );
+                          }
+                        } catch (error) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(error.toString())),
+                            );
+                          }
                         }
-                      }
-                    },
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
+                  const SizedBox(width: 12),
+                ],
                 Expanded(
                   child: _BauhausButton(
                     label: 'RECORD',

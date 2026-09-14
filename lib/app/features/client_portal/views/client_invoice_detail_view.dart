@@ -793,25 +793,40 @@ class _ClientInvoiceDetailViewState
     return balance > 0 ? balance : 0;
   }
 
-  bool _isInvoicePaid(ClientInvoice invoice) {
-    final paymentStatus =
-        (invoice.payment?['status'] ?? invoice.workflow['paymentStatus'] ?? '')
-            .toString()
-            .toLowerCase();
-    if (paymentStatus == 'paid') return true;
-    return _outstandingBalance(invoice) <= 0;
+  String _clientPaymentStatus(ClientInvoice invoice) {
+    final fromPayment = invoice.payment?['status']?.toString().trim();
+    final fromWorkflow = invoice.workflow['paymentStatus']?.toString().trim();
+    return (fromPayment ?? fromWorkflow ?? '').toLowerCase();
   }
 
   bool _shouldShowPayButton(ClientInvoice invoice) {
     final workflowStatus = (invoice.workflow['status'] ?? '')
         .toString()
         .toLowerCase();
-    if (workflowStatus == 'cancelled' ||
+    final paymentStatus = _clientPaymentStatus(invoice);
+
+    final explicitlyPaid = paymentStatus == 'paid' || workflowStatus == 'paid';
+    final notPayable =
+        workflowStatus == 'cancelled' ||
         workflowStatus == 'disputed' ||
-        workflowStatus == 'draft') {
-      return false;
-    }
-    return !_isInvoicePaid(invoice);
+        workflowStatus == 'deleted' ||
+        paymentStatus == 'refunded' ||
+        paymentStatus == 'credited' ||
+        paymentStatus == 'cancelled';
+
+    // Show whenever the invoice is not explicitly settled. This is
+    // status-driven so a missing/zero total can't accidentally hide a
+    // genuinely payable invoice.
+    final show = !explicitlyPaid && !notPayable;
+
+    debugPrint(
+      'PayButton check ${invoice.invoiceNumber}: workflow=$workflowStatus '
+      'paymentStatus=$paymentStatus hasPayment=${invoice.payment != null} '
+      'total=${invoice.financialSummary['totalAmount']} '
+      'paidAmount=${invoice.payment?['paidAmount']} show=$show',
+    );
+
+    return show;
   }
 
   Widget _buildPayCard(
