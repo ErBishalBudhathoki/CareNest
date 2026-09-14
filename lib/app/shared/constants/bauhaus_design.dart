@@ -252,6 +252,30 @@ class BauhausDesign {
         height: 1.4,
         color: textDark,
       ),
+      headlineSmall: GoogleFonts.oswald(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        height: 1.4,
+        color: textDark,
+      ),
+      titleLarge: GoogleFonts.inter(
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        height: 1.4,
+        color: textDark,
+      ),
+      titleMedium: GoogleFonts.inter(
+        fontSize: 15,
+        fontWeight: FontWeight.w700,
+        height: 1.4,
+        color: textDark,
+      ),
+      titleSmall: GoogleFonts.inter(
+        fontSize: 13,
+        fontWeight: FontWeight.w600,
+        height: 1.4,
+        color: textDark,
+      ),
       bodyLarge: GoogleFonts.inter(
         fontSize: 16,
         fontWeight: FontWeight.w400,
