@@ -133,8 +133,8 @@ class BauhausStatCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(BauhausDesign.space1),
                       decoration: BoxDecoration(
-                        color: (iconColor ?? BauhausDesign.primary).withValues(alpha: 
-                          0.1,
+                        color: (iconColor ?? BauhausDesign.primary).withValues(
+                          alpha: 0.1,
                         ),
                         borderRadius: BorderRadius.circular(
                           BauhausDesign.radiusSm,
@@ -155,7 +155,9 @@ class BauhausStatCard extends StatelessWidget {
                       child: isLoading
                           ? Container(
                               height: 18,
-                              color: BauhausDesign.neutral.withValues(alpha: 0.1),
+                              color: BauhausDesign.neutral.withValues(
+                                alpha: 0.1,
+                              ),
                             )
                           : FittedBox(
                               fit: BoxFit.scaleDown,
@@ -191,8 +193,8 @@ class BauhausStatCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(BauhausDesign.space2),
                     decoration: BoxDecoration(
-                      color: (iconColor ?? BauhausDesign.primary).withValues(alpha: 
-                        0.1,
+                      color: (iconColor ?? BauhausDesign.primary).withValues(
+                        alpha: 0.1,
                       ),
                       borderRadius: BorderRadius.circular(
                         BauhausDesign.radiusSm,
@@ -1130,9 +1132,11 @@ class BauhausSectionHeader extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+                  style: BauhausDesign.getTextTheme(context).headlineSmall
+                      ?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: BauhausDesign.textDark,
+                      ),
                 ),
                 if (subtitle != null) ...[
                   const SizedBox(height: BauhausDesign.space1),
@@ -1140,7 +1144,7 @@ class BauhausSectionHeader extends StatelessWidget {
                     subtitle!,
                     style: BauhausDesign.getTextTheme(
                       context,
-                    ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                    ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
                   ),
                 ],
               ],
