@@ -55,9 +55,7 @@ class _ClientInvoiceListViewState extends ConsumerState<ClientInvoiceListView> {
 
     if (_selectedFilter != 'all') {
       filtered = filtered.where((invoice) {
-        final status = (invoice.workflow['status'] as String? ?? '')
-            .toLowerCase();
-        return status == _selectedFilter;
+        return invoice.displayStatus == _selectedFilter;
       }).toList();
     }
 
@@ -246,6 +244,7 @@ class _InvoiceCard extends StatelessWidget {
       case 'overdue':
         return [BauhausDesign.error, BauhausDesign.error];
       case 'disputed':
+      case 'partial':
         return [BauhausDesign.warning, BauhausDesign.warning];
       case 'pending_approval':
       case 'pending':
@@ -265,6 +264,8 @@ class _InvoiceCard extends StatelessWidget {
         return Icons.warning_amber_outlined;
       case 'disputed':
         return Icons.report_problem_outlined;
+      case 'partial':
+        return Icons.timelapse;
       case 'pending_approval':
       case 'pending':
         return Icons.pending_outlined;
@@ -275,7 +276,7 @@ class _InvoiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final status = invoice.workflow['status'] as String? ?? 'Unknown';
+    final status = invoice.displayStatus;
     final total = invoice.financialSummary['totalAmount'] ?? 0.0;
     final dueDate = invoice.financialSummary['dueDate'];
     final statusColors = _getStatusColors(status);
