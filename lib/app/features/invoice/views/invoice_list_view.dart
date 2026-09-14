@@ -314,7 +314,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
                 ),
               ),
               const SizedBox(width: BauhausDesign.space3),
-              _buildStatusChip(invoice.status, l10n),
+              _buildStatusChip(_displayStatus(invoice), l10n),
             ],
           ),
           const SizedBox(height: BauhausDesign.space2),
@@ -349,7 +349,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (invoice.status.toLowerCase() != 'paid') ...[
+                  if (_displayStatus(invoice).toLowerCase() != 'paid') ...[
                     BauhausActionButton(
                       onPressed: () => _markAsPaid(invoice),
                       icon: Icons.check_circle,
@@ -393,6 +393,26 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
         );
   }
 
+  /// Resolves the status shown in the list, preferring the payment status so
+  /// a paid (or partially paid) invoice is not mislabelled by the workflow
+  /// status (workflow can lag behind the Stripe webhook).
+  String _displayStatus(InvoiceListModel invoice) {
+    final payment = invoice.paymentStatus.toLowerCase().trim();
+    final workflow = invoice.status.toLowerCase().trim();
+
+    if (payment == 'paid' || workflow == 'paid') return 'paid';
+    if (payment == 'partial') return 'partial';
+    if (payment == 'refunded') return 'refunded';
+    if (payment == 'cancelled') return 'cancelled';
+    if (payment == 'overdue') return 'overdue';
+
+    final isPastDue = invoice.dueDate.isBefore(DateTime.now());
+    if (isPastDue) return 'overdue';
+
+    if (workflow == 'sent') return 'sent';
+    return 'draft';
+  }
+
   Widget _buildStatusChip(String status, AppLocalizations l10n) {
     BauhausChipVariant variant;
     IconData icon;
@@ -403,6 +423,17 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
         variant = BauhausChipVariant.success;
         icon = Icons.check_circle_outline;
         label = l10n.statusPaid;
+        break;
+      case 'partial':
+        variant = BauhausChipVariant.warning;
+        icon = Icons.timelapse;
+        label = l10n.statusPartial;
+        break;
+      case 'refunded':
+      case 'cancelled':
+        variant = BauhausChipVariant.neutral;
+        icon = Icons.undo;
+        label = l10n.statusDraft;
         break;
       case 'sent':
         variant = BauhausChipVariant.secondary;
@@ -441,7 +472,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
 
       final matchesStatus =
           _statusFilter == 'all' ||
-          invoice.status.toLowerCase() == _statusFilter.toLowerCase();
+          _displayStatus(invoice).toLowerCase() == _statusFilter.toLowerCase();
 
       return matchesSearch && matchesStatus;
     }).toList();

@@ -10,8 +10,6 @@ import 'package:carenest/generated/l10n/app_localizations.dart';
 /// Automatic Invoice Generation ViewModel
 /// Handles automatic invoice generation for all employees and clients in an organization
 class AutomaticInvoiceViewModel extends Notifier<AutomaticInvoiceState> {
-  @override
-  late final Ref ref;
   late final EnhancedInvoiceService _invoiceService;
   late final ApiMethod _apiMethod;
 
