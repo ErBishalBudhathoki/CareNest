@@ -3470,7 +3470,7 @@ as String?,
 /// @nodoc
 mixin _$ClientInvoice {
 
- String get id; String get invoiceNumber; Map<String, dynamic> get workflow; Map<String, dynamic> get financialSummary; List<dynamic>? get lineItems;
+ String get id; String get invoiceNumber; Map<String, dynamic> get workflow; Map<String, dynamic> get financialSummary; List<dynamic>? get lineItems; Map<String, dynamic>? get payment;
 /// Create a copy of ClientInvoice
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -3483,16 +3483,16 @@ $ClientInvoiceCopyWith<ClientInvoice> get copyWith => _$ClientInvoiceCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClientInvoice&&(identical(other.id, id) || other.id == id)&&(identical(other.invoiceNumber, invoiceNumber) || other.invoiceNumber == invoiceNumber)&&const DeepCollectionEquality().equals(other.workflow, workflow)&&const DeepCollectionEquality().equals(other.financialSummary, financialSummary)&&const DeepCollectionEquality().equals(other.lineItems, lineItems));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClientInvoice&&(identical(other.id, id) || other.id == id)&&(identical(other.invoiceNumber, invoiceNumber) || other.invoiceNumber == invoiceNumber)&&const DeepCollectionEquality().equals(other.workflow, workflow)&&const DeepCollectionEquality().equals(other.financialSummary, financialSummary)&&const DeepCollectionEquality().equals(other.lineItems, lineItems)&&const DeepCollectionEquality().equals(other.payment, payment));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,invoiceNumber,const DeepCollectionEquality().hash(workflow),const DeepCollectionEquality().hash(financialSummary),const DeepCollectionEquality().hash(lineItems));
+int get hashCode => Object.hash(runtimeType,id,invoiceNumber,const DeepCollectionEquality().hash(workflow),const DeepCollectionEquality().hash(financialSummary),const DeepCollectionEquality().hash(lineItems),const DeepCollectionEquality().hash(payment));
 
 @override
 String toString() {
-  return 'ClientInvoice(id: $id, invoiceNumber: $invoiceNumber, workflow: $workflow, financialSummary: $financialSummary, lineItems: $lineItems)';
+  return 'ClientInvoice(id: $id, invoiceNumber: $invoiceNumber, workflow: $workflow, financialSummary: $financialSummary, lineItems: $lineItems, payment: $payment)';
 }
 
 
@@ -3503,7 +3503,7 @@ abstract mixin class $ClientInvoiceCopyWith<$Res>  {
   factory $ClientInvoiceCopyWith(ClientInvoice value, $Res Function(ClientInvoice) _then) = _$ClientInvoiceCopyWithImpl;
 @useResult
 $Res call({
- String id, String invoiceNumber, Map<String, dynamic> workflow, Map<String, dynamic> financialSummary, List<dynamic>? lineItems
+ String id, String invoiceNumber, Map<String, dynamic> workflow, Map<String, dynamic> financialSummary, List<dynamic>? lineItems, Map<String, dynamic>? payment
 });
 
 
@@ -3520,14 +3520,15 @@ class _$ClientInvoiceCopyWithImpl<$Res>
 
 /// Create a copy of ClientInvoice
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? invoiceNumber = null,Object? workflow = null,Object? financialSummary = null,Object? lineItems = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? invoiceNumber = null,Object? workflow = null,Object? financialSummary = null,Object? lineItems = freezed,Object? payment = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,invoiceNumber: null == invoiceNumber ? _self.invoiceNumber : invoiceNumber // ignore: cast_nullable_to_non_nullable
 as String,workflow: null == workflow ? _self.workflow : workflow // ignore: cast_nullable_to_non_nullable
 as Map<String, dynamic>,financialSummary: null == financialSummary ? _self.financialSummary : financialSummary // ignore: cast_nullable_to_non_nullable
 as Map<String, dynamic>,lineItems: freezed == lineItems ? _self.lineItems : lineItems // ignore: cast_nullable_to_non_nullable
-as List<dynamic>?,
+as List<dynamic>?,payment: freezed == payment ? _self.payment : payment // ignore: cast_nullable_to_non_nullable
+as Map<String, dynamic>?,
   ));
 }
 
@@ -3612,10 +3613,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String invoiceNumber,  Map<String, dynamic> workflow,  Map<String, dynamic> financialSummary,  List<dynamic>? lineItems)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String invoiceNumber,  Map<String, dynamic> workflow,  Map<String, dynamic> financialSummary,  List<dynamic>? lineItems,  Map<String, dynamic>? payment)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ClientInvoice() when $default != null:
-return $default(_that.id,_that.invoiceNumber,_that.workflow,_that.financialSummary,_that.lineItems);case _:
+return $default(_that.id,_that.invoiceNumber,_that.workflow,_that.financialSummary,_that.lineItems,_that.payment);case _:
   return orElse();
 
 }
@@ -3633,10 +3634,10 @@ return $default(_that.id,_that.invoiceNumber,_that.workflow,_that.financialSumma
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String invoiceNumber,  Map<String, dynamic> workflow,  Map<String, dynamic> financialSummary,  List<dynamic>? lineItems)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String invoiceNumber,  Map<String, dynamic> workflow,  Map<String, dynamic> financialSummary,  List<dynamic>? lineItems,  Map<String, dynamic>? payment)  $default,) {final _that = this;
 switch (_that) {
 case _ClientInvoice():
-return $default(_that.id,_that.invoiceNumber,_that.workflow,_that.financialSummary,_that.lineItems);case _:
+return $default(_that.id,_that.invoiceNumber,_that.workflow,_that.financialSummary,_that.lineItems,_that.payment);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -3653,10 +3654,10 @@ return $default(_that.id,_that.invoiceNumber,_that.workflow,_that.financialSumma
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String invoiceNumber,  Map<String, dynamic> workflow,  Map<String, dynamic> financialSummary,  List<dynamic>? lineItems)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String invoiceNumber,  Map<String, dynamic> workflow,  Map<String, dynamic> financialSummary,  List<dynamic>? lineItems,  Map<String, dynamic>? payment)?  $default,) {final _that = this;
 switch (_that) {
 case _ClientInvoice() when $default != null:
-return $default(_that.id,_that.invoiceNumber,_that.workflow,_that.financialSummary,_that.lineItems);case _:
+return $default(_that.id,_that.invoiceNumber,_that.workflow,_that.financialSummary,_that.lineItems,_that.payment);case _:
   return null;
 
 }
@@ -3668,7 +3669,7 @@ return $default(_that.id,_that.invoiceNumber,_that.workflow,_that.financialSumma
 @JsonSerializable()
 
 class _ClientInvoice implements ClientInvoice {
-  const _ClientInvoice({required this.id, required this.invoiceNumber, required final  Map<String, dynamic> workflow, required final  Map<String, dynamic> financialSummary, final  List<dynamic>? lineItems}): _workflow = workflow,_financialSummary = financialSummary,_lineItems = lineItems;
+  const _ClientInvoice({required this.id, required this.invoiceNumber, required final  Map<String, dynamic> workflow, required final  Map<String, dynamic> financialSummary, final  List<dynamic>? lineItems, final  Map<String, dynamic>? payment}): _workflow = workflow,_financialSummary = financialSummary,_lineItems = lineItems,_payment = payment;
   factory _ClientInvoice.fromJson(Map<String, dynamic> json) => _$ClientInvoiceFromJson(json);
 
 @override final  String id;
@@ -3696,6 +3697,15 @@ class _ClientInvoice implements ClientInvoice {
   return EqualUnmodifiableListView(value);
 }
 
+ final  Map<String, dynamic>? _payment;
+@override Map<String, dynamic>? get payment {
+  final value = _payment;
+  if (value == null) return null;
+  if (_payment is EqualUnmodifiableMapView) return _payment;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(value);
+}
+
 
 /// Create a copy of ClientInvoice
 /// with the given fields replaced by the non-null parameter values.
@@ -3710,16 +3720,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClientInvoice&&(identical(other.id, id) || other.id == id)&&(identical(other.invoiceNumber, invoiceNumber) || other.invoiceNumber == invoiceNumber)&&const DeepCollectionEquality().equals(other._workflow, _workflow)&&const DeepCollectionEquality().equals(other._financialSummary, _financialSummary)&&const DeepCollectionEquality().equals(other._lineItems, _lineItems));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClientInvoice&&(identical(other.id, id) || other.id == id)&&(identical(other.invoiceNumber, invoiceNumber) || other.invoiceNumber == invoiceNumber)&&const DeepCollectionEquality().equals(other._workflow, _workflow)&&const DeepCollectionEquality().equals(other._financialSummary, _financialSummary)&&const DeepCollectionEquality().equals(other._lineItems, _lineItems)&&const DeepCollectionEquality().equals(other._payment, _payment));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,invoiceNumber,const DeepCollectionEquality().hash(_workflow),const DeepCollectionEquality().hash(_financialSummary),const DeepCollectionEquality().hash(_lineItems));
+int get hashCode => Object.hash(runtimeType,id,invoiceNumber,const DeepCollectionEquality().hash(_workflow),const DeepCollectionEquality().hash(_financialSummary),const DeepCollectionEquality().hash(_lineItems),const DeepCollectionEquality().hash(_payment));
 
 @override
 String toString() {
-  return 'ClientInvoice(id: $id, invoiceNumber: $invoiceNumber, workflow: $workflow, financialSummary: $financialSummary, lineItems: $lineItems)';
+  return 'ClientInvoice(id: $id, invoiceNumber: $invoiceNumber, workflow: $workflow, financialSummary: $financialSummary, lineItems: $lineItems, payment: $payment)';
 }
 
 
@@ -3730,7 +3740,7 @@ abstract mixin class _$ClientInvoiceCopyWith<$Res> implements $ClientInvoiceCopy
   factory _$ClientInvoiceCopyWith(_ClientInvoice value, $Res Function(_ClientInvoice) _then) = __$ClientInvoiceCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String invoiceNumber, Map<String, dynamic> workflow, Map<String, dynamic> financialSummary, List<dynamic>? lineItems
+ String id, String invoiceNumber, Map<String, dynamic> workflow, Map<String, dynamic> financialSummary, List<dynamic>? lineItems, Map<String, dynamic>? payment
 });
 
 
@@ -3747,14 +3757,15 @@ class __$ClientInvoiceCopyWithImpl<$Res>
 
 /// Create a copy of ClientInvoice
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? invoiceNumber = null,Object? workflow = null,Object? financialSummary = null,Object? lineItems = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? invoiceNumber = null,Object? workflow = null,Object? financialSummary = null,Object? lineItems = freezed,Object? payment = freezed,}) {
   return _then(_ClientInvoice(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,invoiceNumber: null == invoiceNumber ? _self.invoiceNumber : invoiceNumber // ignore: cast_nullable_to_non_nullable
 as String,workflow: null == workflow ? _self._workflow : workflow // ignore: cast_nullable_to_non_nullable
 as Map<String, dynamic>,financialSummary: null == financialSummary ? _self._financialSummary : financialSummary // ignore: cast_nullable_to_non_nullable
 as Map<String, dynamic>,lineItems: freezed == lineItems ? _self._lineItems : lineItems // ignore: cast_nullable_to_non_nullable
-as List<dynamic>?,
+as List<dynamic>?,payment: freezed == payment ? _self._payment : payment // ignore: cast_nullable_to_non_nullable
+as Map<String, dynamic>?,
   ));
 }
 
