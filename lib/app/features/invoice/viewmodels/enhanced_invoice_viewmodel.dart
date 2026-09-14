@@ -9,8 +9,6 @@ import 'package:carenest/generated/l10n/app_localizations.dart';
 /// Enhanced Invoice ViewModel
 /// Task 5.6: Update invoice service with enhanced pricing integration
 class EnhancedInvoiceViewModel extends Notifier<EnhancedInvoiceState> {
-  @override
-  late final Ref ref;
   late final EnhancedInvoiceService _invoiceService;
 
   @override

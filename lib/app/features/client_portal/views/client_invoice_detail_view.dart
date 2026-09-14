@@ -888,6 +888,21 @@ class _ClientInvoiceDetailViewState
     );
   }
 
+  String _paymentUnavailableMessage(String? reason) {
+    switch (reason) {
+      case 'organization_not_connected':
+        return 'Your provider has not connected Stripe for online payments yet.';
+      case 'charges_not_enabled':
+        return 'Online payments are not enabled for your provider yet. Please try again later.';
+      case 'stripe_not_configured':
+        return 'Online payments are temporarily unavailable. Please try again later.';
+      case 'no_balance_due':
+        return 'This invoice has no outstanding balance.';
+      default:
+        return 'A payment link is not available for this invoice.';
+    }
+  }
+
   Future<void> _startInvoicePayment(
     BuildContext context,
     WidgetRef ref,
@@ -896,15 +911,18 @@ class _ClientInvoiceDetailViewState
     try {
       final repository = ref.read(clientPortalRepositoryProvider);
       final result = await repository.getInvoicePaymentLink(invoice.id);
+      debugPrint(
+        'Client payment link request for invoice ${invoice.id}: $result',
+      );
       final data = result['data'];
       final url = data is Map ? (data['paymentLinkUrl']?.toString() ?? '') : '';
       if (url.isEmpty) {
         final reason = data is Map ? data['reason']?.toString() : null;
-        throw StateError(
-          reason == 'organization_not_connected'
-              ? 'Online payment is not available for this invoice yet.'
-              : 'A payment link is not available for this invoice.',
+        final detail = data is Map ? data['detail']?.toString() : null;
+        debugPrint(
+          'Client payment link unavailable: reason=$reason detail=$detail',
         );
+        throw StateError(_paymentUnavailableMessage(reason));
       }
       final uri = Uri.parse(url);
       if (await canLaunchUrl(uri)) {
