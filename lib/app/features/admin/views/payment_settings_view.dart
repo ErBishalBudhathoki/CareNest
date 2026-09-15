@@ -6,6 +6,8 @@ import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import 'package:carenest/app/features/invoice/viewmodels/payment_viewmodel.dart';
 import 'package:carenest/app/features/organization/views/subscription_view.dart';
+import 'package:carenest/app/shared/widgets/app_snack_bars.dart';
+import 'package:carenest/app/shared/utils/user_messages.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class PaymentSettingsView extends ConsumerStatefulWidget {
@@ -230,18 +232,17 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                   if (!isConnected)
                     InkWell(
                       onTap: () async {
-                        if (organization == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Error: Organization data missing'),
-                            ),
+                        if (organizationId == null) {
+                          showErrorSnack(
+                            context,
+                            'We could not load your organisation. Please reopen the screen.',
                           );
                           return;
                         }
                         try {
                           final url = await ref
                               .read(paymentViewModelProvider.notifier)
-                              .createOnboardingLink(organization.id);
+                              .createOnboardingLink(organizationId);
                           final uri = Uri.tryParse(url);
                           if (uri == null ||
                               !await launchUrl(
@@ -252,9 +253,7 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                           }
                         } catch (e) {
                           if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(e.toString())),
-                            );
+                            showErrorSnack(context, friendlyStripeError(e));
                           }
                         }
                       },
@@ -282,11 +281,9 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                   else
                     InkWell(
                       onTap: () {
-                        // Ideally open Stripe Dashboard
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Dashboard link not implemented yet'),
-                          ),
+                        showInfoSnack(
+                          context,
+                          'Open your Stripe Dashboard in a browser to manage payouts.',
                         );
                       },
                       child: Container(
@@ -388,16 +385,12 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
           .read(paymentViewModelProvider.notifier)
           .disconnectStripe(organizationId);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Stripe account disconnected')),
-        );
+        showSuccessSnack(context, 'Stripe account disconnected.');
         ref.invalidate(stripeConnectStatusProvider(organizationId));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
+        showErrorSnack(context, friendlyStripeError(e));
       }
     }
   }
