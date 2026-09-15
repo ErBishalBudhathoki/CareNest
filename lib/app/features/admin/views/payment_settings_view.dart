@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
 import 'package:carenest/app/features/invoice/viewmodels/payment_viewmodel.dart';
+import 'package:carenest/app/features/organization/views/subscription_view.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class PaymentSettingsView extends ConsumerStatefulWidget {
@@ -283,8 +284,103 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                 ],
               ),
             ),
+            const SizedBox(height: BauhausDesign.space4),
+            _buildSubscriptionCard(context, organization?.id),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildSubscriptionCard(BuildContext context, String? organizationId) {
+    final status = organizationId == null
+        ? null
+        : ref.watch(organizationSubscriptionProvider(organizationId));
+    final statusText = status?.when(
+      data: (value) => value,
+      loading: () => null,
+      error: (_, _) => null,
+    );
+    final isActive = statusText == 'active' || statusText == 'grace';
+    final statusLabel = isActive
+        ? 'ACTIVE'
+        : (statusText == null ? 'UNKNOWN' : statusText.toUpperCase());
+
+    return Container(
+      padding: const EdgeInsets.all(BauhausDesign.space4),
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceLight,
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        boxShadow: const [BauhausDesign.shadowHardSm],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'APP SUBSCRIPTION',
+                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: BauhausDesign.space2,
+                  vertical: BauhausDesign.space1,
+                ),
+                decoration: BoxDecoration(
+                  color: isActive
+                      ? BauhausDesign.success
+                      : BauhausDesign.warning,
+                  border: Border.all(color: BauhausDesign.neutral, width: 1),
+                ),
+                child: Text(
+                  statusLabel,
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: BauhausDesign.space2),
+          Text(
+            'Activate your CareNest subscription to unlock invoicing, payments, '
+            'scheduling and timesheets. Subscriptions are handled by the app store.',
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+          ),
+          const SizedBox(height: BauhausDesign.space3),
+          InkWell(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const SubscriptionView()),
+              );
+            },
+            child: Container(
+              height: 50,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: BauhausDesign.secondary,
+                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                boxShadow: const [BauhausDesign.shadowHardSm],
+              ),
+              child: Text(
+                isActive ? 'MANAGE SUBSCRIPTION' : 'SUBSCRIBE',
+                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                  color: BauhausDesign.surfaceLight,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

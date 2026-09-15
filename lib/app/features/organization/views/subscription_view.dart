@@ -1,9 +1,13 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
 import 'package:carenest/app/features/organization/services/app_subscription_service.dart';
+import 'package:carenest/app/features/invoice/repositories/payment_repository.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:carenest/app/features/invoice/viewmodels/payment_viewmodel.dart';
@@ -17,37 +21,175 @@ class SubscriptionView extends ConsumerStatefulWidget {
 
 class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
   final AppSubscriptionService _service = AppSubscriptionService();
+  StreamSubscription<List<PurchaseDetails>>? _purchaseSubscription;
+  ProductDetails? _product;
   bool _loading = false;
   String? _errorMessage;
 
-  Future<void> _handleSubscribe() async {
-    setState(() => _loading = true);
+  @override
+  void initState() {
+    super.initState();
+    _purchaseSubscription = _service.purchaseUpdates.listen(
+      _onPurchaseUpdates,
+      onError: (Object e) {
+        if (mounted) setState(() => _errorMessage = e.toString());
+      },
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadProduct());
+  }
+
+  @override
+  void dispose() {
+    _purchaseSubscription?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _loadProduct() async {
     try {
       final product = await _service.loadMonthlyProduct();
-      final purchased = await _service.purchaseMonthly(product);
-      if (!purchased) {
-        throw StateError(AppLocalizations.of(context)!.subscriptionError);
+      if (mounted) {
+        setState(() {
+          _product = product;
+          _errorMessage = null;
+        });
       }
     } catch (e) {
-      _errorMessage = e.toString();
-    } finally {
-      if (mounted) setState(() => _loading = false);
+      if (mounted) setState(() => _errorMessage = e.toString());
+    }
+  }
+
+  String? get _organizationId =>
+      ref.read(organizationProvider).currentOrganization?.id;
+
+  Future<void> _onPurchaseUpdates(List<PurchaseDetails> purchases) async {
+    for (final purchase in purchases) {
+      await _processPurchase(purchase);
+    }
+  }
+
+  Future<void> _processPurchase(PurchaseDetails purchase) async {
+    switch (purchase.status) {
+      case PurchaseStatus.purchased:
+      case PurchaseStatus.restored:
+        await _verifyAndActivate(purchase);
+        break;
+      case PurchaseStatus.error:
+        if (mounted) {
+          setState(() {
+            _errorMessage = purchase.error?.message ?? 'Purchase failed';
+            _loading = false;
+          });
+        }
+        break;
+      case PurchaseStatus.canceled:
+        if (mounted) setState(() => _loading = false);
+        break;
+      case PurchaseStatus.pending:
+        // Keep the loading indicator until the store responds.
+        break;
+    }
+  }
+
+  Future<void> _verifyAndActivate(PurchaseDetails purchase) async {
+    final organizationId = _organizationId;
+    try {
+      if (organizationId == null) {
+        throw StateError('Organization data is unavailable');
+      }
+      final repository = ref.read(paymentRepositoryProvider);
+      final verificationToken =
+          purchase.verificationData.serverVerificationData;
+
+      final Map<String, dynamic> result;
+      if (Platform.isAndroid) {
+        result = await repository.verifyGooglePurchase(
+          organizationId: organizationId,
+          purchaseToken: verificationToken,
+          productId: purchase.productID,
+          subscriptionId: purchase.productID,
+        );
+      } else {
+        result = await repository.verifyApplePurchase(
+          organizationId: organizationId,
+          transactionJws: verificationToken,
+          productId: purchase.productID,
+        );
+      }
+
+      if (result['success'] != true) {
+        throw StateError(
+          result['message']?.toString() ?? 'Subscription verification failed',
+        );
+      }
+
+      await _service.completeVerifiedPurchase(purchase);
+      ref.invalidate(organizationSubscriptionProvider(organizationId));
+
+      if (mounted) {
+        setState(() {
+          _loading = false;
+          _errorMessage = null;
+        });
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Subscription activated')));
+      }
+    } catch (e) {
+      // Acknowledge the purchase so the store does not keep it pending, then
+      // surface the verification error so the user can retry/restore.
+      try {
+        await _service.completeVerifiedPurchase(purchase);
+      } catch (_) {}
+      if (mounted) {
+        setState(() {
+          _loading = false;
+          _errorMessage = e.toString();
+        });
+      }
+    }
+  }
+
+  Future<void> _handleSubscribe() async {
+    setState(() {
+      _loading = true;
+      _errorMessage = null;
+    });
+    try {
+      final product = _product ?? await _service.loadMonthlyProduct();
+      _product = product;
+      final started = await _service.purchaseMonthly(product);
+      if (!started && mounted) {
+        setState(() => _loading = false);
+      }
+      // Completion is delivered via the purchase stream.
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          _loading = false;
+        });
+      }
     }
   }
 
   Future<void> _handleRestore() async {
-    setState(() => _loading = true);
+    setState(() {
+      _loading = true;
+      _errorMessage = null;
+    });
     try {
       await _service.restorePurchases();
     } catch (e) {
-      _errorMessage = e.toString();
+      if (mounted) setState(() => _errorMessage = e.toString());
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
 
   Future<void> _handleManage() async {
-    final uri = Uri.parse('https://play.google.com/store/account/subscriptions');
+    final uri = Platform.isIOS
+        ? Uri.parse('https://apps.apple.com/account/subscriptions')
+        : Uri.parse('https://play.google.com/store/account/subscriptions');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
@@ -61,10 +203,7 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
         ? null
         : ref.watch(organizationSubscriptionProvider(organization.id));
 
-    final priceText = NumberFormat.simpleCurrency(
-      locale: 'en_AU',
-      name: 'AUD',
-    ).format(9.99);
+    final priceText = _product?.price ?? l10n.subscriptionPricePerMonth;
 
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
@@ -83,46 +222,58 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
           child: Container(color: BauhausDesign.neutral, height: 2.0),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(BauhausDesign.space4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildStatusBanner(context, l10n, status),
-            const SizedBox(height: BauhausDesign.space4),
-            Text(
-              l10n.subscriptionDescription,
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
-            ),
-            const SizedBox(height: BauhausDesign.space4),
-            _buildPriceCard(context, l10n, priceText),
-            const SizedBox(height: BauhausDesign.space4),
-            _buildFeaturesList(context, l10n),
-            const SizedBox(height: BauhausDesign.space4),
-            _buildPlaceholderCard(context, l10n),
-            const SizedBox(height: BauhausDesign.space4),
-            if (_errorMessage != null)
-              Container(
-                padding: const EdgeInsets.all(BauhausDesign.space3),
-                color: BauhausDesign.error.withOpacity(0.08),
-                child: Text(
-                  _errorMessage!,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodySmall?.copyWith(color: BauhausDesign.error),
-                ),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          if (organization != null) {
+            ref.invalidate(organizationSubscriptionProvider(organization.id));
+          }
+          await _loadProduct();
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(BauhausDesign.space4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildStatusBanner(context, l10n, status),
+              const SizedBox(height: BauhausDesign.space4),
+              Text(
+                l10n.subscriptionDescription,
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
               ),
-            if (_errorMessage != null) const SizedBox(height: BauhausDesign.space4),
-            _buildButtons(context, l10n),
-          ],
+              const SizedBox(height: BauhausDesign.space4),
+              _buildPriceCard(context, l10n, priceText),
+              const SizedBox(height: BauhausDesign.space4),
+              _buildFeaturesList(context, l10n),
+              const SizedBox(height: BauhausDesign.space4),
+              if (_errorMessage != null)
+                Container(
+                  padding: const EdgeInsets.all(BauhausDesign.space3),
+                  color: BauhausDesign.error.withValues(alpha: 0.08),
+                  child: Text(
+                    _errorMessage!,
+                    style: BauhausDesign.getTextTheme(
+                      context,
+                    ).bodySmall?.copyWith(color: BauhausDesign.error),
+                  ),
+                ),
+              if (_errorMessage != null)
+                const SizedBox(height: BauhausDesign.space4),
+              _buildButtons(context, l10n),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildStatusBanner(BuildContext context, AppLocalizations l10n, AsyncValue<String>? status) {
+  Widget _buildStatusBanner(
+    BuildContext context,
+    AppLocalizations l10n,
+    AsyncValue<String>? status,
+  ) {
     final statusText = status?.when(
       data: (value) => value,
       loading: () => null,
@@ -136,9 +287,14 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
     } else if (statusText == 'grace') {
       color = BauhausDesign.warning;
       text = l10n.subscriptionStatusGrace;
-    } else if (statusText == 'expired') {
+    } else if (statusText == 'expired' ||
+        statusText == 'revoked' ||
+        statusText == 'refunded') {
       color = BauhausDesign.error;
       text = l10n.subscriptionStatusExpired;
+    } else if (statusText == 'none') {
+      color = BauhausDesign.warning;
+      text = l10n.subscriptionStatusUnknown;
     }
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
@@ -168,7 +324,11 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
     );
   }
 
-  Widget _buildPriceCard(BuildContext context, AppLocalizations l10n, String priceText) {
+  Widget _buildPriceCard(
+    BuildContext context,
+    AppLocalizations l10n,
+    String priceText,
+  ) {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
@@ -185,25 +345,25 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
               children: [
                 Text(
                   l10n.subscriptionPricePerMonth,
-                  style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-                    color: BauhausDesign.secondary,
-                  ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   l10n.subscriptionDescription,
-                  style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                    color: BauhausDesign.textMuted,
-                  ),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
                 ),
               ],
             ),
           ),
           Text(
             priceText,
-            style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-              color: BauhausDesign.primary,
-            ),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).displaySmall?.copyWith(color: BauhausDesign.primary),
           ),
         ],
       ),
@@ -226,59 +386,31 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: features.map((f) => Padding(
-          padding: const EdgeInsets.only(bottom: BauhausDesign.space2),
-          child: Row(
-            children: [
-              const Icon(Icons.check, color: BauhausDesign.success, size: 20),
-              const SizedBox(width: BauhausDesign.space3),
-              Expanded(
-                child: Text(
-                  f,
-                  style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                    color: BauhausDesign.textDark,
-                  ),
+        children: features
+            .map(
+              (f) => Padding(
+                padding: const EdgeInsets.only(bottom: BauhausDesign.space2),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.check,
+                      color: BauhausDesign.success,
+                      size: 20,
+                    ),
+                    const SizedBox(width: BauhausDesign.space3),
+                    Expanded(
+                      child: Text(
+                        f,
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        )).toList(),
-      ),
-    );
-  }
-
-  Widget _buildPlaceholderCard(BuildContext context, AppLocalizations l10n) {
-    return Container(
-      padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        border: Border.all(color: BauhausDesign.warning, width: 2),
-        boxShadow: const [BauhausDesign.shadowHardSm],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            l10n.subscriptionProductPlaceholder,
-            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-              color: BauhausDesign.textMuted,
-            ),
-          ),
-          const SizedBox(height: BauhausDesign.space2),
-          Text(
-            l10n.subscriptionIosPlaceholder,
-            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-              color: BauhausDesign.textMuted,
-            ),
-          ),
-          const SizedBox(height: BauhausDesign.space2),
-          Text(
-            l10n.subscriptionAndroidPlaceholder,
-            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-              color: BauhausDesign.textMuted,
-            ),
-          ),
-        ],
+            )
+            .toList(),
       ),
     );
   }
@@ -296,7 +428,14 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
           ),
           child: _loading
-              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
               : Text(l10n.subscriptionBuyButton),
         ),
         const SizedBox(height: BauhausDesign.space3),
