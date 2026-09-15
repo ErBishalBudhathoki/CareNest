@@ -25,6 +25,8 @@ import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:carenest/app/features/invoice/repositories/payment_repository.dart';
 import 'package:carenest/app/features/invoice/viewmodels/payment_viewmodel.dart';
+import 'package:carenest/app/shared/widgets/app_snack_bars.dart';
+import 'package:carenest/app/shared/utils/user_messages.dart';
 
 class OrganizationDetailsView extends ConsumerStatefulWidget {
   final String? organizationId;
@@ -2058,12 +2060,12 @@ $appLink
       final uri = Uri.parse(url);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        throw StateError('Could not open the Stripe page');
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
+        showErrorSnack(context, friendlyStripeError(e));
       }
     }
   }
@@ -2130,16 +2132,12 @@ $appLink
           .read(paymentViewModelProvider.notifier)
           .disconnectStripe(organizationId);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Stripe account disconnected')),
-        );
+        showSuccessSnack(context, 'Stripe account disconnected.');
         await _loadOrganization(forceRefresh: true, silent: true);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
+        showErrorSnack(context, friendlyStripeError(e));
       }
     }
   }
@@ -2195,8 +2193,9 @@ $appLink
     final organizationId = _organization?['id'] as String?;
     if (organizationId == null) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.paymentSettingsErrorOrgMissing)),
+        showErrorSnack(
+          context,
+          'We could not load your organisation. Please reopen the screen.',
         );
       }
       return;
@@ -2207,19 +2206,17 @@ $appLink
           .startStripeOAuth(organizationId);
       final url = result['url'] as String?;
       if (url == null) {
-        throw StateError(l10n.paymentSettingsOAuthStartFailed);
+        throw StateError('Stripe did not return a connection URL');
       }
       final uri = Uri.parse(url);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
-        throw StateError(l10n.paymentSettingsErrorLaunch);
+        throw StateError('Could not open the Stripe page');
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
+        showErrorSnack(context, friendlyStripeError(e));
       }
     }
   }

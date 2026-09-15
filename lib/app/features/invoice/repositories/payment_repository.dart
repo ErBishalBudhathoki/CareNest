@@ -86,6 +86,15 @@ class PaymentRepository {
     );
   }
 
+  /// DEV ONLY: clears the organisation's entitlement so the subscription gate
+  /// can be re-tested.
+  Future<Map<String, dynamic>> resetSubscription(String organizationId) async {
+    return _api.post(
+      'api/billing/entitlements/reset',
+      body: {'organizationId': organizationId},
+    );
+  }
+
   /// Verify a Google Play subscription purchase server-side.
   Future<Map<String, dynamic>> verifyGooglePurchase({
     required String organizationId,
