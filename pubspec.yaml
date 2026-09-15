@@ -1,7 +1,7 @@
 name: carenest
 description: Conversion of invoice desktop app to mobile
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 4.6.3+191
+version: 4.6.4+192
 
 environment:
   sdk: ">=3.11.5 <4.0.0"
