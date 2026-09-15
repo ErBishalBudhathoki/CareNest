@@ -100,24 +100,22 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
         await _verifyAndActivate(purchase);
         break;
       case PurchaseStatus.error:
-        final code = purchase.error?.code;
+        final code = purchase.error?.code ?? '';
         final message = purchase.error?.message ?? 'Purchase failed';
         if (mounted) {
           setState(() {
             _purchaseHandled = true;
-            _errorMessage = code != null && code.isNotEmpty
-                ? '[$code] $message'
-                : message;
+            _errorMessage =
+                'Purchase failed: $message${code.isEmpty ? '' : ' ($code)'}. '
+                'If you already subscribed, tap RESTORE PURCHASES.';
             _loading = false;
           });
         }
-        // Common after a first test purchase: the account already owns the
-        // subscription, so restore it instead of surfacing a failure.
-        if (code == 'E_ITEM_ALREADY_OWNED' ||
-            code == 'ITEM_ALREADY_OWNED' ||
-            code == 'already_owned') {
+        // The account may already own the subscription (e.g. after a previous
+        // test purchase). Restore it so we can verify and activate.
+        try {
           await _service.restorePurchases();
-        }
+        } catch (_) {}
         break;
       case PurchaseStatus.canceled:
         if (mounted) setState(() => _loading = false);
