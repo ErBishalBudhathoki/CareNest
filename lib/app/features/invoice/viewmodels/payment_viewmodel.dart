@@ -124,6 +124,14 @@ class PaymentViewModel extends AsyncNotifier<void> {
     }
   }
 
+  Future<void> disconnectStripe(String organizationId) async {
+    final result = await _repository.disconnectStripe(organizationId);
+    if (result['success'] != true) {
+      throw Exception(result['message'] ?? 'Failed to disconnect Stripe');
+    }
+    ref.invalidate(stripeConnectStatusProvider(organizationId));
+  }
+
   Future<String> createOnboardingLink(String organizationId) async {
     try {
       final result = await _repository.createStripeOnboardingLink(

@@ -70,6 +70,14 @@ class PaymentRepository {
     );
   }
 
+  /// Disconnect the organisation's linked Stripe account.
+  Future<Map<String, dynamic>> disconnectStripe(String organizationId) async {
+    return _api.post(
+      'api/payments/disconnect',
+      body: {'organizationId': organizationId},
+    );
+  }
+
   Future<Map<String, dynamic>> getSubscriptionStatus(
     String organizationId,
   ) async {
