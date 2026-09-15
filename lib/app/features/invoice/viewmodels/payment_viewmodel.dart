@@ -26,9 +26,17 @@ final organizationSubscriptionProvider = FutureProvider.autoDispose
           .watch(paymentRepositoryProvider)
           .getSubscriptionStatus(organizationId);
       if (result['success'] != true) {
-        throw Exception(result['message'] ?? 'Failed to check subscription status');
+        throw Exception(
+          result['message'] ?? 'Failed to check subscription status',
+        );
       }
-      return result['status'] as String? ?? 'none';
+      final raw = result['status'];
+      if (raw is String && raw.isNotEmpty) return raw;
+      if (raw is Map && raw['status'] != null) {
+        final value = raw['status'].toString();
+        return value.isEmpty ? 'none' : value;
+      }
+      return 'none';
     });
 
 class PaymentViewModel extends AsyncNotifier<void> {
