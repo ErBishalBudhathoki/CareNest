@@ -24,6 +24,7 @@ import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:carenest/app/features/invoice/repositories/payment_repository.dart';
+import 'package:carenest/app/features/invoice/viewmodels/payment_viewmodel.dart';
 
 class OrganizationDetailsView extends ConsumerStatefulWidget {
   final String? organizationId;
@@ -1933,7 +1934,32 @@ $appLink
   ) {
     final stripeAccountId = (_organization?['stripeAccountId'] as String?)
         ?.trim();
-    final isConnected = stripeAccountId != null && stripeAccountId.isNotEmpty;
+    final organizationId = _organization?['id'] as String?;
+    final hasAccount = stripeAccountId != null && stripeAccountId.isNotEmpty;
+
+    // Use the same live source of truth as Payment Settings so both screens
+    // agree: an account can be linked via OAuth but still not be able to
+    // charge until Stripe onboarding is complete.
+    final connectAsync = (hasAccount && organizationId != null)
+        ? ref.watch(stripeConnectStatusProvider(organizationId))
+        : null;
+    final isFullyConnected = connectAsync?.asData?.value == true;
+    final isActionNeeded = hasAccount && !isFullyConnected;
+
+    final Widget? trailing = isFullyConnected
+        ? _buildStripeConnectedBadge(context, l10n)
+        : (isActionNeeded ? _buildStripeActionNeededBadge(context) : null);
+
+    final String description;
+    if (isFullyConnected) {
+      description = l10n.paymentSettingsActiveDesc;
+    } else if (isActionNeeded) {
+      description =
+          'Your Stripe account is linked but setup is incomplete. Finish Stripe '
+          'onboarding to start receiving payouts.';
+    } else {
+      description = l10n.paymentSettingsExistingAccountSubtitle;
+    }
 
     return _buildSectionCard(
       context,
@@ -1941,20 +1967,36 @@ $appLink
       icon: Icons.payments_outlined,
       iconColor: BauhausDesign.secondary,
       iconBackgroundColor: BauhausDesign.secondary.withValues(alpha: 0.12),
-      trailing: isConnected ? _buildStripeConnectedBadge(context, l10n) : null,
+      trailing: trailing,
       children: [
         Text(
-          isConnected
-              ? l10n.paymentSettingsActiveDesc
-              : l10n.paymentSettingsExistingAccountSubtitle,
+          description,
           style: BauhausDesign.getTextTheme(
             context,
           ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
         ),
         const SizedBox(height: BauhausDesign.space4),
-        if (isConnected)
-          _buildStripeAccountIdRow(context, l10n, stripeAccountId)
-        else
+        if (isFullyConnected)
+          _buildStripeAccountIdRow(context, l10n, stripeAccountId!)
+        else if (isActionNeeded) ...[
+          _buildStripeAccountIdRow(context, l10n, stripeAccountId),
+          const SizedBox(height: BauhausDesign.space3),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => _completeStripeSetup(context, organizationId!),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: BauhausDesign.warning,
+                foregroundColor: BauhausDesign.textDark,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                ),
+              ),
+              child: const Text('COMPLETE STRIPE SETUP'),
+            ),
+          ),
+        ] else
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -1972,6 +2014,51 @@ $appLink
           ),
       ],
     );
+  }
+
+  Widget _buildStripeActionNeededBadge(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: BauhausDesign.warning.withValues(alpha: 0.15),
+        border: Border.all(color: BauhausDesign.warning.withValues(alpha: 0.6)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.error_outline, size: 12, color: BauhausDesign.error),
+          const SizedBox(width: 4),
+          Text(
+            'ACTION NEEDED',
+            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+              color: BauhausDesign.error,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _completeStripeSetup(
+    BuildContext context,
+    String organizationId,
+  ) async {
+    try {
+      final url = await ref
+          .read(paymentViewModelProvider.notifier)
+          .createOnboardingLink(organizationId);
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    }
   }
 
   Widget _buildStripeConnectedBadge(
