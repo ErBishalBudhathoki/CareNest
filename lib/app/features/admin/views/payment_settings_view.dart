@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/app/features/invoice/viewmodels/payment_viewmodel.dart';
 import 'package:carenest/app/features/organization/views/subscription_view.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
@@ -32,19 +34,46 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && _organizationId != null) {
-      ref.invalidate(stripeConnectStatusProvider(_organizationId!));
+    if (state == AppLifecycleState.resumed) {
+      final orgId = _resolveOrganizationId();
+      if (orgId != null) {
+        ref.invalidate(stripeConnectStatusProvider(orgId));
+        ref.invalidate(organizationSubscriptionProvider(orgId));
+      }
     }
+  }
+
+  /// Resolve the org id even when `organizationProvider.currentOrganization`
+  /// has not been loaded, so both cards show the correct live state.
+  String? _resolveOrganizationId() {
+    final fromOrg = ref.read(organizationProvider).currentOrganization?.id;
+    if (fromOrg != null && fromOrg.trim().isNotEmpty) return fromOrg.trim();
+    try {
+      final fromProvider = ref.read(app_providers.organizationIdProvider);
+      if (fromProvider != null && fromProvider.trim().isNotEmpty) {
+        return fromProvider.trim();
+      }
+    } catch (_) {}
+    try {
+      final fromPrefs = ref
+          .read(app_providers.sharedPreferencesProvider)
+          .getOrganizationId();
+      if (fromPrefs != null && fromPrefs.trim().isNotEmpty) {
+        return fromPrefs.trim();
+      }
+    } catch (_) {}
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
     final organizationState = ref.watch(organizationProvider);
     final organization = organizationState.currentOrganization;
-    _organizationId = organization?.id;
-    final connectStatus = organization == null
+    final organizationId = _resolveOrganizationId();
+    _organizationId = organizationId;
+    final connectStatus = organizationId == null
         ? null
-        : ref.watch(stripeConnectStatusProvider(organization.id));
+        : ref.watch(stripeConnectStatusProvider(organizationId));
     final isConnected = connectStatus?.asData?.value == true;
 
     return Scaffold(
@@ -285,7 +314,7 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
               ),
             ),
             const SizedBox(height: BauhausDesign.space4),
-            _buildSubscriptionCard(context, organization?.id),
+            _buildSubscriptionCard(context, organizationId),
           ],
         ),
       ),

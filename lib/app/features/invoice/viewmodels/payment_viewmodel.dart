@@ -15,9 +15,11 @@ final stripeConnectStatusProvider = FutureProvider.autoDispose
       if (result['success'] != true) {
         throw Exception(result['message'] ?? 'Failed to check Stripe status');
       }
+      // "Connected" for collecting payments: the account must be onboarded and
+      // able to charge. Payouts are the organisation's own concern and can
+      // still be pending without blocking client payments.
       return result['detailsSubmitted'] == true &&
-          result['chargesEnabled'] == true &&
-          result['payoutsEnabled'] == true;
+          result['chargesEnabled'] == true;
     });
 
 final organizationSubscriptionProvider = FutureProvider.autoDispose
