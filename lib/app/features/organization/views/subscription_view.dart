@@ -150,35 +150,126 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
   }
 
   Future<bool> _confirmSubscribe() async {
+    final theme = BauhausDesign.getTextTheme(context);
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: BauhausDesign.surfaceWhite,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          side: const BorderSide(color: BauhausDesign.neutral, width: 2),
-        ),
-        title: const Text('Confirm subscription'),
-        content: const Text(
-          'This purchase is completed through Google Play.\n\n'
-          'If your Google account is set up as a Play license tester you will '
-          'NOT be charged. Otherwise Google Play will charge your saved payment '
-          'method and the subscription renews until you cancel it.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('CANCEL'),
+      barrierColor: BauhausDesign.neutral.withValues(alpha: 0.55),
+      builder: (dialogContext) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.all(BauhausDesign.space4),
+        child: Container(
+          decoration: BoxDecoration(
+            color: BauhausDesign.surfaceWhite,
+            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+            boxShadow: const [BauhausDesign.shadowHard],
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: BauhausDesign.secondary,
-              foregroundColor: BauhausDesign.surfaceLight,
-            ),
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('CONTINUE'),
+          padding: const EdgeInsets.all(BauhausDesign.space4),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(BauhausDesign.space2),
+                    decoration: BoxDecoration(
+                      color: BauhausDesign.surfaceWhite,
+                      borderRadius: BorderRadius.circular(
+                        BauhausDesign.radiusSm,
+                      ),
+                      border: Border.all(
+                        color: BauhausDesign.neutral,
+                        width: 2,
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.receipt_long_outlined,
+                      color: BauhausDesign.textDark,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: BauhausDesign.space3),
+                  Expanded(
+                    child: Text(
+                      'CONFIRM SUBSCRIPTION',
+                      style: theme.labelLarge?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.6,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: BauhausDesign.space4),
+              Text(
+                'This purchase is completed through Google Play.',
+                style: theme.bodyMedium?.copyWith(
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: BauhausDesign.space2),
+              Text(
+                'If your Google account is set up as a Play license tester you will '
+                'NOT be charged. Otherwise Google Play will charge your saved payment '
+                'method and the subscription renews until you cancel it.',
+                style: theme.bodyMedium?.copyWith(
+                  color: BauhausDesign.textDark,
+                ),
+              ),
+              const SizedBox(height: BauhausDesign.space4),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(dialogContext, false),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: BauhausDesign.textDark,
+                        side: const BorderSide(
+                          color: BauhausDesign.neutral,
+                          width: 2,
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            BauhausDesign.radiusMd,
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        'CANCEL',
+                        style: TextStyle(fontWeight: FontWeight.w900),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: BauhausDesign.space3),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: BauhausDesign.secondary,
+                        foregroundColor: BauhausDesign.surfaceWhite,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            BauhausDesign.radiusMd,
+                          ),
+                        ),
+                      ),
+                      onPressed: () => Navigator.pop(dialogContext, true),
+                      child: const Text(
+                        'CONTINUE',
+                        style: TextStyle(fontWeight: FontWeight.w900),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
     return confirmed == true;
