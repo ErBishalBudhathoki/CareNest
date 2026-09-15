@@ -149,7 +149,44 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
     }
   }
 
+  Future<bool> _confirmSubscribe() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: BauhausDesign.surfaceWhite,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+          side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+        ),
+        title: const Text('Confirm subscription'),
+        content: const Text(
+          'This purchase is completed through Google Play.\n\n'
+          'If your Google account is set up as a Play license tester you will '
+          'NOT be charged. Otherwise Google Play will charge your saved payment '
+          'method and the subscription renews until you cancel it.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('CANCEL'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: BauhausDesign.secondary,
+              foregroundColor: BauhausDesign.surfaceLight,
+            ),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('CONTINUE'),
+          ),
+        ],
+      ),
+    );
+    return confirmed == true;
+  }
+
   Future<void> _handleSubscribe() async {
+    if (!await _confirmSubscribe()) return;
+    if (!mounted) return;
     setState(() {
       _loading = true;
       _errorMessage = null;
