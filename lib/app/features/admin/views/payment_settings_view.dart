@@ -310,6 +310,33 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                         ),
                       ),
                     ),
+                  if (isConnected) ...[
+                    const SizedBox(height: BauhausDesign.space3),
+                    InkWell(
+                      onTap: () =>
+                          _confirmDisconnectStripe(context, organizationId!),
+                      child: Container(
+                        height: 50,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: BauhausDesign.surfaceLight,
+                          border: Border.all(
+                            color: BauhausDesign.error,
+                            width: 2,
+                          ),
+                          boxShadow: const [BauhausDesign.shadowHardSm],
+                        ),
+                        child: Text(
+                          'DISCONNECT STRIPE',
+                          style: BauhausDesign.getTextTheme(context).labelLarge
+                              ?.copyWith(
+                                color: BauhausDesign.error,
+                                fontWeight: FontWeight.w900,
+                              ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -319,6 +346,60 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
         ),
       ),
     );
+  }
+
+  Future<void> _confirmDisconnectStripe(
+    BuildContext context,
+    String organizationId,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: BauhausDesign.surfaceWhite,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+          side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+        ),
+        title: const Text('Disconnect Stripe?'),
+        content: const Text(
+          'This will remove the linked Stripe account. Clients will no longer '
+          'be able to pay invoices online until you reconnect.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('CANCEL'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: BauhausDesign.error,
+              foregroundColor: BauhausDesign.surfaceWhite,
+            ),
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('DISCONNECT'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    try {
+      await ref
+          .read(paymentViewModelProvider.notifier)
+          .disconnectStripe(organizationId);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Stripe account disconnected')),
+        );
+        ref.invalidate(stripeConnectStatusProvider(organizationId));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    }
   }
 
   Widget _buildSubscriptionCard(BuildContext context, String? organizationId) {

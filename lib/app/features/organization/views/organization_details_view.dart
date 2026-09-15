@@ -1979,9 +1979,11 @@ $appLink
           ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
         ),
         const SizedBox(height: BauhausDesign.space4),
-        if (isFullyConnected)
-          _buildStripeAccountIdRow(context, l10n, stripeAccountId!)
-        else if (isActionNeeded) ...[
+        if (isFullyConnected) ...[
+          _buildStripeAccountIdRow(context, l10n, stripeAccountId!),
+          const SizedBox(height: BauhausDesign.space3),
+          _buildStripeDisconnectButton(context, organizationId!),
+        ] else if (isActionNeeded) ...[
           _buildStripeAccountIdRow(context, l10n, stripeAccountId),
           const SizedBox(height: BauhausDesign.space3),
           SizedBox(
@@ -1999,6 +2001,8 @@ $appLink
               child: const Text('COMPLETE STRIPE SETUP'),
             ),
           ),
+          const SizedBox(height: BauhausDesign.space2),
+          _buildStripeDisconnectButton(context, organizationId!),
         ] else
           SizedBox(
             width: double.infinity,
@@ -2054,6 +2058,82 @@ $appLink
       final uri = Uri.parse(url);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    }
+  }
+
+  Widget _buildStripeDisconnectButton(
+    BuildContext context,
+    String organizationId,
+  ) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: () => _confirmDisconnectStripe(context, organizationId),
+        icon: const Icon(Icons.link_off, size: 18),
+        label: const Text('DISCONNECT STRIPE'),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: BauhausDesign.error,
+          side: const BorderSide(color: BauhausDesign.error, width: 2),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _confirmDisconnectStripe(
+    BuildContext context,
+    String organizationId,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: BauhausDesign.surfaceWhite,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+          side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+        ),
+        title: const Text('Disconnect Stripe?'),
+        content: const Text(
+          'This will remove the linked Stripe account. Clients will no longer '
+          'be able to pay invoices online until you reconnect a Stripe account.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('CANCEL'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: BauhausDesign.error,
+              foregroundColor: BauhausDesign.surfaceWhite,
+            ),
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('DISCONNECT'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    try {
+      await ref
+          .read(paymentViewModelProvider.notifier)
+          .disconnectStripe(organizationId);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Stripe account disconnected')),
+        );
+        await _loadOrganization(forceRefresh: true, silent: true);
       }
     } catch (e) {
       if (mounted) {
