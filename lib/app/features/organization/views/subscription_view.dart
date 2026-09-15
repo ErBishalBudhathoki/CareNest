@@ -381,6 +381,8 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
     final status = organizationId == null
         ? null
         : ref.watch(organizationSubscriptionProvider(organizationId));
+    final statusValue = status?.asData?.value;
+    final isActive = statusValue == 'active' || statusValue == 'grace';
 
     final priceText = _product?.price ?? l10n.subscriptionPricePerMonth;
 
@@ -441,7 +443,7 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
                 ),
               if (_errorMessage != null)
                 const SizedBox(height: BauhausDesign.space4),
-              _buildButtons(context, l10n),
+              _buildButtons(context, l10n, isActive: isActive),
             ],
           ),
         ),
@@ -595,15 +597,27 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
     );
   }
 
-  Widget _buildButtons(BuildContext context, AppLocalizations l10n) {
+  Widget _buildButtons(
+    BuildContext context,
+    AppLocalizations l10n, {
+    required bool isActive,
+  }) {
+    final theme = BauhausDesign.getTextTheme(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ElevatedButton(
-          onPressed: _loading ? null : _handleSubscribe,
+          // Already subscribed: don't offer another purchase.
+          onPressed: (_loading || isActive) ? null : _handleSubscribe,
           style: ElevatedButton.styleFrom(
-            backgroundColor: BauhausDesign.secondary,
-            foregroundColor: BauhausDesign.surfaceLight,
+            backgroundColor: isActive
+                ? BauhausDesign.surfaceOffWhite
+                : BauhausDesign.secondary,
+            foregroundColor: isActive
+                ? BauhausDesign.textMuted
+                : BauhausDesign.surfaceLight,
+            disabledBackgroundColor: BauhausDesign.surfaceOffWhite,
+            disabledForegroundColor: BauhausDesign.textMuted,
             padding: const EdgeInsets.symmetric(vertical: 14),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
           ),
@@ -616,12 +630,22 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
                     color: Colors.white,
                   ),
                 )
-              : Text(l10n.subscriptionBuyButton),
+              : Text(
+                  isActive ? 'SUBSCRIPTION ACTIVE' : l10n.subscriptionBuyButton,
+                  style: theme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: isActive
+                        ? BauhausDesign.textMuted
+                        : BauhausDesign.surfaceLight,
+                  ),
+                ),
         ),
         const SizedBox(height: BauhausDesign.space3),
         OutlinedButton(
           onPressed: _loading ? null : _handleRestore,
           style: OutlinedButton.styleFrom(
+            foregroundColor: BauhausDesign.textDark,
+            side: const BorderSide(color: BauhausDesign.neutral, width: 2),
             padding: const EdgeInsets.symmetric(vertical: 14),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
           ),
