@@ -92,6 +92,10 @@ class _OrganizationDetailsViewState
     // the user returns so a newly linked account (and its Connected badge)
     // shows up without a manual reopen.
     if (state == AppLifecycleState.resumed && mounted) {
+      final orgId = _organization?['id']?.toString();
+      if (orgId != null && orgId.isNotEmpty) {
+        ref.invalidate(stripeConnectStatusProvider(orgId));
+      }
       _loadOrganization(forceRefresh: true, silent: true);
     }
   }
