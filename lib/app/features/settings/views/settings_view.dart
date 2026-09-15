@@ -3,6 +3,7 @@ import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/features/auth/views/change_password_view.dart';
 import 'package:carenest/app/features/auth/services/session_timeout_service.dart';
 import 'package:carenest/app/features/organization/views/organization_details_view.dart';
+import 'package:carenest/app/features/admin/views/payment_settings_view.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/routes/app_pages.dart';
@@ -626,6 +627,21 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                                   );
                                 },
                               ),
+                            _buildSettingsItem(
+                              icon: Icons.payments_outlined,
+                              color: BauhausDesign.success,
+                              title: 'Payment Settings',
+                              subtitle: 'Stripe payouts and app subscription',
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const PaymentSettingsView(),
+                                  ),
+                                );
+                              },
+                            ),
                           ],
                         ),
                       _buildSettingsSection(
