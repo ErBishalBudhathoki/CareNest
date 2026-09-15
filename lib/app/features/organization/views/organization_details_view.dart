@@ -386,8 +386,7 @@ class _OrganizationDetailsViewState
                     ),
                   ),
                 ),
-                if (_hasDedicatedOrganizationEmail &&
-                    !_organizationEmailVerified)
+                if (_hasDedicatedOrganizationEmail && !_organizationVerified)
                   FilledButton.icon(
                     onPressed: _sendingOrganizationVerification
                         ? null
