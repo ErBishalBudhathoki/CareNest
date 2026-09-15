@@ -99,7 +99,8 @@ echo "Step 2/3: Build AAB for Internal Testing (connecting to dev backend: $DEVE
   flutter build appbundle --flavor production -t lib/main_production.dart --release \
     --dart-define=ANDROID_MONTHLY_SUBSCRIPTION_ID=carenest_monthly \
     --dart-define=PRODUCTION_URL="$DEVELOPMENT_URL" \
-    --dart-define=DEVELOPMENT_URL="$DEVELOPMENT_URL"
+    --dart-define=DEVELOPMENT_URL="$DEVELOPMENT_URL" \
+    --dart-define=ENABLE_DEV_SUBSCRIPTION_RESET=true
 )
 
 if [[ ! -f "$AAB_PATH" ]]; then

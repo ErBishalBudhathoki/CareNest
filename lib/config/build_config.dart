@@ -46,4 +46,10 @@ class BuildConfig {
   static const String androidMonthlySubscriptionId = String.fromEnvironment(
     'ANDROID_MONTHLY_SUBSCRIPTION_ID',
   );
+
+  /// Enables developer-only tooling (e.g. "Reset subscription") in internal
+  /// builds. Never enabled for production builds.
+  static const bool enableDevSubscriptionReset = bool.fromEnvironment(
+    'ENABLE_DEV_SUBSCRIPTION_RESET',
+  );
 }

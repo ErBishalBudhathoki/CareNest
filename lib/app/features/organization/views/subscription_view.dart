@@ -10,6 +10,9 @@ import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import 'package:carenest/app/features/organization/services/app_subscription_service.dart';
 import 'package:carenest/app/features/invoice/repositories/payment_repository.dart';
+import 'package:carenest/config/build_config.dart';
+import 'package:carenest/app/shared/widgets/app_snack_bars.dart';
+import 'package:carenest/app/shared/utils/user_messages.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:carenest/app/features/invoice/viewmodels/payment_viewmodel.dart';
@@ -57,7 +60,14 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
         });
       }
     } catch (e) {
-      if (mounted) setState(() => _errorMessage = e.toString());
+      if (mounted) {
+        setState(
+          () => _errorMessage = friendlyErrorMessage(
+            e,
+            fallback: 'Subscriptions are unavailable right now.',
+          ),
+        );
+      }
     }
   }
 
@@ -101,13 +111,18 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
         break;
       case PurchaseStatus.error:
         final code = purchase.error?.code ?? '';
-        final message = purchase.error?.message ?? 'Purchase failed';
+        debugPrint(
+          '[subscription] purchase error code=$code '
+          'message=${purchase.error?.message}',
+        );
         if (mounted) {
           setState(() {
             _purchaseHandled = true;
-            _errorMessage =
-                'Purchase failed: $message${code.isEmpty ? '' : ' ($code)'}. '
-                'If you already subscribed, tap RESTORE PURCHASES.';
+            _errorMessage = friendlyErrorMessage(
+              purchase.error?.message,
+              fallback:
+                  'The Play Store could not complete the purchase. Please try again.',
+            );
             _loading = false;
           });
         }
@@ -167,9 +182,10 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
           _loading = false;
           _errorMessage = null;
         });
-        ScaffoldMessenger.of(
+        showSuccessSnack(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Subscription activated')));
+          'Your subscription is active. All features are unlocked.',
+        );
       }
     } catch (e) {
       // Do NOT acknowledge on failure. Leaving the purchase unacknowledged lets
@@ -179,7 +195,7 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
         setState(() {
           _purchaseHandled = true;
           _loading = false;
-          _errorMessage = e.toString();
+          _errorMessage = friendlyErrorMessage(e);
         });
       }
     }
@@ -330,7 +346,10 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _errorMessage = e.toString();
+          _errorMessage = friendlyErrorMessage(
+            e,
+            fallback: 'We could not start the purchase. Please try again.',
+          );
           _loading = false;
         });
       }
@@ -351,17 +370,61 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
         setState(() {
           _loading = false;
           _errorMessage =
-              'No active subscription found to restore. If you were charged, '
-              'tap SUBSCRIBE again so we can verify it.';
+              'No active subscription found to restore on this account.';
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _errorMessage = e.toString();
+          _errorMessage = friendlyErrorMessage(
+            e,
+            fallback: 'We could not restore your purchases. Please try again.',
+          );
           _loading = false;
         });
       }
+    }
+  }
+
+  Future<void> _handleDevReset() async {
+    final organizationId = _resolveOrganizationId();
+    if (organizationId == null) {
+      showErrorSnack(
+        context,
+        'We could not load your organisation. Please reopen the screen.',
+      );
+      return;
+    }
+    setState(() {
+      _loading = true;
+      _errorMessage = null;
+    });
+    try {
+      final result = await ref
+          .read(paymentRepositoryProvider)
+          .resetSubscription(organizationId);
+      if (result['success'] != true) {
+        throw StateError(result['message']?.toString() ?? 'Reset failed');
+      }
+      ref.invalidate(organizationSubscriptionProvider(organizationId));
+      if (mounted) {
+        showSuccessSnack(
+          context,
+          'Subscription reset (dev build). You can subscribe again.',
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        showErrorSnack(
+          context,
+          friendlyErrorMessage(
+            e,
+            fallback: 'Could not reset the subscription. Please try again.',
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _loading = false);
     }
   }
 
@@ -656,6 +719,47 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
           onPressed: _loading ? null : _handleManage,
           child: Text(l10n.subscriptionManageButton),
         ),
+        if (BuildConfig.enableDevSubscriptionReset) ...[
+          const SizedBox(height: BauhausDesign.space4),
+          Container(
+            padding: const EdgeInsets.all(BauhausDesign.space2),
+            decoration: BoxDecoration(
+              border: Border.all(color: BauhausDesign.neutral, width: 2),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'DEV TOOLS',
+                  style: theme.labelSmall?.copyWith(
+                    color: BauhausDesign.textDark,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1,
+                  ),
+                ),
+                const SizedBox(height: BauhausDesign.space2),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: _loading ? null : _handleDevReset,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: BauhausDesign.textDark,
+                      side: const BorderSide(
+                        color: BauhausDesign.neutral,
+                        width: 2,
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                    ),
+                    child: const Text('RESET SUBSCRIPTION (DEV)'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ],
     );
   }
