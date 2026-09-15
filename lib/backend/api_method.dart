@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'dart:io';
 
+import 'package:carenest/app/core/utils/subscription_guard.dart';
+
 import 'package:carenest/app/core/utils/Services/upload_notes.dart';
 import 'package:carenest/config/environment.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
@@ -635,6 +637,8 @@ class ApiMethod extends ChangeNotifier {
         final Map<String, dynamic> errorData = json.decode(response.body);
         errorData['success'] = false;
         errorData['statusCode'] ??= response.statusCode;
+        // Global paywall: surface the subscription screen on 402 responses.
+        maybePromptSubscriptionRequired(errorData);
         return errorData;
       } catch (e) {
         return {

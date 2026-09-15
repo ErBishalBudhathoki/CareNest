@@ -18,10 +18,7 @@ class PaymentRepository {
   }) async {
     final response = await _api.post(
       'api/payments/create-intent',
-      body: {
-        'invoiceId': invoiceId,
-        'organizationId': organizationId,
-      },
+      body: {'invoiceId': invoiceId, 'organizationId': organizationId},
     );
     return response;
   }
@@ -78,6 +75,40 @@ class PaymentRepository {
   ) async {
     return _api.get(
       'api/billing/entitlements?organizationId=${Uri.encodeQueryComponent(organizationId)}',
+    );
+  }
+
+  /// Verify a Google Play subscription purchase server-side.
+  Future<Map<String, dynamic>> verifyGooglePurchase({
+    required String organizationId,
+    required String purchaseToken,
+    required String productId,
+    required String subscriptionId,
+  }) async {
+    return _api.post(
+      'api/billing/entitlements/verify/google',
+      body: {
+        'organizationId': organizationId,
+        'purchaseToken': purchaseToken,
+        'productId': productId,
+        'subscriptionId': subscriptionId,
+      },
+    );
+  }
+
+  /// Verify an Apple App Store subscription purchase server-side.
+  Future<Map<String, dynamic>> verifyApplePurchase({
+    required String organizationId,
+    required String transactionJws,
+    String? productId,
+  }) async {
+    return _api.post(
+      'api/billing/entitlements/verify/apple',
+      body: {
+        'organizationId': organizationId,
+        'transactionJws': transactionJws,
+        'productId': ?productId,
+      },
     );
   }
 
