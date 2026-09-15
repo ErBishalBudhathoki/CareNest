@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/app/features/organization/services/app_subscription_service.dart';
 import 'package:carenest/app/features/invoice/repositories/payment_repository.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
@@ -25,6 +27,7 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
   ProductDetails? _product;
   bool _loading = false;
   String? _errorMessage;
+  bool _purchaseHandled = false;
 
   @override
   void initState() {
@@ -58,8 +61,31 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
     }
   }
 
-  String? get _organizationId =>
-      ref.read(organizationProvider).currentOrganization?.id;
+  /// Resolve the organisation id from the most reliable available source.
+  /// `organizationProvider.currentOrganization` can be null depending on which
+  /// screen the user came from, which previously broke purchase verification.
+  String? _resolveOrganizationId() {
+    final fromOrg = ref.read(organizationProvider).currentOrganization?.id;
+    if (fromOrg != null && fromOrg.trim().isNotEmpty) return fromOrg.trim();
+
+    try {
+      final fromProvider = ref.read(app_providers.organizationIdProvider);
+      if (fromProvider != null && fromProvider.trim().isNotEmpty) {
+        return fromProvider.trim();
+      }
+    } catch (_) {}
+
+    try {
+      final fromPrefs = ref
+          .read(app_providers.sharedPreferencesProvider)
+          .getOrganizationId();
+      if (fromPrefs != null && fromPrefs.trim().isNotEmpty) {
+        return fromPrefs.trim();
+      }
+    } catch (_) {}
+
+    return null;
+  }
 
   Future<void> _onPurchaseUpdates(List<PurchaseDetails> purchases) async {
     for (final purchase in purchases) {
@@ -74,11 +100,23 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
         await _verifyAndActivate(purchase);
         break;
       case PurchaseStatus.error:
+        final code = purchase.error?.code;
+        final message = purchase.error?.message ?? 'Purchase failed';
         if (mounted) {
           setState(() {
-            _errorMessage = purchase.error?.message ?? 'Purchase failed';
+            _purchaseHandled = true;
+            _errorMessage = code != null && code.isNotEmpty
+                ? '[$code] $message'
+                : message;
             _loading = false;
           });
+        }
+        // Common after a first test purchase: the account already owns the
+        // subscription, so restore it instead of surfacing a failure.
+        if (code == 'E_ITEM_ALREADY_OWNED' ||
+            code == 'ITEM_ALREADY_OWNED' ||
+            code == 'already_owned') {
+          await _service.restorePurchases();
         }
         break;
       case PurchaseStatus.canceled:
@@ -91,7 +129,7 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
   }
 
   Future<void> _verifyAndActivate(PurchaseDetails purchase) async {
-    final organizationId = _organizationId;
+    final organizationId = _resolveOrganizationId();
     try {
       if (organizationId == null) {
         throw StateError('Organization data is unavailable');
@@ -127,6 +165,7 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
 
       if (mounted) {
         setState(() {
+          _purchaseHandled = true;
           _loading = false;
           _errorMessage = null;
         });
@@ -135,13 +174,12 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
         ).showSnackBar(const SnackBar(content: Text('Subscription activated')));
       }
     } catch (e) {
-      // Acknowledge the purchase so the store does not keep it pending, then
-      // surface the verification error so the user can retry/restore.
-      try {
-        await _service.completeVerifiedPurchase(purchase);
-      } catch (_) {}
+      // Do NOT acknowledge on failure. Leaving the purchase unacknowledged lets
+      // Play redeliver it on restore/next launch so verification can be retried,
+      // and Play auto-refunds if it is never acknowledged.
       if (mounted) {
         setState(() {
+          _purchaseHandled = true;
           _loading = false;
           _errorMessage = e.toString();
         });
@@ -281,6 +319,7 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
     setState(() {
       _loading = true;
       _errorMessage = null;
+      _purchaseHandled = false;
     });
     try {
       final product = _product ?? await _service.loadMonthlyProduct();
@@ -304,13 +343,27 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
     setState(() {
       _loading = true;
       _errorMessage = null;
+      _purchaseHandled = false;
     });
     try {
       await _service.restorePurchases();
+      // Restored purchases are delivered asynchronously via the stream.
+      await Future<void>.delayed(const Duration(seconds: 5));
+      if (mounted && !_purchaseHandled) {
+        setState(() {
+          _loading = false;
+          _errorMessage =
+              'No active subscription found to restore. If you were charged, '
+              'tap SUBSCRIBE again so we can verify it.';
+        });
+      }
     } catch (e) {
-      if (mounted) setState(() => _errorMessage = e.toString());
-    } finally {
-      if (mounted) setState(() => _loading = false);
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          _loading = false;
+        });
+      }
     }
   }
 
@@ -326,10 +379,10 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final organization = ref.watch(organizationProvider).currentOrganization;
-    final status = organization == null
+    final organizationId = _resolveOrganizationId();
+    final status = organizationId == null
         ? null
-        : ref.watch(organizationSubscriptionProvider(organization.id));
+        : ref.watch(organizationSubscriptionProvider(organizationId));
 
     final priceText = _product?.price ?? l10n.subscriptionPricePerMonth;
 
@@ -352,8 +405,9 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          if (organization != null) {
-            ref.invalidate(organizationSubscriptionProvider(organization.id));
+          final orgId = _resolveOrganizationId();
+          if (orgId != null) {
+            ref.invalidate(organizationSubscriptionProvider(orgId));
           }
           await _loadProduct();
         },
