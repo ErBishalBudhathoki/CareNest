@@ -24,6 +24,7 @@ import 'package:carenest/app/shared/widgets/app_snack_bars.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
+import 'package:carenest/app/features/invoice/models/ndis_matcher.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Enhanced Invoice Generation View
@@ -410,7 +411,11 @@ class _EnhancedInvoiceGenerationViewState
         }
       }
 
-      // Resolve human-readable support item names for UI display
+      // Resolve human-readable support item names for UI display.
+      // Every number originates from NDIS.csv, whose rows all ship in the
+      // bundled asset, so resolve locally first and use the network only
+      // as a last resort (backend payloads omit the name when the catalogue
+      // document is absent, which previously rendered as "unavailable").
       final Map<String, String> namesMap = {};
       try {
         final Set<String> nameLookupItems = {
@@ -418,7 +423,38 @@ class _EnhancedInvoiceGenerationViewState
           ...missingClientByItem.keys,
         };
         if (nameLookupItems.isNotEmpty) {
+          final Map<String, String> bundledNames = {};
+          try {
+            final matcher = NDISMatcher(apiMethod: apiMethod);
+            await matcher.loadItems();
+            for (final bundled in matcher.items) {
+              final number = bundled.itemNumber.trim();
+              final name = bundled.itemName.trim();
+              if (number.isNotEmpty && name.isNotEmpty) {
+                bundledNames[number] = name;
+              }
+            }
+          } catch (e) {
+            debugPrint('Bundled NDIS names load failed: $e');
+          }
           final lookups = nameLookupItems.map((item) async {
+            try {
+              final bulkEntry = pricingMap?[item];
+              final bulkName = bulkEntry is Map
+                  ? bulkEntry['supportItemName']?.toString().trim()
+                  : null;
+              if (bulkName != null && bulkName.isNotEmpty) {
+                namesMap[item] = bulkName;
+                return;
+              }
+            } catch (e) {
+              debugPrint('Bulk support item name read failed for $item: $e');
+            }
+            final bundledName = bundledNames[item.trim()];
+            if (bundledName != null && bundledName.isNotEmpty) {
+              namesMap[item] = bundledName;
+              return;
+            }
             try {
               final details = await apiMethod.getSupportItemDetails(item);
               final name =
