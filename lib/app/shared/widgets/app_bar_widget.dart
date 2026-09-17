@@ -32,10 +32,9 @@ class CustomAppBar extends StatelessWidget {
         scrolledUnderElevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: theme.colorScheme.surface,
-          statusBarIconBrightness: theme.brightness == Brightness.light
-              ? Brightness.dark
-              : Brightness.light,
-          statusBarBrightness: theme.brightness,
+          // Bauhaus surfaces are always light, so status bar icons stay dark.
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
         ),
         centerTitle: false,
         titleTextStyle: theme.textTheme.headlineMedium?.copyWith(

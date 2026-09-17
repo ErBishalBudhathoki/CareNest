@@ -1081,13 +1081,8 @@ class _ModernDialogState extends State<_ModernDialog>
   @override
   Widget build(BuildContext context) {
     final semanticColor = _getSemanticColor();
-    final surfaceColor = Theme.of(context).colorScheme.surface;
-    final surfaceBrightness = ThemeData.estimateBrightnessForColor(
-      surfaceColor,
-    );
-    final effectiveOnSurface = surfaceBrightness == Brightness.dark
-        ? BauhausDesign.surfaceLight
-        : BauhausDesign.neutral;
+    // Bauhaus dialog surfaces are always light — fixed contrast pair.
+    const effectiveOnSurface = BauhausDesign.neutral;
 
     return AnimatedBuilder(
       animation: Listenable.merge([_scaleAnimation, _fadeAnimation]),
