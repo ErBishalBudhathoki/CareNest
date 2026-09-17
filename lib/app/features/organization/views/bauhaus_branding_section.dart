@@ -314,6 +314,8 @@ class _BauhausColorField extends StatefulWidget {
 
 class _BauhausColorFieldState extends State<_BauhausColorField> {
   void _showColorPickerDialog() {
+    // Neo-brutalist Bauhaus palette only — no rainbow colors, no funny tints.
+    // Squared swatches, hard borders. Brand stays red/indigo/yellow + neutrals.
     final List<Color> bauhausColors = [
       BauhausDesign.primary,
       BauhausDesign.secondary,
@@ -321,16 +323,12 @@ class _BauhausColorFieldState extends State<_BauhausColorField> {
       BauhausDesign.success,
       BauhausDesign.warning,
       BauhausDesign.error,
-      Colors.red,
-      Colors.blue,
-      Colors.green,
-      Colors.yellow,
-      Colors.orange,
-      Colors.purple,
-      Colors.teal,
-      Colors.indigo,
-      Colors.cyan,
-      Colors.lime,
+      BauhausDesign.info,
+      BauhausDesign.neutral,
+      BauhausDesign.textDark,
+      BauhausDesign.textMuted,
+      BauhausDesign.surfaceWhite,
+      BauhausDesign.surfaceOffWhite,
     ];
 
     showDialog(

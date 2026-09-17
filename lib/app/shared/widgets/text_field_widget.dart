@@ -16,6 +16,12 @@ class TextFieldWidget extends ConsumerWidget {
   final String? Function(String?)? validator;
   final IconData Function(bool isVisible)? getSuffixIcon;
   final bool? confirmPasswordToggle;
+  final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
+  final List<String>? autofillHints;
+  final FocusNode? focusNode;
+  final FocusNode? nextFocusNode;
+  final ValueChanged<String>? onSubmitted;
 
   const TextFieldWidget({
     super.key,
@@ -32,6 +38,12 @@ class TextFieldWidget extends ConsumerWidget {
     this.suffixIcon,
     this.getSuffixIcon,
     this.confirmPasswordToggle,
+    this.keyboardType,
+    this.textInputAction,
+    this.autofillHints,
+    this.focusNode,
+    this.nextFocusNode,
+    this.onSubmitted,
   });
 
   @override
@@ -41,10 +53,27 @@ class TextFieldWidget extends ConsumerWidget {
       builder: (context, isObscure, child) {
         return TextFormField(
           controller: controller,
+          focusNode: focusNode,
           obscureText: isObscure,
           onChanged: onChanged,
           onSaved: onSaved,
           validator: validator,
+          keyboardType: keyboardType,
+          textInputAction:
+              textInputAction ??
+              (nextFocusNode != null
+                  ? TextInputAction.next
+                  : TextInputAction.done),
+          autofillHints: autofillHints,
+          onFieldSubmitted: (value) {
+            onSubmitted?.call(value);
+            if (nextFocusNode != null) {
+              FocusScope.of(context).requestFocus(nextFocusNode);
+            } else {
+              FocusScope.of(context).unfocus();
+            }
+          },
+          onTapOutside: (_) => FocusScope.of(context).unfocus(),
           style: BauhausDesign.getTextTheme(context).bodyLarge,
           decoration: BauhausDesign.inputDecoration(hintText).copyWith(
             prefixIcon:
@@ -54,6 +83,7 @@ class TextFieldWidget extends ConsumerWidget {
                     : null),
             suffixIcon: suffixIconClickable
                 ? IconButton(
+                    tooltip: isObscure ? 'Show password' : 'Hide password',
                     icon: Icon(
                       getSuffixIcon != null
                           ? getSuffixIcon!(isObscure)

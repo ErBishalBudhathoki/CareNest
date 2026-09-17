@@ -1,6 +1,18 @@
 // For DateUtils
 
-// Enum for regional pricing strategy
+bool _parseBool(dynamic value) {
+  if (value is bool) return value;
+  final normalized = value?.toString().trim().toLowerCase();
+  return normalized == 'true' ||
+      normalized == 'yes' ||
+      normalized == 'y' ||
+      normalized == '1';
+}
+
+// Enum for regional pricing strategy.
+// NDIS publishes National / Remote / Very Remote caps only (2026-27);
+// the state values are retained for backward compatibility with cached
+// documents but no UI code should reference them anymore.
 enum PriceRegion {
   act,
   nsw,
@@ -24,10 +36,13 @@ class NDISItem {
   final String registrationGroupName;
   final String unit;
   final String
-  type; // "Price Limited Supports", "Quotable Supports", "Unit Price = 0.1"
+  type; // "Priced Supports" (2026-27) / "Price Limited Supports" (legacy), "Quotable Supports", "Unit Price = $1"
   final bool isQuotable;
   final DateTime? startDate;
   final DateTime? endDate;
+  // True when the item comes from the NDIS legacy catalogue (has a real
+  // expiry date). The app shows an "expires <date>" badge for these.
+  final bool isLegacy;
 
   // Store all regional prices
   final Map<PriceRegion, double?> regionalPrices;
@@ -57,6 +72,7 @@ class NDISItem {
       'isQuotable': isQuotable,
       'startDate': startDate?.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
+      'isLegacy': isLegacy,
       'supportPurposeId': supportPurposeId,
       'generalCategory': generalCategory,
       'supportCategoryNumberPACE': supportCategoryNumberPACE,
@@ -81,6 +97,7 @@ class NDISItem {
     required this.isQuotable,
     this.startDate,
     this.endDate,
+    this.isLegacy = false,
     required this.regionalPrices,
     required this.supportPurposeId,
     required this.generalCategory,
@@ -95,8 +112,8 @@ class NDISItem {
 
   factory NDISItem.fromJson(
     Map<String, dynamic> json, {
-    PriceRegion defaultRegion =
-        PriceRegion.nsw /* Or your most common region */,
+    // NDIS publishes National / Remote / Very Remote caps only (2026-27).
+    PriceRegion defaultRegion = PriceRegion.national,
   }) {
     double? parsePrice(dynamic priceValue) {
       if (priceValue == null) return null;
@@ -259,6 +276,7 @@ class NDISItem {
       isQuotable: (json['Quote']?.toString().toLowerCase() == 'yes'),
       startDate: parseNDISDate(json['Start date']),
       endDate: parseNDISDate(json['End Date']),
+      isLegacy: _parseBool(json['isLegacy']),
       regionalPrices: extractRegionalPrices(json),
       supportPurposeId: extractedPurposeId,
       generalCategory: genCat,
@@ -276,12 +294,14 @@ class NDISItem {
   }
 
   // Get price based on a specific region or fallback.
+  // NDIS publishes National / Remote / Very Remote caps only (2026-27),
+  // so every default resolves to the national cap.
   double getPriceForRegion(
     PriceRegion region, {
-    PriceRegion fallbackRegion = PriceRegion.nsw,
+    PriceRegion fallbackRegion = PriceRegion.national,
   }) {
     if (type == "Quotable Supports" || isQuotable) return 0.0;
-    if (type == "Unit Price = 0.1") return 1.0;
+    if (type == "Unit Price = 0.1" || type == "Unit Price = \$1") return 1.0;
 
     return regionalPrices[region] ??
         regionalPrices[fallbackRegion] ??
@@ -289,8 +309,8 @@ class NDISItem {
         0.0;
   }
 
-  // Default applicable price (e.g., for NSW or a national fallback)
-  double getApplicablePrice({PriceRegion region = PriceRegion.nsw}) {
+  // Default applicable price (national NDIS cap).
+  double getApplicablePrice({PriceRegion region = PriceRegion.national}) {
     return getPriceForRegion(region);
   }
 

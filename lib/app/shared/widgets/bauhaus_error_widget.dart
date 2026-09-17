@@ -1,3 +1,4 @@
+import 'package:carenest/app/shared/widgets/app_snack_bars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -203,21 +204,30 @@ class BauhausErrorWidget extends StatelessWidget {
           ),
           if (onRetry != null) ...[
             const SizedBox(width: BauhausDesign.space2),
-            InkWell(
-              onTap: () {
-                HapticFeedback.lightImpact();
-                onRetry!();
-              },
-              child: Container(
-                padding: const EdgeInsets.all(BauhausDesign.space2),
-                decoration: BoxDecoration(
-                  color: BauhausDesign.error,
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
-                ),
-                child: const Icon(
-                  Icons.refresh,
-                  color: BauhausDesign.textLight,
-                  size: 20,
+            Semantics(
+              button: true,
+              label: 'Retry',
+              child: InkWell(
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  onRetry!();
+                },
+                child: Container(
+                  constraints: const BoxConstraints(
+                    minWidth: 48,
+                    minHeight: 48,
+                  ),
+                  padding: const EdgeInsets.all(BauhausDesign.space2),
+                  decoration: BoxDecoration(
+                    color: BauhausDesign.error,
+                    border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  ),
+                  child: const Icon(
+                    Icons.refresh,
+                    color: BauhausDesign.textLight,
+                    size: 20,
+                    semanticLabel: 'Retry',
+                  ),
                 ),
               ),
             ),
@@ -301,9 +311,7 @@ class _DiagnosticsButton extends StatelessWidget {
                 onPressed: () {
                   Clipboard.setData(ClipboardData(text: info));
                   Navigator.pop(ctx);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Copied to clipboard')),
-                  );
+                  showAppSnackBar(context, 'Copied to clipboard');
                 },
                 child: const Text('COPY'),
               ),

@@ -319,7 +319,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
       registrationGroupName:
           rawItem['registrationGroupName']?.toString().trim() ?? '',
       unit: rawItem['unit']?.toString().trim() ?? 'H',
-      type: rawItem['type']?.toString().trim() ?? 'Price Limited Supports',
+      type: rawItem['type']?.toString().trim() ?? 'Priced Supports',
       isQuotable: rawItem['isQuotable'] == true,
       regionalPrices: <PriceRegion, double?>{},
       supportPurposeId: rawItem['supportPurposeId']?.toString().trim() ?? '0',

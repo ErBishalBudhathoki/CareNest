@@ -78,34 +78,37 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Basic implementation to satisfy the compiler and usage
-    // Using Bauhaus colors/style where possible
+    final theme = Theme.of(context);
     return AppBar(
       title: Text(
         title,
-        style: const TextStyle(
-          color: Colors.black87,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: theme.textTheme.titleLarge?.copyWith(
+          color: theme.colorScheme.onSurface,
           fontWeight: FontWeight.bold,
           fontSize: 20,
         ),
       ),
       centerTitle: true,
-      backgroundColor: Colors.white,
+      backgroundColor: theme.colorScheme.surface,
+      foregroundColor: theme.colorScheme.onSurface,
       elevation: 0,
       leading: showBackButton
           ? IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
+              tooltip: 'Back',
+              icon: const Icon(Icons.arrow_back_ios),
               onPressed: () => Navigator.of(context).pop(),
             )
           : null,
       actions: actions,
       bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(1.0),
-        child: Container(color: Colors.grey.shade300, height: 1.0),
+        preferredSize: const Size.fromHeight(2.0),
+        child: Container(color: theme.colorScheme.onSurface, height: 2.0),
       ),
     );
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 1.0);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 2.0);
 }

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -72,7 +71,7 @@ class _EnhancedNdisItemSelectionViewState
   bool _isLoadingCustomPrices = false; // Track loading of custom prices
   bool _queueAnotherPricingPass = false;
   String _searchQuery = '';
-  String _userState = 'NSW'; // Default state
+  bool _showLegacyItems = false;
   String? _resolvedOrganizationId;
   double? _fallbackBaseRate; // Cached organization fallback base rate
   Timer? _searchDebounce;
@@ -128,15 +127,20 @@ class _EnhancedNdisItemSelectionViewState
                 item.itemName.toLowerCase().contains(lowerQuery);
           }).toList();
 
+    // Legacy catalogue items are hidden unless the user opts in.
+    final visibleItems = _showLegacyItems
+        ? searchFiltered
+        : searchFiltered.where((item) => !item.isLegacy).toList();
+
     if (widget.highIntensity) {
-      _filteredNdisItems = searchFiltered.where((item) {
+      _filteredNdisItems = visibleItems.where((item) {
         final itemData = _pricingData[item.itemNumber];
         return itemData != null && itemData['hasHighIntensityPricing'] == true;
       }).toList();
       return;
     }
 
-    _filteredNdisItems = searchFiltered;
+    _filteredNdisItems = visibleItems;
   }
 
   Future<String?> _resolveOrganizationId() async {
@@ -276,26 +280,18 @@ class _EnhancedNdisItemSelectionViewState
   }
 
   Map<String, dynamic> _buildStandardPriceCapsFromItem(NDISItem item) {
-    final standard = <String, double>{};
+    // NDIS publishes National / Remote / Very Remote caps only (2026-27).
+    final national = item.regionalPrices[PriceRegion.national];
+    final remote = item.regionalPrices[PriceRegion.remote];
+    final veryRemote = item.regionalPrices[PriceRegion.veryRemote];
 
-    void addState(String code, PriceRegion region) {
-      final value = item.regionalPrices[region];
-      if (value != null && value > 0) {
-        standard[code] = value;
-      }
-    }
+    final caps = <String, dynamic>{};
+    if (national != null && national > 0) caps['national'] = national;
+    if (remote != null && remote > 0) caps['remote'] = remote;
+    if (veryRemote != null && veryRemote > 0) caps['veryRemote'] = veryRemote;
 
-    addState('ACT', PriceRegion.act);
-    addState('NSW', PriceRegion.nsw);
-    addState('NT', PriceRegion.nt);
-    addState('QLD', PriceRegion.qld);
-    addState('SA', PriceRegion.sa);
-    addState('TAS', PriceRegion.tas);
-    addState('VIC', PriceRegion.vic);
-    addState('WA', PriceRegion.wa);
-
-    if (standard.isEmpty) return const <String, dynamic>{};
-    return <String, dynamic>{'standard': standard};
+    if (caps.isEmpty) return const <String, dynamic>{};
+    return caps;
   }
 
   Map<String, dynamic>? _buildSupportItemFromLookup(
@@ -408,23 +404,9 @@ class _EnhancedNdisItemSelectionViewState
   }
 
   Future<void> _initializeUserState() async {
+    // NDIS caps are national-only (2026-27); no per-state resolution.
+    // Kept to ensure shared prefs are initialised early.
     await _sharedPrefs.init();
-
-    // Get client state from SharedPreferences if client ID is provided
-    String? clientState;
-    if (widget.clientId != null) {
-      clientState = _sharedPrefs.getString('clientState');
-    }
-
-    final state =
-        widget.userState ??
-        clientState ??
-        _sharedPrefs.getString('userState') ??
-        'NSW';
-    if (!mounted) return;
-    setState(() {
-      _userState = state;
-    });
   }
 
   Future<void> _loadNdisItems() async {
@@ -675,81 +657,58 @@ class _EnhancedNdisItemSelectionViewState
 
   /// Resolve the capped price for an NDIS item.
   ///
-  /// Priority:
-  /// 1) State-specific cap (client or user state)
-  /// 2) Standard caps when high-intensity is unavailable
-  /// 3) Organization fallback base rate when no caps are available
+  /// NDIS publishes National / Remote / Very Remote caps only (2026-27),
+  /// so there is no state-specific resolution anymore. Priority:
+  /// 1) National cap from the backend price lookup
+  /// 2) Legacy state-specific cap (old catalogue documents / cached data)
+  /// 3) National cap from the bundled NDIS item
+  /// 4) Organization fallback base rate when no caps are available
   ///
   /// Always returns a rounded 2-decimal price.
   double _getCappedPrice(NDISItem item) {
     final pricingData = _pricingData[item.itemNumber];
-    final clientState = _sharedPrefs.getString('clientState')?.toUpperCase();
-
-    double? resolveStatePrice(Map<String, dynamic>? statePrices) {
-      if (statePrices == null) return null;
-      if (clientState != null && statePrices.containsKey(clientState)) {
-        return _toPositiveDouble(statePrices[clientState]);
-      }
-      final userState = _userState.toUpperCase();
-      if (statePrices.containsKey(userState)) {
-        return _toPositiveDouble(statePrices[userState]);
-      }
-      return null;
-    }
 
     if (pricingData?['supportItem'] != null) {
       final supportItem = pricingData!['supportItem'] as Map<String, dynamic>;
       final priceCaps = supportItem['priceCaps'];
 
-      if (priceCaps is Map<String, dynamic>) {
+      if (priceCaps is Map) {
+        final caps = Map<String, dynamic>.from(priceCaps);
+        // Direct national cap (new format). For high-intensity shifts
+        // prefer the remote loading, else the national cap.
+        final directNational = _toPositiveDouble(caps['national']);
+        final directRemote = _toPositiveDouble(caps['remote']);
+        if (widget.highIntensity && directRemote != null) {
+          return directRemote;
+        }
+        if (directNational != null) return directNational;
+
         final intensityType = widget.highIntensity
             ? 'highIntensity'
             : 'standard';
-        final statePrices = priceCaps[intensityType];
-
-        if (statePrices is Map<String, dynamic>) {
-          final direct = resolveStatePrice(statePrices);
-          if (direct != null) return direct;
-        } else if (statePrices is Map) {
-          final direct = resolveStatePrice(
-            Map<String, dynamic>.from(statePrices),
-          );
-          if (direct != null) return direct;
-        } else if (widget.highIntensity) {
-          final standardPrices = priceCaps['standard'];
-          if (standardPrices is Map<String, dynamic>) {
-            final fallbackStandard = resolveStatePrice(standardPrices);
-            if (fallbackStandard != null) return fallbackStandard;
-          } else if (standardPrices is Map) {
-            final fallbackStandard = resolveStatePrice(
-              Map<String, dynamic>.from(standardPrices),
-            );
-            if (fallbackStandard != null) return fallbackStandard;
+        final legacyCaps = caps[intensityType];
+        if (legacyCaps is Map) {
+          final legacyMap = Map<String, dynamic>.from(legacyCaps);
+          for (final key in ['NSW', 'VIC', 'QLD', 'ACT', 'SA', 'WA', 'TAS', 'NT']) {
+            final legacyPrice = _toPositiveDouble(legacyMap[key]);
+            if (legacyPrice != null) return legacyPrice;
           }
         }
       }
     }
 
-    final regionalState = clientState ?? _userState;
-    final regionalMap = <String, PriceRegion>{
-      'ACT': PriceRegion.act,
-      'NSW': PriceRegion.nsw,
-      'NT': PriceRegion.nt,
-      'QLD': PriceRegion.qld,
-      'SA': PriceRegion.sa,
-      'TAS': PriceRegion.tas,
-      'VIC': PriceRegion.vic,
-      'WA': PriceRegion.wa,
-    };
-    final fallbackRegion = regionalMap[regionalState];
-    if (fallbackRegion != null) {
-      final fromItem = item.regionalPrices[fallbackRegion];
-      if (fromItem != null && fromItem > 0) {
-        return double.parse(fromItem.toStringAsFixed(2));
+    final national = item.regionalPrices[PriceRegion.national];
+    if (national != null && national > 0) {
+      return double.parse(national.toStringAsFixed(2));
+    }
+    if (widget.highIntensity) {
+      final remote = item.regionalPrices[PriceRegion.remote];
+      if (remote != null && remote > 0) {
+        return double.parse(remote.toStringAsFixed(2));
       }
     }
 
-    return double.parse((_fallbackBaseRate ?? 30.00).toStringAsFixed(2));
+    return double.parse((_fallbackBaseRate ?? 50.00).toStringAsFixed(2));
   }
 
   double _getCurrentPrice(NDISItem item) {
@@ -890,7 +849,32 @@ class _EnhancedNdisItemSelectionViewState
                     prefixIcon: const Icon(Icons.search),
                   ),
                 ),
-                const SizedBox(height: BauhausDesign.space4),
+                const SizedBox(height: BauhausDesign.space2),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Show legacy catalogue items',
+                        style: BauhausDesign.getTextTheme(context).labelSmall
+                            ?.copyWith(
+                              color: BauhausDesign.textMuted,
+                              fontWeight: FontWeight.w700,
+                            ),
+                      ),
+                    ),
+                    Switch(
+                      value: _showLegacyItems,
+                      activeColor: BauhausDesign.primary,
+                      onChanged: (value) {
+                        setState(() {
+                          _showLegacyItems = value;
+                          _applyFilters();
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: BauhausDesign.space2),
                 Container(
                   padding: const EdgeInsets.all(BauhausDesign.space4),
                   decoration: BoxDecoration(
@@ -910,7 +894,7 @@ class _EnhancedNdisItemSelectionViewState
                       const SizedBox(width: BauhausDesign.space3),
                       Expanded(
                         child: Text(
-                          'Pricing shown for ${widget.highIntensity ? "High Intensity" : "Standard"} rates in $_userState. Tap the price icon to set custom pricing.',
+                          'Pricing shown at ${widget.highIntensity ? "Remote" : "National"} NDIS rates. Tap the price icon to set custom pricing.',
                           style: BauhausDesign.getTextTheme(context).labelSmall
                               ?.copyWith(color: BauhausDesign.textMuted),
                         ),
@@ -965,6 +949,44 @@ class _EnhancedNdisItemSelectionViewState
     );
   }
 
+  /// Legacy catalogue badge with the item's expiry date.
+  Widget _buildLegacyBadge(NDISItem item) {
+    final end = item.endDate;
+    final expired =
+        end != null &&
+        end.year < 9999 &&
+        DateTime.now().isAfter(end.add(const Duration(days: 1)));
+    final dateText = end == null || end.year >= 9999
+        ? 'NO EXPIRY SET'
+        : '${end.day.toString().padLeft(2, '0')}/'
+              '${end.month.toString().padLeft(2, '0')}/${end.year}';
+    return Semantics(
+      label: expired
+          ? 'Legacy item, expired $dateText'
+          : 'Legacy item, expires $dateText',
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: BauhausDesign.space2,
+          vertical: BauhausDesign.space1,
+        ),
+        decoration: BoxDecoration(
+          color: expired ? BauhausDesign.error : BauhausDesign.warning,
+          border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+        ),
+        child: Text(
+          expired ? 'LEGACY — EXPIRED $dateText' : 'LEGACY — EXPIRES $dateText',
+          style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+            color: expired
+                ? BauhausDesign.surfaceWhite
+                : BauhausDesign.textDark,
+            fontWeight: FontWeight.w800,
+            fontSize: 10,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildNdisItemCard(NDISItem item) {
     final currentPrice = _getCurrentPrice(item);
     final cappedPrice = _getCappedPrice(item);
@@ -1006,6 +1028,10 @@ class _EnhancedNdisItemSelectionViewState
                                 .labelSmall
                                 ?.copyWith(color: BauhausDesign.textMuted),
                           ),
+                          if (item.isLegacy) ...[
+                            const SizedBox(height: BauhausDesign.space1),
+                            _buildLegacyBadge(item),
+                          ],
                           const SizedBox(height: BauhausDesign.space2),
                           Row(
                             children: [

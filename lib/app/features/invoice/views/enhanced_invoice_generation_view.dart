@@ -20,6 +20,7 @@ import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/features/invoice/widgets/source_badge.dart';
 import 'package:carenest/config/environment.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/app_snack_bars.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
@@ -2856,11 +2857,11 @@ class _EnhancedInvoiceGenerationViewState
       final l10n = AppLocalizations.of(context)!;
       final messenger = ScaffoldMessenger.of(context);
       messenger.hideCurrentSnackBar();
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(l10n.generatingInvoices),
-          duration: const Duration(seconds: 10),
-        ),
+      showAppSnackBar(
+        context,
+        l10n.generatingInvoices,
+        type: AppSnackType.warning,
+        duration: const Duration(seconds: 10),
       );
 
       final generatedPaths = await viewModel.generateInvoices(
@@ -2890,14 +2891,16 @@ class _EnhancedInvoiceGenerationViewState
       messenger.hideCurrentSnackBar();
       if (generatedPaths.isNotEmpty) {
         HapticFeedback.lightImpact();
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text('Generated ${generatedPaths.length} invoice PDF(s).'),
-          ),
+        showAppSnackBar(
+          context,
+          'Generated ${generatedPaths.length} invoice PDF(s).',
+          type: AppSnackType.success,
         );
       } else {
-        messenger.showSnackBar(
-          SnackBar(content: Text(l10n.noInvoicesGenerated)),
+        showAppSnackBar(
+          context,
+          l10n.noInvoicesGenerated,
+          type: AppSnackType.warning,
         );
       }
     } catch (e) {
@@ -2921,8 +2924,11 @@ class _EnhancedInvoiceGenerationViewState
           ),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.errorGeneratingInvoices(e.toString()))),
+        showAppSnackBar(
+          context,
+          l10n.errorGeneratingInvoices(e.toString()),
+          type: AppSnackType.error,
+          duration: const Duration(seconds: 5),
         );
       }
     }
@@ -3973,19 +3979,20 @@ class _EnhancedInvoiceGenerationViewState
 
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              result ? l10n.invoicesSentSuccess : l10n.invoicesSentError,
-            ),
-          ),
+        showAppSnackBar(
+          context,
+          result ? l10n.invoicesSentSuccess : l10n.invoicesSentError,
+          type: result ? AppSnackType.success : AppSnackType.error,
         );
       }
     } catch (e) {
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.errorSendingInvoices(e.toString()))),
+        showAppSnackBar(
+          context,
+          l10n.errorSendingInvoices(e.toString()),
+          type: AppSnackType.error,
+          duration: const Duration(seconds: 5),
         );
       }
     }

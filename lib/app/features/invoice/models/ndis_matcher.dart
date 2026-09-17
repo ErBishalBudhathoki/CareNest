@@ -105,8 +105,9 @@ class NDISMatcher {
             itemData['supportType'] ??
             itemData['type'] ??
             itemData['Support Type'] ??
-            'Price Limited Supports',
+            'Priced Supports',
       ),
+      'isLegacy': itemData['isLegacy'] ?? false,
       'Start date': asString(itemData['startDate']),
       'End Date': asString(itemData['endDate']),
       'Support Category Number (PACE)': asString(
@@ -293,17 +294,20 @@ class NDISMatcher {
 
       // Filter out items that are "Quotable Supports" if we need a priced item,
       // unless the unit implies it (e.g. some quotable items might be for a 'Day' or 'Each')
-      // For now, we assume Price Limited Supports are primary targets for auto-matching.
+      // "Priced Supports" is the 2026-27 name for "Price Limited Supports".
       if (item.type != "Price Limited Supports" &&
-          item.type != "Unit Price = 0.1") {
+          item.type != "Priced Supports" &&
+          item.type != "Unit Price = 0.1" &&
+          item.type != "Unit Price = \$1") {
         // For "Quotable Supports", specific logic would be needed if they can be auto-selected.
         // Generally, they require manual quoting.
         return false;
       }
-      if (item.type == "Price Limited Supports" &&
+      if ((item.type == "Price Limited Supports" ||
+              item.type == "Priced Supports") &&
           item.getApplicablePrice() == 0.0 &&
-          item.getPriceForRegion(PriceRegion.nsw) == 0.0) {
-        // A price-limited item with no price information is unusable for auto-billing.
+          item.getPriceForRegion(PriceRegion.national) == 0.0) {
+        // A priced item with no price information is unusable for auto-billing.
         return false;
       }
 

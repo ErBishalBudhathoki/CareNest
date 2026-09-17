@@ -213,17 +213,33 @@ class _ClientPricingReviewViewState
               : (price ?? 0.0);
         }
 
-        // Extract NDIS price cap based on client state
+        // Extract NDIS price cap (National / Remote / Very Remote, 2026-27).
+        // The client state is kept on the record for address purposes only.
         double? ndisPriceCap;
         String? priceCapType;
+
+        double? asCap(dynamic value) {
+          if (value is num && value > 0) return value.toDouble();
+          return null;
+        }
 
         if (supportItemDetails != null &&
             supportItemDetails['priceCaps'] != null) {
           final priceCaps =
               supportItemDetails['priceCaps'] as Map<String, dynamic>;
 
-          // Check standard caps first
-          if (priceCaps['standard'] != null && priceCaps['standard'] is Map) {
+          // New format: scalar national / remote caps.
+          ndisPriceCap ??= asCap(priceCaps['national']);
+          if (ndisPriceCap != null) priceCapType = 'national';
+          ndisPriceCap ??= asCap(priceCaps['remote']);
+          if (ndisPriceCap != null && priceCapType == null) {
+            priceCapType = 'remote';
+          }
+
+          // Legacy per-state documents.
+          if (ndisPriceCap == null &&
+              priceCaps['standard'] != null &&
+              priceCaps['standard'] is Map) {
             final standardCaps = priceCaps['standard'] as Map<String, dynamic>;
             if (standardCaps[clientState] != null) {
               ndisPriceCap = (standardCaps[clientState] as num).toDouble();
@@ -1144,17 +1160,33 @@ class _ClientPricingDetailPageState
               : (price ?? 0.0);
         }
 
-        // Extract NDIS price cap based on client state
+        // Extract NDIS price cap (National / Remote / Very Remote, 2026-27).
+        // The client state is kept on the record for address purposes only.
         double? ndisPriceCap;
         String? priceCapType;
+
+        double? asCap(dynamic value) {
+          if (value is num && value > 0) return value.toDouble();
+          return null;
+        }
 
         if (supportItemDetails != null &&
             supportItemDetails['priceCaps'] != null) {
           final priceCaps =
               supportItemDetails['priceCaps'] as Map<String, dynamic>;
 
-          // Check standard caps first
-          if (priceCaps['standard'] != null && priceCaps['standard'] is Map) {
+          // New format: scalar national / remote caps.
+          ndisPriceCap ??= asCap(priceCaps['national']);
+          if (ndisPriceCap != null) priceCapType = 'national';
+          ndisPriceCap ??= asCap(priceCaps['remote']);
+          if (ndisPriceCap != null && priceCapType == null) {
+            priceCapType = 'remote';
+          }
+
+          // Legacy per-state documents.
+          if (ndisPriceCap == null &&
+              priceCaps['standard'] != null &&
+              priceCaps['standard'] is Map) {
             final standardCaps = priceCaps['standard'] as Map<String, dynamic>;
             if (standardCaps[clientState] != null) {
               ndisPriceCap = (standardCaps[clientState] as num).toDouble();
