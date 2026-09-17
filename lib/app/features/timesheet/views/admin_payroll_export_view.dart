@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../viewmodels/payroll_export_viewmodel.dart';
@@ -198,7 +199,10 @@ class _AdminPayrollExportViewState
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  DateFormat('MMM dd, yyyy').format(date),
+                  DateFormat(
+                    'MMM dd, yyyy',
+                    AppLocalizations.of(context)!.localeName,
+                  ).format(date),
                   style: GoogleFonts.oswald(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,

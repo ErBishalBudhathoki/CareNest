@@ -357,7 +357,10 @@ class _ScheduleDashboardScreenState
       Duration(days: _selectedDate.weekday - 1),
     );
     final endOfWeek = startOfWeek.add(const Duration(days: 6));
-    final dateFormat = DateFormat('MMM d');
+    final dateFormat = DateFormat(
+      'MMM d',
+      AppLocalizations.of(context)!.localeName,
+    );
 
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -497,7 +500,10 @@ class _ScheduleDashboardScreenState
             boxShadow: const [BauhausDesign.shadowHardXs],
           ),
           child: Text(
-            DateFormat('EEE, MMM d').format(date),
+            DateFormat(
+              'EEE, MMM d',
+              AppLocalizations.of(context)!.localeName,
+            ).format(date),
             style: BauhausDesign.getTextTheme(
               context,
             ).labelLarge?.copyWith(color: BauhausDesign.surfaceWhite),
@@ -529,7 +535,10 @@ class _ScheduleDashboardScreenState
   }
 
   Widget _buildShiftCard(ShiftModel shift) {
-    final timeFormat = DateFormat('h:mm a');
+    final timeFormat = DateFormat(
+      'h:mm a',
+      AppLocalizations.of(context)!.localeName,
+    );
     final statusColor = _getStatusColor(shift.status);
 
     return Padding(
@@ -1046,7 +1055,10 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                       ),
                       const SizedBox(width: BauhausDesign.space2),
                       Text(
-                        DateFormat('MMM dd, yyyy').format(_selectedDate),
+                        DateFormat(
+                          'MMM dd, yyyy',
+                          AppLocalizations.of(context)!.localeName,
+                        ).format(_selectedDate),
                         style: BauhausDesign.getTextTheme(
                           context,
                         ).bodyMedium?.copyWith(color: BauhausDesign.textDark),

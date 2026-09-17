@@ -12633,6 +12633,12 @@ abstract class AppLocalizations {
   /// **'Unknown Client'**
   String get unknownClient;
 
+  /// No description provided for @unknownDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown date'**
+  String get unknownDate;
+
   /// No description provided for @unknownEmployee.
   ///
   /// In en, this message translates to:

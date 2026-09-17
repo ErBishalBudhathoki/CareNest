@@ -244,7 +244,7 @@ class _WeekRangeHeader extends StatelessWidget {
           Expanded(
             child: Center(
               child: Text(
-                '${DateFormat('MMM dd').format(weekStart)} – ${DateFormat('MMM dd, yyyy').format(weekEnd)}'
+                '${DateFormat('MMM dd', AppLocalizations.of(context)!.localeName).format(weekStart)} – ${DateFormat('MMM dd, yyyy', AppLocalizations.of(context)!.localeName).format(weekEnd)}'
                     .toUpperCase(),
                 style: BauhausDesign.getTextTheme(context).titleMedium
                     ?.copyWith(
@@ -296,7 +296,8 @@ class _TimesheetDataBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final days = _buildWeekSummaries(entries, weekStart);
+    final locale = AppLocalizations.of(context)!.localeName;
+    final days = _buildWeekSummaries(entries, weekStart, locale);
     final weekTotals = _calculateWeekTotals(days);
     final hasAnyWork = days.any((d) => d.totalSeconds > 0);
 
@@ -655,7 +656,10 @@ class _DayCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    DateFormat('dd').format(summary.date),
+                    DateFormat(
+                      'dd',
+                      AppLocalizations.of(context)!.localeName,
+                    ).format(summary.date),
                     style: GoogleFonts.oswald(
                       fontSize: 24,
                       fontWeight: FontWeight.w700,
@@ -665,7 +669,10 @@ class _DayCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    DateFormat('EEE').format(summary.date).toUpperCase(),
+                    DateFormat(
+                      'EEE',
+                      AppLocalizations.of(context)!.localeName,
+                    ).format(summary.date).toUpperCase(),
                     style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
@@ -912,7 +919,7 @@ class _EmptyWeekState extends StatelessWidget {
             ),
             const SizedBox(height: BauhausDesign.space1),
             Text(
-              '${DateFormat('MMM dd').format(weekStart)} – ${DateFormat('MMM dd').format(weekEnd)}',
+              '${DateFormat('MMM dd', AppLocalizations.of(context)!.localeName).format(weekStart)} – ${DateFormat('MMM dd', AppLocalizations.of(context)!.localeName).format(weekEnd)}',
               style: GoogleFonts.inter(
                 fontSize: 12,
                 color: BauhausDesign.textMuted,
@@ -1032,6 +1039,7 @@ class _WeekTotals {
 List<_DayTimesheetSummary> _buildWeekSummaries(
   List<TimesheetEntry> entries,
   DateTime weekStart,
+  String? locale,
 ) {
   final baseStart = DateTime(weekStart.year, weekStart.month, weekStart.day);
   final summaries = List.generate(
@@ -1053,8 +1061,8 @@ List<_DayTimesheetSummary> _buildWeekSummaries(
     day.shiftCount += 1;
 
     if (day.primaryShiftLabel == null) {
-      final start = _formatTimeStr(entry.shiftStartTime);
-      final end = _formatTimeStr(entry.shiftEndTime);
+      final start = _formatTimeStr(entry.shiftStartTime, locale);
+      final end = _formatTimeStr(entry.shiftEndTime, locale);
       if (start.isNotEmpty && end.isNotEmpty) {
         day.primaryShiftLabel = '$start – $end';
       }
@@ -1127,14 +1135,14 @@ String _formatHoursMinutes(int seconds) {
   return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
 }
 
-String _formatTimeStr(String? rawTime) {
+String _formatTimeStr(String? rawTime, [String? locale]) {
   if (rawTime == null || rawTime.trim().isEmpty) return '';
   final trimmed = rawTime.trim();
 
   // Try to parse it as a DateTime (e.g. ISO string)
   final parsed = DateTime.tryParse(trimmed);
   if (parsed != null) {
-    return DateFormat('hh:mm a').format(parsed.toLocal());
+    return DateFormat('hh:mm a', locale).format(parsed.toLocal());
   }
 
   // If parsing fails, return the trimmed raw string
