@@ -40,12 +40,13 @@ class BauhausDesign {
   static const double space16 = 64.0;
 
   // ==================== BORDER RADIUS ====================
-  static const double radiusXs = 2.0;
-  static const double radiusSm = 4.0;
-  static const double radiusMd = 12.0; // Default
-  static const double radiusLg = 16.0;
-  static const double radiusXl = 24.0;
-  static const double radiusFull = 999.0;
+  // Neo-brutalist Bauhaus: squared geometry only. No pills, no circles.
+  static const double radiusXs = 0.0;
+  static const double radiusSm = 0.0;
+  static const double radiusMd = 0.0; // Default
+  static const double radiusLg = 0.0;
+  static const double radiusXl = 0.0;
+  static const double radiusFull = 0.0;
 
   // ==================== SHADOWS ====================
   static const Color shadowColor = Color(0xFF000000);

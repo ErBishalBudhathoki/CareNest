@@ -24,7 +24,11 @@ class ButtonWidget extends StatelessWidget {
     final effectiveTextColor = textColor ?? BauhausDesign.surfaceWhite;
     final isDisabled = onPressed == null;
 
-    return Container(
+    return Semantics(
+      button: true,
+      enabled: !isDisabled && !isLoading,
+      label: isLoading ? '$buttonText, loading' : buttonText,
+      child: Container(
       decoration: BoxDecoration(
         color: isDisabled
             ? BauhausDesign.surfaceOffWhite
@@ -39,25 +43,31 @@ class ButtonWidget extends StatelessWidget {
           onTap: isLoading ? null : onPressed,
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
           child: Container(
-            constraints: const BoxConstraints(minHeight: 44),
+            constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
             padding: const EdgeInsets.symmetric(
               horizontal: BauhausDesign.space6,
               vertical: BauhausDesign.space3,
             ),
             alignment: Alignment.center,
             child: isLoading
-                ? SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        effectiveTextColor,
+                ? Semantics(
+                    liveRegion: true,
+                    label: 'Loading',
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          effectiveTextColor,
+                        ),
                       ),
                     ),
                   )
                 : Text(
                     buttonText,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.inter(
                       color: isDisabled
                           ? BauhausDesign.textMuted
@@ -69,6 +79,7 @@ class ButtonWidget extends StatelessWidget {
                   ),
           ),
         ),
+      ),
       ),
     );
   }

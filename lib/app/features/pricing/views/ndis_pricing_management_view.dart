@@ -437,27 +437,40 @@ class _NdisPricingManagementViewState
       );
     }
 
-    // Apply state filter - only filter if we have support item data or if filtering for custom pricing
+    // Apply rate filter (National / Remote / Very Remote) - only filter if
+    // we have support item data or if filtering for custom pricing
     if (_selectedStateFilter != 'All') {
+      final rateKey = _selectedStateFilter == 'National'
+          ? 'national'
+          : _selectedStateFilter == 'Remote'
+              ? 'remote'
+              : _selectedStateFilter == 'Very Remote'
+                  ? 'veryRemote'
+                  : null;
       filtered = filtered.where((item) {
         final pricingData = _pricingData[item.itemNumber];
 
         // Check if item has actual custom pricing (not fallback base rate)
         final hasActualCustomPricing = _hasItemLevelCustomPricing(pricingData);
 
-        // If filtering for custom pricing and item has actual custom pricing, don't apply state filter (custom pricing is organization-wide)
+        // If filtering for custom pricing and item has actual custom pricing, don't apply rate filter (custom pricing is organization-wide)
         if (_selectedFilter == 'Custom Pricing' && hasActualCustomPricing) {
           return true;
         }
 
-        // For standard pricing, check if item has pricing for the selected state
+        // For standard pricing, check if item has a cap for the selected rate
         if (pricingData?['supportItem'] != null) {
           final supportItem = pricingData!['supportItem'];
           final priceCaps = supportItem['priceCaps'];
-          if (priceCaps != null) {
-            final statePrices = priceCaps['standard'];
-            return statePrices != null &&
-                statePrices[_selectedStateFilter] != null;
+          if (priceCaps is Map) {
+            final caps = Map<String, dynamic>.from(priceCaps);
+            if (rateKey != null && _resolveNationalPrice(caps[rateKey]) != null) {
+              return true;
+            }
+            // Legacy per-state documents: any usable cap counts.
+            if (_resolveNationalPrice(caps['standard']) != null) return true;
+            if (_resolveNationalPrice(caps['national']) != null) return true;
+            return false;
           }
         }
 
@@ -535,7 +548,29 @@ class _NdisPricingManagementViewState
     return 0.0;
   }
 
+  /// Resolve a national NDIS cap from old or new catalogue shapes.
+  /// New format stores scalar `national` / `remote` / `veryRemote` values;
+  /// old documents store per-state maps. National always wins.
+  double? _resolveNationalPrice(dynamic capValue) {
+    final scalar = _toPositiveDouble(capValue);
+    if (scalar != null) return scalar;
+    if (capValue is Map) {
+      for (final key in ['national', 'remote', 'veryRemote']) {
+        for (final entry in capValue.entries) {
+          if (entry.key.toString().trim().toLowerCase() == key) {
+            final parsed = _toPositiveDouble(entry.value);
+            if (parsed != null) return parsed;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   double? _resolveStatePrice(dynamic capValue, String targetState) {
+    // National cap is the single source of truth (2026-27 format).
+    final national = _resolveNationalPrice(capValue);
+    if (national != null) return national;
     if (capValue is Map) {
       final direct = _toPositiveDouble(capValue[targetState]);
       if (direct != null) return direct;
@@ -609,47 +644,47 @@ class _NdisPricingManagementViewState
     bool isHighIntensity,
   ) {
     final regionalPrices = _getRegionalPrices(item);
-    final stateRegion = _stateToPriceRegion(targetState);
-    final statePrice = stateRegion == null
-        ? null
-        : _normalizeRegionalValue(regionalPrices[stateRegion]);
+    // NDIS publishes National / Remote / Very Remote caps only (2026-27).
     final nationalPrice = _normalizeRegionalValue(
       regionalPrices[PriceRegion.national],
     );
-    final p01Price = _normalizeRegionalValue(
+    final remotePrice = _normalizeRegionalValue(
       regionalPrices[PriceRegion.remote],
     );
-    final p02Price = _normalizeRegionalValue(
+    final veryRemotePrice = _normalizeRegionalValue(
       regionalPrices[PriceRegion.veryRemote],
     );
 
     double? selectedPrice;
-    String selectedLabel;
-    if (statePrice != null) {
-      selectedPrice = statePrice;
-      selectedLabel = isHighIntensity ? 'H' : 'STD';
-    } else if (p02Price != null) {
-      selectedPrice = p02Price;
-      selectedLabel = 'P02';
-    } else if (p01Price != null) {
-      selectedPrice = p01Price;
-      selectedLabel = 'P01';
-    } else {
+    String selectedLabel = isHighIntensity ? 'H' : 'STD';
+    if (isHighIntensity && remotePrice != null) {
+      selectedPrice = remotePrice;
+      selectedLabel = 'REMOTE';
+    } else if (nationalPrice != null) {
       selectedPrice = nationalPrice;
       selectedLabel = isHighIntensity ? 'H' : 'STD';
+    } else if (veryRemotePrice != null) {
+      selectedPrice = veryRemotePrice;
+      selectedLabel = 'VREMOTE';
+    } else if (remotePrice != null) {
+      selectedPrice = remotePrice;
+      selectedLabel = 'REMOTE';
     }
     if (selectedPrice == null) return null;
 
     return {
       'price': selectedPrice,
-      'state': targetState,
+      'state': 'National',
       'label': selectedLabel,
-      'standardPrice': statePrice ?? nationalPrice,
+      'standardPrice': nationalPrice,
       'highIntensityPrice': isHighIntensity ? selectedPrice : null,
-      'p01Price': p01Price,
-      'p02Price': p02Price,
+      'remotePrice': remotePrice,
+      'veryRemotePrice': veryRemotePrice,
       'isHighIntensity': isHighIntensity,
-      'labelledCaps': <String, double>{'P01': ?p01Price, 'P02': ?p02Price},
+      'labelledCaps': <String, double>{
+        'REMOTE': ?remotePrice,
+        'VREMOTE': ?veryRemotePrice,
+      },
       'source': 'regional_prices',
     };
   }
@@ -659,6 +694,16 @@ class _NdisPricingManagementViewState
     if (pricingData == null) return null;
 
     bool hasUsableCapData(Map<String, dynamic> caps) {
+      // National cap is the single source of truth (2026-27 format).
+      if (_resolveNationalPrice(caps['national']) != null) {
+        return true;
+      }
+      if (_resolveNationalPrice(caps['remote']) != null) {
+        return true;
+      }
+      if (_resolveNationalPrice(caps['veryRemote']) != null) {
+        return true;
+      }
       final targetState = _getTargetPricingState();
       if (_resolveStatePrice(caps['standard'], targetState) != null) {
         return true;
@@ -707,12 +752,12 @@ class _NdisPricingManagementViewState
     return null;
   }
 
-  /// Resolve the primary NDIS cap for the selected state.
+  /// Resolve the primary NDIS cap (National / Remote / Very Remote, 2026-27).
   ///
   /// Selection priority:
-  /// - high intensity map when item is high intensity
-  /// - standard map otherwise
-  /// - maxByState fallback
+  /// - national cap (single source of truth)
+  /// - remote cap for high-intensity items
+  /// - legacy per-state maps (old catalogue documents)
   /// - labelled remote loadings (P01/P02)
   Map<String, dynamic>? _getNdisMaxCapInfo(NDISItem item) {
     final targetState = _getTargetPricingState();
@@ -725,6 +770,32 @@ class _NdisPricingManagementViewState
         targetState,
         isHighIntensity,
       );
+    }
+
+    final nationalPrice = _resolveNationalPrice(priceCaps['national']);
+    final remotePrice = _resolveNationalPrice(priceCaps['remote']);
+    if (nationalPrice != null || remotePrice != null) {
+      final selected = (isHighIntensity && remotePrice != null)
+          ? remotePrice
+          : (nationalPrice ?? remotePrice);
+      final regionalFallback = _resolveCapInfoFromRegionalPrices(
+        item,
+        targetState,
+        isHighIntensity,
+      );
+      return {
+        'price': selected,
+        'state': 'National',
+        'label': isHighIntensity ? 'REMOTE' : 'STD',
+        'standardPrice': nationalPrice,
+        'highIntensityPrice': remotePrice,
+        'remotePrice': remotePrice,
+        'veryRemotePrice': _resolveNationalPrice(priceCaps['veryRemote']),
+        'p01Price': regionalFallback?['p01Price'] as double?,
+        'p02Price': regionalFallback?['p02Price'] as double?,
+        'isHighIntensity': isHighIntensity,
+        'labelledCaps': regionalFallback?['labelledCaps'] ?? <String, double>{},
+      };
     }
 
     final standardPrice = _resolveStatePrice(
@@ -1286,12 +1357,12 @@ class _NdisPricingManagementViewState
           borderSide: BorderSide(color: _inkBlack, width: 2),
         ),
       ),
-      items: ['All', 'NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT']
+      items: ['All', 'National', 'Remote', 'Very Remote']
           .map(
             (state) => DropdownMenuItem(
               value: state,
               child: Text(
-                state == 'All' ? 'All States' : state,
+                state == 'All' ? 'All Rates' : state,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
                   color: _inkBlack,
                   fontWeight: FontWeight.w700,
@@ -1344,7 +1415,7 @@ class _NdisPricingManagementViewState
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      'Notice: Pricing shown for Standard rates in ${_getTargetPricingState()}. '
+                      'Notice: Pricing shown at National NDIS rates. '
                       'Custom pricing overrides standard rates.',
                       style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
@@ -1443,16 +1514,19 @@ class _NdisPricingManagementViewState
     final currentPrice = _getCurrentPrice(item);
     final ndisCapInfo = _getNdisMaxCapInfo(item);
     final ndisCapPrice = ndisCapInfo?['price'] as double?;
-    final ndisCapState = (ndisCapInfo?['state'] as String?) ?? _userState;
+    final ndisCapState = (ndisCapInfo?['state'] as String?) ?? 'National';
     final p01Price = ndisCapInfo?['p01Price'] as double?;
+    // Remote cap for the second metric block (new format; legacy P01 fallback).
+    final remoteCapPrice =
+        (ndisCapInfo?['remotePrice'] as double?) ?? p01Price;
     final showOverride = _showPriceOverride[item.itemNumber] ?? false;
     final updatedText = _formatLastUpdated(item.itemNumber);
     final subtitle = _extractSubtitle(item.itemName);
     final capText = ndisCapPrice != null
         ? '\$${ndisCapPrice.toStringAsFixed(2)}'
         : 'N/A';
-    final p01Text = p01Price != null
-        ? '\$${p01Price.toStringAsFixed(2)}'
+    final p01Text = remoteCapPrice != null
+        ? '\$${remoteCapPrice.toStringAsFixed(2)}'
         : 'N/A';
 
     return Container(
@@ -1591,6 +1665,7 @@ class _NdisPricingManagementViewState
                       children: [
                         _buildTagChip('FALLBACK BASE'),
                         _buildTagChip('NDIS CAP: $ndisCapState'),
+                        if (item.isLegacy) _buildLegacyChip(item),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -1668,7 +1743,7 @@ class _NdisPricingManagementViewState
                         const SizedBox(width: 10),
                         Expanded(
                           child: _buildMetricBlock(
-                            title: 'REMOTE P01',
+                            title: 'REMOTE CAP',
                             value: p01Text,
                           ),
                         ),
@@ -1720,6 +1795,42 @@ class _NdisPricingManagementViewState
           color: _inkBlack,
           fontWeight: FontWeight.w800,
           letterSpacing: 0.4,
+        ),
+      ),
+    );
+  }
+
+  /// Legacy catalogue badge: shows the item's expiry date so support
+  /// coordinators can see at a glance which caps are being retired.
+  Widget _buildLegacyChip(NDISItem item) {
+    final end = item.endDate;
+    final expired =
+        end != null &&
+        end.year < 9999 &&
+        DateTime.now().isAfter(end.add(const Duration(days: 1)));
+    final dateText = end == null || end.year >= 9999
+        ? 'NO EXPIRY SET'
+        : '${end.day.toString().padLeft(2, '0')}/'
+              '${end.month.toString().padLeft(2, '0')}/${end.year}';
+    return Semantics(
+      label: expired
+          ? 'Legacy item, expired $dateText'
+          : 'Legacy item, expires $dateText',
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+        decoration: BoxDecoration(
+          color: expired ? BauhausDesign.error : BauhausDesign.warning,
+          border: Border.all(color: _inkBlack, width: 2),
+        ),
+        child: Text(
+          expired ? 'LEGACY — EXPIRED $dateText' : 'LEGACY — EXPIRES $dateText',
+          style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+            color: expired
+                ? BauhausDesign.surfaceWhite
+                : BauhausDesign.textDark,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.4,
+          ),
         ),
       ),
     );

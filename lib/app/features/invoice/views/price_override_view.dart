@@ -246,7 +246,7 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
 
               double currentPrice =
                   _fallbackBaseRate ??
-                  30.00; // Default fallback to org base rate
+                  50.00; // Default fallback to org base rate
               double maxPrice = 0.0; // Will be set from actual NDIS price caps
 
               if (pricingData != null) {

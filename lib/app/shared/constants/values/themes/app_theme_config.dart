@@ -87,14 +87,14 @@ class AppThemeConfig {
   static const double spacingXXXL = 64.0;
 
   // ==================== BORDER RADIUS ====================
-
-  static const double radiusXS = 4.0;
-  static const double radiusS = 8.0;
-  static const double radiusM = 12.0;
-  static const double radiusL = 16.0;
-  static const double radiusXL = 20.0;
-  static const double radiusXXL = 24.0;
-  static const double radiusCircular = 50.0;
+  // Neo-brutalist Bauhaus: squared geometry only (radius 0 everywhere).
+  static const double radiusXS = 0.0;
+  static const double radiusS = 0.0;
+  static const double radiusM = 0.0;
+  static const double radiusL = 0.0;
+  static const double radiusXL = 0.0;
+  static const double radiusXXL = 0.0;
+  static const double radiusCircular = 0.0;
 
   static const BorderRadius borderRadiusXS = BorderRadius.all(
     Radius.circular(radiusXS),
@@ -118,27 +118,15 @@ class AppThemeConfig {
   // ==================== SHADOWS ====================
 
   static const List<BoxShadow> shadowLight = [
-    BoxShadow(
-      color: AppColors.colorShadow,
-      blurRadius: 4.0,
-      offset: Offset(0, 2),
-    ),
+    BoxShadow(color: Color(0xFF1A1A1A), blurRadius: 0, offset: Offset(2, 2)),
   ];
 
   static const List<BoxShadow> shadowMedium = [
-    BoxShadow(
-      color: AppColors.colorShadow,
-      blurRadius: 8.0,
-      offset: Offset(0, 4),
-    ),
+    BoxShadow(color: Color(0xFF1A1A1A), blurRadius: 0, offset: Offset(4, 4)),
   ];
 
   static const List<BoxShadow> shadowHeavy = [
-    BoxShadow(
-      color: AppColors.colorShadow,
-      blurRadius: 16.0,
-      offset: Offset(0, 8),
-    ),
+    BoxShadow(color: Color(0xFF1A1A1A), blurRadius: 0, offset: Offset(6, 6)),
   ];
 
   // ==================== BUTTON STYLES ====================

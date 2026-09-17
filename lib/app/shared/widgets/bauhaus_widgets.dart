@@ -537,31 +537,44 @@ class BauhausSearchBar extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: TextField(
-            controller: controller,
-            onChanged: onChanged,
-            onSubmitted: onSubmitted,
-            decoration: BauhausDesign.inputDecoration(hintText).copyWith(
-              prefixIcon:
-                  prefixIcon ??
-                  const Icon(Icons.search, color: BauhausDesign.textMuted),
-              suffixIcon: controller.text.isNotEmpty
-                  ? IconButton(
-                      icon: const Icon(
-                        Icons.clear,
+          child: ValueListenableBuilder<TextEditingValue>(
+            valueListenable: controller,
+            builder: (context, value, _) {
+              return TextField(
+                controller: controller,
+                onChanged: onChanged,
+                onSubmitted: onSubmitted,
+                textInputAction: TextInputAction.search,
+                onTapOutside: (_) => FocusScope.of(context).unfocus(),
+                decoration: BauhausDesign.inputDecoration(hintText).copyWith(
+                  prefixIcon:
+                      prefixIcon ??
+                      const Icon(
+                        Icons.search,
                         color: BauhausDesign.textMuted,
+                        semanticLabel: 'Search',
                       ),
-                      onPressed: () {
-                        controller.clear();
-                        onClear?.call();
-                      },
-                    )
-                  : suffixIcon,
-            ),
+                  suffixIcon: value.text.isNotEmpty
+                      ? IconButton(
+                          tooltip: 'Clear search',
+                          icon: const Icon(
+                            Icons.clear,
+                            color: BauhausDesign.textMuted,
+                          ),
+                          onPressed: () {
+                            controller.clear();
+                            onClear?.call();
+                            onChanged?.call('');
+                          },
+                        )
+                      : suffixIcon,
+                ),
+              );
+            },
           ),
         ),
         if (onFilterTap != null) ...[
-          SizedBox(width: BauhausDesign.space3),
+          const SizedBox(width: BauhausDesign.space3),
           BauhausActionButton(
             onPressed: onFilterTap,
             icon: Icons.tune,
@@ -581,8 +594,12 @@ class BauhausTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final bool obscureText;
   final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
+  final List<String>? autofillHints;
+  final FocusNode? focusNode;
   final String? Function(String?)? validator;
   final Function(String)? onChanged;
+  final ValueChanged<String>? onSubmitted;
   final int? maxLines;
   final bool enabled;
   final bool readOnly;
@@ -597,8 +614,12 @@ class BauhausTextField extends StatelessWidget {
     this.suffixIcon,
     this.obscureText = false,
     this.keyboardType,
+    this.textInputAction,
+    this.autofillHints,
+    this.focusNode,
     this.validator,
     this.onChanged,
+    this.onSubmitted,
     this.maxLines = 1,
     this.enabled = true,
     this.readOnly = false,
@@ -622,10 +643,15 @@ class BauhausTextField extends StatelessWidget {
         ],
         TextFormField(
           controller: controller,
+          focusNode: focusNode,
           obscureText: obscureText,
           keyboardType: keyboardType,
+          textInputAction: textInputAction,
+          autofillHints: autofillHints,
           validator: validator,
           onChanged: onChanged,
+          onFieldSubmitted: onSubmitted,
+          onTapOutside: (_) => FocusScope.of(context).unfocus(),
           maxLines: maxLines,
           enabled: enabled,
           readOnly: readOnly,
@@ -881,18 +907,22 @@ class BauhausIconButton extends StatelessWidget {
         effectiveBorderColor = BauhausDesign.neutral;
     }
 
-    Widget button =
-        Container(
-              width: isSmall ? 32 : 40,
-              height: isSmall ? 32 : 40,
+    Widget button = Semantics(
+      button: true,
+      enabled: onPressed != null,
+      label: tooltip ?? icon.toString(),
+      child: Container(
+              constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+              width: isSmall ? 48 : 48,
+              height: isSmall ? 48 : 48,
               decoration: BoxDecoration(
                 color: effectiveBg,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                 border: variant != BauhausActionVariant.ghost
-                    ? Border.all(color: effectiveBorderColor, width: 1.5)
+                    ? Border.all(color: effectiveBorderColor, width: 2)
                     : null,
                 boxShadow: variant != BauhausActionVariant.ghost
-                    ? const [BauhausDesign.shadowSoft]
+                    ? const [BauhausDesign.shadowHardSm]
                     : null,
               ),
               child: Material(
@@ -900,10 +930,13 @@ class BauhausIconButton extends StatelessWidget {
                 child: InkWell(
                   onTap: onPressed,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  child: Icon(
-                    icon,
-                    color: effectiveIconColor,
-                    size: isSmall ? 16 : 20,
+                  child: Center(
+                    child: Icon(
+                      icon,
+                      color: effectiveIconColor,
+                      size: isSmall ? 18 : 22,
+                      semanticLabel: tooltip,
+                    ),
                   ),
                 ),
               ),
@@ -913,10 +946,11 @@ class BauhausIconButton extends StatelessWidget {
               begin: const Offset(1, 1),
               end: const Offset(0.95, 0.95),
               duration: 100.ms,
-            );
+            ),
+    );
 
     if (tooltip != null) {
-      return Tooltip(message: tooltip, child: button);
+      return Tooltip(message: tooltip!, child: button);
     }
 
     return button;

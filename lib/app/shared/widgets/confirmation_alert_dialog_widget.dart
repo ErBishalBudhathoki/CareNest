@@ -1,6 +1,7 @@
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ConfirmationAlertDialog extends StatefulWidget {
   final String title;
@@ -69,6 +70,8 @@ class _ConfirmationAlertDialogState extends State<ConfirmationAlertDialog>
               backgroundColor: Colors.transparent,
               elevation: 0,
               insetPadding: const EdgeInsets.all(BauhausDesign.space4),
+              child: SafeArea(
+              child: SingleChildScrollView(
               child: Container(
                 constraints: const BoxConstraints(maxWidth: 400),
                 padding: const EdgeInsets.all(BauhausDesign.space6),
@@ -81,23 +84,27 @@ class _ConfirmationAlertDialogState extends State<ConfirmationAlertDialog>
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Icon
-                    Container(
-                      width: 64,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        color: (widget.confirmColor ?? BauhausDesign.primary)
-                            .withValues(alpha: 0.1),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: widget.confirmColor ?? BauhausDesign.primary,
-                          width: 1.5,
+                    // Icon — squared Bauhaus block, no circles
+                    Semantics(
+                      label: 'Confirmation',
+                      child: Container(
+                        width: 64,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          color: (widget.confirmColor ?? BauhausDesign.primary)
+                              .withValues(alpha: 0.1),
+                          border: Border.all(
+                            color: widget.confirmColor ?? BauhausDesign.primary,
+                            width: 2,
+                          ),
+                          boxShadow: const [BauhausDesign.shadowHardSm],
                         ),
-                      ),
-                      child: Icon(
-                        Icons.help_outline,
-                        size: 32,
-                        color: widget.confirmColor ?? BauhausDesign.primary,
+                        child: Icon(
+                          Icons.help_outline,
+                          size: 32,
+                          color: widget.confirmColor ?? BauhausDesign.primary,
+                          semanticLabel: 'Confirmation',
+                        ),
                       ),
                     ),
                     const SizedBox(height: BauhausDesign.space6),
@@ -105,6 +112,8 @@ class _ConfirmationAlertDialogState extends State<ConfirmationAlertDialog>
                     // Title
                     Text(
                       widget.title,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
                       style: BauhausDesign.getTextTheme(context).headlineSmall
                           ?.copyWith(
                             color: BauhausDesign.textDark,
@@ -133,7 +142,10 @@ class _ConfirmationAlertDialogState extends State<ConfirmationAlertDialog>
                         Expanded(
                           child: BauhausActionButton(
                             text: widget.cancelText ?? 'Cancel',
-                            onPressed: () => Navigator.of(context).pop(),
+                            onPressed: () {
+                              HapticFeedback.lightImpact();
+                              Navigator.of(context).pop();
+                            },
                             variant: BauhausActionVariant.secondary,
                             isFullWidth: true,
                           ),
@@ -143,7 +155,10 @@ class _ConfirmationAlertDialogState extends State<ConfirmationAlertDialog>
                         Expanded(
                           child: BauhausActionButton(
                             text: widget.confirmText ?? 'Confirm',
-                            onPressed: widget.confirmAction,
+                            onPressed: () {
+                              HapticFeedback.mediumImpact();
+                              widget.confirmAction();
+                            },
                             backgroundColor: widget.confirmColor,
                             // If confirmColor is provided, we use it as background,
                             // otherwise variant defaults to primary in the widget logic
@@ -158,6 +173,8 @@ class _ConfirmationAlertDialogState extends State<ConfirmationAlertDialog>
                     ),
                   ],
                 ),
+              ),
+              ),
               ),
             ),
           ),
