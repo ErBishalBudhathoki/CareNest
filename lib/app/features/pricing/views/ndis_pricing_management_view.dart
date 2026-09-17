@@ -15,6 +15,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:carenest/app/features/invoice/presentation/widgets/price_prompt_dialog.dart';
 import 'package:carenest/app/features/pricing/views/pricing_configuration_view.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
+import 'package:carenest/app/features/pricing/viewmodels/scoped_pricing_editor.dart';
 
 /// NDIS Pricing Management View for the Pricing Management Dashboard
 /// Allows users to view, search, and manage custom pricing for NDIS items
@@ -67,11 +68,17 @@ class _NdisPricingManagementViewState
   String _selectedStateFilter =
       'All'; // State filter options: All, NSW, VIC, QLD, WA, SA, TAS, ACT, NT
 
+  String? get _clientId {
+    final id = widget.clientId?.trim();
+    return id == null || id.isEmpty ? null : id;
+  }
+
   // Price override controls
   final Map<String, TextEditingController> _priceControllers = {};
   final Map<String, bool> _showPriceOverride = {};
   final Map<String, bool> _isCustomPriceEnabled = {};
   final Map<String, bool> _isSavingPrice = {};
+  final Map<String, PriceRegion?> _selectedRegion = {};
 
   @override
   void initState() {
@@ -280,6 +287,7 @@ class _NdisPricingManagementViewState
       final bulkPricingData = await _apiMethod.getBulkPricingLookup(
         widget.organizationId!,
         allItemNumbers,
+        clientId: _clientId,
       );
 
       log.info(
@@ -351,9 +359,31 @@ class _NdisPricingManagementViewState
   }
 
   bool _hasItemLevelCustomPricing(Map<String, dynamic>? pricingData) {
-    final customPricing = pricingData?['customPricing'];
-    if (customPricing is! Map<String, dynamic>) return false;
-    return !_isFallbackSource(customPricing['source']?.toString());
+    final lookup = pricingData?['customPricing'];
+    return (_scopedOverride(lookup) ?? _scopedOverrideOrOrg(lookup)) != null;
+  }
+
+  Map<String, dynamic>? _scopedOverride(dynamic lookup) {
+    if (lookup is! Map) return null;
+    final value = Map<String, dynamic>.from(lookup);
+    final savedClient = value['clientId']?.toString();
+    if (savedClient != null && savedClient.isNotEmpty) {
+      if (savedClient != _clientId) return null;
+      value['clientSpecific'] = true;
+    }
+    if (value['organizationId'] != null &&
+        value['organizationId'].toString() != widget.organizationId) return null;
+    return scopedPricing(value, clientId: _clientId);
+  }
+
+  /// Org-scope view of a saved record for display fallback (invoice charges
+  /// client record first, then the org record). Never used for saves.
+  Map<String, dynamic>? _scopedOverrideOrOrg(dynamic lookup) {
+    if (lookup is! Map) return null;
+    final value = Map<String, dynamic>.from(lookup);
+    if (value['organizationId'] != null &&
+        value['organizationId'].toString() != widget.organizationId) return null;
+    return scopedPricing(value, clientId: null);
   }
 
   double? _extractResolvedPrice(Map<String, dynamic>? pricing) {
@@ -437,46 +467,13 @@ class _NdisPricingManagementViewState
       );
     }
 
-    // Apply rate filter (National / Remote / Very Remote) - only filter if
-    // we have support item data or if filtering for custom pricing
     if (_selectedStateFilter != 'All') {
-      final rateKey = _selectedStateFilter == 'National'
-          ? 'national'
-          : _selectedStateFilter == 'Remote'
-              ? 'remote'
-              : _selectedStateFilter == 'Very Remote'
-                  ? 'veryRemote'
-                  : null;
-      filtered = filtered.where((item) {
-        final pricingData = _pricingData[item.itemNumber];
-
-        // Check if item has actual custom pricing (not fallback base rate)
-        final hasActualCustomPricing = _hasItemLevelCustomPricing(pricingData);
-
-        // If filtering for custom pricing and item has actual custom pricing, don't apply rate filter (custom pricing is organization-wide)
-        if (_selectedFilter == 'Custom Pricing' && hasActualCustomPricing) {
-          return true;
-        }
-
-        // For standard pricing, check if item has a cap for the selected rate
-        if (pricingData?['supportItem'] != null) {
-          final supportItem = pricingData!['supportItem'];
-          final priceCaps = supportItem['priceCaps'];
-          if (priceCaps is Map) {
-            final caps = Map<String, dynamic>.from(priceCaps);
-            if (rateKey != null && _resolveNationalPrice(caps[rateKey]) != null) {
-              return true;
-            }
-            // Legacy per-state documents: any usable cap counts.
-            if (_resolveNationalPrice(caps['standard']) != null) return true;
-            if (_resolveNationalPrice(caps['national']) != null) return true;
-            return false;
-          }
-        }
-
-        // If no support item data available yet, include the item (will be loaded on demand)
-        return true;
-      }).toList();
+      final region = switch (_selectedStateFilter) {
+        'Remote' => PriceRegion.remote,
+        'Very Remote' => PriceRegion.veryRemote,
+        _ => PriceRegion.national,
+      };
+      filtered = filtered.where((item) => _regionalCap(item, region) != null).toList();
     }
 
     setState(() {
@@ -518,8 +515,7 @@ class _NdisPricingManagementViewState
 
   /// Get standard NDIS cap for an item (metadata only; not used as rate)
   double _getStandardPrice(NDISItem item) {
-    final capInfo = _getNdisMaxCapInfo(item);
-    final price = _toPositiveDouble(capInfo?['price']);
+    final price = _regionalCap(item, _selectedRegion[item.itemNumber] ?? PriceRegion.national);
     if (price != null && price > 0) return price;
 
     // No standard price for selected state or missing support item details
@@ -527,13 +523,19 @@ class _NdisPricingManagementViewState
     return 0.0;
   }
 
-  /// Get current billable price (custom only) for an item
+  /// Get current billable price (custom only) for an item.
+  ///
+  /// Display follows invoice precedence (client record, then org record) so
+  /// the shown rate matches what invoicing charges. Save paths stay
+  /// scope-strict via [_scopedOverride].
   double _getCurrentPrice(NDISItem item) {
     final pricingData = _pricingData[item.itemNumber];
     final customPricing =
         pricingData?['customPricing'] as Map<String, dynamic>?;
-    if (customPricing != null) {
-      final resolved = _extractResolvedPrice(customPricing);
+    final effective =
+        _scopedOverride(customPricing) ?? _scopedOverrideOrOrg(customPricing);
+    if (effective != null) {
+      final resolved = _extractResolvedPrice(effective);
       if (resolved != null && resolved > 0) {
         return resolved;
       }
@@ -544,8 +546,7 @@ class _NdisPricingManagementViewState
       return _fallbackBaseRate!;
     }
 
-    // No configured billable rate.
-    return 0.0;
+    return 50.0;
   }
 
   /// Resolve a national NDIS cap from old or new catalogue shapes.
@@ -606,6 +607,12 @@ class _NdisPricingManagementViewState
     return resolved;
   }
 
+  double? _regionalCap(NDISItem item, PriceRegion region) => regionalPricingCap(
+    item,
+    region,
+    caps: _extractPriceCapsContainer(item),
+  );
+
   Map<PriceRegion, double?> _getRegionalPrices(NDISItem item) {
     return item.regionalPrices;
   }
@@ -655,22 +662,8 @@ class _NdisPricingManagementViewState
       regionalPrices[PriceRegion.veryRemote],
     );
 
-    double? selectedPrice;
-    String selectedLabel = isHighIntensity ? 'H' : 'STD';
-    if (isHighIntensity && remotePrice != null) {
-      selectedPrice = remotePrice;
-      selectedLabel = 'REMOTE';
-    } else if (nationalPrice != null) {
-      selectedPrice = nationalPrice;
-      selectedLabel = isHighIntensity ? 'H' : 'STD';
-    } else if (veryRemotePrice != null) {
-      selectedPrice = veryRemotePrice;
-      selectedLabel = 'VREMOTE';
-    } else if (remotePrice != null) {
-      selectedPrice = remotePrice;
-      selectedLabel = 'REMOTE';
-    }
-    if (selectedPrice == null) return null;
+    final selectedPrice = nationalPrice;
+    const selectedLabel = 'STD';
 
     return {
       'price': selectedPrice,
@@ -774,10 +767,8 @@ class _NdisPricingManagementViewState
 
     final nationalPrice = _resolveNationalPrice(priceCaps['national']);
     final remotePrice = _resolveNationalPrice(priceCaps['remote']);
-    if (nationalPrice != null || remotePrice != null) {
-      final selected = (isHighIntensity && remotePrice != null)
-          ? remotePrice
-          : (nationalPrice ?? remotePrice);
+    if (nationalPrice != null || remotePrice != null || priceCaps['veryRemote'] != null) {
+      final selected = nationalPrice;
       final regionalFallback = _resolveCapInfoFromRegionalPrices(
         item,
         targetState,
@@ -879,6 +870,7 @@ class _NdisPricingManagementViewState
       'highIntensityPrice': highIntensityPrice,
       'p01Price': resolvedP01,
       'p02Price': resolvedP02,
+      'veryRemotePrice': _resolveNationalPrice(priceCaps['veryRemote']),
       'isHighIntensity': isHighIntensity,
       'labelledCaps': mergedLabelledCaps,
     };
@@ -886,23 +878,7 @@ class _NdisPricingManagementViewState
 
   /// Check if an NDIS item is high intensity
   bool _isHighIntensityItem(NDISItem item) {
-    // Check registration group number for high intensity (0104)
-    if (item.registrationGroupNumber == '0104') {
-      return true;
-    }
-
-    // Check item name for "high intensity" text
-    final itemNameLower = item.itemName.toLowerCase();
-    if (itemNameLower.contains('high intensity')) {
-      return true;
-    }
-
-    final registrationGroupName = item.registrationGroupName.toLowerCase();
-    if (registrationGroupName.contains('high intensity')) {
-      return true;
-    }
-
-    return false;
+    return isHighIntensityPricingItem(item);
   }
 
   /// Toggle price override section for an item
@@ -915,6 +891,14 @@ class _NdisPricingManagementViewState
         final item = _filteredNdisItems.firstWhere(
           (item) => item.itemNumber == itemNumber,
         );
+        // Default the region picker to the saved override's region,
+        // falling back to national so save never fails on untouched picker.
+        final savedCustom =
+            _pricingData[itemNumber]?['customPricing'] as Map?;
+        final savedRegion = savedCustom?['region'];
+        _selectedRegion[itemNumber] = savedRegion != null
+            ? pricingRegion(savedRegion)
+            : PriceRegion.national;
         final current = _getCurrentPrice(item);
         _priceControllers[itemNumber] = TextEditingController(
           text: current > 0 ? current.toStringAsFixed(2) : '',
@@ -972,26 +956,88 @@ class _NdisPricingManagementViewState
       }
 
       Map<String, dynamic> result;
-      if (widget.clientId != null && widget.clientId!.trim().isNotEmpty) {
-        // Save as client-specific pricing when clientId is present
-        result = await _apiMethod.saveClientCustomPricing(
+      final targetClient = _clientId;
+      final selectedRegion = _selectedRegion[item.itemNumber];
+      if (selectedRegion == null) {
+        _showSnackBar(
+          AppLocalizations.of(context)!.pricingCapUnavailable,
+          isError: true,
+        );
+        setState(() {
+          _isSavingPrice[item.itemNumber] = false;
+        });
+        return;
+      }
+      final selectedCap = _regionalCap(item, selectedRegion);
+      if (selectedCap == null || price > selectedCap) {
+        _showSnackBar(
+          selectedCap == null
+              ? AppLocalizations.of(context)!.pricingCapUnavailable
+              : AppLocalizations.of(context)!.priceExceedsCap,
+          isError: true,
+        );
+        setState(() {
+          _isSavingPrice[item.itemNumber] = false;
+        });
+        return;
+      }
+      final lookup = await _apiMethod.getPricingLookup(
+        widget.organizationId!,
+        item.itemNumber,
+        clientId: targetClient,
+      );
+      if (!mounted || lookup == null) {
+        _showSnackBar(
+          AppLocalizations.of(context)!.errorOccurred,
+          isError: true,
+        );
+        setState(() {
+          _isSavingPrice[item.itemNumber] = false;
+        });
+        return;
+      }
+      final existing = _scopedOverride(lookup);
+      final pricingId = existing?['_id']?.toString();
+      if (targetClient != null) {
+        if (pricingId != null && pricingId.isNotEmpty) {
+          result = await _apiMethod.updateCustomPricing(
+            pricingId: pricingId,
+            price: price,
+            userEmail: userEmail,
+            supportItemName: item.itemName,
+            clientSpecific: true,
+            clientId: targetClient,
+            region: selectedRegion.name,
+          );
+        } else {
+          result = await _apiMethod.saveClientCustomPricing(
+            widget.organizationId!,
+            targetClient,
+            item.itemNumber,
+            price,
+            'fixed',
+            userEmail,
+            supportItemName: item.itemName,
+            region: selectedRegion.name,
+          );
+        }
+      } else if (pricingId != null && pricingId.isNotEmpty) {
+        result = await _apiMethod.updateCustomPricing(
+          pricingId: pricingId,
+          price: price,
+          userEmail: userEmail,
+          supportItemName: item.itemName,
+          region: selectedRegion.name,
+        );
+      } else {
+        result = await _apiMethod.saveAsCustomPricing(
           widget.organizationId!,
-          widget.clientId!,
           item.itemNumber,
           price,
           'fixed',
           userEmail,
           supportItemName: item.itemName,
-        );
-      } else {
-        // Fallback to organization-wide custom pricing
-        result = await _apiMethod.saveAsCustomPricing(
-          widget.organizationId!,
-          item.itemNumber,
-          price,
-          'fixed', // Valid pricing type expected by backend
-          userEmail,
-          supportItemName: item.itemName,
+          region: selectedRegion.name,
         );
       }
 
@@ -1000,16 +1046,16 @@ class _NdisPricingManagementViewState
       if (result['success'] == true) {
         // Update local pricing data
         setState(() {
-          final isClientSpecific =
-              widget.clientId != null && widget.clientId!.trim().isNotEmpty;
+          final targetClient = _clientId;
           _pricingData[item.itemNumber] = {
             ..._pricingData[item.itemNumber] ?? {},
             'customPricing': {
               'price': price,
-              'source': isClientSpecific
-                  ? 'Client-Specific Rate'
-                  : 'Organization Rate',
-              if (isClientSpecific) 'clientId': widget.clientId,
+              'source': targetClient != null
+                  ? 'client_specific'
+                  : 'organization',
+              'clientId': ?targetClient,
+              'region': selectedRegion.name,
               'createdAt': DateTime.now().toIso8601String(),
             },
             'supportItem': _pricingData[item.itemNumber]?['supportItem'],
@@ -1519,6 +1565,12 @@ class _NdisPricingManagementViewState
     // Remote cap for the second metric block (new format; legacy P01 fallback).
     final remoteCapPrice =
         (ndisCapInfo?['remotePrice'] as double?) ?? p01Price;
+    // Very Remote cap for the third metric block.
+    final veryRemoteCapPrice =
+        (ndisCapInfo?['veryRemotePrice'] as double?) ??
+        _resolveNationalPrice(
+          _extractPriceCapsContainer(item)?['veryRemote'],
+        );
     final showOverride = _showPriceOverride[item.itemNumber] ?? false;
     final updatedText = _formatLastUpdated(item.itemNumber);
     final subtitle = _extractSubtitle(item.itemName);
@@ -1527,6 +1579,9 @@ class _NdisPricingManagementViewState
         : 'N/A';
     final p01Text = remoteCapPrice != null
         ? '\$${remoteCapPrice.toStringAsFixed(2)}'
+        : 'N/A';
+    final veryRemoteText = veryRemoteCapPrice != null
+        ? '\$${veryRemoteCapPrice.toStringAsFixed(2)}'
         : 'N/A';
 
     return Container(
@@ -1735,7 +1790,7 @@ class _NdisPricingManagementViewState
                       children: [
                         Expanded(
                           child: _buildMetricBlock(
-                            title: 'NDIS MAX CAP',
+                            title: 'NATIONAL CAP',
                             value: capText,
                             valueColor: _accentBlue,
                           ),
@@ -1745,6 +1800,13 @@ class _NdisPricingManagementViewState
                           child: _buildMetricBlock(
                             title: 'REMOTE CAP',
                             value: p01Text,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _buildMetricBlock(
+                            title: 'VERY REMOTE CAP',
+                            value: veryRemoteText,
                           ),
                         ),
                       ],
@@ -2127,6 +2189,8 @@ class _NdisPricingManagementViewState
                 ),
                 if (isCustomEnabled) ...[
                   const SizedBox(height: 10),
+                  _buildRegionPicker(item),
+                  const SizedBox(height: 10),
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
@@ -2290,6 +2354,54 @@ class _NdisPricingManagementViewState
             letterSpacing: 0.5,
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildRegionPicker(NDISItem item) {
+    final selected = _selectedRegion[item.itemNumber];
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: _panelWhite,
+        border: Border.all(color: _inkBlack, width: 2),
+      ),
+      child: DropdownButtonFormField<PriceRegion>(
+        initialValue: selected,
+        isExpanded: true,
+        decoration: InputDecoration(
+          isDense: true,
+          labelText: l10n.pricingRegionLabel,
+          border: InputBorder.none,
+        ),
+        items: [
+          for (final region in pricingRegions)
+            DropdownMenuItem<PriceRegion>(
+              value: region,
+              child: Text(
+                switch (region) {
+                  PriceRegion.remote => l10n.pricingRemoteRegion,
+                  PriceRegion.veryRemote => l10n.pricingVeryRemoteRegion,
+                  _ => l10n.pricingNationalRegion,
+                },
+              ),
+            ),
+        ],
+        onChanged: (value) => setState(() {
+          _selectedRegion[item.itemNumber] = value;
+          final controller = _priceControllers[item.itemNumber];
+          if (value != null && controller != null) {
+            // Only suggest the cap when no usable price is typed yet, so
+            // switching region never destroys the user's entered price.
+            // Out-of-cap prices are rejected at save with a clear message.
+            if (double.tryParse(controller.text.trim()) == null) {
+              final cap = _regionalCap(item, value);
+              if (cap != null) controller.text = cap.toStringAsFixed(2);
+            }
+          }
+        }),
       ),
     );
   }

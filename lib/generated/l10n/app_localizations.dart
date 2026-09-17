@@ -94,6 +94,108 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('en')];
 
+  /// No description provided for @pricingNationalCap.
+  ///
+  /// In en, this message translates to:
+  /// **'National Cap'**
+  String get pricingNationalCap;
+
+  /// No description provided for @pricingRemoteCap.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote Cap'**
+  String get pricingRemoteCap;
+
+  /// No description provided for @pricingVeryRemoteCap.
+  ///
+  /// In en, this message translates to:
+  /// **'Very Remote Cap'**
+  String get pricingVeryRemoteCap;
+
+  /// No description provided for @pricingRegionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pricing region'**
+  String get pricingRegionLabel;
+
+  /// No description provided for @pricingNationalRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'National'**
+  String get pricingNationalRegion;
+
+  /// No description provided for @pricingRemoteRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote'**
+  String get pricingRemoteRegion;
+
+  /// No description provided for @pricingVeryRemoteRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Very Remote'**
+  String get pricingVeryRemoteRegion;
+
+  /// No description provided for @pricingCapUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No cap is available for this region. Saving is unavailable.'**
+  String get pricingCapUnavailable;
+
+  /// No description provided for @pricingSaveDraftFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Save or discard your price changes before selecting this item.'**
+  String get pricingSaveDraftFirst;
+
+  /// No description provided for @pricingCapsNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Caps are limits, not charges. Charges use saved pricing or the organization base rate (default \$50).'**
+  String get pricingCapsNotice;
+
+  /// No description provided for @pricingBaseRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Base rate'**
+  String get pricingBaseRate;
+
+  /// No description provided for @pricingAllItems.
+  ///
+  /// In en, this message translates to:
+  /// **'All items'**
+  String get pricingAllItems;
+
+  /// No description provided for @pricingAllRegions.
+  ///
+  /// In en, this message translates to:
+  /// **'All regions'**
+  String get pricingAllRegions;
+
+  /// No description provided for @pricingCustomRates.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom rates'**
+  String get pricingCustomRates;
+
+  /// No description provided for @pricingShowLegacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Show legacy catalogue items'**
+  String get pricingShowLegacy;
+
+  /// No description provided for @pricingLegacyItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Legacy catalogue item'**
+  String get pricingLegacyItem;
+
+  /// No description provided for @pricingLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Pricing could not be loaded. Please try again.'**
+  String get pricingLoadFailed;
+
   /// No description provided for @abnHint.
   ///
   /// In en, this message translates to:

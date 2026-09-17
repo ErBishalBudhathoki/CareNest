@@ -13,6 +13,9 @@ import 'package:carenest/app/shared/utils/logging.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/features/pricing/viewmodels/scoped_pricing_editor.dart';
+import 'package:carenest/app/features/pricing/widgets/regional_price_editor.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class EnhancedNdisItemSelectionResult {
   final NDISItem ndisItem;
@@ -82,6 +85,48 @@ class _EnhancedNdisItemSelectionViewState
   final Map<String, bool> _isCustomPriceEnabled = {};
   final Map<String, String> _selectedPricingScope = {};
   final Map<String, bool> _isSavingCustomPrice = {}; // Track saving status
+  final Map<String, Map<String, PricingDraft>> _pricingDrafts = {};
+
+  PricingDraft _draftFor(String itemNumber, {String? scope}) {
+    final selectedScope = scope ?? _getSelectedScope(itemNumber);
+    return (_pricingDrafts[itemNumber] ??= {}).putIfAbsent(
+      selectedScope,
+      () => PricingDraft(
+        _getCustomPricingForScope(itemNumber, scope: selectedScope),
+        _toPositiveDouble(_fallbackBaseRate) ?? 50,
+      ),
+    );
+  }
+
+  Map<String, dynamic>? _effectiveCustomPricing(String itemNumber) {
+    final data = _pricingData[itemNumber];
+    final client = data?['clientCustomPricing'] as Map<String, dynamic>?;
+    final organization = data?['orgCustomPricing'] as Map<String, dynamic>?;
+    return (_hasClientScope ? client : null) ?? organization;
+  }
+
+  Map<String, dynamic>? _priceCaps(NDISItem item) {
+    final caps = _pricingData[item.itemNumber]?['supportItem']?['priceCaps'];
+    return caps is Map ? Map<String, dynamic>.from(caps) : null;
+  }
+
+  String _formatRegionalCaps(NDISItem item) {
+    final caps = _priceCaps(item);
+    String part(String label, PriceRegion region) {
+      final value = regionalPricingCap(item, region, caps: caps);
+      final text = value != null
+          ? '\$${value.toStringAsFixed(2)}'
+          : 'N/A';
+      return '$label $text';
+    }
+
+    return '${part('NAT', PriceRegion.national)} · '
+        '${part('REM', PriceRegion.remote)} · '
+        '${part('V-REM', PriceRegion.veryRemote)}';
+  }
+
+  bool _hasUnsavedPricing(String itemNumber) =>
+      _pricingDrafts[itemNumber]?.values.any((draft) => draft.isDirty) ?? false;
 
   @override
   void initState() {
@@ -133,10 +178,7 @@ class _EnhancedNdisItemSelectionViewState
         : searchFiltered.where((item) => !item.isLegacy).toList();
 
     if (widget.highIntensity) {
-      _filteredNdisItems = visibleItems.where((item) {
-        final itemData = _pricingData[item.itemNumber];
-        return itemData != null && itemData['hasHighIntensityPricing'] == true;
-      }).toList();
+      _filteredNdisItems = visibleItems.where(isHighIntensityPricingItem).toList();
       return;
     }
 
@@ -222,12 +264,7 @@ class _EnhancedNdisItemSelectionViewState
     final selectedScope = scope ?? _getSelectedScope(itemNumber);
     final clientCustom = data['clientCustomPricing'] as Map<String, dynamic>?;
     final orgCustom = data['orgCustomPricing'] as Map<String, dynamic>?;
-    final fallbackCustom = data['customPricing'] as Map<String, dynamic>?;
-
-    if (selectedScope == _scopeClient) {
-      return clientCustom ?? orgCustom ?? fallbackCustom;
-    }
-    return orgCustom ?? clientCustom ?? fallbackCustom;
+    return selectedScope == _scopeClient ? clientCustom : orgCustom;
   }
 
   double? _getSavedCustomPriceForScope(String itemNumber, {String? scope}) {
@@ -243,40 +280,21 @@ class _EnhancedNdisItemSelectionViewState
     Map<String, dynamic>? orgCustomPricing,
     Map<String, dynamic>? fallbackCustomPricing,
   }) {
-    final selectedScope = _getSelectedScope(itemNumber);
-    if (selectedScope == _scopeClient) {
-      return clientCustomPricing ?? orgCustomPricing ?? fallbackCustomPricing;
-    }
-    return orgCustomPricing ?? clientCustomPricing ?? fallbackCustomPricing;
+    return (_hasClientScope ? clientCustomPricing : null) ?? orgCustomPricing;
   }
 
   void _setSelectedScope(String itemNumber, String scope, {NDISItem? item}) {
     if (scope == _scopeClient && !_hasClientScope) return;
     if (scope != _scopeClient && scope != _scopeOrganization) return;
+    if (_isSavingCustomPrice[itemNumber] == true) return;
     setState(() {
       _selectedPricingScope[itemNumber] = scope;
-      final controller = _priceControllers[itemNumber];
-      if (controller != null) {
-        final scopedPrice = _getSavedCustomPriceForScope(
-          itemNumber,
-          scope: scope,
-        );
-        final cappedPrice = item != null ? _getCappedPrice(item) : null;
-        final nextPrice = scopedPrice ?? cappedPrice;
-        if (nextPrice != null) {
-          controller.text = nextPrice.toStringAsFixed(2);
-        }
-      }
+      _priceControllers[itemNumber]?.text = _draftFor(itemNumber).priceText;
     });
   }
 
   double? _toPositiveDouble(dynamic value) {
-    if (value is num && value > 0) return value.toDouble();
-    if (value is String) {
-      final parsed = double.tryParse(value.trim());
-      if (parsed != null && parsed > 0) return parsed;
-    }
-    return null;
+    return positivePricingValue(value);
   }
 
   Map<String, dynamic> _buildStandardPriceCapsFromItem(NDISItem item) {
@@ -329,7 +347,16 @@ class _EnhancedNdisItemSelectionViewState
         source == 'organization' ||
         source == 'organization_specific' ||
         source == 'organization-specific';
-    if (!isCustomSource) return null;
+    if (!isCustomSource &&
+        (pricingLookup['_id'] == null ||
+            const {
+              'ndis_default',
+              'fallback',
+              'base_rate',
+              'fallback_base_rate',
+            }.contains(source))) {
+      return null;
+    }
 
     final resolvedPrice =
         _toPositiveDouble(pricingLookup['customPrice']) ??
@@ -342,8 +369,15 @@ class _EnhancedNdisItemSelectionViewState
         source == 'client_specific' ||
         source == 'client-specific';
     final pricingClientId = pricingLookup['clientId'];
+    if (isClientSpecific &&
+        (!_hasClientScope ||
+            (pricingClientId != null &&
+                pricingClientId.toString() != widget.clientId?.trim()))) {
+      return null;
+    }
 
     return <String, dynamic>{
+      ...pricingLookup,
       'price': resolvedPrice,
       'customPrice': resolvedPrice,
       'fixedPrice': resolvedPrice,
@@ -390,9 +424,7 @@ class _EnhancedNdisItemSelectionViewState
         _buildSupportItemFromLookup(item, clientAwareLookup) ??
         _buildSupportItemFromLookup(item, organizationLookup);
 
-    final priceCaps = supportItem?['priceCaps'];
-    final hasHighIntensityPricing =
-        priceCaps is Map<String, dynamic> && priceCaps['highIntensity'] != null;
+    final hasHighIntensityPricing = isHighIntensityPricingItem(item);
 
     return <String, dynamic>{
       'clientCustomPricing': clientCustomPricing,
@@ -655,64 +687,16 @@ class _EnhancedNdisItemSelectionViewState
     });
   }
 
-  /// Resolve the capped price for an NDIS item.
-  ///
-  /// NDIS publishes National / Remote / Very Remote caps only (2026-27),
-  /// so there is no state-specific resolution anymore. Priority:
-  /// 1) National cap from the backend price lookup
-  /// 2) Legacy state-specific cap (old catalogue documents / cached data)
-  /// 3) National cap from the bundled NDIS item
-  /// 4) Organization fallback base rate when no caps are available
-  ///
-  /// Always returns a rounded 2-decimal price.
-  double _getCappedPrice(NDISItem item) {
-    final pricingData = _pricingData[item.itemNumber];
-
-    if (pricingData?['supportItem'] != null) {
-      final supportItem = pricingData!['supportItem'] as Map<String, dynamic>;
-      final priceCaps = supportItem['priceCaps'];
-
-      if (priceCaps is Map) {
-        final caps = Map<String, dynamic>.from(priceCaps);
-        // Direct national cap (new format). For high-intensity shifts
-        // prefer the remote loading, else the national cap.
-        final directNational = _toPositiveDouble(caps['national']);
-        final directRemote = _toPositiveDouble(caps['remote']);
-        if (widget.highIntensity && directRemote != null) {
-          return directRemote;
-        }
-        if (directNational != null) return directNational;
-
-        final intensityType = widget.highIntensity
-            ? 'highIntensity'
-            : 'standard';
-        final legacyCaps = caps[intensityType];
-        if (legacyCaps is Map) {
-          final legacyMap = Map<String, dynamic>.from(legacyCaps);
-          for (final key in ['NSW', 'VIC', 'QLD', 'ACT', 'SA', 'WA', 'TAS', 'NT']) {
-            final legacyPrice = _toPositiveDouble(legacyMap[key]);
-            if (legacyPrice != null) return legacyPrice;
-          }
-        }
-      }
-    }
-
-    final national = item.regionalPrices[PriceRegion.national];
-    if (national != null && national > 0) {
-      return double.parse(national.toStringAsFixed(2));
-    }
-    if (widget.highIntensity) {
-      final remote = item.regionalPrices[PriceRegion.remote];
-      if (remote != null && remote > 0) {
-        return double.parse(remote.toStringAsFixed(2));
-      }
-    }
-
-    return double.parse((_fallbackBaseRate ?? 50.00).toStringAsFixed(2));
+  double? _getCappedPrice(NDISItem item, {PriceRegion? region}) {
+    return regionalPricingCap(
+      item,
+      region ?? pricingRegion(_effectiveCustomPricing(item.itemNumber)?['region']),
+      caps: _priceCaps(item),
+    );
   }
 
   double _getCurrentPrice(NDISItem item) {
-    final customPricing = _getCustomPricingForScope(item.itemNumber);
+    final customPricing = _effectiveCustomPricing(item.itemNumber);
 
     if (customPricing != null) {
       final customPrice =
@@ -725,12 +709,11 @@ class _EnhancedNdisItemSelectionViewState
       }
     }
 
-    return _getCappedPrice(item);
+    return _toPositiveDouble(_fallbackBaseRate) ?? 50;
   }
 
   String _getPricingSource(NDISItem item) {
-    final itemPricing = _pricingData[item.itemNumber];
-    final customPricing = _getCustomPricingForScope(item.itemNumber);
+    final customPricing = _effectiveCustomPricing(item.itemNumber);
 
     if (customPricing != null) {
       final hasCustomPrice =
@@ -747,71 +730,74 @@ class _EnhancedNdisItemSelectionViewState
       }
     }
 
-    final supportItem = itemPricing?['supportItem'];
-    if (supportItem is Map &&
-        supportItem['priceCaps'] is Map &&
-        (supportItem['priceCaps'] as Map).isNotEmpty) {
-      return 'Standard NDIS Rate';
-    }
-
-    if ((_fallbackBaseRate ?? 0) > 0) {
-      return 'Organization Base Rate';
-    }
-
-    return 'Standard NDIS Rate';
+    return AppLocalizations.of(context)!.pricingBaseRate;
   }
 
   void _togglePriceOverride(String itemNumber) {
+    if (_isSavingCustomPrice[itemNumber] == true) return;
+    if (!_loadedPricingItems.contains(itemNumber)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.pricingLoadFailed)),
+      );
+      unawaited(_loadPricingData());
+      return;
+    }
     setState(() {
       _showPriceOverride[itemNumber] =
           !(_showPriceOverride[itemNumber] ?? false);
       if (_showPriceOverride[itemNumber] == true) {
-        // Initialize controller with current price
-        final item = _filteredNdisItems.firstWhere(
-          (item) => item.itemNumber == itemNumber,
-        );
-        _priceControllers[itemNumber] = TextEditingController(
-          text: _getCurrentPrice(item).toStringAsFixed(2),
-        );
         _selectedPricingScope[itemNumber] = _getSelectedScope(itemNumber);
+        _priceControllers[itemNumber]?.dispose();
+        _priceControllers[itemNumber] = TextEditingController(
+          text: _draftFor(itemNumber).priceText,
+        );
       } else {
         // Dispose controller
         _priceControllers[itemNumber]?.dispose();
         _priceControllers.remove(itemNumber);
+        _pricingDrafts.remove(itemNumber);
         _isCustomPriceEnabled[itemNumber] = false;
       }
     });
   }
 
   void _selectItem(NDISItem item) {
-    final isCustomPriceSet = _isCustomPriceEnabled[item.itemNumber] ?? false;
-    final isClientSpecificScope = _isClientScopeSelected(item.itemNumber);
-    double? customPrice;
-    String pricingType = widget.highIntensity ? 'high_intensity' : 'standard';
-    Map<String, dynamic>? customPricingData;
-
-    if (isCustomPriceSet && _priceControllers[item.itemNumber] != null) {
-      customPrice = double.tryParse(_priceControllers[item.itemNumber]!.text);
-      pricingType = 'custom';
-
-      // Create custom pricing data structure that matches backend expectations
-      if (customPrice != null) {
-        customPricingData = {
-          'price': customPrice,
-          'pricingType': 'fixed', // Backend expects 'fixed' for custom prices
-          'isCustom': true, // This is the key field the backend checks
-          'clientSpecific': isClientSpecificScope,
-          'clientId': isClientSpecificScope ? widget.clientId?.trim() : null,
-        };
-      }
+    final l10n = AppLocalizations.of(context)!;
+    final editing = _isCustomPriceEnabled[item.itemNumber] == true;
+    if (_isSavingCustomPrice[item.itemNumber] == true ||
+        _hasUnsavedPricing(item.itemNumber) ||
+        (editing &&
+            !_draftFor(item.itemNumber).validFor(item, _priceCaps(item)))) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.pricingSaveDraftFirst)),
+      );
+      return;
     }
-
+    if (!_loadedPricingItems.contains(item.itemNumber)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.pricingLoadFailed)),
+      );
+      unawaited(_loadPricingData());
+      return;
+    }
+    final saved = _effectiveCustomPricing(item.itemNumber);
     final result = EnhancedNdisItemSelectionResult(
       ndisItem: item,
-      customPrice: customPrice,
-      pricingType: pricingType,
-      isCustomPriceSet: isCustomPriceSet,
-      customPricing: customPricingData,
+      customPrice: _getCurrentPrice(item),
+      pricingType: saved != null
+          ? 'custom'
+          : widget.highIntensity
+          ? 'high_intensity'
+          : 'standard',
+      isCustomPriceSet: saved != null,
+      customPricing: saved == null
+          ? null
+          : {
+              ...saved,
+              'price': _getCurrentPrice(item),
+              'pricingType': 'fixed',
+              'isCustom': true,
+            },
     );
 
     Navigator.of(context).pop(result);
@@ -894,7 +880,7 @@ class _EnhancedNdisItemSelectionViewState
                       const SizedBox(width: BauhausDesign.space3),
                       Expanded(
                         child: Text(
-                          'Pricing shown at ${widget.highIntensity ? "Remote" : "National"} NDIS rates. Tap the price icon to set custom pricing.',
+                          AppLocalizations.of(context)!.pricingCapsNotice,
                           style: BauhausDesign.getTextTheme(context).labelSmall
                               ?.copyWith(color: BauhausDesign.textMuted),
                         ),
@@ -990,6 +976,7 @@ class _EnhancedNdisItemSelectionViewState
   Widget _buildNdisItemCard(NDISItem item) {
     final currentPrice = _getCurrentPrice(item);
     final cappedPrice = _getCappedPrice(item);
+    final exceedsCap = cappedPrice != null && currentPrice != cappedPrice;
     final pricingSource = _getPricingSource(item);
     final showOverride = _showPriceOverride[item.itemNumber] ?? false;
 
@@ -1041,7 +1028,7 @@ class _EnhancedNdisItemSelectionViewState
                                   vertical: BauhausDesign.space1,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: currentPrice != cappedPrice
+                                  color: exceedsCap
                                       ? BauhausDesign.warning.withValues(alpha: 0.1)
                                       : BauhausDesign.success.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(
@@ -1053,7 +1040,7 @@ class _EnhancedNdisItemSelectionViewState
                                   style: BauhausDesign.getTextTheme(context)
                                       .labelSmall
                                       ?.copyWith(
-                                        color: currentPrice != cappedPrice
+                                        color: exceedsCap
                                             ? BauhausDesign.warning
                                             : BauhausDesign.success,
                                         fontWeight: FontWeight.w700,
@@ -1071,6 +1058,16 @@ class _EnhancedNdisItemSelectionViewState
                                     ),
                               ),
                             ],
+                          ),
+                          const SizedBox(height: BauhausDesign.space1),
+                          Text(
+                            _formatRegionalCaps(item),
+                            style: BauhausDesign.getTextTheme(context)
+                                .labelSmall
+                                ?.copyWith(
+                                  color: BauhausDesign.textMuted,
+                                  fontSize: 10,
+                                ),
                           ),
                         ],
                       ),
@@ -1123,7 +1120,8 @@ class _EnhancedNdisItemSelectionViewState
   }
 
   Widget _buildPriceOverrideSection(NDISItem item) {
-    final cappedPrice = _getCappedPrice(item);
+    final draft = _draftFor(item.itemNumber);
+    final cappedPrice = _getCappedPrice(item, region: draft.region);
     final currentPrice = _getCurrentPrice(item);
     final controller = _priceControllers[item.itemNumber];
     final isCustomEnabled = _isCustomPriceEnabled[item.itemNumber] ?? false;
@@ -1224,7 +1222,9 @@ class _EnhancedNdisItemSelectionViewState
                       ),
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
-                        '\$${cappedPrice.toStringAsFixed(2)}/hr',
+                        cappedPrice == null
+                            ? AppLocalizations.of(context)!.naLabel
+                            : '\$${cappedPrice.toStringAsFixed(2)}/hr',
                         style: BauhausDesign.getTextTheme(context).labelLarge
                             ?.copyWith(
                               color: BauhausDesign.primary,
@@ -1326,15 +1326,18 @@ class _EnhancedNdisItemSelectionViewState
           Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: () {
-                setState(() {
-                  final nextValue = !(isCustomEnabled);
-                  _isCustomPriceEnabled[item.itemNumber] = nextValue;
-                  if (!nextValue) {
-                    controller?.text = cappedPrice.toStringAsFixed(2);
-                  }
-                });
-              },
+              onTap: isSaving
+                  ? null
+                  : () {
+                      setState(() {
+                        final nextValue = !isCustomEnabled;
+                        _isCustomPriceEnabled[item.itemNumber] = nextValue;
+                        if (!nextValue) {
+                          _pricingDrafts[item.itemNumber]?.clear();
+                          controller?.text = draft.priceText;
+                        }
+                      });
+                    },
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(BauhausDesign.space3),
@@ -1368,8 +1371,12 @@ class _EnhancedNdisItemSelectionViewState
           ),
           if (isCustomEnabled) ...[
             const SizedBox(height: BauhausDesign.space3),
+            _buildRegionPicker(item),
+            const SizedBox(height: BauhausDesign.space3),
             TextFormField(
               controller: controller,
+              enabled: !isSaving,
+              onChanged: (value) => setState(() => draft.priceText = value),
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
@@ -1378,6 +1385,11 @@ class _EnhancedNdisItemSelectionViewState
               ],
               decoration: BauhausDesign.defaultInputDecoration.copyWith(
                 labelText: 'Custom Price (\$/hour)',
+                errorText: cappedPrice == null
+                    ? AppLocalizations.of(context)!.pricingCapUnavailable
+                    : !draft.validFor(item, _priceCaps(item))
+                    ? AppLocalizations.of(context)!.priceExceedsCap
+                    : null,
                 helperText: isClientScopeSelected
                     ? 'This will override pricing only for this client.'
                     : 'This will apply across the organization.',
@@ -1432,10 +1444,10 @@ class _EnhancedNdisItemSelectionViewState
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: isSaving
+                onPressed: isSaving || !draft.validFor(item, _priceCaps(item))
                     ? null
                     : () async {
-                        final price = double.tryParse(controller?.text ?? '');
+                        final price = _toPositiveDouble(controller?.text);
                         if (price == null || price <= 0) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
@@ -1445,7 +1457,7 @@ class _EnhancedNdisItemSelectionViewState
                           return;
                         }
 
-                        if (price > cappedPrice) {
+                        if (cappedPrice == null || price > cappedPrice) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text(
@@ -1455,6 +1467,8 @@ class _EnhancedNdisItemSelectionViewState
                           );
                           return;
                         }
+                        final savingScope = _getSelectedScope(item.itemNumber);
+                        final selectedRegion = draft.region;
 
                         setState(() {
                           _isSavingCustomPrice[item.itemNumber] = true;
@@ -1481,8 +1495,34 @@ class _EnhancedNdisItemSelectionViewState
                             return;
                           }
 
-                          Map<String, dynamic> result;
-                          if (isClientScopeSelected && hasClientScope) {
+                          final targetClient = isClientScopeSelected
+                              ? widget.clientId!.trim()
+                              : null;
+                          final lookup = await _apiMethod.getPricingLookup(
+                            orgId,
+                            item.itemNumber,
+                            clientId: targetClient,
+                          );
+                          if (lookup == null) {
+                            throw StateError('Pricing lookup unavailable');
+                          }
+                          final existing = scopedPricing(lookup, clientId: targetClient);
+                          final pricingId = existing?['_id']?.toString();
+                          final region = draft.regionTouched || existing == null
+                              ? selectedRegion.name
+                              : existing['region']?.toString();
+                          final Map<String, dynamic> result;
+                          if (pricingId != null && pricingId.isNotEmpty) {
+                            result = await _apiMethod.updateCustomPricing(
+                              pricingId: pricingId,
+                              price: price,
+                              userEmail: userEmail.trim(),
+                              supportItemName: item.itemName,
+                              clientSpecific: isClientScopeSelected,
+                              clientId: targetClient,
+                              region: region,
+                            );
+                          } else if (isClientScopeSelected && hasClientScope) {
                             result = await _apiMethod.saveClientCustomPricing(
                               orgId,
                               widget.clientId!.trim(),
@@ -1491,6 +1531,7 @@ class _EnhancedNdisItemSelectionViewState
                               'fixed',
                               userEmail.trim(),
                               supportItemName: item.itemName,
+                              region: region,
                             );
                           } else {
                             result = await _apiMethod.saveAsCustomPricing(
@@ -1500,10 +1541,25 @@ class _EnhancedNdisItemSelectionViewState
                               'fixed',
                               userEmail.trim(),
                               supportItemName: item.itemName,
+                              region: region,
                             );
                           }
 
                           if (result['success'] == true) {
+                            final confirmed = scopedPricing(
+                              await _apiMethod.getPricingLookup(
+                                orgId,
+                                item.itemNumber,
+                                clientId: targetClient,
+                              ),
+                              clientId: targetClient,
+                            );
+                            if (confirmed == null ||
+                                confirmed['_id'] == null ||
+                                confirmed['region'] != region ||
+                                (_toPositiveDouble(confirmed['price'])! - price).abs() > 0.001) {
+                              throw StateError('Pricing persistence confirmation failed');
+                            }
                             if (mounted) {
                               setState(() {
                                 final customPricingData = {
@@ -1518,6 +1574,7 @@ class _EnhancedNdisItemSelectionViewState
                                       ? 'Client Custom Price'
                                       : 'Organization Custom Price',
                                   'updatedAt': DateTime.now().toIso8601String(),
+                                  'region': ?region,
                                 };
                                 final existingEntry =
                                     _pricingData[item.itemNumber] ??
@@ -1551,6 +1608,7 @@ class _EnhancedNdisItemSelectionViewState
                                 };
                                 _showPriceOverride[item.itemNumber] = false;
                                 _isCustomPriceEnabled[item.itemNumber] = true;
+                                _pricingDrafts[item.itemNumber]?.clear();
                               });
                             }
 
@@ -1714,6 +1772,35 @@ class _EnhancedNdisItemSelectionViewState
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildRegionPicker(NDISItem item) {
+    final draft = _draftFor(item.itemNumber);
+    final l10n = AppLocalizations.of(context)!;
+    return DropdownButtonFormField<PriceRegion>(
+      key: ValueKey('${item.itemNumber}:${_getSelectedScope(item.itemNumber)}:${draft.region.name}'),
+      initialValue: draft.region,
+      isExpanded: true,
+      decoration: BauhausDesign.defaultInputDecoration.copyWith(
+        labelText: l10n.pricingRegionLabel,
+      ),
+      items: [
+        for (final region in pricingRegions)
+          DropdownMenuItem(
+            value: region,
+            child: Text(pricingRegionLabel(l10n, region)),
+          ),
+      ],
+      onChanged: _isSavingCustomPrice[item.itemNumber] == true
+          ? null
+          : (value) {
+              if (value == null) return;
+              setState(() {
+                draft.region = value;
+                draft.regionTouched = true;
+              });
+            },
     );
   }
 }
