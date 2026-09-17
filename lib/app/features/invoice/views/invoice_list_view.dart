@@ -351,7 +351,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
                 children: [
                   if (_displayStatus(invoice).toLowerCase() != 'paid') ...[
                     BauhausActionButton(
-                      onPressed: () => _markAsPaid(invoice),
+                      onPressed: () => _markAsPaid(invoice, l10n),
                       icon: Icons.check_circle,
                       variant: BauhausActionVariant.ghost,
                       textColor: BauhausDesign.success,
@@ -382,15 +382,73 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
     );
   }
 
-  void _markAsPaid(InvoiceListModel invoice) {
-    ref
-        .read(invoiceListViewModelProvider.notifier)
-        .markAsPaid(
-          invoice.id,
-          widget.organizationId,
-          invoice.totalAmount,
-          updatedBy: widget.userEmail,
+  void _markAsPaid(InvoiceListModel invoice, AppLocalizations l10n) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: BauhausDesign.surfaceWhite,
+          title: Text(
+            l10n.markAsPaidTitle,
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).titleLarge?.copyWith(color: BauhausDesign.textDark),
+          ),
+          content: Text(
+            l10n.markAsPaidConfirm(invoice.invoiceNumber),
+            style: BauhausDesign.getTextTheme(
+              context,
+            ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                l10n.cancel,
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).labelLarge?.copyWith(color: BauhausDesign.textMuted),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                final success = await ref
+                    .read(invoiceListViewModelProvider.notifier)
+                    .markAsPaid(
+                      invoice.id,
+                      widget.organizationId,
+                      invoice.totalAmount,
+                      updatedBy: widget.userEmail,
+                    );
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      success
+                          ? l10n.markAsPaidSuccess(invoice.invoiceNumber)
+                          : l10n.markAsPaidError(invoice.invoiceNumber),
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
+                          ?.copyWith(color: BauhausDesign.surfaceWhite),
+                    ),
+                    backgroundColor: success
+                        ? BauhausDesign.success
+                        : BauhausDesign.error,
+                  ),
+                );
+              },
+              child: Text(
+                l10n.markAsPaid,
+                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                  color: BauhausDesign.success,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
         );
+      },
+    );
   }
 
   /// Resolves the status shown in the list, preferring the payment status so

@@ -1736,6 +1736,32 @@
   "marInitial": "Mar",
   "markAllRead": "Mark All Read",
   "markAsCompletedButton": "Mark as Completed",
+  "markAsPaid": "Mark Paid",
+  "markAsPaidConfirm": "Mark invoice {invoiceNumber} as paid?",
+  "@markAsPaidConfirm": {
+    "placeholders": {
+      "invoiceNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "markAsPaidError": "Failed to mark invoice {invoiceNumber} as paid.",
+  "@markAsPaidError": {
+    "placeholders": {
+      "invoiceNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "markAsPaidSuccess": "Invoice {invoiceNumber} marked as paid.",
+  "@markAsPaidSuccess": {
+    "placeholders": {
+      "invoiceNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "markAsPaidTitle": "Mark as Paid",
   "markAsRead": "Mark as read",
   "maximumPriceLabel": "Maximum: {price}",
   "@maximumPriceLabel": {

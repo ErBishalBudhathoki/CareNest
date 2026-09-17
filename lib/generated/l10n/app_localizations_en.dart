@@ -3547,6 +3547,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get markAsCompletedButton => 'Mark as Completed';
 
   @override
+  String get markAsPaid => 'Mark Paid';
+
+  @override
+  String markAsPaidConfirm(String invoiceNumber) {
+    return 'Mark invoice $invoiceNumber as paid?';
+  }
+
+  @override
+  String markAsPaidError(String invoiceNumber) {
+    return 'Failed to mark invoice $invoiceNumber as paid.';
+  }
+
+  @override
+  String markAsPaidSuccess(String invoiceNumber) {
+    return 'Invoice $invoiceNumber marked as paid.';
+  }
+
+  @override
+  String get markAsPaidTitle => 'Mark as Paid';
+
+  @override
   String get markAsRead => 'Mark as read';
 
   @override
