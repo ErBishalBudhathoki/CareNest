@@ -244,6 +244,7 @@
     }
   },
   "attachedFilesLabel": "Attached Files",
+  "attachmentRemoved": "Attachment removed",
   "attachmentsTitle": "Attachments",
   "attempts": "Attempts: {count}",
   "@attempts": {
@@ -3164,6 +3165,7 @@
   "typeNoteHint": "Type your note here...",
   "unassigned": "Unassigned",
   "unblockThisIp": "Unblock this IP",
+  "undo": "Undo",
   "unit": "Unit",
   "unitDay": "Day",
   "unitEach": "Each",

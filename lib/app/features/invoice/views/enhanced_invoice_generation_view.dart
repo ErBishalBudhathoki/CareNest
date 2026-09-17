@@ -1598,9 +1598,30 @@ class _EnhancedInvoiceGenerationViewState
                           ),
                           child: IconButton(
                             onPressed: () {
+                              final removed =
+                                  _additionalAttachments[index];
                               setState(() {
                                 _additionalAttachments.removeAt(index);
                               });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(l10n.attachmentRemoved),
+                                  action: SnackBarAction(
+                                    label: l10n.undo,
+                                    onPressed: () {
+                                      setState(() {
+                                        _additionalAttachments.insert(
+                                          index.clamp(
+                                            0,
+                                            _additionalAttachments.length,
+                                          ),
+                                          removed,
+                                        );
+                                      });
+                                    },
+                                  ),
+                                ),
+                              );
                             },
                             icon: const Icon(
                               Icons.close_rounded,

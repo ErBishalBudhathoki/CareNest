@@ -644,6 +644,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attachedFilesLabel => 'Attached Files';
 
   @override
+  String get attachmentRemoved => 'Attachment removed';
+
+  @override
   String get attachmentsTitle => 'Attachments';
 
   @override
@@ -6661,6 +6664,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unblockThisIp => 'Unblock this IP';
+
+  @override
+  String get undo => 'Undo';
 
   @override
   String get unit => 'Unit';
