@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class AssignC2E extends ConsumerStatefulWidget {
   const AssignC2E({super.key});
@@ -219,6 +220,7 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
           suffixIcon: _isSearching
               ? IconButton(
                   icon: Icon(Icons.clear, color: BauhausDesign.textMuted),
+                  tooltip: AppLocalizations.of(context)!.clearSearch,
                   onPressed: () {
                     _searchController.clear();
                     _filterUsers('');
@@ -349,6 +351,7 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
         automaticallyImplyLeading: false,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          tooltip: AppLocalizations.of(context)!.backButton,
           onPressed: () => Navigator.of(context).maybePop(),
         ),
         title: Text(

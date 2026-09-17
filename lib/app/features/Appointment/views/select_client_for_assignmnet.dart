@@ -7,6 +7,7 @@ import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:carenest/app/features/client/views/add_client_details_view.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
@@ -188,6 +189,7 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
       ),
       leading: IconButton(
         icon: Icon(Icons.arrow_back_ios, color: BauhausDesign.surfaceWhite),
+        tooltip: AppLocalizations.of(context)!.backButton,
         onPressed: _returnToAdminDashboard,
       ),
     );
@@ -217,6 +219,7 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
           suffixIcon: _isSearching
               ? IconButton(
                   icon: Icon(Icons.clear, color: BauhausDesign.textMuted),
+                  tooltip: AppLocalizations.of(context)!.clearSearch,
                   onPressed: () {
                     _searchController.clear();
                     _filterClients('');

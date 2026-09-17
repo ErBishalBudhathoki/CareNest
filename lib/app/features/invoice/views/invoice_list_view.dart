@@ -123,6 +123,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh, color: BauhausDesign.textDark),
+            tooltip: l10n.refreshAction,
             onPressed: _loadInvoices,
           ),
         ],
@@ -134,30 +135,33 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
           Expanded(child: _buildInvoiceList(invoiceListState, l10n, isOnline)),
         ],
       ),
-      floatingActionButton: Container(
-        height: 56,
-        width: 56,
-        decoration: BoxDecoration(
-          color: BauhausDesign.primary,
-          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
-          boxShadow: const [BauhausDesign.shadowHard],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                '/enhancedInvoiceGeneration',
-                arguments: {
-                  'userEmail': widget.userEmail,
-                  'organizationId': widget.organizationId,
-                },
-              );
-            },
+      floatingActionButton: Tooltip(
+        message: l10n.createInvoice,
+        child: Container(
+          height: 56,
+          width: 56,
+          decoration: BoxDecoration(
+            color: BauhausDesign.primary,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            child: const Icon(Icons.add, color: BauhausDesign.surfaceWhite),
+            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            boxShadow: const [BauhausDesign.shadowHard],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  '/enhancedInvoiceGeneration',
+                  arguments: {
+                    'userEmail': widget.userEmail,
+                    'organizationId': widget.organizationId,
+                  },
+                );
+              },
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+              child: const Icon(Icons.add, color: BauhausDesign.surfaceWhite),
+            ),
           ),
         ),
       ),
@@ -379,6 +383,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
                           ? () => _markAsPaid(invoice, l10n)
                           : null,
                       icon: Icons.check_circle,
+                      tooltip: l10n.markAsPaidTitle,
                       variant: BauhausActionVariant.ghost,
                       textColor: BauhausDesign.success,
                       isSmall: true,
@@ -388,6 +393,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
                   BauhausActionButton(
                     onPressed: isOnline ? () => _shareInvoice(invoice) : null,
                     icon: Icons.share,
+                    tooltip: l10n.share,
                     variant: BauhausActionVariant.ghost,
                     isSmall: true,
                   ),
@@ -395,6 +401,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
                   BauhausActionButton(
                     onPressed: () => _deleteInvoice(invoice, l10n),
                     icon: Icons.delete_outline,
+                    tooltip: l10n.delete,
                     variant: BauhausActionVariant.ghost,
                     textColor: BauhausDesign.error,
                     isSmall: true,

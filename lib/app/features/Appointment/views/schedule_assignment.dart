@@ -1094,6 +1094,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
               Icons.arrow_back_ios_rounded,
               color: BauhausDesign.textDark,
             ),
+            tooltip: AppLocalizations.of(context)!.backButton,
             onPressed: _returnToAdminDashboard,
           ),
           bottom: PreferredSize(
