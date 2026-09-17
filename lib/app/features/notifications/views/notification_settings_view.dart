@@ -4,8 +4,15 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../models/notification_preferences.dart';
 import '../viewmodels/notification_preferences_viewmodel.dart';
+
+/// OS-level notification permission status for the rationale banner.
+final _notificationPermissionProvider =
+    FutureProvider<PermissionStatus>((ref) async {
+      return Permission.notification.status;
+    });
 
 class NotificationSettingsView extends ConsumerWidget {
   const NotificationSettingsView({super.key});
@@ -118,6 +125,7 @@ class NotificationSettingsView extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       children: [
+        _buildPermissionBanner(context, ref),
         _buildSectionHeader(context, 'Notification Categories'),
         _buildCategorySettings(context, ref, preferences),
         const SizedBox(height: BauhausDesign.space6),
@@ -134,6 +142,88 @@ class NotificationSettingsView extends ConsumerWidget {
         _buildBehaviorSettings(context, ref, preferences),
         const SizedBox(height: BauhausDesign.space4),
       ],
+    );
+  }
+
+  /// Banner shown when the OS notification permission isn't granted,
+  /// with a direct path to fix it (in-app request or system settings).
+  Widget _buildPermissionBanner(BuildContext context, WidgetRef ref) {
+    final status = ref.watch(_notificationPermissionProvider);
+    return status.when(
+      data: (permission) {
+        if (permission.isGranted || permission.isLimited) {
+          return const SizedBox.shrink();
+        }
+        final permanentlyDenied =
+            permission.isPermanentlyDenied || permission.isRestricted;
+        final l10n = AppLocalizations.of(context)!;
+        return Padding(
+          padding: const EdgeInsets.only(bottom: BauhausDesign.space4),
+          child: Container(
+            padding: const EdgeInsets.all(BauhausDesign.space4),
+            decoration: BoxDecoration(
+              color: BauhausDesign.warning.withValues(alpha: 0.12),
+              border: Border.all(
+                color: BauhausDesign.neutral,
+                width: BauhausDesign.borderThick,
+              ),
+              boxShadow: const [BauhausDesign.shadowHardSm],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.notifications_off_outlined,
+                      color: BauhausDesign.textDark,
+                    ),
+                    const SizedBox(width: BauhausDesign.space2),
+                    Expanded(
+                      child: Text(
+                        l10n.notificationsDisabledTitle,
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).titleMedium?.copyWith(
+                          color: BauhausDesign.textDark,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: BauhausDesign.space2),
+                Text(
+                  l10n.notificationsDisabledMessage,
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                ),
+                const SizedBox(height: BauhausDesign.space3),
+                BauhausActionButton(
+                  text: permanentlyDenied
+                      ? l10n.openSystemSettings
+                      : l10n.enableAction,
+                  icon: permanentlyDenied
+                      ? Icons.settings_outlined
+                      : Icons.notifications_active_outlined,
+                  isSmall: true,
+                  onPressed: () async {
+                    if (permanentlyDenied) {
+                      await openAppSettings();
+                    } else {
+                      await Permission.notification.request();
+                      ref.invalidate(_notificationPermissionProvider);
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+      loading: () => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
     );
   }
 

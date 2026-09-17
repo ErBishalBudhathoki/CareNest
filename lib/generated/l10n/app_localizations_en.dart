@@ -4365,6 +4365,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationsAndAlerts => 'Notifications & Alerts';
 
   @override
+  String get notificationsDisabledMessage =>
+      'Enable them in system settings to receive shift and invoice alerts.';
+
+  @override
+  String get notificationsDisabledTitle => 'Notifications are off';
+
+  @override
   String get notificationsSubtitle => 'Manage notification preferences';
 
   @override
@@ -4473,6 +4480,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openPricingManagement => 'Open Pricing Management';
+
+  @override
+  String get openSystemSettings => 'Open Settings';
 
   @override
   String get openWith => 'Open with';
