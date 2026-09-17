@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 import '../models/notification_preferences.dart';
 import '../viewmodels/notification_preferences_viewmodel.dart';
 
@@ -238,7 +239,7 @@ class NotificationSettingsView extends ConsumerWidget {
                     final isChannelEnabled = channels.contains(channel);
                     return _buildCheckboxRow(
                       context: context,
-                      label: _getChannelName(channel),
+                      label: _getChannelName(context, channel),
                       value: isChannelEnabled,
                       onChanged: (value) {
                         ref
@@ -272,7 +273,7 @@ class NotificationSettingsView extends ConsumerWidget {
         children: [
           _buildToggleRow(
             context: context,
-            title: 'Enable Quiet Hours',
+            title: AppLocalizations.of(context)!.enableQuietHours,
             subtitle: 'Silence non-urgent notifications',
             value: quietHours.enabled,
             icon: Icons.bedtime_outlined,
@@ -684,10 +685,10 @@ class NotificationSettingsView extends ConsumerWidget {
     }
   }
 
-  String _getChannelName(NotificationChannel channel) {
+  String _getChannelName(BuildContext context, NotificationChannel channel) {
     switch (channel) {
       case NotificationChannel.push:
-        return 'Push Notification';
+        return AppLocalizations.of(context)!.pushNotification;
       case NotificationChannel.sms:
         return 'SMS';
       case NotificationChannel.email:

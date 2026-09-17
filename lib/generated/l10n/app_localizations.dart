@@ -256,6 +256,12 @@ abstract class AppLocalizations {
   /// **'Account Type'**
   String get accountTypeSection;
 
+  /// No description provided for @acknowledgeFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to acknowledge: {error}'**
+  String acknowledgeFailed(String error);
+
   /// No description provided for @actionsCaps.
   ///
   /// In en, this message translates to:
@@ -465,6 +471,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Added Schedules'**
   String get addedSchedules;
+
+  /// No description provided for @addEmployeesToStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Add employees to get started'**
+  String get addEmployeesToStart;
 
   /// No description provided for @addExpense.
   ///
@@ -687,6 +699,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add Rule'**
   String get addRule;
+
+  /// No description provided for @adjustSearchTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your search terms.'**
+  String get adjustSearchTerms;
 
   /// No description provided for @addRuleAction.
   ///
@@ -2212,6 +2230,12 @@ abstract class AppLocalizations {
   /// **'Client Email'**
   String get clientEmailLabel;
 
+  /// No description provided for @clientInvoicesTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Client Invoices'**
+  String get clientInvoicesTab;
+
   /// No description provided for @clientInformation.
   ///
   /// In en, this message translates to:
@@ -3532,6 +3556,12 @@ abstract class AppLocalizations {
   /// **'Generate pay-rate invoices for employees'**
   String get employeeInvoiceSubtitle;
 
+  /// No description provided for @employeeInvoicesTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Employee Invoices'**
+  String get employeeInvoicesTab;
+
   /// No description provided for @employeeLabel.
   ///
   /// In en, this message translates to:
@@ -3681,6 +3711,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Validate prices against configured rules'**
   String get enablePriceValidationDesc;
+
+  /// No description provided for @enableQuietHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Quiet Hours'**
+  String get enableQuietHours;
+
+  /// No description provided for @enableRecurringBilling.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Recurring Billing'**
+  String get enableRecurringBilling;
 
   /// No description provided for @endDateBeforeStartDate.
   ///
@@ -4623,6 +4665,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'EXPIRY DATE'**
   String get expiryDateLabel;
+
+  /// No description provided for @exportAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get exportAction;
 
   /// No description provided for @exportAnalytics.
   ///
@@ -7474,6 +7522,12 @@ abstract class AppLocalizations {
   /// **'No clients assigned to this employee'**
   String get noClientsAssignedText;
 
+  /// No description provided for @noClientsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no clients available to assign.'**
+  String get noClientsAvailable;
+
   /// No description provided for @noClientsFound.
   ///
   /// In en, this message translates to:
@@ -7563,6 +7617,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No employees found for this organization'**
   String get noEmployeesFoundError;
+
+  /// No description provided for @noEmployeesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No employees available'**
+  String get noEmployeesYet;
 
   /// No description provided for @noEmployeesSelected.
   ///
@@ -7791,6 +7851,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No requests to display'**
   String get noRequestsToDisplay;
+
+  /// No description provided for @noResultsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get noResultsFound;
 
   /// No description provided for @noResultsMessage.
   ///
@@ -8602,11 +8668,41 @@ abstract class AppLocalizations {
   /// **'PDF Document'**
   String get pdfDocumentLabel;
 
+  /// No description provided for @pdfGeneratedTapToView.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice PDF generated! Tap again to view.'**
+  String get pdfGeneratedTapToView;
+
+  /// No description provided for @pdfGeneratingLines.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating invoice lines...'**
+  String get pdfGeneratingLines;
+
   /// No description provided for @pdfGenerationFailed.
   ///
   /// In en, this message translates to:
   /// **'Failed to generate invoice PDF'**
   String get pdfGenerationFailed;
+
+  /// No description provided for @pdfHolidaysUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not fetch holiday data. Proceeding without it.'**
+  String get pdfHolidaysUnavailable;
+
+  /// No description provided for @pdfInitFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t start invoice generation. Please try again.'**
+  String get pdfInitFailed;
+
+  /// No description provided for @pdfLinesGenerated.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} line item(s) generated. Review and proceed.'**
+  String pdfLinesGenerated(String count);
 
   /// No description provided for @pdfLoadError.
   ///
@@ -8614,11 +8710,35 @@ abstract class AppLocalizations {
   /// **'Failed to load invoice PDF'**
   String get pdfLoadError;
 
+  /// No description provided for @pdfNoFile.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF generation failed or yielded no file.'**
+  String get pdfNoFile;
+
+  /// No description provided for @pdfNoLineItems.
+  ///
+  /// In en, this message translates to:
+  /// **'No line items available to generate PDF.'**
+  String get pdfNoLineItems;
+
   /// No description provided for @pdfRegeneratedMessage.
   ///
   /// In en, this message translates to:
   /// **'PDF regenerated for invoice {number}'**
   String pdfRegeneratedMessage(String number);
+
+  /// No description provided for @pdfSetupFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t set up the invoice. Please try again.'**
+  String get pdfSetupFailed;
+
+  /// No description provided for @pdfShiftsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t process shifts. Please try again.'**
+  String get pdfShiftsFailed;
 
   /// No description provided for @pdfViewError.
   ///
@@ -9429,6 +9549,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Public Holiday Rate'**
   String get publicHolidayRate;
+
+  /// No description provided for @pushNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Push Notification'**
+  String get pushNotification;
 
   /// No description provided for @quickActions.
   ///
@@ -10407,6 +10533,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search by item name or code...'**
   String get searchByItemNameOrCode;
+
+  /// No description provided for @searchClientsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search clients...'**
+  String get searchClientsHint;
+
+  /// No description provided for @searchEmployeesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search employees...'**
+  String get searchEmployeesHint;
 
   /// No description provided for @searchHistory.
   ///
@@ -12051,6 +12189,18 @@ abstract class AppLocalizations {
   /// **'Timesheet'**
   String get timesheetTitle;
 
+  /// No description provided for @timesheetExportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to export timesheet'**
+  String get timesheetExportFailed;
+
+  /// No description provided for @timesheetExportSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Exported timesheet: {path}'**
+  String timesheetExportSuccess(String path);
+
   /// No description provided for @timestampLabel.
   ///
   /// In en, this message translates to:
@@ -12854,6 +13004,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Video'**
   String get videoType;
+
+  /// No description provided for @viewAction.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get viewAction;
 
   /// No description provided for @viewAll.
   ///

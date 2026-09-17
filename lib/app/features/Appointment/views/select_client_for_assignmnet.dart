@@ -229,7 +229,7 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
               controller: _searchController,
               onChanged: _filterClients,
               decoration: InputDecoration(
-                hintText: 'Search clients...',
+                hintText: AppLocalizations.of(context)!.searchClientsHint,
                 hintStyle: BauhausDesign.getTextTheme(
                   context,
                 ).bodyLarge?.copyWith(color: BauhausDesign.textMuted),
@@ -468,7 +468,7 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
           ),
           const SizedBox(height: BauhausDesign.space4),
           Text(
-            'Loading clients...',
+            AppLocalizations.of(context)!.loadingClients,
             style: BauhausDesign.getTextTheme(
               context,
             ).bodyLarge?.copyWith(color: BauhausDesign.textMuted),
@@ -487,7 +487,7 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
           Icon(Icons.error_outline, size: 64, color: BauhausDesign.error),
           const SizedBox(height: BauhausDesign.space4),
           Text(
-            'Error loading clients',
+            AppLocalizations.of(context)!.errorLoadingClients(error),
             style: BauhausDesign.getTextTheme(
               context,
             ).headlineSmall?.copyWith(color: BauhausDesign.textDark),
@@ -502,7 +502,7 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
           ),
           const SizedBox(height: BauhausDesign.space6),
           BauhausButton(
-            text: 'Try Again',
+            text: AppLocalizations.of(context)!.retryButton,
             icon: Icons.refresh,
             onPressed: _retryLoad,
           ),
@@ -520,21 +520,21 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
           Icon(Icons.people_outline, size: 64, color: BauhausDesign.neutral),
           const SizedBox(height: BauhausDesign.space4),
           Text(
-            'No clients found',
+            AppLocalizations.of(context)!.noClientsFound,
             style: BauhausDesign.getTextTheme(
               context,
             ).headlineSmall?.copyWith(color: BauhausDesign.textDark),
           ),
           const SizedBox(height: BauhausDesign.space2),
           Text(
-            'There are no clients available to assign.',
+            AppLocalizations.of(context)!.noClientsAvailable,
             style: BauhausDesign.getTextTheme(
               context,
             ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
           ),
           const SizedBox(height: BauhausDesign.space6),
           BauhausButton(
-            text: 'Add Client',
+            text: AppLocalizations.of(context)!.addClient,
             icon: Icons.person_add_outlined,
             onPressed: () {
               Navigator.push(
@@ -559,21 +559,21 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
           Icon(Icons.search_off, size: 64, color: BauhausDesign.neutral),
           const SizedBox(height: BauhausDesign.space4),
           Text(
-            'No results found',
+            AppLocalizations.of(context)!.noResultsFound,
             style: BauhausDesign.getTextTheme(
               context,
             ).headlineSmall?.copyWith(color: BauhausDesign.textDark),
           ),
           const SizedBox(height: BauhausDesign.space2),
           Text(
-            'Try adjusting your search terms.',
+            AppLocalizations.of(context)!.adjustSearchTerms,
             style: BauhausDesign.getTextTheme(
               context,
             ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
           ),
           const SizedBox(height: BauhausDesign.space6),
           BauhausButton(
-            text: 'Clear Search',
+            text: AppLocalizations.of(context)!.clearSearch,
             icon: Icons.clear,
             onPressed: () {
               _searchController.clear();

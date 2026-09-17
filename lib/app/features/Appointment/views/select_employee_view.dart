@@ -224,7 +224,7 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                   controller: _searchController,
                   onChanged: _filterUsers,
                   decoration: InputDecoration(
-                    hintText: 'Search employees...',
+                    hintText: AppLocalizations.of(context)!.searchEmployeesHint,
                     hintStyle: TextStyle(
                       color: BauhausDesign.textMuted.withValues(alpha: 0.5),
                     ),
@@ -342,7 +342,9 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
           ),
           const SizedBox(height: BauhausDesign.space4),
           Text(
-            _isSearching ? 'No employees found' : 'No employees available',
+            _isSearching
+                ? AppLocalizations.of(context)!.noEmployeesFound
+                : AppLocalizations.of(context)!.noEmployeesYet,
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
               color: BauhausDesign.textMuted,
               fontWeight: FontWeight.w500,
@@ -351,15 +353,17 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
           const SizedBox(height: BauhausDesign.space2),
           Text(
             _isSearching
-                ? 'Try adjusting your search terms'
-                : 'Add employees to get started',
+                ? AppLocalizations.of(context)!.adjustSearchTerms
+                : AppLocalizations.of(context)!.addEmployeesToStart,
             style: BauhausDesign.getTextTheme(
               context,
             ).bodyMedium?.copyWith(color: BauhausDesign.neutral),
           ),
           const SizedBox(height: BauhausDesign.space6),
           BauhausButton(
-            text: _isSearching ? 'Clear Search' : 'Try Again',
+            text: _isSearching
+                ? AppLocalizations.of(context)!.clearSearch
+                : AppLocalizations.of(context)!.retryButton,
             icon: _isSearching ? Icons.clear : Icons.refresh,
             onPressed: () {
               if (_isSearching) {
@@ -384,7 +388,7 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
           Icon(Icons.error_outline, size: 64, color: BauhausDesign.error),
           const SizedBox(height: BauhausDesign.space4),
           Text(
-            'Something went wrong',
+            AppLocalizations.of(context)!.errorLoadingEmployees,
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
               color: BauhausDesign.textDark,
               fontWeight: FontWeight.w500,
@@ -400,7 +404,7 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
           ),
           const SizedBox(height: BauhausDesign.space6),
           BauhausButton(
-            text: 'Try Again',
+            text: AppLocalizations.of(context)!.retryButton,
             icon: Icons.refresh,
             onPressed: () {
               setState(() {

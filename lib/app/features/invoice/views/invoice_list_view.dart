@@ -112,9 +112,9 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
                 unselectedLabelStyle: BauhausDesign.getTextTheme(
                   context,
                 ).labelLarge?.copyWith(fontWeight: FontWeight.w600),
-                tabs: const [
-                  Tab(text: 'Client Invoices'),
-                  Tab(text: 'Employee Invoices'),
+                tabs: [
+                  Tab(text: l10n.clientInvoicesTab),
+                  Tab(text: l10n.employeeInvoicesTab),
                 ],
               ),
             ],

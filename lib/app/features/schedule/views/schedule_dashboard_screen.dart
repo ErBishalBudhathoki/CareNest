@@ -958,9 +958,11 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                         fillColor: BauhausDesign.surfaceWhite,
                       ),
                   items: [
-                    const DropdownMenuItem<String>(
+                    DropdownMenuItem<String>(
                       value: null,
-                      child: Text('Unassigned'),
+                      child: Text(
+                        AppLocalizations.of(context)!.unassigned,
+                      ),
                     ),
                     ..._employees.map(
                       (emp) {

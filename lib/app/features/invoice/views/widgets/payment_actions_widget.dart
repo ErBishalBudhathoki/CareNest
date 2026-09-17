@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:carenest/app/features/analytics/theme/bauhaus_theme.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 import '../../models/invoice_model.dart';
 import '../../models/payment_info.dart';
 import '../../viewmodels/payment_viewmodel.dart';
@@ -153,7 +155,10 @@ class PaymentActionsWidget extends ConsumerWidget {
           ),
           if (payment?.transactions.isNotEmpty ?? false) ...[
             const SizedBox(height: 24),
-            Text('HISTORY', style: BauhausTheme.labelStyle),
+            Text(
+              AppLocalizations.of(context)!.historyTitle,
+              style: BauhausTheme.labelStyle,
+            ),
             const SizedBox(height: 8),
             ...payment!.transactions.map(
               (t) => Padding(
@@ -162,11 +167,16 @@ class PaymentActionsWidget extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      t.date.toString().split(' ')[0],
+                      DateFormat.yMMMd(
+                        AppLocalizations.of(context)!.localeName,
+                      ).format(t.date),
                       style: BauhausTheme.bodyStyle,
                     ),
                     Text(
-                      '\$${t.amount.toStringAsFixed(2)} (${t.method})',
+                      '${AppLocalizations.of(context)!.priceDisplay(
+                        AppLocalizations.of(context)!.currencySymbol,
+                        t.amount.toStringAsFixed(2),
+                      )} (${t.method})',
                       style: BauhausTheme.bodyStyle,
                     ),
                   ],

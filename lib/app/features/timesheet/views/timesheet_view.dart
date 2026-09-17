@@ -178,19 +178,20 @@ class _TimesheetViewState extends ConsumerState<TimesheetView> {
                     );
                     final path = await viewModel.exportTimesheet();
                     if (!context.mounted) return;
+                    final l10n = AppLocalizations.of(context)!;
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
                           path == null
-                              ? 'Failed to export timesheet'
-                              : 'Exported timesheet: $path',
+                              ? l10n.timesheetExportFailed
+                              : l10n.timesheetExportSuccess(path),
                         ),
                       ),
                     );
                   },
                   icon: Icons.file_download_outlined,
                   variant: BauhausActionVariant.ghost,
-                  tooltip: 'Export',
+                  tooltip: AppLocalizations.of(context)!.exportAction,
                 ),
               ],
             ),

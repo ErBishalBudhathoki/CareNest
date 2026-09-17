@@ -1722,7 +1722,7 @@ class _EnhancedInvoiceGenerationViewState
             children: [
               Expanded(
                 child: Text(
-                  'Enable Recurring Billing', // TODO: Add to l10n
+                  l10n.enableRecurringBilling,
                   style: _neoLabelStyle(fontSize: 12, weight: FontWeight.w700),
                 ),
               ),
@@ -1738,7 +1738,7 @@ class _EnhancedInvoiceGenerationViewState
             DropdownButtonFormField<String>(
               initialValue: _recurrenceFrequency,
               decoration: InputDecoration(
-                labelText: 'Frequency', // TODO: Add to l10n
+                labelText: l10n.frequency,
               ),
               items: const [
                 DropdownMenuItem(value: 'weekly', child: Text('Weekly')),

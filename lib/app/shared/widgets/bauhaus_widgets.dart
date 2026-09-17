@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 // ==================== ENUMS ====================
@@ -556,7 +557,9 @@ class BauhausSearchBar extends StatelessWidget {
                       ),
                   suffixIcon: value.text.isNotEmpty
                       ? IconButton(
-                          tooltip: 'Clear search',
+                          tooltip: AppLocalizations.of(
+                            context,
+                          )!.clearSearch,
                           icon: const Icon(
                             Icons.clear,
                             color: BauhausDesign.textMuted,
