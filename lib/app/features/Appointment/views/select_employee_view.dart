@@ -28,6 +28,8 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
   List<User> _filteredUsers = [];
   List<User> _allUsers = [];
   bool _isSearching = false;
+  bool _sortAscending = true;
+  String _roleFilter = 'all';
 
   /// Keep assignable staff in picker; exclude only client accounts.
   List<User> _extractEmployeeUsers(List<User> users) {
@@ -200,41 +202,127 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
 
   /// Build search bar widget
   Widget _buildSearchBar() {
-    return Container(
-      margin: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
-        boxShadow: const [BauhausDesign.shadowSoft],
-      ),
-      child: TextField(
-        controller: _searchController,
-        onChanged: _filterUsers,
-        decoration: InputDecoration(
-          hintText: 'Search employees...',
-          hintStyle: TextStyle(color: BauhausDesign.textMuted.withValues(alpha: 0.5)),
-          filled: false,
-          fillColor: Colors.transparent,
-          prefixIcon: Icon(Icons.search, color: BauhausDesign.textMuted),
-          suffixIcon: _isSearching
-              ? IconButton(
-                  icon: Icon(Icons.clear, color: BauhausDesign.textMuted),
-                  tooltip: AppLocalizations.of(context)!.clearSearch,
-                  onPressed: () {
-                    _searchController.clear();
-                    _filterUsers('');
-                  },
-                )
-              : null,
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          errorBorder: InputBorder.none,
-          focusedErrorBorder: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
+    final l10n = AppLocalizations.of(context)!;
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.only(
+                  left: BauhausDesign.space4,
+                  top: BauhausDesign.space4,
+                  bottom: BauhausDesign.space2,
+                ),
+                decoration: BoxDecoration(
+                  color: BauhausDesign.surfaceWhite,
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                  border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                  boxShadow: const [BauhausDesign.shadowSoft],
+                ),
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: _filterUsers,
+                  decoration: InputDecoration(
+                    hintText: 'Search employees...',
+                    hintStyle: TextStyle(
+                      color: BauhausDesign.textMuted.withValues(alpha: 0.5),
+                    ),
+                    filled: false,
+                    fillColor: Colors.transparent,
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: BauhausDesign.textMuted,
+                    ),
+                    suffixIcon: _isSearching
+                        ? IconButton(
+                            icon: Icon(
+                              Icons.clear,
+                              color: BauhausDesign.textMuted,
+                            ),
+                            tooltip: l10n.clearSearch,
+                            onPressed: () {
+                              _searchController.clear();
+                              _filterUsers('');
+                            },
+                          )
+                        : null,
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    focusedErrorBorder: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: BauhausDesign.space4,
+                      vertical: BauhausDesign.space4,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(
+                left: BauhausDesign.space2,
+                right: BauhausDesign.space4,
+                top: BauhausDesign.space4,
+                bottom: BauhausDesign.space2,
+              ),
+              decoration: BoxDecoration(
+                color: BauhausDesign.surfaceWhite,
+                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                boxShadow: const [BauhausDesign.shadowSoft],
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.sort_by_alpha),
+                color: BauhausDesign.textDark,
+                tooltip: _sortAscending ? l10n.sortAZ : l10n.sortZA,
+                onPressed: () =>
+                    setState(() => _sortAscending = !_sortAscending),
+              ),
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(
             horizontal: BauhausDesign.space4,
-            vertical: BauhausDesign.space4,
+            vertical: BauhausDesign.space2,
+          ),
+          child: Row(
+            children: [
+              _buildRoleChip('all', l10n.statusAll),
+              const SizedBox(width: BauhausDesign.space2),
+              _buildRoleChip('admin', l10n.roleAdmin),
+              const SizedBox(width: BauhausDesign.space2),
+              _buildRoleChip('employee', l10n.roleEmployee),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRoleChip(String value, String label) {
+    final selected = _roleFilter == value;
+    return GestureDetector(
+      onTap: () => setState(() => _roleFilter = value),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: BauhausDesign.space3,
+          vertical: BauhausDesign.space2,
+        ),
+        decoration: BoxDecoration(
+          color: selected ? BauhausDesign.neutral : BauhausDesign.surfaceWhite,
+          border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+          boxShadow: selected ? const [BauhausDesign.shadowHardSm] : [],
+        ),
+        child: Text(
+          label.toUpperCase(),
+          style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+            color: selected
+                ? BauhausDesign.surfaceWhite
+                : BauhausDesign.textDark,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
@@ -398,9 +486,22 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                   _filteredUsers = _allUsers;
                 }
 
-                final usersToShow = _filteredUsers.isEmpty && !_isSearching
+                final base = _filteredUsers.isEmpty && !_isSearching
                     ? _allUsers
                     : _filteredUsers;
+                final usersToShow = [...base]
+                  ..retainWhere(
+                    (u) =>
+                        _roleFilter == 'all' ||
+                        (_roleFilter == 'admin' && u.role == UserRole.admin) ||
+                        (_roleFilter == 'employee' &&
+                            u.role == UserRole.employee),
+                  )
+                  ..sort(
+                    (a, b) => _sortAscending
+                        ? a.name.toLowerCase().compareTo(b.name.toLowerCase())
+                        : b.name.toLowerCase().compareTo(a.name.toLowerCase()),
+                  );
 
                 if (usersToShow.isEmpty && _isSearching) {
                   return _buildEmptyState();

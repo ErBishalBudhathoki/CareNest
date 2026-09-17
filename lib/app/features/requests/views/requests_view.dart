@@ -25,6 +25,8 @@ class RequestsView extends ConsumerStatefulWidget {
 class _RequestsViewState extends ConsumerState<RequestsView> {
   DateTimeRange? _selectedDateRange;
   String _searchQuery = '';
+  String _statusFilter = 'all';
+  bool _newestFirst = true;
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -230,6 +232,64 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                               _buildDateRangePicker(),
                             ],
                           ),
+                          const SizedBox(height: BauhausDesign.space3),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: [
+                                      _buildStatusChip(
+                                        'all',
+                                        AppLocalizations.of(context)!.statusAll,
+                                      ),
+                                      const SizedBox(
+                                        width: BauhausDesign.space2,
+                                      ),
+                                      _buildStatusChip(
+                                        'pending',
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.statusPending,
+                                      ),
+                                      const SizedBox(
+                                        width: BauhausDesign.space2,
+                                      ),
+                                      _buildStatusChip(
+                                        'approved',
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.statusApproved,
+                                      ),
+                                      const SizedBox(
+                                        width: BauhausDesign.space2,
+                                      ),
+                                      _buildStatusChip(
+                                        'rejected',
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.statusRejected,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              BauhausIconButton(
+                                onPressed: () => setState(
+                                  () => _newestFirst = !_newestFirst,
+                                ),
+                                icon: _newestFirst
+                                    ? Icons.arrow_downward
+                                    : Icons.arrow_upward,
+                                variant: BauhausActionVariant.neutral,
+                                isSmall: true,
+                                tooltip: _newestFirst
+                                    ? AppLocalizations.of(context)!.sortNewest
+                                    : AppLocalizations.of(context)!.sortOldest,
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: BauhausDesign.space4),
                         ],
                       ),
@@ -315,10 +375,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
         ),
         child: Row(
           children: [
-            const Icon(
-              Icons.warning_amber_rounded,
-              color: BauhausDesign.error,
-            ),
+            const Icon(Icons.warning_amber_rounded, color: BauhausDesign.error),
             const SizedBox(width: BauhausDesign.space2),
             Expanded(
               child: Text(
@@ -378,6 +435,40 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
     }
   }
 
+  DateTime? _requestDate(RequestModel r) {
+    final startStr =
+        r.details['starts'] ?? r.details['date'] ?? r.details['startDate'];
+    if (startStr == null) return null;
+    return DateTime.tryParse(startStr)?.toLocal();
+  }
+
+  Widget _buildStatusChip(String value, String label) {
+    final selected = _statusFilter == value;
+    return GestureDetector(
+      onTap: () => setState(() => _statusFilter = value),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: BauhausDesign.space3,
+          vertical: BauhausDesign.space2,
+        ),
+        decoration: BoxDecoration(
+          color: selected ? BauhausDesign.neutral : BauhausDesign.surfaceWhite,
+          border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+          boxShadow: selected ? const [BauhausDesign.shadowHardSm] : [],
+        ),
+        child: Text(
+          label.toUpperCase(),
+          style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+            color: selected
+                ? BauhausDesign.surfaceWhite
+                : BauhausDesign.textDark,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildRequestList(AsyncValue<List<RequestModel>> requestsState) {
     return requestsState.when(
       data: (requests) {
@@ -422,13 +513,34 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                 r.details['date'] ??
                 r.details['startDate'];
             if (startStr == null) return false;
-            final start = DateTime.parse(startStr).toLocal();
+            final start = DateTime.tryParse(startStr)?.toLocal();
+            if (start == null) return false;
             return start.isAfter(_selectedDateRange!.start) &&
                 start.isBefore(
                   _selectedDateRange!.end.add(const Duration(days: 1)),
                 );
           }).toList();
         }
+
+        // Status Filter
+        if (_statusFilter != 'all') {
+          filtered = filtered
+              .where((r) => r.status.name.toLowerCase() == _statusFilter)
+              .toList();
+        }
+
+        // Date Sort (nulls last)
+        filtered = [...filtered]
+          ..sort((a, b) {
+            final aDate = _requestDate(a);
+            final bDate = _requestDate(b);
+            if (aDate == null && bDate == null) return 0;
+            if (aDate == null) return 1;
+            if (bDate == null) return -1;
+            return _newestFirst
+                ? bDate.compareTo(aDate)
+                : aDate.compareTo(bDate);
+          });
 
         if (filtered.isEmpty) {
           return SliverToBoxAdapter(
