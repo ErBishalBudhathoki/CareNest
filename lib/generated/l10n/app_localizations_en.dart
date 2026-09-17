@@ -6838,6 +6838,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unknownClient => 'Unknown Client';
 
   @override
+  String get unknownDate => 'Unknown date';
+
+  @override
   String get unknownEmployee => 'Unknown Employee';
 
   @override
