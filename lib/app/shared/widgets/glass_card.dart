@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:blur/blur.dart';
 
+/// DEPRECATED (Bauhaus): glassmorphism violates neo-brutalism (no blur,
+/// no rounded 32, no soft elevation). Use [BauhausCard] instead.
+/// Kept only for legacy call sites — do not use in new code.
+@Deprecated('Use BauhausCard (squared, hard shadow) instead')
 class GlassCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? padding;

@@ -1,4 +1,6 @@
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// Enhanced Search and Filter Bar
 class EnhancedSearchFilterBar extends StatefulWidget {
@@ -39,6 +41,7 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
         _isSearchFocused = _searchFocusNode.hasFocus;
       });
     });
+    _searchController.addListener(() => setState(() {}));
   }
 
   @override
@@ -65,23 +68,14 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
   Widget _buildSearchBar() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        color: BauhausDesign.surfaceWhite,
         border: Border.all(
           color: _isSearchFocused
-              ? const Color(0xFF667EEA)
-              : const Color(0xFFE0E0E0),
-          width: _isSearchFocused ? 2 : 1,
+              ? BauhausDesign.primary
+              : BauhausDesign.neutral,
+          width: 2,
         ),
-        boxShadow: [
-          if (_isSearchFocused)
-            BoxShadow(
-              color: const Color(0xFF667EEA).withValues(alpha: 0.1),
-              spreadRadius: 2,
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-        ],
+        boxShadow: _isSearchFocused ? const [BauhausDesign.shadowHardSm] : null,
       ),
       child: Row(
         children: [
@@ -90,16 +84,30 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
               controller: _searchController,
               focusNode: _searchFocusNode,
               onChanged: widget.onSearchChanged,
+              textInputAction: TextInputAction.search,
+              onSubmitted: (_) => _searchFocusNode.unfocus(),
+              onTapOutside: (_) => _searchFocusNode.unfocus(),
               decoration: InputDecoration(
                 hintText: widget.searchHint,
-                hintStyle: const TextStyle(
-                  fontSize: 16,
-                ).copyWith(color: const Color(0xFF9CA3AF)),
-                prefixIcon: const Icon(Icons.search, color: Color(0xFF9CA3AF)),
+                hintStyle: BauhausDesign.neoMonoStyle(
+                  context,
+                  color: BauhausDesign.textMuted,
+                  fontSize: 14,
+                ),
+                prefixIcon: const Icon(
+                  Icons.search,
+                  color: BauhausDesign.textMuted,
+                  semanticLabel: 'Search',
+                ),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear, color: Color(0xFF9CA3AF)),
+                        tooltip: 'Clear search',
+                        icon: const Icon(
+                          Icons.clear,
+                          color: BauhausDesign.textMuted,
+                        ),
                         onPressed: () {
+                          HapticFeedback.lightImpact();
                           _searchController.clear();
                           widget.onSearchChanged?.call('');
                         },
@@ -114,7 +122,7 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
             ),
           ),
           if (widget.filterOptions?.isNotEmpty == true) ...[
-            Container(width: 1, height: 24, color: const Color(0xFFE0E0E0)),
+            Container(width: 2, height: 24, color: BauhausDesign.neutral),
             _buildFilterButton(),
           ],
         ],
@@ -124,8 +132,16 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
 
   Widget _buildFilterButton() {
     return PopupMenuButton<FilterOption>(
-      icon: const Icon(Icons.filter_list, color: Color(0xFF6B7280)),
-      onSelected: widget.onFilterChanged,
+      tooltip: 'Filter options',
+      icon: const Icon(
+        Icons.filter_list,
+        color: BauhausDesign.textDark,
+        semanticLabel: 'Filter options',
+      ),
+      onSelected: (option) {
+        HapticFeedback.selectionClick();
+        widget.onFilterChanged?.call(option);
+      },
       itemBuilder: (context) {
         return widget.filterOptions!.map((option) {
           return PopupMenuItem<FilterOption>(
@@ -135,20 +151,26 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
                 Icon(
                   option.icon,
                   size: 18,
-                  color: option.color ?? const Color(0xFF6B7280),
+                  color: option.color ?? BauhausDesign.textDark,
                 ),
                 const SizedBox(width: 8.0),
-                Text(option.label),
+                Expanded(
+                  child: Text(
+                    option.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
                 if (option.count != null) ...[
-                  const Spacer(),
+                  const SizedBox(width: 8.0),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 6,
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE5E5E5),
-                      borderRadius: BorderRadius.circular(10),
+                      color: BauhausDesign.surfaceOffWhite,
+                      border: Border.all(color: BauhausDesign.neutral),
                     ),
                     child: Text(
                       option.count.toString(),
@@ -178,21 +200,25 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
               return Chip(
                 label: Text(
                   filter,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                  ).copyWith(color: const Color(0xFF667EEA)),
+                  ).copyWith(color: BauhausDesign.textDark),
                 ),
+                backgroundColor: BauhausDesign.surfaceOffWhite,
                 deleteIcon: const Icon(
                   Icons.close,
                   size: 16,
-                  color: Color(0xFF667EEA),
+                  semanticLabel: 'Remove filter',
                 ),
                 onDeleted: () {
-                  // Handle filter removal
+                  HapticFeedback.lightImpact();
                 },
-                side: BorderSide(
-                  color: const Color(0xFF667EEA).withValues(alpha: 0.1),
+                side: const BorderSide(color: BauhausDesign.neutral, width: 1.5),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero,
                 ),
               );
             }).toList(),
@@ -200,13 +226,16 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
         ),
         if (widget.onClearFilters != null)
           TextButton(
-            onPressed: widget.onClearFilters,
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              widget.onClearFilters?.call();
+            },
             child: Text(
               'Clear All',
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-              ).copyWith(color: const Color(0xFF6B7280)),
+              ).copyWith(color: BauhausDesign.textDark),
             ),
           ),
       ],

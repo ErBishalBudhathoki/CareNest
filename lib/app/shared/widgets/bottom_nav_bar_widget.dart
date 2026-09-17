@@ -1,6 +1,5 @@
 import 'package:carenest/app/core/utils/permission_manager.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'dart:typed_data';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/Appointment/views/select_employee_view.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
@@ -10,6 +9,7 @@ import 'package:carenest/app/features/admin/views/admin_dashboard_view.dart';
 import 'package:carenest/app/features/settings/views/settings_view.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class BottomNavBarWidget extends ConsumerStatefulWidget {
@@ -258,15 +258,26 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
   ) {
     final isSelected = _selectedIndex == index;
 
-    return GestureDetector(
-      onTap: () => setState(() {
-        _selectedIndex = index;
-        _visitedTabs.add(index);
-      }),
-      behavior: HitTestBehavior.opaque,
-      child: isSelected
-          ? _buildActiveItem(activeIcon, label, activeBg, activeContent)
-          : _buildInactiveItem(inactiveIcon, label),
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      label: label,
+      child: InkWell(
+        onTap: () {
+          HapticFeedback.selectionClick();
+          setState(() {
+            _selectedIndex = index;
+            _visitedTabs.add(index);
+          });
+        },
+        child: Container(
+          constraints: const BoxConstraints(minWidth: 72, minHeight: 48),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: isSelected
+              ? _buildActiveItem(activeIcon, label, activeBg, activeContent)
+              : _buildInactiveItem(inactiveIcon, label),
+        ),
+      ),
     );
   }
 
@@ -281,7 +292,7 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
       padding: const EdgeInsets.symmetric(vertical: 6),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         border: Border.all(color: BauhausDesign.neutral, width: 2),
         boxShadow: const [
           BoxShadow(
@@ -295,14 +306,16 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: contentColor),
+          Icon(icon, size: 20, color: contentColor, semanticLabel: label),
           const SizedBox(height: 2),
           Text(
             label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: contentColor,
               fontWeight: FontWeight.w900,
-              fontSize: 8,
+              fontSize: 10,
               fontFamily: 'Inter',
               letterSpacing: 0.5,
             ),

@@ -50,11 +50,9 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
   late final NDISMatcher _ndisMatcher;
   late final EnhancedInvoiceService _invoiceService;
   List<String> _apiHolidays = [];
-  // ignore: unused_field
-  final PriceRegion _currentRegionForInvoice =
-      PriceRegion.nsw; // Default, this should be configurable
-
-  static const double _kDefaultBaseRate = 30.00;
+  // NDIS publishes National / Remote / Very Remote caps only (2026-27);
+  // the national cap is the single price used for invoice line items.
+  static const double _kDefaultBaseRate = 50.00;
 
   @override
   void initState() {
@@ -723,7 +721,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
               }
             } else if (cachedPricing['source'] == 'base-rate' &&
                 cachedPricing['price'] != null) {
-              // Use base rate pricing (30.00) as specified in requirements
+              // Use base rate pricing (50.00, updated 2026-27 NDIS schedule)
               try {
                 unitPrice = double.parse(cachedPricing['price'].toString());
                 pricingSource = 'base_rate';
@@ -766,7 +764,8 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
               ? hours
               : 1.0;
 
-          if (matchedNdisItem.type == "Unit Price = 0.1") {
+          if (matchedNdisItem.type == "Unit Price = 0.1" ||
+              matchedNdisItem.type == "Unit Price = \$1") {
             unitPrice = 1.0;
             if (matchedNdisItem.unit.toUpperCase() == 'E') quantity = 1.0;
           }
@@ -775,8 +774,10 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
           );
 
           if (unitPrice > 0.0 ||
-              matchedNdisItem.type != "Price Limited Supports" ||
-              matchedNdisItem.type == "Unit Price = 0.1") {
+              (matchedNdisItem.type != "Price Limited Supports" &&
+                  matchedNdisItem.type != "Priced Supports") ||
+              matchedNdisItem.type == "Unit Price = 0.1" ||
+              matchedNdisItem.type == "Unit Price = \$1") {
             generatedItems.add(
               InvoiceLineItem(
                 description: description,
@@ -789,7 +790,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
             log.finer("    ADDED: Line item from NDIS Matcher for $dateStr.");
           } else {
             log.warning(
-              "Matched Price Limited item ${matchedNdisItem.itemNumber} has an invalid price ($unitPrice). Shift: $parsedShiftStart. Using placeholder.",
+              "Matched priced item ${matchedNdisItem.itemNumber} has an invalid price ($unitPrice). Shift: $parsedShiftStart. Using placeholder.",
             );
             generatedItems.add(
               InvoiceLineItem(
