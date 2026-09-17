@@ -310,6 +310,21 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
     );
   }
 
+  /// Reload employee data from the backend (pull-to-refresh).
+  Future<void> _refreshUsers() async {
+    try {
+      final future = _apiMethod.fetchUserData();
+      setState(() {
+        futureUserData = future;
+        _searchController.clear();
+        _allUsers = [];
+        _filteredUsers = [];
+        _isSearching = false;
+      });
+      await future;
+    } catch (_) {}
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -375,12 +390,19 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                   return _buildEmptyState();
                 }
 
-                return ListView.builder(
-                  padding: const EdgeInsets.only(bottom: BauhausDesign.space4),
-                  itemCount: usersToShow.length,
-                  itemBuilder: (context, index) {
-                    return _buildEmployeeCard(usersToShow[index], index);
-                  },
+                return RefreshIndicator(
+                  onRefresh: _refreshUsers,
+                  color: BauhausDesign.primary,
+                  child: ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.only(
+                      bottom: BauhausDesign.space4,
+                    ),
+                    itemCount: usersToShow.length,
+                    itemBuilder: (context, index) {
+                      return _buildEmployeeCard(usersToShow[index], index);
+                    },
+                  ),
                 );
               },
             ),

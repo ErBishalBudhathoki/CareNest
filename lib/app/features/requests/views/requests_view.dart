@@ -151,7 +151,12 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
 
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
-      body: CustomScrollView(
+      body: RefreshIndicator(
+        onRefresh: () =>
+            ref.read(requestsViewModelProvider.notifier).refresh(),
+        color: BauhausDesign.primary,
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
           SliverAppBar(
             expandedHeight: 120,
@@ -226,6 +231,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
           _buildRequestList(requestsState),
           const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
         ],
+        ),
       ),
     );
   }

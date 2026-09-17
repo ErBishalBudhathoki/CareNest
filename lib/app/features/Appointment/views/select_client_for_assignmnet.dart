@@ -236,15 +236,35 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
     );
   }
 
+  /// Reload client data from the backend (pull-to-refresh).
+  Future<void> _refreshClients() async {
+    try {
+      final apiMethod = ref.read(app_providers.apiMethodProvider);
+      final future = apiMethod.fetchClientData();
+      setState(() {
+        futureClientsData = future;
+        _searchController.clear();
+        _filteredClients = [];
+        _isSearching = false;
+      });
+      await future;
+    } catch (_) {}
+  }
+
   /// Build clients list
   Widget _buildClientsList(List<Patient> clients) {
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
-      itemCount: clients.length,
-      itemBuilder: (context, index) {
-        Patient client = clients[index];
-        return _buildClientCard(client, index);
-      },
+    return RefreshIndicator(
+      onRefresh: _refreshClients,
+      color: BauhausDesign.primary,
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
+        itemCount: clients.length,
+        itemBuilder: (context, index) {
+          Patient client = clients[index];
+          return _buildClientCard(client, index);
+        },
+      ),
     );
   }
 
