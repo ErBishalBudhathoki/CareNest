@@ -5,6 +5,7 @@ import 'package:carenest/app/features/timesheet/viewmodels/timesheet_viewmodel.d
 import 'package:carenest/app/features/timesheet/views/timesheet_history_view.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/app/shared/widgets/offline_banner.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,6 +28,7 @@ class TimesheetView extends ConsumerWidget {
       appBar: _buildBauhausAppBar(context, ref, email),
       body: Column(
         children: [
+          const BauhausOfflineBanner(),
           _WeekRangeHeader(
             weekStart: weekStart,
             weekEnd: weekEnd,
@@ -258,56 +260,60 @@ class _TimesheetDataBody extends StatelessWidget {
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(BauhausDesign.space4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // ── Hero Summary Panels ──
-          _HeroSummaryCard(totals: weekTotals),
-          const SizedBox(height: BauhausDesign.space3),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // ── Hero Summary Panels ──
+            _HeroSummaryCard(totals: weekTotals),
+            const SizedBox(height: BauhausDesign.space3),
 
-          // ── Weekly Target Progress ──
-          _WeeklyProgressBar(totalSeconds: weekTotals.totalSeconds),
-          const SizedBox(height: BauhausDesign.space5),
+            // ── Weekly Target Progress ──
+            _WeeklyProgressBar(totalSeconds: weekTotals.totalSeconds),
+            const SizedBox(height: BauhausDesign.space5),
 
-          // ── Section Label ──
-          Padding(
-            padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
-            child: Row(
-              children: [
-                Container(width: 4, height: 20, color: BauhausDesign.secondary),
-                const SizedBox(width: BauhausDesign.space2),
-                Text(
-                  'DAILY BREAKDOWN',
-                  style: GoogleFonts.oswald(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: BauhausDesign.textDark,
-                    letterSpacing: 1.5,
+            // ── Section Label ──
+            Padding(
+              padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
+              child: Row(
+                children: [
+                  Container(
+                    width: 4,
+                    height: 20,
+                    color: BauhausDesign.secondary,
                   ),
-                ),
-              ],
+                  const SizedBox(width: BauhausDesign.space2),
+                  Text(
+                    'DAILY BREAKDOWN',
+                    style: GoogleFonts.oswald(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: BauhausDesign.textDark,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
 
-          // ── Day Cards ──
-          if (!hasAnyWork)
-            _EmptyWeekState(weekStart: weekStart, weekEnd: weekEnd),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: days.length,
-            separatorBuilder: (_, _) =>
-                const SizedBox(height: BauhausDesign.space3),
-            itemBuilder: (context, index) => _DayCard(summary: days[index]),
-          ),
+            // ── Day Cards ──
+            if (!hasAnyWork)
+              _EmptyWeekState(weekStart: weekStart, weekEnd: weekEnd),
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: days.length,
+              separatorBuilder: (_, _) =>
+                  const SizedBox(height: BauhausDesign.space3),
+              itemBuilder: (context, index) => _DayCard(summary: days[index]),
+            ),
 
-          const SizedBox(height: BauhausDesign.space5),
+            const SizedBox(height: BauhausDesign.space5),
 
-          // ── History Banner ──
-          _HistoryBanner(entryCount: entries.length, onTap: onOpenHistory),
+            // ── History Banner ──
+            _HistoryBanner(entryCount: entries.length, onTap: onOpenHistory),
 
-          const SizedBox(height: BauhausDesign.space4),
-        ],
+            const SizedBox(height: BauhausDesign.space4),
+          ],
         ),
       ),
     );

@@ -32,6 +32,7 @@ import 'package:carenest/app/features/mileage/views/mileage_tracker_view.dart';
 import 'package:carenest/app/features/notifications/views/notification_settings_view.dart';
 import 'package:carenest/app/features/offline/views/offline_sync_dashboard.dart';
 import 'package:carenest/app/features/home/viewmodels/home_viewmodel.dart';
+import 'package:carenest/app/core/providers/connectivity_providers.dart';
 import 'package:carenest/app/features/home/models/home_dashboard_data.dart';
 import 'package:carenest/app/features/teams/models/team_models.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -88,9 +89,11 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
 
   /// Poll active broadcasts and recompute shift statuses every 15 seconds
   /// so emergency alerts and shift badges update without manual refresh.
+  /// Skipped while offline so the timer doesn't hammer a dead connection.
   void _startBroadcastPolling() {
     _broadcastPollTimer = Timer.periodic(const Duration(seconds: 15), (_) {
       if (!mounted) return;
+      if ((ref.read(isOnlineProvider).value ?? true) == false) return;
       ref.read(homeViewModelProvider.notifier).pollBroadcasts();
       ref.read(homeViewModelProvider.notifier).recomputeShiftStatuses();
     });

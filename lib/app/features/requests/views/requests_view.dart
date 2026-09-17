@@ -1,6 +1,7 @@
 import 'package:carenest/app/features/pricing/widgets/bauhaus_dashboard_components.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/app/shared/widgets/offline_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/requests/viewmodels/requests_viewmodel.dart';
@@ -151,87 +152,96 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
 
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
-      body: RefreshIndicator(
-        onRefresh: () =>
-            ref.read(requestsViewModelProvider.notifier).refresh(),
-        color: BauhausDesign.primary,
-        child: CustomScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 120,
-            floating: true,
-            pinned: true,
-            backgroundColor: BauhausDesign.surfaceWhite,
-            elevation: 0,
-            flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsets.only(
-                left: BauhausDesign.space4,
-                bottom: 16,
-              ),
-              title: Text(
-                AppLocalizations.of(context)!.requestsTitle,
-                style: BauhausDesign.getTextTheme(context).headlineSmall
-                    ?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: BauhausDesign.textDark,
+      body: Column(
+        children: [
+          const BauhausOfflineBanner(),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () =>
+                  ref.read(requestsViewModelProvider.notifier).refresh(),
+              color: BauhausDesign.primary,
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverAppBar(
+                    expandedHeight: 120,
+                    floating: true,
+                    pinned: true,
+                    backgroundColor: BauhausDesign.surfaceWhite,
+                    elevation: 0,
+                    flexibleSpace: FlexibleSpaceBar(
+                      titlePadding: const EdgeInsets.only(
+                        left: BauhausDesign.space4,
+                        bottom: 16,
+                      ),
+                      title: Text(
+                        AppLocalizations.of(context)!.requestsTitle,
+                        style: BauhausDesign.getTextTheme(context).headlineSmall
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: BauhausDesign.textDark,
+                            ),
+                      ),
+                      background: Container(color: BauhausDesign.surfaceWhite),
                     ),
-              ),
-              background: Container(color: BauhausDesign.surfaceWhite),
-            ),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 16.0),
-                child: BauhausActionButton(
-                  onPressed: () => _showRequestOptions(context, userEmail),
-                  text: AppLocalizations.of(context)!.newRequest,
-                  icon: Icons.add,
-                  isSmall: true,
-                ),
-              ),
-            ],
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(1),
-              child: Container(
-                height: 1,
-                color: BauhausDesign.neutral.withValues(alpha: 0.2),
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(BauhausDesign.space4),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSummarySection(requestsState),
-                  const SizedBox(height: BauhausDesign.space4),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: BauhausSearchBar(
-                          controller: _searchController,
-                          hintText: AppLocalizations.of(
-                            context,
-                          )!.searchRequestsHint,
-                          onChanged: (val) =>
-                              setState(() => _searchQuery = val),
-                          onClear: () => setState(() => _searchQuery = ''),
+                    actions: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 16.0),
+                        child: BauhausActionButton(
+                          onPressed: () =>
+                              _showRequestOptions(context, userEmail),
+                          text: AppLocalizations.of(context)!.newRequest,
+                          icon: Icons.add,
+                          isSmall: true,
                         ),
                       ),
-                      const SizedBox(width: BauhausDesign.space3),
-                      _buildDateRangePicker(),
                     ],
+                    bottom: PreferredSize(
+                      preferredSize: const Size.fromHeight(1),
+                      child: Container(
+                        height: 1,
+                        color: BauhausDesign.neutral.withValues(alpha: 0.2),
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: BauhausDesign.space4),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(BauhausDesign.space4),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildSummarySection(requestsState),
+                          const SizedBox(height: BauhausDesign.space4),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: BauhausSearchBar(
+                                  controller: _searchController,
+                                  hintText: AppLocalizations.of(
+                                    context,
+                                  )!.searchRequestsHint,
+                                  onChanged: (val) =>
+                                      setState(() => _searchQuery = val),
+                                  onClear: () =>
+                                      setState(() => _searchQuery = ''),
+                                ),
+                              ),
+                              const SizedBox(width: BauhausDesign.space3),
+                              _buildDateRangePicker(),
+                            ],
+                          ),
+                          const SizedBox(height: BauhausDesign.space4),
+                        ],
+                      ),
+                    ),
+                  ),
+                  _buildRequestList(requestsState),
+                  const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
                 ],
               ),
             ),
           ),
-          _buildRequestList(requestsState),
-          const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
         ],
-        ),
       ),
     );
   }

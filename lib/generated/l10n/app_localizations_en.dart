@@ -4367,6 +4367,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'You are offline. Changes will sync when connected.';
 
   @override
+  String get offlineActionBlocked =>
+      'You are offline. Reconnect to perform this action.';
+
+  @override
   String get offlineStatus => 'STATUS: OFFLINE';
 
   @override

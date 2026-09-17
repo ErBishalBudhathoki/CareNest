@@ -2135,6 +2135,7 @@
   "octInitial": "Oct",
   "off": "Off",
   "offlineBannerMessage": "You are offline. Changes will sync when connected.",
+  "offlineActionBlocked": "You are offline. Reconnect to perform this action.",
   "offlineStatus": "STATUS: OFFLINE",
   "offlineSyncTitle": "OFFLINE SYNC",
   "ok": "OK",

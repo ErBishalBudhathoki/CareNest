@@ -7996,6 +7996,12 @@ abstract class AppLocalizations {
   /// **'You are offline. Changes will sync when connected.'**
   String get offlineBannerMessage;
 
+  /// No description provided for @offlineActionBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'You are offline. Reconnect to perform this action.'**
+  String get offlineActionBlocked;
+
   /// No description provided for @offlineStatus.
   ///
   /// In en, this message translates to:

@@ -1,5 +1,7 @@
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/app/shared/widgets/offline_banner.dart';
+import 'package:carenest/app/core/providers/connectivity_providers.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -74,6 +76,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
   @override
   Widget build(BuildContext context) {
     final invoiceListState = ref.watch(invoiceListViewModelProvider);
+    final isOnline = ref.watch(isOnlineProvider).value ?? true;
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
@@ -126,8 +129,9 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
       ),
       body: Column(
         children: [
+          const BauhausOfflineBanner(),
           _buildSearchAndFilter(l10n),
-          Expanded(child: _buildInvoiceList(invoiceListState, l10n)),
+          Expanded(child: _buildInvoiceList(invoiceListState, l10n, isOnline)),
         ],
       ),
       floatingActionButton: Container(
@@ -259,7 +263,11 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
     );
   }
 
-  Widget _buildInvoiceList(InvoiceListState state, AppLocalizations l10n) {
+  Widget _buildInvoiceList(
+    InvoiceListState state,
+    AppLocalizations l10n,
+    bool isOnline,
+  ) {
     if (state.isLoading) {
       return Center(child: BauhausLoadingState(message: l10n.loadingInvoices));
     }
@@ -293,18 +301,22 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
         controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(BauhausDesign.space4),
-      itemCount: filteredInvoices.length,
-      separatorBuilder: (context, index) =>
-          const SizedBox(height: BauhausDesign.space3),
-      itemBuilder: (context, index) {
-        final invoice = filteredInvoices[index];
-        return _buildInvoiceCard(invoice, l10n);
-      },
+        itemCount: filteredInvoices.length,
+        separatorBuilder: (context, index) =>
+            const SizedBox(height: BauhausDesign.space3),
+        itemBuilder: (context, index) {
+          final invoice = filteredInvoices[index];
+          return _buildInvoiceCard(invoice, l10n, isOnline);
+        },
       ),
     );
   }
 
-  Widget _buildInvoiceCard(InvoiceListModel invoice, AppLocalizations l10n) {
+  Widget _buildInvoiceCard(
+    InvoiceListModel invoice,
+    AppLocalizations l10n,
+    bool isOnline,
+  ) {
     return BauhausCard(
       onTap: () => _viewInvoiceDetails(invoice),
       padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -363,7 +375,9 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
                 children: [
                   if (_displayStatus(invoice).toLowerCase() != 'paid') ...[
                     BauhausActionButton(
-                      onPressed: () => _markAsPaid(invoice, l10n),
+                      onPressed: isOnline
+                          ? () => _markAsPaid(invoice, l10n)
+                          : null,
                       icon: Icons.check_circle,
                       variant: BauhausActionVariant.ghost,
                       textColor: BauhausDesign.success,
@@ -372,7 +386,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
                     const SizedBox(width: BauhausDesign.space2),
                   ],
                   BauhausActionButton(
-                    onPressed: () => _shareInvoice(invoice),
+                    onPressed: isOnline ? () => _shareInvoice(invoice) : null,
                     icon: Icons.share,
                     variant: BauhausActionVariant.ghost,
                     isSmall: true,
@@ -390,6 +404,20 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  void _showOfflineBlocked(AppLocalizations l10n) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          l10n.offlineActionBlocked,
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+        ),
+        backgroundColor: BauhausDesign.warning,
       ),
     );
   }
@@ -425,6 +453,11 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
             TextButton(
               onPressed: () async {
                 Navigator.of(context).pop();
+                if ((ref.read(isOnlineProvider).value ?? true) == false) {
+                  if (!mounted) return;
+                  _showOfflineBlocked(l10n);
+                  return;
+                }
                 final success = await ref
                     .read(invoiceListViewModelProvider.notifier)
                     .markAsPaid(
@@ -440,8 +473,9 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
                       success
                           ? l10n.markAsPaidSuccess(invoice.invoiceNumber)
                           : l10n.markAsPaidError(invoice.invoiceNumber),
-                      style: BauhausDesign.getTextTheme(context).bodyMedium
-                          ?.copyWith(color: BauhausDesign.surfaceWhite),
+                      style: BauhausDesign.getTextTheme(
+                        context,
+                      ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
                     ),
                     backgroundColor: success
                         ? BauhausDesign.success
@@ -565,6 +599,11 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
   }
 
   void _shareInvoice(InvoiceListModel invoice) {
+    final l10n = AppLocalizations.of(context)!;
+    if ((ref.read(isOnlineProvider).value ?? true) == false) {
+      _showOfflineBlocked(l10n);
+      return;
+    }
     ref
         .read(invoiceListViewModelProvider.notifier)
         .shareInvoice(invoice.id, widget.organizationId);
