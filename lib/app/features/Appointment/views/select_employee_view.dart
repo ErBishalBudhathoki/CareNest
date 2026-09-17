@@ -267,6 +267,19 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
               context,
             ).bodyMedium?.copyWith(color: BauhausDesign.neutral),
           ),
+          const SizedBox(height: BauhausDesign.space6),
+          BauhausButton(
+            text: _isSearching ? 'Clear Search' : 'Try Again',
+            icon: _isSearching ? Icons.clear : Icons.refresh,
+            onPressed: () {
+              if (_isSearching) {
+                _searchController.clear();
+                _filterUsers('');
+              } else {
+                _refreshUsers();
+              }
+            },
+          ),
         ],
       ),
     );

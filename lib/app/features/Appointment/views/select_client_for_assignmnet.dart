@@ -6,6 +6,7 @@ import 'package:carenest/app/shared/widgets/confirmation_alert_dialog_widget.dar
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/features/client/models/client_model.dart';
+import 'package:carenest/app/features/client/views/add_client_details_view.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
@@ -236,6 +237,18 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
     );
   }
 
+  /// Re-run the client fetch without touching the current search.
+  Future<void> _retryLoad() async {
+    try {
+      final apiMethod = ref.read(app_providers.apiMethodProvider);
+      final future = apiMethod.fetchClientData();
+      setState(() {
+        futureClientsData = future;
+      });
+      await future;
+    } catch (_) {}
+  }
+
   /// Reload client data from the backend (pull-to-refresh).
   Future<void> _refreshClients() async {
     try {
@@ -441,6 +454,12 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
             ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
             textAlign: TextAlign.center,
           ),
+          const SizedBox(height: BauhausDesign.space6),
+          BauhausButton(
+            text: 'Try Again',
+            icon: Icons.refresh,
+            onPressed: _retryLoad,
+          ),
         ],
       ),
     );
@@ -467,6 +486,19 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
               context,
             ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
           ),
+          const SizedBox(height: BauhausDesign.space6),
+          BauhausButton(
+            text: 'Add Client',
+            icon: Icons.person_add_outlined,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddClientDetails(),
+                ),
+              );
+            },
+          ),
         ],
       ),
     );
@@ -492,6 +524,15 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
             style: BauhausDesign.getTextTheme(
               context,
             ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+          ),
+          const SizedBox(height: BauhausDesign.space6),
+          BauhausButton(
+            text: 'Clear Search',
+            icon: Icons.clear,
+            onPressed: () {
+              _searchController.clear();
+              _filterClients('');
+            },
           ),
         ],
       ),
