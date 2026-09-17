@@ -193,6 +193,7 @@ class _WeekRangeHeader extends StatelessWidget {
           BauhausIconButton(
             onPressed: onPreviousWeek,
             icon: Icons.chevron_left,
+            tooltip: AppLocalizations.of(context)!.previousWeek,
             variant: BauhausActionVariant.neutral,
             isSmall: true,
           ),
@@ -213,6 +214,7 @@ class _WeekRangeHeader extends StatelessWidget {
           BauhausIconButton(
             onPressed: onNextWeek,
             icon: Icons.chevron_right,
+            tooltip: AppLocalizations.of(context)!.nextWeek,
             variant: BauhausActionVariant.neutral,
             isSmall: true,
           ),

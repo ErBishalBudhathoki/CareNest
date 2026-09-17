@@ -673,6 +673,7 @@ class BauhausTextField extends StatelessWidget {
 class BauhausActionButton extends StatelessWidget {
   final String? text;
   final String? semanticsLabel;
+  final String? tooltip;
   final VoidCallback? onPressed;
   final IconData? icon;
   final Color? backgroundColor;
@@ -687,6 +688,7 @@ class BauhausActionButton extends StatelessWidget {
     super.key,
     this.text,
     this.semanticsLabel,
+    this.tooltip,
     this.onPressed,
     this.icon,
     this.backgroundColor,
@@ -843,9 +845,14 @@ class BauhausActionButton extends StatelessWidget {
   }
 
   Widget _wrapWithSemantics(Widget child) {
-    final label = semanticsLabel ?? text;
-    if (label == null || label.trim().isEmpty) {
-      return child;
+    Widget current = child;
+    final tooltipMessage = tooltip?.trim();
+    if (tooltipMessage != null && tooltipMessage.isNotEmpty) {
+      current = Tooltip(message: tooltipMessage, child: current);
+    }
+    final label = semanticsLabel ?? text ?? tooltipMessage;
+    if (label == null || label.isEmpty) {
+      return current;
     }
 
     return Semantics(
@@ -853,7 +860,7 @@ class BauhausActionButton extends StatelessWidget {
       enabled: onPressed != null && !isLoading,
       label: label,
       excludeSemantics: true,
-      child: child,
+      child: current,
     );
   }
 }
