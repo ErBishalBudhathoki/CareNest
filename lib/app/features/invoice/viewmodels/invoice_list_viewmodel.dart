@@ -105,7 +105,7 @@ class InvoiceListViewModel extends Notifier<InvoiceListState> {
     }
   }
 
-  Future<void> markAsPaid(
+  Future<bool> markAsPaid(
     String invoiceId,
     String organizationId,
     double amount, {
@@ -125,13 +125,16 @@ class InvoiceListViewModel extends Notifier<InvoiceListState> {
 
         // Actually, let's just reload to get fresh data
         loadInvoices(organizationId);
+        return true;
       } else {
         state = state.copyWith(
           error: result['message'] ?? 'Failed to update payment status',
         );
+        return false;
       }
     } catch (e) {
       state = state.copyWith(error: 'Error updating payment status: $e');
+      return false;
     }
   }
 

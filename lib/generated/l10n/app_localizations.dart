@@ -6496,6 +6496,36 @@ abstract class AppLocalizations {
   /// **'Mark as Completed'**
   String get markAsCompletedButton;
 
+  /// No description provided for @markAsPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Paid'**
+  String get markAsPaid;
+
+  /// No description provided for @markAsPaidConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark invoice {invoiceNumber} as paid?'**
+  String markAsPaidConfirm(String invoiceNumber);
+
+  /// No description provided for @markAsPaidError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to mark invoice {invoiceNumber} as paid.'**
+  String markAsPaidError(String invoiceNumber);
+
+  /// No description provided for @markAsPaidSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice {invoiceNumber} marked as paid.'**
+  String markAsPaidSuccess(String invoiceNumber);
+
+  /// No description provided for @markAsPaidTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Paid'**
+  String get markAsPaidTitle;
+
   /// No description provided for @markAsRead.
   ///
   /// In en, this message translates to:
