@@ -1,5 +1,4 @@
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:carenest/app/core/providers/theme_providers.dart';
 import 'package:carenest/app/features/business/views/add_business_details_view.dart';
 import 'package:carenest/app/features/business/views/business_list_view.dart';
 import 'package:carenest/app/features/invoice/views/employee_selection_view.dart';
@@ -431,16 +430,13 @@ class MyApp extends ConsumerWidget {
     ref.watch(sharedPreferencesProvider);
     ref.watch(userRoleProvider);
 
-    // Watch theme mode for dynamic switching
-    final themeMode = ref.watch(themeModeProvider);
-
     return NotificationHandler(
       child: MaterialApp(
         navigatorKey: navigatorKey,
         title: AppStrings.appName,
+        // Single neo-brutalist Bauhaus light theme — OS dark mode is ignored.
         theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: themeMode,
+        themeMode: ThemeMode.light,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         debugShowCheckedModeBanner: false,

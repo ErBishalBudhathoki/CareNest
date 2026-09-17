@@ -102,11 +102,10 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? BauhausDesign.textLight : BauhausDesign.textDark;
-    final hintColor = isDark
-        ? BauhausDesign.textLight.withValues(alpha: 0.4)
-        : BauhausDesign.textMuted;
+    // Single Bauhaus light theme — fixed colors, never derived from OS
+    // dark mode.
+    const textColor = BauhausDesign.textDark;
+    const hintColor = BauhausDesign.textMuted;
 
     return Scaffold(
       key: _scaffoldKey,
