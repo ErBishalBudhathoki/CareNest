@@ -19,8 +19,10 @@ import 'package:carenest/app/features/security/views/api_usage_dashboard_view.da
 import 'package:carenest/app/features/pricing/views/pricing_analytics_view.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:carenest/app/features/settings/views/date_format_settings_view.dart';
+import 'package:carenest/app/features/settings/views/theme_settings_view.dart';
 import 'package:carenest/app/features/photo/views/photo_upload_view.dart';
 import 'package:carenest/app/features/feedback/views/feedback_form_view.dart';
+import 'package:carenest/app/features/notifications/views/notification_settings_view.dart';
 import 'package:carenest/app/features/requests/models/request_model.dart';
 import 'package:carenest/app/features/requests/repositories/request_repository.dart';
 import 'package:carenest/app/shared/widgets/confirmation_alert_dialog_widget.dart';
@@ -376,19 +378,6 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                         title: AppLocalizations.of(context)!.accountSection,
                         items: [
                           _buildSettingsItem(
-                            icon: Icons.person_outline,
-                            color: BauhausDesign.primary,
-                            title: AppLocalizations.of(
-                              context,
-                            )!.profileSettings,
-                            subtitle: AppLocalizations.of(
-                              context,
-                            )!.profileSettingsSubtitle,
-                            onTap: () {
-                              // TODO: Navigate to profile settings
-                            },
-                          ),
-                          _buildSettingsItem(
                             icon: Icons.lock_outline,
                             color: BauhausDesign.success,
                             title: AppLocalizations.of(context)!.changePassword,
@@ -489,7 +478,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                               context,
                             )!.notificationsSubtitle,
                             onTap: () {
-                              // TODO: Implement notification settings
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const NotificationSettingsView(),
+                                ),
+                              );
                             },
                           ),
                           _buildSettingsItem(
@@ -519,7 +514,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                               context,
                             )!.themeSubtitle,
                             onTap: () {
-                              // TODO: Implement theme settings
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ThemeSettingsView(),
+                                ),
+                              );
                             },
                           ),
                           _buildSettingsItem(

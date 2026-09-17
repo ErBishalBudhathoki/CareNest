@@ -12,6 +12,8 @@ import 'package:carenest/app/features/auth/services/session_timeout_service.dart
 import 'package:carenest/app/features/requests/models/request_model.dart';
 import 'package:carenest/app/features/requests/repositories/request_repository.dart';
 import 'package:carenest/app/features/training_compliance/views/training_compliance_hub_view.dart';
+import 'package:carenest/app/features/requests/views/requests_view.dart';
+import 'package:carenest/app/features/settings/views/settings_view.dart';
 import 'package:carenest/app/shared/widgets/profile_image_widget.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
@@ -206,22 +208,14 @@ class NavBarWidget extends ConsumerWidget {
                       fontFamily: "ShadowsIntoLightTwo",
                     ),
                   ),
-                  onTap: () {},
-                  trailing: ClipOval(
-                    child: Container(
-                      color: theme.colorScheme.error,
-                      width: 20,
-                      height: 20,
-                      child: Center(
-                        child: Text(
-                          '8',
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: Colors.white,
-                          ),
-                        ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RequestsView(email: email),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
                 ListTile(
                   leading: const Icon(Icons.school),
@@ -251,7 +245,23 @@ class NavBarWidget extends ConsumerWidget {
                       fontFamily: "ShadowsIntoLightTwo",
                     ),
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SettingsView(
+                          organizationId: organizationId,
+                          organizationName: organizationName,
+                          organizationCode: organizationCode,
+                          userEmail: email,
+                          userName: '$firstName $lastName',
+                          photoData: currentPhotoData,
+                          imageUrl: currentImageUrl,
+                          currentDashboardRole: role,
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 ListTile(
                   leading: const Icon(Icons.delete_forever_outlined),
