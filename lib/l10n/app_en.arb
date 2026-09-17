@@ -898,6 +898,7 @@
       }
     }
   },
+  "errorLoadingDashboard": "Couldn't load your dashboard",
   "errorLoadingEmployees": "Error Loading Employees",
   "errorLoadingInvoice": "Error loading invoice",
   "errorLoadingInvoices": "Error loading invoices",
@@ -917,6 +918,7 @@
       }
     }
   },
+  "errorLoadingRequests": "Couldn't load request summary",
   "errorLoadingRoles": "Error loading roles",
   "errorLoadingTypes": "Error loading types",
   "errorNegativeTaxRate": "Tax rate cannot be negative when tax is applied",

@@ -306,7 +306,40 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
           ),
         ],
       ),
-      error: (_, _) => const SizedBox.shrink(),
+      error: (_, _) => Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(BauhausDesign.space3),
+        decoration: BoxDecoration(
+          color: BauhausDesign.error.withValues(alpha: 0.08),
+          border: Border.all(color: BauhausDesign.error, width: 1.5),
+        ),
+        child: Row(
+          children: [
+            const Icon(
+              Icons.warning_amber_rounded,
+              color: BauhausDesign.error,
+            ),
+            const SizedBox(width: BauhausDesign.space2),
+            Expanded(
+              child: Text(
+                AppLocalizations.of(context)!.errorLoadingRequests,
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: BauhausDesign.textDark,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            BauhausActionButton(
+              text: AppLocalizations.of(context)!.retryButton,
+              icon: Icons.refresh,
+              isSmall: true,
+              variant: BauhausActionVariant.error,
+              onPressed: () =>
+                  ref.read(requestsViewModelProvider.notifier).refresh(),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
