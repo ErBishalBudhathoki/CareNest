@@ -7996,6 +7996,18 @@ abstract class AppLocalizations {
   /// **'Notifications & Alerts'**
   String get notificationsAndAlerts;
 
+  /// No description provided for @notificationsDisabledMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable them in system settings to receive shift and invoice alerts.'**
+  String get notificationsDisabledMessage;
+
+  /// No description provided for @notificationsDisabledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are off'**
+  String get notificationsDisabledTitle;
+
   /// No description provided for @notificationsSubtitle.
   ///
   /// In en, this message translates to:
@@ -8205,6 +8217,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open Pricing Management'**
   String get openPricingManagement;
+
+  /// No description provided for @openSystemSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get openSystemSettings;
 
   /// No description provided for @openWith.
   ///
