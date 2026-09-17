@@ -1491,10 +1491,13 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                       context,
                     ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
                     items: breakOptionItems.map((String item) {
+                      // Values stay "Yes"/"No" (API contract) — only the
+                      // displayed label is localized.
+                      final l10n = AppLocalizations.of(context)!;
                       return DropdownMenuItem<String>(
                         value: item,
                         child: Text(
-                          item,
+                          item == 'Yes' ? l10n.yes : l10n.no,
                           style: BauhausDesign.getTextTheme(
                             context,
                           ).bodyMedium?.copyWith(color: BauhausDesign.textDark),

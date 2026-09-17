@@ -1365,7 +1365,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                     size: 18,
                     color: BauhausDesign.textDark,
                   ),
-                  tooltip: 'View',
+                  tooltip: AppLocalizations.of(context)!.viewAction,
                   padding: const EdgeInsets.all(8.0),
                   constraints: const BoxConstraints.tightFor(
                     width: 44,

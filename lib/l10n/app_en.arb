@@ -28,6 +28,14 @@
   "accountSection": "Account",
   "accountSettings": "Account Settings",
   "accountTypeSection": "Account Type",
+  "acknowledgeFailed": "Failed to acknowledge: {error}",
+  "@acknowledgeFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "actionsCaps": "ACTIONS",
   "actionsLabel": "Actions",
   "actionsTitle": "Actions",
@@ -89,6 +97,7 @@
     }
   },
   "addedSchedules": "Added Schedules",
+  "addEmployeesToStart": "Add employees to get started",
   "addExpense": "Add Expense",
   "addExpenseItemsToInvoices": "Add expense items to invoices",
   "addExpenseTitle": "Add New Expense",
@@ -126,6 +135,7 @@
   "addressInformation": "Address Information",
   "addressLine1": "ADDRESS LINE 1",
   "addRule": "Add Rule",
+  "adjustSearchTerms": "Try adjusting your search terms.",
   "addRuleAction": "Add Rule",
   "addSchedule": "Add Schedule",
   "addShift": "Add shift",
@@ -460,6 +470,7 @@
   },
   "clientDetails": "Client Details",
   "clientEmailLabel": "Client Email",
+  "clientInvoicesTab": "Client Invoices",
   "clientInformation": "Client Information",
   "clientInformationTitle": "Client Information",
   "clientInfoTemplate": "Client: {clientName} ({clientState})",
@@ -802,6 +813,7 @@
   "employeeFallback": "Employee",
   "employeeInvoice": "Employee Invoice",
   "employeeInvoiceSubtitle": "Generate pay-rate invoices for employees",
+  "employeeInvoicesTab": "Employee Invoices",
   "employeeLabel": "EMPLOYEE",
   "employeeOptionSubtitle": "Bill the employee",
   "employeeOptionTitle": "Employee",
@@ -834,6 +846,8 @@
   "enablePriceHistoryDesc": "Maintain detailed history of all price changes",
   "enablePriceValidation": "Enable Price Validation",
   "enablePriceValidationDesc": "Validate prices against configured rules",
+  "enableQuietHours": "Enable Quiet Hours",
+  "enableRecurringBilling": "Enable Recurring Billing",
   "endDateBeforeStartDate": "End date cannot be before start date",
   "endDateBeforeStartDateError": "End date must be on or after start date",
   "endDateError": "End date cannot be before start date",
@@ -1137,6 +1151,7 @@
   "expiringSoonStatus": "Expiring Soon",
   "expiryDateHint": "Resgistration expiry date",
   "expiryDateLabel": "EXPIRY DATE",
+  "exportAction": "Export",
   "exportAnalytics": "Export analytics",
   "exportComingSoon": "Export functionality coming soon...",
   "exportConfiguration": "Export Configuration",
@@ -2034,6 +2049,7 @@
   "noClientDetailsFound": "No client details found",
   "noClientsAssigned": "No clients assigned to this employee",
   "noClientsAssignedText": "No clients assigned to this employee",
+  "noClientsAvailable": "There are no clients available to assign.",
   "noClientsFound": "No clients found",
   "noClientsFoundDesc": "No clients with assignments found in this organization.",
   "noClientsFoundError": "No clients found for this organization",
@@ -2049,6 +2065,7 @@
   "noEmployeesAvailableDesc": "There are no employees available to select for invoice generation.",
   "noEmployeesFound": "No Employees Found",
   "noEmployeesFoundError": "No employees found for this organization",
+  "noEmployeesYet": "No employees available",
   "noEmployeesSelected": "No employees selected",
   "noEmployeesSelectedCaps": "NO EMPLOYEES SELECTED",
   "noEmployeesSelectedText": "No employees selected",
@@ -2094,6 +2111,7 @@
   "noRequestsFoundCaps": "NO REQUESTS FOUND",
   "noRequestsMessage": "Create a new request to get started.",
   "noRequestsToDisplay": "No requests to display",
+  "noResultsFound": "No results found",
   "noResultsMessage": "No items found matching your criteria.",
   "noResultsTitle": "NO RESULTS",
   "normalUser": "Normal User",
@@ -2269,8 +2287,22 @@
   },
   "payTypeLabel": "Pay Type",
   "pdfDocumentLabel": "PDF Document",
+  "pdfGeneratedTapToView": "Invoice PDF generated! Tap again to view.",
+  "pdfGeneratingLines": "Generating invoice lines...",
   "pdfGenerationFailed": "Failed to generate invoice PDF",
+  "pdfHolidaysUnavailable": "Could not fetch holiday data. Proceeding without it.",
+  "pdfInitFailed": "Couldn't start invoice generation. Please try again.",
+  "pdfLinesGenerated": "{count} line item(s) generated. Review and proceed.",
+  "@pdfLinesGenerated": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "pdfLoadError": "Failed to load invoice PDF",
+  "pdfNoFile": "PDF generation failed or yielded no file.",
+  "pdfNoLineItems": "No line items available to generate PDF.",
   "pdfRegeneratedMessage": "PDF regenerated for invoice {number}",
   "@pdfRegeneratedMessage": {
     "placeholders": {
@@ -2279,6 +2311,8 @@
       }
     }
   },
+  "pdfSetupFailed": "Couldn't set up the invoice. Please try again.",
+  "pdfShiftsFailed": "Couldn't process shifts. Please try again.",
   "pdfViewError": "Error viewing invoice: {error}",
   "@pdfViewError": {
     "placeholders": {
@@ -2496,6 +2530,7 @@
   "publicHoliday": "Public Holiday",
   "publicHolidayPenaltyLabel": "Public Holiday (250%)",
   "publicHolidayRate": "Public Holiday Rate",
+  "pushNotification": "Push Notification",
   "quickActions": "Quick Actions",
   "quickActionsDesc": "Frequently used pricing tools",
   "quickActionsSubtitle": "Frequently used pricing tools",
@@ -2738,6 +2773,8 @@
   "scheduleTitle": "Schedule",
   "search": "Search",
   "searchByItemNameOrCode": "Search by item name or code...",
+  "searchClientsHint": "Search clients...",
+  "searchEmployeesHint": "Search employees...",
   "searchHistory": "Search History...",
   "searchHistoryHint": "Search price history...",
   "searchInvoices": "Search Invoices",
@@ -3115,6 +3152,15 @@
   "timeRangeLast30Days": "Last 30 Days",
   "timesheet": "Timesheet",
   "timesheetTitle": "Timesheet",
+  "timesheetExportFailed": "Failed to export timesheet",
+  "timesheetExportSuccess": "Exported timesheet: {path}",
+  "@timesheetExportSuccess": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
   "timestampLabel": "Timestamp",
   "timeUpdatedSuccessfully": "Time updated successfully",
   "timeValidationError": "Time validation error",
@@ -3311,6 +3357,7 @@
     }
   },
   "videoType": "Video",
+  "viewAction": "View",
   "viewAll": "View All",
   "viewAllAssignments": "View All Assignments",
   "viewAssignments": "View Assignments",

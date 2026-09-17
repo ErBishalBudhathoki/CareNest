@@ -1,5 +1,6 @@
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/notifications/providers/notification_provider.dart';
@@ -141,7 +142,7 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
                           ? BauhausActionVariant.primary
                           : BauhausActionVariant.neutral,
                       isSmall: true,
-                      tooltip: 'Mark all as read',
+                      tooltip: AppLocalizations.of(context)!.markAllRead,
                     ),
                     const SizedBox(width: BauhausDesign.space2),
                     // Clear all
@@ -150,7 +151,7 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
                       icon: Icons.delete_sweep_outlined,
                       variant: BauhausActionVariant.danger,
                       isSmall: true,
-                      tooltip: 'Clear all',
+                      tooltip: AppLocalizations.of(context)!.clearAll,
                     ),
                   ],
                 ],

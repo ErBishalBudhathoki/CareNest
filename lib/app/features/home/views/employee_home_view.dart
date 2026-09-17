@@ -359,9 +359,13 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
           .read(homeViewModelProvider.notifier)
           .refreshSilently(widget.email);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Data refreshed')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.dataRefreshedSuccess,
+            ),
+          ),
+        );
       }
     } catch (e) {
       debugPrint('Error refreshing data: $e');
@@ -1008,7 +1012,11 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Failed to acknowledge: $e'),
+                            content: Text(
+                              AppLocalizations.of(
+                                context,
+                              )!.acknowledgeFailed(e.toString()),
+                            ),
                             backgroundColor: Colors.black,
                           ),
                         );

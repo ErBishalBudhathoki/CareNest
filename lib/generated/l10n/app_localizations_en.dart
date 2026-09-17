@@ -94,6 +94,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountTypeSection => 'Account Type';
 
   @override
+  String acknowledgeFailed(String error) {
+    return 'Failed to acknowledge: $error';
+  }
+
+  @override
   String get actionsCaps => 'ACTIONS';
 
   @override
@@ -205,6 +210,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addedSchedules => 'Added Schedules';
+
+  @override
+  String get addEmployeesToStart => 'Add employees to get started';
 
   @override
   String get addExpense => 'Add Expense';
@@ -319,6 +327,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addRule => 'Add Rule';
+
+  @override
+  String get adjustSearchTerms => 'Try adjusting your search terms.';
 
   @override
   String get addRuleAction => 'Add Rule';
@@ -1140,6 +1151,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clientEmailLabel => 'Client Email';
 
   @override
+  String get clientInvoicesTab => 'Client Invoices';
+
+  @override
   String get clientInformation => 'Client Information';
 
   @override
@@ -1859,6 +1873,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Generate pay-rate invoices for employees';
 
   @override
+  String get employeeInvoicesTab => 'Employee Invoices';
+
+  @override
   String get employeeLabel => 'EMPLOYEE';
 
   @override
@@ -1939,6 +1956,12 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get enablePriceValidationDesc =>
       'Validate prices against configured rules';
+
+  @override
+  String get enableQuietHours => 'Enable Quiet Hours';
+
+  @override
+  String get enableRecurringBilling => 'Enable Recurring Billing';
 
   @override
   String get endDateBeforeStartDate => 'End date cannot be before start date';
@@ -2486,6 +2509,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expiryDateLabel => 'EXPIRY DATE';
+
+  @override
+  String get exportAction => 'Export';
 
   @override
   String get exportAnalytics => 'Export analytics';
@@ -4088,6 +4114,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noClientsAssignedText => 'No clients assigned to this employee';
 
   @override
+  String get noClientsAvailable => 'There are no clients available to assign.';
+
+  @override
   String get noClientsFound => 'No clients found';
 
   @override
@@ -4137,6 +4166,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get noEmployeesFoundError =>
       'No employees found for this organization';
+
+  @override
+  String get noEmployeesYet => 'No employees available';
 
   @override
   String get noEmployeesSelected => 'No employees selected';
@@ -4254,6 +4286,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noRequestsToDisplay => 'No requests to display';
+
+  @override
+  String get noResultsFound => 'No results found';
 
   @override
   String get noResultsMessage => 'No items found matching your criteria.';
@@ -4688,15 +4723,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pdfDocumentLabel => 'PDF Document';
 
   @override
+  String get pdfGeneratedTapToView =>
+      'Invoice PDF generated! Tap again to view.';
+
+  @override
+  String get pdfGeneratingLines => 'Generating invoice lines...';
+
+  @override
   String get pdfGenerationFailed => 'Failed to generate invoice PDF';
+
+  @override
+  String get pdfHolidaysUnavailable =>
+      'Could not fetch holiday data. Proceeding without it.';
+
+  @override
+  String get pdfInitFailed =>
+      'Couldn\'t start invoice generation. Please try again.';
+
+  @override
+  String pdfLinesGenerated(String count) {
+    return '$count line item(s) generated. Review and proceed.';
+  }
 
   @override
   String get pdfLoadError => 'Failed to load invoice PDF';
 
   @override
+  String get pdfNoFile => 'PDF generation failed or yielded no file.';
+
+  @override
+  String get pdfNoLineItems => 'No line items available to generate PDF.';
+
+  @override
   String pdfRegeneratedMessage(String number) {
     return 'PDF regenerated for invoice $number';
   }
+
+  @override
+  String get pdfSetupFailed =>
+      'Couldn\'t set up the invoice. Please try again.';
+
+  @override
+  String get pdfShiftsFailed => 'Couldn\'t process shifts. Please try again.';
 
   @override
   String pdfViewError(String error) {
@@ -5139,6 +5207,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get publicHolidayRate => 'Public Holiday Rate';
+
+  @override
+  String get pushNotification => 'Push Notification';
 
   @override
   String get quickActions => 'Quick Actions';
@@ -5664,6 +5735,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchByItemNameOrCode => 'Search by item name or code...';
+
+  @override
+  String get searchClientsHint => 'Search clients...';
+
+  @override
+  String get searchEmployeesHint => 'Search employees...';
 
   @override
   String get searchHistory => 'Search History...';
@@ -6532,6 +6609,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get timesheetTitle => 'Timesheet';
 
   @override
+  String get timesheetExportFailed => 'Failed to export timesheet';
+
+  @override
+  String timesheetExportSuccess(String path) {
+    return 'Exported timesheet: $path';
+  }
+
+  @override
   String get timestampLabel => 'Timestamp';
 
   @override
@@ -6955,6 +7040,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get videoType => 'Video';
+
+  @override
+  String get viewAction => 'View';
 
   @override
   String get viewAll => 'View All';
