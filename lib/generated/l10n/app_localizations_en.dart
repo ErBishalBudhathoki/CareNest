@@ -1103,6 +1103,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clearPriceHistoryDesc => 'Remove all historical pricing data';
 
   @override
+  String get clearSearch => 'Clear search';
+
+  @override
   String get client => 'Client';
 
   @override
@@ -3995,6 +3998,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nextShiftCaps => 'NEXT SHIFT';
 
   @override
+  String get nextWeek => 'Next week';
+
+  @override
   String get nightShiftLabel => 'Night Shift';
 
   @override
@@ -4843,6 +4849,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get preflightSuccess =>
       'All selected NDIS items have configured base service rates.';
+
+  @override
+  String get previousWeek => 'Previous week';
 
   @override
   String get priceAdjustmentSubtitle => 'Apply percentage increases/decreases';

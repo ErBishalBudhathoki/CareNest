@@ -2158,6 +2158,12 @@ abstract class AppLocalizations {
   /// **'Remove all historical pricing data'**
   String get clearPriceHistoryDesc;
 
+  /// No description provided for @clearSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get clearSearch;
+
   /// No description provided for @client.
   ///
   /// In en, this message translates to:
@@ -7306,6 +7312,12 @@ abstract class AppLocalizations {
   /// **'NEXT SHIFT'**
   String get nextShiftCaps;
 
+  /// No description provided for @nextWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Next week'**
+  String get nextWeek;
+
   /// No description provided for @nightShiftLabel.
   ///
   /// In en, this message translates to:
@@ -8871,6 +8883,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All selected NDIS items have configured base service rates.'**
   String get preflightSuccess;
+
+  /// No description provided for @previousWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous week'**
+  String get previousWeek;
 
   /// No description provided for @priceAdjustmentSubtitle.
   ///
