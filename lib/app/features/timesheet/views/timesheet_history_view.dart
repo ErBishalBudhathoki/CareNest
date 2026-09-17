@@ -75,7 +75,10 @@ class TimesheetHistoryView extends ConsumerWidget {
               final weekEnd = weekStart.add(const Duration(days: 6));
 
               // Check if we should insert a month header
-              final monthYear = DateFormat('MMMM yyyy').format(weekStart);
+              final monthYear = DateFormat(
+                'MMMM yyyy',
+                AppLocalizations.of(context)!.localeName,
+              ).format(weekStart);
               if (monthYear != lastMonthYear) {
                 lastMonthYear = monthYear;
                 items.add(_buildMonthHeader(context, monthYear));
@@ -226,8 +229,9 @@ class TimesheetHistoryView extends ConsumerWidget {
     DateTime end,
     List<TimesheetEntry> entries,
   ) {
-    final dateFormat = DateFormat('MMM dd');
-    final yearFormat = DateFormat('yyyy');
+    final locale = AppLocalizations.of(context)!.localeName;
+    final dateFormat = DateFormat('MMM dd', locale);
+    final yearFormat = DateFormat('yyyy', locale);
 
     // Group entries by weekday to show in the timeline
     final List<List<TimesheetEntry>> dayEntries = List.generate(7, (i) => []);
@@ -515,8 +519,11 @@ class TimesheetHistoryView extends ConsumerWidget {
         entry.workDate ??
         (entry.shiftDate != null ? DateTime.tryParse(entry.shiftDate!) : null);
     final entryDateStr = entryDate != null
-        ? DateFormat('EEE, MMM dd').format(entryDate)
-        : 'Unknown Date';
+        ? DateFormat(
+            'EEE, MMM dd',
+            AppLocalizations.of(context)!.localeName,
+          ).format(entryDate)
+        : AppLocalizations.of(context)!.unknownDate;
 
     final startTime = entry.shiftStartTime ?? '00:00';
     final endTime = entry.shiftEndTime ?? '00:00';

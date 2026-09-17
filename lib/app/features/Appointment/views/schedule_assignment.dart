@@ -749,7 +749,10 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                   ),
                   Text(
                     AppLocalizations.of(context)!.addedOn(
-                      DateFormat('MMM d, yyyy').format(DateTime.now()),
+                      DateFormat(
+                        'MMM d, yyyy',
+                        AppLocalizations.of(context)!.localeName,
+                      ).format(DateTime.now()),
                     ),
                     style: BauhausDesign.getTextTheme(
                       context,
@@ -804,6 +807,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
             label: AppLocalizations.of(context)!.appointmentDateLabel,
             value: DateFormat(
               'EEEE, MMMM d, y',
+              AppLocalizations.of(context)!.localeName,
             ).format(DateFormat('yyyy-MM-dd').parse(dateList[index])),
             iconColor: BauhausDesign.primary,
             backgroundColor: BauhausDesign.primary.withValues(alpha: 0.1),
@@ -1400,7 +1404,10 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
               child: Text(
                 _isVisibleDate
                     ? AppLocalizations.of(context)!.selectDate
-                    : DateFormat('MMM dd, yyyy').format(_focusedDay),
+                    : DateFormat(
+                        'MMM dd, yyyy',
+                        AppLocalizations.of(context)!.localeName,
+                      ).format(_focusedDay),
                 style: BauhausDesign.getTextTheme(
                   context,
                 ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
