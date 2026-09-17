@@ -91,7 +91,6 @@ class _WaveAnimationState extends State<WaveAnimation>
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return AnimatedBuilder(
       animation: animationController,
       builder: (context, _) {
