@@ -1,5 +1,7 @@
-// Theme Providers - App theming and visual customization
-// Contains providers for theme management including dark mode support.
+// Theme Providers - App theming and visual customization.
+// The app follows a single neo-brutalist Bauhaus light theme and does not
+// currently support light/dark switching. All providers below are pinned to
+// the light theme so the OS dark mode can never leak into the UI.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,37 +15,27 @@ class ThemeModeNotifier extends Notifier<ThemeMode> {
 
   @override
   ThemeMode build() {
-    _loadTheme();
-    return ThemeMode.system;
+    _migrateLegacyPreference();
+    return ThemeMode.light;
   }
 
-  Future<void> _loadTheme() async {
+  /// One-way migration: any stored 'dark'/'system' preference from before the
+  /// light-only lock is normalized to 'light' so it can never restore dark.
+  Future<void> _migrateLegacyPreference() async {
     await _prefs.init();
     final pref = _prefs.getThemePreference();
-    if (pref == 'dark') {
-      state = ThemeMode.dark;
-    } else if (pref == 'light') {
-      state = ThemeMode.light;
-    } else {
-      state = ThemeMode.system;
+    if (pref != 'light') {
+      await _prefs.saveThemePreference('light');
     }
+    // Keep state pinned even if the stored value was dark/system.
+    state = ThemeMode.light;
   }
 
+  /// Kept for API compatibility (e.g. ThemeSettingsView). Any requested mode
+  /// resolves to light; the stored preference is normalized to 'light'.
   Future<void> setMode(ThemeMode mode) async {
-    state = mode;
-    String prefString = 'system';
-    switch (mode) {
-      case ThemeMode.light:
-        prefString = 'light';
-        break;
-      case ThemeMode.dark:
-        prefString = 'dark';
-        break;
-      case ThemeMode.system:
-        prefString = 'system';
-        break;
-    }
-    await _prefs.saveThemePreference(prefString);
+    state = ThemeMode.light;
+    await _prefs.saveThemePreference('light');
   }
 }
 
@@ -53,26 +45,14 @@ final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(
 
 // ==================== THEME DATA PROVIDER ====================
 
-// Returns the actual ThemeData based on current mode and system brightness
+// Always returns the single Bauhaus light theme, regardless of OS brightness.
 final themeProvider = Provider<ThemeData>((ref) {
-  final mode = ref.watch(themeModeProvider);
-
-  switch (mode) {
-    case ThemeMode.light:
-      return AppThemeConfig.lightTheme;
-    case ThemeMode.dark:
-      return AppThemeConfig.darkTheme;
-    case ThemeMode.system:
-      final brightness =
-          WidgetsBinding.instance.platformDispatcher.platformBrightness;
-      return brightness == Brightness.dark
-          ? AppThemeConfig.darkTheme
-          : AppThemeConfig.lightTheme;
-  }
+  ref.watch(themeModeProvider);
+  return AppThemeConfig.lightTheme;
 });
 
-// Derived provider for dark mode status
+// Derived provider for dark mode status — always false (light-only app).
 final isDarkModeProvider = Provider<bool>((ref) {
-  final theme = ref.watch(themeProvider);
-  return theme.brightness == Brightness.dark;
+  ref.watch(themeModeProvider);
+  return false;
 });
