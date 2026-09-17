@@ -198,20 +198,23 @@ class _LoginViewState extends ConsumerState<LoginView>
       decoration: BauhausDesign.cardDecoration,
       child: Form(
         key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Enhanced email field
-            BauhausTextField(
-              controller: loginViewModel.model.emailController,
-              label: AppLocalizations.of(context)!.emailLabel,
-              hintText: AppLocalizations.of(context)!.emailHint,
-              prefixIcon: Icon(
-                Iconsax.sms,
-                color: BauhausDesign.textMuted,
-                size: 20,
-              ),
-              keyboardType: TextInputType.emailAddress,
+        child: AutofillGroup(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Enhanced email field
+              BauhausTextField(
+                controller: loginViewModel.model.emailController,
+                label: AppLocalizations.of(context)!.emailLabel,
+                hintText: AppLocalizations.of(context)!.emailHint,
+                prefixIcon: Icon(
+                  Iconsax.sms,
+                  color: BauhausDesign.textMuted,
+                  size: 20,
+                ),
+                keyboardType: TextInputType.emailAddress,
+                autofillHints: const [AutofillHints.email],
+                textInputAction: TextInputAction.next,
               validator: (value) {
                 if (value?.isEmpty ?? true) {
                   return AppLocalizations.of(context)!.emailRequired;
@@ -245,6 +248,8 @@ class _LoginViewState extends ConsumerState<LoginView>
                     size: 20,
                   ),
                   obscureText: !viewModel.model.isVisible,
+                  autofillHints: const [AutofillHints.password],
+                  textInputAction: TextInputAction.done,
                   suffixIcon: IconButton(
                     icon: Icon(
                       viewModel.model.isVisible
@@ -367,7 +372,8 @@ class _LoginViewState extends ConsumerState<LoginView>
 
             // Trust footer
             _buildTrustFooter(isSmallScreen),
-          ],
+            ],
+          ),
         ),
       ),
     );
