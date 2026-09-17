@@ -4,6 +4,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/features/care_intelligence/viewmodels/behavior_support_viewmodel.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
+import 'package:carenest/app/features/care_intelligence/views/incident_management_view.dart';
 
 class BehaviorSupportView extends ConsumerStatefulWidget {
   const BehaviorSupportView({super.key});
@@ -90,7 +91,15 @@ class _BehaviorSupportViewState extends ConsumerState<BehaviorSupportView> {
                   SizedBox(
                     width: double.infinity,
                     child: BauhausActionButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const IncidentManagementView(),
+                          ),
+                        );
+                      },
                       text: 'LOG NEW BEHAVIOR',
                       variant: BauhausActionVariant.primary,
                       isFullWidth: true,
