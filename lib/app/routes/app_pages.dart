@@ -22,7 +22,6 @@ import 'package:carenest/app/features/client/views/client_list_view.dart';
 import 'package:carenest/app/features/client_portal/views/client_dashboard_view.dart';
 import 'package:carenest/app/features/analytics/views/enhanced_predictive_insights_view.dart';
 import 'package:carenest/app/features/notifications/views/notification_settings_view.dart';
-import 'package:carenest/app/features/bulk_actions/views/bulk_actions_view.dart';
 import 'package:carenest/app/features/scheduling/views/shift_matching_view.dart';
 import 'package:carenest/app/features/scheduling/views/auto_schedule_dashboard.dart';
 import 'package:carenest/app/features/invoice/views/invoice_ai_consent_view.dart';
@@ -79,7 +78,6 @@ class AppPages {
     // Phase 1 Views
     const EnhancedPredictiveInsightsView(),
     const NotificationSettingsView(),
-    const BulkActionsView(),
     // Phase 2 Views
     const ShiftMatchingView(),
     const AutoScheduleDashboard(),
