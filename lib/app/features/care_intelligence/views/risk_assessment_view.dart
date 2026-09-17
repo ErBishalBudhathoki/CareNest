@@ -4,6 +4,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/features/care_intelligence/viewmodels/risk_prediction_viewmodel.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
+import 'package:carenest/app/features/care_intelligence/views/care_plan_builder_view.dart';
 
 class RiskAssessmentView extends ConsumerStatefulWidget {
   const RiskAssessmentView({super.key});
@@ -193,7 +194,14 @@ class _RiskAssessmentViewState extends ConsumerState<RiskAssessmentView> {
             ),
             const SizedBox(height: 16),
             BauhausActionButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CarePlanBuilderView(),
+                  ),
+                );
+              },
               text: 'VIEW MITIGATION PLAN',
               variant: BauhausActionVariant.warning,
               isSmall: true,

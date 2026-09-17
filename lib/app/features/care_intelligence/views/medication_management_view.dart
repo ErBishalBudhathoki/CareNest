@@ -4,6 +4,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/features/care_intelligence/viewmodels/medication_viewmodel.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class MedicationManagementView extends ConsumerStatefulWidget {
   const MedicationManagementView({super.key});
@@ -86,7 +87,9 @@ class _MedicationManagementViewState
                       icon: Icons.shield_outlined,
                     )
                   else
-                    ...state.alerts.map((alert) => _buildAlertCard(alert)),
+                    ...state.alerts.map(
+                      (alert) => _buildAlertCard(context, alert),
+                    ),
                   const SizedBox(height: 32),
                   BauhausSectionHeader(title: 'COMPLIANCE INSIGHTS'),
                   const SizedBox(height: 16),
@@ -138,7 +141,7 @@ class _MedicationManagementViewState
     );
   }
 
-  Widget _buildAlertCard(dynamic alert) {
+  Widget _buildAlertCard(BuildContext context, dynamic alert) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: BauhausCard(
@@ -154,7 +157,39 @@ class _MedicationManagementViewState
           subtitle: Text(alert.message ?? 'Details...'),
           trailing: BauhausIconButton(
             icon: Icons.info_outline,
-            onPressed: () {},
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (dialogContext) => AlertDialog(
+                  backgroundColor: BauhausDesign.surfaceWhite,
+                  title: Text(
+                    alert.title ?? 'Medication Alert',
+                    style: BauhausDesign.getTextTheme(
+                      dialogContext,
+                    ).titleLarge?.copyWith(color: BauhausDesign.textDark),
+                  ),
+                  content: Text(
+                    alert.message ?? 'Details...',
+                    style: BauhausDesign.getTextTheme(
+                      dialogContext,
+                    ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                      child: Text(
+                        AppLocalizations.of(
+                          dialogContext,
+                        )!.closeButton,
+                        style: BauhausDesign.getTextTheme(dialogContext)
+                            .labelLarge
+                            ?.copyWith(color: BauhausDesign.textMuted),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
             variant: BauhausActionVariant.warning,
             isSmall: true,
           ),

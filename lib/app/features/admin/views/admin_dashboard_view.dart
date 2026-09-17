@@ -59,7 +59,6 @@ import 'package:carenest/app/features/expenses/views/quick_expense_capture_view.
 import 'package:carenest/app/features/payroll/views/advanced_payroll_dashboard.dart';
 import 'package:carenest/app/features/communication/views/communication_hub_dashboard.dart';
 import 'package:carenest/app/features/realtime_portal/views/realtime_portal_dashboard.dart';
-import 'package:carenest/app/features/workforce_optimization/views/workforce_optimization_dashboard.dart';
 import 'package:carenest/app/features/care_intelligence/views/care_intelligence_dashboard.dart';
 import 'package:carenest/app/features/financial_intelligence/views/financial_intelligence_dashboard.dart';
 import 'package:carenest/config/environment.dart';
@@ -1507,18 +1506,6 @@ class _AdminDashboardViewControllerState
               context,
               MaterialPageRoute(
                 builder: (_) => const RealtimePortalDashboard(),
-              ),
-            ),
-          ),
-          CommandAction(
-            icon: const Icon(Icons.insights_rounded),
-            title: 'Workforce Optimization',
-            subtitle: 'AI planning & business intelligence',
-            color: BauhausDesign.secondary,
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const WorkforceOptimizationDashboard(),
               ),
             ),
           ),
