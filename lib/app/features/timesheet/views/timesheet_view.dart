@@ -63,6 +63,12 @@ class TimesheetView extends ConsumerWidget {
                 weekStart: weekStart,
                 weekEnd: weekEnd,
                 email: email,
+                onRefresh: () async {
+                  try {
+                    ref.invalidate(timesheetViewModelProvider(email));
+                    await ref.read(timesheetViewModelProvider(email).future);
+                  } catch (_) {}
+                },
                 onOpenHistory: () => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => TimesheetHistoryView(email: email),
@@ -229,6 +235,7 @@ class _TimesheetDataBody extends StatelessWidget {
   final DateTime weekEnd;
   final String email;
   final VoidCallback onOpenHistory;
+  final Future<void> Function() onRefresh;
 
   const _TimesheetDataBody({
     required this.entries,
@@ -236,6 +243,7 @@ class _TimesheetDataBody extends StatelessWidget {
     required this.weekEnd,
     required this.email,
     required this.onOpenHistory,
+    required this.onRefresh,
   });
 
   @override
@@ -244,8 +252,12 @@ class _TimesheetDataBody extends StatelessWidget {
     final weekTotals = _calculateWeekTotals(days);
     final hasAnyWork = days.any((d) => d.totalSeconds > 0);
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(BauhausDesign.space4),
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      color: BauhausDesign.primary,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(BauhausDesign.space4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -296,6 +308,7 @@ class _TimesheetDataBody extends StatelessWidget {
 
           const SizedBox(height: BauhausDesign.space4),
         ],
+        ),
       ),
     );
   }

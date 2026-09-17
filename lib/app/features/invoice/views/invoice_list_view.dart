@@ -55,6 +55,13 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
         .loadInvoices(widget.organizationId, invoiceType: invoiceType);
   }
 
+  Future<void> _refreshInvoices() async {
+    final invoiceType = _tabController.index == 0 ? 'client' : 'employee';
+    await ref
+        .read(invoiceListViewModelProvider.notifier)
+        .loadInvoices(widget.organizationId, invoiceType: invoiceType);
+  }
+
   @override
   void dispose() {
     _tabController.removeListener(_handleTabSelection);
@@ -279,9 +286,13 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
       );
     }
 
-    return ListView.separated(
-      controller: _scrollController,
-      padding: const EdgeInsets.all(BauhausDesign.space4),
+    return RefreshIndicator(
+      onRefresh: _refreshInvoices,
+      color: BauhausDesign.primary,
+      child: ListView.separated(
+        controller: _scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(BauhausDesign.space4),
       itemCount: filteredInvoices.length,
       separatorBuilder: (context, index) =>
           const SizedBox(height: BauhausDesign.space3),
@@ -289,6 +300,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
         final invoice = filteredInvoices[index];
         return _buildInvoiceCard(invoice, l10n);
       },
+      ),
     );
   }
 
