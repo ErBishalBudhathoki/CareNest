@@ -4184,6 +4184,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noMatchingRequestsMessage => 'Try adjusting your filters.';
 
   @override
+  String get noMatchingShifts => 'No matching shifts';
+
+  @override
+  String get noMatchingShiftsMessage => 'Try adjusting your search.';
+
+  @override
   String get noModulesFound => 'No modules found.';
 
   @override
@@ -5513,6 +5519,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewedByLabel => 'Reviewed by';
 
   @override
+  String get roleAdmin => 'Admin';
+
+  @override
+  String get roleEmployee => 'Employee';
+
+  @override
   String get roleManagementTitle => 'ROLE MANAGEMENT';
 
   @override
@@ -5684,6 +5696,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchServiceRatesHint => 'Search service rates...';
+
+  @override
+  String get searchShiftsHint => 'Search by employee or client...';
+
+  @override
+  String get searchTimesheetsHint => 'Search by client email...';
 
   @override
   String get searchValidationHint => 'Search validation results...';
@@ -6022,6 +6040,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sort => 'Sort';
+
+  @override
+  String get sortAZ => 'Name A–Z';
+
+  @override
+  String get sortNewest => 'Newest first';
+
+  @override
+  String get sortOldest => 'Oldest first';
+
+  @override
+  String get sortZA => 'Name Z–A';
 
   @override
   String get sourceClientSpecific => 'Client-specific custom price';

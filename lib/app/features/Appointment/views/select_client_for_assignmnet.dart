@@ -37,6 +37,7 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
   List<Patient> _filteredClients = [];
   List<Patient> _allClients = [];
   bool _isSearching = false;
+  bool _sortAscending = true;
 
   @override
   void initState() {
@@ -147,6 +148,17 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
                           ? _filteredClients
                           : _allClients;
 
+                      clientsToShow = [...clientsToShow]
+                        ..sort(
+                          (a, b) => _sortAscending
+                              ? a.displayName.toLowerCase().compareTo(
+                                  b.displayName.toLowerCase(),
+                                )
+                              : b.displayName.toLowerCase().compareTo(
+                                  a.displayName.toLowerCase(),
+                                ),
+                        );
+
                       if (clientsToShow.isEmpty && _isSearching) {
                         return _buildNoSearchResultsState();
                       }
@@ -197,46 +209,77 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
 
   /// Build search bar
   Widget _buildSearchBar() {
-    return Container(
-      margin: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
-        boxShadow: const [BauhausDesign.shadowSoft],
-      ),
-      child: TextField(
-        controller: _searchController,
-        onChanged: _filterClients,
-        decoration: InputDecoration(
-          hintText: 'Search clients...',
-          hintStyle: BauhausDesign.getTextTheme(
-            context,
-          ).bodyLarge?.copyWith(color: BauhausDesign.textMuted),
-          filled: false,
-          fillColor: Colors.transparent,
-          prefixIcon: Icon(Icons.search, color: BauhausDesign.textMuted),
-          suffixIcon: _isSearching
-              ? IconButton(
-                  icon: Icon(Icons.clear, color: BauhausDesign.textMuted),
-                  tooltip: AppLocalizations.of(context)!.clearSearch,
-                  onPressed: () {
-                    _searchController.clear();
-                    _filterClients('');
-                  },
-                )
-              : null,
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          errorBorder: InputBorder.none,
-          focusedErrorBorder: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: BauhausDesign.space4,
-            vertical: BauhausDesign.space4,
+    final l10n = AppLocalizations.of(context)!;
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            margin: const EdgeInsets.only(
+              left: BauhausDesign.space4,
+              top: BauhausDesign.space4,
+              bottom: BauhausDesign.space4,
+            ),
+            decoration: BoxDecoration(
+              color: BauhausDesign.surfaceWhite,
+              borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+              border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+              boxShadow: const [BauhausDesign.shadowSoft],
+            ),
+            child: TextField(
+              controller: _searchController,
+              onChanged: _filterClients,
+              decoration: InputDecoration(
+                hintText: 'Search clients...',
+                hintStyle: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyLarge?.copyWith(color: BauhausDesign.textMuted),
+                filled: false,
+                fillColor: Colors.transparent,
+                prefixIcon: Icon(Icons.search, color: BauhausDesign.textMuted),
+                suffixIcon: _isSearching
+                    ? IconButton(
+                        icon: Icon(Icons.clear, color: BauhausDesign.textMuted),
+                        tooltip: AppLocalizations.of(context)!.clearSearch,
+                        onPressed: () {
+                          _searchController.clear();
+                          _filterClients('');
+                        },
+                      )
+                    : null,
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: BauhausDesign.space4,
+                  vertical: BauhausDesign.space4,
+                ),
+              ),
+            ),
           ),
         ),
-      ),
+        Container(
+          margin: const EdgeInsets.only(
+            left: BauhausDesign.space2,
+            right: BauhausDesign.space4,
+            top: BauhausDesign.space4,
+            bottom: BauhausDesign.space4,
+          ),
+          decoration: BoxDecoration(
+            color: BauhausDesign.surfaceWhite,
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+            border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+            boxShadow: const [BauhausDesign.shadowSoft],
+          ),
+          child: IconButton(
+            icon: const Icon(Icons.sort_by_alpha),
+            color: BauhausDesign.textDark,
+            tooltip: _sortAscending ? l10n.sortAZ : l10n.sortZA,
+            onPressed: () => setState(() => _sortAscending = !_sortAscending),
+          ),
+        ),
+      ],
     );
   }
 

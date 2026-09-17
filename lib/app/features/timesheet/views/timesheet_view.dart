@@ -12,13 +12,28 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-class TimesheetView extends ConsumerWidget {
+class TimesheetView extends ConsumerStatefulWidget {
   final String email;
 
   const TimesheetView({super.key, required this.email});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TimesheetView> createState() => _TimesheetViewState();
+}
+
+class _TimesheetViewState extends ConsumerState<TimesheetView> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final email = widget.email;
     final weekStart = ref.watch(timesheetDateProvider);
     final weekEnd = weekStart.add(const Duration(days: 6));
     final entriesAsync = ref.watch(timesheetViewModelProvider(email));
@@ -50,6 +65,23 @@ class TimesheetView extends ConsumerWidget {
                   .setDate(DateTime(monday.year, monday.month, monday.day));
             },
           ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              BauhausDesign.space4,
+              BauhausDesign.space3,
+              BauhausDesign.space4,
+              0,
+            ),
+            child: BauhausSearchBar(
+              controller: _searchController,
+              hintText: AppLocalizations.of(context)!.searchTimesheetsHint,
+              onChanged: (value) => setState(() => _searchQuery = value.trim()),
+              onClear: () => setState(() {
+                _searchQuery = '';
+                _searchController.clear();
+              }),
+            ),
+          ),
           Expanded(
             child: entriesAsync.when(
               loading: () => const BauhausLoadingState(showMessage: false),
@@ -60,23 +92,34 @@ class TimesheetView extends ConsumerWidget {
                 onRetry: () =>
                     ref.invalidate(timesheetViewModelProvider(email)),
               ),
-              data: (entries) => _TimesheetDataBody(
-                entries: entries,
-                weekStart: weekStart,
-                weekEnd: weekEnd,
-                email: email,
-                onRefresh: () async {
-                  try {
-                    ref.invalidate(timesheetViewModelProvider(email));
-                    await ref.read(timesheetViewModelProvider(email).future);
-                  } catch (_) {}
-                },
-                onOpenHistory: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => TimesheetHistoryView(email: email),
+              data: (allEntries) {
+                final entries = _searchQuery.isEmpty
+                    ? allEntries
+                    : allEntries
+                          .where(
+                            (e) => (e.clientEmail ?? '').toLowerCase().contains(
+                              _searchQuery.toLowerCase(),
+                            ),
+                          )
+                          .toList();
+                return _TimesheetDataBody(
+                  entries: entries,
+                  weekStart: weekStart,
+                  weekEnd: weekEnd,
+                  email: email,
+                  onRefresh: () async {
+                    try {
+                      ref.invalidate(timesheetViewModelProvider(email));
+                      await ref.read(timesheetViewModelProvider(email).future);
+                    } catch (_) {}
+                  },
+                  onOpenHistory: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => TimesheetHistoryView(email: email),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
         ],

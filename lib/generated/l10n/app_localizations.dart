@@ -7654,6 +7654,18 @@ abstract class AppLocalizations {
   /// **'Try adjusting your filters.'**
   String get noMatchingRequestsMessage;
 
+  /// No description provided for @noMatchingShifts.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching shifts'**
+  String get noMatchingShifts;
+
+  /// No description provided for @noMatchingShiftsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your search.'**
+  String get noMatchingShiftsMessage;
+
   /// No description provided for @noModulesFound.
   ///
   /// In en, this message translates to:
@@ -10126,6 +10138,18 @@ abstract class AppLocalizations {
   /// **'Reviewed by'**
   String get reviewedByLabel;
 
+  /// No description provided for @roleAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin'**
+  String get roleAdmin;
+
+  /// No description provided for @roleEmployee.
+  ///
+  /// In en, this message translates to:
+  /// **'Employee'**
+  String get roleEmployee;
+
   /// No description provided for @roleManagementTitle.
   ///
   /// In en, this message translates to:
@@ -10443,6 +10467,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search service rates...'**
   String get searchServiceRatesHint;
+
+  /// No description provided for @searchShiftsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by employee or client...'**
+  String get searchShiftsHint;
+
+  /// No description provided for @searchTimesheetsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by client email...'**
+  String get searchTimesheetsHint;
 
   /// No description provided for @searchValidationHint.
   ///
@@ -11060,6 +11096,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sort'**
   String get sort;
+
+  /// No description provided for @sortAZ.
+  ///
+  /// In en, this message translates to:
+  /// **'Name A–Z'**
+  String get sortAZ;
+
+  /// No description provided for @sortNewest.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest first'**
+  String get sortNewest;
+
+  /// No description provided for @sortOldest.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest first'**
+  String get sortOldest;
+
+  /// No description provided for @sortZA.
+  ///
+  /// In en, this message translates to:
+  /// **'Name Z–A'**
+  String get sortZA;
 
   /// No description provided for @sourceClientSpecific.
   ///
