@@ -1550,21 +1550,70 @@ class EnhancedInvoiceService {
         for (int itemIndex = 0; itemIndex < lineItems.length; itemIndex++) {
           try {
             final item = lineItems[itemIndex] as Map<String, dynamic>;
-            final ndisItemNumber = item['ndisItemNumber'];
-            final price = (item['price'] is num)
-                ? (item['price'] as num).toDouble()
-                : 0.0;
+            final ndisItemNumber = item['ndisItemNumber'] ?? item['itemCode'];
+            var price = _asDouble(
+              item['price'] ?? item['rate'] ?? item['unitPrice'],
+            );
+            if (price <= 0 && ndisItemNumber != null) {
+              Map<String, dynamic>? pricing;
+              if (resolvedOrganizationId != null) {
+                try {
+                  pricing = await _apiMethod.getPricingLookup(
+                    resolvedOrganizationId,
+                    ndisItemNumber.toString(),
+                    clientId: clientId.toString(),
+                  );
+                } catch (_) {
+                  pricing = null;
+                }
+              }
+              pricing ??= bulkPricingData?[ndisItemNumber] is Map
+                  ? Map<String, dynamic>.from(bulkPricingData![ndisItemNumber])
+                  : null;
+              price = _asDouble(pricing?['customPrice']);
+              if (price <= 0) price = _asDouble(pricing?['price']);
+              if (price > 0) {
+                item.remove('region');
+                item['pricingMetadata'] = Map<String, dynamic>.from(pricing!);
+                if (pricing['region'] != null)
+                  item['region'] = pricing['region'];
+                item['pricingSource'] = pricing['source'];
+              } else {
+                // Leave genuinely missing prices missing: the prompt flow
+                // below resolves them (custom/base/standard) instead of
+                // silently inventing a fallback charge here.
+                item.remove('region');
+              }
+            }
+            final quantity = _asDouble(item['quantity'] ?? item['hours'] ?? 1);
+            item['price'] = price;
+            item['rate'] = price;
+            item['unitPrice'] = price;
+            item['quantity'] = quantity;
+            item['total'] = price * quantity;
+            item['amount'] = price * quantity;
+            item['id'] ??= 'client${clientIndex}_item$itemIndex';
 
             // Add to validation list if it has a price and NDIS item number
             if (ndisItemNumber != null && price > 0) {
               itemsToValidate.add({
+                ...item,
+                'id': item['id'],
                 'ndisItemNumber': ndisItemNumber,
                 'unitPrice': price,
-                'quantity': item['quantity'] is num
-                    ? (item['quantity'] as num).toDouble()
-                    : 1.0,
-                'description': item['description'] as String? ?? '',
+                'quantity': quantity,
+                'description': item['description'] ?? item['itemName'] ?? '',
                 'clientId': clientId,
+                if (item['serviceDate'] != null || item['date'] != null)
+                  'serviceDate':
+                      _tryParseDateFlexible(
+                        (item['serviceDate'] ?? item['date']).toString(),
+                      )?.toIso8601String() ??
+                      item['serviceDate'] ??
+                      item['date'],
+                if ((item['region'] ?? item['pricingMetadata']?['region']) !=
+                    null)
+                  'region': item['region'] ?? item['pricingMetadata']['region'],
               });
             }
           } catch (e) {
@@ -1587,12 +1636,27 @@ class EnhancedInvoiceService {
             );
 
             if (validationResult['success'] == true &&
-                validationResult['data'] != null &&
-                validationResult['data']['validationResults'] != null) {
-              // Process validation results
-              final validationResults =
-                  validationResult['data']['validationResults']
-                      as List<dynamic>;
+                validationResult['data'] != null) {
+              final validationData =
+                  validationResult['data'] as Map<String, dynamic>;
+              final rawResults =
+                  (validationData['results'] ??
+                          validationData['validationResults'])
+                      as List<dynamic>?;
+
+              // Backend echoes each row's requestId; map results by id so
+              // repeated item numbers never share a validation verdict.
+              final resultsById = <String, Map<String, dynamic>>{};
+              if (rawResults != null) {
+                for (final result in rawResults) {
+                  if (result is Map<String, dynamic>) {
+                    final id = result['requestId']?.toString();
+                    if (id != null && id.isNotEmpty) {
+                      resultsById[id] = result;
+                    }
+                  }
+                }
+              }
 
               // Update line items with validation information
               for (
@@ -1602,38 +1666,30 @@ class EnhancedInvoiceService {
               ) {
                 try {
                   final item = lineItems[itemIndex] as Map<String, dynamic>;
-                  final ndisItemNumber = item['ndisItemNumber'];
-                  if (ndisItemNumber == null) continue;
+                  final itemId = item['id']?.toString();
+                  if (itemId == null) continue;
 
-                  // Find matching validation result
-                  Map<String, dynamic>? matchingResult;
-                  try {
-                    for (final result in validationResults) {
-                      if (result is Map<String, dynamic> &&
-                          result['ndisItemNumber'] == ndisItemNumber) {
-                        matchingResult = result;
-                        break;
-                      }
-                    }
-                  } catch (e) {
-                    debugPrint('Error finding matching validation result: $e');
-                    matchingResult = null;
-                  }
-
+                  final matchingResult = resultsById[itemId];
                   if (matchingResult != null) {
+                    final isCompliant =
+                        matchingResult['isCompliant'] ??
+                        matchingResult['isValid'] ??
+                        true;
                     // Update item with validation information
-                    item['isCompliant'] = matchingResult['isCompliant'] ?? true;
+                    item['isCompliant'] = isCompliant;
                     item['priceCap'] = matchingResult['priceCap'];
-                    item['exceedsPriceCap'] =
-                        matchingResult['isCompliant'] == false;
+                    item['exceedsPriceCap'] = isCompliant == false;
                     item['complianceStatus'] =
-                        matchingResult['complianceStatus'] ?? 'unknown';
+                        matchingResult['complianceStatus'] ??
+                        matchingResult['status'] ??
+                        'unknown';
 
                     // Add validation metadata
-                    if (item['metadata'] == null) {
-                      item['metadata'] = {};
-                    }
-                    (item['metadata'] as Map<String, dynamic>)['validation'] = {
+                    final itemMetadata = item['metadata'] is Map
+                        ? Map<String, dynamic>.from(item['metadata'] as Map)
+                        : <String, dynamic>{};
+                    item['metadata'] = itemMetadata;
+                    itemMetadata['validation'] = {
                       'timestamp': DateTime.now().toIso8601String(),
                       'isValid': matchingResult['isValid'] ?? true,
                       'validationSource': 'price_validation_service',
@@ -1789,8 +1845,15 @@ class EnhancedInvoiceService {
               );
             }
 
-            // Apply custom pricing immediately if available
-            if (hasCustomPricing && customPrice != null) {
+            // Apply custom pricing immediately if available.
+            // Never overwrite an already-resolved client-specific price;
+            // organization-wide custom prices are lower precedence.
+            final resolvedSource =
+                (item['pricingMetadata']?['source'] ?? item['pricingSource'])
+                    ?.toString()
+                    .toLowerCase();
+            final isClientResolved = resolvedSource == 'client_specific';
+            if (hasCustomPricing && customPrice != null && !isClientResolved) {
               item['price'] = customPrice;
               item['pricingSource'] = l10n.sourceOrganizationWide;
               item['hasCustomPricing'] = true;
@@ -2020,15 +2083,30 @@ class EnhancedInvoiceService {
       }
     }
 
-    // Add validation errors to processedData metadata
+    // Add validation errors to processedData metadata.
+    // Guarded: some callers pass narrowly-typed maps whose reified value
+    // type rejects new keys; metadata recording must never abort the run.
     if (validationErrors.isNotEmpty) {
-      if (!processedData.containsKey('metadata')) {
-        processedData['metadata'] = {};
-      }
+      try {
+        final dynamic writable = processedData;
+        if (!writable.containsKey('metadata')) {
+          writable['metadata'] = <String, dynamic>{};
+        }
 
-      final metadata = processedData['metadata'] as Map<String, dynamic>;
-      metadata['validationErrors'] = validationErrors;
-      metadata['hasValidationErrors'] = true;
+        if (writable['metadata'] is! Map<String, dynamic>) {
+          writable['metadata'] = Map<String, dynamic>.from(
+            writable['metadata'] as Map,
+          );
+        }
+
+        final metadata = writable['metadata'] as Map<String, dynamic>;
+        metadata['validationErrors'] = validationErrors;
+        metadata['hasValidationErrors'] = true;
+      } catch (e) {
+        debugPrint(
+          'Enhanced Invoice Service: unable to record validation metadata: $e',
+        );
+      }
     }
 
     return missingPricePrompts;

@@ -5279,6 +5279,7 @@ class ApiMethod extends ChangeNotifier {
     String pricingType,
     String userEmail, {
     String? supportItemName,
+    String? region,
   }) async {
     try {
       final resolvedName =
@@ -5293,6 +5294,7 @@ class ApiMethod extends ChangeNotifier {
         'supportItemName': resolvedName,
         'customPrice': price,
         'pricingType': pricingType,
+        if (region != null) 'region': region,
         'userEmail': userEmail,
       };
       final sw = Stopwatch()..start();
@@ -5370,6 +5372,7 @@ class ApiMethod extends ChangeNotifier {
     String pricingType,
     String userEmail, {
     String? supportItemName,
+    String? region,
   }) async {
     try {
       final resolvedName =
@@ -5385,6 +5388,7 @@ class ApiMethod extends ChangeNotifier {
         'supportItemName': resolvedName,
         'customPrice': price,
         'pricingType': pricingType,
+        if (region != null) 'region': region,
         'userEmail': userEmail,
       };
       final sw = Stopwatch()..start();
@@ -5555,6 +5559,7 @@ class ApiMethod extends ChangeNotifier {
     double? multiplier,
     String? clientId,
     bool? clientSpecific,
+    String? region,
   }) async {
     try {
       final payload = <String, dynamic>{
@@ -5565,6 +5570,7 @@ class ApiMethod extends ChangeNotifier {
       if (supportItemName != null) payload['supportItemName'] = supportItemName;
       if (clientId != null) payload['clientId'] = clientId;
       if (clientSpecific != null) payload['clientSpecific'] = clientSpecific;
+      if (region != null) payload['region'] = region;
       if (pricingType == 'fixed') {
         payload['customPrice'] = price;
       } else if (pricingType == 'multiplier') {

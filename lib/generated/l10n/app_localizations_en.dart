@@ -9,6 +9,61 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get pricingNationalCap => 'National Cap';
+
+  @override
+  String get pricingRemoteCap => 'Remote Cap';
+
+  @override
+  String get pricingVeryRemoteCap => 'Very Remote Cap';
+
+  @override
+  String get pricingRegionLabel => 'Pricing region';
+
+  @override
+  String get pricingNationalRegion => 'National';
+
+  @override
+  String get pricingRemoteRegion => 'Remote';
+
+  @override
+  String get pricingVeryRemoteRegion => 'Very Remote';
+
+  @override
+  String get pricingCapUnavailable =>
+      'No cap is available for this region. Saving is unavailable.';
+
+  @override
+  String get pricingSaveDraftFirst =>
+      'Save or discard your price changes before selecting this item.';
+
+  @override
+  String get pricingCapsNotice =>
+      'Caps are limits, not charges. Charges use saved pricing or the organization base rate (default \$50).';
+
+  @override
+  String get pricingBaseRate => 'Base rate';
+
+  @override
+  String get pricingAllItems => 'All items';
+
+  @override
+  String get pricingAllRegions => 'All regions';
+
+  @override
+  String get pricingCustomRates => 'Custom rates';
+
+  @override
+  String get pricingShowLegacy => 'Show legacy catalogue items';
+
+  @override
+  String get pricingLegacyItem => 'Legacy catalogue item';
+
+  @override
+  String get pricingLoadFailed =>
+      'Pricing could not be loaded. Please try again.';
+
+  @override
   String get abnHint => 'ABN (11 digits)';
 
   @override
