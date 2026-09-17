@@ -42,12 +42,20 @@ class _ScheduleDashboardScreenState
   String? _error;
   DateTime _selectedDate = DateTime.now();
   String _selectedFilter = 'all'; // all, pending, approved, completed
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _api = ref.read(app_providers.apiMethodProvider);
     _loadShifts();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadShifts() async {
@@ -320,6 +328,23 @@ class _ScheduleDashboardScreenState
     return Column(
       children: [
         _buildWeekNavigator(),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            BauhausDesign.space4,
+            BauhausDesign.space3,
+            BauhausDesign.space4,
+            0,
+          ),
+          child: BauhausSearchBar(
+            controller: _searchController,
+            hintText: AppLocalizations.of(context)!.searchShiftsHint,
+            onChanged: (value) => setState(() => _searchQuery = value.trim()),
+            onClear: () => setState(() {
+              _searchQuery = '';
+              _searchController.clear();
+            }),
+          ),
+        ),
         Expanded(
           child: _shifts.isEmpty ? _buildEmptyState() : _buildShiftsList(),
         ),
@@ -396,14 +421,38 @@ class _ScheduleDashboardScreenState
   }
 
   Widget _buildShiftsList() {
+    // Text search across employee/client names and emails
+    final query = _searchQuery.toLowerCase();
+    final visibleShifts = query.isEmpty
+        ? _shifts
+        : _shifts.where((shift) {
+            return (shift.employeeName ?? '').toLowerCase().contains(query) ||
+                (shift.employeeEmail ?? '').toLowerCase().contains(query) ||
+                (shift.clientName ?? '').toLowerCase().contains(query) ||
+                (shift.clientEmail ?? '').toLowerCase().contains(query);
+          }).toList();
+
     // Group shifts by date
     final groupedShifts = <String, List<ShiftModel>>{};
-    for (final shift in _shifts) {
+    for (final shift in visibleShifts) {
       final dateKey = DateFormat('yyyy-MM-dd').format(shift.startTime);
       groupedShifts.putIfAbsent(dateKey, () => []).add(shift);
     }
 
     final sortedDates = groupedShifts.keys.toList()..sort();
+
+    if (sortedDates.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(BauhausDesign.space8),
+          child: BauhausEmptyState(
+            title: AppLocalizations.of(context)!.noMatchingShifts,
+            message: AppLocalizations.of(context)!.noMatchingShiftsMessage,
+            icon: Icons.search_off,
+          ),
+        ),
+      );
+    }
 
     return RefreshIndicator(
       onRefresh: _loadShifts,
