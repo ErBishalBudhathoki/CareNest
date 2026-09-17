@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class GenerateInvoice extends ConsumerStatefulWidget {
   final String adminEmail;
@@ -79,10 +80,10 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
       log.severe("GenerateInvoice: Initialization Error", e, s);
       if (mounted) {
         setState(() {
-          _statusMessage = 'Initialization Error. Please try again.';
+          _statusMessage = AppLocalizations.of(context)!.pdfInitFailed;
           _isLoading = false;
         });
-        _showErrorSnackBar('Initialization failed: ${e.toString()}');
+        _showErrorSnackBar(AppLocalizations.of(context)!.pdfInitFailed);
       }
     }
   }
@@ -231,8 +232,8 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
     } catch (e, s) {
       log.severe("Error in _startAdminInvoiceFlow", e, s);
       if (mounted) {
-        _statusMessage = 'An error occurred during invoice setup.';
-        _showErrorSnackBar('Operation failed: ${e.toString()}');
+        _statusMessage = AppLocalizations.of(context)!.pdfSetupFailed;
+        _showErrorSnackBar(AppLocalizations.of(context)!.pdfSetupFailed);
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -446,7 +447,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
           _apiHolidays = [];
           if (mounted) {
             _showErrorSnackBar(
-              'Could not fetch holiday data. Proceeding without it.',
+              AppLocalizations.of(context)!.pdfHolidaysUnavailable,
             );
           }
         }
@@ -456,7 +457,11 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
       }
 
       if (!mounted) return;
-      setState(() => _statusMessage = 'Generating invoice lines...');
+      setState(
+        () => _statusMessage = AppLocalizations.of(
+          context,
+        )!.pdfGeneratingLines,
+      );
       log.info("Status: Generating invoice lines...");
 
       final workedDates = workedTimes
@@ -832,15 +837,16 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
         } else if (generatedItems.isEmpty && workedTimes.isEmpty) {
           _statusMessage = "No worked time data to generate line items from.";
         } else if (generatedItems.isNotEmpty) {
-          _statusMessage =
-              "${generatedItems.length} line item(s) generated. Review and proceed.";
+          _statusMessage = AppLocalizations.of(
+            context,
+          )!.pdfLinesGenerated(generatedItems.length.toString());
         }
       });
     } catch (e, s) {
       log.severe("Error in _generateDataForPair", e, s);
       if (mounted) {
-        _statusMessage = 'Error processing shift data.';
-        _showErrorSnackBar('Failed to process shifts: ${e.toString()}');
+        _statusMessage = AppLocalizations.of(context)!.pdfShiftsFailed;
+        _showErrorSnackBar(AppLocalizations.of(context)!.pdfShiftsFailed);
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -873,7 +879,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
   Future<void> _generateAndShowPdf() async {
     if (_lineItems.isEmpty) {
       log.info("Attempted to generate PDF with no line items.");
-      _showErrorSnackBar('No line items available to generate PDF.');
+      _showErrorSnackBar(AppLocalizations.of(context)!.pdfNoLineItems);
       return;
     }
     if (!mounted) return;
@@ -921,7 +927,9 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
         log.info("PDF generated successfully at $_pdfPath");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Invoice PDF generated! Tap again to view.'),
+            content: Text(
+              AppLocalizations.of(context)!.pdfGeneratedTapToView,
+            ),
             backgroundColor: BauhausDesign.success,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -933,20 +941,24 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
         );
       } else {
         setState(() {
-          _statusMessage = 'PDF generation returned no paths.';
+          _statusMessage = AppLocalizations.of(context)!.pdfNoFile;
           _isLoading = false;
         });
         log.warning("PDF generation returned empty list.");
-        _showErrorSnackBar('PDF generation failed or yielded no file.');
+        _showErrorSnackBar(AppLocalizations.of(context)!.pdfNoFile);
       }
     } catch (e, s) {
       log.severe("Error generating PDF", e, s);
       if (mounted) {
         setState(() {
-          _statusMessage = 'Error generating PDF.';
+          _statusMessage = AppLocalizations.of(
+            context,
+          )!.pdfGenerationFailed;
           _isLoading = false;
         });
-        _showErrorSnackBar('Error generating PDF: ${e.toString()}');
+        _showErrorSnackBar(
+          AppLocalizations.of(context)!.pdfGenerationFailed,
+        );
       }
     }
   }
