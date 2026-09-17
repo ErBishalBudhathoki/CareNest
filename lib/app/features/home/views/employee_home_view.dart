@@ -513,7 +513,16 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                             );
                           },
                           loading: () => _buildBauhausSkeleton(),
-                          error: (e, _) => Center(child: Text('Error: $e')),
+                          error: (e, _) => BauhausErrorState(
+                            title: AppLocalizations.of(
+                              context,
+                            )!.errorLoadingDashboard,
+                            message: e.toString(),
+                            retryText: AppLocalizations.of(context)!.retryButton,
+                            onRetry: () => ref
+                                .read(homeViewModelProvider.notifier)
+                                .loadDashboard(widget.email),
+                          ),
                         ),
                         const SizedBox(height: 48),
 

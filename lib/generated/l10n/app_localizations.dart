@@ -3910,6 +3910,12 @@ abstract class AppLocalizations {
   /// **'Error loading clients: {error}'**
   String errorLoadingClients(String error);
 
+  /// No description provided for @errorLoadingDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your dashboard'**
+  String get errorLoadingDashboard;
+
   /// No description provided for @errorLoadingEmployees.
   ///
   /// In en, this message translates to:
@@ -3939,6 +3945,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error loading recommendations: {error}'**
   String errorLoadingRecommendations(String error);
+
+  /// No description provided for @errorLoadingRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load request summary'**
+  String get errorLoadingRequests;
 
   /// No description provided for @errorLoadingRoles.
   ///

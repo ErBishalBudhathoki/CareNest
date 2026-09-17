@@ -2070,6 +2070,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get errorLoadingDashboard => 'Couldn\'t load your dashboard';
+
+  @override
   String get errorLoadingEmployees => 'Error Loading Employees';
 
   @override
@@ -2087,6 +2090,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String errorLoadingRecommendations(String error) {
     return 'Error loading recommendations: $error';
   }
+
+  @override
+  String get errorLoadingRequests => 'Couldn\'t load request summary';
 
   @override
   String get errorLoadingRoles => 'Error loading roles';
