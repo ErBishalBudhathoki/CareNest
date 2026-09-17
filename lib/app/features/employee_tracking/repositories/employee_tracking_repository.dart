@@ -561,34 +561,29 @@ class EmployeeTrackingRepository {
     return await getEmployeeTrackingData();
   }
 
-  /// Updates employee status (placeholder for future functionality)
-  /// TODO: Implement updateEmployeeStatus method in ApiMethod class
+  /// Updates employee status.
+  ///
+  /// NOT YET IMPLEMENTED: there is no backend endpoint for this (see
+  /// backend/employee_tracking_endpoint.js). This throws instead of
+  /// pretending success so no caller can mistake it for a real update.
+  /// TODO(backend): add PUT /employees/:id/status, then implement the
+  /// ApiMethod call here and remove this throw.
   Future<bool> updateEmployeeStatus(
     String employeeId,
     WorkStatus status,
   ) async {
-    try {
-      final sharedPrefs = SharedPreferencesUtils();
-      await sharedPrefs.init();
-      final organizationId = sharedPrefs.getString('organizationId');
+    final sharedPrefs = SharedPreferencesUtils();
+    await sharedPrefs.init();
+    final organizationId = sharedPrefs.getString('organizationId');
 
-      if (organizationId == null || organizationId.isEmpty) {
-        throw Exception('Organization ID not found');
-      }
-
-      // TODO: Implement the actual API call once the backend endpoint is ready
-      // For now, return true as a placeholder
-      debugPrint(
-        'updateEmployeeStatus called for employee: $employeeId, status: ${status.name}',
-      );
-      debugPrint('Organization ID: $organizationId');
-
-      // Simulate successful update
-      await Future.delayed(const Duration(milliseconds: 500));
-      return true;
-    } catch (e) {
-      throw Exception('Error updating employee status: ${e.toString()}');
+    if (organizationId == null || organizationId.isEmpty) {
+      throw Exception('Organization ID not found');
     }
+
+    throw UnimplementedError(
+      'updateEmployeeStatus has no backend endpoint yet '
+      '(employee: $employeeId, status: ${status.name})',
+    );
   }
 
   /// Gets real-time employee location updates (placeholder for future implementation)
