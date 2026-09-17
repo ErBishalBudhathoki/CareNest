@@ -174,8 +174,14 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
       );
     }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(BauhausDesign.space4),
+    return RefreshIndicator(
+      onRefresh: () => ref
+          .read(invoiceDetailViewModelProvider.notifier)
+          .loadInvoiceDetails(widget.invoiceId, widget.organizationId),
+      color: BauhausDesign.primary,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(BauhausDesign.space4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -213,6 +219,7 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
           // Add extra padding at bottom
           const SizedBox(height: BauhausDesign.space12),
         ],
+        ),
       ),
     );
   }
