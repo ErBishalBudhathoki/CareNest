@@ -54,8 +54,10 @@ class ScheduleAssignment extends ConsumerStatefulWidget {
 
 class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
   late DateTime _focusedDay = DateTime.now();
-  TimeOfDay _focusedTime = TimeOfDay.now();
-  TimeOfDay _focusedTime1 = TimeOfDay.now();
+  // Sensible shift defaults (09:00–17:00) so the form starts valid;
+  // explicit initial times still override these in initState.
+  TimeOfDay _focusedTime = const TimeOfDay(hour: 9, minute: 0);
+  TimeOfDay _focusedTime1 = const TimeOfDay(hour: 17, minute: 0);
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(
     debugLabel: 'time_date_picker_scaffold_key',
   );
@@ -500,6 +502,33 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
       }
     }
 
+    return null;
+  }
+
+  /// Inline validation for the currently picked time range, shown
+  /// directly under the time selectors so mistakes surface immediately.
+  String? _currentTimeRangeError() {
+    final start = DateTime(
+      _focusedDay.year,
+      _focusedDay.month,
+      _focusedDay.day,
+      _focusedTime.hour,
+      _focusedTime.minute,
+    );
+    final rawEnd = DateTime(
+      _focusedDay.year,
+      _focusedDay.month,
+      _focusedDay.day,
+      _focusedTime1.hour,
+      _focusedTime1.minute,
+    );
+    final end = _normalizeEndDateTime(start, rawEnd);
+    if (!end.isAfter(start)) {
+      return AppLocalizations.of(context)!.startBeforeEnd;
+    }
+    if (end.difference(start).inMinutes < 30) {
+      return AppLocalizations.of(context)!.minimumDuration30;
+    }
     return null;
   }
 
@@ -1054,9 +1083,10 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
 
   void _showTimePicker(bool isStartTime) {
     _clearValidationErrors();
-    showBauhausTimePicker(context: context, initialTime: TimeOfDay.now()).then((
-      value,
-    ) {
+    showBauhausTimePicker(
+      context: context,
+      initialTime: isStartTime ? _focusedTime : _focusedTime1,
+    ).then((value) {
       if (value != null) {
         setState(() {
           if (isStartTime) {
@@ -1292,6 +1322,32 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                 ),
               ),
             ],
+          ),
+          Builder(
+            builder: (context) {
+              final timeError = _currentTimeRangeError();
+              if (timeError == null) return const SizedBox.shrink();
+              return Padding(
+                padding: const EdgeInsets.only(top: BauhausDesign.space2),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 16,
+                      color: BauhausDesign.error,
+                    ),
+                    const SizedBox(width: BauhausDesign.space1),
+                    Expanded(
+                      child: Text(
+                        timeError,
+                        style: BauhausDesign.getTextTheme(context).bodySmall
+                            ?.copyWith(color: BauhausDesign.error),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
           const SizedBox(height: BauhausDesign.space4),
           _buildBreakSelector(),
