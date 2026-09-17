@@ -1306,6 +1306,12 @@ abstract class AppLocalizations {
   /// **'Attached Files'**
   String get attachedFilesLabel;
 
+  /// No description provided for @attachmentRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Attachment removed'**
+  String get attachmentRemoved;
+
   /// No description provided for @attachmentsTitle.
   ///
   /// In en, this message translates to:
@@ -12302,6 +12308,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unblock this IP'**
   String get unblockThisIp;
+
+  /// No description provided for @undo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undo;
 
   /// No description provided for @unit.
   ///
