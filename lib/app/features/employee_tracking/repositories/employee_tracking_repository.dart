@@ -563,11 +563,21 @@ class EmployeeTrackingRepository {
 
   /// Updates employee status.
   ///
-  /// NOT YET IMPLEMENTED: there is no backend endpoint for this (see
+  /// NOT YET IMPLEMENTED: there is no stored work-status field (User and
+  /// Employee schemas have none; tracking status is derived from
+  /// timers/sessions) and no backend endpoint (see
   /// backend/employee_tracking_endpoint.js). This throws instead of
   /// pretending success so no caller can mistake it for a real update.
-  /// TODO(backend): add PUT /employees/:id/status, then implement the
-  /// ApiMethod call here and remove this throw.
+  ///
+  /// TODO(backend, separate cycle): full design is
+  /// 1. Add `workStatus` String field (enum active|on_break|offline|
+  ///    clocked_out, default active) to the User schema.
+  /// 2. Add admin-gated `PUT /api/employee-tracking/:organizationId/status`
+  ///    route + controller updating that field.
+  /// 3. Merge the stored value into the derived status in
+  ///    employeeTrackingService.getEmployeeTrackingData.
+  /// 4. Add ApiMethod.updateEmployeeStatus, then implement this method
+  ///    and remove the throw. Verified: nothing in the app calls this yet.
   Future<bool> updateEmployeeStatus(
     String employeeId,
     WorkStatus status,
