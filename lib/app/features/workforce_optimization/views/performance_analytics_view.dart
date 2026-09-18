@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/performance_analytics_viewmodel.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
+import 'package:carenest/app/features/workforce_optimization/utils/workforce_export_helper.dart';
 
 class PerformanceAnalyticsView extends ConsumerStatefulWidget {
   const PerformanceAnalyticsView({super.key});
@@ -449,9 +450,7 @@ class _PerformanceAnalyticsViewState
       children: [
         Expanded(
           child: ElevatedButton.icon(
-            onPressed: () {
-              // TODO: Implement detailed report
-            },
+            onPressed: () => _viewReport(),
             icon: const Icon(Icons.assessment),
             label: const Text('View Report'),
             style: ElevatedButton.styleFrom(
@@ -467,9 +466,7 @@ class _PerformanceAnalyticsViewState
         const SizedBox(width: 12),
         Expanded(
           child: OutlinedButton.icon(
-            onPressed: () {
-              // TODO: Implement export
-            },
+            onPressed: () => _exportCsv(),
             icon: const Icon(Icons.download),
             label: const Text('Export'),
             style: OutlinedButton.styleFrom(
@@ -483,6 +480,76 @@ class _PerformanceAnalyticsViewState
           ),
         ),
       ],
+    );
+  }
+
+  Future<void> _viewReport() async {
+    final orgState = ref.read(organizationProvider);
+    final orgId = orgState.currentOrganization?.id;
+    if (orgId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Organization context is unavailable')),
+      );
+      return;
+    }
+    await ref
+        .read(performanceAnalyticsViewModelProvider.notifier)
+        .analyzePerformanceTrends(employeeId: 'all', organizationId: orgId);
+    if (!mounted) return;
+    final trends = ref.read(performanceAnalyticsViewModelProvider).trends;
+    final entries = trends?.entries
+        .map((e) => '${e.key}: ${e.value}')
+        .join('\n');
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Performance Trends'),
+        content: SingleChildScrollView(
+          child: Text(
+            (entries == null || entries.isEmpty)
+                ? 'No trend data returned.'
+                : entries,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _exportCsv() async {
+    final state = ref.read(performanceAnalyticsViewModelProvider);
+    final rows = state.analytics
+        .map(
+          (a) => [
+            a.employeeId,
+            a.employeeName,
+            a.score.toString(),
+            a.metrics.completionRate.toString(),
+            a.metrics.avgRating.toString(),
+          ],
+        )
+        .toList();
+    final csv = WorkforceExportHelper.toCsv(
+      const ['employee_id', 'name', 'score', 'completion_rate', 'avg_rating'],
+      rows,
+    );
+    final path = await WorkforceExportHelper.shareTextFile(
+      filename:
+          'performance-analytics-${WorkforceExportHelper.fileTimestamp()}.csv',
+      content: csv,
+    );
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          path == null ? 'Export failed' : 'Performance report exported',
+        ),
+      ),
     );
   }
 }

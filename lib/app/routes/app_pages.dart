@@ -35,6 +35,13 @@ import 'package:carenest/app/features/realtime_portal/views/live_tracking_view.d
 import 'package:carenest/app/features/realtime_portal/views/secure_messaging_view.dart';
 import 'package:carenest/app/features/realtime_portal/views/service_confirmation_view.dart';
 import 'package:carenest/app/features/realtime_portal/views/family_management_view.dart';
+import 'package:carenest/app/features/workforce_optimization/views/workforce_optimization_dashboard.dart';
+import 'package:carenest/app/features/workforce_optimization/views/workforce_planning_view.dart';
+import 'package:carenest/app/features/workforce_optimization/views/resource_allocation_view.dart';
+import 'package:carenest/app/features/workforce_optimization/views/performance_analytics_view.dart';
+import 'package:carenest/app/features/workforce_optimization/views/quality_assurance_view.dart';
+import 'package:carenest/app/features/workforce_optimization/views/business_intelligence_view.dart';
+import 'package:carenest/app/features/workforce_optimization/views/report_builder_view.dart';
 import 'package:carenest/app/features/care_intelligence/views/care_intelligence_dashboard.dart';
 import 'package:carenest/app/features/financial_intelligence/views/financial_intelligence_dashboard.dart';
 import 'package:carenest/app/features/voice_assistant/views/voice_assistant_view.dart';
@@ -91,8 +98,13 @@ class AppPages {
     const FamilyManagementView(),
 
     // Phase 8 - Workforce Optimization & Business Intelligence
-    // Hidden until backend wiring lands (module routes unregistered,
-    // actions unimplemented). Code retained in workforce_optimization/.
+    const WorkforceOptimizationDashboard(),
+    const WorkforcePlanningView(),
+    const ResourceAllocationView(),
+    const PerformanceAnalyticsView(),
+    const QualityAssuranceView(),
+    const BusinessIntelligenceView(),
+    const ReportBuilderView(),
 
     // Phase 9 - AI-Powered Care Intelligence & Risk Management
     const CareIntelligenceDashboard(),

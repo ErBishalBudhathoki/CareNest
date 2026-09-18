@@ -89,6 +89,12 @@ import 'package:carenest/app/features/voice_assistant/views/voice_assistant_view
 import 'package:carenest/app/features/worker/views/deprecated_worker_dashboard_view.dart';
 import 'package:carenest/app/features/worker/views/worker_shift_history_view.dart';
 import 'package:carenest/app/features/teams/views/team_dashboard_view.dart';
+import 'package:carenest/app/features/workforce_optimization/views/workforce_planning_view.dart';
+import 'package:carenest/app/features/workforce_optimization/views/resource_allocation_view.dart';
+import 'package:carenest/app/features/workforce_optimization/views/performance_analytics_view.dart';
+import 'package:carenest/app/features/workforce_optimization/views/quality_assurance_view.dart';
+import 'package:carenest/app/features/workforce_optimization/views/business_intelligence_view.dart';
+import 'package:carenest/app/features/workforce_optimization/views/report_builder_view.dart';
 // No, DeepLinkHandler imports it. main.dart imports DeepLinkHandler.
 // But we need to IMPORT it explicitly here to use it in MaterialApp.
 
@@ -844,6 +850,16 @@ class MyApp extends ConsumerWidget {
           Routes.workerShiftHistory: (context) =>
               const WorkerShiftHistoryView(),
           Routes.teamDashboard: (context) => const TeamDashboardView(),
+          // Workforce Optimization Routes
+          Routes.workforcePlanning: (context) => const WorkforcePlanningView(),
+          Routes.resourceAllocation: (context) =>
+              const ResourceAllocationView(),
+          Routes.performanceAnalytics: (context) =>
+              const PerformanceAnalyticsView(),
+          Routes.qualityAssurance: (context) => const QualityAssuranceView(),
+          Routes.businessIntelligence: (context) =>
+              const BusinessIntelligenceView(),
+          Routes.reportBuilder: (context) => const ReportBuilderView(),
         },
       ),
     );

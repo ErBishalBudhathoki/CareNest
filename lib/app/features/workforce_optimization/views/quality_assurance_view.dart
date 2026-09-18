@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/quality_assurance_viewmodel.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
+import 'package:carenest/app/features/workforce_optimization/utils/workforce_export_helper.dart';
 
 class QualityAssuranceView extends ConsumerStatefulWidget {
   const QualityAssuranceView({super.key});
@@ -465,7 +466,19 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
         Expanded(
           child: ElevatedButton.icon(
             onPressed: () {
-              // TODO: Implement audit
+              final orgState = ref.read(organizationProvider);
+              final orgId = orgState.currentOrganization?.id;
+              if (orgId == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Organization context is unavailable'),
+                  ),
+                );
+                return;
+              }
+              ref
+                  .read(qualityAssuranceViewModelProvider.notifier)
+                  .performComplianceCheck(organizationId: orgId);
             },
             icon: const Icon(Icons.fact_check),
             label: const Text('Run Audit'),
@@ -482,9 +495,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
         const SizedBox(width: 12),
         Expanded(
           child: OutlinedButton.icon(
-            onPressed: () {
-              // TODO: Implement export
-            },
+            onPressed: () => _exportCsv(),
             icon: const Icon(Icons.download),
             label: const Text('Export'),
             style: OutlinedButton.styleFrom(
@@ -498,6 +509,55 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
           ),
         ),
       ],
+    );
+  }
+
+  Future<void> _exportCsv() async {
+    final state = ref.read(qualityAssuranceViewModelProvider);
+    final rows = <List<String>>[];
+    final score = state.qualityScore;
+    if (score != null) {
+      rows.add([
+        'quality_score',
+        score.appointmentId,
+        score.overallScore.toString(),
+        score.grade,
+      ]);
+    }
+    for (final check in state.complianceChecks) {
+      rows.add([
+        'compliance',
+        check.appointmentId,
+        check.compliant.toString(),
+        check.riskLevel,
+      ]);
+    }
+    for (final risk in state.riskAssessments) {
+      rows.add([
+        'risk',
+        risk.appointmentId,
+        risk.riskScore.toString(),
+        risk.riskLevel,
+      ]);
+    }
+    final csv = WorkforceExportHelper.toCsv(const [
+      'section',
+      'reference',
+      'value',
+      'detail',
+    ], rows);
+    final path = await WorkforceExportHelper.shareTextFile(
+      filename:
+          'quality-assurance-${WorkforceExportHelper.fileTimestamp()}.csv',
+      content: csv,
+    );
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          path == null ? 'Export failed' : 'Quality report exported',
+        ),
+      ),
     );
   }
 }

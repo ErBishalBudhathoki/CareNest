@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/business_intelligence_viewmodel.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
+import 'package:carenest/app/features/workforce_optimization/utils/workforce_export_helper.dart';
 
 class BusinessIntelligenceView extends ConsumerStatefulWidget {
   const BusinessIntelligenceView({super.key});
@@ -119,7 +120,10 @@ class _BusinessIntelligenceViewState
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.colorPink, AppColors.colorPink.withValues(alpha: 0.8)],
+          colors: [
+            AppColors.colorPink,
+            AppColors.colorPink.withValues(alpha: 0.8),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -556,9 +560,7 @@ class _BusinessIntelligenceViewState
       children: [
         Expanded(
           child: ElevatedButton.icon(
-            onPressed: () {
-              // TODO: Implement scenario planning
-            },
+            onPressed: () => _runWhatIf(),
             icon: const Icon(Icons.analytics),
             label: const Text('What-If'),
             style: ElevatedButton.styleFrom(
@@ -574,9 +576,7 @@ class _BusinessIntelligenceViewState
         const SizedBox(width: 12),
         Expanded(
           child: OutlinedButton.icon(
-            onPressed: () {
-              // TODO: Implement export
-            },
+            onPressed: () => _exportCsv(),
             icon: const Icon(Icons.download),
             label: const Text('Export'),
             style: OutlinedButton.styleFrom(
@@ -590,6 +590,104 @@ class _BusinessIntelligenceViewState
           ),
         ),
       ],
+    );
+  }
+
+  /// Runs a baseline-growth what-if scenario and shows the outcome.
+  Future<void> _runWhatIf() async {
+    final orgState = ref.read(organizationProvider);
+    final orgId = orgState.currentOrganization?.id;
+    if (orgId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Organization context is unavailable')),
+      );
+      return;
+    }
+    await ref
+        .read(businessIntelligenceViewModelProvider.notifier)
+        .analyzeWhatIfScenario(
+          organizationId: orgId,
+          scenario: const {
+            'name': 'Baseline growth (+10% demand, +1 worker)',
+            'changes': {
+              'appointmentGrowth': 0.1,
+              'additionalWorkers': 1,
+              'revenueGrowth': 0.1,
+            },
+          },
+        );
+    if (!mounted) return;
+    final scenario = ref
+        .read(businessIntelligenceViewModelProvider)
+        .whatIfScenario;
+    if (scenario == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Scenario analysis failed')));
+      return;
+    }
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(scenario.name),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Decision: ${scenario.recommendation.decision} '
+                '(${scenario.recommendation.confidence} confidence)',
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Revenue change: ${scenario.impact.revenueChange.toStringAsFixed(2)} '
+                '(${scenario.impact.revenueChangePercent})',
+              ),
+              const SizedBox(height: 8),
+              Text('Feasibility: ${scenario.feasibility.rating}'),
+              const SizedBox(height: 8),
+              Text(scenario.recommendation.reasoning),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _exportCsv() async {
+    final state = ref.read(businessIntelligenceViewModelProvider);
+    final rows = state.revenueForecast
+        .map(
+          (f) => [
+            f.period.toString(),
+            f.predicted.toString(),
+            f.lower.toString(),
+            f.upper.toString(),
+          ],
+        )
+        .toList();
+    final csv = WorkforceExportHelper.toCsv(const [
+      'period',
+      'predicted',
+      'lower',
+      'upper',
+    ], rows);
+    final path = await WorkforceExportHelper.shareTextFile(
+      filename: 'revenue-forecast-${WorkforceExportHelper.fileTimestamp()}.csv',
+      content: csv,
+    );
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(path == null ? 'Export failed' : 'Forecast exported'),
+      ),
     );
   }
 }

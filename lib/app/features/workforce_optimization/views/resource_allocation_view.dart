@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/resource_allocation_viewmodel.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
+import 'package:carenest/app/features/workforce_optimization/utils/workforce_export_helper.dart';
 
 class ResourceAllocationView extends ConsumerStatefulWidget {
   const ResourceAllocationView({super.key});
@@ -388,9 +389,7 @@ class _ResourceAllocationViewState
       children: [
         Expanded(
           child: ElevatedButton.icon(
-            onPressed: () {
-              // TODO: Implement optimization
-            },
+            onPressed: () => _optimize(),
             icon: const Icon(Icons.auto_fix_high),
             label: const Text('Optimize'),
             style: ElevatedButton.styleFrom(
@@ -406,9 +405,7 @@ class _ResourceAllocationViewState
         const SizedBox(width: 12),
         Expanded(
           child: OutlinedButton.icon(
-            onPressed: () {
-              // TODO: Implement export
-            },
+            onPressed: () => _exportCsv(),
             icon: const Icon(Icons.download),
             label: const Text('Export'),
             style: OutlinedButton.styleFrom(
@@ -422,6 +419,56 @@ class _ResourceAllocationViewState
           ),
         ),
       ],
+    );
+  }
+
+  /// Runs allocation optimization for today; results render via state.
+  Future<void> _optimize() async {
+    final orgState = ref.read(organizationProvider);
+    final orgId = orgState.currentOrganization?.id;
+    if (orgId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Organization context is unavailable')),
+      );
+      return;
+    }
+    final now = DateTime.now();
+    await ref
+        .read(resourceAllocationViewModelProvider.notifier)
+        .optimizeAllocation(
+          organizationId: orgId,
+          date: DateTime(now.year, now.month, now.day).toIso8601String(),
+        );
+  }
+
+  Future<void> _exportCsv() async {
+    final state = ref.read(resourceAllocationViewModelProvider);
+    final rows = state.allocations
+        .map(
+          (a) => [
+            a.appointmentId,
+            a.workerId,
+            a.score.toString(),
+            a.cost.toString(),
+          ],
+        )
+        .toList();
+    final csv = WorkforceExportHelper.toCsv(const [
+      'appointment_id',
+      'worker_id',
+      'score',
+      'cost',
+    ], rows);
+    final path = await WorkforceExportHelper.shareTextFile(
+      filename:
+          'resource-allocation-${WorkforceExportHelper.fileTimestamp()}.csv',
+      content: csv,
+    );
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(path == null ? 'Export failed' : 'Allocations exported'),
+      ),
     );
   }
 }
