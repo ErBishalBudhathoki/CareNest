@@ -84,9 +84,10 @@ class _OrganizationDetailsViewState
     WidgetsBinding.instance.addObserver(this);
     _api = ref.read(app_providers.apiMethodProvider);
     // Re-sync the role: the provider defaults to employee when local prefs
-    // are empty/stale (e.g. after an app update), which would hide the
-    // admin-only sections below. Cooldown + dedup make this cheap.
-    ref.read(app_providers.userRoleProvider.notifier).refreshRole();
+    // are empty/stale (e.g. cold start after an app update), which would
+    // hide the admin-only sections below. Cooldown + dedup make this cheap.
+    // syncOnViewOpen awaits prefs init first so the repair actually sticks.
+    ref.read(app_providers.userRoleProvider.notifier).syncOnViewOpen();
     if ((widget.organizationId ?? '').isNotEmpty) {
       _loadOrganization();
     }

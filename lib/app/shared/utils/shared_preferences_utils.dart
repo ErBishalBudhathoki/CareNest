@@ -87,6 +87,17 @@ class SharedPreferencesUtils {
     }
   }
 
+  /// Completes once SharedPreferences and the secure-storage token cache are
+  /// loaded. Providers that read synchronously in build() (e.g.
+  /// UserRoleNotifier) can await this to avoid acting on empty caches during
+  /// cold start. Never throws: init failures are logged inside init().
+  Future<void> get ready async {
+    if (_sharedPreferences != null) return;
+    try {
+      await init();
+    } catch (_) {}
+  }
+
   Future<void> setString(String key, String value) async {
     await _sharedPreferences?.setString(key, value);
   }
