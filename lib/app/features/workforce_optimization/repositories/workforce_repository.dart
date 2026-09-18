@@ -1,7 +1,8 @@
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/features/workforce_optimization/models/workforce_models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 final workforceRepositoryProvider = Provider<WorkforceRepository>((ref) {
   return WorkforceRepository(ref.watch(app_providers.apiMethodProvider));
@@ -11,6 +12,18 @@ class WorkforceRepository {
   final ApiMethod _apiMethod;
 
   WorkforceRepository(this._apiMethod);
+
+  /// JSON numbers decode as int or double unpredictably; the Freezed models
+  /// cast strictly, so normalize before fromJson to avoid runtime cast errors.
+  static double _asDouble(dynamic v) => (v as num?)?.toDouble() ?? 0.0;
+  static int _asInt(dynamic v) => (v as num?)?.toInt() ?? 0;
+
+  static Map<String, dynamic> _normalizeMetrics(Map<String, dynamic> m) => {
+    'appointments': _asInt(m['appointments']),
+    'workers': _asInt(m['workers']),
+    'revenue': _asDouble(m['revenue']),
+    'avgRevenuePerWorker': _asDouble(m['avgRevenuePerWorker']),
+  };
 
   // ============================================================================
   // Workforce Planning Methods
@@ -129,9 +142,17 @@ class WorkforceRepository {
         final data = response['data'];
         return {
           'success': true,
-          'scenarios': (data['scenarios'] as List)
-              .map((s) => ScenarioAnalysis.fromJson(s))
-              .toList(),
+          'scenarios': (data['scenarios'] as List).map((s) {
+            final m = Map<String, dynamic>.from(s as Map);
+            return ScenarioAnalysis.fromJson({
+              'name': m['name']?.toString() ?? '',
+              'projectedRevenue': _asDouble(m['projectedRevenue']),
+              'projectedCost': _asDouble(m['projectedCost']),
+              'netBenefit': _asDouble(m['netBenefit']),
+              'feasibility': m['feasibility']?.toString() ?? '',
+              'roi': _asDouble(m['roi']),
+            });
+          }).toList(),
           'comparison': data['comparison'],
           'recommendation': data['recommendation'],
         };
@@ -731,9 +752,43 @@ class WorkforceRepository {
       });
 
       if (response['success'] == true && response['data'] != null) {
+        final data = Map<String, dynamic>.from(response['data'] as Map);
+        final baseline = Map<String, dynamic>.from(
+          data['baseline'] as Map? ?? {},
+        );
+        final projected = Map<String, dynamic>.from(
+          data['projected'] as Map? ?? {},
+        );
+        final impact = Map<String, dynamic>.from(data['impact'] as Map? ?? {});
+        final feasibility = Map<String, dynamic>.from(
+          data['feasibility'] as Map? ?? {},
+        );
+        final scores = Map<String, dynamic>.from(
+          feasibility['scores'] as Map? ?? {},
+        );
         return {
           'success': true,
-          'scenario': WhatIfScenario.fromJson(response['data']),
+          'scenario': WhatIfScenario.fromJson({
+            'name': data['scenario']?.toString() ?? '',
+            'baseline': _normalizeMetrics(baseline),
+            'projected': _normalizeMetrics(projected),
+            'impact': {
+              'revenueChange': _asDouble(impact['revenueChange']),
+              'revenueChangePercent':
+                  impact['revenueChangePercent']?.toString() ?? '',
+              'appointmentChange': _asInt(impact['appointmentChange']),
+              'workerChange': _asInt(impact['workerChange']),
+              'productivityChange': _asDouble(impact['productivityChange']),
+            },
+            'feasibility': {
+              'scores': scores.map(
+                (key, value) => MapEntry(key.toString(), _asDouble(value)),
+              ),
+              'overall': _asDouble(feasibility['overall']),
+              'rating': feasibility['rating']?.toString() ?? '',
+            },
+            'recommendation': data['recommendation'] ?? {},
+          }),
         };
       }
 

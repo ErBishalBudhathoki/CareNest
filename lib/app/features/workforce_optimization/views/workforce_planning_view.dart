@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/workforce_planning_viewmodel.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
+import 'package:carenest/app/features/workforce_optimization/utils/workforce_export_helper.dart';
 
 class WorkforcePlanningView extends ConsumerStatefulWidget {
   const WorkforcePlanningView({super.key});
@@ -135,7 +136,10 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.colorBlue, AppColors.colorBlue.withValues(alpha: 0.8)],
+          colors: [
+            AppColors.colorBlue,
+            AppColors.colorBlue.withValues(alpha: 0.8),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -525,9 +529,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
       children: [
         Expanded(
           child: ElevatedButton.icon(
-            onPressed: () {
-              // TODO: Implement scenario analysis
-            },
+            onPressed: () => _runScenarioAnalysis(),
             icon: const Icon(Icons.analytics),
             label: const Text('Run Scenario'),
             style: ElevatedButton.styleFrom(
@@ -543,9 +545,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
         const SizedBox(width: 12),
         Expanded(
           child: OutlinedButton.icon(
-            onPressed: () {
-              // TODO: Implement export
-            },
+            onPressed: () => _exportCsv(),
             icon: const Icon(Icons.download),
             label: const Text('Export'),
             style: OutlinedButton.styleFrom(
@@ -559,6 +559,108 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
           ),
         ),
       ],
+    );
+  }
+
+  /// Compares two staffing scenarios (+2 and +5 staff) and shows the outcome.
+  Future<void> _runScenarioAnalysis() async {
+    final orgState = ref.read(organizationProvider);
+    final orgId = orgState.currentOrganization?.id;
+    if (orgId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Organization context is unavailable')),
+      );
+      return;
+    }
+    await ref
+        .read(workforcePlanningViewModelProvider.notifier)
+        .analyzeScenarios(
+          organizationId: orgId,
+          scenarios: const [
+            {
+              'name': 'Conservative (+2 staff)',
+              'parameters': {'staffIncrease': 2},
+            },
+            {
+              'name': 'Aggressive (+5 staff)',
+              'parameters': {'staffIncrease': 5},
+            },
+          ],
+        );
+    if (!mounted) return;
+    final scenarios = ref.read(workforcePlanningViewModelProvider).scenarios;
+    if (scenarios.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Scenario analysis failed')));
+      return;
+    }
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Scenario Comparison'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (final s in scenarios) ...[
+                Text(
+                  s.name,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  'Net benefit: ${s.netBenefit.toStringAsFixed(2)} • '
+                  'ROI: ${s.roi.toStringAsFixed(2)} • '
+                  'Feasibility: ${s.feasibility}',
+                ),
+                const SizedBox(height: 8),
+              ],
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _exportCsv() async {
+    final state = ref.read(workforcePlanningViewModelProvider);
+    final rows = state.scenarios
+        .map(
+          (s) => [
+            s.name,
+            s.projectedRevenue.toString(),
+            s.projectedCost.toString(),
+            s.netBenefit.toString(),
+            s.roi.toString(),
+            s.feasibility,
+          ],
+        )
+        .toList();
+    final csv = WorkforceExportHelper.toCsv(const [
+      'scenario',
+      'projected_revenue',
+      'projected_cost',
+      'net_benefit',
+      'roi',
+      'feasibility',
+    ], rows);
+    final path = await WorkforceExportHelper.shareTextFile(
+      filename:
+          'workforce-scenarios-${WorkforceExportHelper.fileTimestamp()}.csv',
+      content: csv,
+    );
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(path == null ? 'Export failed' : 'Scenarios exported'),
+      ),
     );
   }
 }

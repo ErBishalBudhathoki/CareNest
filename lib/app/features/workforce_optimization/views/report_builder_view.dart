@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/features/workforce_optimization/utils/workforce_export_helper.dart';
 
 class ReportBuilderView extends ConsumerStatefulWidget {
   const ReportBuilderView({super.key});
@@ -13,6 +17,22 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
   final List<String> _selectedMetrics = [];
   String _selectedFormat = 'PDF';
   String _selectedPeriod = 'Last 30 Days';
+  String? _selectedTemplate;
+
+  static const Map<String, List<String>> _templateMetrics = {
+    'Executive Summary': [
+      'Business Intelligence',
+      'Revenue Forecast',
+      'Performance Analytics',
+    ],
+    'Operational Report': [
+      'Workforce Planning',
+      'Resource Allocation',
+      'Performance Analytics',
+    ],
+    'Financial Analysis': ['Revenue Forecast', 'Business Intelligence'],
+    'Quality Report': ['Quality Assurance', 'Performance Analytics'],
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -192,7 +212,8 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
   }
 
   Widget _buildFormatSelection() {
-    final formats = ['PDF', 'Excel', 'CSV', 'JSON'];
+    // Excel omitted: no spreadsheet package in scope; CSV opens in Excel.
+    final formats = ['PDF', 'CSV', 'JSON'];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -364,8 +385,21 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
               description: template['description'] as String,
               icon: template['icon'] as IconData,
               color: template['color'] as Color,
+              selected: _selectedTemplate == (template['name'] as String),
               onTap: () {
-                // TODO: Load template
+                setState(() {
+                  _selectedTemplate = template['name'] as String;
+                  _selectedMetrics
+                    ..clear()
+                    ..addAll(
+                      _templateMetrics[template['name'] as String] ?? const [],
+                    );
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('${template['name']} template applied'),
+                  ),
+                );
               },
             );
           },
@@ -379,6 +413,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
     required String description,
     required IconData icon,
     required Color color,
+    required bool selected,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
@@ -388,7 +423,12 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
         decoration: BoxDecoration(
           color: AppColors.colorWhite,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withValues(alpha: 0.2), width: 2),
+          border: Border.all(
+            color: selected
+                ? AppColors.colorPrimary
+                : color.withValues(alpha: 0.2),
+            width: selected ? 3 : 2,
+          ),
           boxShadow: [
             BoxShadow(
               color: AppColors.colorShadow,
@@ -441,16 +481,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
           child: ElevatedButton.icon(
             onPressed: _selectedMetrics.isEmpty
                 ? null
-                : () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Your report is being generated in $_selectedFormat format',
-                        ),
-                        backgroundColor: AppColors.colorSuccess,
-                      ),
-                    );
-                  },
+                : () => _generateReport(),
             icon: const Icon(Icons.play_arrow),
             label: const Text('Generate Report'),
             style: ElevatedButton.styleFrom(
@@ -463,26 +494,77 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
             ),
           ),
         ),
-        const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton.icon(
-            onPressed: () {
-              // TODO: Schedule report
-            },
-            icon: const Icon(Icons.schedule),
-            label: const Text('Schedule Report'),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.colorPrimary,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              side: const BorderSide(color: AppColors.colorPrimary),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-        ),
       ],
     );
+  }
+
+  /// Builds the report locally in the selected format and shares it.
+  /// Scheduled delivery needs a backend scheduler, so only manual
+  /// generation is offered here.
+  Future<void> _generateReport() async {
+    final stamp = WorkforceExportHelper.fileTimestamp();
+    final period = _selectedPeriod;
+    final generatedAt = DateTime.now().toIso8601String();
+    try {
+      String? path;
+      if (_selectedFormat == 'JSON') {
+        final content = jsonEncode({
+          'generatedAt': generatedAt,
+          'period': period,
+          'template': _selectedTemplate,
+          'metrics': _selectedMetrics,
+        });
+        path = await WorkforceExportHelper.shareTextFile(
+          filename: 'workforce-report-$stamp.json',
+          content: content,
+        );
+      } else if (_selectedFormat == 'PDF') {
+        final doc = pw.Document();
+        doc.addPage(
+          pw.Page(
+            build: (context) => pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Header(text: 'Workforce Report'),
+                pw.Text('Period: $period'),
+                pw.Text('Generated: $generatedAt'),
+                pw.SizedBox(height: 16),
+                pw.TableHelper.fromTextArray(
+                  headers: const ['Metric'],
+                  data: _selectedMetrics.map((m) => [m]).toList(),
+                ),
+              ],
+            ),
+          ),
+        );
+        path = await WorkforceExportHelper.shareBytes(
+          filename: 'workforce-report-$stamp.pdf',
+          bytes: await doc.save(),
+        );
+      } else {
+        final csv = WorkforceExportHelper.toCsv(const [
+          'metric',
+          'period',
+          'generated_at',
+        ], _selectedMetrics.map((m) => [m, period, generatedAt]).toList());
+        path = await WorkforceExportHelper.shareTextFile(
+          filename: 'workforce-report-$stamp.csv',
+          content: csv,
+        );
+      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            path == null ? 'Report export failed' : 'Report shared',
+          ),
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Report export failed')));
+    }
   }
 }
