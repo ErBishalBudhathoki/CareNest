@@ -13969,6 +13969,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Status'**
   String get stripeStatus;
+
+  /// No description provided for @paymentSettingsPendingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'VERIFICATION PENDING'**
+  String get paymentSettingsPendingTitle;
+
+  /// No description provided for @paymentSettingsPendingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Stripe account is linked but setup is incomplete. Finish Stripe onboarding to start receiving payouts.'**
+  String get paymentSettingsPendingDesc;
 }
 
 class _AppLocalizationsDelegate

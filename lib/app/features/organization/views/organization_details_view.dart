@@ -83,6 +83,10 @@ class _OrganizationDetailsViewState
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _api = ref.read(app_providers.apiMethodProvider);
+    // Re-sync the role: the provider defaults to employee when local prefs
+    // are empty/stale (e.g. after an app update), which would hide the
+    // admin-only sections below. Cooldown + dedup make this cheap.
+    ref.read(app_providers.userRoleProvider.notifier).refreshRole();
     if ((widget.organizationId ?? '').isNotEmpty) {
       _loadOrganization();
     }
@@ -1948,7 +1952,7 @@ $appLink
     final connectAsync = (hasAccount && organizationId != null)
         ? ref.watch(stripeConnectStatusProvider(organizationId))
         : null;
-    final isFullyConnected = connectAsync?.asData?.value == true;
+    final isFullyConnected = stripeCanCharge(connectAsync?.asData?.value);
     final isActionNeeded = hasAccount && !isFullyConnected;
 
     final Widget? trailing = isFullyConnected
@@ -1959,9 +1963,7 @@ $appLink
     if (isFullyConnected) {
       description = l10n.paymentSettingsActiveDesc;
     } else if (isActionNeeded) {
-      description =
-          'Your Stripe account is linked but setup is incomplete. Finish Stripe '
-          'onboarding to start receiving payouts.';
+      description = l10n.paymentSettingsPendingDesc;
     } else {
       description = l10n.paymentSettingsExistingAccountSubtitle;
     }

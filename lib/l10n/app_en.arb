@@ -3732,6 +3732,9 @@
   "stripePendingStatus": "PENDING",
   "stripeOverdue": "OVERDUE",
   "stripeRefunded": "REFUNDED",
-  "stripeStatus": "Status"
+  "stripeStatus": "Status",
+
+  "paymentSettingsPendingTitle": "VERIFICATION PENDING",
+  "paymentSettingsPendingDesc": "Your Stripe account is linked but setup is incomplete. Finish Stripe onboarding to start receiving payouts."
 
 }

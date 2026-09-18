@@ -10,6 +10,7 @@ import 'package:carenest/app/features/organization/views/subscription_view.dart'
 import 'package:carenest/app/shared/widgets/app_snack_bars.dart';
 import 'package:carenest/app/shared/utils/user_messages.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class PaymentSettingsView extends ConsumerStatefulWidget {
   const PaymentSettingsView({super.key});
@@ -77,7 +78,12 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
     final connectStatus = organizationId == null
         ? null
         : ref.watch(stripeConnectStatusProvider(organizationId));
-    final isConnected = connectStatus?.asData?.value == true;
+    // Three states: no account linked / linked but Stripe onboarding
+    // incomplete / fully able to charge. Collapsing the first two into
+    // "not connected" is what hid newly-linked accounts.
+    final statusMap = connectStatus?.asData?.value;
+    final isLinked = statusMap?['hasAccount'] == true;
+    final isConnected = stripeCanCharge(statusMap);
 
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
@@ -96,252 +102,328 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
           child: Container(color: BauhausDesign.neutral, height: 2.0),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(BauhausDesign.space4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(BauhausDesign.space3),
-              decoration: BoxDecoration(
-                color: BauhausDesign.surfaceLight,
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
-                boxShadow: const [BauhausDesign.shadowHardSm],
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.account_balance,
-                    color: BauhausDesign.secondary,
-                  ),
-                  const SizedBox(width: BauhausDesign.space3),
-                  Expanded(
-                    child: Text(
-                      'Stripe payout account',
-                      style: BauhausDesign.getTextTheme(context).bodyMedium
-                          ?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w700,
-                          ),
+      body: RefreshIndicator(
+        color: BauhausDesign.secondary,
+        onRefresh: () async {
+          final orgId = _resolveOrganizationId();
+          if (orgId != null) {
+            ref.invalidate(stripeConnectStatusProvider(orgId));
+            ref.invalidate(organizationSubscriptionProvider(orgId));
+            try {
+              await ref.read(stripeConnectStatusProvider(orgId).future);
+            } catch (_) {}
+          }
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(BauhausDesign.space4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(BauhausDesign.space3),
+                decoration: BoxDecoration(
+                  color: BauhausDesign.surfaceLight,
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  boxShadow: const [BauhausDesign.shadowHardSm],
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.account_balance,
+                      color: BauhausDesign.secondary,
                     ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: BauhausDesign.space2,
-                      vertical: BauhausDesign.space1,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isConnected
-                          ? BauhausDesign.success
-                          : BauhausDesign.warning,
-                      border: Border.all(
-                        color: BauhausDesign.neutral,
-                        width: 1,
-                      ),
-                    ),
-                    child: Text(
-                      isConnected ? 'CONNECTED' : 'ACTION NEEDED',
-                      style: BauhausDesign.getTextTheme(context).labelSmall
-                          ?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w800,
-                          ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: BauhausDesign.space4),
-            Text(
-              'Connect with Stripe',
-              style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                color: BauhausDesign.textDark,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Link your bank account to receive payments directly from clients. '
-              'We use Stripe Connect to ensure secure and compliant payouts for your NDIS business.',
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
-            ),
-            const SizedBox(height: 24),
-            Container(
-              decoration: BoxDecoration(
-                color: BauhausDesign.surfaceLight,
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
-                boxShadow: const [BauhausDesign.shadowHardSm],
-              ),
-              padding: const EdgeInsets.all(BauhausDesign.space4),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: isConnected
-                              ? BauhausDesign.success
-                              : BauhausDesign.warning,
-                          border: Border.all(
-                            color: BauhausDesign.neutral,
-                            width: 2,
-                          ),
-                        ),
-                        child: Icon(
-                          isConnected ? Icons.check : Icons.link,
-                          color: BauhausDesign.textDark,
-                          size: 24,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              isConnected
-                                  ? 'ACCOUNT CONNECTED'
-                                  : 'NOT CONNECTED',
-                              style: BauhausDesign.getTextTheme(context)
-                                  .labelLarge
-                                  ?.copyWith(
-                                    color: BauhausDesign.textDark,
-                                    fontWeight: FontWeight.w700,
-                                  ),
+                    const SizedBox(width: BauhausDesign.space3),
+                    Expanded(
+                      child: Text(
+                        'Stripe payout account',
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
+                            ?.copyWith(
+                              color: BauhausDesign.textDark,
+                              fontWeight: FontWeight.w700,
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              isConnected
-                                  ? 'Your Stripe account is active and ready to receive payouts.'
-                                  : 'Connect your account to start accepting payments.',
-                              style: BauhausDesign.getTextTheme(context)
-                                  .bodySmall
-                                  ?.copyWith(color: BauhausDesign.textMuted),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: BauhausDesign.space4),
-                  if (!isConnected)
-                    InkWell(
-                      onTap: () async {
-                        if (organizationId == null) {
-                          showErrorSnack(
-                            context,
-                            'We could not load your organisation. Please reopen the screen.',
-                          );
-                          return;
-                        }
-                        try {
-                          final url = await ref
-                              .read(paymentViewModelProvider.notifier)
-                              .createOnboardingLink(organizationId);
-                          final uri = Uri.tryParse(url);
-                          if (uri == null ||
-                              !await launchUrl(
-                                uri,
-                                mode: LaunchMode.externalApplication,
-                              )) {
-                            throw Exception('Could not launch Stripe URL');
-                          }
-                        } catch (e) {
-                          if (context.mounted) {
-                            showErrorSnack(context, friendlyStripeError(e));
-                          }
-                        }
-                      },
-                      child: Container(
-                        height: 50,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: BauhausDesign.secondary,
-                          border: Border.all(
-                            color: BauhausDesign.neutral,
-                            width: 2,
-                          ),
-                          boxShadow: const [BauhausDesign.shadowHardSm],
-                        ),
-                        child: Text(
-                          'CONNECT WITH STRIPE',
-                          style: BauhausDesign.getTextTheme(context).labelLarge
-                              ?.copyWith(
-                                color: BauhausDesign.surfaceLight,
-                                fontWeight: FontWeight.w900,
-                              ),
-                        ),
-                      ),
-                    )
-                  else
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const StripeDashboardView(),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        height: 50,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: BauhausDesign.surfaceLight,
-                          border: Border.all(
-                            color: BauhausDesign.neutral,
-                            width: 2,
-                          ),
-                          boxShadow: const [BauhausDesign.shadowHardSm],
-                        ),
-                        child: Text(
-                          'VIEW STRIPE DASHBOARD',
-                          style: BauhausDesign.getTextTheme(context).labelLarge
-                              ?.copyWith(
-                                color: BauhausDesign.textDark,
-                                fontWeight: FontWeight.w900,
-                              ),
-                        ),
                       ),
                     ),
-                  if (isConnected) ...[
-                    const SizedBox(height: BauhausDesign.space3),
-                    InkWell(
-                      onTap: () =>
-                          _confirmDisconnectStripe(context, organizationId!),
-                      child: Container(
-                        height: 50,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: BauhausDesign.surfaceLight,
-                          border: Border.all(
-                            color: BauhausDesign.error,
-                            width: 2,
-                          ),
-                          boxShadow: const [BauhausDesign.shadowHardSm],
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: BauhausDesign.space2,
+                        vertical: BauhausDesign.space1,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isConnected
+                            ? BauhausDesign.success
+                            : BauhausDesign.warning,
+                        border: Border.all(
+                          color: BauhausDesign.neutral,
+                          width: 1,
                         ),
-                        child: Text(
-                          'DISCONNECT STRIPE',
-                          style: BauhausDesign.getTextTheme(context).labelLarge
-                              ?.copyWith(
-                                color: BauhausDesign.error,
-                                fontWeight: FontWeight.w900,
-                              ),
-                        ),
+                      ),
+                      child: Text(
+                        isConnected ? 'CONNECTED' : 'ACTION NEEDED',
+                        style: BauhausDesign.getTextTheme(context).labelSmall
+                            ?.copyWith(
+                              color: BauhausDesign.textDark,
+                              fontWeight: FontWeight.w800,
+                            ),
                       ),
                     ),
                   ],
-                ],
+                ),
               ),
-            ),
-            const SizedBox(height: BauhausDesign.space4),
-            _buildSubscriptionCard(context, organizationId),
-          ],
+              const SizedBox(height: BauhausDesign.space4),
+              Text(
+                'Connect with Stripe',
+                style: BauhausDesign.getTextTheme(context).titleMedium
+                    ?.copyWith(
+                      color: BauhausDesign.textDark,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Link your bank account to receive payments directly from clients. '
+                'We use Stripe Connect to ensure secure and compliant payouts for your NDIS business.',
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+              ),
+              const SizedBox(height: 24),
+              Container(
+                decoration: BoxDecoration(
+                  color: BauhausDesign.surfaceLight,
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  boxShadow: const [BauhausDesign.shadowHardSm],
+                ),
+                padding: const EdgeInsets.all(BauhausDesign.space4),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: isConnected
+                                ? BauhausDesign.success
+                                : BauhausDesign.warning,
+                            border: Border.all(
+                              color: BauhausDesign.neutral,
+                              width: 2,
+                            ),
+                          ),
+                          child: Icon(
+                            isConnected
+                                ? Icons.check
+                                : (isLinked
+                                      ? Icons.hourglass_empty
+                                      : Icons.link),
+                            color: BauhausDesign.textDark,
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                isConnected
+                                    ? 'ACCOUNT CONNECTED'
+                                    : (isLinked
+                                          ? AppLocalizations.of(
+                                              context,
+                                            )!.paymentSettingsPendingTitle
+                                          : 'NOT CONNECTED'),
+                                style: BauhausDesign.getTextTheme(context)
+                                    .labelLarge
+                                    ?.copyWith(
+                                      color: BauhausDesign.textDark,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                isConnected
+                                    ? 'Your Stripe account is active and ready to receive payouts.'
+                                    : (isLinked
+                                          ? AppLocalizations.of(
+                                              context,
+                                            )!.paymentSettingsPendingDesc
+                                          : 'Connect your account to start accepting payments.'),
+                                style: BauhausDesign.getTextTheme(context)
+                                    .bodySmall
+                                    ?.copyWith(color: BauhausDesign.textMuted),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: BauhausDesign.space4),
+                    if (!isLinked)
+                      InkWell(
+                        onTap: () async {
+                          if (organizationId == null) {
+                            showErrorSnack(
+                              context,
+                              'We could not load your organisation. Please reopen the screen.',
+                            );
+                            return;
+                          }
+                          try {
+                            final url = await ref
+                                .read(paymentViewModelProvider.notifier)
+                                .createOnboardingLink(organizationId);
+                            final uri = Uri.tryParse(url);
+                            if (uri == null ||
+                                !await launchUrl(
+                                  uri,
+                                  mode: LaunchMode.externalApplication,
+                                )) {
+                              throw Exception('Could not launch Stripe URL');
+                            }
+                          } catch (e) {
+                            if (context.mounted) {
+                              showErrorSnack(context, friendlyStripeError(e));
+                            }
+                          }
+                        },
+                        child: Container(
+                          height: 50,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: BauhausDesign.secondary,
+                            border: Border.all(
+                              color: BauhausDesign.neutral,
+                              width: 2,
+                            ),
+                            boxShadow: const [BauhausDesign.shadowHardSm],
+                          ),
+                          child: Text(
+                            'CONNECT WITH STRIPE',
+                            style: BauhausDesign.getTextTheme(context)
+                                .labelLarge
+                                ?.copyWith(
+                                  color: BauhausDesign.surfaceLight,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                          ),
+                        ),
+                      )
+                    else if (!isConnected)
+                      InkWell(
+                        onTap: () async {
+                          if (organizationId == null) return;
+                          try {
+                            final url = await ref
+                                .read(paymentViewModelProvider.notifier)
+                                .createOnboardingLink(organizationId);
+                            final uri = Uri.tryParse(url);
+                            if (uri == null ||
+                                !await launchUrl(
+                                  uri,
+                                  mode: LaunchMode.externalApplication,
+                                )) {
+                              throw Exception('Could not launch Stripe URL');
+                            }
+                          } catch (e) {
+                            if (context.mounted) {
+                              showErrorSnack(context, friendlyStripeError(e));
+                            }
+                          }
+                        },
+                        child: Container(
+                          height: 50,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: BauhausDesign.warning,
+                            border: Border.all(
+                              color: BauhausDesign.neutral,
+                              width: 2,
+                            ),
+                            boxShadow: const [BauhausDesign.shadowHardSm],
+                          ),
+                          child: Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.stripeCompleteVerification,
+                            style: BauhausDesign.getTextTheme(context)
+                                .labelLarge
+                                ?.copyWith(
+                                  color: BauhausDesign.textDark,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                          ),
+                        ),
+                      )
+                    else
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const StripeDashboardView(),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          height: 50,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: BauhausDesign.surfaceLight,
+                            border: Border.all(
+                              color: BauhausDesign.neutral,
+                              width: 2,
+                            ),
+                            boxShadow: const [BauhausDesign.shadowHardSm],
+                          ),
+                          child: Text(
+                            'VIEW STRIPE DASHBOARD',
+                            style: BauhausDesign.getTextTheme(context)
+                                .labelLarge
+                                ?.copyWith(
+                                  color: BauhausDesign.textDark,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                          ),
+                        ),
+                      ),
+                    if (isLinked) ...[
+                      const SizedBox(height: BauhausDesign.space3),
+                      InkWell(
+                        onTap: () =>
+                            _confirmDisconnectStripe(context, organizationId!),
+                        child: Container(
+                          height: 50,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: BauhausDesign.surfaceLight,
+                            border: Border.all(
+                              color: BauhausDesign.error,
+                              width: 2,
+                            ),
+                            boxShadow: const [BauhausDesign.shadowHardSm],
+                          ),
+                          child: Text(
+                            'DISCONNECT STRIPE',
+                            style: BauhausDesign.getTextTheme(context)
+                                .labelLarge
+                                ?.copyWith(
+                                  color: BauhausDesign.error,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(height: BauhausDesign.space4),
+              _buildSubscriptionCard(context, organizationId),
+            ],
+          ),
         ),
       ),
     );
