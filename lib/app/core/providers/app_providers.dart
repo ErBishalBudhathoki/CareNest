@@ -121,8 +121,10 @@ class PhotoDataNotifier extends Notifier<PhotoDataState> {
     if (!forceRefresh &&
         _lastFetchAt != null &&
         now.difference(_lastFetchAt!) < _fetchCooldown) {
-      debugPrint("fetchPhotoData: skipping (fetched "
-          "${now.difference(_lastFetchAt!).inSeconds}s ago)");
+      debugPrint(
+        "fetchPhotoData: skipping (fetched "
+        "${now.difference(_lastFetchAt!).inSeconds}s ago)",
+      );
       return;
     }
     _lastFetchAt = now;
@@ -134,9 +136,10 @@ class PhotoDataNotifier extends Notifier<PhotoDataState> {
     }
   }
 
-  Future<void> _fetchPhotoDataImpl(String email,
-      {bool forceRefresh = false}) async {
-
+  Future<void> _fetchPhotoDataImpl(
+    String email, {
+    bool forceRefresh = false,
+  }) async {
     // If not forcing refresh, try to load from cache first for immediate display
     if (!forceRefresh) {
       debugPrint("Checking cache for photo data...");
@@ -391,9 +394,28 @@ class UserRoleNotifier extends Notifier<UserRole> {
     state = newRole;
   }
 
+  /// Cold-start repair for views that gate on role. build() may have
+  /// defaulted to [UserRole.employee] because prefs/secure-storage were not
+  /// loaded yet; this reloads the cached role first (instant UI correction)
+  /// and then re-syncs from the backend. Safe to call from initState.
+  Future<void> syncOnViewOpen() async {
+    try {
+      await _sharedPrefs.ready;
+    } catch (_) {}
+    final cached = _sharedPrefs.getRole();
+    if (cached != null && state != cached) {
+      debugPrint('👤 UserRoleNotifier: repaired role from cache: $cached');
+      state = cached;
+    }
+    await refreshRole();
+  }
+
   /// Re-syncs the user's role from the backend to ensure local state is fresh.
   /// Useful for handling role regressions or updates without forcing logout.
   Future<void> refreshRole() async {
+    // Cold start: the token cache lives behind async init. Wait for it so
+    // the refresh below does not bail on empty credentials.
+    await _sharedPrefs.ready;
     if (_refreshInFlight != null) {
       debugPrint('refreshRole: already in-flight, reusing');
       return _refreshInFlight;
