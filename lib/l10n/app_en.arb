@@ -353,6 +353,48 @@
   "bulkUpdatesQuickDesc": "Mass update pricing data",
   "bulkUpdatesTitle": "Bulk Updates",
   "bulkUpdateSubtitle": "Update multiple rates",
+  "bulkApproved": "Approved {count} of {total}",
+  "@bulkApproved": {
+    "placeholders": {
+      "count": {"type": "String"},
+      "total": {"type": "String"}
+    }
+  },
+  "bulkInvoicesGenerated": "Generated {invoices} invoice(s) from {appointments} appointment(s)",
+  "@bulkInvoicesGenerated": {
+    "placeholders": {
+      "invoices": {"type": "String"},
+      "appointments": {"type": "String"}
+    }
+  },
+  "bulkMessagesScheduled": "Scheduled for {count} recipient(s)",
+  "@bulkMessagesScheduled": {
+    "placeholders": {
+      "count": {"type": "String"}
+    }
+  },
+  "bulkMessagesSent": "Sent to {count} recipient(s)",
+  "@bulkMessagesSent": {
+    "placeholders": {
+      "count": {"type": "String"}
+    }
+  },
+  "bulkRejected": "Rejected {count} of {total}",
+  "@bulkRejected": {
+    "placeholders": {
+      "count": {"type": "String"},
+      "total": {"type": "String"}
+    }
+  },
+  "bulkRejectReasonHint": "Reason for rejection",
+  "bulkRejectTitle": "Reject Timesheets",
+  "bulkShiftsAssigned": "Assigned {succeeded} shift(s), {failed} failed",
+  "@bulkShiftsAssigned": {
+    "placeholders": {
+      "succeeded": {"type": "String"},
+      "failed": {"type": "String"}
+    }
+  },
   "business": "Business",
   "businessAddedSuccess": "Business details added successfully",
   "businessAddFailed": "Failed to add business. Please try again.",
@@ -1522,6 +1564,7 @@
   "invoiceNumberLabel": "Invoice Number",
   "invoicePeriod": "Invoice Period",
   "invoicePeriodTitle": "Invoice Period",
+  "invoicePreviewTitle": "Invoice Preview",
   "invoicesCaps": "INVOICES",
   "invoicesGenerated": "Invoices Generated",
   "invoiceSharedSuccess": "Invoice shared",
@@ -2072,6 +2115,7 @@
   "noExpenseData": "No Expense Data",
   "noHistorySubtitle": "No timesheet history found",
   "noHistoryTitle": "No History",
+  "noInvoiceableAppointments": "No completed appointments to invoice",
   "noInvoicesFound": "No invoices found",
   "noInvoicesGenerated": "No invoices generated yet.",
   "noInvoicesToSave": "No invoices to save",
@@ -2122,6 +2166,7 @@
   "noServiceRatesFoundSubtitle": "Try adjusting your search criteria or add new service rates to get started.",
   "noServiceRatesFoundTitle": "No Service Rates Found",
   "noShiftsScheduled": "No Shifts Scheduled",
+  "noSubmittedTimesheets": "No submitted timesheets awaiting approval",
   "noSupportItemsFound": "No support items found",
   "noSupportItemsTitle": "No support items",
   "notAvailableLabel": "N/A",
@@ -2146,11 +2191,13 @@
   "notificationsDisabledTitle": "Notifications are off",
   "notificationsSubtitle": "Manage notification preferences",
   "notificationsTitle": "Notifications",
+  "noTeamMembersFound": "No team members found",
   "noTrainingModulesMessage": "No training modules available.",
   "notRegistered": "NOT REGISTERED",
   "notSet": "Not set",
   "notSetLabel": "Not Set",
   "notStartedStatus": "Not Started",
+  "noUnassignedShifts": "No unassigned shifts",
   "noUpcomingAppointments": "NO UPCOMING APPOINTMENTS",
   "noUpcomingShifts": "No upcoming shifts",
   "noUpcomingShiftsMessage": "You have no upcoming shifts scheduled.",

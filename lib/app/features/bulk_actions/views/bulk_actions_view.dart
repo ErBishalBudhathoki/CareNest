@@ -1,15 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
+import 'package:carenest/app/features/bulk_actions/models/bulk_action_models.dart';
+import 'package:carenest/app/features/bulk_actions/repositories/bulk_actions_repository.dart';
+import 'package:carenest/app/features/timesheet/models/timesheet_model.dart';
+import 'package:carenest/app/features/timesheet/repositories/timesheet_repository.dart';
+import 'package:carenest/app/features/schedule/models/shift_model.dart';
+import 'package:carenest/app/features/auth/models/user_model.dart';
 
-/// Bulk Actions View - Tabbed interface for all bulk operations
-class BulkActionsView extends StatefulWidget {
-  const BulkActionsView({super.key});
+/// Bulk Actions View - Tabbed interface for all bulk operations.
+/// Every tab loads live data and calls the real bulk endpoints; there are
+/// no mock lists or simulated results anywhere in this screen.
+class BulkActionsView extends ConsumerStatefulWidget {
+  final String organizationId;
+  final String userEmail;
+
+  const BulkActionsView({
+    super.key,
+    required this.organizationId,
+    required this.userEmail,
+  });
 
   @override
-  State<BulkActionsView> createState() => _BulkActionsViewState();
+  ConsumerState<BulkActionsView> createState() => _BulkActionsViewState();
 }
 
-class _BulkActionsViewState extends State<BulkActionsView>
+class _BulkActionsViewState extends ConsumerState<BulkActionsView>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -56,11 +75,14 @@ class _BulkActionsViewState extends State<BulkActionsView>
       ),
       body: TabBarView(
         controller: _tabController,
-        children: const [
-          _BulkTimesheetTab(),
-          _BulkInvoiceTab(),
-          _BulkAssignmentTab(),
-          _BulkMessagingTab(),
+        children: [
+          _BulkTimesheetTab(
+            organizationId: widget.organizationId,
+            userEmail: widget.userEmail,
+          ),
+          _BulkInvoiceTab(organizationId: widget.organizationId),
+          _BulkAssignmentTab(organizationId: widget.organizationId),
+          _BulkMessagingTab(organizationId: widget.organizationId),
         ],
       ),
     );
@@ -68,19 +90,207 @@ class _BulkActionsViewState extends State<BulkActionsView>
 }
 
 // ============================================================================
+// Shared list-state helpers
+// ============================================================================
+
+Widget _buildTabError(String message, VoidCallback onRetry) {
+  return Center(
+    child: Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.error_outline, size: 48, color: BauhausDesign.error),
+          const SizedBox(height: 12),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 14, color: BauhausDesign.textDark),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton.icon(
+            onPressed: onRetry,
+            icon: const Icon(Icons.refresh, size: 20),
+            label: const Text('RETRY'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: BauhausDesign.primary,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+// ============================================================================
 // Bulk Timesheet Tab
 // ============================================================================
 
-class _BulkTimesheetTab extends StatefulWidget {
-  const _BulkTimesheetTab();
+class _BulkTimesheetTab extends ConsumerStatefulWidget {
+  final String organizationId;
+  final String userEmail;
+
+  const _BulkTimesheetTab({
+    required this.organizationId,
+    required this.userEmail,
+  });
 
   @override
-  State<_BulkTimesheetTab> createState() => _BulkTimesheetTabState();
+  ConsumerState<_BulkTimesheetTab> createState() => _BulkTimesheetTabState();
 }
 
-class _BulkTimesheetTabState extends State<_BulkTimesheetTab> {
+class _BulkTimesheetTabState extends ConsumerState<_BulkTimesheetTab> {
   final Set<String> _selectedTimesheets = {};
-  bool _isLoading = false;
+  bool _isLoading = true;
+  bool _isActing = false;
+  String? _error;
+  List<TimesheetEntry> _timesheets = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTimesheets();
+  }
+
+  Future<void> _loadTimesheets() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+    try {
+      final apiMethod = ref.read(app_providers.apiMethodProvider);
+      final now = DateTime.now();
+      final items = await TimesheetRepository(apiMethod)
+          .fetchOrganizationTimesheets(
+            organizationId: widget.organizationId,
+            startDate: now.subtract(const Duration(days: 30)),
+            endDate: now,
+            status: 'submitted',
+          );
+      if (!mounted) return;
+      setState(() {
+        _timesheets = items;
+        _selectedTimesheets.removeWhere((id) => items.every((t) => t.id != id));
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
+
+  BulkActionsRepository get _repo =>
+      BulkActionsRepository(ref.read(app_providers.apiMethodProvider));
+
+  Future<void> _approveTimesheets() async {
+    final ids = _selectedTimesheets.toList();
+    setState(() => _isActing = true);
+    try {
+      final result = await _repo.approveTimesheets(
+        timesheetIds: ids,
+        organizationId: widget.organizationId,
+        approvedBy: widget.userEmail,
+      );
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            l10n.bulkApproved(
+              result.approvedCount.toString(),
+              result.totalRequested.toString(),
+            ),
+          ),
+          backgroundColor: BauhausDesign.success,
+        ),
+      );
+      setState(() => _selectedTimesheets.clear());
+      await _loadTimesheets();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: BauhausDesign.error,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isActing = false);
+    }
+  }
+
+  Future<void> _rejectTimesheets() async {
+    final reason = await _showRejectDialog();
+    if (reason == null) return;
+    final ids = _selectedTimesheets.toList();
+    setState(() => _isActing = true);
+    try {
+      final result = await _repo.rejectTimesheets(
+        timesheetIds: ids,
+        organizationId: widget.organizationId,
+        rejectedBy: widget.userEmail,
+        reason: reason.isEmpty ? 'Rejected by admin' : reason,
+      );
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            l10n.bulkRejected(
+              result.rejectedCount.toString(),
+              result.totalRequested.toString(),
+            ),
+          ),
+          backgroundColor: BauhausDesign.error,
+        ),
+      );
+      setState(() => _selectedTimesheets.clear());
+      await _loadTimesheets();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: BauhausDesign.error,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isActing = false);
+    }
+  }
+
+  Future<String?> _showRejectDialog() async {
+    final controller = TextEditingController();
+    final l10n = AppLocalizations.of(context)!;
+    return showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.bulkRejectTitle),
+        content: TextField(
+          controller: controller,
+          decoration: InputDecoration(hintText: l10n.bulkRejectReasonHint),
+          maxLines: 3,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, controller.text),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: BauhausDesign.error,
+            ),
+            child: Text(l10n.rejectAction),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +304,8 @@ class _BulkTimesheetTabState extends State<_BulkTimesheetTab> {
             builder: (context, constraints) {
               final isCompact = constraints.maxWidth < 900;
               final approveButton = ElevatedButton.icon(
-                onPressed: _selectedTimesheets.isEmpty
+                onPressed:
+                    (_selectedTimesheets.isEmpty || _isActing || _isLoading)
                     ? null
                     : () => _approveTimesheets(),
                 icon: const Icon(Icons.check_circle, size: 20),
@@ -105,7 +316,8 @@ class _BulkTimesheetTabState extends State<_BulkTimesheetTab> {
                 ),
               );
               final rejectButton = ElevatedButton.icon(
-                onPressed: _selectedTimesheets.isEmpty
+                onPressed:
+                    (_selectedTimesheets.isEmpty || _isActing || _isLoading)
                     ? null
                     : () => _rejectTimesheets(),
                 icon: const Icon(Icons.cancel, size: 20),
@@ -165,140 +377,50 @@ class _BulkTimesheetTabState extends State<_BulkTimesheetTab> {
           ),
         ),
         // Timesheet List
-        Expanded(
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _buildTimesheetList(),
-        ),
+        Expanded(child: _buildBody()),
       ],
     );
   }
 
-  Widget _buildTimesheetList() {
-    // Mock data - replace with actual data from repository
-    final timesheets = List.generate(
-      10,
-      (i) => {
-        'id': 'ts_$i',
-        'workerName': 'Worker ${i + 1}',
-        'date': DateTime.now().subtract(Duration(days: i)),
-        'hours': 8.0 + i * 0.5,
-        'status': 'pending',
-      },
-    );
-
-    if (timesheets.isEmpty) {
-      return const Center(child: Text('No pending timesheets'));
+  Widget _buildBody() {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
     }
-
-    return ListView.builder(
-      itemCount: timesheets.length,
-      itemBuilder: (context, index) {
-        final timesheet = timesheets[index];
-        final id = timesheet['id'] as String;
-        final isSelected = _selectedTimesheets.contains(id);
-
-        return CheckboxListTile(
-          value: isSelected,
-          onChanged: (value) {
-            setState(() {
-              if (value == true) {
-                _selectedTimesheets.add(id);
-              } else {
-                _selectedTimesheets.remove(id);
-              }
-            });
-          },
-          title: Text(timesheet['workerName'] as String),
-          subtitle: Text(
-            '${(timesheet['date'] as DateTime).toString().split(' ')[0]} • ${timesheet['hours']} hours',
-          ),
-          secondary: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: BauhausDesign.warning.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Text(
-              timesheet['status'] as String,
-              style: TextStyle(
-                color: BauhausDesign.warning,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _approveTimesheets() async {
-    setState(() => _isLoading = true);
-    // TODO: Call repository method
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Approved ${_selectedTimesheets.length} timesheets'),
-          backgroundColor: BauhausDesign.success,
-        ),
+    if (_error != null) {
+      return _buildTabError(_error!, _loadTimesheets);
+    }
+    if (_timesheets.isEmpty) {
+      return Center(
+        child: Text(AppLocalizations.of(context)!.noSubmittedTimesheets),
       );
-      setState(() {
-        _selectedTimesheets.clear();
-        _isLoading = false;
-      });
     }
-  }
-
-  Future<void> _rejectTimesheets() async {
-    final reason = await _showRejectDialog();
-    if (reason == null) return;
-
-    setState(() => _isLoading = true);
-    // TODO: Call repository method
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Rejected ${_selectedTimesheets.length} timesheets'),
-          backgroundColor: BauhausDesign.error,
-        ),
-      );
-      setState(() {
-        _selectedTimesheets.clear();
-        _isLoading = false;
-      });
-    }
-  }
-
-  Future<String?> _showRejectDialog() async {
-    final controller = TextEditingController();
-    return showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Reject Timesheets'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Reason for rejection',
-            hintText: 'Enter reason...',
-          ),
-          maxLines: 3,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('CANCEL'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, controller.text),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: BauhausDesign.error,
-            ),
-            child: const Text('REJECT'),
-          ),
-        ],
+    return RefreshIndicator(
+      onRefresh: _loadTimesheets,
+      child: ListView.builder(
+        itemCount: _timesheets.length,
+        itemBuilder: (context, index) {
+          final entry = _timesheets[index];
+          final isSelected = _selectedTimesheets.contains(entry.id);
+          final hours = entry.totalHours?.toString() ?? entry.timeWorked ?? '';
+          final date =
+              entry.shiftDate ??
+              entry.workDate?.toString().split(' ').first ??
+              '';
+          return CheckboxListTile(
+            value: isSelected,
+            onChanged: (value) {
+              setState(() {
+                if (value == true) {
+                  _selectedTimesheets.add(entry.id);
+                } else {
+                  _selectedTimesheets.remove(entry.id);
+                }
+              });
+            },
+            title: Text(entry.userEmail),
+            subtitle: Text('$date • $hours hours'),
+          );
+        },
       ),
     );
   }
@@ -308,17 +430,72 @@ class _BulkTimesheetTabState extends State<_BulkTimesheetTab> {
 // Bulk Invoice Tab
 // ============================================================================
 
-class _BulkInvoiceTab extends StatefulWidget {
-  const _BulkInvoiceTab();
+class _BulkInvoiceTab extends ConsumerStatefulWidget {
+  final String organizationId;
+
+  const _BulkInvoiceTab({required this.organizationId});
 
   @override
-  State<_BulkInvoiceTab> createState() => _BulkInvoiceTabState();
+  ConsumerState<_BulkInvoiceTab> createState() => _BulkInvoiceTabState();
 }
 
-class _BulkInvoiceTabState extends State<_BulkInvoiceTab> {
+class _BulkInvoiceTabState extends ConsumerState<_BulkInvoiceTab> {
   final Set<String> _selectedAppointments = {};
   bool _groupByClient = true;
-  bool _isLoading = false;
+  bool _isLoading = true;
+  bool _isActing = false;
+  String? _error;
+  List<Map<String, dynamic>> _appointments = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAppointments();
+  }
+
+  static String _stringId(Map<String, dynamic> item) {
+    final raw = item['_id'] ?? item['id'] ?? '';
+    return raw.toString();
+  }
+
+  Future<void> _loadAppointments() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+    try {
+      final apiMethod = ref.read(app_providers.apiMethodProvider);
+      final response = await apiMethod.getAssignmentsByStatus(
+        organizationId: widget.organizationId,
+        status: 'completed',
+      );
+      if (!mounted) return;
+      if (response['success'] != true) {
+        throw Exception(response['message'] ?? 'Failed to load appointments');
+      }
+      final all = (response['assignments'] as List? ?? [])
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .where((a) => a['invoiced'] != true)
+          .toList();
+      setState(() {
+        _appointments = all;
+        _selectedAppointments.removeWhere(
+          (id) => all.every((a) => _stringId(a) != id),
+        );
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
+
+  BulkActionsRepository get _repo =>
+      BulkActionsRepository(ref.read(app_providers.apiMethodProvider));
 
   @override
   Widget build(BuildContext context) {
@@ -334,7 +511,10 @@ class _BulkInvoiceTabState extends State<_BulkInvoiceTab> {
                 builder: (context, constraints) {
                   final isCompact = constraints.maxWidth < 900;
                   final previewButton = ElevatedButton.icon(
-                    onPressed: _selectedAppointments.isEmpty
+                    onPressed:
+                        (_selectedAppointments.isEmpty ||
+                            _isActing ||
+                            _isLoading)
                         ? null
                         : () => _previewInvoices(),
                     icon: const Icon(Icons.preview, size: 20),
@@ -345,7 +525,10 @@ class _BulkInvoiceTabState extends State<_BulkInvoiceTab> {
                     ),
                   );
                   final generateButton = ElevatedButton.icon(
-                    onPressed: _selectedAppointments.isEmpty
+                    onPressed:
+                        (_selectedAppointments.isEmpty ||
+                            _isActing ||
+                            _isLoading)
                         ? null
                         : () => _generateInvoices(),
                     icon: const Icon(Icons.receipt_long, size: 20),
@@ -417,99 +600,143 @@ class _BulkInvoiceTabState extends State<_BulkInvoiceTab> {
           ),
         ),
         // Appointment List
-        Expanded(
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _buildAppointmentList(),
-        ),
+        Expanded(child: _buildBody()),
       ],
     );
   }
 
-  Widget _buildAppointmentList() {
-    // Mock data
-    final appointments = List.generate(
-      8,
-      (i) => {
-        'id': 'apt_$i',
-        'clientName': 'Client ${i + 1}',
-        'date': DateTime.now().subtract(Duration(days: i)),
-        'service': 'Personal Care',
-        'amount': 150.0 + i * 10,
-      },
-    );
-
-    if (appointments.isEmpty) {
-      return const Center(child: Text('No completed appointments to invoice'));
+  Widget _buildBody() {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
     }
-
-    return ListView.builder(
-      itemCount: appointments.length,
-      itemBuilder: (context, index) {
-        final apt = appointments[index];
-        final id = apt['id'] as String;
-        final isSelected = _selectedAppointments.contains(id);
-
-        return CheckboxListTile(
-          value: isSelected,
-          onChanged: (value) {
-            setState(() {
-              if (value == true) {
-                _selectedAppointments.add(id);
-              } else {
-                _selectedAppointments.remove(id);
-              }
-            });
-          },
-          title: Text(apt['clientName'] as String),
-          subtitle: Text(
-            '${(apt['date'] as DateTime).toString().split(' ')[0]} • ${apt['service']}',
-          ),
-        );
-      },
+    if (_error != null) {
+      return _buildTabError(_error!, _loadAppointments);
+    }
+    if (_appointments.isEmpty) {
+      return Center(
+        child: Text(AppLocalizations.of(context)!.noInvoiceableAppointments),
+      );
+    }
+    return RefreshIndicator(
+      onRefresh: _loadAppointments,
+      child: ListView.builder(
+        itemCount: _appointments.length,
+        itemBuilder: (context, index) {
+          final apt = _appointments[index];
+          final id = _stringId(apt);
+          final isSelected = _selectedAppointments.contains(id);
+          final client = (apt['clientEmail'] ?? apt['clientName'] ?? '')
+              .toString();
+          final worker = (apt['userEmail'] ?? '').toString();
+          return CheckboxListTile(
+            value: isSelected,
+            onChanged: (value) {
+              setState(() {
+                if (value == true) {
+                  _selectedAppointments.add(id);
+                } else {
+                  _selectedAppointments.remove(id);
+                }
+              });
+            },
+            title: Text(client.isEmpty ? id : client),
+            subtitle: Text(worker),
+          );
+        },
+      ),
     );
   }
 
   Future<void> _previewInvoices() async {
-    setState(() => _isLoading = true);
-    // TODO: Call repository method
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
-      setState(() => _isLoading = false);
-      // Show preview dialog
+    final l10n = AppLocalizations.of(context)!;
+    setState(() => _isActing = true);
+    try {
+      final preview = await _repo.previewInvoices(
+        appointmentIds: _selectedAppointments.toList(),
+        organizationId: widget.organizationId,
+        groupByClient: _groupByClient,
+      );
+      if (!mounted) return;
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Invoice Preview'),
-          content: const Text('Preview functionality coming soon'),
+          title: Text(l10n.invoicePreviewTitle),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${preview.invoiceCount} invoices • '
+                  '${preview.totalAppointments} appointments • '
+                  '\$${preview.totalAmount.toStringAsFixed(2)}',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 12),
+                for (final item in preview.invoices) ...[
+                  Text(
+                    '${item.clientName} — '
+                    '\$${item.totalAmount.toStringAsFixed(2)}',
+                  ),
+                  const SizedBox(height: 4),
+                ],
+              ],
+            ),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('CLOSE'),
+              child: Text(l10n.closeButton),
             ),
           ],
         ),
       );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: BauhausDesign.error,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isActing = false);
     }
   }
 
   Future<void> _generateInvoices() async {
-    setState(() => _isLoading = true);
-    // TODO: Call repository method
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
+    final l10n = AppLocalizations.of(context)!;
+    setState(() => _isActing = true);
+    try {
+      final result = await _repo.generateInvoices(
+        appointmentIds: _selectedAppointments.toList(),
+        organizationId: widget.organizationId,
+        groupByClient: _groupByClient,
+      );
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Generated ${_groupByClient ? "grouped" : _selectedAppointments.length} invoices',
+            l10n.bulkInvoicesGenerated(
+              result.invoiceCount.toString(),
+              result.appointmentCount.toString(),
+            ),
           ),
           backgroundColor: BauhausDesign.success,
         ),
       );
-      setState(() {
-        _selectedAppointments.clear();
-        _isLoading = false;
-      });
+      setState(() => _selectedAppointments.clear());
+      await _loadAppointments();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: BauhausDesign.error,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isActing = false);
     }
   }
 }
@@ -518,16 +745,67 @@ class _BulkInvoiceTabState extends State<_BulkInvoiceTab> {
 // Bulk Assignment Tab
 // ============================================================================
 
-class _BulkAssignmentTab extends StatefulWidget {
-  const _BulkAssignmentTab();
+class _BulkAssignmentTab extends ConsumerStatefulWidget {
+  final String organizationId;
+
+  const _BulkAssignmentTab({required this.organizationId});
 
   @override
-  State<_BulkAssignmentTab> createState() => _BulkAssignmentTabState();
+  ConsumerState<_BulkAssignmentTab> createState() => _BulkAssignmentTabState();
 }
 
-class _BulkAssignmentTabState extends State<_BulkAssignmentTab> {
-  final Map<String, String?> _assignments = {};
-  bool _isLoading = false;
+class _BulkAssignmentTabState extends ConsumerState<_BulkAssignmentTab> {
+  final Set<String> _selectedShifts = {};
+  final Map<String, String> _suggestedWorkers = {};
+  final Map<String, String> _suggestedWorkerNames = {};
+  bool _isLoading = true;
+  bool _isActing = false;
+  String? _error;
+  List<ShiftModel> _shifts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadShifts();
+  }
+
+  Future<void> _loadShifts() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+    try {
+      final apiMethod = ref.read(app_providers.apiMethodProvider);
+      final now = DateTime.now();
+      final response = await apiMethod.getScheduleShifts(
+        organizationId: widget.organizationId,
+        startDate: now.subtract(const Duration(days: 7)),
+        endDate: now.add(const Duration(days: 30)),
+      );
+      if (!mounted) return;
+      if (response['success'] != true) {
+        throw Exception(response['message'] ?? 'Failed to load shifts');
+      }
+      final all = ((response['data'] ?? response['shifts']) as List? ?? [])
+          .map((e) => ShiftModel.fromJson(e as Map<String, dynamic>))
+          .where((s) => (s.employeeEmail == null || s.employeeEmail!.isEmpty))
+          .toList();
+      setState(() {
+        _shifts = all;
+        _selectedShifts.removeWhere((id) => all.every((s) => s.id != id));
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
+
+  BulkActionsRepository get _repo =>
+      BulkActionsRepository(ref.read(app_providers.apiMethodProvider));
 
   @override
   Widget build(BuildContext context) {
@@ -541,7 +819,7 @@ class _BulkAssignmentTabState extends State<_BulkAssignmentTab> {
             builder: (context, constraints) {
               final isCompact = constraints.maxWidth < 900;
               final suggestButton = ElevatedButton.icon(
-                onPressed: _assignments.isEmpty
+                onPressed: (_selectedShifts.isEmpty || _isActing || _isLoading)
                     ? null
                     : () => _getSuggestions(),
                 icon: const Icon(Icons.lightbulb, size: 20),
@@ -552,7 +830,9 @@ class _BulkAssignmentTabState extends State<_BulkAssignmentTab> {
                 ),
               );
               final assignButton = ElevatedButton.icon(
-                onPressed: _assignments.isEmpty ? null : () => _assignShifts(),
+                onPressed: (_selectedShifts.isEmpty || _isActing || _isLoading)
+                    ? null
+                    : () => _assignShifts(),
                 icon: const Icon(Icons.assignment_turned_in, size: 20),
                 label: const Text('ASSIGN'),
                 style: ElevatedButton.styleFrom(
@@ -566,7 +846,7 @@ class _BulkAssignmentTabState extends State<_BulkAssignmentTab> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${_assignments.length} shifts to assign',
+                      '${_selectedShifts.length} shifts to assign',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -586,7 +866,7 @@ class _BulkAssignmentTabState extends State<_BulkAssignmentTab> {
                 children: [
                   Expanded(
                     child: Text(
-                      '${_assignments.length} shifts to assign',
+                      '${_selectedShifts.length} shifts to assign',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
@@ -610,77 +890,140 @@ class _BulkAssignmentTabState extends State<_BulkAssignmentTab> {
           ),
         ),
         // Shift List
-        Expanded(
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _buildShiftList(),
-        ),
+        Expanded(child: _buildBody()),
       ],
     );
   }
 
-  Widget _buildShiftList() {
-    // Mock data
-    final shifts = List.generate(
-      6,
-      (i) => {
-        'id': 'shift_$i',
-        'date': DateTime.now().add(Duration(days: i + 1)),
-        'time': '09:00 AM',
-        'service': 'Personal Care',
-        'client': 'Client ${i + 1}',
-      },
-    );
-
-    if (shifts.isEmpty) {
-      return const Center(child: Text('No unassigned shifts'));
+  Widget _buildBody() {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
     }
-
-    return ListView.builder(
-      itemCount: shifts.length,
-      itemBuilder: (context, index) {
-        final shift = shifts[index];
-
-        return ListTile(
-          title: Text('${shift['service']} - ${shift['client']}'),
-          subtitle: Text(
-            '${(shift['date'] as DateTime).toString().split(' ')[0]} at ${shift['time']}',
-          ),
-        );
-      },
+    if (_error != null) {
+      return _buildTabError(_error!, _loadShifts);
+    }
+    if (_shifts.isEmpty) {
+      return Center(
+        child: Text(AppLocalizations.of(context)!.noUnassignedShifts),
+      );
+    }
+    return RefreshIndicator(
+      onRefresh: _loadShifts,
+      child: ListView.builder(
+        itemCount: _shifts.length,
+        itemBuilder: (context, index) {
+          final shift = _shifts[index];
+          final isSelected = _selectedShifts.contains(shift.id);
+          final suggested = _suggestedWorkerNames[shift.id];
+          return CheckboxListTile(
+            value: isSelected,
+            onChanged: (value) {
+              setState(() {
+                if (value == true) {
+                  _selectedShifts.add(shift.id);
+                } else {
+                  _selectedShifts.remove(shift.id);
+                }
+              });
+            },
+            title: Text(shift.clientName ?? shift.id),
+            subtitle: Text(
+              '${shift.startTime.toString().split(' ').first}'
+              '${suggested != null ? ' • $suggested' : ''}',
+            ),
+          );
+        },
+      ),
     );
   }
 
   Future<void> _getSuggestions() async {
-    setState(() => _isLoading = true);
-    // TODO: Call repository method
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
-      setState(() => _isLoading = false);
+    setState(() => _isActing = true);
+    try {
+      final suggestions = await _repo.suggestAssignments(
+        shiftIds: _selectedShifts.toList(),
+        organizationId: widget.organizationId,
+      );
+      if (!mounted) return;
+      setState(() {
+        for (final s in suggestions) {
+          if (s.suggestedWorkers.isNotEmpty) {
+            final best = s.suggestedWorkers.first;
+            _suggestedWorkers[s.shiftId] = best.workerId;
+            _suggestedWorkerNames[s.shiftId] = best.workerName;
+          }
+        }
+      });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Suggestions loaded'),
+        const SnackBar(
+          content: Text('Suggestions loaded'),
           backgroundColor: BauhausDesign.success,
         ),
       );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: BauhausDesign.error,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isActing = false);
     }
   }
 
   Future<void> _assignShifts() async {
-    setState(() => _isLoading = true);
-    // TODO: Call repository method
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
+    final pairs = _selectedShifts
+        .where((id) => _suggestedWorkers[id] != null)
+        .map(
+          (id) => ShiftAssignment(shiftId: id, workerId: _suggestedWorkers[id]),
+        )
+        .toList();
+    if (pairs.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Run SUGGEST first to pick workers'),
+          backgroundColor: BauhausDesign.warning,
+        ),
+      );
+      return;
+    }
+    final l10n = AppLocalizations.of(context)!;
+    setState(() => _isActing = true);
+    try {
+      final result = await _repo.assignShifts(
+        assignments: pairs,
+        organizationId: widget.organizationId,
+      );
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Assigned ${_assignments.length} shifts'),
+          content: Text(
+            l10n.bulkShiftsAssigned(
+              result.successfulCount.toString(),
+              result.failedCount.toString(),
+            ),
+          ),
           backgroundColor: BauhausDesign.success,
         ),
       );
       setState(() {
-        _assignments.clear();
-        _isLoading = false;
+        _selectedShifts.clear();
+        _suggestedWorkers.clear();
+        _suggestedWorkerNames.clear();
       });
+      await _loadShifts();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: BauhausDesign.error,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isActing = false);
     }
   }
 }
@@ -689,18 +1032,30 @@ class _BulkAssignmentTabState extends State<_BulkAssignmentTab> {
 // Bulk Messaging Tab
 // ============================================================================
 
-class _BulkMessagingTab extends StatefulWidget {
-  const _BulkMessagingTab();
+class _BulkMessagingTab extends ConsumerStatefulWidget {
+  final String organizationId;
+
+  const _BulkMessagingTab({required this.organizationId});
 
   @override
-  State<_BulkMessagingTab> createState() => _BulkMessagingTabState();
+  ConsumerState<_BulkMessagingTab> createState() => _BulkMessagingTabState();
 }
 
-class _BulkMessagingTabState extends State<_BulkMessagingTab> {
+class _BulkMessagingTabState extends ConsumerState<_BulkMessagingTab> {
   final Set<String> _selectedRecipients = {};
   final _subjectController = TextEditingController();
   final _messageController = TextEditingController();
   final Set<String> _selectedChannels = {'push'};
+  bool _isLoading = true;
+  bool _isActing = false;
+  String? _error;
+  List<User> _users = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsers();
+  }
 
   @override
   void dispose() {
@@ -708,6 +1063,43 @@ class _BulkMessagingTabState extends State<_BulkMessagingTab> {
     _messageController.dispose();
     super.dispose();
   }
+
+  Future<void> _loadUsers() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+    try {
+      final apiMethod = ref.read(app_providers.apiMethodProvider);
+      final users = await apiMethod.fetchUserData();
+      if (!mounted) return;
+      setState(() {
+        _users = users.where((u) => u.email.trim().isNotEmpty).toList();
+        _selectedRecipients.removeWhere(
+          (id) => _users.every((u) => u.id != id),
+        );
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
+
+  BulkActionsRepository get _repo =>
+      BulkActionsRepository(ref.read(app_providers.apiMethodProvider));
+
+  List<MessageChannel> get _channels => _selectedChannels
+      .map(
+        (c) => MessageChannel.values.firstWhere(
+          (m) => m.name == c,
+          orElse: () => MessageChannel.push,
+        ),
+      )
+      .toList();
 
   @override
   Widget build(BuildContext context) {
@@ -803,7 +1195,9 @@ class _BulkMessagingTabState extends State<_BulkMessagingTab> {
             builder: (context, constraints) {
               final isCompact = constraints.maxWidth < 520;
               final sendButton = ElevatedButton.icon(
-                onPressed: _canSend() ? () => _sendMessages() : null,
+                onPressed: (_canSend() && !_isActing)
+                    ? () => _sendMessages()
+                    : null,
                 icon: const Icon(Icons.send),
                 label: const Text('SEND NOW'),
                 style: ElevatedButton.styleFrom(
@@ -817,7 +1211,9 @@ class _BulkMessagingTabState extends State<_BulkMessagingTab> {
                 ),
               );
               final scheduleButton = OutlinedButton.icon(
-                onPressed: _canSend() ? () => _scheduleMessages() : null,
+                onPressed: (_canSend() && !_isActing)
+                    ? () => _scheduleMessages()
+                    : null,
                 icon: const Icon(Icons.schedule),
                 label: const Text('SCHEDULE'),
                 style: OutlinedButton.styleFrom(
@@ -854,39 +1250,46 @@ class _BulkMessagingTabState extends State<_BulkMessagingTab> {
   }
 
   Widget _buildRecipientSelector() {
-    // Mock data
-    final recipients = List.generate(
-      5,
-      (i) => {
-        'id': 'user_$i',
-        'name': 'User ${i + 1}',
-        'role': i % 2 == 0 ? 'Worker' : 'Client',
-      },
-    );
-
+    if (_isLoading) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(24),
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    if (_error != null) {
+      return _buildTabError(_error!, _loadUsers);
+    }
+    if (_users.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(AppLocalizations.of(context)!.noTeamMembersFound),
+        ),
+      );
+    }
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: BauhausDesign.neutral),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Column(
-        children: recipients.map((recipient) {
-          final id = recipient['id'] as String;
-          final isSelected = _selectedRecipients.contains(id);
-
+        children: _users.map((user) {
+          final isSelected = _selectedRecipients.contains(user.id);
           return CheckboxListTile(
             value: isSelected,
             onChanged: (value) {
               setState(() {
                 if (value == true) {
-                  _selectedRecipients.add(id);
+                  _selectedRecipients.add(user.id);
                 } else {
-                  _selectedRecipients.remove(id);
+                  _selectedRecipients.remove(user.id);
                 }
               });
             },
-            title: Text(recipient['name'] as String),
-            subtitle: Text(recipient['role'] as String),
+            title: Text(user.name),
+            subtitle: Text(user.email),
           );
         }).toList(),
       ),
@@ -900,12 +1303,20 @@ class _BulkMessagingTabState extends State<_BulkMessagingTab> {
   }
 
   Future<void> _sendMessages() async {
-    // TODO: Call repository method
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
+    final l10n = AppLocalizations.of(context)!;
+    setState(() => _isActing = true);
+    try {
+      final result = await _repo.sendMessages(
+        recipientIds: _selectedRecipients.toList(),
+        organizationId: widget.organizationId,
+        subject: _subjectController.text,
+        message: _messageController.text,
+        channels: _channels,
+      );
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Sent to ${_selectedRecipients.length} recipients'),
+          content: Text(l10n.bulkMessagesSent(result.sentCount.toString())),
           backgroundColor: BauhausDesign.success,
         ),
       );
@@ -914,26 +1325,56 @@ class _BulkMessagingTabState extends State<_BulkMessagingTab> {
         _subjectController.clear();
         _messageController.clear();
       });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: BauhausDesign.error,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isActing = false);
     }
   }
 
   Future<void> _scheduleMessages() async {
-    final scheduledTime = await showDatePicker(
+    final date = await showDatePicker(
       context: context,
-      initialDate: DateTime.now().add(const Duration(hours: 1)),
+      initialDate: DateTime.now().add(const Duration(days: 1)),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 30)),
     );
+    if (date == null || !mounted) return;
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (time == null || !mounted) return;
+    final scheduledFor = DateTime(
+      date.year,
+      date.month,
+      date.day,
+      time.hour,
+      time.minute,
+    );
 
-    if (scheduledTime == null) return;
-
-    // TODO: Call repository method
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
+    final l10n = AppLocalizations.of(context)!;
+    setState(() => _isActing = true);
+    try {
+      final result = await _repo.scheduleMessages(
+        recipientIds: _selectedRecipients.toList(),
+        organizationId: widget.organizationId,
+        subject: _subjectController.text,
+        message: _messageController.text,
+        channels: _channels,
+        scheduledFor: scheduledFor,
+      );
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Scheduled for ${_selectedRecipients.length} recipients',
+            l10n.bulkMessagesScheduled(result.scheduledCount.toString()),
           ),
           backgroundColor: BauhausDesign.success,
         ),
@@ -943,6 +1384,16 @@ class _BulkMessagingTabState extends State<_BulkMessagingTab> {
         _subjectController.clear();
         _messageController.clear();
       });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: BauhausDesign.error,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isActing = false);
     }
   }
 }
