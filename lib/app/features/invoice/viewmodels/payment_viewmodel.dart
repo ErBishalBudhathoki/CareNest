@@ -7,8 +7,13 @@ final paymentViewModelProvider = AsyncNotifierProvider<PaymentViewModel, void>(
   PaymentViewModel.new,
 );
 
+/// Live Stripe Connect status for an organisation, straight from Stripe
+/// (no local caching). Returns the full flag map so callers can distinguish
+/// "no account linked" from "linked but onboarding incomplete":
+/// `{hasAccount, detailsSubmitted, chargesEnabled, payoutsEnabled}`.
+/// Ready to collect payments = detailsSubmitted && chargesEnabled.
 final stripeConnectStatusProvider = FutureProvider.autoDispose
-    .family<bool, String>((ref, organizationId) async {
+    .family<Map<String, dynamic>, String>((ref, organizationId) async {
       final result = await ref
           .watch(paymentRepositoryProvider)
           .getStripeConnectStatus(organizationId);
@@ -18,9 +23,19 @@ final stripeConnectStatusProvider = FutureProvider.autoDispose
       // "Connected" for collecting payments: the account must be onboarded and
       // able to charge. Payouts are the organisation's own concern and can
       // still be pending without blocking client payments.
-      return result['detailsSubmitted'] == true &&
-          result['chargesEnabled'] == true;
+      return {
+        'hasAccount': result['hasAccount'] == true,
+        'detailsSubmitted': result['detailsSubmitted'] == true,
+        'chargesEnabled': result['chargesEnabled'] == true,
+        'payoutsEnabled': result['payoutsEnabled'] == true,
+      };
     });
+
+/// Convenience: true when the organisation can collect client payments.
+bool stripeCanCharge(Map<String, dynamic>? status) =>
+    status != null &&
+    status['detailsSubmitted'] == true &&
+    status['chargesEnabled'] == true;
 
 final organizationSubscriptionProvider = FutureProvider.autoDispose
     .family<String, String>((ref, organizationId) async {
