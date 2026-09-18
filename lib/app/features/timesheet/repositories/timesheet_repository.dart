@@ -62,15 +62,16 @@ class TimesheetRepository {
     required DateTime endDate,
     String? status,
   }) async {
-    final response = await _apiMethod.post(
-      'timesheets/list',
-      body: {
-        'startDate': startDate.toIso8601String(),
-        'endDate': endDate.toIso8601String(),
-        'organizationId': organizationId,
-        if (status != null) 'status': status,
-      },
-    );
+    final body = <String, String>{
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate.toIso8601String(),
+      'organizationId': organizationId,
+    };
+    final statusFilter = status;
+    if (statusFilter != null) {
+      body['status'] = statusFilter;
+    }
+    final response = await _apiMethod.post('timesheets/list', body: body);
 
     if (response['success'] == true && response['data'] != null) {
       final rawData = response['data'];
