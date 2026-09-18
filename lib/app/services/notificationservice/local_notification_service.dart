@@ -198,6 +198,8 @@ class LocalNotificationService {
         return 'Expense Reminders';
       case 'emergency_alerts':
         return 'Emergency Alerts';
+      case 'payments':
+        return 'Payment Notifications';
       default:
         return 'General Notifications';
     }
@@ -217,6 +219,8 @@ class LocalNotificationService {
         return 'Reminders to upload expense receipts';
       case 'emergency_alerts':
         return 'High-priority emergency broadcast alerts';
+      case 'payments':
+        return 'Invoice payments, payouts and billing alerts';
       default:
         return 'General application notifications';
     }
@@ -367,6 +371,21 @@ class LocalNotificationService {
               showBadge: true,
             );
 
+        // Payment notifications channel — invoice approvals/disputes,
+        // payments received, payouts and billing alerts
+        const AndroidNotificationChannel paymentsChannel =
+            AndroidNotificationChannel(
+              'payments',
+              'Payment Notifications',
+              description: 'Invoice payments, payouts and billing alerts',
+              importance: Importance.max,
+              playSound: true,
+              sound: null, // Use default system notification sound
+              enableVibration: true,
+              enableLights: true,
+              showBadge: true,
+            );
+
         // Create the notification channels
         await androidPlugin.createNotificationChannel(mainChannel);
         await androidPlugin.createNotificationChannel(timerChannel);
@@ -374,8 +393,9 @@ class LocalNotificationService {
         await androidPlugin.createNotificationChannel(timesheetChannel);
         await androidPlugin.createNotificationChannel(expenseChannel);
         await androidPlugin.createNotificationChannel(emergencyChannel);
+        await androidPlugin.createNotificationChannel(paymentsChannel);
         debugPrint(
-          'DEBUG_LOCAL_NOTIF: Created notification channels: invoice, timer_alerts, message, timesheet_reminders, expense_reminders, emergency_alerts',
+          'DEBUG_LOCAL_NOTIF: Created notification channels: invoice, timer_alerts, message, timesheet_reminders, expense_reminders, emergency_alerts, payments',
         );
       }
     }

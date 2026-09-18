@@ -181,4 +181,81 @@ class PaymentRepository {
       body: {'organizationId': organizationId},
     );
   }
+
+  String _dashboardQuery(String organizationId, [Map<String, String>? extra]) {
+    final params = {'organizationId': organizationId, ...?extra}.entries
+        .map(
+          (e) =>
+              '${Uri.encodeQueryComponent(e.key)}=${Uri.encodeQueryComponent(e.value)}',
+        )
+        .join('&');
+    return params;
+  }
+
+  /// In-app Stripe revenue dashboard (all org-scoped, manage_billing-gated).
+  Future<Map<String, dynamic>> getDashboardOverview(
+    String organizationId,
+  ) async {
+    return _api.get(
+      'api/billing/dashboard/overview?${_dashboardQuery(organizationId)}',
+    );
+  }
+
+  Future<Map<String, dynamic>> getDashboardBalance(
+    String organizationId,
+  ) async {
+    return _api.get(
+      'api/billing/dashboard/balance?${_dashboardQuery(organizationId)}',
+    );
+  }
+
+  Future<Map<String, dynamic>> getDashboardPayouts(
+    String organizationId, {
+    int limit = 20,
+  }) async {
+    return _api.get(
+      'api/billing/dashboard/payouts?${_dashboardQuery(organizationId, {'limit': '$limit'})}',
+    );
+  }
+
+  Future<Map<String, dynamic>> getDashboardRevenue(
+    String organizationId, {
+    int days = 30,
+  }) async {
+    return _api.get(
+      'api/billing/dashboard/revenue?${_dashboardQuery(organizationId, {'days': '$days'})}',
+    );
+  }
+
+  Future<Map<String, dynamic>> getDashboardPayments(
+    String organizationId, {
+    int limit = 20,
+  }) async {
+    return _api.get(
+      'api/billing/dashboard/payments?${_dashboardQuery(organizationId, {'limit': '$limit'})}',
+    );
+  }
+
+  Future<Map<String, dynamic>> getDashboardRisk(String organizationId) async {
+    return _api.get(
+      'api/billing/dashboard/risk?${_dashboardQuery(organizationId)}',
+    );
+  }
+
+  /// DEV ONLY: full or partial refund. The backend rejects unless
+  /// ENABLE_INAPP_REFUNDS=true (never set in production).
+  Future<Map<String, dynamic>> issueDashboardRefund({
+    required String organizationId,
+    required String invoiceId,
+    double? amount,
+  }) async {
+    return _api.post(
+      'api/billing/dashboard/refund',
+      body: {
+        'organizationId': organizationId,
+        'invoiceId': invoiceId,
+        'amount': ?amount,
+      },
+    );
+  }
 }
