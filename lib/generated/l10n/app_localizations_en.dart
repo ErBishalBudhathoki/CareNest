@@ -7447,4 +7447,137 @@ class AppLocalizationsEn extends AppLocalizations {
   String recurringPaymentSetupUrlHint(String url) {
     return 'Open this link in your browser: $url';
   }
+
+  @override
+  String get stripeDashboardTitle => 'PAYMENT DASHBOARD';
+
+  @override
+  String get stripeDashboardSubtitle =>
+      'Money collected on your linked Stripe account.';
+
+  @override
+  String get stripeDashboardRefreshFailed =>
+      'Could not refresh payment data. Pull to retry.';
+
+  @override
+  String get stripeAccountHealth => 'ACCOUNT HEALTH';
+
+  @override
+  String get stripeChargesEnabled => 'CHARGES ON';
+
+  @override
+  String get stripeChargesDisabled => 'CHARGES OFF';
+
+  @override
+  String get stripePayoutsEnabled => 'PAYOUTS ON';
+
+  @override
+  String get stripePayoutsDisabled => 'PAYOUTS OFF';
+
+  @override
+  String get stripeDetailsPending => 'VERIFICATION PENDING';
+
+  @override
+  String get stripeDetailsDone => 'VERIFIED';
+
+  @override
+  String get stripeRequirementsTitle => 'Action needed on your Stripe account';
+
+  @override
+  String get stripeRequirementsNone =>
+      'No pending requirements. Your account is in good standing.';
+
+  @override
+  String get stripeCompleteVerification => 'COMPLETE VERIFICATION';
+
+  @override
+  String get stripeVerificationLaunched =>
+      'Opening Stripe verification in your browser.';
+
+  @override
+  String get stripeBalance => 'BALANCE';
+
+  @override
+  String get stripeAvailable => 'Available';
+
+  @override
+  String get stripePending => 'Pending';
+
+  @override
+  String get stripeNextPayout => 'Next payout';
+
+  @override
+  String get stripeNoPayouts => 'No payouts yet. Paid invoices will land here.';
+
+  @override
+  String get stripeBankLabel => 'Destination';
+
+  @override
+  String get stripeRevenue30d => 'REVENUE (30 DAYS)';
+
+  @override
+  String get stripeRevenueTotal => 'Collected';
+
+  @override
+  String get stripeRevenueInvoices => 'invoices paid';
+
+  @override
+  String get stripeRecentPayments => 'RECENT PAYMENTS';
+
+  @override
+  String get stripeNoPayments => 'No payments recorded yet.';
+
+  @override
+  String get stripePayoutHistory => 'PAYOUT HISTORY';
+
+  @override
+  String get stripeRiskTitle => 'REFUNDS & DISPUTES';
+
+  @override
+  String get stripeRiskEmpty => 'No refunds or disputes. Good news.';
+
+  @override
+  String get stripeDisputeRespondBy => 'Respond by';
+
+  @override
+  String get stripeViewInvoice => 'VIEW INVOICE';
+
+  @override
+  String get stripeRefund => 'REFUND';
+
+  @override
+  String get stripeRefundTitle => 'Issue refund (dev only)';
+
+  @override
+  String get stripeRefundAmountHint => 'Amount in AUD (empty = full)';
+
+  @override
+  String get stripeRefundConfirm => 'ISSUE REFUND';
+
+  @override
+  String get stripeRefundCancel => 'CANCEL';
+
+  @override
+  String get stripeRefundIssued => 'Refund issued.';
+
+  @override
+  String get stripeRefundFailed => 'Refund failed. Please try again.';
+
+  @override
+  String get stripePaid => 'PAID';
+
+  @override
+  String get stripePartial => 'PARTIAL';
+
+  @override
+  String get stripePendingStatus => 'PENDING';
+
+  @override
+  String get stripeOverdue => 'OVERDUE';
+
+  @override
+  String get stripeRefunded => 'REFUNDED';
+
+  @override
+  String get stripeStatus => 'Status';
 }

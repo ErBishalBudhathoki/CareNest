@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
+import 'package:carenest/app/features/admin/views/stripe_dashboard_view.dart';
 import 'package:carenest/app/features/invoice/viewmodels/payment_viewmodel.dart';
 import 'package:carenest/app/features/organization/views/subscription_view.dart';
 import 'package:carenest/app/shared/widgets/app_snack_bars.dart';
@@ -281,9 +282,10 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                   else
                     InkWell(
                       onTap: () {
-                        showInfoSnack(
-                          context,
-                          'Open your Stripe Dashboard in a browser to manage payouts.',
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const StripeDashboardView(),
+                          ),
                         );
                       },
                       child: Container(
