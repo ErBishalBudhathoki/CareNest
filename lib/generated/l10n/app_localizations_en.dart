@@ -7580,4 +7580,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stripeStatus => 'Status';
+
+  @override
+  String get paymentSettingsPendingTitle => 'VERIFICATION PENDING';
+
+  @override
+  String get paymentSettingsPendingDesc =>
+      'Your Stripe account is linked but setup is incomplete. Finish Stripe onboarding to start receiving payouts.';
 }
