@@ -19,8 +19,7 @@ class TimesheetRepository {
     required String email,
     required DateTime startDate,
     required DateTime endDate,
-  }) async {
-    try {
+  }) async {    try {
       final sharedPrefs = SharedPreferencesUtils();
       await sharedPrefs.init();
       final organizationId = sharedPrefs.getString('organizationId');
@@ -53,5 +52,34 @@ class TimesheetRepository {
       debugPrint('Error fetching timesheets: $e');
       throw Exception('Failed to load timesheets');
     }
+  }
+
+  /// Organization-wide timesheet listing for admins (bulk approval).
+  /// Requires the admin-gated backend list (email omitted).
+  Future<List<TimesheetEntry>> fetchOrganizationTimesheets({
+    required String organizationId,
+    required DateTime startDate,
+    required DateTime endDate,
+    String? status,
+  }) async {
+    final response = await _apiMethod.post(
+      'timesheets/list',
+      body: {
+        'startDate': startDate.toIso8601String(),
+        'endDate': endDate.toIso8601String(),
+        'organizationId': organizationId,
+        if (status != null) 'status': status,
+      },
+    );
+
+    if (response['success'] == true && response['data'] != null) {
+      final rawData = response['data'];
+      if (rawData is! List) {
+        return [];
+      }
+      final List<dynamic> data = rawData;
+      return data.map((json) => TimesheetEntry.fromJson(json)).toList();
+    }
+    throw Exception(response['message'] ?? 'Failed to load timesheets');
   }
 }

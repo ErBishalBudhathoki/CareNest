@@ -1762,6 +1762,54 @@ abstract class AppLocalizations {
   /// **'Update multiple rates'**
   String get bulkUpdateSubtitle;
 
+  /// No description provided for @bulkApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved {count} of {total}'**
+  String bulkApproved(String count, String total);
+
+  /// No description provided for @bulkInvoicesGenerated.
+  ///
+  /// In en, this message translates to:
+  /// **'Generated {invoices} invoice(s) from {appointments} appointment(s)'**
+  String bulkInvoicesGenerated(String invoices, String appointments);
+
+  /// No description provided for @bulkMessagesScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled for {count} recipient(s)'**
+  String bulkMessagesScheduled(String count);
+
+  /// No description provided for @bulkMessagesSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent to {count} recipient(s)'**
+  String bulkMessagesSent(String count);
+
+  /// No description provided for @bulkRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected {count} of {total}'**
+  String bulkRejected(String count, String total);
+
+  /// No description provided for @bulkRejectReasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason for rejection'**
+  String get bulkRejectReasonHint;
+
+  /// No description provided for @bulkRejectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject Timesheets'**
+  String get bulkRejectTitle;
+
+  /// No description provided for @bulkShiftsAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned {succeeded} shift(s), {failed} failed'**
+  String bulkShiftsAssigned(String succeeded, String failed);
+
   /// No description provided for @business.
   ///
   /// In en, this message translates to:
@@ -5908,6 +5956,12 @@ abstract class AppLocalizations {
   /// **'Invoice Period'**
   String get invoicePeriodTitle;
 
+  /// No description provided for @invoicePreviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice Preview'**
+  String get invoicePreviewTitle;
+
   /// No description provided for @invoicesCaps.
   ///
   /// In en, this message translates to:
@@ -7660,6 +7714,12 @@ abstract class AppLocalizations {
   /// **'No History'**
   String get noHistoryTitle;
 
+  /// No description provided for @noInvoiceableAppointments.
+  ///
+  /// In en, this message translates to:
+  /// **'No completed appointments to invoice'**
+  String get noInvoiceableAppointments;
+
   /// No description provided for @noInvoicesFound.
   ///
   /// In en, this message translates to:
@@ -7918,6 +7978,12 @@ abstract class AppLocalizations {
   /// **'No Shifts Scheduled'**
   String get noShiftsScheduled;
 
+  /// No description provided for @noSubmittedTimesheets.
+  ///
+  /// In en, this message translates to:
+  /// **'No submitted timesheets awaiting approval'**
+  String get noSubmittedTimesheets;
+
   /// No description provided for @noSupportItemsFound.
   ///
   /// In en, this message translates to:
@@ -8020,6 +8086,12 @@ abstract class AppLocalizations {
   /// **'Notifications'**
   String get notificationsTitle;
 
+  /// No description provided for @noTeamMembersFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No team members found'**
+  String get noTeamMembersFound;
+
   /// No description provided for @noTrainingModulesMessage.
   ///
   /// In en, this message translates to:
@@ -8049,6 +8121,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not Started'**
   String get notStartedStatus;
+
+  /// No description provided for @noUnassignedShifts.
+  ///
+  /// In en, this message translates to:
+  /// **'No unassigned shifts'**
+  String get noUnassignedShifts;
 
   /// No description provided for @noUpcomingAppointments.
   ///

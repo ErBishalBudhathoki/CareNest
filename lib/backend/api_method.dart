@@ -6073,6 +6073,48 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
+  /// Lists organization assignments with an optional status filter
+  /// (active|completed|cancelled). Used by bulk invoice generation to find
+  /// completed, uninvoiced assignments.
+  Future<Map<String, dynamic>> getAssignmentsByStatus({
+    required String organizationId,
+    String? status,
+  }) async {
+    try {
+      final params = <String, String>{'organizationId': organizationId};
+      if (status != null && status.isNotEmpty) {
+        params['status'] = status;
+      }
+      final uri = Uri.parse(
+        '${_baseUrl}assignments',
+      ).replace(queryParameters: params);
+      final headers = await _buildJsonHeaders(
+        includeAuth: true,
+        includeAppCheck: true,
+      );
+      final response = await http.get(uri, headers: headers);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return {
+          'success': true,
+          'assignments': data['assignments'] ?? data['data'] ?? [],
+        };
+      }
+      return {
+        'success': false,
+        'message': 'Failed to load assignments: ${response.statusCode}',
+        'assignments': [],
+      };
+    } catch (e) {
+      debugPrint('getAssignmentsByStatus error: $e');
+      return {
+        'success': false,
+        'message': 'Error loading assignments: $e',
+        'assignments': [],
+      };
+    }
+  }
+
   Future<Map<String, dynamic>> patch(
     String endpoint, {
     Map<String, dynamic>? body,

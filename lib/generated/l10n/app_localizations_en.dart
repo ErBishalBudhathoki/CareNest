@@ -895,6 +895,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bulkUpdateSubtitle => 'Update multiple rates';
 
   @override
+  String bulkApproved(String count, String total) {
+    return 'Approved $count of $total';
+  }
+
+  @override
+  String bulkInvoicesGenerated(String invoices, String appointments) {
+    return 'Generated $invoices invoice(s) from $appointments appointment(s)';
+  }
+
+  @override
+  String bulkMessagesScheduled(String count) {
+    return 'Scheduled for $count recipient(s)';
+  }
+
+  @override
+  String bulkMessagesSent(String count) {
+    return 'Sent to $count recipient(s)';
+  }
+
+  @override
+  String bulkRejected(String count, String total) {
+    return 'Rejected $count of $total';
+  }
+
+  @override
+  String get bulkRejectReasonHint => 'Reason for rejection';
+
+  @override
+  String get bulkRejectTitle => 'Reject Timesheets';
+
+  @override
+  String bulkShiftsAssigned(String succeeded, String failed) {
+    return 'Assigned $succeeded shift(s), $failed failed';
+  }
+
+  @override
   String get business => 'Business';
 
   @override
@@ -3211,6 +3247,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invoicePeriodTitle => 'Invoice Period';
 
   @override
+  String get invoicePreviewTitle => 'Invoice Preview';
+
+  @override
   String get invoicesCaps => 'INVOICES';
 
   @override
@@ -4189,6 +4228,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noHistoryTitle => 'No History';
 
   @override
+  String get noInvoiceableAppointments =>
+      'No completed appointments to invoice';
+
+  @override
   String get noInvoicesFound => 'No invoices found';
 
   @override
@@ -4324,6 +4367,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noShiftsScheduled => 'No Shifts Scheduled';
 
   @override
+  String get noSubmittedTimesheets =>
+      'No submitted timesheets awaiting approval';
+
+  @override
   String get noSupportItemsFound => 'No support items found';
 
   @override
@@ -4378,6 +4425,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationsTitle => 'Notifications';
 
   @override
+  String get noTeamMembersFound => 'No team members found';
+
+  @override
   String get noTrainingModulesMessage => 'No training modules available.';
 
   @override
@@ -4391,6 +4441,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notStartedStatus => 'Not Started';
+
+  @override
+  String get noUnassignedShifts => 'No unassigned shifts';
 
   @override
   String get noUpcomingAppointments => 'NO UPCOMING APPOINTMENTS';
