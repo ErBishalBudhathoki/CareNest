@@ -50,6 +50,7 @@ import 'package:carenest/app/features/timesheet/views/admin_payroll_export_view.
 
 // Phase 1-10 Advanced Features
 import 'package:carenest/app/features/analytics/views/enhanced_predictive_insights_view.dart';
+import 'package:carenest/app/features/bulk_actions/views/bulk_actions_view.dart';
 import 'package:carenest/app/features/scheduling/views/auto_schedule_dashboard.dart';
 import 'package:carenest/app/features/invoice/views/invoice_ai_consent_view.dart';
 import 'package:carenest/app/features/invoice/views/invoice_ai_dashboard.dart';
@@ -1379,6 +1380,21 @@ class _AdminDashboardViewControllerState
               context,
               MaterialPageRoute(
                 builder: (_) => const EnhancedPredictiveInsightsView(),
+              ),
+            ),
+          ),
+          CommandAction(
+            icon: const Icon(Icons.playlist_add_check),
+            title: 'Bulk Actions',
+            subtitle: 'Mass approve, invoice, and assign',
+            color: BauhausDesign.secondary,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => BulkActionsView(
+                  organizationId: widget.organizationId ?? '',
+                  userEmail: widget.email,
+                ),
               ),
             ),
           ),
