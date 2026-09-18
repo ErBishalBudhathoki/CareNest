@@ -13711,6 +13711,264 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open this link in your browser: {url}'**
   String recurringPaymentSetupUrlHint(String url);
+
+  /// No description provided for @stripeDashboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'PAYMENT DASHBOARD'**
+  String get stripeDashboardTitle;
+
+  /// No description provided for @stripeDashboardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Money collected on your linked Stripe account.'**
+  String get stripeDashboardSubtitle;
+
+  /// No description provided for @stripeDashboardRefreshFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not refresh payment data. Pull to retry.'**
+  String get stripeDashboardRefreshFailed;
+
+  /// No description provided for @stripeAccountHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'ACCOUNT HEALTH'**
+  String get stripeAccountHealth;
+
+  /// No description provided for @stripeChargesEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'CHARGES ON'**
+  String get stripeChargesEnabled;
+
+  /// No description provided for @stripeChargesDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'CHARGES OFF'**
+  String get stripeChargesDisabled;
+
+  /// No description provided for @stripePayoutsEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'PAYOUTS ON'**
+  String get stripePayoutsEnabled;
+
+  /// No description provided for @stripePayoutsDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'PAYOUTS OFF'**
+  String get stripePayoutsDisabled;
+
+  /// No description provided for @stripeDetailsPending.
+  ///
+  /// In en, this message translates to:
+  /// **'VERIFICATION PENDING'**
+  String get stripeDetailsPending;
+
+  /// No description provided for @stripeDetailsDone.
+  ///
+  /// In en, this message translates to:
+  /// **'VERIFIED'**
+  String get stripeDetailsDone;
+
+  /// No description provided for @stripeRequirementsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Action needed on your Stripe account'**
+  String get stripeRequirementsTitle;
+
+  /// No description provided for @stripeRequirementsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending requirements. Your account is in good standing.'**
+  String get stripeRequirementsNone;
+
+  /// No description provided for @stripeCompleteVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'COMPLETE VERIFICATION'**
+  String get stripeCompleteVerification;
+
+  /// No description provided for @stripeVerificationLaunched.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening Stripe verification in your browser.'**
+  String get stripeVerificationLaunched;
+
+  /// No description provided for @stripeBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'BALANCE'**
+  String get stripeBalance;
+
+  /// No description provided for @stripeAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get stripeAvailable;
+
+  /// No description provided for @stripePending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get stripePending;
+
+  /// No description provided for @stripeNextPayout.
+  ///
+  /// In en, this message translates to:
+  /// **'Next payout'**
+  String get stripeNextPayout;
+
+  /// No description provided for @stripeNoPayouts.
+  ///
+  /// In en, this message translates to:
+  /// **'No payouts yet. Paid invoices will land here.'**
+  String get stripeNoPayouts;
+
+  /// No description provided for @stripeBankLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination'**
+  String get stripeBankLabel;
+
+  /// No description provided for @stripeRevenue30d.
+  ///
+  /// In en, this message translates to:
+  /// **'REVENUE (30 DAYS)'**
+  String get stripeRevenue30d;
+
+  /// No description provided for @stripeRevenueTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Collected'**
+  String get stripeRevenueTotal;
+
+  /// No description provided for @stripeRevenueInvoices.
+  ///
+  /// In en, this message translates to:
+  /// **'invoices paid'**
+  String get stripeRevenueInvoices;
+
+  /// No description provided for @stripeRecentPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'RECENT PAYMENTS'**
+  String get stripeRecentPayments;
+
+  /// No description provided for @stripeNoPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'No payments recorded yet.'**
+  String get stripeNoPayments;
+
+  /// No description provided for @stripePayoutHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'PAYOUT HISTORY'**
+  String get stripePayoutHistory;
+
+  /// No description provided for @stripeRiskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'REFUNDS & DISPUTES'**
+  String get stripeRiskTitle;
+
+  /// No description provided for @stripeRiskEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No refunds or disputes. Good news.'**
+  String get stripeRiskEmpty;
+
+  /// No description provided for @stripeDisputeRespondBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Respond by'**
+  String get stripeDisputeRespondBy;
+
+  /// No description provided for @stripeViewInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'VIEW INVOICE'**
+  String get stripeViewInvoice;
+
+  /// No description provided for @stripeRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'REFUND'**
+  String get stripeRefund;
+
+  /// No description provided for @stripeRefundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue refund (dev only)'**
+  String get stripeRefundTitle;
+
+  /// No description provided for @stripeRefundAmountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount in AUD (empty = full)'**
+  String get stripeRefundAmountHint;
+
+  /// No description provided for @stripeRefundConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'ISSUE REFUND'**
+  String get stripeRefundConfirm;
+
+  /// No description provided for @stripeRefundCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'CANCEL'**
+  String get stripeRefundCancel;
+
+  /// No description provided for @stripeRefundIssued.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund issued.'**
+  String get stripeRefundIssued;
+
+  /// No description provided for @stripeRefundFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund failed. Please try again.'**
+  String get stripeRefundFailed;
+
+  /// No description provided for @stripePaid.
+  ///
+  /// In en, this message translates to:
+  /// **'PAID'**
+  String get stripePaid;
+
+  /// No description provided for @stripePartial.
+  ///
+  /// In en, this message translates to:
+  /// **'PARTIAL'**
+  String get stripePartial;
+
+  /// No description provided for @stripePendingStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'PENDING'**
+  String get stripePendingStatus;
+
+  /// No description provided for @stripeOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'OVERDUE'**
+  String get stripeOverdue;
+
+  /// No description provided for @stripeRefunded.
+  ///
+  /// In en, this message translates to:
+  /// **'REFUNDED'**
+  String get stripeRefunded;
+
+  /// No description provided for @stripeStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get stripeStatus;
 }
 
 class _AppLocalizationsDelegate

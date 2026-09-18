@@ -12,6 +12,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carenest/app/features/home/viewmodels/home_viewmodel.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
+import 'package:carenest/app/features/client_portal/views/client_invoice_detail_view.dart';
 
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
@@ -109,14 +110,21 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
         // Handle different notification types
         switch (notificationType) {
           case 'invoice':
-            // Navigate to invoice details
+            // Navigate to invoice details (e.g. client approved/disputed an
+            // invoice, a payment arrived, or a chargeback opened).
             if (payload.containsKey('invoiceId')) {
-              final invoiceId = payload['invoiceId'];
+              final invoiceId = '${payload['invoiceId']}';
               _debugLog(
                 'DEBUG_NOTIF_HANDLER: Navigating to invoice details for ID: $invoiceId',
               );
-              // Example navigation:
-              // Navigator.of(context).pushNamed('/invoice_details', arguments: {'invoiceId': invoiceId});
+              if (invoiceId.isNotEmpty && mounted) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        ClientInvoiceDetailView(invoiceId: invoiceId),
+                  ),
+                );
+              }
             }
             break;
           case 'timer':
