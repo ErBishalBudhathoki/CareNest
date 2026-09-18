@@ -73,6 +73,12 @@ import 'package:carenest/app/features/onboarding/views/onboarding_app_router.dar
 
 import 'package:carenest/app/features/mileage/views/mileage_tracker_view.dart';
 import 'package:carenest/app/features/teams/views/team_dashboard_view.dart';
+import 'package:carenest/app/features/workforce_optimization/views/workforce_planning_view.dart';
+import 'package:carenest/app/features/workforce_optimization/views/resource_allocation_view.dart';
+import 'package:carenest/app/features/workforce_optimization/views/performance_analytics_view.dart';
+import 'package:carenest/app/features/workforce_optimization/views/quality_assurance_view.dart';
+import 'package:carenest/app/features/workforce_optimization/views/business_intelligence_view.dart';
+import 'package:carenest/app/features/workforce_optimization/views/report_builder_view.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 // Note: navigation.dart is exported or imported via other files, ensuring we use the same key?
 // No, DeepLinkHandler imports it. main.dart imports DeepLinkHandler.
@@ -761,6 +767,16 @@ class MyApp extends ConsumerWidget {
           },
           Routes.mileageTracker: (context) => const MileageTrackerView(),
           Routes.teamDashboard: (context) => const TeamDashboardView(),
+          // Workforce Optimization Routes
+          Routes.workforcePlanning: (context) => const WorkforcePlanningView(),
+          Routes.resourceAllocation: (context) =>
+              const ResourceAllocationView(),
+          Routes.performanceAnalytics: (context) =>
+              const PerformanceAnalyticsView(),
+          Routes.qualityAssurance: (context) => const QualityAssuranceView(),
+          Routes.businessIntelligence: (context) =>
+              const BusinessIntelligenceView(),
+          Routes.reportBuilder: (context) => const ReportBuilderView(),
         },
       ),
     );
