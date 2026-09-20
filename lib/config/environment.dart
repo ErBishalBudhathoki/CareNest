@@ -47,7 +47,71 @@ class AppConfig {
       );
     }
 
+    checkTransportSecurity(
+      parsed,
+      sourceLabel: sourceLabel,
+      isRelease: kReleaseMode,
+    );
+
     return normalized;
+  }
+
+  /// Enforces encrypted transport for API traffic.
+  ///
+  /// Plaintext `http://` is only ever acceptable for local development hosts
+  /// (loopback / LAN). Anything else throws in release builds so a bad
+  /// `--dart-define` URL fails fast at startup instead of silently sending
+  /// NDIS/PII traffic unencrypted. In debug builds it logs a warning.
+  @visibleForTesting
+  static void checkTransportSecurity(
+    Uri parsed, {
+    required String sourceLabel,
+    required bool isRelease,
+  }) {
+    if (parsed.scheme != 'http') return;
+    if (isLocalHost(parsed.host)) return;
+    if (!isRelease) {
+      debugPrint(
+        'WARNING: $sourceLabel uses plaintext HTTP (${parsed.host}). '
+        'Release builds refuse non-local HTTP — switch to HTTPS.',
+      );
+      return;
+    }
+    throw StateError(
+      '$sourceLabel uses insecure plaintext HTTP ("${parsed.host}"). '
+      'Release builds require HTTPS for non-local hosts.',
+    );
+  }
+
+  /// True for hosts that never leave the local machine/network.
+  ///
+  /// String-based on purpose: no `dart:io` dependency, so this file keeps
+  /// compiling for web builds.
+  @visibleForTesting
+  static bool isLocalHost(String host) {
+    var h = host.toLowerCase().trim();
+    // Bracketed IPv6 literals, e.g. "[::1]".
+    if (h.startsWith('[') && h.endsWith(']')) {
+      h = h.substring(1, h.length - 1);
+    }
+    if (h == 'localhost' ||
+        h.endsWith('.localhost') ||
+        h.endsWith('.local') ||
+        h == '127.0.0.1' ||
+        h == '0.0.0.0' ||
+        h == '::1') {
+      return true;
+    }
+    // RFC 1918 private ranges: 10/8, 172.16/12, 192.168/16.
+    if (h.startsWith('10.') || h.startsWith('192.168.')) return true;
+    if (RegExp(r'^172\.(1[6-9]|2\d|3[01])\.').hasMatch(h)) return true;
+    // IPv6 unique-local (fc00::/7) and link-local (fe80::/10).
+    if (h.startsWith('fc') || h.startsWith('fd') || h.startsWith('fe80')) {
+      return true;
+    }
+    // IPv4 link-local (169.254/16).
+    if (h.startsWith('169.254.')) return true;
+    return false;
   }
 
   static bool isBaseUrlConfiguredForCurrentFlavor() {

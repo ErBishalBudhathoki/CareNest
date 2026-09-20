@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/backend/pinned_http_client.dart';
+import 'package:carenest/config/environment.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
@@ -189,7 +191,13 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
     }
 
     try {
-      _sseClient = http.Client();
+      // Fresh (non-shared) pinned client: this view closes it on dispose
+      // to cancel the stream, so it must not be the shared instance.
+      _sseClient = PinnedHttpClient.clientForBackendUrl(
+        AppConfig.baseUrl,
+        Uri.parse(AppConfig.baseUrl),
+        shared: false,
+      );
       final resp = await _api.openSseStream(
         'analytics/api-usage/stream/$_organizationId',
         client: _sseClient!,
