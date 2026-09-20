@@ -3,6 +3,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
+import '../widgets/authed_network_image.dart';
+
 /// Utility class for handling image processing operations
 /// Provides centralized methods for image decoding, validation, and error handling
 class ImageUtils {
@@ -129,8 +131,10 @@ class ImageUtils {
     }
 
     if (imageUrl != null && isNetworkUrl(imageUrl)) {
-      return Image.network(
-        imageUrl,
+      // AuthedNetworkImage attaches credentials for backend-hosted files
+      // and behaves like Image.network for anything else.
+      return AuthedNetworkImage(
+        url: imageUrl,
         width: width,
         height: height,
         fit: fit,

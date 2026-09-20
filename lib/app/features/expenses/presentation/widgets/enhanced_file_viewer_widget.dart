@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:path/path.dart' as path;
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carenest/app/shared/widgets/authed_network_image.dart';
 import 'package:carenest/config/environment.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
@@ -598,6 +599,8 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
                                                 imageUrl: _getServerUrl(
                                                   filePath,
                                                 ),
+                                                cacheManager:
+                                                    AuthedCacheManager.instance,
                                                 fit: BoxFit.cover,
                                                 placeholder: (context, url) {
                                                   debugPrint(
@@ -876,6 +879,9 @@ class _FullScreenImageViewer extends StatelessWidget {
       debugPrint('Full-screen viewer loading image from URL: $serverUrl');
       return CachedNetworkImage(
         imageUrl: serverUrl,
+        // Backend-hosted files need Firebase credentials (private /uploads);
+        // public/third-party URLs pass through untouched.
+        cacheManager: AuthedCacheManager.instance,
         fit: BoxFit.contain,
         placeholder: (context, url) {
           debugPrint('Full-screen placeholder for URL: $url');

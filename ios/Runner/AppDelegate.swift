@@ -5,6 +5,10 @@ import Vision
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
+  // Blur overlay hiding NDIS PII from the iOS app-switcher snapshot
+  // (iOS has no FLAG_SECURE equivalent — this is the platform answer).
+  private var privacyBlurView: UIVisualEffectView?
+
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -58,7 +62,90 @@ import Vision
     }
     
     GeneratedPluginRegistrant.register(with: self)
+    self.registerDeviceSecurityChannel()
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  // MARK: - App-switcher privacy (PII snapshot protection)
+
+  override func applicationWillResignActive(_ application: UIApplication) {
+    super.applicationWillResignActive(application)
+    guard privacyBlurView == nil, let window = self.window else { return }
+    let blur = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
+    blur.frame = window.bounds
+    blur.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    window.addSubview(blur)
+    privacyBlurView = blur
+  }
+
+  override func applicationDidBecomeActive(_ application: UIApplication) {
+    super.applicationDidBecomeActive(application)
+    privacyBlurView?.removeFromSuperview()
+    privacyBlurView = nil
+  }
+
+  // MARK: - Device security posture (jailbreak detection, best-effort)
+
+  /// Called from Dart via the device_security channel registrar below.
+  private func registerDeviceSecurityChannel() {
+    guard let registrar = self.registrar(forPlugin: "DeviceSecurityPlugin") else { return }
+    let channel = FlutterMethodChannel(
+      name: "com.bishal.invoice/device_security",
+      binaryMessenger: registrar.messenger()
+    )
+    channel.setMethodCallHandler({ (call, result) in
+      guard call.method == "getSecurityPosture" else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+      result(self.securityPosture())
+    })
+  }
+
+  private func securityPosture() -> [String: Any] {
+    var reasons: [String] = []
+
+    // Classic jailbreak artifacts
+    let suspectPaths = [
+      "/Applications/Cydia.app",
+      "/Applications/Sileo.app",
+      "/Library/MobileSubstrate/MobileSubstrate.dylib",
+      "/bin/bash",
+      "/usr/sbin/sshd",
+      "/etc/apt",
+      "/private/var/lib/apt",
+      "/private/var/tmp/cydia.log",
+      "/.installed_unc0ver",
+      "/.bootstrapped_electra",
+    ]
+    if suspectPaths.contains(where: { FileManager.default.fileExists(atPath: $0) }) {
+      reasons.append("jailbreak_artifacts")
+    }
+
+    // Sandbox escape probe: App Store apps cannot write outside their container
+    let probePath = "/private/" + UUID().uuidString
+    if (try? "x".write(toFile: probePath, atomically: true, encoding: .utf8)) != nil {
+      reasons.append("sandbox_escape")
+      try? FileManager.default.removeItem(atPath: probePath)
+    }
+
+    // Dynamic injection (set by jailbreak tooling, absent on stock iOS)
+    if getenv("DYLD_INSERT_LIBRARIES") != nil {
+      reasons.append("dyld_injection")
+    }
+
+    #if targetEnvironment(simulator)
+    let simulator = true
+    #else
+    let simulator = false
+    #endif
+
+    return [
+      "compromised": !reasons.isEmpty,
+      "reasons": reasons,
+      "emulator": simulator,
+      "debuggable": false,
+    ]
   }
   
   private func hideSystemUI() {
