@@ -32,6 +32,7 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:media_store_plus/media_store_plus.dart';
 import 'package:app_links/app_links.dart';
 import 'package:carenest/app/di/service_locator.dart';
+import 'package:carenest/app/core/services/device_security.dart';
 import 'package:carenest/app/core/utils/navigation.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/auth/utils/deep_link_state.dart';
@@ -130,6 +131,8 @@ void main() async {
   runApp(const ProviderScope(child: MyApp()));
   WidgetsBinding.instance.addPostFrameCallback((_) {
     _processPendingInitialDeepLink();
+    // Root/jailbreak warning (warn-only, no-ops on healthy devices).
+    DeviceSecurity.runStartupCheck();
   });
 }
 

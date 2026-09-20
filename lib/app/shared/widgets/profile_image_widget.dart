@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
 import '../utils/image_utils.dart';
+import 'authed_network_image.dart';
 
 /// Unified profile image widget that handles different image sources
 ///
@@ -162,8 +163,10 @@ class ProfileImageWidget extends StatelessWidget {
   Widget _buildNetworkImage(String url) {
     // debugPrint('ProfileImageWidget: Loading network image from: $url');
 
-    return Image.network(
-      url,
+    // AuthedNetworkImage attaches credentials for backend-hosted files
+    // (private /uploads) and behaves like Image.network elsewhere.
+    return AuthedNetworkImage(
+      url: url,
       width: size,
       height: size,
       fit: BoxFit.cover,
