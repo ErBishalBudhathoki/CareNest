@@ -13,6 +13,7 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:carenest/backend/pinned_http_client.dart';
 import 'package:carenest/app/core/services/timer_service.dart';
 
 import 'package:carenest/app/features/auth/models/user_model.dart' as app;
@@ -168,7 +169,7 @@ class ApiMethod extends ChangeNotifier {
         extra: headers,
       );
 
-      final response = await http.get(uri, headers: requestHeaders);
+      final response = await _get(uri, headers: requestHeaders);
       debugPrint(
         '=== API METHOD DEBUG: GET status: ${response.statusCode} ===',
       );
@@ -223,7 +224,7 @@ class ApiMethod extends ChangeNotifier {
         );
         return staleCachedRate;
       }
-      final response = await http.get(Uri.parse(url), headers: headers);
+      final response = await _get(Uri.parse(url), headers: headers);
       sw.stop();
       dynamic body;
       try {
@@ -285,7 +286,7 @@ class ApiMethod extends ChangeNotifier {
   ) async {
     try {
       final url = '${_baseUrl}settings/general?organizationId=$organizationId';
-      final response = await http.get(Uri.parse(url), headers: headers);
+      final response = await _get(Uri.parse(url), headers: headers);
       if (response.statusCode != 200) return null;
 
       final decoded = json.decode(response.body);
@@ -328,7 +329,7 @@ class ApiMethod extends ChangeNotifier {
       }
       final sw = Stopwatch()..start();
       DebugLog.networkRequest('PUT', url, payload: payload);
-      final response = await http.put(
+      final response = await _put(
         Uri.parse(url),
         headers: headers,
         body: json.encode(payload),
@@ -414,7 +415,7 @@ class ApiMethod extends ChangeNotifier {
         );
       }
 
-      final response = await http.post(
+      final response = await _post(
         uri,
         headers: requestHeaders,
         body: body != null ? json.encode(body) : null,
@@ -474,7 +475,7 @@ class ApiMethod extends ChangeNotifier {
         request.files.addAll(files);
       }
 
-      final streamedResponse = await request.send();
+      final streamedResponse = await _send(request);
       final response = await http.Response.fromStream(streamedResponse);
 
       debugPrint(
@@ -531,7 +532,7 @@ class ApiMethod extends ChangeNotifier {
 
       final sw = Stopwatch()..start();
       DebugLog.networkRequest('PUT', url, payload: payload);
-      final response = await http.put(
+      final response = await _put(
         Uri.parse(url),
         headers: headers,
         body: json.encode(payload),
@@ -586,7 +587,7 @@ class ApiMethod extends ChangeNotifier {
         includeAppCheck: true,
       );
 
-      final response = await http.put(
+      final response = await _put(
         uri,
         headers: headers,
         body: body != null ? json.encode(body) : null,
@@ -606,7 +607,7 @@ class ApiMethod extends ChangeNotifier {
         includeAppCheck: true,
       );
 
-      final response = await http.delete(uri, headers: headers);
+      final response = await _delete(uri, headers: headers);
 
       return _handleResponse(response);
     } catch (e) {
@@ -697,6 +698,66 @@ class ApiMethod extends ChangeNotifier {
   bool _isSameOrigin(Uri a, Uri b) {
     return a.scheme == b.scheme && a.host == b.host && a.port == b.port;
   }
+
+  /// Routes a request to the CA-pinned client when it targets our backend,
+  /// or a standard system-trust client otherwise (see PinnedHttpClient).
+  http.Client _clientFor(Uri uri) {
+    try {
+      return PinnedHttpClient.clientForBackendUrl(_baseUrl, uri);
+    } catch (_) {
+      // Base URL unresolvable here (callers already surface that error);
+      // fall back without pinning rather than crashing request building.
+      return PinnedHttpClient.clientForBackendUrl('', uri);
+    }
+  }
+
+  /// Pinned-transport equivalents of `package:http` top-level functions.
+  /// All ApiMethod traffic must go through these so backend requests use
+  /// the GTS-roots-only trust store.
+  Future<http.Response> _get(Uri url, {Map<String, String>? headers}) =>
+      _clientFor(url).get(url, headers: headers);
+
+  Future<http.Response> _head(Uri url, {Map<String, String>? headers}) =>
+      _clientFor(url).head(url, headers: headers);
+
+  Future<http.Response> _post(
+    Uri url, {
+    Map<String, String>? headers,
+    Object? body,
+    Encoding? encoding,
+  }) => _clientFor(
+    url,
+  ).post(url, headers: headers, body: body, encoding: encoding);
+
+  Future<http.Response> _put(
+    Uri url, {
+    Map<String, String>? headers,
+    Object? body,
+    Encoding? encoding,
+  }) => _clientFor(
+    url,
+  ).put(url, headers: headers, body: body, encoding: encoding);
+
+  Future<http.Response> _patch(
+    Uri url, {
+    Map<String, String>? headers,
+    Object? body,
+    Encoding? encoding,
+  }) => _clientFor(
+    url,
+  ).patch(url, headers: headers, body: body, encoding: encoding);
+
+  Future<http.Response> _delete(
+    Uri url, {
+    Map<String, String>? headers,
+    Object? body,
+    Encoding? encoding,
+  }) => _clientFor(
+    url,
+  ).delete(url, headers: headers, body: body, encoding: encoding);
+
+  Future<http.StreamedResponse> _send(http.BaseRequest request) =>
+      _clientFor(request.url).send(request);
 
   Future<String?> _getAuthorizationHeaderValue({
     bool forceRefresh = false,
@@ -836,7 +897,7 @@ class ApiMethod extends ChangeNotifier {
       }
     }
 
-    Future<http.Response> f = http.get(targetUri, headers: combinedHeaders);
+    Future<http.Response> f = _get(targetUri, headers: combinedHeaders);
     if (timeout != null) {
       f = f.timeout(timeout);
     }
@@ -870,7 +931,7 @@ class ApiMethod extends ChangeNotifier {
       }
     }
 
-    Future<http.Response> f = http.head(targetUri, headers: combinedHeaders);
+    Future<http.Response> f = _head(targetUri, headers: combinedHeaders);
     if (timeout != null) {
       f = f.timeout(timeout);
     }
@@ -921,7 +982,7 @@ class ApiMethod extends ChangeNotifier {
       request.headers['X-Platform'] = 'ios';
     }
     request.files.add(await http.MultipartFile.fromPath(fieldName, file.path));
-    final streamedResponse = await request.send();
+    final streamedResponse = await _send(request);
     final response = await http.Response.fromStream(streamedResponse);
     final decoded = response.body.isNotEmpty ? json.decode(response.body) : {};
 
@@ -998,7 +1059,7 @@ class ApiMethod extends ChangeNotifier {
       request.headers['X-Platform'] = 'ios';
     }
     request.files.add(await http.MultipartFile.fromPath('logo', file.path));
-    final streamedResponse = await request.send();
+    final streamedResponse = await _send(request);
     final response = await http.Response.fromStream(streamedResponse);
     final decoded = response.body.isNotEmpty ? json.decode(response.body) : {};
     if (response.statusCode != 200) {
@@ -1031,7 +1092,7 @@ class ApiMethod extends ChangeNotifier {
     var data;
     try {
       debugPrint('${_baseUrl}hello/$email');
-      final response = await http.get(Uri.parse('${_baseUrl}hello/$email'));
+      final response = await _get(Uri.parse('${_baseUrl}hello/$email'));
       //debugPrint(response.body);
       switch (response.statusCode) {
         case 200:
@@ -1194,7 +1255,7 @@ class ApiMethod extends ChangeNotifier {
     debugPrint('sendOTP request URL: $uri');
 
     final headers = await _buildJsonHeaders(includeAppCheck: true);
-    final response = await http.post(
+    final response = await _post(
       uri,
       body: jsonEncode({'email': email}),
       headers: headers,
@@ -1256,7 +1317,7 @@ class ApiMethod extends ChangeNotifier {
     final uri = Uri.parse('${_baseUrl}auth/resend-verification');
     final headers = await _buildJsonHeaders(includeAppCheck: true);
 
-    final response = await http.post(
+    final response = await _post(
       uri,
       body: jsonEncode({'email': email}),
       headers: headers,
@@ -1273,7 +1334,7 @@ class ApiMethod extends ChangeNotifier {
     final uri = Uri.parse('${_baseUrl}auth/verify-email');
     final headers = await _buildJsonHeaders(includeAppCheck: true);
 
-    final response = await http.post(
+    final response = await _post(
       uri,
       body: jsonEncode({'email': email, 'otp': otp}),
       headers: headers,
@@ -1291,7 +1352,7 @@ class ApiMethod extends ChangeNotifier {
     final uri = Uri.parse('${_baseUrl}auth/reset-password');
     final headers = await _buildJsonHeaders(includeAppCheck: true);
 
-    final response = await http.post(
+    final response = await _post(
       uri,
       headers: headers,
       body: jsonEncode({
@@ -1347,7 +1408,7 @@ class ApiMethod extends ChangeNotifier {
         '=== API METHOD DEBUG: initData headers (Authorization: ${headers.containsKey('Authorization')}, AppCheck: ${headers.containsKey('X-Firebase-AppCheck')}) ===',
       );
 
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}initData/$email'),
         headers: headers,
       );
@@ -1390,11 +1451,11 @@ class ApiMethod extends ChangeNotifier {
         includeAppCheck: true,
       );
 
-      http.Response response = await http.get(primaryUri, headers: headers);
+      http.Response response = await _get(primaryUri, headers: headers);
 
       // Backward-compatibility fallback for environments still exposing legacy route.
       if (response.statusCode == 404) {
-        response = await http.get(fallbackUri, headers: headers);
+        response = await _get(fallbackUri, headers: headers);
       }
 
       if (response.statusCode == 200) {
@@ -1434,7 +1495,7 @@ class ApiMethod extends ChangeNotifier {
       includeAuth: true,
       includeAppCheck: true,
     );
-    final response = await http.get(
+    final response = await _get(
       Uri.parse('${_baseUrl}getMultipleClients/$emails'),
       headers: headers,
     );
@@ -1513,7 +1574,7 @@ class ApiMethod extends ChangeNotifier {
         includeAuth: true,
         includeAppCheck: true,
       );
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}loadAppointments/$email'),
         headers: headers,
       );
@@ -1662,7 +1723,7 @@ class ApiMethod extends ChangeNotifier {
 
       debugPrint('Request body: ${json.encode(body)}');
 
-      final response = await http.post(
+      final response = await _post(
         Uri.parse(url),
         headers: headers,
         body: json.encode(body),
@@ -1711,7 +1772,7 @@ class ApiMethod extends ChangeNotifier {
       'Client-Email': clientEmail,
       'TimeList': time,
     };
-    final response = await http.post(
+    final response = await _post(
       Uri.parse(url),
       headers: headers,
       body: json.encode(body),
@@ -1747,7 +1808,7 @@ class ApiMethod extends ChangeNotifier {
         includeAuth: true,
         includeAppCheck: true,
       );
-      final response = await http.get(Uri.parse(url), headers: headers);
+      final response = await _get(Uri.parse(url), headers: headers);
 
       debugPrint(
         '=== API METHOD DEBUG: loadAppointmentDetails status: ${response.statusCode} ===',
@@ -1843,7 +1904,7 @@ class ApiMethod extends ChangeNotifier {
       );
 
       // Legacy endpoint (if present in older deployments).
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}checkEmail/$encoded'),
         headers: headers,
       );
@@ -1892,7 +1953,7 @@ class ApiMethod extends ChangeNotifier {
         includeAuth: true,
         includeAppCheck: true,
       );
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}userPayDetails/$encoded'),
         headers: headers,
       );
@@ -2063,7 +2124,7 @@ class ApiMethod extends ChangeNotifier {
       http.Response? lastResponse;
 
       for (final uri in candidateUris) {
-        final response = await http.get(uri, headers: headers);
+        final response = await _get(uri, headers: headers);
         lastResponse = response;
         debugPrint(
           'Client details request: GET $uri -> ${response.statusCode}',
@@ -2091,7 +2152,7 @@ class ApiMethod extends ChangeNotifier {
           final listUri = _buildUri(
             'clients/$resolvedOrgId',
           ).replace(queryParameters: {'organizationId': resolvedOrgId});
-          final listResp = await http.get(listUri, headers: headers);
+          final listResp = await _get(listUri, headers: headers);
           lastResponse = listResp;
           if (listResp.statusCode == 200) {
             final decoded = listResp.body.isNotEmpty
@@ -2178,7 +2239,7 @@ class ApiMethod extends ChangeNotifier {
         includeAuth: true,
         includeAppCheck: true,
       );
-      final response = await http.delete(
+      final response = await _delete(
         Uri.parse('${_baseUrl}deleteUser/'),
         headers: headers,
         body: jsonEncode({'email': email}),
@@ -2205,7 +2266,7 @@ class ApiMethod extends ChangeNotifier {
     try {
       debugPrint('${_baseUrl}getSalt/$email');
       //post method with body
-      final response = await http.post(
+      final response = await _post(
         Uri.parse('${_baseUrl}getSalt/'),
         body: jsonEncode({'email': email}),
         headers: {'Content-Type': 'application/json'},
@@ -2397,7 +2458,7 @@ class ApiMethod extends ChangeNotifier {
         includeAuth: true,
         includeAppCheck: true,
       );
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}user-docs'),
         headers: headers,
       );
@@ -2458,7 +2519,7 @@ class ApiMethod extends ChangeNotifier {
         };
       }
 
-      final response = await http.post(
+      final response = await _post(
         Uri.parse('${_baseUrl}save-custom-price-organization'),
         headers: headers,
         body: json.encode(requestBody),
@@ -2506,7 +2567,7 @@ class ApiMethod extends ChangeNotifier {
         };
       }
 
-      final response = await http.post(
+      final response = await _post(
         Uri.parse('${_baseUrl}save-custom-price-client'),
         headers: headers,
         body: json.encode(requestBody),
@@ -2534,7 +2595,7 @@ class ApiMethod extends ChangeNotifier {
         includeAppCheck: true,
       );
 
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}custom-price-organization/$ndisItemNumber'),
         headers: headers,
       );
@@ -2562,7 +2623,7 @@ class ApiMethod extends ChangeNotifier {
         includeAppCheck: true,
       );
 
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}custom-price-client/$ndisItemNumber/$clientId'),
         headers: headers,
       );
@@ -2592,7 +2653,7 @@ class ApiMethod extends ChangeNotifier {
         includeAppCheck: true,
       );
 
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}price-history/$ndisItemNumber/$clientId'),
         headers: headers,
       );
@@ -2617,7 +2678,7 @@ class ApiMethod extends ChangeNotifier {
         includeAppCheck: true,
       );
 
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}ndis-price-cap/$ndisItemNumber'),
         headers: headers,
       );
@@ -2642,7 +2703,7 @@ class ApiMethod extends ChangeNotifier {
         includeAppCheck: true,
       );
 
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}pricing/standard-price/$ndisItemNumber'),
         headers: headers,
       );
@@ -2678,7 +2739,7 @@ class ApiMethod extends ChangeNotifier {
         includeAuth: true,
         includeAppCheck: true,
       );
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}assigned-client-data'),
         headers: headers,
       );
@@ -2759,7 +2820,7 @@ class ApiMethod extends ChangeNotifier {
         debugPrint('App Check token error: $e');
       }
 
-      final signupResponse = await http.post(
+      final signupResponse = await _post(
         Uri.parse('${_baseUrl}auth/register'),
         headers: {
           "Content-Type": "application/json",
@@ -3056,7 +3117,7 @@ class ApiMethod extends ChangeNotifier {
         includeAppCheck: true,
       );
 
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}businesses/$organizationId'),
         headers: headers,
       );
@@ -3085,7 +3146,7 @@ class ApiMethod extends ChangeNotifier {
         includeAppCheck: true,
       );
 
-      final response = await http.post(
+      final response = await _post(
         Uri.parse('${_baseUrl}organization/create'),
         headers: headers,
         body: jsonEncode({
@@ -3120,7 +3181,7 @@ class ApiMethod extends ChangeNotifier {
   ) async {
     try {
       // Use public endpoint for signup flow (no auth required)
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}auth/verify-organization/$organizationCode'),
         headers: {
           "Content-Type": "application/json",
@@ -3158,7 +3219,7 @@ class ApiMethod extends ChangeNotifier {
         includeAppCheck: true,
       );
 
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}organization/$organizationId'),
         headers: headers,
       );
@@ -3187,7 +3248,7 @@ class ApiMethod extends ChangeNotifier {
         includeAppCheck: true,
       );
 
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}organization/$organizationId/members'),
         headers: headers,
       );
@@ -3234,7 +3295,7 @@ class ApiMethod extends ChangeNotifier {
         includeAppCheck: true,
       );
 
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}organization/$organizationId/businesses'),
         headers: headers,
       );
@@ -3278,7 +3339,7 @@ class ApiMethod extends ChangeNotifier {
         includeAppCheck: true,
       );
 
-      final response = await http.post(
+      final response = await _post(
         Uri.parse('${_baseUrl}addClient/'),
         headers: headers,
         body: jsonEncode(requestBody),
@@ -3362,7 +3423,7 @@ class ApiMethod extends ChangeNotifier {
       debugPrint(
         '=== API METHOD DEBUG: assignClientToUser payload: ${jsonEncode(requestBody)} ===',
       );
-      final response = await http.post(
+      final response = await _post(
         _buildUri('assignClientToUser'),
         headers: headers,
         body: jsonEncode(requestBody),
@@ -3445,7 +3506,7 @@ class ApiMethod extends ChangeNotifier {
       debugPrint(
         '=== API METHOD DEBUG: assignClientToUserWithScheduleItems payload: ${jsonEncode(requestBody)} ===',
       );
-      final response = await http.post(
+      final response = await _post(
         _buildUri('assignClientToUser'),
         headers: headers,
         body: jsonEncode(requestBody),
@@ -3561,7 +3622,7 @@ class ApiMethod extends ChangeNotifier {
 
       headers["Accept"] = "application/json";
 
-      final response = await http.post(
+      final response = await _post(
         Uri.parse('${_baseUrl}invoice/generate-line-items'),
         headers: headers,
         body: jsonEncode(requestBody),
@@ -3698,7 +3759,7 @@ class ApiMethod extends ChangeNotifier {
       debugPrint(
         'Auth header present: ${headers.containsKey('Authorization')}',
       );
-      final response = await http.put(
+      final response = await _put(
         uri,
         headers: headers,
         body: json.encode(updates),
@@ -3769,7 +3830,7 @@ class ApiMethod extends ChangeNotifier {
 
   Future<List<String>> checkHolidaysSingle(List<String> workedDateList) async {
     try {
-      final response = await http.post(
+      final response = await _post(
         Uri.parse('${_baseUrl}check-holidays'),
         headers: {
           "Content-Type": "application/json",
@@ -3827,7 +3888,7 @@ class ApiMethod extends ChangeNotifier {
         ),
       );
 
-      final streamed = await request.send();
+      final streamed = await _send(request);
       final response = await http.Response.fromStream(streamed);
 
       Map<String, dynamic> payload = {};
@@ -3926,7 +3987,7 @@ class ApiMethod extends ChangeNotifier {
     required String note,
   }) async {
     try {
-      final response = await http.post(
+      final response = await _post(
         Uri.parse('${_baseUrl}addShiftNote'),
         headers: {
           "Content-Type": "application/json",
@@ -3963,7 +4024,7 @@ class ApiMethod extends ChangeNotifier {
       if (careNotes != null) body['careNotes'] = careNotes;
       if (preferences != null) body['preferences'] = preferences;
 
-      final response = await http.put(
+      final response = await _put(
         Uri.parse('${_baseUrl}updateClientExtendedDetails'),
         headers: {
           "Content-Type": "application/json",
@@ -4001,7 +4062,7 @@ class ApiMethod extends ChangeNotifier {
         };
       }
 
-      final encryptedPassword = EncryptDecrypt.encryptPassword(
+      final encryptedPassword = await EncryptDecrypt.encryptPassword(
         invoicingEmailAppPassword,
         generatedKey,
       );
@@ -4016,7 +4077,7 @@ class ApiMethod extends ChangeNotifier {
         },
       );
 
-      final response = await http.post(
+      final response = await _post(
         Uri.parse('${_baseUrl}addUpdateInvoicingEmailDetail'),
         headers: headers,
         body: {
@@ -4035,7 +4096,7 @@ class ApiMethod extends ChangeNotifier {
       final alreadyExists = lowerMessage.contains('already');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final keyResponse = await http.post(
+        final keyResponse = await _post(
           Uri.parse('${_baseUrl}invoicingEmailDetailKey'),
           headers: headers,
           body: {'userEmail': userEmail, 'invoicingBusinessKey': generatedKey},
@@ -4112,7 +4173,7 @@ class ApiMethod extends ChangeNotifier {
       includeAppCheck: true,
       extra: {'Content-Type': 'application/x-www-form-urlencoded'},
     );
-    final response = await http.get(
+    final response = await _get(
       Uri.parse('${_baseUrl}getInvoicingEmailDetails?email=$email'),
       headers: headers,
     );
@@ -4134,7 +4195,7 @@ class ApiMethod extends ChangeNotifier {
           }
           // Decrypt the password before returning the data
           final keyToUse = generatedKey ?? genKey;
-          final decryptedPassword = EncryptDecrypt.decryptPassword(
+          final decryptedPassword = await EncryptDecrypt.decryptPassword(
             data['data']['encryptedPassword'] ?? '',
             keyToUse,
           );
@@ -4177,7 +4238,7 @@ class ApiMethod extends ChangeNotifier {
       includeAppCheck: true,
       extra: {'Content-Type': 'application/x-www-form-urlencoded'},
     );
-    final response = await http.get(
+    final response = await _get(
       Uri.parse('${_baseUrl}checkInvoicingEmailKey?email=$email'),
       headers: headers,
     );
@@ -4237,7 +4298,7 @@ class ApiMethod extends ChangeNotifier {
         includeAuth: true,
         includeAppCheck: true,
       );
-      final response = await http.post(
+      final response = await _post(
         Uri.parse('${_baseUrl}getEmailDetailToSendEmail'),
         headers: headers,
         body: jsonEncode({'userEmail': userEmail}),
@@ -4282,7 +4343,7 @@ class ApiMethod extends ChangeNotifier {
         includeAuth: true,
         includeAppCheck: true,
       );
-      final response = await http.post(
+      final response = await _post(
         Uri.parse('${_baseUrl}sendInvoiceEmail'),
         headers: headers,
         body: jsonEncode({
@@ -4320,7 +4381,7 @@ class ApiMethod extends ChangeNotifier {
           'message': 'Authentication required. Please log in again.',
         };
       }
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('$_baseUrl/requests'),
         headers: headers,
       );
@@ -4341,7 +4402,7 @@ class ApiMethod extends ChangeNotifier {
           'message': 'Authentication required. Please log in again.',
         };
       }
-      final response = await http.post(
+      final response = await _post(
         Uri.parse('$_baseUrl/requests'),
         headers: headers,
         body: jsonEncode(requestData),
@@ -4363,7 +4424,7 @@ class ApiMethod extends ChangeNotifier {
           'message': 'Authentication required. Please log in again.',
         };
       }
-      final response = await http.put(
+      final response = await _put(
         Uri.parse('$_baseUrl/requests/${requestData['id']}'),
         headers: headers,
         body: jsonEncode(requestData),
@@ -4377,7 +4438,7 @@ class ApiMethod extends ChangeNotifier {
   // Future<Map<String, dynamic>> sendNotification(
   //     {String? recipientEmail, String? organizationId, String? title, String? body}) async {
   //   try {
-  //     final response = await http.post(
+  //     final response = await _post(
   //       Uri.parse('${_baseUrl}sendNotification'),
   //       headers: {'Content-Type': 'application/json'},
   //       body: jsonEncode({
@@ -4497,7 +4558,7 @@ class ApiMethod extends ChangeNotifier {
         requestBody['channelId'] = channelId; // Add channelId to request body
       }
 
-      final response = await http.post(
+      final response = await _post(
         Uri.parse('${_baseUrl}sendNotification'),
         headers: headers,
         body: jsonEncode(requestBody),
@@ -4535,7 +4596,7 @@ class ApiMethod extends ChangeNotifier {
         includeAuth: true,
         includeAppCheck: true,
       );
-      final response = await http.get(
+      final response = await _get(
         Uri.parse(
           '${_baseUrl}getUserAssignments/${Uri.encodeComponent(userEmail)}',
         ),
@@ -4639,7 +4700,7 @@ class ApiMethod extends ChangeNotifier {
         'organizationId': organizationId,
       };
 
-      final response = await http.post(
+      final response = await _post(
         Uri.parse('${_baseUrl}fixClientOrganizationId'),
         headers: headers,
         body: jsonEncode(requestData),
@@ -4673,7 +4734,7 @@ class ApiMethod extends ChangeNotifier {
 
       http.Response? response;
       for (final endpoint in endpoints) {
-        response = await http.get(Uri.parse(endpoint), headers: headers);
+        response = await _get(Uri.parse(endpoint), headers: headers);
         if (response.statusCode == 200) {
           return jsonDecode(response.body);
         }
@@ -4702,7 +4763,7 @@ class ApiMethod extends ChangeNotifier {
       final encodedQuery = Uri.encodeComponent(query);
       final uri = Uri.parse('${_baseUrl}support-items/search?q=$encodedQuery');
 
-      final response = await http.get(uri);
+      final response = await _get(uri);
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -4731,9 +4792,7 @@ class ApiMethod extends ChangeNotifier {
   Future<List<Map<String, dynamic>>> getAllSupportItems() async {
     // ... (This method should also have the same safe casting logic as searchSupportItems)
     try {
-      final response = await http.get(
-        Uri.parse('${_baseUrl}support-items/all'),
-      );
+      final response = await _get(Uri.parse('${_baseUrl}support-items/all'));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['success'] == true && data['items'] != null) {
@@ -4785,7 +4844,7 @@ class ApiMethod extends ChangeNotifier {
           'validationResults': null,
         };
       }
-      final response = await http.post(
+      final response = await _post(
         Uri.parse('${_baseUrl}invoice/validate-pricing-realtime'),
         headers: headers,
         body: jsonEncode({
@@ -4829,7 +4888,7 @@ class ApiMethod extends ChangeNotifier {
           'message': 'Authentication required. Please log in again.',
         };
       }
-      final response = await http.post(
+      final response = await _post(
         Uri.parse('${_baseUrl}price-prompts/create'),
         headers: headers,
         body: jsonEncode(promptData),
@@ -4865,7 +4924,7 @@ class ApiMethod extends ChangeNotifier {
           'message': 'Authentication required. Please log in again.',
         };
       }
-      final response = await http.post(
+      final response = await _post(
         Uri.parse('${_baseUrl}price-prompts/resolve'),
         headers: headers,
         body: jsonEncode({'promptId': promptId, 'resolution': resolution}),
@@ -4899,7 +4958,7 @@ class ApiMethod extends ChangeNotifier {
           'prompts': [],
         };
       }
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}price-prompts/pending/$sessionId'),
         headers: headers,
       );
@@ -4936,7 +4995,7 @@ class ApiMethod extends ChangeNotifier {
         includeAuth: true,
         includeAppCheck: true,
       );
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}organization/$organizationId/clients'),
         headers: headers,
       );
@@ -5001,7 +5060,7 @@ class ApiMethod extends ChangeNotifier {
         includeAuth: true,
         includeAppCheck: true,
       );
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}organization/$organizationId/clients/history'),
         headers: headers,
       );
@@ -5069,7 +5128,7 @@ class ApiMethod extends ChangeNotifier {
         );
         return null;
       }
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}pricing/standard-price/$supportItemNumber'),
         headers: headers,
       );
@@ -5119,7 +5178,7 @@ class ApiMethod extends ChangeNotifier {
           'clientId': ?clientId,
         },
       );
-      final response = await http.get(Uri.parse(url), headers: headers);
+      final response = await _get(Uri.parse(url), headers: headers);
       sw.stop();
       dynamic body;
       try {
@@ -5191,7 +5250,7 @@ class ApiMethod extends ChangeNotifier {
 
       final sw = Stopwatch()..start();
       DebugLog.networkRequest('POST', url, payload: body);
-      final response = await http.post(
+      final response = await _post(
         Uri.parse(url),
         headers: headers,
         body: json.encode(body),
@@ -5306,7 +5365,7 @@ class ApiMethod extends ChangeNotifier {
           'message': 'Authentication required to save custom pricing',
         };
       }
-      final response = await http.post(
+      final response = await _post(
         Uri.parse(url),
         headers: headers,
         body: json.encode(payload),
@@ -5400,7 +5459,7 @@ class ApiMethod extends ChangeNotifier {
           'message': 'Authentication required to save client custom pricing',
         };
       }
-      final response = await http.post(
+      final response = await _post(
         Uri.parse(url),
         headers: headers,
         body: json.encode(payload),
@@ -5499,7 +5558,7 @@ class ApiMethod extends ChangeNotifier {
           'message': 'Authentication required to remove custom pricing',
         };
       }
-      final response = await http.delete(Uri.parse(url), headers: headers);
+      final response = await _delete(Uri.parse(url), headers: headers);
       sw.stop();
 
       final responseBody = response.body.isNotEmpty
@@ -5587,7 +5646,7 @@ class ApiMethod extends ChangeNotifier {
           'message': 'Authentication required to update custom pricing',
         };
       }
-      final response = await http.put(
+      final response = await _put(
         Uri.parse(url),
         headers: headers,
         body: json.encode(payload),
@@ -5648,7 +5707,7 @@ class ApiMethod extends ChangeNotifier {
 
       // Modern auth flow: backend expects plain password at /api/auth/login.
       final headers = await _buildJsonHeaders(includeAppCheck: true);
-      final response = await http.post(
+      final response = await _post(
         Uri.parse('${_baseUrl}auth/login'),
         headers: headers,
         body: json.encode(requestBody),
@@ -5845,7 +5904,7 @@ class ApiMethod extends ChangeNotifier {
     Map<String, dynamic> logEntry,
   ) async {
     try {
-      final response = await http.post(
+      final response = await _post(
         Uri.parse('${_baseUrl}auth/security-log'),
         headers: await _buildJsonHeaders(includeAppCheck: true),
         body: json.encode(logEntry),
@@ -6046,7 +6105,7 @@ class ApiMethod extends ChangeNotifier {
         includeAppCheck: true,
       );
 
-      final response = await http.get(Uri.parse(url), headers: headers);
+      final response = await _get(Uri.parse(url), headers: headers);
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -6092,7 +6151,7 @@ class ApiMethod extends ChangeNotifier {
         includeAuth: true,
         includeAppCheck: true,
       );
-      final response = await http.get(uri, headers: headers);
+      final response = await _get(uri, headers: headers);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         return {
@@ -6138,7 +6197,7 @@ class ApiMethod extends ChangeNotifier {
         );
       }
 
-      final response = await http.patch(
+      final response = await _patch(
         uri,
         headers: headers,
         body: body != null ? json.encode(body) : null,
@@ -6243,7 +6302,7 @@ class ApiMethod extends ChangeNotifier {
           'message': 'Authentication required. Please log in again.',
         };
       }
-      final response = await http.get(
+      final response = await _get(
         Uri.parse('${_baseUrl}leave/public-holidays'),
         headers: headers,
       );
@@ -6266,7 +6325,7 @@ class ApiMethod extends ChangeNotifier {
         throw Exception('Failed to load tax settings: missing authorization');
       }
 
-      var response = await http.get(uri, headers: headers);
+      var response = await _get(uri, headers: headers);
 
       if (response.statusCode == 401) {
         debugPrint(
@@ -6274,7 +6333,7 @@ class ApiMethod extends ChangeNotifier {
         );
         headers = await _buildProtectedJsonHeaders(forceAuthRefresh: true);
         if (headers != null) {
-          response = await http.get(uri, headers: headers);
+          response = await _get(uri, headers: headers);
         }
       }
 
@@ -6313,7 +6372,7 @@ class ApiMethod extends ChangeNotifier {
       final sw = Stopwatch()..start();
       DebugLog.networkRequest('POST', url, payload: shiftData);
 
-      final response = await http.post(
+      final response = await _post(
         Uri.parse(url),
         headers: headers,
         body: json.encode(shiftData),
@@ -6381,7 +6440,7 @@ class ApiMethod extends ChangeNotifier {
       final sw = Stopwatch()..start();
       DebugLog.networkRequest('POST', url, payload: payload);
 
-      final response = await http.post(
+      final response = await _post(
         Uri.parse(url),
         headers: headers,
         body: json.encode(payload),
@@ -6454,7 +6513,7 @@ class ApiMethod extends ChangeNotifier {
       final sw = Stopwatch()..start();
       DebugLog.networkRequest('GET', uri.toString(), payload: queryParams);
 
-      final response = await http.get(uri, headers: headers);
+      final response = await _get(uri, headers: headers);
 
       sw.stop();
       final responseBody = response.body.isNotEmpty
@@ -6525,7 +6584,7 @@ class ApiMethod extends ChangeNotifier {
       final sw = Stopwatch()..start();
       DebugLog.networkRequest('GET', uri.toString(), payload: queryParams);
 
-      final response = await http.get(uri, headers: headers);
+      final response = await _get(uri, headers: headers);
 
       sw.stop();
       final responseBody = response.body.isNotEmpty
@@ -6574,7 +6633,7 @@ class ApiMethod extends ChangeNotifier {
         includeAppCheck: true,
       );
 
-      final response = await http.put(
+      final response = await _put(
         Uri.parse(url),
         headers: headers,
         body: json.encode(updateData),
@@ -6616,7 +6675,7 @@ class ApiMethod extends ChangeNotifier {
         includeAppCheck: true,
       );
 
-      final response = await http.delete(Uri.parse(url), headers: headers);
+      final response = await _delete(Uri.parse(url), headers: headers);
 
       final responseBody = response.body.isNotEmpty
           ? json.decode(response.body)
@@ -6657,7 +6716,7 @@ class ApiMethod extends ChangeNotifier {
         'excludeShiftId': ?excludeShiftId,
       };
 
-      final response = await http.post(
+      final response = await _post(
         Uri.parse(url),
         headers: headers,
         body: json.encode(payload),
@@ -6702,7 +6761,7 @@ class ApiMethod extends ChangeNotifier {
         includeAppCheck: true,
       );
 
-      final response = await http.get(Uri.parse(url), headers: headers);
+      final response = await _get(Uri.parse(url), headers: headers);
       return json.decode(response.body);
     } catch (e) {
       debugPrint('Error getting invoices list: $e');
@@ -6734,7 +6793,7 @@ class ApiMethod extends ChangeNotifier {
         'updatedBy': ?updatedBy,
       };
 
-      final response = await http.patch(
+      final response = await _patch(
         Uri.parse(url),
         headers: headers,
         body: json.encode(body),
@@ -9078,7 +9137,7 @@ class ApiMethod extends ChangeNotifier {
       debugPrint('🔐 syncFirebaseUser: POST to $fullUrl');
       debugPrint('🔐 syncFirebaseUser: body = $body');
 
-      final response = await http.post(
+      final response = await _post(
         Uri.parse(fullUrl),
         headers: headers,
         body: json.encode(body),
