@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/theme_providers.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
@@ -21,14 +22,18 @@ class ThemeSettingsView extends ConsumerWidget {
             fontWeight: FontWeight.w900,
             fontSize: 18,
             letterSpacing: 0.5,
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
           ),
         ),
         centerTitle: true,
-        backgroundColor: BauhausDesign.surfaceLight,
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: BauhausDesign.textDark),
+          icon: const Icon(Icons.close, color: BauhausDesign.surfaceWhite),
           onPressed: () => Navigator.pop(context),
         ),
         bottom: const PreferredSize(

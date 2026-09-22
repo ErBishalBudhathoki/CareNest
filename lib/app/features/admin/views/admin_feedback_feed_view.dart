@@ -2,6 +2,7 @@ import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -36,18 +37,21 @@ class AdminFeedbackFeedView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: BauhausDesign.neutral,
         elevation: 0,
         title: Text(
           'Client Feedback',
           style: GoogleFonts.oswald(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
             letterSpacing: 1.1,
           ),
         ),
-        foregroundColor: BauhausDesign.textDark,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         actions: [
           IconButton(
             onPressed: () => ref.invalidate(adminFeedbackFeedProvider),

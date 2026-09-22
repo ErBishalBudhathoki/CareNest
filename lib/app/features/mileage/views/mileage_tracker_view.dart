@@ -1,6 +1,7 @@
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/constants/bauhaus_design.dart';
 import '../viewmodels/mileage_view_model.dart';
@@ -40,12 +41,17 @@ class MileageTrackerView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: BauhausDesign.surfaceLight,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceLight,
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         title: Text(
           'MILEAGE TRACKER',
           style: textTheme.headlineMedium?.copyWith(
+            color: BauhausDesign.surfaceWhite,
             fontWeight: FontWeight.w900,
             letterSpacing: 1.5,
           ),

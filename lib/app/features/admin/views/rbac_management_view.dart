@@ -153,7 +153,7 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: Container(
         decoration: const BoxDecoration(
-          color: BauhausDesign.surfaceLight,
+          color: BauhausDesign.neutral,
           border: Border(
             bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
           ),
@@ -169,7 +169,7 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(
                     Icons.arrow_back,
-                    color: BauhausDesign.textDark,
+                    color: BauhausDesign.surfaceWhite,
                   ),
                 ),
                 const SizedBox(width: BauhausDesign.space2),
@@ -180,7 +180,7 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
                     overflow: TextOverflow.ellipsis,
                     style: BauhausDesign.getTextTheme(
                       context,
-                    ).displaySmall?.copyWith(color: BauhausDesign.textDark),
+                    ).displaySmall?.copyWith(color: BauhausDesign.surfaceWhite),
                   ),
                 ),
                 IconButton(
@@ -188,7 +188,7 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
                   onPressed: _fetchRoles,
                   icon: const Icon(
                     Icons.refresh,
-                    color: BauhausDesign.textDark,
+                    color: BauhausDesign.surfaceWhite,
                   ),
                 ),
               ],

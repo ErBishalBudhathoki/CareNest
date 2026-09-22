@@ -50,7 +50,6 @@ class OfflineViewModel extends Notifier<OfflineState> {
 
   @override
   OfflineState build() {
-
     return OfflineState();
   }
 

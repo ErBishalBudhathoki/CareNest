@@ -8,7 +8,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/client_appointment_details/providers.dart';
 
 class ClientAppointmentDetailsViewModel extends Notifier<int> {
-  late final ClientAppointmentRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  ClientAppointmentRepository get _repository =>
+      ref.read(clientAppointmentRepositoryProvider);
   late String _clientId;
   late final String? _clientEmail;
 
@@ -19,7 +23,7 @@ class ClientAppointmentDetailsViewModel extends Notifier<int> {
 
   @override
   int build() {
-    _repository = ref.watch(clientAppointmentRepositoryProvider);
+    ref.watch(clientAppointmentRepositoryProvider);
     return 0;
   }
 

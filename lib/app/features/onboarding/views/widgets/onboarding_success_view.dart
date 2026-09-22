@@ -72,7 +72,9 @@ class OnboardingSuccessView extends StatelessWidget {
                           child: Text(
                             s,
                             style: theme.bodyMedium?.copyWith(
-                              color: BauhausDesign.textDark.withValues(alpha: 0.7),
+                              color: BauhausDesign.textDark.withValues(
+                                alpha: 0.7,
+                              ),
                               height: 1.45,
                             ),
                           ),

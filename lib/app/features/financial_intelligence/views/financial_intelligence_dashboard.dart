@@ -6,6 +6,7 @@ import 'package:carenest/app/features/financial_intelligence/viewmodels/revenue_
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class FinancialIntelligenceDashboard extends ConsumerStatefulWidget {
@@ -20,6 +21,10 @@ class _FinancialIntelligenceDashboardState
     extends ConsumerState<FinancialIntelligenceDashboard> {
   String? _loadedOrgId;
   bool _isFetching = false;
+
+  /// Cross-instance freshness guard: double-pushes and rebuild storms must
+  /// not refire the full request sequence. Pull-to-refresh (force) bypasses.
+  static final Map<String, DateTime> _lastLoadedByOrg = {};
 
   static const List<_PulseMetric> _fallbackPulseMetrics = [
     _PulseMetric(
@@ -155,6 +160,14 @@ class _FinancialIntelligenceDashboardState
   }) async {
     if (_isFetching && !force) return;
     if (!force && _loadedOrgId == organizationId) return;
+    if (!force) {
+      final last = _lastLoadedByOrg[organizationId];
+      if (last != null &&
+          DateTime.now().difference(last) < const Duration(minutes: 1)) {
+        _loadedOrgId = organizationId;
+        return;
+      }
+    }
 
     _loadedOrgId = organizationId;
     _isFetching = true;
@@ -178,6 +191,7 @@ class _FinancialIntelligenceDashboardState
             .read(revenueForecastingViewModelProvider.notifier)
             .generateScenarios(organizationId: organizationId, horizon: 90),
       ]);
+      _lastLoadedByOrg[organizationId] = DateTime.now();
     } finally {
       _isFetching = false;
     }
@@ -321,6 +335,8 @@ class _FinancialIntelligenceDashboardState
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
+      foregroundColor: BauhausDesign.surfaceWhite,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
       backgroundColor: BauhausDesign.primary,
       elevation: 0,
       titleSpacing: 0,

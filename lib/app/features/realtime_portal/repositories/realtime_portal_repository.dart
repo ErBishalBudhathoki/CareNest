@@ -4,7 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 
-final realtimePortalRepositoryProvider = Provider<RealtimePortalRepository>((ref) {
+final realtimePortalRepositoryProvider = Provider<RealtimePortalRepository>((
+  ref,
+) {
   final apiMethod = ref.watch(apiMethodProvider);
   return RealtimePortalRepository(apiMethod);
 });

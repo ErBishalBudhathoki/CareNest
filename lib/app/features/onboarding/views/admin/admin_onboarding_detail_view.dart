@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import '../../providers/onboarding_providers.dart';
 import '../../models/employee_document.dart';
 
@@ -24,7 +26,14 @@ class AdminOnboardingDetailView extends ConsumerWidget {
         .trim();
 
     return Scaffold(
-      appBar: AppBar(title: Text('Review: $name')),
+      appBar: AppBar(
+        backgroundColor: BauhausDesign.secondary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
+        title: Text('Review: $name'),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(

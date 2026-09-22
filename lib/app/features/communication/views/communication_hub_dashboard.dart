@@ -1146,7 +1146,9 @@ class _CommunicationHubDashboardState
                         message.sentAt,
                         style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
-                              color: BauhausDesign.textDark.withValues(alpha: 0.7),
+                              color: BauhausDesign.textDark.withValues(
+                                alpha: 0.7,
+                              ),
                             ),
                       ),
                     );

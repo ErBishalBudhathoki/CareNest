@@ -21,10 +21,10 @@ import 'package:carenest/app/core/providers/app_providers.dart'
 
 class LoginViewModel extends Notifier<int> {
   final LoginModel model = LoginModel();
-  late final ApiMethod _apiMethod;
-  late final SharedPreferencesUtils _sharedPrefs;
-  late final FcmTokenManager _fcmTokenManager;
-  late final FirebaseAuthService _firebaseAuth;
+  late ApiMethod _apiMethod;
+  late SharedPreferencesUtils _sharedPrefs;
+  late FcmTokenManager _fcmTokenManager;
+  late FirebaseAuthService _firebaseAuth;
   final OnboardingGateService _onboardingGateService = OnboardingGateService();
 
   bool isLoading = false;
@@ -74,7 +74,6 @@ class LoginViewModel extends Notifier<int> {
         _deviceId = iosInfo.identifierForVendor;
         _deviceInfo = 'iOS ${iosInfo.systemVersion} (${iosInfo.model})';
       }
-
     } catch (e) {
       debugPrint('Error initializing security context: $e');
     }

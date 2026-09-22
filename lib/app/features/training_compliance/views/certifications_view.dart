@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
@@ -45,10 +46,14 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.certificationsTitle,
-          style: BauhausDesign.getTextTheme(context).headlineLarge,
+          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(color: BauhausDesign.surfaceWhite),
         ),
-        backgroundColor: BauhausDesign.surfaceLight,
-        iconTheme: const IconThemeData(color: BauhausDesign.textDark),
+        backgroundColor: BauhausDesign.secondary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
+        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
@@ -446,7 +451,6 @@ class _EditCertificationDialogState
 
   @override
   Widget build(BuildContext context) {
-
     return Dialog(
       insetPadding: const EdgeInsets.all(BauhausDesign.space4),
       backgroundColor: Colors.transparent,

@@ -136,7 +136,6 @@ class GeofenceMonitor {
   }
 
   void _handlePositionUpdate(Position position) {
-
     final distance = Geolocator.distanceBetween(
       position.latitude,
       position.longitude,

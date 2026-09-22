@@ -42,12 +42,17 @@ class PricingOptimizationState {
 
 /// Pricing Optimization ViewModel
 class PricingOptimizationViewModel extends Notifier<PricingOptimizationState> {
-  late final FinancialIntelligenceRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  FinancialIntelligenceRepository get _repository =>
+      FinancialIntelligenceRepository(
+        ref.read(app_providers.apiMethodProvider),
+      );
 
   @override
   PricingOptimizationState build() {
-    final apiMethod = ref.read(app_providers.apiMethodProvider);
-    _repository = FinancialIntelligenceRepository(apiMethod);
+    ref.watch(app_providers.apiMethodProvider);
     return PricingOptimizationState();
   }
 

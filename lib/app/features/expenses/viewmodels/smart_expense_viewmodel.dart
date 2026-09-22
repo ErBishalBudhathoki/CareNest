@@ -50,7 +50,6 @@ class SmartExpenseViewModel extends Notifier<SmartExpenseState> {
 
   @override
   SmartExpenseState build() {
-
     return SmartExpenseState();
   }
 

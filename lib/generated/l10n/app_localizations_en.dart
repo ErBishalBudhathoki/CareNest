@@ -1266,6 +1266,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get comingSoonMsg => 'New rate feature coming soon!';
 
   @override
+  String get commandDeskSortRecentTitle => 'Sort Command Desk by recent use';
+
+  @override
+  String get commandDeskSortRecentSubtitle =>
+      'Float recently used admin sections to the top';
+
+  @override
   String get companyNameLabel => 'COMPANY NAME/LEGAL NAME';
 
   @override

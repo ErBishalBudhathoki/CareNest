@@ -40,11 +40,14 @@ class TeamState {
 }
 
 class TeamViewModel extends Notifier<TeamState> {
-  late final TeamRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  TeamRepository get _repository => ref.read(teamRepositoryProvider);
 
   @override
   TeamState build() {
-    _repository = ref.watch(teamRepositoryProvider);
+    ref.watch(teamRepositoryProvider);
     return TeamState();
   }
 

@@ -35,11 +35,14 @@ final workerDashboardViewModelProvider =
 /// - Provide refresh functionality
 /// - Handle errors gracefully
 class WorkerDashboardViewModel extends AsyncNotifier<WorkerDashboardData> {
-  late final WorkerRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  WorkerRepository get _repository => ref.read(workerRepositoryProvider);
 
   @override
   Future<WorkerDashboardData> build() async {
-    _repository = ref.watch(workerRepositoryProvider);
+    ref.watch(workerRepositoryProvider);
     return _repository.getDashboardData();
   }
 

@@ -67,7 +67,8 @@ class RecurringConsentDialog extends ConsumerStatefulWidget {
       _RecurringConsentDialogState();
 }
 
-class _RecurringConsentDialogState extends ConsumerState<RecurringConsentDialog> {
+class _RecurringConsentDialogState
+    extends ConsumerState<RecurringConsentDialog> {
   String _frequency = 'monthly';
   bool _consentChecked = false;
   bool _loading = false;
@@ -84,7 +85,9 @@ class _RecurringConsentDialogState extends ConsumerState<RecurringConsentDialog>
   }
 
   String _buildConsentText(AppLocalizations l10n) {
-    final orgName = ref.read(organizationProvider).currentOrganization?.name ?? 'this organization';
+    final orgName =
+        ref.read(organizationProvider).currentOrganization?.name ??
+        'this organization';
     final invoiceNumber = widget.invoice.invoiceNumber;
     final amount = NumberFormat.simpleCurrency(
       locale: 'en_AU',
@@ -136,9 +139,9 @@ class _RecurringConsentDialogState extends ConsumerState<RecurringConsentDialog>
       );
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.recurringPaymentError)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.recurringPaymentError)));
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -163,14 +166,21 @@ class _RecurringConsentDialogState extends ConsumerState<RecurringConsentDialog>
             value: _frequency,
             decoration: const InputDecoration(labelText: 'Frequency'),
             items: ['weekly', 'fortnightly', 'monthly']
-                .map((f) => DropdownMenuItem(value: f, child: Text(_frequencyLabel(l10n, f))))
+                .map(
+                  (f) => DropdownMenuItem(
+                    value: f,
+                    child: Text(_frequencyLabel(l10n, f)),
+                  ),
+                )
                 .toList(),
-            onChanged: (value) => setState(() => _frequency = value ?? 'monthly'),
+            onChanged: (value) =>
+                setState(() => _frequency = value ?? 'monthly'),
           ),
           const SizedBox(height: 16),
           CheckboxListTile(
             value: _consentChecked,
-            onChanged: (value) => setState(() => _consentChecked = value ?? false),
+            onChanged: (value) =>
+                setState(() => _consentChecked = value ?? false),
             title: Text(l10n.recurringPaymentConsentCheckbox),
             controlAffinity: ListTileControlAffinity.leading,
           ),
@@ -190,7 +200,14 @@ class _RecurringConsentDialogState extends ConsumerState<RecurringConsentDialog>
             padding: const EdgeInsets.symmetric(vertical: 14),
           ),
           child: _loading
-              ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: BauhausTheme.white))
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: BauhausTheme.white,
+                  ),
+                )
               : Text(l10n.recurringPaymentAcceptButton),
         ),
       ],

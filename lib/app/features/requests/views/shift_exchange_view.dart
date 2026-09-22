@@ -5,6 +5,7 @@ import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'dart:io' show Platform;
@@ -186,6 +187,12 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
     return Scaffold(
       backgroundColor: BauhausDesign.surfaceLight,
       appBar: AppBar(
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: BauhausIconButton(
@@ -199,12 +206,10 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
           'Shift Exchange',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
           ),
         ),
         centerTitle: true,
-        backgroundColor: BauhausDesign.surfaceLight,
-        elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: Container(
@@ -218,9 +223,11 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
             ),
             child: TabBar(
               controller: _tabController,
-              labelColor: BauhausDesign.primary,
-              unselectedLabelColor: BauhausDesign.textMuted,
-              indicatorColor: BauhausDesign.primary,
+              labelColor: BauhausDesign.surfaceWhite,
+              unselectedLabelColor: BauhausDesign.surfaceWhite.withValues(
+                alpha: 0.6,
+              ),
+              indicatorColor: BauhausDesign.accent,
               indicatorWeight: 3,
               labelStyle: BauhausDesign.getTextTheme(
                 context,

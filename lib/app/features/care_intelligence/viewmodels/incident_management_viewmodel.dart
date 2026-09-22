@@ -46,11 +46,15 @@ class IncidentManagementState {
 
 // StateNotifier for Incident Management
 class IncidentManagementViewModel extends Notifier<IncidentManagementState> {
-  late final CareIntelligenceRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  CareIntelligenceRepository get _repository =>
+      ref.read(careIntelligenceRepositoryProvider);
 
   @override
   IncidentManagementState build() {
-    _repository = ref.watch(careIntelligenceRepositoryProvider);
+    ref.watch(careIntelligenceRepositoryProvider);
     return IncidentManagementState();
   }
 

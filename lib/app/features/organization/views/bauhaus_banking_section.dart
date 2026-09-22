@@ -204,7 +204,9 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
                               style: GoogleFonts.inter(
                                 fontSize: BauhausDesign.fontSm,
                                 fontWeight: FontWeight.w400,
-                                color: BauhausDesign.textDark.withValues(alpha: 0.7),
+                                color: BauhausDesign.textDark.withValues(
+                                  alpha: 0.7,
+                                ),
                               ),
                             ),
                           ],

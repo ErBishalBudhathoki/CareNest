@@ -257,7 +257,9 @@ class _ExpensePhotoAttachmentWidgetState
         decoration: BoxDecoration(
           color: BauhausDesign.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          border: Border.all(color: BauhausDesign.primary.withValues(alpha: 0.1)),
+          border: Border.all(
+            color: BauhausDesign.primary.withValues(alpha: 0.1),
+          ),
         ),
         child: Column(
           children: [

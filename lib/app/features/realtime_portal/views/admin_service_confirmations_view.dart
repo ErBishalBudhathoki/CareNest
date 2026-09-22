@@ -4,6 +4,7 @@ import 'package:carenest/app/features/realtime_portal/models/realtime_portal_mod
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -50,20 +51,26 @@ class AdminServiceConfirmationsView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: BauhausDesign.secondary,
         elevation: 0,
         title: Text(
           'Service Confirmation Ledger',
           style: GoogleFonts.oswald(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
             letterSpacing: 1.1,
           ),
         ),
-        foregroundColor: BauhausDesign.textDark,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: BauhausDesign.textDark),
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: BauhausDesign.surfaceWhite,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
@@ -686,8 +693,8 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                     BauhausDesign.space4,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: BauhausDesign.warning.withValues(alpha: 
-                                      0.1,
+                                    color: BauhausDesign.warning.withValues(
+                                      alpha: 0.1,
                                     ),
                                     border: Border.all(
                                       color: BauhausDesign.warning,

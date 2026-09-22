@@ -9,11 +9,14 @@ final crossOrgViewModelProvider =
     );
 
 class CrossOrgViewModel extends AsyncNotifier<List<CrossOrgMetric>> {
-  late final AnalyticsRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  AnalyticsRepository get _repository => ref.read(analyticsRepositoryProvider);
 
   @override
   FutureOr<List<CrossOrgMetric>> build() {
-    _repository = ref.watch(analyticsRepositoryProvider);
+    ref.watch(analyticsRepositoryProvider);
     Future.microtask(() => fetchMetrics());
     return <CrossOrgMetric>[];
   }

@@ -4,7 +4,7 @@ import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/core_providers.dart';
 
 class LineItemViewModel extends Notifier<List<Map<String, dynamic>>> {
-  late final ApiMethod _apiMethod;
+  late ApiMethod _apiMethod;
 
   @override
   List<Map<String, dynamic>> build() {

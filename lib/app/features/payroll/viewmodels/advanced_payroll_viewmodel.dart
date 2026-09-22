@@ -44,11 +44,15 @@ class AdvancedPayrollState {
 }
 
 class AdvancedPayrollViewModel extends Notifier<AdvancedPayrollState> {
-  late final AdvancedPayrollRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  AdvancedPayrollRepository get _repository =>
+      ref.read(advancedPayrollRepositoryProvider);
 
   @override
   AdvancedPayrollState build() {
-    _repository = ref.watch(advancedPayrollRepositoryProvider);
+    ref.watch(advancedPayrollRepositoryProvider);
     return AdvancedPayrollState();
   }
 

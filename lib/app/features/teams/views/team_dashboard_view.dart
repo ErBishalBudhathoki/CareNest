@@ -1453,7 +1453,9 @@ class _HistoryTile extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: BauhausDesign.surfaceWhite,
-              border: Border.all(color: BauhausDesign.neutral.withValues(alpha: 0.2)),
+              border: Border.all(
+                color: BauhausDesign.neutral.withValues(alpha: 0.2),
+              ),
             ),
             child: Text(
               '$ackCount ACK',

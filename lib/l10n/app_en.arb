@@ -560,6 +560,8 @@
     }
   },
   "comingSoonMsg": "New rate feature coming soon!",
+  "commandDeskSortRecentTitle": "Sort Command Desk by recent use",
+  "commandDeskSortRecentSubtitle": "Float recently used admin sections to the top",
   "companyNameLabel": "COMPANY NAME/LEGAL NAME",
   "complete": "Complete",
   "completedOps": "Completed",

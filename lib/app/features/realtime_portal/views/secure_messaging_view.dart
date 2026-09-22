@@ -4,6 +4,7 @@ import 'package:carenest/app/features/realtime_portal/models/realtime_portal_mod
 import 'package:carenest/app/features/notifications/models/notification_model.dart';
 import 'package:carenest/app/services/notificationservice/local_notification_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -480,7 +481,11 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
       return Scaffold(
         backgroundColor: BauhausDesign.backgroundLight,
         appBar: AppBar(
-          backgroundColor: BauhausDesign.surfaceWhite,
+          backgroundColor: BauhausDesign.secondary,
+          foregroundColor: BauhausDesign.surfaceWhite,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
+          scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
           elevation: 0,
           centerTitle: true,
           title: Text(
@@ -507,7 +512,11 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
       return Scaffold(
         backgroundColor: BauhausDesign.backgroundLight,
         appBar: AppBar(
-          backgroundColor: BauhausDesign.surfaceWhite,
+          backgroundColor: BauhausDesign.secondary,
+          foregroundColor: BauhausDesign.surfaceWhite,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
+          scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
           elevation: 0,
           centerTitle: true,
           title: Text(
@@ -581,7 +590,11 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: BauhausDesign.secondary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -600,7 +613,7 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
                   : 'WORKER COMMUNICATION',
               style: BauhausDesign.neoMonoStyle(
                 context,
-                color: BauhausDesign.textMuted,
+                color: BauhausDesign.surfaceWhite,
                 fontSize: 10,
               ),
             ),

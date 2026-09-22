@@ -9,6 +9,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
@@ -228,7 +229,11 @@ class _ScheduleDashboardScreenState
 
   PreferredSizeWidget _buildBauhausAppBar() {
     return AppBar(
-      backgroundColor: BauhausDesign.surfaceLight,
+      backgroundColor: BauhausDesign.secondary,
+      foregroundColor: BauhausDesign.surfaceWhite,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      scrolledUnderElevation: 0,
+      surfaceTintColor: Colors.transparent,
       elevation: 0,
       leading: BauhausIconButton(
         onPressed: () => Navigator.of(context).pop(),
@@ -237,7 +242,7 @@ class _ScheduleDashboardScreenState
       ),
       title: Text(
         AppLocalizations.of(context)!.scheduleTitle,
-        style: BauhausDesign.getTextTheme(context).displaySmall,
+        style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(color: BauhausDesign.surfaceWhite),
       ),
       actions: [
         Padding(
@@ -969,9 +974,7 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                   items: [
                     DropdownMenuItem<String>(
                       value: null,
-                      child: Text(
-                        AppLocalizations.of(context)!.unassigned,
-                      ),
+                      child: Text(AppLocalizations.of(context)!.unassigned),
                     ),
                     ..._employees.map(
                       (emp) {

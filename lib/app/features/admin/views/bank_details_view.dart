@@ -92,7 +92,7 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
               'BANK DETAILS',
               style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
                 fontWeight: FontWeight.w900,
-                color: BauhausDesign.textDark,
+                color: BauhausDesign.surfaceWhite,
                 letterSpacing: 1.2,
               ),
             ),
@@ -101,15 +101,17 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
                   ? 'Invoice payout destination'
                   : 'Your payroll destination',
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.textMuted,
+                color: BauhausDesign.surfaceWhite,
                 fontWeight: FontWeight.w700,
               ),
             ),
           ],
         ),
         elevation: 0,
-        backgroundColor: BauhausDesign.surfaceWhite,
-        foregroundColor: BauhausDesign.textDark,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(3),

@@ -63,12 +63,15 @@ final predictiveInsightsViewModelProvider =
     );
 
 class PredictiveInsightsViewModel extends Notifier<PredictiveInsightsState> {
-  late final AnalyticsRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  AnalyticsRepository get _repository => ref.read(analyticsRepositoryProvider);
   User? _user;
 
   @override
   PredictiveInsightsState build() {
-    _repository = ref.watch(analyticsRepositoryProvider);
+    ref.watch(analyticsRepositoryProvider);
     final userAsync = ref.watch(currentUserProvider);
     _user = userAsync.value;
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
@@ -338,14 +339,16 @@ class _ClientPricingReviewViewState
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: BauhausDesign.surfaceWhite,
+      backgroundColor: BauhausDesign.primary,
+      foregroundColor: BauhausDesign.surfaceWhite,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
       surfaceTintColor: Colors.transparent,
       scrolledUnderElevation: 0,
       elevation: 0,
       title: Text(
         AppLocalizations.of(context)!.clientPricingReviewTitle,
         style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-          color: BauhausDesign.textDark,
+          color: BauhausDesign.surfaceWhite,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -353,14 +356,14 @@ class _ClientPricingReviewViewState
         icon: const Icon(Icons.arrow_back_ios_new_rounded),
         onPressed: () => Navigator.of(context).pop(),
         tooltip: AppLocalizations.of(context)!.backAction,
-        color: BauhausDesign.textDark,
+        color: BauhausDesign.surfaceWhite,
       ),
       actions: [
         IconButton(
           icon: const Icon(Icons.refresh_rounded),
           onPressed: _loadClientsWithAssignments,
           tooltip: AppLocalizations.of(context)!.refreshAction,
-          color: BauhausDesign.textDark,
+          color: BauhausDesign.surfaceWhite,
         ),
       ],
       bottom: PreferredSize(
@@ -577,7 +580,9 @@ class _ClientPricingReviewViewState
           ),
           decoration: BoxDecoration(
             border: Border(
-              bottom: BorderSide(color: BauhausDesign.neutral.withValues(alpha: 0.5)),
+              bottom: BorderSide(
+                color: BauhausDesign.neutral.withValues(alpha: 0.5),
+              ),
               left: isSelected
                   ? const BorderSide(color: BauhausDesign.primary, width: 3)
                   : BorderSide.none,
@@ -777,7 +782,9 @@ class _ClientPricingReviewViewState
     return BauhausCard(
           margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
           padding: const EdgeInsets.all(BauhausDesign.space4),
-          borderColor: exceedsCap ? BauhausDesign.error.withValues(alpha: 0.5) : null,
+          borderColor: exceedsCap
+              ? BauhausDesign.error.withValues(alpha: 0.5)
+              : null,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1260,16 +1267,17 @@ class _ClientPricingDetailPageState
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: BauhausDesign.primary,
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
-        foregroundColor: BauhausDesign.textDark,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
         title: Text(
           clientName,
           style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
           ),
         ),
         actions: [
@@ -1277,7 +1285,7 @@ class _ClientPricingDetailPageState
             icon: const Icon(Icons.refresh),
             onPressed: _loadItems,
             tooltip: 'Refresh',
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
           ),
         ],
         bottom: PreferredSize(
@@ -1373,7 +1381,9 @@ class _ClientPricingDetailPageState
     return BauhausCard(
           margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
           padding: const EdgeInsets.all(BauhausDesign.space4),
-          borderColor: exceedsCap ? BauhausDesign.error.withValues(alpha: 0.5) : null,
+          borderColor: exceedsCap
+              ? BauhausDesign.error.withValues(alpha: 0.5)
+              : null,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

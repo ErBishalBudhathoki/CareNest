@@ -34,11 +34,15 @@ class ComplianceState {
 }
 
 class ComplianceViewModel extends Notifier<ComplianceState> {
-  late final FinancialIntelligenceRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  FinancialIntelligenceRepository get _repository =>
+      ref.read(financialIntelligenceRepositoryProvider);
 
   @override
   ComplianceState build() {
-    _repository = ref.watch(financialIntelligenceRepositoryProvider);
+    ref.watch(financialIntelligenceRepositoryProvider);
     return ComplianceState();
   }
 

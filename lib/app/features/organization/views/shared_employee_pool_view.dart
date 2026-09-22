@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 // import 'package:carenest/app/features/analytics/widgets/bauhaus_container.dart'; // Unused
@@ -11,9 +12,12 @@ class SharedEmployeePoolView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: BauhausDesign.background,
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         title: const Text('Shared Employee Pool'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: BauhausDesign.secondary,
+        foregroundColor: BauhausDesign.surfaceWhite,
         elevation: 0,
       ),
       body: Padding(

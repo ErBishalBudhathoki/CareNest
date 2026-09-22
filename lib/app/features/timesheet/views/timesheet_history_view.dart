@@ -379,7 +379,9 @@ class TimesheetHistoryView extends ConsumerWidget {
                         horizontal: BauhausDesign.space2,
                       ),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.surfaceOffWhite.withValues(alpha: 0.3),
+                        color: BauhausDesign.surfaceOffWhite.withValues(
+                          alpha: 0.3,
+                        ),
                         border: Border.all(
                           color: BauhausDesign.neutral.withValues(alpha: 0.15),
                           width: 1,

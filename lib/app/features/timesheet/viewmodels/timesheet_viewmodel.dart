@@ -34,15 +34,18 @@ final timesheetViewModelProvider =
     });
 
 class TimesheetViewModel extends AsyncNotifier<List<TimesheetEntry>> {
-  late final TimesheetRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  TimesheetRepository get _repository => ref.read(timesheetRepositoryProvider);
   final String _email;
-  late final DateTime _startDate;
+  late DateTime _startDate;
 
   TimesheetViewModel(this._email);
 
   @override
   FutureOr<List<TimesheetEntry>> build() {
-    _repository = ref.watch(timesheetRepositoryProvider);
+    ref.watch(timesheetRepositoryProvider);
     _startDate = ref.watch(timesheetDateProvider);
     final endDate = _startDate.add(const Duration(days: 6));
     return _repository.fetchTimesheets(
