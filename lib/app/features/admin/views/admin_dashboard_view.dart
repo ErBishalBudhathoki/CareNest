@@ -1670,8 +1670,8 @@ class _AdminDashboardViewControllerState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     BauhausSectionHeader(
-                      title: 'Command Center',
-                      subtitle: 'Use tabs to jump between admin workflows',
+                      title: 'Command Desk',
+                      subtitle: 'Launch any admin workflow from one place.',
                     ),
                     const SizedBox(height: BauhausDesign.space6),
                     BauhausCommandCenter(categories: categories),
