@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -366,6 +367,8 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         title: Text(
           widget.expenseToEdit != null
               ? l10n.editExpenseTitle

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/performance_analytics_viewmodel.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
 import 'package:carenest/app/features/workforce_optimization/utils/workforce_export_helper.dart';
@@ -51,7 +53,11 @@ class _PerformanceAnalyticsViewState
     return Scaffold(
       backgroundColor: AppColors.colorBackground,
       appBar: AppBar(
-        backgroundColor: AppColors.colorPrimary,
+        backgroundColor: BauhausDesign.secondary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
         title: const Text(
           'Performance Analytics',
@@ -125,7 +131,10 @@ class _PerformanceAnalyticsViewState
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.colorGreen, AppColors.colorGreen.withValues(alpha: 0.8)],
+          colors: [
+            AppColors.colorGreen,
+            AppColors.colorGreen.withValues(alpha: 0.8),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -534,10 +543,13 @@ class _PerformanceAnalyticsViewState
           ],
         )
         .toList();
-    final csv = WorkforceExportHelper.toCsv(
-      const ['employee_id', 'name', 'score', 'completion_rate', 'avg_rating'],
-      rows,
-    );
+    final csv = WorkforceExportHelper.toCsv(const [
+      'employee_id',
+      'name',
+      'score',
+      'completion_rate',
+      'avg_rating',
+    ], rows);
     final path = await WorkforceExportHelper.shareTextFile(
       filename:
           'performance-analytics-${WorkforceExportHelper.fileTimestamp()}.csv',

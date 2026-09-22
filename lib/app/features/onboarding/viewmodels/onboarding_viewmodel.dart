@@ -34,11 +34,15 @@ class OnboardingState {
 }
 
 class OnboardingViewModel extends Notifier<OnboardingState> {
-  late final OnboardingRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  OnboardingRepository get _repository =>
+      ref.read(onboardingRepositoryProvider);
 
   @override
   OnboardingState build() {
-    _repository = ref.watch(onboardingRepositoryProvider);
+    ref.watch(onboardingRepositoryProvider);
     return OnboardingState();
   }
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/firebase_auth_provider.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 
 class BauhausSignupView extends ConsumerStatefulWidget {
@@ -136,10 +138,14 @@ class _BauhausSignupViewState extends ConsumerState<BauhausSignupView> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: BauhausDesign.secondary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: colorBlack),
+          icon: const Icon(Icons.arrow_back, color: BauhausDesign.surfaceWhite),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),

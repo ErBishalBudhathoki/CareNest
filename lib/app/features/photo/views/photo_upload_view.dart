@@ -195,19 +195,23 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
       appBar: AppBar(
         elevation: 0,
         surfaceTintColor: Colors.transparent,
-        backgroundColor: BauhausDesign.surfaceWhite,
-        foregroundColor: BauhausDesign.textDark,
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        scrolledUnderElevation: 0,
         title: Text(
           'Profile Photo',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             fontWeight: FontWeight.w600,
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
           ),
         ),
         centerTitle: true,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: BauhausDesign.textDark),
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: BauhausDesign.surfaceWhite,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),

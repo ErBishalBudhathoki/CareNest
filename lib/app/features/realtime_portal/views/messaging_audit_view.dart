@@ -4,6 +4,7 @@ import 'package:carenest/app/features/realtime_portal/viewmodels/messaging_viewm
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -139,7 +140,11 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: BauhausDesign.secondary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         title: Text(
           isViewingChat
@@ -148,12 +153,15 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
           style: GoogleFonts.oswald(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
             letterSpacing: 1.1,
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: BauhausDesign.textDark),
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: BauhausDesign.surfaceWhite,
+          ),
           onPressed: () {
             if (isViewingChat) {
               ref
@@ -169,7 +177,7 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
             onPressed: isViewingChat
                 ? () => _openConversation(state.activeConversation!)
                 : _loadConversations,
-            icon: const Icon(Icons.refresh, color: BauhausDesign.textDark),
+            icon: const Icon(Icons.refresh, color: BauhausDesign.surfaceWhite),
             tooltip: 'Refresh',
           ),
         ],

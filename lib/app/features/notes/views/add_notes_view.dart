@@ -2,6 +2,7 @@
 
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
@@ -113,10 +114,14 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
       appBar: AppBar(
         title: Text(
           'Add Notes',
-          style: BauhausDesign.getTextTheme(context).headlineMedium,
+          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(color: BauhausDesign.surfaceWhite),
         ),
         elevation: 0.0,
-        backgroundColor: BauhausDesign.surfaceLight,
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         centerTitle: true,
         leading: BauhausIconButton(
           icon: Icons.arrow_back_ios_new,

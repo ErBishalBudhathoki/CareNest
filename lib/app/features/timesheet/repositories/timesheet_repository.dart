@@ -19,7 +19,8 @@ class TimesheetRepository {
     required String email,
     required DateTime startDate,
     required DateTime endDate,
-  }) async {    try {
+  }) async {
+    try {
       final sharedPrefs = SharedPreferencesUtils();
       await sharedPrefs.init();
       final organizationId = sharedPrefs.getString('organizationId');

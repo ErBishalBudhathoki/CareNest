@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 
@@ -27,6 +28,8 @@ class _ComplianceAutomationDashboardState
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         backgroundColor: BauhausDesign.textDark,
         title: Text(
           'COMPLIANCE AUTOMATION',

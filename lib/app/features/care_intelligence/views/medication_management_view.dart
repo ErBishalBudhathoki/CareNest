@@ -178,12 +178,10 @@ class _MedicationManagementViewState
                     TextButton(
                       onPressed: () => Navigator.of(dialogContext).pop(),
                       child: Text(
-                        AppLocalizations.of(
+                        AppLocalizations.of(dialogContext)!.closeButton,
+                        style: BauhausDesign.getTextTheme(
                           dialogContext,
-                        )!.closeButton,
-                        style: BauhausDesign.getTextTheme(dialogContext)
-                            .labelLarge
-                            ?.copyWith(color: BauhausDesign.textMuted),
+                        ).labelLarge?.copyWith(color: BauhausDesign.textMuted),
                       ),
                     ),
                   ],

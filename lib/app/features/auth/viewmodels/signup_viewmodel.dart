@@ -17,7 +17,7 @@ class SignupViewModel extends Notifier<int> {
   dynamic ins;
   dynamic result;
   late final ApiMethod apiMethod;
-  late final FirebaseAuthService _firebaseAuthService;
+  late FirebaseAuthService _firebaseAuthService;
 
   @override
   int build() {

@@ -513,7 +513,9 @@ class _AppointmentCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: BauhausDesign.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-            border: Border.all(color: BauhausDesign.primary.withValues(alpha: 0.3)),
+            border: Border.all(
+              color: BauhausDesign.primary.withValues(alpha: 0.3),
+            ),
           ),
           child: Icon(
             Icons.access_time,
@@ -551,7 +553,9 @@ class _AppointmentCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: BauhausDesign.secondary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-            border: Border.all(color: BauhausDesign.secondary.withValues(alpha: 0.3)),
+            border: Border.all(
+              color: BauhausDesign.secondary.withValues(alpha: 0.3),
+            ),
           ),
           child: Icon(
             Icons.person_outline,

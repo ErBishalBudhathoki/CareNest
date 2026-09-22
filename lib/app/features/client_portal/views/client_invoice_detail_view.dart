@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
@@ -10,6 +8,7 @@ import 'package:carenest/app/features/invoice/viewmodels/invoice_detail_viewmode
 import 'package:carenest/app/shared/utils/pdf/pdf_viewer.dart';
 import 'package:carenest/config/environment.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
@@ -98,10 +97,14 @@ class _ClientInvoiceDetailViewState
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: BauhausDesign.secondary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: BauhausDesign.textDark),
+          icon: const Icon(Icons.arrow_back, color: BauhausDesign.surfaceWhite),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
@@ -109,7 +112,7 @@ class _ClientInvoiceDetailViewState
           style: GoogleFonts.oswald(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
             letterSpacing: 1,
           ),
         ),
@@ -1375,10 +1378,14 @@ class _SecureReceiptViewerPageState
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: BauhausDesign.secondary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: BauhausDesign.textDark),
+          icon: const Icon(Icons.arrow_back, color: BauhausDesign.surfaceWhite),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
@@ -1386,7 +1393,7 @@ class _SecureReceiptViewerPageState
           style: GoogleFonts.oswald(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
             letterSpacing: 1,
           ),
         ),

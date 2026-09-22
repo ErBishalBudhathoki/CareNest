@@ -2422,6 +2422,18 @@ abstract class AppLocalizations {
   /// **'New rate feature coming soon!'**
   String get comingSoonMsg;
 
+  /// No description provided for @commandDeskSortRecentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort Command Desk by recent use'**
+  String get commandDeskSortRecentTitle;
+
+  /// No description provided for @commandDeskSortRecentSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Float recently used admin sections to the top'**
+  String get commandDeskSortRecentSubtitle;
+
   /// No description provided for @companyNameLabel.
   ///
   /// In en, this message translates to:

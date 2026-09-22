@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
@@ -18,7 +19,11 @@ class InvoiceAIDashboard extends ConsumerWidget {
     return Scaffold(
       backgroundColor: BauhausDesign.surfaceLight,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceLight,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -37,7 +42,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
         title: Text(
           'SMART INVOICING',
           style: textTheme.headlineMedium?.copyWith(
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
             fontWeight: FontWeight.w700,
           ),
         ),

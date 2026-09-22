@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/viewmodels/automatic_invoice_viewmodel.dart';
@@ -95,7 +96,9 @@ class _AutomaticInvoiceGenerationViewState
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      foregroundColor: BauhausDesign.textDark,
+      foregroundColor: BauhausDesign.surfaceWhite,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      scrolledUnderElevation: 0,
       elevation: 0,
       titleSpacing: BauhausDesign.space4,
       title: Column(
@@ -106,20 +109,20 @@ class _AutomaticInvoiceGenerationViewState
             style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
               fontWeight: FontWeight.w900,
               letterSpacing: 0.8,
-              color: BauhausDesign.textDark,
+              color: BauhausDesign.surfaceWhite,
             ),
           ),
           Text(
             widget.organizationName ??
                 AppLocalizations.of(context)!.organizationLabel,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: BauhausDesign.textDark.withValues(alpha: 0.7),
+              color: BauhausDesign.surfaceWhite.withValues(alpha: 0.7),
               fontWeight: FontWeight.w700,
             ),
           ),
         ],
       ),
-      backgroundColor: BauhausDesign.surfaceWhite,
+      backgroundColor: BauhausDesign.primary,
       surfaceTintColor: Colors.transparent,
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(3),

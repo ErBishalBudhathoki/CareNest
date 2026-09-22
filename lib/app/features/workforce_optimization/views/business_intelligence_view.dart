@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/business_intelligence_viewmodel.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
 import 'package:carenest/app/features/workforce_optimization/utils/workforce_export_helper.dart';
@@ -44,7 +46,11 @@ class _BusinessIntelligenceViewState
     return Scaffold(
       backgroundColor: AppColors.colorBackground,
       appBar: AppBar(
-        backgroundColor: AppColors.colorPrimary,
+        backgroundColor: BauhausDesign.secondary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
         title: const Text(
           'Business Intelligence',

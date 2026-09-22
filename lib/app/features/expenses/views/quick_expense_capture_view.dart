@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:carenest/app/features/analytics/theme/bauhaus_theme.dart';
@@ -47,6 +49,8 @@ class _QuickExpenseCaptureViewState
     return Scaffold(
       backgroundColor: BauhausTheme.black,
       appBar: AppBar(
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         title: Text(
           AppLocalizations.of(context)!.quickCaptureTitle,
           style: BauhausTheme.headerStyle.copyWith(color: BauhausTheme.white),

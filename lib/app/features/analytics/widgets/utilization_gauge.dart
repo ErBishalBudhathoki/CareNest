@@ -133,7 +133,9 @@ class UtilizationGauge extends StatelessWidget {
                             Container(
                               height: 8,
                               decoration: BoxDecoration(
-                                color: BauhausDesign.neutral.withValues(alpha: 0.1),
+                                color: BauhausDesign.neutral.withValues(
+                                  alpha: 0.1,
+                                ),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),

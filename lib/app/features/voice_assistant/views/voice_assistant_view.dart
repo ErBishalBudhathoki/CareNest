@@ -9,7 +9,9 @@ import 'package:carenest/app/features/voice_assistant/models/voice_models.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -281,10 +283,21 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
     return Scaffold(
       backgroundColor: BauhausDesign.surfaceLight,
       appBar: AppBar(
-        title: const Text('Voice Assistant'),
-        backgroundColor: BauhausDesign.surfaceLight,
-        foregroundColor: BauhausDesign.textDark,
+        title: Text(
+          'Voice Assistant',
+          style: GoogleFonts.oswald(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.6,
+            color: BauhausDesign.surfaceWhite,
+          ),
+        ),
+        backgroundColor: BauhausDesign.info,
+        foregroundColor: BauhausDesign.surfaceWhite,
         surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
       body: Column(
         children: [
@@ -490,7 +503,9 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
               children: [
                 _buildStatusChip(
                   label: command.detectedIntent,
-                  backgroundColor: BauhausDesign.primary.withValues(alpha: 0.08),
+                  backgroundColor: BauhausDesign.primary.withValues(
+                    alpha: 0.08,
+                  ),
                   foregroundColor: BauhausDesign.primary,
                 ),
                 _buildStatusChip(

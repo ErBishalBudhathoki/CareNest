@@ -4,6 +4,7 @@ import 'package:carenest/app/features/client_portal/viewmodels/client_appointmen
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -30,10 +31,14 @@ class ClientAppointmentDetailView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: BauhausDesign.secondary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: BauhausDesign.textDark),
+          icon: const Icon(Icons.arrow_back, color: BauhausDesign.surfaceWhite),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
@@ -41,7 +46,7 @@ class ClientAppointmentDetailView extends ConsumerWidget {
           style: GoogleFonts.oswald(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
             letterSpacing: 1,
           ),
         ),
@@ -420,7 +425,9 @@ class ClientAppointmentDetailView extends ConsumerWidget {
             decoration: BoxDecoration(
               color: BauhausDesign.backgroundLight,
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-              border: Border.all(color: BauhausDesign.neutral.withValues(alpha: 0.3)),
+              border: Border.all(
+                color: BauhausDesign.neutral.withValues(alpha: 0.3),
+              ),
             ),
             child: Row(
               children: [
@@ -492,7 +499,9 @@ class ClientAppointmentDetailView extends ConsumerWidget {
             decoration: BoxDecoration(
               color: BauhausDesign.backgroundLight,
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-              border: Border.all(color: BauhausDesign.neutral.withValues(alpha: 0.3)),
+              border: Border.all(
+                color: BauhausDesign.neutral.withValues(alpha: 0.3),
+              ),
             ),
             child: Text(
               appointment.notes!,

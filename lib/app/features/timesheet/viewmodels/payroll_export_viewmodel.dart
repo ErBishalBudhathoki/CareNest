@@ -13,7 +13,7 @@ final payrollExportViewModelProvider =
     });
 
 class PayrollExportViewModel extends AsyncNotifier<void> {
-  late final ApiMethod _apiMethod;
+  late ApiMethod _apiMethod;
 
   @override
   FutureOr<void> build() {

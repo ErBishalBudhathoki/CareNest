@@ -78,7 +78,10 @@ class BauhausActionCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
+                  border: Border.all(
+                    color: color.withValues(alpha: 0.2),
+                    width: 1,
+                  ),
                 ),
                 child: Icon(icon, color: color, size: 20),
               ),
@@ -194,9 +197,8 @@ class BauhausChartWidget extends StatelessWidget {
                   Text(
                     AppLocalizations.of(context)!.chartVisualizationPlaceholder,
                     textAlign: TextAlign.center,
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).bodySmall?.copyWith(color: primaryColor.withValues(alpha: 0.5)),
+                    style: BauhausDesign.getTextTheme(context).bodySmall
+                        ?.copyWith(color: primaryColor.withValues(alpha: 0.5)),
                   ),
                 ],
               ),

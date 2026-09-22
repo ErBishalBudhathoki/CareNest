@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/services/crashlytics/crashlytics_service.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
@@ -137,7 +138,11 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(

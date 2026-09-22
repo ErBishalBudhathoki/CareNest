@@ -4,6 +4,7 @@ import 'package:carenest/app/features/client_appointment_details/providers.dart'
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/utils/navigation_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/client_appointment_details/models/client_detail_model.dart';
 
@@ -39,7 +40,11 @@ class ClientAppointmentDetailsView extends ConsumerWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: BauhausDesign.secondary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
@@ -283,7 +288,9 @@ class ClientAppointmentDetailsView extends ConsumerWidget {
                   .map(
                     (c) => Chip(
                       label: Text(c),
-                      backgroundColor: BauhausDesign.warning.withValues(alpha: 0.1),
+                      backgroundColor: BauhausDesign.warning.withValues(
+                        alpha: 0.1,
+                      ),
                       labelStyle: TextStyle(color: BauhausDesign.warning),
                     ),
                   )

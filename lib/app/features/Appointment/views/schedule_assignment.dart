@@ -11,6 +11,7 @@ import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:carenest/app/shared/widgets/flushbar_widget.dart';
@@ -1113,20 +1114,23 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
         key: _scaffoldKey,
         backgroundColor: BauhausDesign.backgroundLight,
         appBar: AppBar(
-          backgroundColor: BauhausDesign.surfaceWhite,
-          foregroundColor: BauhausDesign.textDark,
+          backgroundColor: BauhausDesign.secondary,
+          foregroundColor: BauhausDesign.surfaceWhite,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
+          scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
           elevation: 0,
           title: Text(
             AppLocalizations.of(context)!.scheduleAssignmentTitle,
             style: BauhausDesign.getTextTheme(
               context,
-            ).titleLarge?.copyWith(color: BauhausDesign.textDark),
+            ).titleLarge?.copyWith(color: BauhausDesign.surfaceWhite),
           ),
           centerTitle: true,
           leading: IconButton(
             icon: const Icon(
               Icons.arrow_back_ios_rounded,
-              color: BauhausDesign.textDark,
+              color: BauhausDesign.surfaceWhite,
             ),
             tooltip: AppLocalizations.of(context)!.backButton,
             onPressed: _returnToAdminDashboard,
@@ -1340,8 +1344,9 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                     Expanded(
                       child: Text(
                         timeError,
-                        style: BauhausDesign.getTextTheme(context).bodySmall
-                            ?.copyWith(color: BauhausDesign.error),
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodySmall?.copyWith(color: BauhausDesign.error),
                       ),
                     ),
                   ],

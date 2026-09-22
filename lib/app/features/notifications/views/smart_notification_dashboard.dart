@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import '../providers/ai_providers.dart';
 import '../models/ai_models.dart';
 
@@ -37,9 +39,21 @@ class _SmartNotificationDashboardState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         title: const Text('Smart Notifications'),
         bottom: TabBar(
           controller: _tabController,
+          labelColor: BauhausDesign.surfaceWhite,
+          unselectedLabelColor: BauhausDesign.surfaceWhite.withValues(
+            alpha: 0.6,
+          ),
+          indicatorColor: BauhausDesign.accent,
+          indicatorWeight: 3,
           tabs: const [
             Tab(text: 'AI Predictions'),
             Tab(text: 'Calendar'),

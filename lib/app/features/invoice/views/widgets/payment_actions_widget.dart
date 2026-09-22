@@ -173,10 +173,7 @@ class PaymentActionsWidget extends ConsumerWidget {
                       style: BauhausTheme.bodyStyle,
                     ),
                     Text(
-                      '${AppLocalizations.of(context)!.priceDisplay(
-                        AppLocalizations.of(context)!.currencySymbol,
-                        t.amount.toStringAsFixed(2),
-                      )} (${t.method})',
+                      '${AppLocalizations.of(context)!.priceDisplay(AppLocalizations.of(context)!.currencySymbol, t.amount.toStringAsFixed(2))} (${t.method})',
                       style: BauhausTheme.bodyStyle,
                     ),
                   ],

@@ -38,11 +38,15 @@ class CashFlowState {
 }
 
 class CashFlowViewModel extends Notifier<CashFlowState> {
-  late final FinancialIntelligenceRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  FinancialIntelligenceRepository get _repository =>
+      ref.read(financialIntelligenceRepositoryProvider);
 
   @override
   CashFlowState build() {
-    _repository = ref.watch(financialIntelligenceRepositoryProvider);
+    ref.watch(financialIntelligenceRepositoryProvider);
     return CashFlowState();
   }
 

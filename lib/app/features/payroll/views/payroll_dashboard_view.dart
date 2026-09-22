@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import '../viewmodels/payroll_viewmodel.dart';
 import '../models/payroll_model.dart';
 
@@ -28,6 +30,11 @@ class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         title: const Text('Payroll Summary'),
         actions: [
           IconButton(

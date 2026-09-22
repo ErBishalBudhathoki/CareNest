@@ -7,8 +7,8 @@ import '../models/notification_preferences.dart';
 
 class NotificationPreferencesViewModel
     extends AsyncNotifier<NotificationPreferences> {
-  late final ApiMethod _apiMethod;
-  late final SharedPreferencesUtils _sharedPrefs;
+  late ApiMethod _apiMethod;
+  late SharedPreferencesUtils _sharedPrefs;
   bool _hasUnsavedChanges = false;
   bool _isSaving = false;
   String? _saveError;

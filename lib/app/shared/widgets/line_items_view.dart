@@ -1,6 +1,8 @@
 import 'package:carenest/app/core/providers/app_providers.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:animation_list/animation_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class LineItemsView extends ConsumerStatefulWidget {
@@ -57,6 +59,11 @@ class _LineItemsControllerState extends ConsumerState<LineItemsView> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         title: const Text(
           'Support item list with description',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),

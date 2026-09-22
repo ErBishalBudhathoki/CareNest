@@ -118,7 +118,9 @@ void main() {
     );
     expect(
       api.lastEndpoint,
-      'api/billing/recurring-agreements/agr-1?organizationId=org-1&reason=No%20longer%20needed',
+      // Uri.encodeQueryComponent encodes spaces as '+' (form encoding);
+      // Express/qs decodes '+' back to space, so this round-trips correctly.
+      'api/billing/recurring-agreements/agr-1?organizationId=org-1&reason=No+longer+needed',
     );
   });
 

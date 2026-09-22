@@ -4,6 +4,7 @@ import 'package:carenest/config/environment.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -385,17 +386,20 @@ class _PdfViewPageState extends State<PdfViewPage> {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceWhite,
-        foregroundColor: BauhausDesign.textDark,
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: BauhausDesign.textDark),
+          icon: const Icon(Icons.arrow_back_ios, color: BauhausDesign.surfaceWhite),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Invoice PDF',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -525,7 +529,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
               ),
               child: Text(
                 '$page/${pagesCount ?? 0}',
-                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith( 
                   color: BauhausDesign.primary,
                   fontWeight: FontWeight.w600,
                 ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/analytics/theme/bauhaus_theme.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import '../viewmodels/compliance_dashboard_viewmodel.dart';
 
@@ -23,11 +25,17 @@ class _ComplianceDashboardViewState
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.complianceAuditTitle,
-          style: BauhausTheme.headerStyle,
+          style: BauhausTheme.headerStyle.copyWith(
+            color: BauhausDesign.surfaceWhite,
+          ),
         ),
-        backgroundColor: BauhausTheme.white,
+        backgroundColor: BauhausDesign.secondary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: BauhausTheme.black),
+        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
       ),
       body: state.isLoading
           ? const Center(

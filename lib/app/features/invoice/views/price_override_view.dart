@@ -769,16 +769,18 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
       appBar: AppBar(
         title: Text(
           l10n.priceOverrideTitle,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).titleLarge?.copyWith(fontWeight: FontWeight.bold),
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: BauhausDesign.surfaceWhite,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: BauhausDesign.surfaceWhite,
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
         shadowColor: Colors.transparent,
-        iconTheme: const IconThemeData(color: BauhausDesign.textDark),
+        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
@@ -920,7 +922,9 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: BauhausDesign.primary.withValues(alpha: 0.1),
+                              color: BauhausDesign.primary.withValues(
+                                alpha: 0.1,
+                              ),
                               borderRadius: BorderRadius.circular(
                                 BauhausDesign.radiusSm,
                               ),
@@ -949,7 +953,9 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: BauhausDesign.warning.withValues(alpha: 0.1),
+                                color: BauhausDesign.warning.withValues(
+                                  alpha: 0.1,
+                                ),
                                 borderRadius: BorderRadius.circular(
                                   BauhausDesign.radiusSm,
                                 ),

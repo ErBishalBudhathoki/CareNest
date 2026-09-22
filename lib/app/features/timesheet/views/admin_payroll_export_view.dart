@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
@@ -56,12 +57,16 @@ class _AdminPayrollExportViewState
           'PAYROLL EXPORT',
           style: GoogleFonts.oswald(
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
             letterSpacing: 1.0,
           ),
         ),
-        backgroundColor: BauhausDesign.surfaceWhite,
-        iconTheme: const IconThemeData(color: BauhausDesign.textDark),
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
+        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),

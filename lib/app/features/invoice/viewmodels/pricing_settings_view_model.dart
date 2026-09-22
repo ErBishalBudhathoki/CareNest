@@ -17,12 +17,16 @@ abstract class PricingSettingsState with _$PricingSettingsState {
 }
 
 class PricingSettingsViewModel extends Notifier<PricingSettingsState> {
-  late final PricingSettingsRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  PricingSettingsRepository get _repository =>
+      ref.read(pricingSettingsRepositoryProvider);
   PricingSettingsViewModel([PricingSettings? initial]);
 
   @override
   PricingSettingsState build() {
-    _repository = ref.watch(pricingSettingsRepositoryProvider);
+    ref.watch(pricingSettingsRepositoryProvider);
     final initial = ref.watch(defaultPricingSettingsProvider);
     return PricingSettingsState(settings: initial);
   }

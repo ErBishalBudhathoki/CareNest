@@ -175,7 +175,9 @@ class _BauhausNDISectionState extends ConsumerState<BauhausNDISection> {
                               style: GoogleFonts.inter(
                                 fontSize: BauhausDesign.fontSm,
                                 fontWeight: FontWeight.w400,
-                                color: BauhausDesign.textDark.withValues(alpha: 0.7),
+                                color: BauhausDesign.textDark.withValues(
+                                  alpha: 0.7,
+                                ),
                               ),
                             ),
                           ],
@@ -234,7 +236,9 @@ class _BauhausNDISectionState extends ConsumerState<BauhausNDISection> {
                               style: GoogleFonts.inter(
                                 fontSize: BauhausDesign.fontSm,
                                 fontWeight: FontWeight.w400,
-                                color: BauhausDesign.textDark.withValues(alpha: 0.7),
+                                color: BauhausDesign.textDark.withValues(
+                                  alpha: 0.7,
+                                ),
                               ),
                             ),
                           ],
@@ -251,8 +255,8 @@ class _BauhausNDISectionState extends ConsumerState<BauhausNDISection> {
                           });
                         },
                         activeThumbColor: BauhausDesign.success,
-                        activeTrackColor: BauhausDesign.success.withValues(alpha: 
-                          0.5,
+                        activeTrackColor: BauhausDesign.success.withValues(
+                          alpha: 0.5,
                         ),
                         inactiveTrackColor: BauhausDesign.neutral,
                       ),
@@ -300,7 +304,9 @@ class _BauhausNDISectionState extends ConsumerState<BauhausNDISection> {
                             hintStyle: GoogleFonts.inter(
                               fontSize: BauhausDesign.fontMd,
                               fontWeight: FontWeight.w400,
-                              color: BauhausDesign.textDark.withValues(alpha: 0.5),
+                              color: BauhausDesign.textDark.withValues(
+                                alpha: 0.5,
+                              ),
                             ),
                             filled: true,
                             fillColor: _isRegistered
@@ -665,7 +671,9 @@ class _BauhausNDISatusCard extends StatelessWidget {
                             style: GoogleFonts.inter(
                               fontSize: BauhausDesign.fontXs,
                               fontWeight: FontWeight.w600,
-                              color: BauhausDesign.textDark.withValues(alpha: 0.7),
+                              color: BauhausDesign.textDark.withValues(
+                                alpha: 0.7,
+                              ),
                               letterSpacing: 0.5,
                             ),
                           ),
@@ -716,7 +724,9 @@ class _BauhausNDISatusCard extends StatelessWidget {
                               style: GoogleFonts.inter(
                                 fontSize: BauhausDesign.fontXs,
                                 fontWeight: FontWeight.w600,
-                                color: BauhausDesign.textDark.withValues(alpha: 0.7),
+                                color: BauhausDesign.textDark.withValues(
+                                  alpha: 0.7,
+                                ),
                                 letterSpacing: 0.5,
                               ),
                             ),

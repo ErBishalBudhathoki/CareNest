@@ -19,7 +19,7 @@ class EmployeePayRateState {
 class EmployeePayRateViewModel extends Notifier<EmployeePayRateState> {
   EmployeePayRateViewModel(this.organizationId);
   final String organizationId;
-  late final ApiMethod _apiMethod;
+  late ApiMethod _apiMethod;
 
   @override
   EmployeePayRateState build() {

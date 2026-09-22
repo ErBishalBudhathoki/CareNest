@@ -2,6 +2,7 @@ import 'package:carenest/app/features/invoice/views/invoice_ai_dashboard.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Gates the AI-powered invoicing features behind an explicit user consent.
@@ -36,7 +37,11 @@ class InvoiceAIConsentView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: BauhausDesign.surfaceLight,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceLight,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -55,7 +60,7 @@ class InvoiceAIConsentView extends ConsumerWidget {
         title: Text(
           'AI CONSENT',
           style: textTheme.headlineMedium?.copyWith(
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
             fontWeight: FontWeight.w700,
           ),
         ),

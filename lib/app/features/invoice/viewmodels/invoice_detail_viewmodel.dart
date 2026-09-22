@@ -47,7 +47,7 @@ class InvoiceDetailState {
 
 // ViewModel for invoice detail
 class InvoiceDetailViewModel extends Notifier<InvoiceDetailState> {
-  late final InvoiceManagementService _invoiceService;
+  late InvoiceManagementService _invoiceService;
 
   @override
   InvoiceDetailState build() {

@@ -4,6 +4,7 @@ import 'package:carenest/app/shared/widgets/popup_client_details.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:carenest/backend/api_method.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -69,12 +70,15 @@ class _AddUpdateInvoicingEmailViewState
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: BauhausDesign.surfaceWhite,
-        foregroundColor: BauhausDesign.textDark,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         title: Text(
           'Add Invoicing Email Details',
           style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
             fontWeight: FontWeight.bold,
           ),
         ),

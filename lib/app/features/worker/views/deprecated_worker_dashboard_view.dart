@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:carenest/app/features/analytics/theme/bauhaus_theme.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/worker/viewmodels/worker_dashboard_viewmodel.dart';
 import 'package:carenest/app/features/worker/views/widgets/worker_shift_card.dart';
 import 'package:carenest/app/features/worker/views/widgets/worker_action_grid.dart';
@@ -45,23 +47,29 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.workerDashboardTitle,
-          style: BauhausTheme.headerStyle,
+          style: BauhausTheme.headerStyle.copyWith(
+            color: BauhausDesign.surfaceWhite,
+          ),
         ),
-        backgroundColor: BauhausTheme.white,
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        iconTheme: const IconThemeData(color: BauhausTheme.black),
+        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
         actions: [
           IconButton(
             tooltip: 'Scan Invoice',
             icon: const Icon(
               Icons.document_scanner_outlined,
-              color: BauhausTheme.black,
+              color: BauhausDesign.surfaceWhite,
             ),
             onPressed: openScanInvoice,
           ),
           IconButton(
-            icon: const Icon(Icons.refresh, color: BauhausTheme.black),
+            icon: const Icon(Icons.refresh, color: BauhausDesign.surfaceWhite),
             onPressed: () =>
                 ref.read(workerDashboardViewModelProvider.notifier).refresh(),
           ),

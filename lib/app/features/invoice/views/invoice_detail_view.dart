@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/models/invoice_list_model.dart';
 import 'package:carenest/app/features/invoice/viewmodels/invoice_detail_viewmodel.dart';
@@ -108,12 +109,14 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
           l10n.invoiceDetailsTitle,
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             fontWeight: FontWeight.w800,
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
           ),
         ),
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: BauhausDesign.primary,
         surfaceTintColor: Colors.transparent, // Disable surface tint
-        foregroundColor: BauhausDesign.textDark,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
         elevation: 0,
         shape: const Border(
           bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
@@ -182,43 +185,44 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(BauhausDesign.space4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (state.warning != null && state.warning!.trim().isNotEmpty) ...[
-            Container(
-              width: double.infinity,
-              margin: const EdgeInsets.only(bottom: BauhausDesign.space4),
-              padding: const EdgeInsets.all(BauhausDesign.space3),
-              decoration: BoxDecoration(
-                color: BauhausDesign.warning.withValues(alpha: 0.1),
-                border: Border.all(color: BauhausDesign.warning, width: 1.5),
-              ),
-              child: Text(
-                state.warning!,
-                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
-                  fontWeight: FontWeight.w600,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (state.warning != null && state.warning!.trim().isNotEmpty) ...[
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: BauhausDesign.space4),
+                padding: const EdgeInsets.all(BauhausDesign.space3),
+                decoration: BoxDecoration(
+                  color: BauhausDesign.warning.withValues(alpha: 0.1),
+                  border: Border.all(color: BauhausDesign.warning, width: 1.5),
+                ),
+                child: Text(
+                  state.warning!,
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(
+                        color: BauhausDesign.textDark,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
               ),
-            ),
+            ],
+            _buildInvoiceHeader(state.invoice!),
+            const SizedBox(height: BauhausDesign.space4),
+            _buildClientInformation(state.invoice!),
+            const SizedBox(height: BauhausDesign.space4),
+            _buildInvoiceDetails(state.invoice!),
+            const SizedBox(height: BauhausDesign.space4),
+            _buildFinancialSummary(state.invoice!),
+            const SizedBox(height: BauhausDesign.space4),
+            _buildStatusInformation(state.invoice!),
+            const SizedBox(height: BauhausDesign.space4),
+            _buildPaymentActions(state.invoice!),
+            const SizedBox(height: BauhausDesign.space4),
+            _buildActionButtons(state.invoice!),
+            // Add extra padding at bottom
+            const SizedBox(height: BauhausDesign.space12),
           ],
-          _buildInvoiceHeader(state.invoice!),
-          const SizedBox(height: BauhausDesign.space4),
-          _buildClientInformation(state.invoice!),
-          const SizedBox(height: BauhausDesign.space4),
-          _buildInvoiceDetails(state.invoice!),
-          const SizedBox(height: BauhausDesign.space4),
-          _buildFinancialSummary(state.invoice!),
-          const SizedBox(height: BauhausDesign.space4),
-          _buildStatusInformation(state.invoice!),
-          const SizedBox(height: BauhausDesign.space4),
-          _buildPaymentActions(state.invoice!),
-          const SizedBox(height: BauhausDesign.space4),
-          _buildActionButtons(state.invoice!),
-          // Add extra padding at bottom
-          const SizedBox(height: BauhausDesign.space12),
-        ],
         ),
       ),
     );

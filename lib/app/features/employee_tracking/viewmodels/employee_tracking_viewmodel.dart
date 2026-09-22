@@ -109,11 +109,15 @@ class EmployeeTrackingState {
 }
 
 class EmployeeTrackingViewModel extends AsyncNotifier<EmployeeTrackingState> {
-  late final EmployeeTrackingRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  EmployeeTrackingRepository get _repository =>
+      ref.read(employeeTrackingRepositoryProvider);
 
   @override
   Future<EmployeeTrackingState> build() async {
-    _repository = ref.watch(employeeTrackingRepositoryProvider);
+    ref.watch(employeeTrackingRepositoryProvider);
     return _loadInitialData();
   }
 

@@ -52,11 +52,17 @@ class MessagingState {
 }
 
 class MessagingViewModel extends Notifier<MessagingState> {
-  late final RealtimePortalRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  RealtimePortalRepository get _repository =>
+      ref.read(realtimePortalRepositoryProvider);
 
   @override
   MessagingState build() {
-    _repository = ref.watch(realtimePortalRepositoryProvider);
+    // Subscribe so state rebuilds if dependencies change; the repository
+    // itself is read on demand via [_repository].
+    ref.watch(realtimePortalRepositoryProvider);
     return MessagingState();
   }
 

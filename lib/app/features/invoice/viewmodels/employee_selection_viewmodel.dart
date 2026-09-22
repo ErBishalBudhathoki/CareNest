@@ -6,7 +6,7 @@ import 'package:carenest/app/core/providers/app_providers.dart'
 
 class EmployeeSelectionViewModel extends Notifier<EmployeeSelectionState> {
   final String organizationId;
-  late final ApiMethod _apiMethod;
+  late ApiMethod _apiMethod;
 
   EmployeeSelectionViewModel(this.organizationId);
 

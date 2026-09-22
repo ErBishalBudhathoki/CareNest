@@ -33,6 +33,7 @@ class ServiceConfirmationState {
     String? error,
     DigitalSignature? signature,
     ServiceConfirmation? confirmation,
+    bool clearConfirmation = false,
     List<ChecklistItem>? checklist,
     ClientRating? rating,
     List<IncidentReport>? incidents,
@@ -43,7 +44,9 @@ class ServiceConfirmationState {
       isLoading: isLoading ?? this.isLoading,
       error: error,
       signature: signature ?? this.signature,
-      confirmation: confirmation ?? this.confirmation,
+      confirmation: clearConfirmation
+          ? null
+          : confirmation ?? this.confirmation,
       checklist: checklist ?? this.checklist,
       rating: rating ?? this.rating,
       incidents: incidents ?? this.incidents,
@@ -54,12 +57,17 @@ class ServiceConfirmationState {
 }
 
 class ServiceConfirmationViewModel extends Notifier<ServiceConfirmationState> {
-  late final RealtimePortalRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  RealtimePortalRepository get _repository =>
+      RealtimePortalRepository(ref.read(apiMethodProvider));
 
   @override
   ServiceConfirmationState build() {
-    final apiMethod = ref.watch(apiMethodProvider);
-    _repository = RealtimePortalRepository(apiMethod);
+    // Subscribe so state rebuilds if dependencies change; the repository
+    // itself is built on demand via [_repository].
+    ref.watch(apiMethodProvider);
     return ServiceConfirmationState();
   }
 
@@ -143,9 +151,14 @@ class ServiceConfirmationViewModel extends Notifier<ServiceConfirmationState> {
           incidents: confirmation.incidents ?? [],
         );
       } else {
+        // No confirmation exists yet for this appointment — a normal empty
+        // state (backend 404), not an error. Keeps error banners quiet.
         state = state.copyWith(
           isLoading: false,
-          error: 'Service confirmation not found',
+          error: null,
+          clearConfirmation: true,
+          checklist: const [],
+          incidents: const [],
         );
       }
     } catch (e) {

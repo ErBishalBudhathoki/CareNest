@@ -73,11 +73,14 @@ final stripeDashboardRiskProvider = FutureProvider.autoDispose
 /// Actions on the dashboard (dev-gated refund). Read providers above refresh
 /// automatically via invalidation on success.
 class StripeDashboardViewModel extends AsyncNotifier<void> {
-  late final PaymentRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  PaymentRepository get _repository => ref.read(paymentRepositoryProvider);
 
   @override
   FutureOr<void> build() {
-    _repository = ref.watch(paymentRepositoryProvider);
+    ref.watch(paymentRepositoryProvider);
     return null;
   }
 

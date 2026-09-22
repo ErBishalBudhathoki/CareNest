@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 enum BusinessListStatus { initial, loading, loaded, error, empty }
 
 class BusinessListViewModel extends Notifier<int> {
-  late final ApiMethod _apiMethod;
+  late ApiMethod _apiMethod;
 
   @override
   int build() {

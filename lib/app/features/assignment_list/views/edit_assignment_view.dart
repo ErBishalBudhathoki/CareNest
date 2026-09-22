@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/features/invoice/domain/models/ndis_item.dart';
@@ -236,15 +237,19 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
       backgroundColor: BauhausDesign.background,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
-          icon: Icon(Icons.arrow_back, color: BauhausDesign.textDark),
+          icon: Icon(Icons.arrow_back, color: BauhausDesign.surfaceWhite),
         ),
         title: Text(
           'Edit Assignment',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -282,7 +287,9 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                   // Assignment Info Card
                   BauhausCard(
                     padding: const EdgeInsets.all(BauhausDesign.space4),
-                    backgroundColor: BauhausDesign.primary.withValues(alpha: 0.05),
+                    backgroundColor: BauhausDesign.primary.withValues(
+                      alpha: 0.05,
+                    ),
                     borderColor: BauhausDesign.primary.withValues(alpha: 0.1),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,6 +1,7 @@
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -2434,13 +2435,17 @@ class _ClientAndAppointmentDetailsState
             title: Text(
               'CLIENT DETAILS',
               style: GoogleFonts.oswald(
-                color: BauhausDesign.neutral,
+                color: BauhausDesign.surfaceWhite,
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
                 letterSpacing: 1.5,
               ),
             ),
-            backgroundColor: BauhausDesign.surfaceWhite,
+            backgroundColor: BauhausDesign.secondary,
+            foregroundColor: BauhausDesign.surfaceWhite,
+            systemOverlayStyle: SystemUiOverlayStyle.light,
+            scrolledUnderElevation: 0,
+            surfaceTintColor: Colors.transparent,
             elevation: 0,
             centerTitle: true,
             leading: Padding(

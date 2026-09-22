@@ -1,6 +1,7 @@
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:carenest/app/features/assignment_list/views/edit_assignment_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/assignment_list/viewmodels/assignment_list_viewmodel.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
@@ -106,7 +107,11 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
     return Scaffold(
       backgroundColor: BauhausDesign.surfaceLight,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceLight,
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -125,7 +130,7 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
         title: Text(
           AppLocalizations.of(context)!.assignmentList.toUpperCase(),
           style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
             fontWeight: FontWeight.w700,
           ),
         ),

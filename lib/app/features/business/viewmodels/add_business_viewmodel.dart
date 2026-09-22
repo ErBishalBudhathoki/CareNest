@@ -10,7 +10,7 @@ enum AddBusinessStatus { idle, processing, success, error }
 /// ViewModel for handling business addition logic
 /// Follows MVVM pattern by keeping only business logic and state management
 class AddBusinessViewModel extends Notifier<int> {
-  late final ApiMethod _apiMethod;
+  late ApiMethod _apiMethod;
 
   @override
   int build() {

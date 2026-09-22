@@ -297,7 +297,9 @@ class _AdminRequestsDashboardViewState
                           child: Container(
                             padding: const EdgeInsets.all(BauhausDesign.space2),
                             decoration: BoxDecoration(
-                              color: BauhausDesign.neutral.withValues(alpha: 0.05),
+                              color: BauhausDesign.neutral.withValues(
+                                alpha: 0.05,
+                              ),
                               borderRadius: BorderRadius.circular(
                                 BauhausDesign.radiusSm,
                               ),

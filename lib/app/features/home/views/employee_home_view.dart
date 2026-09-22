@@ -361,9 +361,7 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.dataRefreshedSuccess,
-            ),
+            content: Text(AppLocalizations.of(context)!.dataRefreshedSuccess),
           ),
         );
       }
@@ -522,7 +520,9 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                               context,
                             )!.errorLoadingDashboard,
                             message: e.toString(),
-                            retryText: AppLocalizations.of(context)!.retryButton,
+                            retryText: AppLocalizations.of(
+                              context,
+                            )!.retryButton,
                             onRetry: () => ref
                                 .read(homeViewModelProvider.notifier)
                                 .loadDashboard(widget.email),

@@ -51,7 +51,9 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen> {
               surface: BauhausDesign.surfaceWhite,
               onSurface: BauhausDesign.textDark,
             ),
-            dialogTheme: DialogThemeData(backgroundColor: BauhausDesign.surfaceWhite),
+            dialogTheme: DialogThemeData(
+              backgroundColor: BauhausDesign.surfaceWhite,
+            ),
           ),
           child: child!,
         );

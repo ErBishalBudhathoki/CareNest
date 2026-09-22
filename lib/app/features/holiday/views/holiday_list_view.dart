@@ -6,6 +6,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -283,7 +284,11 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
     return Scaffold(
       backgroundColor: BauhausDesign.surfaceLight,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceLight,
+        backgroundColor: BauhausDesign.secondary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         leadingWidth: 64,
@@ -307,7 +312,7 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
         ],
         title: Text(
           l10n.holidays,
-          style: BauhausDesign.getTextTheme(context).headlineMedium,
+          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(color: BauhausDesign.surfaceWhite),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),

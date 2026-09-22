@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/domain/models/ndis_item.dart';
 import 'package:carenest/app/features/invoice/models/ndis_matcher.dart';
@@ -75,12 +76,15 @@ class _NdisItemSelectionViewState extends ConsumerState<NdisItemSelectionView> {
     return Scaffold(
       backgroundColor: BauhausDesign.background,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceWhite,
-        foregroundColor: BauhausDesign.textDark,
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         title: Text(
           'Select NDIS Item',
-          style: BauhausDesign.getTextTheme(context).titleLarge,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(color: BauhausDesign.surfaceWhite),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
@@ -154,8 +158,9 @@ class _NdisItemSelectionViewState extends ConsumerState<NdisItemSelectionView> {
                                         vertical: BauhausDesign.space1,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: BauhausDesign.primary
-                                            .withValues(alpha: 0.1),
+                                        color: BauhausDesign.primary.withValues(
+                                          alpha: 0.1,
+                                        ),
                                         borderRadius: BorderRadius.circular(
                                           BauhausDesign.radiusXs,
                                         ),

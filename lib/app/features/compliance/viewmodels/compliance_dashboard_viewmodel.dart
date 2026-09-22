@@ -27,11 +27,15 @@ class ComplianceState {
 }
 
 class ComplianceDashboardViewModel extends Notifier<ComplianceState> {
-  late final ComplianceRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  ComplianceRepository get _repository =>
+      ref.read(complianceRepositoryProvider);
 
   @override
   ComplianceState build() {
-    _repository = ref.watch(complianceRepositoryProvider);
+    ref.watch(complianceRepositoryProvider);
     // Loading data asynchronously in build can be done without awaiting,
     // or typically we might just invoke it right away.
     Future.microtask(() => loadData());

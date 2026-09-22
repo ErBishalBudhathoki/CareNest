@@ -27,11 +27,15 @@ class GeofenceState {
 }
 
 class GeofenceViewModel extends Notifier<GeofenceState> {
-  late final NotificationRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  NotificationRepository get _repository =>
+      ref.read(notificationRepositoryProvider);
 
   @override
   GeofenceState build() {
-    _repository = ref.watch(notificationRepositoryProvider);
+    ref.watch(notificationRepositoryProvider);
     return const GeofenceState();
   }
 

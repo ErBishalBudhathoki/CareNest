@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
@@ -27,11 +28,14 @@ class AnalyticsDashboardView extends ConsumerWidget {
           'WORKFORCE ANALYTICS',
           style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
             fontWeight: FontWeight.w700,
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
           ),
         ),
         centerTitle: true,
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: BauhausDesign.success,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         shape: const Border(
@@ -259,7 +263,9 @@ class AnalyticsDashboardView extends ConsumerWidget {
                           surface: BauhausDesign.surfaceWhite,
                           onSurface: BauhausDesign.textDark,
                         ),
-                        dialogTheme: DialogThemeData(backgroundColor: BauhausDesign.surfaceWhite),
+                        dialogTheme: DialogThemeData(
+                          backgroundColor: BauhausDesign.surfaceWhite,
+                        ),
                       ),
                       child: child!,
                     );

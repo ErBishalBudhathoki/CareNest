@@ -179,7 +179,10 @@ class RevenueChartWidget extends StatelessWidget {
           drawVerticalLine: false,
           horizontalInterval: 1000,
           getDrawingHorizontalLine: (value) {
-            return FlLine(color: Colors.grey.withValues(alpha: 0.1), strokeWidth: 1);
+            return FlLine(
+              color: Colors.grey.withValues(alpha: 0.1),
+              strokeWidth: 1,
+            );
           },
         ),
         titlesData: FlTitlesData(

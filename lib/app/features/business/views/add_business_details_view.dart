@@ -354,7 +354,9 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
                       Text(
                         l10n.addBusinessDesc,
                         style: BauhausDesign.getTextTheme(context).bodySmall
-                            ?.copyWith(color: foreground.withValues(alpha: 0.92)),
+                            ?.copyWith(
+                              color: foreground.withValues(alpha: 0.92),
+                            ),
                         maxLines: isCompact ? 3 : 4,
                         overflow: TextOverflow.ellipsis,
                       ),

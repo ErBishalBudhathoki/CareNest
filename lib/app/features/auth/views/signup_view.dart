@@ -511,10 +511,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
                 ],
               ),
             ),
-            Radio<String>(
-              value: value,
-              activeColor: BauhausDesign.primary,
-            ),
+            Radio<String>(value: value, activeColor: BauhausDesign.primary),
           ],
         ),
       ),

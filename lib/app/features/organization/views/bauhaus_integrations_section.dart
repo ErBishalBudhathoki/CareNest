@@ -371,7 +371,9 @@ class _BauhausIntegrationsSectionState
                             style: GoogleFonts.inter(
                               fontSize: BauhausDesign.fontSm,
                               fontWeight: FontWeight.w400,
-                              color: BauhausDesign.textDark.withValues(alpha: 0.7),
+                              color: BauhausDesign.textDark.withValues(
+                                alpha: 0.7,
+                              ),
                             ),
                           ),
                         ],
@@ -1131,7 +1133,9 @@ class _IntegrationSettingsDialogState
                             style: GoogleFonts.inter(
                               fontSize: BauhausDesign.fontXs,
                               fontWeight: FontWeight.w400,
-                              color: BauhausDesign.textDark.withValues(alpha: 0.8),
+                              color: BauhausDesign.textDark.withValues(
+                                alpha: 0.8,
+                              ),
                             ),
                           ),
                         ),
@@ -1225,7 +1229,9 @@ class _IntegrationSettingsDialogState
                           hintText: 'Enter your OAuth Client ID',
                           hintStyle: GoogleFonts.inter(
                             fontSize: BauhausDesign.fontSm,
-                            color: BauhausDesign.textDark.withValues(alpha: 0.4),
+                            color: BauhausDesign.textDark.withValues(
+                              alpha: 0.4,
+                            ),
                           ),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.all(
@@ -1267,7 +1273,9 @@ class _IntegrationSettingsDialogState
                           hintText: 'Enter your OAuth Client Secret',
                           hintStyle: GoogleFonts.inter(
                             fontSize: BauhausDesign.fontSm,
-                            color: BauhausDesign.textDark.withValues(alpha: 0.4),
+                            color: BauhausDesign.textDark.withValues(
+                              alpha: 0.4,
+                            ),
                           ),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.all(
@@ -1283,7 +1291,9 @@ class _IntegrationSettingsDialogState
                               _showClientSecret
                                   ? Icons.visibility_off
                                   : Icons.visibility,
-                              color: BauhausDesign.textDark.withValues(alpha: 0.6),
+                              color: BauhausDesign.textDark.withValues(
+                                alpha: 0.6,
+                              ),
                               size: 20,
                             ),
                           ),

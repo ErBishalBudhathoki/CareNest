@@ -35,11 +35,14 @@ class AiState {
 }
 
 class AiViewModel extends Notifier<AiState> {
-  late final AiRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  AiRepository get _repository => ref.read(aiRepositoryProvider);
 
   @override
   AiState build() {
-    _repository = ref.watch(aiRepositoryProvider);
+    ref.watch(aiRepositoryProvider);
     return const AiState();
   }
 

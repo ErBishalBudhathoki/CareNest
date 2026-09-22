@@ -7,11 +7,15 @@ final accountingViewModelProvider =
     );
 
 class AccountingViewModel extends Notifier<AsyncValue<void>> {
-  late final AccountingRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  AccountingRepository get _repository =>
+      ref.read(accountingRepositoryProvider);
 
   @override
   AsyncValue<void> build() {
-    _repository = ref.watch(accountingRepositoryProvider);
+    ref.watch(accountingRepositoryProvider);
     return const AsyncData(null);
   }
 

@@ -16,11 +16,15 @@ abstract class TrainingState with _$TrainingState {
 }
 
 class TrainingViewModel extends Notifier<TrainingState> {
-  late final TrainingComplianceRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  TrainingComplianceRepository get _repository =>
+      ref.read(trainingComplianceRepositoryProvider);
 
   @override
   TrainingState build() {
-    _repository = ref.watch(trainingComplianceRepositoryProvider);
+    ref.watch(trainingComplianceRepositoryProvider);
     return const TrainingState();
   }
 

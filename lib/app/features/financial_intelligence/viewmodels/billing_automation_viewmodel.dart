@@ -38,11 +38,15 @@ class BillingAutomationState {
 }
 
 class BillingAutomationViewModel extends Notifier<BillingAutomationState> {
-  late final FinancialIntelligenceRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  FinancialIntelligenceRepository get _repository =>
+      ref.read(financialIntelligenceRepositoryProvider);
 
   @override
   BillingAutomationState build() {
-    _repository = ref.watch(financialIntelligenceRepositoryProvider);
+    ref.watch(financialIntelligenceRepositoryProvider);
     return BillingAutomationState();
   }
 

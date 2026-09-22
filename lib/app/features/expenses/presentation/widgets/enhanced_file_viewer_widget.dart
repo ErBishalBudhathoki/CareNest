@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:path/path.dart' as path;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carenest/app/shared/widgets/authed_network_image.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/config/environment.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
@@ -254,7 +256,9 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
       if (!context.mounted) return;
 
       if (!isAvailable) {
-        if (dialogContext != null && dialogContext!.mounted && Navigator.of(dialogContext!).canPop()) {
+        if (dialogContext != null &&
+            dialogContext!.mounted &&
+            Navigator.of(dialogContext!).canPop()) {
           Navigator.of(dialogContext!).pop();
           dialogContext = null;
         }
@@ -267,7 +271,9 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
       }
 
       // Update dialog text
-      if (dialogContext != null && dialogContext!.mounted && Navigator.of(dialogContext!).canPop()) {
+      if (dialogContext != null &&
+          dialogContext!.mounted &&
+          Navigator.of(dialogContext!).canPop()) {
         Navigator.of(dialogContext!).pop();
         dialogContext = null;
       }
@@ -313,7 +319,9 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
         );
 
         // Close loading dialog before opening file
-        if (dialogContext != null && dialogContext!.mounted && Navigator.of(dialogContext!).canPop()) {
+        if (dialogContext != null &&
+            dialogContext!.mounted &&
+            Navigator.of(dialogContext!).canPop()) {
           Navigator.of(dialogContext!).pop();
           dialogContext = null;
         }
@@ -338,7 +346,9 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
         }
       } else {
         // Close loading dialog on error
-        if (dialogContext != null && dialogContext!.mounted && Navigator.of(dialogContext!).canPop()) {
+        if (dialogContext != null &&
+            dialogContext!.mounted &&
+            Navigator.of(dialogContext!).canPop()) {
           Navigator.of(dialogContext!).pop();
           dialogContext = null;
         }
@@ -357,7 +367,9 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
       debugPrint('DEBUG: Exception in _downloadAndOpenFile: $e');
 
       // Close loading dialog if still open
-      if (dialogContext != null && dialogContext!.mounted && Navigator.of(dialogContext!).canPop()) {
+      if (dialogContext != null &&
+          dialogContext!.mounted &&
+          Navigator.of(dialogContext!).canPop()) {
         Navigator.of(dialogContext!).pop();
       }
 
@@ -844,6 +856,11 @@ class _FullScreenImageViewer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
           path.basename(imagePath),

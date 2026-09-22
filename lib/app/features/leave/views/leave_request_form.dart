@@ -2,6 +2,7 @@ import 'package:carenest/app/features/leave/viewmodels/leave_viewmodel.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:intl/intl.dart';
@@ -107,9 +108,13 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.newRequestTitle,
-          style: BauhausDesign.getTextTheme(context).headlineMedium,
+          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(color: BauhausDesign.surfaceWhite),
         ),
-        backgroundColor: BauhausDesign.surfaceLight,
+        backgroundColor: BauhausDesign.secondary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         centerTitle: true,
         elevation: 0,
         leading: BauhausIconButton(

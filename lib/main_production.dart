@@ -80,6 +80,7 @@ import 'package:carenest/app/features/workforce_optimization/views/performance_a
 import 'package:carenest/app/features/workforce_optimization/views/quality_assurance_view.dart';
 import 'package:carenest/app/features/workforce_optimization/views/business_intelligence_view.dart';
 import 'package:carenest/app/features/workforce_optimization/views/report_builder_view.dart';
+import 'package:carenest/app/features/voice_assistant/views/voice_assistant_view.dart';
 // No, DeepLinkHandler imports it. main.dart imports DeepLinkHandler.
 // But we need to IMPORT it explicitly here to use it in MaterialApp.
 
@@ -447,6 +448,7 @@ class MyApp extends ConsumerWidget {
             );
           },
           Routes.login: (context) => LoginView(),
+          Routes.voiceAssistant: (context) => const VoiceAssistantView(),
           Routes.home: (context) {
             final arguments =
                 ModalRoute.of(context)?.settings.arguments

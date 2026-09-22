@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
@@ -15,7 +16,6 @@ class ShiftMatchingView extends ConsumerStatefulWidget {
 }
 
 class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(shiftMatchingViewModelProvider);
@@ -23,6 +23,8 @@ class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         backgroundColor: BauhausDesign.textDark,
         title: Text(
           'SHIFT MATCHING',
@@ -52,7 +54,9 @@ class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: BauhausDesign.primary.withValues(alpha: 0.1),
+                                  color: BauhausDesign.primary.withValues(
+                                    alpha: 0.1,
+                                  ),
                                   border: Border.all(
                                     color: BauhausDesign.primary,
                                     width: 2,

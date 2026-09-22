@@ -42,12 +42,15 @@ final ocrViewModelProvider =
     NotifierProvider.autoDispose<OcrViewModel, OcrState>(OcrViewModel.new);
 
 class OcrViewModel extends Notifier<OcrState> {
-  late final OcrService _ocrService;
-  late final OcrRepository _repository;
+  late OcrService _ocrService;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  OcrRepository get _repository => ref.read(ocrRepositoryProvider);
 
   @override
   OcrState build() {
-    _repository = ref.watch(ocrRepositoryProvider);
+    ref.watch(ocrRepositoryProvider);
     _ocrService = OcrService();
     ref.onDispose(() {
       _ocrService.dispose();

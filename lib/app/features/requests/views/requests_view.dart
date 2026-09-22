@@ -3,6 +3,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/shared/widgets/offline_banner.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/requests/viewmodels/requests_viewmodel.dart';
 import 'package:carenest/app/features/requests/views/add_shift_request_view.dart';
@@ -169,8 +170,12 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                     expandedHeight: 120,
                     floating: true,
                     pinned: true,
-                    backgroundColor: BauhausDesign.surfaceWhite,
+                    backgroundColor: BauhausDesign.neutral,
+                    foregroundColor: BauhausDesign.surfaceWhite,
+                    surfaceTintColor: Colors.transparent,
+                    scrolledUnderElevation: 0,
                     elevation: 0,
+                    systemOverlayStyle: SystemUiOverlayStyle.light,
                     flexibleSpace: FlexibleSpaceBar(
                       titlePadding: const EdgeInsets.only(
                         left: BauhausDesign.space4,
@@ -181,10 +186,10 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                         style: BauhausDesign.getTextTheme(context).headlineSmall
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: BauhausDesign.textDark,
+                              color: BauhausDesign.surfaceWhite,
                             ),
                       ),
-                      background: Container(color: BauhausDesign.surfaceWhite),
+                      background: Container(color: BauhausDesign.neutral),
                     ),
                     actions: [
                       Padding(

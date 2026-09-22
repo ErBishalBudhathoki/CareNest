@@ -3,6 +3,7 @@ import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/shared/widgets/offline_banner.dart';
 import 'package:carenest/app/core/providers/connectivity_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/models/invoice_list_model.dart';
@@ -85,13 +86,16 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
         title: Text(
           l10n.allInvoices,
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
             fontWeight: FontWeight.w800,
           ),
         ),
         centerTitle: true,
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: BauhausDesign.surfaceWhite,
         surfaceTintColor: Colors.transparent, // Disable surface tint
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
         shape: const Border(
           bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
@@ -102,9 +106,11 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
             children: [
               TabBar(
                 controller: _tabController,
-                labelColor: BauhausDesign.textDark,
-                unselectedLabelColor: BauhausDesign.textMuted,
-                indicatorColor: BauhausDesign.primary,
+                labelColor: BauhausDesign.surfaceWhite,
+                unselectedLabelColor: BauhausDesign.surfaceWhite.withValues(
+                  alpha: 0.65,
+                ),
+                indicatorColor: BauhausDesign.surfaceWhite,
                 indicatorWeight: 4,
                 labelStyle: BauhausDesign.getTextTheme(
                   context,
@@ -122,7 +128,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: BauhausDesign.textDark),
+            icon: const Icon(Icons.refresh, color: BauhausDesign.surfaceWhite),
             tooltip: l10n.refreshAction,
             onPressed: _loadInvoices,
           ),

@@ -372,7 +372,8 @@ class _NdisPricingManagementViewState
       value['clientSpecific'] = true;
     }
     if (value['organizationId'] != null &&
-        value['organizationId'].toString() != widget.organizationId) return null;
+        value['organizationId'].toString() != widget.organizationId)
+      return null;
     return scopedPricing(value, clientId: _clientId);
   }
 
@@ -382,7 +383,8 @@ class _NdisPricingManagementViewState
     if (lookup is! Map) return null;
     final value = Map<String, dynamic>.from(lookup);
     if (value['organizationId'] != null &&
-        value['organizationId'].toString() != widget.organizationId) return null;
+        value['organizationId'].toString() != widget.organizationId)
+      return null;
     return scopedPricing(value, clientId: null);
   }
 
@@ -473,7 +475,9 @@ class _NdisPricingManagementViewState
         'Very Remote' => PriceRegion.veryRemote,
         _ => PriceRegion.national,
       };
-      filtered = filtered.where((item) => _regionalCap(item, region) != null).toList();
+      filtered = filtered
+          .where((item) => _regionalCap(item, region) != null)
+          .toList();
     }
 
     setState(() {
@@ -515,7 +519,10 @@ class _NdisPricingManagementViewState
 
   /// Get standard NDIS cap for an item (metadata only; not used as rate)
   double _getStandardPrice(NDISItem item) {
-    final price = _regionalCap(item, _selectedRegion[item.itemNumber] ?? PriceRegion.national);
+    final price = _regionalCap(
+      item,
+      _selectedRegion[item.itemNumber] ?? PriceRegion.national,
+    );
     if (price != null && price > 0) return price;
 
     // No standard price for selected state or missing support item details
@@ -607,11 +614,8 @@ class _NdisPricingManagementViewState
     return resolved;
   }
 
-  double? _regionalCap(NDISItem item, PriceRegion region) => regionalPricingCap(
-    item,
-    region,
-    caps: _extractPriceCapsContainer(item),
-  );
+  double? _regionalCap(NDISItem item, PriceRegion region) =>
+      regionalPricingCap(item, region, caps: _extractPriceCapsContainer(item));
 
   Map<PriceRegion, double?> _getRegionalPrices(NDISItem item) {
     return item.regionalPrices;
@@ -767,7 +771,9 @@ class _NdisPricingManagementViewState
 
     final nationalPrice = _resolveNationalPrice(priceCaps['national']);
     final remotePrice = _resolveNationalPrice(priceCaps['remote']);
-    if (nationalPrice != null || remotePrice != null || priceCaps['veryRemote'] != null) {
+    if (nationalPrice != null ||
+        remotePrice != null ||
+        priceCaps['veryRemote'] != null) {
       final selected = nationalPrice;
       final regionalFallback = _resolveCapInfoFromRegionalPrices(
         item,
@@ -893,8 +899,7 @@ class _NdisPricingManagementViewState
         );
         // Default the region picker to the saved override's region,
         // falling back to national so save never fails on untouched picker.
-        final savedCustom =
-            _pricingData[itemNumber]?['customPricing'] as Map?;
+        final savedCustom = _pricingData[itemNumber]?['customPricing'] as Map?;
         final savedRegion = savedCustom?['region'];
         _selectedRegion[itemNumber] = savedRegion != null
             ? pricingRegion(savedRegion)
@@ -1563,14 +1568,11 @@ class _NdisPricingManagementViewState
     final ndisCapState = (ndisCapInfo?['state'] as String?) ?? 'National';
     final p01Price = ndisCapInfo?['p01Price'] as double?;
     // Remote cap for the second metric block (new format; legacy P01 fallback).
-    final remoteCapPrice =
-        (ndisCapInfo?['remotePrice'] as double?) ?? p01Price;
+    final remoteCapPrice = (ndisCapInfo?['remotePrice'] as double?) ?? p01Price;
     // Very Remote cap for the third metric block.
     final veryRemoteCapPrice =
         (ndisCapInfo?['veryRemotePrice'] as double?) ??
-        _resolveNationalPrice(
-          _extractPriceCapsContainer(item)?['veryRemote'],
-        );
+        _resolveNationalPrice(_extractPriceCapsContainer(item)?['veryRemote']);
     final showOverride = _showPriceOverride[item.itemNumber] ?? false;
     final updatedText = _formatLastUpdated(item.itemNumber);
     final subtitle = _extractSubtitle(item.itemName);
@@ -2380,13 +2382,11 @@ class _NdisPricingManagementViewState
           for (final region in pricingRegions)
             DropdownMenuItem<PriceRegion>(
               value: region,
-              child: Text(
-                switch (region) {
-                  PriceRegion.remote => l10n.pricingRemoteRegion,
-                  PriceRegion.veryRemote => l10n.pricingVeryRemoteRegion,
-                  _ => l10n.pricingNationalRegion,
-                },
-              ),
+              child: Text(switch (region) {
+                PriceRegion.remote => l10n.pricingRemoteRegion,
+                PriceRegion.veryRemote => l10n.pricingVeryRemoteRegion,
+                _ => l10n.pricingNationalRegion,
+              }),
             ),
         ],
         onChanged: (value) => setState(() {

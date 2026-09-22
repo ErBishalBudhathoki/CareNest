@@ -50,11 +50,15 @@ class MedicationState {
 
 // StateNotifier for Medication Management
 class MedicationViewModel extends Notifier<MedicationState> {
-  late final CareIntelligenceRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  CareIntelligenceRepository get _repository =>
+      ref.read(careIntelligenceRepositoryProvider);
 
   @override
   MedicationState build() {
-    _repository = ref.watch(careIntelligenceRepositoryProvider);
+    ref.watch(careIntelligenceRepositoryProvider);
     return MedicationState();
   }
 

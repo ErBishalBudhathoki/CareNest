@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -90,19 +91,26 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: BauhausDesign.surfaceLight,
+      backgroundColor: BauhausDesign.primary,
+      foregroundColor: BauhausDesign.surfaceWhite,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      scrolledUnderElevation: 0,
+      surfaceTintColor: Colors.transparent,
       elevation: 0,
       leading: IconButton(
         icon: Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: BauhausDesign.backgroundLight,
+            color: Colors.transparent,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-            border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+            border: Border.all(
+              color: BauhausDesign.surfaceWhite.withValues(alpha: 0.5),
+              width: 1.5,
+            ),
           ),
           child: const Icon(
             Icons.arrow_back_ios_new_rounded,
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
             size: 16,
           ),
         ),
@@ -114,7 +122,7 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
           Text(
             AppLocalizations.of(context)!.selectEmployeesAndClients,
             style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
-              color: BauhausDesign.textDark,
+              color: BauhausDesign.surfaceWhite,
               fontWeight: FontWeight.w700,
             ),
           ),

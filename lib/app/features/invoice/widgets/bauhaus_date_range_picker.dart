@@ -234,7 +234,10 @@ class _BauhausDateRangePickerDialogState
               width: 30,
               height: 30,
               decoration: BoxDecoration(
-                border: Border.all(color: _paper.withValues(alpha: 0.5), width: 1.5),
+                border: Border.all(
+                  color: _paper.withValues(alpha: 0.5),
+                  width: 1.5,
+                ),
               ),
               child: const Icon(Icons.close_rounded, color: _paper, size: 16),
             ),
@@ -258,7 +261,11 @@ class _BauhausDateRangePickerDialogState
       child: Row(
         children: [
           Expanded(child: _summaryCell('FROM', _start)),
-          Container(width: 1.5, height: 36, color: _paper.withValues(alpha: 0.35)),
+          Container(
+            width: 1.5,
+            height: 36,
+            color: _paper.withValues(alpha: 0.35),
+          ),
           Expanded(child: _summaryCell('TO', _end)),
         ],
       ),
@@ -605,14 +612,18 @@ class _BauhausDateRangePickerDialogState
                   children: [
                     Icon(
                       Icons.check_rounded,
-                      color: canConfirm ? _paper : _paper.withValues(alpha: 0.45),
+                      color: canConfirm
+                          ? _paper
+                          : _paper.withValues(alpha: 0.45),
                       size: 16,
                     ),
                     const SizedBox(width: 6),
                     Text(
                       'CONFIRM PERIOD',
                       style: GoogleFonts.oswald(
-                        color: canConfirm ? _paper : _paper.withValues(alpha: 0.45),
+                        color: canConfirm
+                            ? _paper
+                            : _paper.withValues(alpha: 0.45),
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
@@ -730,7 +741,10 @@ class _BauhausDatePickerDialogState extends State<_BauhausDatePickerDialog> {
               width: 30,
               height: 30,
               decoration: BoxDecoration(
-                border: Border.all(color: _paper.withValues(alpha: 0.5), width: 1.5),
+                border: Border.all(
+                  color: _paper.withValues(alpha: 0.5),
+                  width: 1.5,
+                ),
               ),
               child: const Icon(Icons.close_rounded, color: _paper, size: 16),
             ),

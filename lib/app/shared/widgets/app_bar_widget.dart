@@ -1,4 +1,5 @@
 import 'package:carenest/app/shared/widgets/profile_placeholder_widget.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:carenest/app/shared/widgets/profile_image_widget.dart';
@@ -38,7 +39,7 @@ class CustomAppBar extends StatelessWidget {
         ),
         centerTitle: false,
         titleTextStyle: theme.textTheme.headlineMedium?.copyWith(
-          color: Colors.grey[800],
+          color: BauhausDesign.surfaceWhite,
         ),
         title: ProfilePlaceholder(firstName: firstName, lastName: lastName),
         actions: [
@@ -67,12 +68,16 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final bool showBackButton;
   final List<Widget>? actions;
+  final Color backgroundColor;
+  final Color foregroundColor;
 
   const AppBarWidget({
     super.key,
     required this.title,
     this.showBackButton = true,
     this.actions,
+    this.backgroundColor = BauhausDesign.neutral,
+    this.foregroundColor = BauhausDesign.surfaceWhite,
   });
 
   @override
@@ -84,14 +89,17 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: theme.textTheme.titleLarge?.copyWith(
-          color: theme.colorScheme.onSurface,
+          color: foregroundColor,
           fontWeight: FontWeight.bold,
           fontSize: 20,
         ),
       ),
       centerTitle: true,
-      backgroundColor: theme.colorScheme.surface,
-      foregroundColor: theme.colorScheme.onSurface,
+      backgroundColor: backgroundColor,
+      foregroundColor: foregroundColor,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
       elevation: 0,
       leading: showBackButton
           ? IconButton(
@@ -103,7 +111,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       actions: actions,
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(2.0),
-        child: Container(color: theme.colorScheme.onSurface, height: 2.0),
+        child: Container(color: foregroundColor, height: 2.0),
       ),
     );
   }

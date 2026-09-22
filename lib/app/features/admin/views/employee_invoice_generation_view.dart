@@ -649,20 +649,27 @@ class _EmployeeInvoiceGenerationViewState
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceLight,
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
           icon: Container(
             padding: const EdgeInsets.all(BauhausDesign.space2),
             decoration: BoxDecoration(
-              color: BauhausDesign.backgroundLight,
+              color: Colors.transparent,
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-              border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+              border: Border.all(
+                color: BauhausDesign.surfaceWhite.withValues(alpha: 0.5),
+                width: 1.5,
+              ),
             ),
             child: const Icon(
               Icons.arrow_back_ios_new_rounded,
-              color: BauhausDesign.textDark,
+              color: BauhausDesign.surfaceWhite,
               size: 16,
             ),
           ),
@@ -674,7 +681,7 @@ class _EmployeeInvoiceGenerationViewState
               'Employee Invoice',
               style: BauhausDesign.getTextTheme(context).headlineLarge
                   ?.copyWith(
-                    color: BauhausDesign.textDark,
+                    color: BauhausDesign.surfaceWhite,
                     fontWeight: FontWeight.w800,
                   ),
             ),
@@ -1582,7 +1589,9 @@ class _EmployeeInvoiceGenerationViewState
           if (selected.isEmpty)
             Text(
               'No employees selected',
-              style: GoogleFonts.robotoMono(color: _neoBlack.withValues(alpha: 0.6)),
+              style: GoogleFonts.robotoMono(
+                color: _neoBlack.withValues(alpha: 0.6),
+              ),
             )
           else
             ...selected.asMap().entries.map((entry) {
@@ -2228,5 +2237,4 @@ class _EmployeeInvoiceGenerationViewState
       ),
     );
   }
-
 }

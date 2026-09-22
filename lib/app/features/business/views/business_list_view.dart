@@ -399,7 +399,8 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
                                                   userContext['organizationId']!,
                                             );
 
-                                        if (!mounted || !context.mounted) return;
+                                        if (!mounted || !context.mounted)
+                                          return;
                                         if (dialogContext.mounted) {
                                           Navigator.of(dialogContext).pop();
                                         }
@@ -416,7 +417,8 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
                                           ),
                                         );
                                       } catch (e) {
-                                        if (!mounted || !context.mounted) return;
+                                        if (!mounted || !context.mounted)
+                                          return;
                                         ScaffoldMessenger.of(
                                           context,
                                         ).showSnackBar(
@@ -678,7 +680,10 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
               '${business.businessAddress}, ${business.businessCity}',
             ),
           SizedBox(height: BauhausDesign.space4),
-          Divider(color: BauhausDesign.neutral.withValues(alpha: 0.2), height: 1),
+          Divider(
+            color: BauhausDesign.neutral.withValues(alpha: 0.2),
+            height: 1,
+          ),
           SizedBox(height: BauhausDesign.space4),
           Row(
             children: [

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // StateProvider
 import 'package:carenest/app/features/auth/providers/auth_provider.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class BauhausChangePasswordView extends ConsumerStatefulWidget {
   final bool isForced; // If true, hide back button
@@ -85,9 +87,13 @@ class _BauhausChangePasswordViewState
       appBar: AppBar(
         title: const Text(
           'CHANGE PASSWORD',
-          style: TextStyle(color: colorBlack, fontWeight: FontWeight.bold),
+          style: TextStyle(color: BauhausDesign.surfaceWhite, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: BauhausDesign.secondary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         automaticallyImplyLeading: !widget.isForced,
         leading: widget.isForced

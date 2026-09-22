@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/admin/viewmodels/admin_mileage_view_model.dart';
@@ -23,10 +24,14 @@ class AdminMileageDashboard extends ConsumerWidget {
         title: Text(
           'MILEAGE ADMIN',
           style: textTheme.displaySmall?.copyWith(
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
           ),
         ),
-        backgroundColor: BauhausDesign.surfaceLight,
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),

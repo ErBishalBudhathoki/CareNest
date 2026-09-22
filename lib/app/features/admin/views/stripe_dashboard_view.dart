@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
@@ -103,11 +104,15 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
           l10n.stripeDashboardTitle,
           style: BauhausDesign.getTextTheme(
             context,
-          ).displaySmall?.copyWith(color: BauhausDesign.textDark),
+          ).displaySmall?.copyWith(color: BauhausDesign.surfaceWhite),
         ),
-        backgroundColor: BauhausDesign.surfaceLight,
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: BauhausDesign.textDark),
+        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2.0),
           child: Container(color: BauhausDesign.neutral, height: 2.0),

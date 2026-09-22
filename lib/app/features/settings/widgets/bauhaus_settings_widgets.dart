@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
-import 'dart:typed_data';
 import 'package:carenest/app/shared/widgets/profile_image_widget.dart';
 
 // --- Bauhaus Settings Header ---
@@ -369,7 +369,9 @@ class BauhausSettingsTile extends StatelessWidget {
                         subtitle,
                         style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
-                              color: BauhausDesign.textDark.withValues(alpha: 0.8),
+                              color: BauhausDesign.textDark.withValues(
+                                alpha: 0.8,
+                              ),
                               fontWeight: FontWeight.w500,
                             ),
                       ),
@@ -381,6 +383,171 @@ class BauhausSettingsTile extends StatelessWidget {
                   Icons.arrow_forward_ios_rounded,
                   size: 16,
                   color: BauhausDesign.neutral.withValues(alpha: 0.4),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// --- Bauhaus Settings Switch Tile ---
+/// Settings row with a neo-brutalist square toggle instead of a
+/// Material switch. Parent owns [value]; [onChanged] fires on tap.
+class BauhausSettingsSwitchTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color iconColor;
+  final Color activeColor;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  const BauhausSettingsSwitchTile({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.value,
+    required this.onChanged,
+    required this.iconColor,
+    this.activeColor = BauhausDesign.primary,
+  });
+
+  void _toggle() {
+    HapticFeedback.lightImpact();
+    onChanged(!value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final iconForegroundColor =
+        ThemeData.estimateBrightnessForColor(iconColor) == Brightness.dark
+        ? BauhausDesign.textLight
+        : BauhausDesign.textDark;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(
+        horizontal: BauhausDesign.space4,
+        vertical: BauhausDesign.space2,
+      ),
+      decoration: BoxDecoration(
+        color: BauhausDesign.surfaceLight,
+        borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+        border: Border.all(color: BauhausDesign.neutral, width: 2.0),
+        boxShadow: const [BauhausDesign.shadowHardSm],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _toggle,
+          borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+          child: Padding(
+            padding: const EdgeInsets.all(BauhausDesign.space3),
+            child: Row(
+              children: [
+                // Icon Block
+                Container(
+                  padding: const EdgeInsets.all(BauhausDesign.space2),
+                  decoration: BoxDecoration(
+                    color: iconColor,
+                    borderRadius: BorderRadius.circular(BauhausDesign.radiusXs),
+                    border: Border.all(
+                      color: BauhausDesign.neutral,
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Icon(icon, size: 20, color: iconForegroundColor),
+                ),
+                const SizedBox(width: BauhausDesign.space3),
+                // Text Content
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: BauhausDesign.getTextTheme(context).titleSmall
+                            ?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: BauhausDesign.textDark,
+                              letterSpacing: 0.3,
+                            ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: BauhausDesign.getTextTheme(context).bodySmall
+                            ?.copyWith(
+                              color: BauhausDesign.textDark.withValues(
+                                alpha: 0.8,
+                              ),
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: BauhausDesign.space3),
+                // Square toggle
+                GestureDetector(
+                  onTap: _toggle,
+                  child: Semantics(
+                    label: title,
+                    toggled: value,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      curve: Curves.easeOut,
+                      width: 52,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: value
+                            ? activeColor
+                            : BauhausDesign.backgroundLight,
+                        border: Border.all(
+                          color: BauhausDesign.neutral,
+                          width: 2,
+                        ),
+                        boxShadow: const [BauhausDesign.shadowHardXs],
+                      ),
+                      child: Stack(
+                        children: [
+                          AnimatedAlign(
+                            duration: const Duration(milliseconds: 180),
+                            curve: Curves.easeOut,
+                            alignment: value
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
+                            child: Container(
+                              width: 22,
+                              height: 22,
+                              margin: const EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                color: value
+                                    ? BauhausDesign.surfaceWhite
+                                    : BauhausDesign.textMuted.withValues(
+                                        alpha: 0.4,
+                                      ),
+                                border: Border.all(
+                                  color: BauhausDesign.neutral,
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: value
+                                  ? Icon(
+                                      Icons.check_rounded,
+                                      size: 14,
+                                      color: activeColor,
+                                    )
+                                  : null,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),

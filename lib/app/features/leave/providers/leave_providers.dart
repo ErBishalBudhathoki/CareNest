@@ -24,11 +24,14 @@ final leaveRequestsProvider = FutureProvider.family<List<LeaveRequest>, String>(
 );
 
 class LeaveForecastNotifier extends AsyncNotifier<Map<String, dynamic>?> {
-  late final LeaveRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  LeaveRepository get _repository => ref.read(leaveRepositoryProvider);
 
   @override
   FutureOr<Map<String, dynamic>?> build() {
-    _repository = ref.watch(leaveRepositoryProvider);
+    ref.watch(leaveRepositoryProvider);
     return null;
   }
 

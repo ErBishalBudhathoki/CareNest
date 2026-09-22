@@ -15,12 +15,14 @@ final requestsViewModelProvider =
     );
 
 class RequestsViewModel extends AsyncNotifier<List<RequestModel>> {
-  late final RequestRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance (e.g. when a watched provider
+  // changes) and reassigning a late final throws LateInitializationError.
+  RequestRepository get _repository => ref.read(requestRepositoryProvider);
   User? _user;
 
   @override
   Future<List<RequestModel>> build() async {
-    _repository = ref.watch(requestRepositoryProvider);
     final userAsync = ref.watch(currentUserProvider);
     _user = userAsync.value;
     if (_user != null) {

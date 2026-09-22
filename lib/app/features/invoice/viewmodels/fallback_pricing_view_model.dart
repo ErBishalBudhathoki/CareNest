@@ -16,11 +16,15 @@ abstract class FallbackPricingState with _$FallbackPricingState {
 }
 
 class FallbackPricingViewModel extends Notifier<FallbackPricingState> {
-  late final FallbackPricingRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  FallbackPricingRepository get _repository =>
+      ref.read(fallbackPricingRepositoryProvider);
 
   @override
   FallbackPricingState build() {
-    _repository = ref.watch(fallbackPricingRepositoryProvider);
+    ref.watch(fallbackPricingRepositoryProvider);
     return const FallbackPricingState();
   }
 

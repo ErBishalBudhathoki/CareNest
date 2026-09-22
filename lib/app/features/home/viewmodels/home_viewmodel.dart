@@ -12,11 +12,14 @@ final homeViewModelProvider =
 ///
 /// Manages the state of the Employee Home View dashboard.
 class HomeViewModel extends AsyncNotifier<HomeDashboardData> {
-  late final HomeRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  HomeRepository get _repository => ref.read(homeRepositoryProvider);
 
   @override
   Future<HomeDashboardData> build() async {
-    _repository = ref.watch(homeRepositoryProvider);
+    ref.watch(homeRepositoryProvider);
     // Don't auto-load, let the initialization happen via return
     // Wait, the original code doesn't load immediately in constructor.
     // Wait, actually I should check if it needs manual load or just returns

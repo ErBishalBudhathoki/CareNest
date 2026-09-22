@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/analytics/theme/bauhaus_theme.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import '../models/multi_org_rollup_model.dart';
 import '../repositories/multi_org_repository.dart';
@@ -46,11 +48,17 @@ class _MultiOrgRollupViewState extends ConsumerState<MultiOrgRollupView> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.multiOrgRollupTitle,
-          style: BauhausTheme.headerStyle,
+          style: BauhausTheme.headerStyle.copyWith(
+            color: BauhausDesign.surfaceWhite,
+          ),
         ),
-        backgroundColor: BauhausTheme.white,
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: BauhausTheme.black),
+        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
       ),
       body: _isLoading
           ? const Center(

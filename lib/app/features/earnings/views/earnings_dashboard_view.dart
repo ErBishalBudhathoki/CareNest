@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/earnings/viewmodels/earnings_viewmodel.dart';
 import 'package:carenest/app/features/earnings/models/earnings_data.dart';
@@ -48,16 +49,21 @@ class EarningsDashboardView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: BauhausDesign.surfaceLight,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceLight,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),
-          child: Container(color: BauhausDesign.textDark, height: 2),
+          child: Container(color: BauhausDesign.surfaceWhite, height: 2),
         ),
         title: Text(
           l10n?.earningsDashboardTitle ?? 'Earnings Dashboard',
           style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+            color: BauhausDesign.surfaceWhite,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.0,
           ),
@@ -66,7 +72,7 @@ class EarningsDashboardView extends ConsumerWidget {
           IconButton(
             icon: const Icon(
               Icons.download_rounded,
-              color: BauhausDesign.textDark,
+              color: BauhausDesign.surfaceWhite,
             ),
             tooltip: l10n?.generatePayslip ?? 'Generate payslip',
             onPressed: () {

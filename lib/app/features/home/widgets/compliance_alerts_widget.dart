@@ -108,7 +108,10 @@ class ComplianceAlertsWidget extends StatelessWidget {
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: color.withValues(alpha: 0.3), width: 1.5),
+              border: Border.all(
+                color: color.withValues(alpha: 0.3),
+                width: 1.5,
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
