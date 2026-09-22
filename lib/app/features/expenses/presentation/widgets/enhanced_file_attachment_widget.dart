@@ -393,7 +393,9 @@ class _EnhancedFileAttachmentWidgetState
           decoration: BoxDecoration(
             color: BauhausDesign.info.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-            border: Border.all(color: BauhausDesign.info.withValues(alpha: 0.1)),
+            border: Border.all(
+              color: BauhausDesign.info.withValues(alpha: 0.1),
+            ),
           ),
           child: Row(
             children: [
@@ -495,7 +497,9 @@ class _EnhancedFileAttachmentWidgetState
                             child: Container(
                               padding: const EdgeInsets.all(4.0),
                               decoration: BoxDecoration(
-                                color: BauhausDesign.textDark.withValues(alpha: 0.6),
+                                color: BauhausDesign.textDark.withValues(
+                                  alpha: 0.6,
+                                ),
                                 borderRadius: const BorderRadius.only(
                                   bottomLeft: Radius.circular(
                                     BauhausDesign.radiusMd,

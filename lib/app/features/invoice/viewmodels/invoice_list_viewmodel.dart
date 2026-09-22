@@ -37,7 +37,7 @@ class InvoiceListState {
 
 // StateNotifier for managing invoice list state
 class InvoiceListViewModel extends Notifier<InvoiceListState> {
-  late final InvoiceManagementService _invoiceService;
+  late InvoiceManagementService _invoiceService;
 
   @override
   InvoiceListState build() {

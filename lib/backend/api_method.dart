@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'dart:io';
 
 import 'package:carenest/app/core/utils/subscription_guard.dart';
+import 'package:carenest/app/core/utils/session_guard.dart';
 
 import 'package:carenest/app/core/utils/Services/upload_notes.dart';
 import 'package:carenest/config/environment.dart';
@@ -169,10 +171,19 @@ class ApiMethod extends ChangeNotifier {
         extra: headers,
       );
 
-      final response = await _get(uri, headers: requestHeaders);
+      var response = await _get(uri, headers: requestHeaders);
       debugPrint(
         '=== API METHOD DEBUG: GET status: ${response.statusCode} ===',
       );
+      response = await _retryWithFreshToken(response, () async {
+        final freshHeaders = await _buildJsonHeaders(
+          includeAuth: true,
+          includeAppCheck: true,
+          extra: headers,
+          forceAuthRefresh: true,
+        );
+        return _get(uri, headers: freshHeaders);
+      });
 
       return _handleResponse(response);
     } catch (e) {
@@ -420,16 +431,29 @@ class ApiMethod extends ChangeNotifier {
         headers: requestHeaders,
         body: body != null ? json.encode(body) : null,
       );
+      final effectiveResponse = await _retryWithFreshToken(response, () async {
+        final freshHeaders = await _buildJsonHeaders(
+          includeAuth: true,
+          includeAppCheck: true,
+          extra: headers,
+          forceAuthRefresh: true,
+        );
+        return _post(
+          uri,
+          headers: freshHeaders,
+          body: body != null ? json.encode(body) : null,
+        );
+      });
 
       debugPrint(
-        '=== API METHOD DEBUG: Response status code: ${response.statusCode} ===',
+        '=== API METHOD DEBUG: Response status code: ${effectiveResponse.statusCode} ===',
       );
       debugPrint(
-        '=== API METHOD DEBUG: Response headers: ${response.headers} ===',
+        '=== API METHOD DEBUG: Response headers: ${effectiveResponse.headers} ===',
       );
-      debugPrint('=== API METHOD DEBUG: Response body: ${response.body} ===');
+      debugPrint('=== API METHOD DEBUG: Response body: ${effectiveResponse.body} ===');
 
-      return _handleResponse(response);
+      return _handleResponse(effectiveResponse);
     } catch (e) {
       debugPrint('=== API METHOD DEBUG: Exception occurred: $e ===');
       debugPrint('=== API METHOD DEBUG: Exception type: ${e.runtimeType} ===');
@@ -592,8 +616,20 @@ class ApiMethod extends ChangeNotifier {
         headers: headers,
         body: body != null ? json.encode(body) : null,
       );
+      final effectiveResponse = await _retryWithFreshToken(response, () async {
+        final freshHeaders = await _buildJsonHeaders(
+          includeAuth: true,
+          includeAppCheck: true,
+          forceAuthRefresh: true,
+        );
+        return _put(
+          uri,
+          headers: freshHeaders,
+          body: body != null ? json.encode(body) : null,
+        );
+      });
 
-      return _handleResponse(response);
+      return _handleResponse(effectiveResponse);
     } catch (e) {
       return {'success': false, 'message': 'Error: $e'};
     }
@@ -608,10 +644,70 @@ class ApiMethod extends ChangeNotifier {
       );
 
       final response = await _delete(uri, headers: headers);
+      final effectiveResponse = await _retryWithFreshToken(response, () async {
+        final freshHeaders = await _buildJsonHeaders(
+          includeAuth: true,
+          includeAppCheck: true,
+          forceAuthRefresh: true,
+        );
+        return _delete(uri, headers: freshHeaders);
+      });
 
-      return _handleResponse(response);
+      return _handleResponse(effectiveResponse);
     } catch (e) {
       return {'success': false, 'message': 'Error: $e'};
+    }
+  }
+
+  /// True when the backend rejected our credentials as expired/invalid
+  /// (as opposed to missing auth, forbidden, paywalled, etc.).
+  bool _isAuthenticationExpired(http.Response response) {
+    if (response.statusCode != 401) return false;
+    try {
+      final decoded = json.decode(response.body);
+      if (decoded is Map<String, dynamic>) {
+        return isSessionExpiredResponse(response.statusCode, decoded);
+      }
+    } catch (_) {}
+    return false;
+  }
+
+  /// Resends [resend] once with a force-refreshed Firebase token when
+  /// [response] signals expired credentials. Returns the retried response,
+  /// or the original when no refresh is possible.
+  ///
+  /// Network failures during the retry surface as a synthetic 503 so a
+  /// transport blip is never mistaken for a dead session (which would
+  /// wrongly route the user to re-login).
+  Future<http.Response> _retryWithFreshToken(
+    http.Response response,
+    Future<http.Response> Function() resend,
+  ) async {
+    if (!_isAuthenticationExpired(response)) return response;
+    bool canRefresh = false;
+    try {
+      canRefresh = FirebaseAuth.instance.currentUser != null;
+    } catch (_) {
+      return response;
+    }
+    if (!canRefresh) return response;
+    try {
+      debugPrint(
+        '=== API METHOD DEBUG: 401 expired token — retrying with forced refresh ===',
+      );
+      return await resend();
+    } on SocketException catch (e) {
+      debugPrint('=== API METHOD DEBUG: retry transport failure: $e ===');
+      return http.Response('{"success":false,"message":"Network error"}', 503);
+    } on TimeoutException catch (e) {
+      debugPrint('=== API METHOD DEBUG: retry timed out: $e ===');
+      return http.Response('{"success":false,"message":"Network error"}', 503);
+    } on http.ClientException catch (e) {
+      debugPrint('=== API METHOD DEBUG: retry client failure: $e ===');
+      return http.Response('{"success":false,"message":"Network error"}', 503);
+    } catch (e) {
+      debugPrint('=== API METHOD DEBUG: retry failed: $e ===');
+      return response;
     }
   }
 
@@ -640,6 +736,9 @@ class ApiMethod extends ChangeNotifier {
         errorData['statusCode'] ??= response.statusCode;
         // Global paywall: surface the subscription screen on 402 responses.
         maybePromptSubscriptionRequired(errorData);
+        // Global session expiry: route to re-login when a forced refresh
+        // already failed (or was impossible) and credentials are still bad.
+        maybePromptReLogin(errorData);
         return errorData;
       } catch (e) {
         return {
@@ -6202,13 +6301,25 @@ class ApiMethod extends ChangeNotifier {
         headers: headers,
         body: body != null ? json.encode(body) : null,
       );
+      final effectiveResponse = await _retryWithFreshToken(response, () async {
+        final freshHeaders = await _buildJsonHeaders(
+          includeAuth: true,
+          includeAppCheck: true,
+          forceAuthRefresh: true,
+        );
+        return _patch(
+          uri,
+          headers: freshHeaders,
+          body: body != null ? json.encode(body) : null,
+        );
+      });
 
       debugPrint(
-        '=== API METHOD DEBUG: PATCH status: ${response.statusCode} ===',
+        '=== API METHOD DEBUG: PATCH status: ${effectiveResponse.statusCode} ===',
       );
-      debugPrint('=== API METHOD DEBUG: PATCH response: ${response.body} ===');
+      debugPrint('=== API METHOD DEBUG: PATCH response: ${effectiveResponse.body} ===');
 
-      return _handleResponse(response);
+      return _handleResponse(effectiveResponse);
     } catch (e) {
       return {'success': false, 'message': 'Error: $e'};
     }

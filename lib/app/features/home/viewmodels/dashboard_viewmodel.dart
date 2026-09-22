@@ -6,8 +6,8 @@ import '../models/dashboard_models.dart';
 import 'package:flutter/foundation.dart' show debugPrint;
 
 class DashboardViewModel extends Notifier<DashboardState> {
-  late final ApiMethod _apiMethod;
-  late final String _organizationId;
+  late ApiMethod _apiMethod;
+  late String _organizationId;
 
   @override
   DashboardState build() {

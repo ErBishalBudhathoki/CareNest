@@ -50,11 +50,15 @@ class ClientPortalState {
 }
 
 class ClientPortalViewModel extends Notifier<ClientPortalState> {
-  late final ClientPortalRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  ClientPortalRepository get _repository =>
+      ref.read(clientPortalRepositoryProvider);
 
   @override
   ClientPortalState build() {
-    _repository = ref.watch(clientPortalRepositoryProvider);
+    ref.watch(clientPortalRepositoryProvider);
     return ClientPortalState();
   }
 

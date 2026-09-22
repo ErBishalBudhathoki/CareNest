@@ -931,6 +931,8 @@ $appLink
     return Scaffold(
       backgroundColor: BauhausDesign.surfaceLight,
       appBar: AppBar(
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         backgroundColor: BauhausDesign.secondary,
         elevation: 0,
         leading: IconButton(

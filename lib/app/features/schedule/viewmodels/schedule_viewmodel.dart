@@ -35,11 +35,14 @@ class ScheduleState {
 class ScheduleViewModel extends Notifier<ScheduleState> {
   ScheduleViewModel(this._organizationId);
   final String _organizationId;
-  late final ScheduleRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  ScheduleRepository get _repository => ref.read(scheduleRepositoryProvider);
 
   @override
   ScheduleState build() {
-    _repository = ref.watch(scheduleRepositoryProvider);
+    ref.watch(scheduleRepositoryProvider);
     Future.microtask(() => loadShifts());
     return ScheduleState(selectedDate: DateTime.now());
   }

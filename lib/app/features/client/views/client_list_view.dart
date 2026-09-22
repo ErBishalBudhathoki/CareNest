@@ -655,7 +655,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                                     userContext['organizationId']!,
                                               );
 
-                                        if (!mounted || !context.mounted) return;
+                                        if (!mounted || !context.mounted)
+                                          return;
                                         if (dialogContext.mounted) {
                                           Navigator.of(dialogContext).pop();
                                         }
@@ -685,7 +686,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                           await _loadClients();
                                         }
                                       } catch (e) {
-                                        if (!mounted || !context.mounted) return;
+                                        if (!mounted || !context.mounted)
+                                          return;
                                         ScaffoldMessenger.of(
                                           context,
                                         ).showSnackBar(
@@ -1307,7 +1309,10 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
               ),
             ],
             SizedBox(height: BauhausDesign.space4),
-            Divider(color: BauhausDesign.neutral.withValues(alpha: 0.2), height: 1),
+            Divider(
+              color: BauhausDesign.neutral.withValues(alpha: 0.2),
+              height: 1,
+            ),
             SizedBox(height: BauhausDesign.space4),
             if (isHistoryMode) ...[
               Row(
@@ -1370,7 +1375,10 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
             ],
             if (!isHistoryMode && !client.isActivated) ...[
               SizedBox(height: BauhausDesign.space4),
-              Divider(color: BauhausDesign.neutral.withValues(alpha: 0.2), height: 1),
+              Divider(
+                color: BauhausDesign.neutral.withValues(alpha: 0.2),
+                height: 1,
+              ),
               SizedBox(height: BauhausDesign.space4),
               Row(
                 children: [

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/core/providers/firebase_auth_provider.dart';
@@ -220,6 +221,8 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         backgroundColor: BauhausDesign.secondary,
         elevation: 0,
         leading: Navigator.of(context).canPop()
@@ -462,8 +465,8 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
                         subtitle,
                         style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
-                              color: BauhausDesign.surfaceWhite.withValues(alpha: 
-                                0.92,
+                              color: BauhausDesign.surfaceWhite.withValues(
+                                alpha: 0.92,
                               ),
                             ),
                       ),

@@ -215,163 +215,168 @@ class _LoginViewState extends ConsumerState<LoginView>
                 keyboardType: TextInputType.emailAddress,
                 autofillHints: const [AutofillHints.email],
                 textInputAction: TextInputAction.next,
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return AppLocalizations.of(context)!.emailRequired;
-                }
-                if (!RegExp(
-                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                ).hasMatch(value!)) {
-                  return AppLocalizations.of(context)!.emailInvalid;
-                }
-                return null;
-              },
-              onChanged: (value) {
-                loginViewModel.model.validateEmail(value);
-              },
-            ),
+                validator: (value) {
+                  if (value?.isEmpty ?? true) {
+                    return AppLocalizations.of(context)!.emailRequired;
+                  }
+                  if (!RegExp(
+                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                  ).hasMatch(value!)) {
+                    return AppLocalizations.of(context)!.emailInvalid;
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  loginViewModel.model.validateEmail(value);
+                },
+              ),
 
-            SizedBox(height: isSmallScreen ? 12 : 16),
+              SizedBox(height: isSmallScreen ? 12 : 16),
 
-            // Enhanced password field
-            Consumer(
-              builder: (context, ref, child) {
-                ref.watch(loginViewModelProvider);
-                final viewModel = ref.read(loginViewModelProvider.notifier);
-                return BauhausTextField(
-                  controller: viewModel.model.passwordController,
-                  label: AppLocalizations.of(context)!.passwordLabel,
-                  hintText: AppLocalizations.of(context)!.passwordHint,
-                  prefixIcon: Icon(
-                    Iconsax.lock,
-                    color: BauhausDesign.textMuted,
-                    size: 20,
-                  ),
-                  obscureText: !viewModel.model.isVisible,
-                  autofillHints: const [AutofillHints.password],
-                  textInputAction: TextInputAction.done,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      viewModel.model.isVisible
-                          ? Iconsax.eye
-                          : Iconsax.eye_slash,
+              // Enhanced password field
+              Consumer(
+                builder: (context, ref, child) {
+                  ref.watch(loginViewModelProvider);
+                  final viewModel = ref.read(loginViewModelProvider.notifier);
+                  return BauhausTextField(
+                    controller: viewModel.model.passwordController,
+                    label: AppLocalizations.of(context)!.passwordLabel,
+                    hintText: AppLocalizations.of(context)!.passwordHint,
+                    prefixIcon: Icon(
+                      Iconsax.lock,
                       color: BauhausDesign.textMuted,
                       size: 20,
                     ),
-                    onPressed: () {
-                      viewModel.togglePasswordVisibility();
-                    },
-                  ),
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) {
-                      return AppLocalizations.of(context)!.passwordRequired;
-                    }
-                    return null;
-                  },
-                );
-              },
-            ),
-
-            SizedBox(height: isSmallScreen ? 8 : 12),
-
-            // Enhanced forgot password link
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/forgotPassword');
-                },
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                child: Text(
-                  AppLocalizations.of(context)!.forgotPassword,
-                  style: BauhausDesign.getTextTheme(context).bodySmall
-                      ?.copyWith(
-                        color: BauhausDesign.primary,
-                        fontWeight: FontWeight.w500,
-                        decoration: TextDecoration.underline,
-                        decorationColor: BauhausDesign.primary.withValues(alpha: 0.6),
+                    obscureText: !viewModel.model.isVisible,
+                    autofillHints: const [AutofillHints.password],
+                    textInputAction: TextInputAction.done,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        viewModel.model.isVisible
+                            ? Iconsax.eye
+                            : Iconsax.eye_slash,
+                        color: BauhausDesign.textMuted,
+                        size: 20,
                       ),
-                ),
+                      onPressed: () {
+                        viewModel.togglePasswordVisibility();
+                      },
+                    ),
+                    validator: (value) {
+                      if (value?.isEmpty ?? true) {
+                        return AppLocalizations.of(context)!.passwordRequired;
+                      }
+                      return null;
+                    },
+                  );
+                },
               ),
-            ),
 
-            SizedBox(height: isSmallScreen ? 12 : 16),
+              SizedBox(height: isSmallScreen ? 8 : 12),
 
-            // Enhanced login button
-            BauhausActionButton(
-              text: AppLocalizations.of(context)!.signInButton,
-              variant: BauhausActionVariant.primary,
-              isLoading: loginViewModel.isLoading,
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  await loginViewModel.login(context);
-                }
-              },
-              icon: Iconsax.login,
-              backgroundColor: BauhausDesign.accent,
-              textColor: BauhausDesign.neutral,
-            ),
-
-            SizedBox(height: isSmallScreen ? 12 : 16),
-
-            // Bauhaus divider with bold design
-            Row(
-              children: [
-                Expanded(
-                  child: Container(height: 2, color: BauhausDesign.neutral),
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: BauhausDesign.surfaceWhite,
-                    border: Border.all(color: BauhausDesign.neutral, width: 2),
+              // Enhanced forgot password link
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/forgotPassword');
+                  },
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
                   child: Text(
-                    AppLocalizations.of(context)!.or,
-                    style: BauhausDesign.getTextTheme(context).bodyMedium
+                    AppLocalizations.of(context)!.forgotPassword,
+                    style: BauhausDesign.getTextTheme(context).bodySmall
                         ?.copyWith(
-                          color: BauhausDesign.neutral,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5,
+                          color: BauhausDesign.primary,
+                          fontWeight: FontWeight.w500,
+                          decoration: TextDecoration.underline,
+                          decorationColor: BauhausDesign.primary.withValues(
+                            alpha: 0.6,
+                          ),
                         ),
                   ),
                 ),
-                Expanded(
-                  child: Container(height: 2, color: BauhausDesign.neutral),
-                ),
-              ],
-            ),
+              ),
 
-            SizedBox(height: isSmallScreen ? 12 : 16),
+              SizedBox(height: isSmallScreen ? 12 : 16),
 
-            // Enhanced create account button
-            BauhausActionButton(
-              text: AppLocalizations.of(context)!.createAccount,
-              variant: BauhausActionVariant.secondary,
-              onPressed: () {
-                Navigator.pushNamed(context, '/signup');
-              },
-              icon: Iconsax.user_add,
-              backgroundColor: BauhausDesign.backgroundLight,
-              textColor: BauhausDesign.neutral,
-              isOutlined: false, // Custom style
-            ),
+              // Enhanced login button
+              BauhausActionButton(
+                text: AppLocalizations.of(context)!.signInButton,
+                variant: BauhausActionVariant.primary,
+                isLoading: loginViewModel.isLoading,
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    await loginViewModel.login(context);
+                  }
+                },
+                icon: Iconsax.login,
+                backgroundColor: BauhausDesign.accent,
+                textColor: BauhausDesign.neutral,
+              ),
 
-            SizedBox(height: isSmallScreen ? 12 : 16),
+              SizedBox(height: isSmallScreen ? 12 : 16),
 
-            // Trust footer
-            _buildTrustFooter(isSmallScreen),
+              // Bauhaus divider with bold design
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(height: 2, color: BauhausDesign.neutral),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: BauhausDesign.surfaceWhite,
+                      border: Border.all(
+                        color: BauhausDesign.neutral,
+                        width: 2,
+                      ),
+                    ),
+                    child: Text(
+                      AppLocalizations.of(context)!.or,
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
+                          ?.copyWith(
+                            color: BauhausDesign.neutral,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5,
+                          ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(height: 2, color: BauhausDesign.neutral),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: isSmallScreen ? 12 : 16),
+
+              // Enhanced create account button
+              BauhausActionButton(
+                text: AppLocalizations.of(context)!.createAccount,
+                variant: BauhausActionVariant.secondary,
+                onPressed: () {
+                  Navigator.pushNamed(context, '/signup');
+                },
+                icon: Iconsax.user_add,
+                backgroundColor: BauhausDesign.backgroundLight,
+                textColor: BauhausDesign.neutral,
+                isOutlined: false, // Custom style
+              ),
+
+              SizedBox(height: isSmallScreen ? 12 : 16),
+
+              // Trust footer
+              _buildTrustFooter(isSmallScreen),
             ],
           ),
         ),

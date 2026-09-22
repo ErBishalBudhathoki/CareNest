@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/analytics/theme/bauhaus_theme.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:carenest/app/core/services/sync/sync_manager.dart';
 import 'package:carenest/app/core/providers/core_providers.dart';
@@ -60,11 +62,17 @@ class _OfflineSyncDashboardViewState
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.offlineSyncTitle,
-          style: BauhausTheme.headerStyle,
+          style: BauhausTheme.headerStyle.copyWith(
+            color: BauhausDesign.surfaceWhite,
+          ),
         ),
-        backgroundColor: BauhausTheme.white,
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: BauhausTheme.black),
+        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _loadData),
         ],

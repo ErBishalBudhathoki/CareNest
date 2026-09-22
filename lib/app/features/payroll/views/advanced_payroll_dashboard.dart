@@ -5,6 +5,7 @@ import 'package:carenest/app/features/payroll/viewmodels/advanced_payroll_viewmo
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AdvancedPayrollDashboard extends ConsumerStatefulWidget {
@@ -237,6 +238,8 @@ class _AdvancedPayrollDashboardState
     final textTheme = BauhausDesign.getTextTheme(context);
 
     return AppBar(
+      foregroundColor: BauhausDesign.surfaceWhite,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
       backgroundColor: BauhausDesign.success,
       elevation: 0,
       titleSpacing: 0,

@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/workforce_optimization/models/workforce_models.dart';
 import 'package:carenest/app/features/workforce_optimization/repositories/workforce_repository.dart';
 
-
 // State class for Workforce Planning
 class WorkforcePlanningState {
   late final bool isLoading;
@@ -50,11 +49,14 @@ class WorkforcePlanningState {
 
 // StateNotifier for Workforce Planning
 class WorkforcePlanningViewModel extends Notifier<WorkforcePlanningState> {
-  late final WorkforceRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  WorkforceRepository get _repository => ref.read(workforceRepositoryProvider);
 
   @override
   WorkforcePlanningState build() {
-    _repository = ref.watch(workforceRepositoryProvider);
+    ref.watch(workforceRepositoryProvider);
     return WorkforcePlanningState();
   }
 

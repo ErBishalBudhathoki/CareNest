@@ -114,9 +114,7 @@ class _EnhancedNdisItemSelectionViewState
     final caps = _priceCaps(item);
     String part(String label, PriceRegion region) {
       final value = regionalPricingCap(item, region, caps: caps);
-      final text = value != null
-          ? '\$${value.toStringAsFixed(2)}'
-          : 'N/A';
+      final text = value != null ? '\$${value.toStringAsFixed(2)}' : 'N/A';
       return '$label $text';
     }
 
@@ -178,7 +176,9 @@ class _EnhancedNdisItemSelectionViewState
         : searchFiltered.where((item) => !item.isLegacy).toList();
 
     if (widget.highIntensity) {
-      _filteredNdisItems = visibleItems.where(isHighIntensityPricingItem).toList();
+      _filteredNdisItems = visibleItems
+          .where(isHighIntensityPricingItem)
+          .toList();
       return;
     }
 
@@ -690,7 +690,8 @@ class _EnhancedNdisItemSelectionViewState
   double? _getCappedPrice(NDISItem item, {PriceRegion? region}) {
     return regionalPricingCap(
       item,
-      region ?? pricingRegion(_effectiveCustomPricing(item.itemNumber)?['region']),
+      region ??
+          pricingRegion(_effectiveCustomPricing(item.itemNumber)?['region']),
       caps: _priceCaps(item),
     );
   }
@@ -737,7 +738,9 @@ class _EnhancedNdisItemSelectionViewState
     if (_isSavingCustomPrice[itemNumber] == true) return;
     if (!_loadedPricingItems.contains(itemNumber)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.pricingLoadFailed)),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.pricingLoadFailed),
+        ),
       );
       unawaited(_loadPricingData());
       return;
@@ -768,15 +771,15 @@ class _EnhancedNdisItemSelectionViewState
         _hasUnsavedPricing(item.itemNumber) ||
         (editing &&
             !_draftFor(item.itemNumber).validFor(item, _priceCaps(item)))) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.pricingSaveDraftFirst)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.pricingSaveDraftFirst)));
       return;
     }
     if (!_loadedPricingItems.contains(item.itemNumber)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.pricingLoadFailed)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.pricingLoadFailed)));
       unawaited(_loadPricingData());
       return;
     }
@@ -808,14 +811,17 @@ class _EnhancedNdisItemSelectionViewState
     return Scaffold(
       //backgroundColor: BauhausDesign.background,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceWhite,
-        foregroundColor: BauhausDesign.textDark,
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         title: Text(
           'Select NDIS Item',
           style: BauhausDesign.getTextTheme(
             context,
-          ).titleLarge?.copyWith(color: BauhausDesign.textDark),
+          ).titleLarge?.copyWith(color: BauhausDesign.surfaceWhite),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
@@ -1029,8 +1035,12 @@ class _EnhancedNdisItemSelectionViewState
                                 ),
                                 decoration: BoxDecoration(
                                   color: exceedsCap
-                                      ? BauhausDesign.warning.withValues(alpha: 0.1)
-                                      : BauhausDesign.success.withValues(alpha: 0.1),
+                                      ? BauhausDesign.warning.withValues(
+                                          alpha: 0.1,
+                                        )
+                                      : BauhausDesign.success.withValues(
+                                          alpha: 0.1,
+                                        ),
                                   borderRadius: BorderRadius.circular(
                                     BauhausDesign.radiusPill,
                                   ),
@@ -1408,7 +1418,9 @@ class _EnhancedNdisItemSelectionViewState
                       fontWeight: FontWeight.w700,
                     ),
                 hintStyle: BauhausDesign.getTextTheme(context).bodyMedium
-                    ?.copyWith(color: BauhausDesign.textDark.withValues(alpha: 0.96)),
+                    ?.copyWith(
+                      color: BauhausDesign.textDark.withValues(alpha: 0.96),
+                    ),
                 helperStyle: BauhausDesign.getTextTheme(context).labelMedium
                     ?.copyWith(
                       color: BauhausDesign.textDark,
@@ -1506,7 +1518,10 @@ class _EnhancedNdisItemSelectionViewState
                           if (lookup == null) {
                             throw StateError('Pricing lookup unavailable');
                           }
-                          final existing = scopedPricing(lookup, clientId: targetClient);
+                          final existing = scopedPricing(
+                            lookup,
+                            clientId: targetClient,
+                          );
                           final pricingId = existing?['_id']?.toString();
                           final region = draft.regionTouched || existing == null
                               ? selectedRegion.name
@@ -1557,8 +1572,12 @@ class _EnhancedNdisItemSelectionViewState
                             if (confirmed == null ||
                                 confirmed['_id'] == null ||
                                 confirmed['region'] != region ||
-                                (_toPositiveDouble(confirmed['price'])! - price).abs() > 0.001) {
-                              throw StateError('Pricing persistence confirmation failed');
+                                (_toPositiveDouble(confirmed['price'])! - price)
+                                        .abs() >
+                                    0.001) {
+                              throw StateError(
+                                'Pricing persistence confirmation failed',
+                              );
                             }
                             if (mounted) {
                               setState(() {
@@ -1779,7 +1798,9 @@ class _EnhancedNdisItemSelectionViewState
     final draft = _draftFor(item.itemNumber);
     final l10n = AppLocalizations.of(context)!;
     return DropdownButtonFormField<PriceRegion>(
-      key: ValueKey('${item.itemNumber}:${_getSelectedScope(item.itemNumber)}:${draft.region.name}'),
+      key: ValueKey(
+        '${item.itemNumber}:${_getSelectedScope(item.itemNumber)}:${draft.region.name}',
+      ),
       initialValue: draft.region,
       isExpanded: true,
       decoration: BauhausDesign.defaultInputDecoration.copyWith(

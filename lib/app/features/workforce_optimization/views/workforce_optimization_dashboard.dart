@@ -8,6 +8,7 @@ import 'package:carenest/app/features/workforce_optimization/viewmodels/workforc
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class WorkforceOptimizationDashboard extends ConsumerStatefulWidget {
@@ -331,6 +332,8 @@ class _WorkforceOptimizationDashboardState
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
+      foregroundColor: BauhausDesign.surfaceWhite,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
       backgroundColor: BauhausDesign.secondary,
       elevation: 0,
       titleSpacing: 0,

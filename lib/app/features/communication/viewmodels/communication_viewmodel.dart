@@ -93,11 +93,15 @@ class CommunicationState {
 }
 
 class CommunicationViewModel extends Notifier<CommunicationState> {
-  late final CommunicationRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  CommunicationRepository get _repository =>
+      ref.read(communicationRepositoryProvider);
 
   @override
   CommunicationState build() {
-    _repository = ref.watch(communicationRepositoryProvider);
+    ref.watch(communicationRepositoryProvider);
     return CommunicationState();
   }
 

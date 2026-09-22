@@ -9,7 +9,7 @@ enum BankDetailsScope { personal, organization }
 
 class BankDetailsViewModel extends Notifier<BankDetailsState> {
   final BankDetailsScope scope;
-  late final ApiMethod _apiMethod;
+  late ApiMethod _apiMethod;
 
   BankDetailsViewModel(this.scope);
 

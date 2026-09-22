@@ -628,12 +628,15 @@ class _EnhancedInvoiceGenerationViewState
 
   PreferredSizeWidget _buildAppBar(AppLocalizations l10n) {
     return AppBar(
-      foregroundColor: BauhausDesign.textDark,
-      backgroundColor: BauhausDesign.surfaceWhite,
+      foregroundColor: BauhausDesign.surfaceWhite,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      scrolledUnderElevation: 0,
+      surfaceTintColor: Colors.transparent,
+      backgroundColor: BauhausDesign.primary,
       elevation: 0,
       title: Text(
         l10n.generateInvoiceTitle,
-        style: BauhausDesign.getTextTheme(context).headlineMedium,
+        style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(color: BauhausDesign.surfaceWhite),
       ),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios_new_rounded),
@@ -1598,8 +1601,7 @@ class _EnhancedInvoiceGenerationViewState
                           ),
                           child: IconButton(
                             onPressed: () {
-                              final removed =
-                                  _additionalAttachments[index];
+                              final removed = _additionalAttachments[index];
                               setState(() {
                                 _additionalAttachments.removeAt(index);
                               });
@@ -1737,9 +1739,7 @@ class _EnhancedInvoiceGenerationViewState
             const SizedBox(height: BauhausDesign.space4),
             DropdownButtonFormField<String>(
               initialValue: _recurrenceFrequency,
-              decoration: InputDecoration(
-                labelText: l10n.frequency,
-              ),
+              decoration: InputDecoration(labelText: l10n.frequency),
               items: const [
                 DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
                 DropdownMenuItem(
@@ -1971,7 +1971,9 @@ class _EnhancedInvoiceGenerationViewState
                               style: BauhausDesign.neoMonoStyle(
                                 context,
                                 fontSize: 11,
-                                color: BauhausDesign.neoInk.withValues(alpha: 0.75),
+                                color: BauhausDesign.neoInk.withValues(
+                                  alpha: 0.75,
+                                ),
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -2642,13 +2644,13 @@ class _EnhancedInvoiceGenerationViewState
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: BauhausDesign.neoSignal.withValues(alpha: 
-                                  0.08,
+                                color: BauhausDesign.neoSignal.withValues(
+                                  alpha: 0.08,
                                 ),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: BauhausDesign.neoSignal.withValues(alpha: 
-                                    0.25,
+                                  color: BauhausDesign.neoSignal.withValues(
+                                    alpha: 0.25,
                                   ),
                                 ),
                               ),
@@ -2687,7 +2689,9 @@ class _EnhancedInvoiceGenerationViewState
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
                         border: Border(
-                          top: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
+                          top: BorderSide(
+                            color: Colors.grey.withValues(alpha: 0.1),
+                          ),
                         ),
                       ),
                       child: Row(
@@ -2752,7 +2756,8 @@ class _EnhancedInvoiceGenerationViewState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (index > 0) Divider(color: BauhausDesign.error.withValues(alpha: 0.1)),
+          if (index > 0)
+            Divider(color: BauhausDesign.error.withValues(alpha: 0.1)),
           if (index > 0) const SizedBox(height: 8),
           Text(
             l10n.itemInfoTemplate(
@@ -3277,7 +3282,9 @@ class _EnhancedInvoiceGenerationViewState
                                 ? BauhausDesign.neoDanger
                                 : BauhausDesign.success,
                             border: Border.all(
-                              color: BauhausDesign.neoPaper.withValues(alpha: 0.4),
+                              color: BauhausDesign.neoPaper.withValues(
+                                alpha: 0.4,
+                              ),
                               width: 1,
                             ),
                           ),
@@ -3300,7 +3307,9 @@ class _EnhancedInvoiceGenerationViewState
                               _ratesCheckMessage,
                               style: BauhausDesign.neoMonoStyle(
                                 context,
-                                color: BauhausDesign.neoPaper.withValues(alpha: 0.7),
+                                color: BauhausDesign.neoPaper.withValues(
+                                  alpha: 0.7,
+                                ),
                                 fontSize: 10,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -3315,7 +3324,9 @@ class _EnhancedInvoiceGenerationViewState
                                   : 'All items have valid pricing',
                               style: BauhausDesign.neoMonoStyle(
                                 context,
-                                color: BauhausDesign.neoPaper.withValues(alpha: 0.7),
+                                color: BauhausDesign.neoPaper.withValues(
+                                  alpha: 0.7,
+                                ),
                                 fontSize: 10,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -3361,7 +3372,9 @@ class _EnhancedInvoiceGenerationViewState
                           Container(
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: BauhausDesign.success.withValues(alpha: 0.08),
+                              color: BauhausDesign.success.withValues(
+                                alpha: 0.08,
+                              ),
                               border: Border.all(
                                 color: BauhausDesign.neoInk,
                                 width: BauhausDesign.neoInnerBorderWidth,

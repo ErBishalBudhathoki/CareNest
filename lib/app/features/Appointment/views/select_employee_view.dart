@@ -3,6 +3,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/profile_image_widget.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:carenest/app/features/auth/models/user_model.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -438,8 +439,11 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: BauhausDesign.surfaceWhite,
-        foregroundColor: BauhausDesign.textDark,
+        backgroundColor: BauhausDesign.secondary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         automaticallyImplyLeading: false,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
@@ -450,7 +454,7 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
           'Employee List',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             fontWeight: FontWeight.w600,
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
           ),
         ),
         centerTitle: false,

@@ -36,11 +36,14 @@ final payrollViewModelProvider =
     NotifierProvider<PayrollViewModel, PayrollState>(PayrollViewModel.new);
 
 class PayrollViewModel extends Notifier<PayrollState> {
-  late final PayrollRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  PayrollRepository get _repository => ref.read(payrollRepositoryProvider);
 
   @override
   PayrollState build() {
-    _repository = ref.watch(payrollRepositoryProvider);
+    ref.watch(payrollRepositoryProvider);
     final now = DateTime.now();
     final defaultRange = DateTimeRange(
       start: DateTime(now.year, now.month, 1),

@@ -47,7 +47,6 @@ class ComplianceAutomationViewModel
 
   @override
   ComplianceAutomationState build() {
-
     return ComplianceAutomationState();
   }
 

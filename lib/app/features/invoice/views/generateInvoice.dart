@@ -458,9 +458,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
 
       if (!mounted) return;
       setState(
-        () => _statusMessage = AppLocalizations.of(
-          context,
-        )!.pdfGeneratingLines,
+        () => _statusMessage = AppLocalizations.of(context)!.pdfGeneratingLines,
       );
       log.info("Status: Generating invoice lines...");
 
@@ -927,9 +925,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
         log.info("PDF generated successfully at $_pdfPath");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.pdfGeneratedTapToView,
-            ),
+            content: Text(AppLocalizations.of(context)!.pdfGeneratedTapToView),
             backgroundColor: BauhausDesign.success,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -951,14 +947,10 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
       log.severe("Error generating PDF", e, s);
       if (mounted) {
         setState(() {
-          _statusMessage = AppLocalizations.of(
-            context,
-          )!.pdfGenerationFailed;
+          _statusMessage = AppLocalizations.of(context)!.pdfGenerationFailed;
           _isLoading = false;
         });
-        _showErrorSnackBar(
-          AppLocalizations.of(context)!.pdfGenerationFailed,
-        );
+        _showErrorSnackBar(AppLocalizations.of(context)!.pdfGenerationFailed);
       }
     }
   }

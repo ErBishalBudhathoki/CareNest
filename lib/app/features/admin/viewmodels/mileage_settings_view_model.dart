@@ -4,11 +4,15 @@ import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import '../models/mileage_settings_state.dart';
 
 class MileageSettingsViewModel extends Notifier<MileageSettingsState> {
-  late final OrganizationRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  OrganizationRepository get _repository =>
+      ref.read(organizationRepositoryProvider);
 
   @override
   MileageSettingsState build() {
-    _repository = ref.watch(organizationRepositoryProvider);
+    ref.watch(organizationRepositoryProvider);
     _loadSettings();
     return const MileageSettingsState();
   }

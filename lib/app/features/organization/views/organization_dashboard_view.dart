@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
@@ -31,9 +32,12 @@ class _OrganizationDashboardViewState
     return Scaffold(
       backgroundColor: BauhausDesign.background,
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         title: const Text('Organizations'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: BauhausDesign.secondary,
+        foregroundColor: BauhausDesign.surfaceWhite,
         elevation: 0,
         actions: [
           IconButton(

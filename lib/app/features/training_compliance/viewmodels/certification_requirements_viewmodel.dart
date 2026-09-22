@@ -29,11 +29,15 @@ class CertificationRequirementsState {
 
 class CertificationRequirementsViewModel
     extends Notifier<CertificationRequirementsState> {
-  late final TrainingComplianceRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  TrainingComplianceRepository get _repository =>
+      ref.read(trainingComplianceRepositoryProvider);
 
   @override
   CertificationRequirementsState build() {
-    _repository = ref.watch(trainingComplianceRepositoryProvider);
+    ref.watch(trainingComplianceRepositoryProvider);
     return const CertificationRequirementsState();
   }
 

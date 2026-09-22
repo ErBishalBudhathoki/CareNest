@@ -72,7 +72,8 @@ Map<String, dynamic>? scopedPricing(
     'price': price,
     'customPrice': price,
     'clientSpecific': client,
-    if (lookup['region'] != null) 'region': pricingRegion(lookup['region']).name,
+    if (lookup['region'] != null)
+      'region': pricingRegion(lookup['region']).name,
   };
 }
 
@@ -86,13 +87,12 @@ double? effectiveScopedPrice(
     '-',
     '_',
   );
-  final isFallback =
-      const {
-        'ndis_default',
-        'fallback',
-        'base_rate',
-        'fallback_base_rate',
-      }.contains(source);
+  final isFallback = const {
+    'ndis_default',
+    'fallback',
+    'base_rate',
+    'fallback_base_rate',
+  }.contains(source);
   final clientSpecific =
       lookup['clientSpecific'] == true || source == 'client_specific';
   final custom =
@@ -107,10 +107,9 @@ double? effectiveScopedPrice(
   if (!clientSpecific && clientId != null) {
     return positivePricingValue(lookup['price']) ?? fallback;
   }
-  final matchingClient =
-      clientSpecific && lookup['clientId'] != null
-          ? lookup['clientId'].toString() == clientId
-          : true;
+  final matchingClient = clientSpecific && lookup['clientId'] != null
+      ? lookup['clientId'].toString() == clientId
+      : true;
   if (!matchingClient) return fallback;
   return positivePricingValue(lookup['price']) ?? fallback;
 }

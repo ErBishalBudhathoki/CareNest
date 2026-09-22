@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:carenest/app/core/providers/core_providers.dart';
@@ -72,19 +73,26 @@ class _OrganizationSettingsRedesignedState
           title: Text(
             'Organization Settings',
             style: GoogleFonts.inter(
-              color: BauhausDesign.textDark,
+              color: BauhausDesign.surfaceWhite,
               fontWeight: FontWeight.w600,
               fontSize: BauhausDesign.fontLg,
             ),
           ),
-          backgroundColor: BauhausDesign.surfaceWhite,
+          backgroundColor: BauhausDesign.secondary,
+          foregroundColor: BauhausDesign.surfaceWhite,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
+          scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
           elevation: 0,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.0),
             child: Container(color: BauhausDesign.neutral, height: 1.0),
           ),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: BauhausDesign.textDark),
+            icon: const Icon(
+              Icons.arrow_back,
+              color: BauhausDesign.surfaceWhite,
+            ),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -591,7 +599,9 @@ class _SidebarItem extends StatelessWidget {
           vertical: BauhausDesign.space4,
         ),
         decoration: BoxDecoration(
-          color: isSelected ? activeColor.withValues(alpha: 0.1) : Colors.transparent,
+          color: isSelected
+              ? activeColor.withValues(alpha: 0.1)
+              : Colors.transparent,
           border: Border(
             right: BorderSide(
               color: isSelected ? activeColor : Colors.transparent,

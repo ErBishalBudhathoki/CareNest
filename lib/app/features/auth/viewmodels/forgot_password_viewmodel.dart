@@ -15,7 +15,7 @@ class ForgotPasswordViewModel extends Notifier<bool> {
   );
   final TextEditingController emailController = TextEditingController();
   late final ApiMethod apiMethod;
-  late final SharedPreferencesUtils _sharedPrefs;
+  late SharedPreferencesUtils _sharedPrefs;
 
   @override
   bool build() {

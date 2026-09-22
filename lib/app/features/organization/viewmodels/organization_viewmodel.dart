@@ -9,11 +9,15 @@ final organizationViewModelProvider =
     );
 
 class OrganizationViewModel extends Notifier<AsyncValue<Organization?>> {
-  late final OrganizationRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  OrganizationRepository get _repository =>
+      ref.read(organizationRepositoryProvider);
 
   @override
   AsyncValue<Organization?> build() {
-    _repository = ref.watch(organizationRepositoryProvider);
+    ref.watch(organizationRepositoryProvider);
     return const AsyncValue.loading();
   }
 

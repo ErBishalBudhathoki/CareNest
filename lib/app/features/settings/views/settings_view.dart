@@ -27,6 +27,7 @@ import 'package:carenest/app/features/requests/models/request_model.dart';
 import 'package:carenest/app/features/requests/repositories/request_repository.dart';
 import 'package:carenest/app/shared/widgets/confirmation_alert_dialog_widget.dart';
 import 'package:carenest/app/features/settings/widgets/bauhaus_settings_widgets.dart';
+import 'package:carenest/app/features/admin/utils/command_desk_prefs.dart';
 import 'package:carenest/config/environment.dart';
 
 /// Modernized Settings View using Bauhaus Design System
@@ -79,6 +80,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     _currentPhotoData = widget.photoData;
     _initPackageInfo();
     _isEmailVerified = _firebaseAuthService.currentUser?.emailVerified ?? false;
+    // Ensure the Command Desk display preference is loaded for the toggle.
+    CommandDeskPrefs.load();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _refreshEmailVerificationStatus(showFeedback: false);
     });
@@ -542,6 +545,23 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                                     userEmail: widget.userEmail,
                                   ),
                                 ),
+                              );
+                            },
+                          ),
+                          ValueListenableBuilder<bool>(
+                            valueListenable: CommandDeskPrefs.sortByRecent,
+                            builder: (context, sortByRecent, _) {
+                              return BauhausSettingsSwitchTile(
+                                icon: Icons.history_rounded,
+                                iconColor: BauhausDesign.secondary,
+                                title: AppLocalizations.of(
+                                  context,
+                                )!.commandDeskSortRecentTitle,
+                                subtitle: AppLocalizations.of(
+                                  context,
+                                )!.commandDeskSortRecentSubtitle,
+                                value: sortByRecent,
+                                onChanged: CommandDeskPrefs.setSortByRecent,
                               );
                             },
                           ),

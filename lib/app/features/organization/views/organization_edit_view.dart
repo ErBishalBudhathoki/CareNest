@@ -140,7 +140,9 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
               surface: BauhausDesign.surfaceWhite,
               onSurface: BauhausDesign.textDark,
             ),
-            dialogTheme: DialogThemeData(backgroundColor: BauhausDesign.surfaceWhite),
+            dialogTheme: DialogThemeData(
+              backgroundColor: BauhausDesign.surfaceWhite,
+            ),
           ),
           child: child!,
         );
@@ -462,6 +464,8 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         backgroundColor: BauhausDesign.secondary,
         elevation: 0,
         leading: IconButton(
@@ -686,7 +690,9 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                         Container(
                           padding: const EdgeInsets.all(BauhausDesign.space3),
                           decoration: BoxDecoration(
-                            color: BauhausDesign.warning.withValues(alpha: 0.12),
+                            color: BauhausDesign.warning.withValues(
+                              alpha: 0.12,
+                            ),
                             borderRadius: BorderRadius.circular(
                               BauhausDesign.radiusSm,
                             ),
@@ -939,8 +945,8 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                         l10n.tapToChangeLogo,
                         style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
-                              color: BauhausDesign.surfaceWhite.withValues(alpha: 
-                                0.85,
+                              color: BauhausDesign.surfaceWhite.withValues(
+                                alpha: 0.85,
                               ),
                             ),
                       ),

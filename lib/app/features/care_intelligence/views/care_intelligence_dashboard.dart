@@ -8,6 +8,7 @@ import 'package:carenest/app/features/client/providers/client_provider.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CareIntelligenceDashboard extends ConsumerStatefulWidget {
@@ -322,6 +323,8 @@ class _CareIntelligenceDashboardState
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
+      foregroundColor: BauhausDesign.surfaceWhite,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
       backgroundColor: BauhausDesign.primary,
       elevation: 0,
       titleSpacing: 0,
@@ -479,7 +482,9 @@ class _CareIntelligenceDashboardState
                         width: 68,
                         height: 68,
                         decoration: BoxDecoration(
-                          color: BauhausDesign.secondary.withValues(alpha: 0.22),
+                          color: BauhausDesign.secondary.withValues(
+                            alpha: 0.22,
+                          ),
                           borderRadius: BorderRadius.circular(
                             BauhausDesign.radiusSm,
                           ),

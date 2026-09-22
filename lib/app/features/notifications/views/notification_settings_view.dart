@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
@@ -9,10 +10,11 @@ import '../models/notification_preferences.dart';
 import '../viewmodels/notification_preferences_viewmodel.dart';
 
 /// OS-level notification permission status for the rationale banner.
-final _notificationPermissionProvider =
-    FutureProvider<PermissionStatus>((ref) async {
-      return Permission.notification.status;
-    });
+final _notificationPermissionProvider = FutureProvider<PermissionStatus>((
+  ref,
+) async {
+  return Permission.notification.status;
+});
 
 class NotificationSettingsView extends ConsumerWidget {
   const NotificationSettingsView({super.key});
@@ -29,19 +31,23 @@ class NotificationSettingsView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: BauhausDesign.backgroundLight,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.surfaceLight,
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: BauhausDesign.textDark),
+        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
         title: Text(
           'Notification Settings',
           style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
             fontWeight: FontWeight.w700,
-            color: BauhausDesign.textDark,
+            color: BauhausDesign.surfaceWhite,
           ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),
-          child: Container(height: 2, color: BauhausDesign.textDark),
+          child: Container(height: 2, color: BauhausDesign.surfaceWhite),
         ),
       ),
       body: preferencesState.when(
@@ -182,12 +188,11 @@ class NotificationSettingsView extends ConsumerWidget {
                     Expanded(
                       child: Text(
                         l10n.notificationsDisabledTitle,
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).titleMedium?.copyWith(
-                          color: BauhausDesign.textDark,
-                          fontWeight: FontWeight.w700,
-                        ),
+                        style: BauhausDesign.getTextTheme(context).titleMedium
+                            ?.copyWith(
+                              color: BauhausDesign.textDark,
+                              fontWeight: FontWeight.w700,
+                            ),
                       ),
                     ),
                   ],
@@ -477,8 +482,8 @@ class NotificationSettingsView extends ConsumerWidget {
                         enabledThumbRadius: 10,
                       ),
                       activeTrackColor: BauhausDesign.secondary,
-                      inactiveTrackColor: BauhausDesign.neutral.withValues(alpha: 
-                        0.2,
+                      inactiveTrackColor: BauhausDesign.neutral.withValues(
+                        alpha: 0.2,
                       ),
                       thumbColor: BauhausDesign.accent,
                       overlayShape: SliderComponentShape.noOverlay,

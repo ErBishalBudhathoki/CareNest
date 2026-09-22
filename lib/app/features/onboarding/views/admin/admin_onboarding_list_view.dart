@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import '../../providers/onboarding_providers.dart';
 import 'admin_onboarding_detail_view.dart';
 
@@ -27,7 +29,14 @@ class _AdminOnboardingListViewState
     final state = ref.watch(adminOnboardingViewModelProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Pending Onboardings')),
+      appBar: AppBar(
+        backgroundColor: BauhausDesign.secondary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
+        title: const Text('Pending Onboardings'),
+      ),
       body: state.isLoading
           ? const Center(child: CircularProgressIndicator())
           : state.error != null

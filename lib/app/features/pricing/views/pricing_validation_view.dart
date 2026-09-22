@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
 import 'package:flutter_animate/flutter_animate.dart';
@@ -127,6 +129,12 @@ class _PricingValidationViewState extends State<PricingValidationView>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         title: Text(
           AppLocalizations.of(context)!.pricingValidationTitle,
           style: const TextStyle(color: Colors.white),

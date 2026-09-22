@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/analytics/theme/bauhaus_theme.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/schedule/models/shift_model.dart';
 import 'package:carenest/app/features/worker/repositories/worker_repository.dart';
 import 'package:carenest/app/features/worker/views/widgets/worker_shift_card.dart';
@@ -61,13 +63,17 @@ class _WorkerShiftHistoryViewState
       backgroundColor: BauhausTheme.white,
       appBar: AppBar(
         title: Text('SHIFT HISTORY', style: BauhausTheme.headerStyle),
-        backgroundColor: BauhausTheme.white,
+        backgroundColor: BauhausDesign.neutral,
+        foregroundColor: BauhausDesign.surfaceWhite,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: BauhausTheme.black),
+        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
         actions: [
           IconButton(
             onPressed: _loadHistory,
-            icon: const Icon(Icons.refresh, color: BauhausTheme.black),
+            icon: const Icon(Icons.refresh, color: BauhausDesign.surfaceWhite),
           ),
         ],
       ),

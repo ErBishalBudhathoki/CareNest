@@ -8,7 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// running timer's elapsed seconds. Reacts to changes in both sources.
 final todayWorkHoursProvider = FutureProvider.family
     .autoDispose<double, String>((ref, email) async {
-
       final entries = ref.watch(timesheetViewModelProvider(email)).value ?? [];
       final timerService = ref.watch(timerServiceProvider);
 

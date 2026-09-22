@@ -57,13 +57,16 @@ final organizationSubscriptionProvider = FutureProvider.autoDispose
     });
 
 class PaymentViewModel extends AsyncNotifier<void> {
-  late final PaymentRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  PaymentRepository get _repository => ref.read(paymentRepositoryProvider);
   final StripePaymentService _stripePaymentService =
       const StripePaymentService();
 
   @override
   FutureOr<void> build() {
-    _repository = ref.watch(paymentRepositoryProvider);
+    ref.watch(paymentRepositoryProvider);
     return null;
   }
 

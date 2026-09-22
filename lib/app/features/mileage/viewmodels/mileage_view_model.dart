@@ -59,7 +59,10 @@ final mileageViewModelProvider =
 
 class MileageViewModel extends Notifier<MileageViewState> {
   late final MileageController _controller;
-  late final MileageRepository _repository;
+  // NOTE: never cache providers in `late final` fields here — build() can
+  // re-run on the same notifier instance and reassigning a late final
+  // throws LateInitializationError.
+  MileageRepository get _repository => ref.read(mileageRepositoryProvider);
 
   // TextEditingControllers are not in state (they are Flutter objects, not serializable)
   final startLocationController = TextEditingController();
@@ -69,7 +72,7 @@ class MileageViewModel extends Notifier<MileageViewState> {
   @override
   MileageViewState build() {
     _controller = ref.watch(mileageControllerProvider.notifier);
-    _repository = ref.watch(mileageRepositoryProvider);
+    ref.watch(mileageRepositoryProvider);
 
     // Sync from the backing MileageController state
     final controllerState = ref.watch(mileageControllerProvider);
