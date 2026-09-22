@@ -2,8 +2,23 @@ import 'package:carenest/app/features/admin/utils/command_desk_prefs.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+/// Darkens bright accents (e.g. the tangerine) so an icon tinted with the
+/// category colour still clears a 3:1 non-text contrast ratio on the light
+/// tile behind it. Dark accents pass through untouched.
+Color _readableAccent(Color color) {
+  if (color.computeLuminance() > 0.42) {
+    return Color.lerp(color, BauhausDesign.neutral, 0.5)!;
+  }
+  return color;
+}
+
+/// Picks ink or paper for a glyph sitting on a solid accent block, so the
+/// colour plane keeps a readable icon at any category hue.
+Color _onAccent(Color color) => color.computeLuminance() > 0.5
+    ? BauhausDesign.neutral
+    : BauhausDesign.surfaceWhite;
 
 /// Data model for a single action item inside a category.
 class CommandAction {
@@ -223,97 +238,29 @@ class _BauhausCommandCenterState extends State<BauhausCommandCenter> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildDeckHeader(),
-        const SizedBox(height: BauhausDesign.space3),
         _buildSearchField(totalActions),
         const SizedBox(height: BauhausDesign.space3),
         if (indices.isEmpty)
           _buildEmptyState()
         else
           for (var position = 0; position < indices.length; position++)
-            Padding(
-              padding: EdgeInsets.only(
-                bottom: position == indices.length - 1
-                    ? 0
-                    : BauhausDesign.space3,
+            _BauhausSectionCard(
+              category: widget.categories[indices[position]],
+              originalIndex: indices[position],
+              // Search always reveals matches, regardless of collapse state.
+              expanded:
+                  _query.isNotEmpty || _expanded.contains(indices[position]),
+              showRecentChip: _isFloated(position, indices[position]),
+              visibleActions: _visibleActions(
+                widget.categories[indices[position]],
               ),
-              child: _BauhausSectionCard(
-                category: widget.categories[indices[position]],
-                originalIndex: indices[position],
-                // Search always reveals matches, regardless of collapse state.
-                expanded:
-                    _query.isNotEmpty || _expanded.contains(indices[position]),
-                showRecentChip: _isFloated(position, indices[position]),
-                visibleActions: _visibleActions(
-                  widget.categories[indices[position]],
-                ),
-                searchActive: _query.isNotEmpty,
-                onHeaderTap: () => _toggleSection(indices[position]),
-                onActionTap: (action) =>
-                    _onActionTap(widget.categories[indices[position]], action),
-              ),
+              searchActive: _query.isNotEmpty,
+              onHeaderTap: () => _toggleSection(indices[position]),
+              onActionTap: (action) =>
+                  _onActionTap(widget.categories[indices[position]], action),
             ),
       ],
     );
-  }
-
-  Widget _buildDeckHeader() {
-    return Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
-            boxShadow: const [BauhausDesign.shadowHard],
-          ),
-          padding: const EdgeInsets.all(BauhausDesign.space4),
-          child: Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: BauhausDesign.neutral,
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
-                  boxShadow: const [BauhausDesign.shadowHardSm],
-                ),
-                child: const Icon(
-                  Icons.apps_rounded,
-                  color: BauhausDesign.surfaceWhite,
-                  size: 22,
-                ),
-              ),
-              const SizedBox(width: BauhausDesign.space3),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Command Desk',
-                      style: GoogleFonts.oswald(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.4,
-                        color: BauhausDesign.textDark,
-                        height: 1.1,
-                      ),
-                    ),
-                    Text(
-                      'Focused control for admin workflows',
-                      style: GoogleFonts.inter(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: BauhausDesign.textMuted,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        )
-        .animate()
-        .fadeIn(duration: 300.ms)
-        .slideY(begin: 0.06, end: 0, duration: 350.ms, curve: Curves.easeOut);
   }
 
   Widget _buildSearchField(int totalActions) {
@@ -428,7 +375,7 @@ class _BauhausCommandCenterState extends State<BauhausCommandCenter> {
   }
 }
 
-class _BauhausSectionCard extends StatelessWidget {
+class _BauhausSectionCard extends StatefulWidget {
   final CommandCategory category;
   final int originalIndex;
   final bool expanded;
@@ -450,122 +397,220 @@ class _BauhausSectionCard extends StatelessWidget {
   });
 
   @override
+  State<_BauhausSectionCard> createState() => _BauhausSectionCardState();
+}
+
+class _BauhausSectionCardState extends State<_BauhausSectionCard>
+    with SingleTickerProviderStateMixin {
+  static const Duration _expandDuration = Duration(milliseconds: 460);
+  static const Duration _collapseDuration = Duration(milliseconds: 280);
+
+  late final AnimationController _controller;
+  late final Animation<double> _reveal;
+  late final Animation<double> _chevron;
+
+  /// Body stays mounted while the card is open or mid-close so the collapse
+  /// animates real content, then unmounts once fully collapsed.
+  bool _showBody = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _showBody = widget.expanded;
+    _controller = AnimationController(
+      vsync: this,
+      duration: _expandDuration,
+      reverseDuration: _collapseDuration,
+      value: widget.expanded ? 1 : 0,
+    );
+    _controller.addStatusListener(_handleStatus);
+    _reveal = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOutCubic,
+      reverseCurve: Curves.easeInOutCubic,
+    );
+    _chevron = Tween<double>(begin: 0, end: 0.5).animate(_reveal);
+  }
+
+  void _handleStatus(AnimationStatus status) {
+    if (status == AnimationStatus.dismissed && _showBody && mounted) {
+      setState(() => _showBody = false);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _BauhausSectionCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.expanded != oldWidget.expanded) {
+      if (widget.expanded) {
+        if (!_showBody) setState(() => _showBody = true);
+        _controller.forward();
+      } else {
+        _controller.reverse();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.removeStatusListener(_handleStatus);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: category.accentColor, width: 2),
-        boxShadow: const [BauhausDesign.shadowHard],
-      ),
-      clipBehavior: Clip.antiAlias,
+    return AnimatedBuilder(
+      animation: _controller,
+      // Static subtree; the body stays mounted through the close animation so
+      // it retracts under SizeTransition instead of vanishing instantly.
       child: Column(
         children: [
           _buildHeader(context),
-          AnimatedSize(
-            duration: const Duration(milliseconds: 240),
-            curve: Curves.easeOut,
-            alignment: Alignment.topCenter,
-            child: expanded
+          SizeTransition(
+            sizeFactor: _reveal,
+            axisAlignment: -1,
+            child: _showBody
                 ? _buildBody(context)
                 : const SizedBox(width: double.infinity),
           ),
         ],
       ),
+      builder: (context, child) {
+        final t = _reveal.value;
+        return Transform.translate(
+          offset: Offset(0, -2 * t),
+          child: Container(
+            margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
+            decoration: BoxDecoration(
+              color: BauhausDesign.surfaceWhite,
+              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              boxShadow: [
+                BoxShadow.lerp(
+                  BauhausDesign.shadowHardSm,
+                  BauhausDesign.shadowHard,
+                  t,
+                )!,
+              ],
+            ),
+            child: child,
+          ),
+        );
+      },
     );
   }
 
   Widget _buildHeader(BuildContext context) {
+    final accent = widget.category.accentColor;
+    final onAccent = _onAccent(accent);
+    final meta = widget.searchActive
+        ? '${widget.visibleActions.length} MATCHING'
+        : '${widget.category.actions.length} ACTIONS';
+
     return Material(
-      color: Colors.transparent,
+      color: accent,
       child: InkWell(
-        onTap: () {
-          HapticFeedback.lightImpact();
-          onHeaderTap();
-        },
+        onTap: widget.onHeaderTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: BauhausDesign.space3,
-            vertical: BauhausDesign.space3,
-          ),
-          child: Row(
+          padding: const EdgeInsets.all(BauhausDesign.space4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(width: 8, height: 28, color: category.accentColor),
-              const SizedBox(width: BauhausDesign.space3),
-              Container(
-                width: 34,
-                height: 34,
-                decoration: BoxDecoration(
-                  color: category.accentColor.withValues(alpha: 0.14),
-                  border: Border.all(
-                    color: category.accentColor.withValues(alpha: 0.55),
-                    width: 1.5,
-                  ),
-                ),
-                alignment: Alignment.center,
-                child: Icon(
-                  category.headerIcon,
-                  color: category.accentColor,
-                  size: 19,
-                ),
-              ),
-              const SizedBox(width: BauhausDesign.space3),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      category.title.toUpperCase(),
-                      style: GoogleFonts.oswald(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: BauhausDesign.textDark,
-                        letterSpacing: 1.0,
-                        height: 1.1,
-                      ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      meta,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      searchActive
-                          ? '${visibleActions.length} matching actions'
-                          : '${category.actions.length} actions',
                       style: GoogleFonts.inter(
                         fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: BauhausDesign.textMuted,
+                        fontWeight: FontWeight.w700,
+                        color: onAccent.withValues(alpha: 0.85),
+                        letterSpacing: 0.6,
                       ),
                     ),
-                  ],
-                ),
-              ),
-              if (showRecentChip)
-                Container(
-                  margin: const EdgeInsets.only(right: BauhausDesign.space2),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: BauhausDesign.space2,
-                    vertical: 2,
                   ),
-                  decoration: BoxDecoration(
-                    color: category.accentColor.withValues(alpha: 0.12),
-                    border: Border.all(color: category.accentColor, width: 1),
-                  ),
-                  child: Text(
-                    'RECENT',
-                    style: GoogleFonts.inter(
-                      fontSize: 9,
-                      fontWeight: FontWeight.w800,
-                      color: category.accentColor,
-                      letterSpacing: 0.6,
+                  if (widget.showRecentChip)
+                    Container(
+                      margin: const EdgeInsets.only(
+                        right: BauhausDesign.space2,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: BauhausDesign.space2,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: onAccent.withValues(alpha: 0.16),
+                        border: Border.all(
+                          color: onAccent.withValues(alpha: 0.55),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        'RECENT',
+                        style: GoogleFonts.inter(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w800,
+                          color: onAccent,
+                          letterSpacing: 0.6,
+                        ),
+                      ),
+                    ),
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: onAccent.withValues(alpha: 0.16),
+                      border: Border.all(
+                        color: onAccent.withValues(alpha: 0.55),
+                        width: 1.5,
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: Icon(
+                      widget.category.headerIcon,
+                      color: onAccent,
+                      size: 20,
                     ),
                   ),
+                ],
+              ),
+              const SizedBox(height: BauhausDesign.space3),
+              Text(
+                widget.category.title.toUpperCase(),
+                style: GoogleFonts.oswald(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: onAccent,
+                  letterSpacing: 0.8,
+                  height: 1.05,
                 ),
-              AnimatedRotation(
-                duration: const Duration(milliseconds: 200),
-                turns: expanded ? 0.5 : 0,
-                child: const Icon(
-                  Icons.expand_more_rounded,
-                  size: 22,
-                  color: BauhausDesign.textDark,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: BauhausDesign.space2),
+              Center(
+                child: RotationTransition(
+                  turns: _chevron,
+                  child: Container(
+                    width: 36,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: onAccent.withValues(alpha: 0.16),
+                      border: Border.all(
+                        color: onAccent.withValues(alpha: 0.55),
+                        width: 1.5,
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: Icon(
+                      Icons.expand_more_rounded,
+                      color: onAccent,
+                      size: 20,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -580,8 +625,8 @@ class _BauhausSectionCard extends StatelessWidget {
       color: BauhausDesign.backgroundLight,
       child: Column(
         children: [
-          if (category.setupBannerTitle != null &&
-              category.setupBannerSubtitle != null)
+          if (widget.category.setupBannerTitle != null &&
+              widget.category.setupBannerSubtitle != null)
             _buildSetupBanner(),
           _buildActionGrid(context),
         ],
@@ -610,13 +655,16 @@ class _BauhausSectionCard extends StatelessWidget {
             height: 34,
             decoration: BoxDecoration(
               color: BauhausDesign.warning.withValues(alpha: 0.14),
-              border: Border.all(color: BauhausDesign.warning, width: 1.5),
+              border: Border.all(
+                color: _readableAccent(BauhausDesign.warning),
+                width: 1.5,
+              ),
             ),
             alignment: Alignment.center,
-            child: const Icon(
+            child: Icon(
               Icons.settings_suggest_outlined,
               size: 18,
-              color: BauhausDesign.warning,
+              color: _readableAccent(BauhausDesign.warning),
             ),
           ),
           const SizedBox(width: BauhausDesign.space3),
@@ -625,7 +673,7 @@ class _BauhausSectionCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  category.setupBannerTitle!,
+                  widget.category.setupBannerTitle!,
                   style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w800,
@@ -635,9 +683,9 @@ class _BauhausSectionCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  category.setupBannerSubtitle!,
+                  widget.category.setupBannerSubtitle!,
                   style: GoogleFonts.inter(
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.w600,
                     color: BauhausDesign.textMuted,
                     height: 1.35,
@@ -646,12 +694,12 @@ class _BauhausSectionCard extends StatelessWidget {
               ],
             ),
           ),
-          if (category.onSetupBannerTap != null &&
-              category.setupBannerActionLabel != null)
+          if (widget.category.onSetupBannerTap != null &&
+              widget.category.setupBannerActionLabel != null)
             TextButton(
-              onPressed: category.onSetupBannerTap,
+              onPressed: widget.category.onSetupBannerTap,
               style: TextButton.styleFrom(
-                foregroundColor: BauhausDesign.warning,
+                foregroundColor: _readableAccent(BauhausDesign.warning),
                 padding: const EdgeInsets.symmetric(
                   horizontal: BauhausDesign.space2,
                   vertical: BauhausDesign.space1,
@@ -660,9 +708,9 @@ class _BauhausSectionCard extends StatelessWidget {
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
               child: Text(
-                category.setupBannerActionLabel!,
+                widget.category.setupBannerActionLabel!,
                 style: GoogleFonts.inter(
-                  fontSize: 10,
+                  fontSize: 11,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.4,
                 ),
@@ -682,7 +730,7 @@ class _BauhausSectionCard extends StatelessWidget {
         : width < 390
         ? 1
         : 2;
-    final childAspectRatio = crossAxisCount == 1 ? 2.8 : 1.18;
+    final childAspectRatio = crossAxisCount == 1 ? 2.4 : 1.18;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -702,13 +750,14 @@ class _BauhausSectionCard extends StatelessWidget {
           crossAxisSpacing: BauhausDesign.space3,
           childAspectRatio: childAspectRatio,
         ),
-        itemCount: visibleActions.length,
+        itemCount: widget.visibleActions.length,
         itemBuilder: (context, index) {
           return _BauhausGridActionCard(
-            action: visibleActions[index],
+            action: widget.visibleActions[index],
+            accentColor: widget.category.accentColor,
             index: index,
-            categoryIndex: originalIndex,
-            onTap: () => onActionTap(visibleActions[index]),
+            categoryIndex: widget.originalIndex,
+            onTap: () => widget.onActionTap(widget.visibleActions[index]),
           );
         },
       ),
@@ -716,37 +765,69 @@ class _BauhausSectionCard extends StatelessWidget {
   }
 }
 
-class _BauhausGridActionCard extends StatelessWidget {
+class _BauhausGridActionCard extends StatefulWidget {
   final CommandAction action;
+  final Color accentColor;
   final int index;
   final int categoryIndex;
   final VoidCallback? onTap;
 
   const _BauhausGridActionCard({
     required this.action,
+    required this.accentColor,
     required this.index,
     required this.categoryIndex,
     this.onTap,
   });
 
   @override
+  State<_BauhausGridActionCard> createState() => _BauhausGridActionCardState();
+}
+
+class _BauhausGridActionCardState extends State<_BauhausGridActionCard> {
+  static const Offset _pressOffset = Offset(2, 2);
+  bool _pressed = false;
+
+  void _setPressed(bool value) {
+    if (_pressed == value) return;
+    setState(() => _pressed = value);
+  }
+
+  void _handleTap() {
+    HapticFeedback.lightImpact();
+    final callback = widget.onTap;
+    if (callback != null) {
+      callback();
+    } else {
+      widget.action.onTap();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final accent = widget.accentColor;
+    final reducedMotion =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    final pressed = _pressed && !reducedMotion;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {
-          HapticFeedback.lightImpact();
-          if (onTap != null) {
-            onTap!();
-          } else {
-            action.onTap();
-          }
-        },
-        child: Container(
+        onTap: _handleTap,
+        onHighlightChanged: _setPressed,
+        splashFactory: NoSplash.splashFactory,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 90),
+          curve: Curves.easeOut,
+          transform: Matrix4.translationValues(
+            pressed ? _pressOffset.dx : 0,
+            pressed ? _pressOffset.dy : 0,
+            0,
+          ),
           decoration: BoxDecoration(
             color: BauhausDesign.surfaceWhite,
-            border: Border.all(color: BauhausDesign.neutral, width: 1.8),
-            boxShadow: const [BauhausDesign.shadowHardXs],
+            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            boxShadow: pressed ? const [] : const [BauhausDesign.shadowHardSm],
           ),
           child: Padding(
             padding: const EdgeInsets.all(BauhausDesign.space3),
@@ -754,73 +835,18 @@ class _BauhausGridActionCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: action.color.withValues(alpha: 0.14),
-                        border: Border.all(
-                          color: action.color.withValues(alpha: 0.55),
-                          width: 1.4,
-                        ),
-                      ),
-                      alignment: Alignment.center,
-                      child: IconTheme(
-                        data: IconThemeData(color: action.color, size: 22),
-                        child: _constrainIcon(action.icon),
-                      ),
-                    ),
+                    _buildIconBlock(accent),
                     const Spacer(),
-                    if (action.statusLabel != null)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: BauhausDesign.space2,
-                          vertical: BauhausDesign.space1,
-                        ),
-                        decoration: BoxDecoration(
-                          color: (action.statusColor ?? BauhausDesign.warning)
-                              .withValues(alpha: 0.12),
-                          border: Border.all(
-                            color: action.statusColor ?? BauhausDesign.warning,
-                            width: 1,
-                          ),
-                        ),
-                        child: Text(
-                          action.statusLabel!,
-                          style: GoogleFonts.inter(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w800,
-                            color: action.statusColor ?? BauhausDesign.warning,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      )
-                    else
-                      Container(
-                        width: 24,
-                        height: 24,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: BauhausDesign.backgroundLight,
-                          border: Border.all(
-                            color: BauhausDesign.neutral,
-                            width: 1,
-                          ),
-                        ),
-                        child: const Icon(
-                          Icons.arrow_forward_rounded,
-                          size: 14,
-                          color: BauhausDesign.textDark,
-                        ),
-                      ),
+                    _buildTrailing(),
                   ],
                 ),
                 const SizedBox(height: BauhausDesign.space2),
                 Text(
-                  action.title,
+                  widget.action.title,
                   style: GoogleFonts.inter(
-                    fontSize: 12,
+                    fontSize: 13,
                     fontWeight: FontWeight.w800,
                     color: BauhausDesign.textDark,
                     height: 1.2,
@@ -831,33 +857,81 @@ class _BauhausGridActionCard extends StatelessWidget {
                 const SizedBox(height: BauhausDesign.space1),
                 Expanded(
                   child: Text(
-                    action.subtitle,
+                    widget.action.subtitle,
                     style: GoogleFonts.inter(
-                      fontSize: 10,
+                      fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: BauhausDesign.textMuted,
                       height: 1.3,
                     ),
-                    maxLines: 3,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                const SizedBox(height: BauhausDesign.space1),
-                Container(
-                  height: 4,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: action.color,
-                    border: Border.all(
-                      color: BauhausDesign.neutral.withValues(alpha: 0.25),
-                      width: 0.5,
-                    ),
                   ),
                 ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  /// Solid accent plane that gives every action a strong, categorised marker
+  /// instead of the old washed-out tint.
+  Widget _buildIconBlock(Color accent) {
+    return Container(
+      width: 42,
+      height: 42,
+      decoration: BoxDecoration(
+        color: accent,
+        border: Border.all(color: BauhausDesign.neutral, width: 2),
+      ),
+      alignment: Alignment.center,
+      child: IconTheme(
+        data: IconThemeData(color: _onAccent(accent), size: 22),
+        child: _constrainIcon(widget.action.icon),
+      ),
+    );
+  }
+
+  Widget _buildTrailing() {
+    final statusLabel = widget.action.statusLabel;
+    if (statusLabel != null) {
+      final statusColor = _readableAccent(
+        widget.action.statusColor ?? BauhausDesign.warning,
+      );
+      return Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: BauhausDesign.space2,
+          vertical: BauhausDesign.space1,
+        ),
+        decoration: BoxDecoration(
+          color: statusColor.withValues(alpha: 0.12),
+          border: Border.all(color: statusColor, width: 1.5),
+        ),
+        child: Text(
+          statusLabel,
+          style: GoogleFonts.inter(
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            color: statusColor,
+            letterSpacing: 0.5,
+          ),
+        ),
+      );
+    }
+    return Container(
+      width: 26,
+      height: 26,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: BauhausDesign.backgroundLight,
+        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+      ),
+      child: const Icon(
+        Icons.arrow_outward_rounded,
+        size: 15,
+        color: BauhausDesign.textDark,
       ),
     );
   }
