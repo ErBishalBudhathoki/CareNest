@@ -43,7 +43,58 @@
 #   end
 # end
 
-platform :ios, '15.5'
+# ==============================================================================
+# SINGLE SOURCE OF TRUTH FOR iOS DEPLOYMENT TARGET
+# Change MIN_IOS_VERSION here; it automatically syncs to:
+#   1. CocoaPods platform (:ios, MIN_IOS_VERSION)
+#   2. All Pod targets (IPHONEOS_DEPLOYMENT_TARGET in post_install)
+#   3. Runner.xcodeproj (project & all target configurations)
+#   4. ios/Flutter/AppFrameworkInfo.plist (MinimumOSVersion)
+# ==============================================================================
+MIN_IOS_VERSION = '16.0'
+
+def sync_ios_deployment_target(target_version)
+  # 1. Sync AppFrameworkInfo.plist
+  plist_path = File.expand_path('Flutter/AppFrameworkInfo.plist', __dir__)
+  if File.exist?(plist_path)
+    content = File.read(plist_path)
+    new_content = content.gsub(
+      /<key>MinimumOSVersion<\/key>\s*<string>[^<]*<\/string>/,
+      "<key>MinimumOSVersion</key>\n\t<string>#{target_version}</string>"
+    )
+    File.write(plist_path, new_content) if content != new_content
+  end
+
+  # 2. Sync Runner.xcodeproj
+  project_path = File.expand_path('Runner.xcodeproj', __dir__)
+  if File.exist?(project_path)
+    require 'xcodeproj'
+    project = Xcodeproj::Project.open(project_path)
+    modified = false
+
+    project.build_configurations.each do |config|
+      if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] != target_version
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = target_version
+        modified = true
+      end
+    end
+
+    project.targets.each do |target|
+      target.build_configurations.each do |config|
+        if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] != target_version
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = target_version
+          modified = true
+        end
+      end
+    end
+
+    project.save if modified
+  end
+end
+
+sync_ios_deployment_target(MIN_IOS_VERSION)
+
+platform :ios, MIN_IOS_VERSION
 use_frameworks!
 
 # Disable CocoaPods analytics to improve build latency
@@ -116,9 +167,9 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
 
-    # Force the minimum iOS version to 15.5 for all targets
+    # Force the minimum iOS version for all pod targets
     target.build_configurations.each do |config|
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.5'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = MIN_IOS_VERSION
       # Apple Silicon simulators require arm64; the old exclusion breaks local runs.
       config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'i386'
 
