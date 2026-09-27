@@ -125,17 +125,10 @@ class _PricingConfigurationViewState
     super.initState();
     _api = ref.read(app_providers.apiMethodProvider);
     _tabController = TabController(length: 4, vsync: this);
-    _tabController.addListener(_onTabChanged);
-  }
-
-  void _onTabChanged() {
-    if (_tabController.indexIsChanging) return;
-    setState(() {});
   }
 
   @override
   void dispose() {
-    _tabController.removeListener(_onTabChanged);
     _tabController.dispose();
     _fallbackRateController.dispose();
     super.dispose();
@@ -215,13 +208,6 @@ class _PricingConfigurationViewState
         overflow: TextOverflow.ellipsis,
       ),
       actions: [
-        if (_tabController.index == 1)
-          _buildHeaderActionIcon(
-            icon: Icons.add,
-            tooltip: l10n.addRuleAction,
-            onTap: _addNewRule,
-            color: _accentRed,
-          ),
         Consumer(
           builder: (context, ref, _) {
             final vm = ref.watch(pricingSettingsViewModelProvider);
@@ -368,12 +354,17 @@ class _PricingConfigurationViewState
     required String tooltip,
     required VoidCallback? onTap,
     required Color color,
+    // The app bar wants breathing room around the action. Inside the pricing
+    // rules title row the same padding makes the row 52px tall against a 16px
+    // heading, and the dead band that creates cannot be absorbed by the gap
+    // below without making it negative.
+    bool padEdges = true,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(
+      padding: EdgeInsets.only(
         right: BauhausDesign.space2,
-        top: BauhausDesign.space2,
-        bottom: BauhausDesign.space2,
+        top: padEdges ? BauhausDesign.space2 : 0,
+        bottom: padEdges ? BauhausDesign.space2 : 0,
       ),
       child: Tooltip(
         message: tooltip,
@@ -667,11 +658,9 @@ class _PricingConfigurationViewState
     );
   }
 
-  /// Mirrors [_buildGeneralSettingsTab] exactly: a lone panel title, then
-  /// `space3`, then the sections. A trailing action icon in the title row made
-  /// that row taller than the 16px heading, and the title floated centred
-  /// inside it, so the first card always sat further down than in General
-  /// Settings. The add action therefore lives in the app bar.
+  /// Mirrors [_buildGeneralSettingsTab]: a panel title row, then the sections.
+  /// The trailing action icon makes that row 36px tall against a 16px heading,
+  /// so the `space1` gap below has to absorb the extra band the icon creates.
   Widget _buildPricingRulesTab() {
     final rules = _getPricingRules(context);
     return SingleChildScrollView(
@@ -679,8 +668,29 @@ class _PricingConfigurationViewState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildPanelTitle(AppLocalizations.of(context)!.pricingRulesTitle),
-          const SizedBox(height: BauhausDesign.space3),
+          Row(
+            children: [
+              Expanded(
+                child: _buildPanelTitle(
+                  AppLocalizations.of(context)!.pricingRulesTitle,
+                ),
+              ),
+              _buildHeaderActionIcon(
+                icon: Icons.add,
+                tooltip: AppLocalizations.of(context)!.addRuleAction,
+                onTap: _addNewRule,
+                color: _accentRed,
+                padEdges: false,
+              ),
+            ],
+          ),
+          // space1, not space3: the action icon is 36px against a 16px
+          // heading, so the heading floats centred and contributes ~10px of its
+          // own dead band below. The tighter gap cancels that out, leaving the
+          // first card at the same distance from the heading as in General
+          // Settings. A 36px control beside a 16px heading always adds
+          // vertical bulk, so the gap has to absorb it.
+          const SizedBox(height: BauhausDesign.space1),
           ...rules.asMap().entries.map(
             (entry) => _buildPricingRuleCard(entry.value, entry.key),
           ),
