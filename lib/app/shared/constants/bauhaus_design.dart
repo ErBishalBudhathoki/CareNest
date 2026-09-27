@@ -173,6 +173,30 @@ class BauhausDesign {
     return background.computeLuminance() > 0.45 ? textDark : textLight;
   }
 
+  /// Half-extent of the slider thumb, so the block is `2 * sliderThumbRadius`
+  /// square.
+  static const double sliderThumbRadius = 9;
+
+  /// Corner radius of the slider thumb. DESIGN.md mandates zero radii, so the
+  /// dialer is a true square block. Note that a radius equal to
+  /// `sliderThumbRadius` on an 18x18 thumb would render a circle again.
+  static const double sliderThumbCornerRadius = 0;
+
+  /// Hard-edged slider thumb: a square block with a 2.5px border and a solid
+  /// offset shadow, matching the rest of the design language.
+  ///
+  /// Material's default `RoundSliderThumbShape` is a circle, which DESIGN.md
+  /// does not allow.
+  static final SliderComponentShape sliderThumbShape = _BauhausSliderThumbShape(
+    enabledBorderColor: neoInk,
+  );
+
+  /// Track, overlay and thumb shapes for the slider theme.
+  static const SliderTrackShape sliderTrackShape =
+      RectangularSliderTrackShape();
+  static const SliderComponentShape sliderOverlayShape =
+      _BauhausSliderOverlay();
+
   static TextStyle neoHeadingStyle(
     BuildContext context, {
     Color? color,
@@ -576,6 +600,19 @@ class BauhausDesign {
         circularTrackColor: surfaceOffWhite,
         borderRadius: BorderRadius.zero,
       ),
+      sliderTheme: SliderThemeData(
+        // Hard-edged dialer: square thumb with a structural border and a
+        // rectangular track, instead of Material's round thumb.
+        thumbColor: primary,
+        activeTrackColor: primary,
+        inactiveTrackColor: neutral.withValues(alpha: 0.25),
+        overlayColor: primary.withValues(alpha: 0.18),
+        trackHeight: 10,
+        thumbShape: sliderThumbShape,
+        trackShape: sliderTrackShape,
+        overlayShape: sliderOverlayShape,
+        showValueIndicator: ShowValueIndicator.never,
+      ),
       snackBarTheme: SnackBarThemeData(
         elevation: 0,
         backgroundColor: inverseSurface,
@@ -833,6 +870,20 @@ class BauhausDesign {
         circularTrackColor: surfaceDarkest,
         borderRadius: BorderRadius.zero,
       ),
+      sliderTheme: SliderThemeData(
+        // Hard-edged dialer, matching the light theme. The inactive track uses
+        // a themed role: a fixed `textMuted` track was near-invisible on the
+        // dark surface.
+        thumbColor: primary,
+        activeTrackColor: primary,
+        inactiveTrackColor: textLight.withValues(alpha: 0.28),
+        overlayColor: primary.withValues(alpha: 0.18),
+        trackHeight: 10,
+        thumbShape: sliderThumbShape,
+        trackShape: sliderTrackShape,
+        overlayShape: sliderOverlayShape,
+        showValueIndicator: ShowValueIndicator.never,
+      ),
       snackBarTheme: SnackBarThemeData(
         elevation: 0,
         backgroundColor: surfaceDarkest,
@@ -1040,3 +1091,100 @@ const tertiaryFixedDeep = Color(0xFF410007);
 const outlineVariant = Color(0xFFD3C5AB);
 const inverseSurface = Color(0xFF313030);
 const inversePrimary = Color(0xFFF8BE00);
+
+/// Square slider thumb with a structural border and a solid offset shadow.
+///
+/// Material's default thumb is a circle; DESIGN.md requires hard edges with no
+/// radii anywhere in the component set.
+class _BauhausSliderThumbShape extends SliderComponentShape {
+  final Color enabledBorderColor;
+
+  const _BauhausSliderThumbShape({
+    this.enabledBorderColor = BauhausDesign.neoInk,
+  });
+
+  @override
+  Size getPreferredSize(bool isEnabled, bool isDiscrete) =>
+      Size.fromRadius(BauhausDesign.sliderThumbRadius);
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    required Animation<double> activationAnimation,
+    required Animation<double> enableAnimation,
+    required bool isDiscrete,
+    required TextPainter labelPainter,
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required TextDirection textDirection,
+    required double value,
+    required double textScaleFactor,
+    required Size sizeWithOverflow,
+  }) {
+    final canvas = context.canvas;
+    final rect = Rect.fromCircle(
+      center: center,
+      radius: BauhausDesign.sliderThumbRadius,
+    );
+    final rrect = RRect.fromRectAndRadius(
+      rect,
+      Radius.circular(BauhausDesign.sliderThumbCornerRadius),
+    );
+    final enabled = enableAnimation.value >= 0.5;
+
+    // Solid offset shadow, matching the rest of the hard-edged set.
+    canvas.drawRRect(
+      rrect.shift(const Offset(2, 2)),
+      Paint()..color = BauhausDesign.neoInk.withValues(alpha: 0.9),
+    );
+
+    final fill =
+        sliderTheme.thumbColor ??
+        (enabled ? BauhausDesign.primary : BauhausDesign.surfaceWhite);
+    canvas.drawRRect(rrect, Paint()..color = fill);
+
+    canvas.drawRRect(
+      rrect,
+      Paint()
+        ..color = enabled
+            ? enabledBorderColor
+            : enabledBorderColor.withValues(alpha: 0.4)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = BauhausDesign.borderThick,
+    );
+  }
+}
+
+/// Square press/drag overlay so the interaction feedback matches the thumb.
+class _BauhausSliderOverlay extends SliderComponentShape {
+  const _BauhausSliderOverlay();
+
+  @override
+  Size getPreferredSize(bool isEnabled, bool isDiscrete) => const Size(40, 40);
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    required Animation<double> activationAnimation,
+    required Animation<double> enableAnimation,
+    required bool isDiscrete,
+    required TextPainter labelPainter,
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required TextDirection textDirection,
+    required double value,
+    required double textScaleFactor,
+    required Size sizeWithOverflow,
+  }) {
+    context.canvas.drawRect(
+      Rect.fromCenter(center: center, width: 28, height: 28),
+      Paint()
+        ..color = (sliderTheme.overlayColor ?? BauhausDesign.primary)
+            .withValues(
+              alpha: 0.18 * enableAnimation.value * activationAnimation.value,
+            ),
+    );
+  }
+}
