@@ -4,30 +4,32 @@ import GoogleMaps
 import Vision
 
 @main
-@objc class AppDelegate: FlutterAppDelegate {
-  // Blur overlay hiding NDIS PII from the iOS app-switcher snapshot
-  // (iOS has no FLAG_SECURE equivalent — this is the platform answer).
-  private var privacyBlurView: UIVisualEffectView?
-
+@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     if let apiKey = Bundle.main.object(forInfoDictionaryKey: "GoogleMapsAPIKey") as? String {
-        GMSServices.provideAPIKey(apiKey)
+      GMSServices.provideAPIKey(apiKey)
     }
-    
-    guard let systemUIRegistrar = registrar(forPlugin: "SystemUIChannelPlugin") else {
-      GeneratedPluginRegistrant.register(with: self)
-      return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-    }
-    let systemUIChannel = FlutterMethodChannel(
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
+    GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+    let messenger = engineBridge.applicationRegistrar.messenger()
+    registerSystemUIChannel(messenger: messenger)
+    registerVisionChannel(messenger: messenger)
+    registerDeviceSecurityChannel(messenger: messenger)
+  }
+
+  private func registerSystemUIChannel(messenger: FlutterBinaryMessenger) {
+    let channel = FlutterMethodChannel(
       name: "com.bishal.invoice/system_ui",
-      binaryMessenger: systemUIRegistrar.messenger()
+      binaryMessenger: messenger
     )
-    
-    systemUIChannel.setMethodCallHandler({
-      (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
+    channel.setMethodCallHandler { [weak self] call, result in
+      guard let self else { return }
       switch call.method {
       case "hideSystemUI":
         self.hideSystemUI()
@@ -38,60 +40,36 @@ import Vision
       default:
         result(FlutterMethodNotImplemented)
       }
-    })
-    
-    if let visionRegistrar = registrar(forPlugin: "VisionPlugin") {
-      let visionChannel = FlutterMethodChannel(
-        name: "com.bishal.invoice/vision",
-        binaryMessenger: visionRegistrar.messenger()
-      )
-      visionChannel.setMethodCallHandler({ [weak self] (call, result) in
-        guard call.method == "recognizeText" else {
-          result(FlutterMethodNotImplemented)
-          return
-        }
-        guard
-          let args = call.arguments as? [String: Any],
-          let path = args["path"] as? String
-        else {
-          result(FlutterError(code: "invalid_args", message: "Missing image path", details: nil))
-          return
-        }
-        self?.recognizeText(path: path, result: result)
-      })
     }
-    
-    GeneratedPluginRegistrant.register(with: self)
-    self.registerDeviceSecurityChannel()
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
-  // MARK: - App-switcher privacy (PII snapshot protection)
-
-  override func applicationWillResignActive(_ application: UIApplication) {
-    super.applicationWillResignActive(application)
-    guard privacyBlurView == nil, let window = self.window else { return }
-    let blur = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
-    blur.frame = window.bounds
-    blur.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-    window.addSubview(blur)
-    privacyBlurView = blur
-  }
-
-  override func applicationDidBecomeActive(_ application: UIApplication) {
-    super.applicationDidBecomeActive(application)
-    privacyBlurView?.removeFromSuperview()
-    privacyBlurView = nil
+  private func registerVisionChannel(messenger: FlutterBinaryMessenger) {
+    let channel = FlutterMethodChannel(
+      name: "com.bishal.invoice/vision",
+      binaryMessenger: messenger
+    )
+    channel.setMethodCallHandler { [weak self] call, result in
+      guard call.method == "recognizeText" else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+      guard
+        let arguments = call.arguments as? [String: Any],
+        let path = arguments["path"] as? String
+      else {
+        result(FlutterError(code: "invalid_args", message: "Missing image path", details: nil))
+        return
+      }
+      self?.recognizeText(path: path, result: result)
+    }
   }
 
   // MARK: - Device security posture (jailbreak detection, best-effort)
 
-  /// Called from Dart via the device_security channel registrar below.
-  private func registerDeviceSecurityChannel() {
-    guard let registrar = self.registrar(forPlugin: "DeviceSecurityPlugin") else { return }
+  private func registerDeviceSecurityChannel(messenger: FlutterBinaryMessenger) {
     let channel = FlutterMethodChannel(
       name: "com.bishal.invoice/device_security",
-      binaryMessenger: registrar.messenger()
+      binaryMessenger: messenger
     )
     channel.setMethodCallHandler({ (call, result) in
       guard call.method == "getSecurityPosture" else {
