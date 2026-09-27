@@ -1859,30 +1859,39 @@ class _NdisPricingManagementViewState
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildMetricBlock(
-                            title: 'NATIONAL CAP',
-                            value: capText,
-                            valueColor: _accentBlue,
+                    // "VERY REMOTE CAP" wraps to two lines, which left the
+                    // other two tiles shorter and vertically offset. The row
+                    // needs IntrinsicHeight because the cards live in a
+                    // CustomScrollView, where the incoming height is
+                    // unbounded and a bare CrossAxisAlignment.stretch would
+                    // assert.
+                    IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: _buildMetricBlock(
+                              title: 'NATIONAL',
+                              value: capText,
+                              valueColor: _accentBlue,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: _buildMetricBlock(
-                            title: 'REMOTE CAP',
-                            value: p01Text,
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: _buildMetricBlock(
+                              title: 'REMOTE',
+                              value: p01Text,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: _buildMetricBlock(
-                            title: 'VERY REMOTE CAP',
-                            value: veryRemoteText,
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: _buildMetricBlock(
+                              title: 'VERY REMOTE',
+                              value: veryRemoteText,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     if (showOverride) ...[
                       const SizedBox(height: 10),
@@ -1904,7 +1913,9 @@ class _NdisPricingManagementViewState
                   ),
                 ),
                 child: Text(
-                  updatedText,
+                  // No per-item timestamp exists for catalogue-seeded items,
+                  // so say so rather than implying a fresh edit.
+                  updatedText ?? 'LAST UPDATED: NOT RECORDED',
                   textAlign: TextAlign.center,
                   style: BauhausDesign.getTextTheme(context).labelLarge
                       ?.copyWith(
@@ -2000,21 +2011,45 @@ class _NdisPricingManagementViewState
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
+          // Labels are short enough to sit on one line at their natural size.
+          // Scaling them individually would give each tile a different scale
+          // factor and therefore a different height, so they are left unscaled.
           Text(
             title,
+            maxLines: 1,
+            softWrap: false,
+            overflow: TextOverflow.clip,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w800,
-              letterSpacing: 0.4,
+              letterSpacing: 0,
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            value,
-            style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-              color: resolvedValueColor,
-              fontWeight: FontWeight.w900,
+          // The amount is held to one line. FittedBox scales it down when the
+          // value is wide, but a plain FittedBox would let that scale factor
+          // change each tile's height ("$82.57" and "$123.86" are different
+          // widths in a proportional face). Pinning the height keeps all three
+          // tiles identical while still guaranteeing the value never wraps or
+          // overflows.
+          SizedBox(
+            height: 24,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                value,
+                maxLines: 1,
+                softWrap: false,
+                style: BauhausDesign.getTextTheme(context).headlineMedium
+                    ?.copyWith(
+                      color: resolvedValueColor,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 20,
+                    ),
+              ),
             ),
           ),
         ],
@@ -2028,7 +2063,14 @@ class _NdisPricingManagementViewState
     return parts.skip(1).join(' - ');
   }
 
-  String _formatLastUpdated(String itemNumber) {
+  /// Relative "last updated" label for a pricing item, or `null` when the
+  /// backend holds no per-item timestamp.
+  ///
+  /// Items seeded from the NDIS pricing catalogue carry no `updatedAt`/
+  /// `createdAt`, and `supportItem` is only populated lazily. Returning
+  /// "JUST NOW" in that case asserted something untrue: nothing had been
+  /// edited, and the catalogue snapshot was simply never stamped.
+  String? _formatLastUpdated(String itemNumber) {
     final pricing = _pricingData[itemNumber];
     final customPricing = pricing?['customPricing'];
     final supportItem = pricing?['supportItem'];
@@ -2036,7 +2078,7 @@ class _NdisPricingManagementViewState
         customPricing?['updatedAt'] ??
         customPricing?['createdAt'] ??
         supportItem?['updatedAt'];
-    if (raw == null) return 'LAST UPDATED: JUST NOW';
+    if (raw == null) return null;
 
     DateTime? updatedAt;
     if (raw is DateTime) {
@@ -2046,13 +2088,18 @@ class _NdisPricingManagementViewState
     } else if (raw is Map && raw['\$date'] != null) {
       updatedAt = DateTime.tryParse(raw['\$date'].toString());
     }
-    if (updatedAt == null) return 'LAST UPDATED: JUST NOW';
+    if (updatedAt == null) return null;
 
     final diff = DateTime.now().difference(updatedAt.toLocal());
+    if (diff.isNegative) return 'LAST UPDATED: JUST NOW';
     if (diff.inMinutes < 1) return 'LAST UPDATED: JUST NOW';
     if (diff.inMinutes < 60) return 'LAST UPDATED: ${diff.inMinutes} MINS AGO';
     if (diff.inHours < 24) return 'LAST UPDATED: ${diff.inHours} HRS AGO';
-    return 'LAST UPDATED: ${diff.inDays} DAYS AGO';
+    if (diff.inDays < 7) return 'LAST UPDATED: ${diff.inDays} DAYS AGO';
+    if (diff.inDays < 365) {
+      return 'LAST UPDATED: ${(diff.inDays / 7).floor()} WKS AGO';
+    }
+    return 'LAST UPDATED: ${(diff.inDays / 365).floor()} YR AGO';
   }
 
   /// Build modern price override section for an item
