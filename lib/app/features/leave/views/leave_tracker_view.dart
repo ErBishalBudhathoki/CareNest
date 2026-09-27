@@ -46,14 +46,16 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           l10n.leaveTracker,
-          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSecondary,
+          ),
         ),
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -68,7 +70,10 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: BauhausDesign.neutral, height: 1),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 1,
+          ),
         ),
       ),
       body: RefreshIndicator(
@@ -205,7 +210,7 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
       child: Text(
         title.toUpperCase(),
         style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-          color: BauhausDesign.textDark,
+          color: Theme.of(context).colorScheme.onSurface,
           fontWeight: FontWeight.w900,
           letterSpacing: 1.2,
         ),
@@ -225,8 +230,11 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.textDark, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Column(
@@ -239,7 +247,10 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
             decoration: BoxDecoration(
               color: accentColor,
               border: Border(
-                bottom: BorderSide(color: BauhausDesign.textDark, width: 2),
+                bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 2,
+                ),
               ),
             ),
           ),
@@ -266,20 +277,20 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontFamily: 'Inter',
                         ),
                       ),
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
                         '$days day${days == 1 ? '' : 's'} available',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
-                          color: BauhausDesign.textMuted,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           fontFamily: 'Inter',
                         ),
                       ),
@@ -298,12 +309,12 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
                         fontFamily: 'Oswald',
                       ),
                     ),
-                    const Text(
+                    Text(
                       'HOURS',
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         letterSpacing: 1.2,
                         fontFamily: 'Inter',
                       ),
@@ -328,8 +339,11 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.textDark, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -342,12 +356,15 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceOffWhite,
-                  border: Border.all(color: BauhausDesign.textDark, width: 2),
+                  color: Theme.of(context).colorScheme.surfaceContainer,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 2,
+                  ),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.trending_up,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   size: 20,
                 ),
               ),
@@ -356,12 +373,12 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'PROJECTED BALANCE',
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w800,
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         letterSpacing: 1,
                         fontFamily: 'Inter',
                       ),
@@ -369,10 +386,10 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
                     const SizedBox(height: 2),
                     Text(
                       dateStr,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontFamily: 'Inter',
                       ),
                     ),
@@ -409,16 +426,19 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
               vertical: BauhausDesign.space3,
             ),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceOffWhite,
-              border: Border.all(color: BauhausDesign.textDark, width: 2),
+              color: Theme.of(context).colorScheme.surfaceContainer,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.onSurface,
+                width: 2,
+              ),
             ),
             child: forecastAsync.when(
               data: (data) {
                 if (data == null) {
-                  return const Text(
+                  return Text(
                     'Select a date to forecast',
                     style: TextStyle(
-                      color: BauhausDesign.textMuted,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontFamily: 'Inter',
                     ),
                   );
@@ -429,10 +449,10 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
                   children: [
                     Text(
                       forecast.toStringAsFixed(2),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.w900,
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontFamily: 'Oswald',
                       ),
                     ),
@@ -440,22 +460,24 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'HOURS',
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             letterSpacing: 1,
                             fontFamily: 'Inter',
                           ),
                         ),
                         Text(
                           '≈ $days day${days == 1 ? '' : 's'}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontFamily: 'Inter',
                           ),
                         ),
@@ -475,12 +497,12 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
             ),
           ),
           const SizedBox(height: BauhausDesign.space2),
-          const Text(
+          Text(
             'Based on your start date and standard accrual rates.',
             style: TextStyle(
               fontSize: 11,
               fontStyle: FontStyle.italic,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontFamily: 'Inter',
             ),
           ),
@@ -522,7 +544,7 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
         ? BauhausDesign.error
         : isPending
         ? BauhausDesign.warning
-        : BauhausDesign.neutral;
+        : Theme.of(context).colorScheme.outline;
 
     final String statusLabel = req.status.toUpperCase();
     final Color statusBg = statusColor.withValues(alpha: 0.10);
@@ -532,8 +554,11 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
-          border: Border.all(color: BauhausDesign.textDark, width: 2),
+          color: Theme.of(context).colorScheme.surface,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
           boxShadow: const [BauhausDesign.shadowHardSm],
         ),
         child: Column(
@@ -549,7 +574,10 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
               decoration: BoxDecoration(
                 color: statusBg,
                 border: Border(
-                  bottom: BorderSide(color: BauhausDesign.textDark, width: 1),
+                  bottom: BorderSide(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 1,
+                  ),
                 ),
               ),
               child: Row(
@@ -557,10 +585,10 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
                 children: [
                   Text(
                     req.leaveType,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w800,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontFamily: 'Inter',
                     ),
                   ),
@@ -572,16 +600,16 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
                     decoration: BoxDecoration(
                       color: statusColor,
                       border: Border.all(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         width: 1.5,
                       ),
                     ),
                     child: Text(
                       statusLabel,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
-                        color: BauhausDesign.surfaceWhite,
+                        color: Theme.of(context).colorScheme.surface,
                         letterSpacing: 0.8,
                         fontFamily: 'Inter',
                       ),
@@ -598,18 +626,18 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
                 children: [
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.date_range_outlined,
                         size: 16,
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(width: BauhausDesign.space2),
                       Text(
                         "${DateFormat('dd MMM').format(req.startDate)} — ${DateFormat('dd MMM yyyy').format(req.endDate)}",
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontFamily: 'Inter',
                         ),
                       ),
@@ -620,19 +648,21 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.chat_bubble_outline,
                           size: 14,
-                          color: BauhausDesign.textMuted,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                         const SizedBox(width: BauhausDesign.space2),
                         Expanded(
                           child: Text(
                             req.reason,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
-                              color: BauhausDesign.textMuted,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                               height: 1.4,
                               fontFamily: 'Inter',
                             ),
@@ -657,8 +687,10 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
       height: 100,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral.withValues(alpha: 0.3)),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+        ),
       ),
       child: const Center(child: BauhausLoadingState(showMessage: false)),
     );
@@ -669,7 +701,7 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         border: Border.all(color: BauhausDesign.error, width: 2),
       ),
       child: Text(

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/analytics/theme/bauhaus_theme.dart';
-import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/schedule/models/shift_model.dart';
 import 'package:carenest/app/features/worker/repositories/worker_repository.dart';
 import 'package:carenest/app/features/worker/views/widgets/worker_shift_card.dart';
@@ -58,22 +57,28 @@ class _WorkerShiftHistoryViewState
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: BauhausTheme.white,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: Text('SHIFT HISTORY', style: BauhausTheme.headerStyle),
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        title: Text(
+          'SHIFT HISTORY',
+          style: BauhausTheme.headerStyle.copyWith(
+            color: colorScheme.onInverseSurface,
+          ),
+        ),
+        backgroundColor: colorScheme.inverseSurface,
+        foregroundColor: colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(color: colorScheme.onInverseSurface),
         actions: [
           IconButton(
             onPressed: _loadHistory,
-            icon: const Icon(Icons.refresh, color: BauhausDesign.surfaceWhite),
+            icon: Icon(Icons.refresh, color: colorScheme.onInverseSurface),
           ),
         ],
       ),
@@ -132,7 +137,7 @@ class _WorkerShiftHistoryViewState
                         child: Text(
                           l10n.noHistorySubtitle,
                           style: BauhausTheme.bodyStyle.copyWith(
-                            color: BauhausTheme.black,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -158,21 +163,24 @@ class _WorkerShiftHistoryViewState
 
   Widget _buildFilterChip(String label, int? days) {
     final isSelected = _selectedDays == days;
+    final colorScheme = Theme.of(context).colorScheme;
     return ChoiceChip(
       label: Text(
         label,
         style: BauhausTheme.bodyStyle.copyWith(
-          color: isSelected ? BauhausTheme.white : BauhausTheme.black,
+          color: isSelected
+              ? colorScheme.onInverseSurface
+              : colorScheme.onSurface,
           fontWeight: FontWeight.w600,
         ),
       ),
       selected: isSelected,
       onSelected: (_) => _setFilter(days),
-      selectedColor: BauhausTheme.black,
-      backgroundColor: BauhausTheme.white,
+      selectedColor: colorScheme.inverseSurface,
+      backgroundColor: colorScheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(0),
-        side: const BorderSide(color: BauhausTheme.black, width: 1.5),
+        side: BorderSide(color: colorScheme.outline, width: 1.5),
       ),
     );
   }

@@ -26,19 +26,21 @@ class _ComplianceAutomationDashboardState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        backgroundColor: BauhausDesign.textDark,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
         title: Text(
           'COMPLIANCE AUTOMATION',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onInverseSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onInverseSurface,
+        ),
       ),
       body: _isLoading
           ? const Center(child: BauhausLoadingState())
@@ -175,9 +177,10 @@ class _ComplianceAutomationDashboardState
               children: [
                 Text(
                   label.toUpperCase(),
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).labelSmall?.copyWith(color: BauhausDesign.textDark),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 ),
                 Icon(icon, color: color, size: 20),
               ],
@@ -227,9 +230,9 @@ class _ComplianceAutomationDashboardState
                       children: [
                         leadingIcon,
                         const Spacer(),
-                        const Icon(
+                        Icon(
                           Icons.arrow_forward,
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ],
                     ),
@@ -243,9 +246,10 @@ class _ComplianceAutomationDashboardState
                     const SizedBox(height: 4),
                     Text(
                       description,
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).bodySmall?.copyWith(color: BauhausDesign.textDark),
+                      style: BauhausDesign.getTextTheme(context).bodySmall
+                          ?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
                     ),
                   ],
                 );
@@ -270,18 +274,19 @@ class _ComplianceAutomationDashboardState
                         const SizedBox(height: 4),
                         Text(
                           description,
-                          style: BauhausDesign.getTextTheme(
-                            context,
-                          ).bodySmall?.copyWith(color: BauhausDesign.textDark),
+                          style: BauhausDesign.getTextTheme(context).bodySmall
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
                   ),
-                  const Icon(
+                  Icon(
                     Icons.arrow_forward,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ],
               );
@@ -308,7 +313,7 @@ class _ComplianceAutomationDashboardState
       case 'critical':
         return BauhausDesign.error;
       default:
-        return BauhausDesign.neutral;
+        return Theme.of(context).colorScheme.onSurfaceVariant;
     }
   }
 

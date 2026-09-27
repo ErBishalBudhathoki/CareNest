@@ -390,14 +390,14 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
               child: Text(
                 message,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
           ],
         ),
-        backgroundColor: BauhausDesign.surfaceLight,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
@@ -418,14 +418,14 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
               child: Text(
                 message,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
           ],
         ),
-        backgroundColor: BauhausDesign.surfaceLight,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
@@ -435,13 +435,17 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
     );
   }
 
-  TextStyle? get _sectionTitleStyle => BauhausDesign.getTextTheme(context)
-      .titleMedium
-      ?.copyWith(color: BauhausDesign.textDark, fontWeight: FontWeight.w700);
+  TextStyle? get _sectionTitleStyle =>
+      BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+        color: Theme.of(context).colorScheme.onSurface,
+        fontWeight: FontWeight.w700,
+      );
 
-  TextStyle? get _itemTitleStyle => BauhausDesign.getTextTheme(context)
-      .bodyMedium
-      ?.copyWith(color: BauhausDesign.textDark, fontWeight: FontWeight.w600);
+  TextStyle? get _itemTitleStyle =>
+      BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+        color: Theme.of(context).colorScheme.onSurface,
+        fontWeight: FontWeight.w600,
+      );
 
   TextStyle? get _itemSubtitleStyle => BauhausDesign.getTextTheme(
     context,
@@ -450,7 +454,7 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _buildBauhausAppBar(),
       body: _loading
           ? const Center(
@@ -489,10 +493,13 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: Container(
-        decoration: const BoxDecoration(
-          color: BauhausDesign.surfaceLight,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
           border: Border(
-            bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+            bottom: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
           ),
         ),
         child: SafeArea(
@@ -510,9 +517,10 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
                 const SizedBox(width: BauhausDesign.space2),
                 Text(
                   AppLocalizations.of(context)!.apiSecurity,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).displaySmall?.copyWith(color: BauhausDesign.textDark),
+                  style: BauhausDesign.getTextTheme(context).displaySmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 ),
                 const Spacer(),
                 BauhausIconButton(
@@ -543,9 +551,12 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Row(
@@ -555,9 +566,9 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
           Expanded(
             child: Text(
               AppLocalizations.of(context)!.apiSecurity,
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).labelLarge?.copyWith(color: BauhausDesign.textDark),
+              style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
           ),
           BauhausChip(
@@ -622,9 +633,12 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
           2, // 2 columns
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardXs],
       ),
       child: Column(
@@ -638,12 +652,15 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
                   height: 22,
                   decoration: BoxDecoration(
                     color: color,
-                    border: Border.all(color: BauhausDesign.neutral, width: 1),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 1,
+                    ),
                   ),
                   child: Icon(
                     icon,
                     size: 13,
-                    color: BauhausDesign.surfaceLight,
+                    color: Theme.of(context).colorScheme.surface,
                   ),
                 ),
                 const SizedBox(width: BauhausDesign.space2),
@@ -655,7 +672,7 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
                   overflow: TextOverflow.ellipsis,
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -667,7 +684,7 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
             value,
             style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ],
@@ -679,18 +696,21 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title, style: _sectionTitleStyle),
-          const Divider(
+          Divider(
             height: BauhausDesign.space6,
-            color: BauhausDesign.neutral,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             thickness: 1.2,
           ),
           child,
@@ -853,7 +873,7 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
                   text: user['activityLevel'] ?? 'low',
                   color: user['activityLevel'] == 'high'
                       ? BauhausDesign.primary
-                      : BauhausDesign.neutral,
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
                   isSmall: true,
                 ),
               );
@@ -933,7 +953,10 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
 
           // Divider between config and current rate-limited users
           items.add(
-            const Divider(color: BauhausDesign.neutral, thickness: 0.5),
+            Divider(
+              color: Theme.of(context).colorScheme.outline,
+              thickness: 0.5,
+            ),
           );
 
           // Aggregate current rate-limited entries by IP (blocked IPs + failed attempts)

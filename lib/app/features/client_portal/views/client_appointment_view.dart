@@ -145,28 +145,38 @@ class _ClientAppointmentViewState extends ConsumerState<ClientAppointmentView> {
 
   Widget _buildFilterTabs(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
-          bottom: BorderSide(color: BauhausDesign.neutral, width: 1),
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 1,
+          ),
         ),
       ),
       padding: const EdgeInsets.all(BauhausDesign.space4),
       child: Row(
         children: [
           _buildFilterTab(
+            context: context,
             label: 'Upcoming',
             value: 'upcoming',
             icon: Icons.calendar_today,
           ),
           const SizedBox(width: BauhausDesign.space3),
-          _buildFilterTab(label: 'Past', value: 'past', icon: Icons.history),
+          _buildFilterTab(
+            context: context,
+            label: 'Past',
+            value: 'past',
+            icon: Icons.history,
+          ),
         ],
       ),
     );
   }
 
   Widget _buildFilterTab({
+    required BuildContext context,
     required String label,
     required String value,
     required IconData icon,
@@ -182,10 +192,12 @@ class _ClientAppointmentViewState extends ConsumerState<ClientAppointmentView> {
           decoration: BoxDecoration(
             color: isSelected
                 ? BauhausDesign.primary
-                : BauhausDesign.surfaceWhite,
+                : Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
             border: Border.all(
-              color: isSelected ? BauhausDesign.primary : BauhausDesign.neutral,
+              color: isSelected
+                  ? BauhausDesign.primary
+                  : Theme.of(context).colorScheme.outline,
               width: 1.5,
             ),
             boxShadow: isSelected ? const [BauhausDesign.shadowHardXs] : [],
@@ -196,8 +208,8 @@ class _ClientAppointmentViewState extends ConsumerState<ClientAppointmentView> {
               Icon(
                 icon,
                 color: isSelected
-                    ? BauhausDesign.surfaceWhite
-                    : BauhausDesign.textMuted,
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
                 size: 18,
               ),
               const SizedBox(width: BauhausDesign.space2),
@@ -207,8 +219,8 @@ class _ClientAppointmentViewState extends ConsumerState<ClientAppointmentView> {
                   fontSize: 13,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                   color: isSelected
-                      ? BauhausDesign.surfaceWhite
-                      : BauhausDesign.textDark,
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ],
@@ -285,7 +297,7 @@ class _ClientAppointmentViewState extends ConsumerState<ClientAppointmentView> {
 
     return RefreshIndicator(
       color: BauhausDesign.primary,
-      backgroundColor: BauhausDesign.surfaceWhite,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       onRefresh: () async {
         ref.invalidate(clientAppointmentsProvider);
         if (widget.clientId != null && widget.clientId!.isNotEmpty) {
@@ -321,16 +333,19 @@ class _ClientAppointmentViewState extends ConsumerState<ClientAppointmentView> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
         ),
         title: Text(
           'Request Appointment',
           style: GoogleFonts.oswald(
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         content: Column(
@@ -430,12 +445,19 @@ class _AppointmentCard extends StatelessWidget {
     final formattedDate = date != null
         ? DateFormat('MMM d, yyyy').format(date)
         : appointment.date;
+    final colorScheme = Theme.of(context).colorScheme;
+    final headerBackground = isUpcoming
+        ? colorScheme.secondary
+        : colorScheme.inverseSurface;
+    final headerForeground = isUpcoming
+        ? colorScheme.onSecondary
+        : colorScheme.onInverseSurface;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: isUpcoming ? BauhausDesign.secondary : BauhausDesign.neutral,
+        color: headerBackground,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(BauhausDesign.radiusMd),
           topRight: Radius.circular(BauhausDesign.radiusMd),
@@ -446,12 +468,12 @@ class _AppointmentCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space3),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite.withValues(alpha: 0.2),
+              color: headerForeground.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
             ),
             child: Icon(
               isUpcoming ? Icons.calendar_today : Icons.history,
-              color: BauhausDesign.surfaceWhite,
+              color: headerForeground,
               size: 20,
             ),
           ),
@@ -465,7 +487,7 @@ class _AppointmentCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: BauhausDesign.surfaceWhite.withValues(alpha: 0.8),
+                    color: headerForeground.withValues(alpha: 0.8),
                     letterSpacing: 1,
                   ),
                 ),
@@ -474,7 +496,7 @@ class _AppointmentCard extends StatelessWidget {
                   style: GoogleFonts.oswald(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: BauhausDesign.surfaceWhite,
+                    color: headerForeground,
                   ),
                 ),
               ],
@@ -495,7 +517,7 @@ class _AppointmentCard extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
-                  color: BauhausDesign.surfaceWhite,
+                  color: colorScheme.onSecondary,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -529,9 +551,9 @@ class _AppointmentCard extends StatelessWidget {
           children: [
             Text(
               'TIME',
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+              style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             Text(
               '${appointment.startTime} - ${appointment.endTime}',
@@ -570,9 +592,9 @@ class _AppointmentCard extends StatelessWidget {
             children: [
               Text(
                 'SUPPORT WORKER',
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               Text(
                 appointment.workerName ?? appointment.userEmail ?? '',
@@ -595,20 +617,26 @@ class _AppointmentCard extends StatelessWidget {
         vertical: BauhausDesign.space2,
       ),
       decoration: BoxDecoration(
-        color: BauhausDesign.backgroundLight,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral.withValues(alpha: 0.3)),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.open_in_new, color: BauhausDesign.textMuted, size: 14),
+          Icon(
+            Icons.open_in_new,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            size: 14,
+          ),
           const SizedBox(width: BauhausDesign.space2),
           Text(
             'Tap to view details',
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -671,16 +699,22 @@ class _ServiceHistoryFooter extends ConsumerWidget {
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
                         '${service.date} • ${service.startTime} - ${service.endTime}',
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                        style: BauhausDesign.getTextTheme(context).bodySmall
+                            ?.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
                       ),
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
                         'Worker: ${service.workerName}',
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                        style: BauhausDesign.getTextTheme(context).bodySmall
+                            ?.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
                       ),
                       const SizedBox(height: BauhausDesign.space2),
                       if (rating > 0)

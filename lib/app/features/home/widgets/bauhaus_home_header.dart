@@ -19,13 +19,14 @@ class BauhausHomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final now = DateTime.now();
     final dateStr = DateFormat('EEEE, d MMMM').format(now).toUpperCase();
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space4),
-      color: BauhausDesign.accent, // Yellow background
+      color: colorScheme.primary,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -47,7 +48,7 @@ class BauhausHomeHeader extends StatelessWidget {
                                 .labelSmall
                                 ?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: BauhausDesign.textDark,
+                                  color: colorScheme.onPrimary,
                                   letterSpacing: 1.0,
                                 ),
                           ),
@@ -58,7 +59,7 @@ class BauhausHomeHeader extends StatelessWidget {
                                 .headlineMedium
                                 ?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: BauhausDesign.textDark,
+                                  color: colorScheme.onPrimary,
                                   height: 1.0,
                                 ),
                           ),
@@ -68,7 +69,7 @@ class BauhausHomeHeader extends StatelessWidget {
                                 .displaySmall
                                 ?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: BauhausDesign.textDark,
+                                  color: colorScheme.onPrimary,
                                   height: 1.0,
                                 ),
                             maxLines: 1,
@@ -97,9 +98,9 @@ class BauhausHomeHeader extends StatelessWidget {
                               vertical: BauhausDesign.space1,
                             ),
                             decoration: BoxDecoration(
-                              color: BauhausDesign.surfaceLight,
+                              color: colorScheme.surface,
                               border: Border.all(
-                                color: BauhausDesign.textDark,
+                                color: colorScheme.outline,
                                 width: 2,
                               ),
                             ),
@@ -109,7 +110,7 @@ class BauhausHomeHeader extends StatelessWidget {
                                   .labelSmall
                                   ?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: BauhausDesign.textDark,
+                                    color: colorScheme.onSurface,
                                     letterSpacing: 0.5,
                                   ),
                             ),
@@ -134,15 +135,17 @@ class BauhausHomeHeader extends StatelessWidget {
   }
 
   Widget _buildProfileImage(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       width: 60,
       height: 60,
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        border: Border.all(color: BauhausDesign.textDark, width: 3),
-        boxShadow: const [
+        color: colorScheme.surface,
+        border: Border.all(color: colorScheme.outline, width: 3),
+        boxShadow: [
           BoxShadow(
-            color: BauhausDesign.textDark,
+            color: colorScheme.shadow,
             offset: Offset(4, 4),
             blurRadius: 0,
           ),
@@ -156,7 +159,7 @@ class BauhausHomeHeader extends StatelessWidget {
                 style: BauhausDesign.getTextTheme(context).headlineMedium
                     ?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: BauhausDesign.textDark,
+                      color: colorScheme.onSurface,
                     ),
               ),
             ),
@@ -178,6 +181,8 @@ class _AnimatedRefreshButtonState extends State<_AnimatedRefreshButton> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return GestureDetector(
       onTapDown: (_) => setState(() => _isPressed = true),
       onTapUp: (_) {
@@ -193,15 +198,11 @@ class _AnimatedRefreshButtonState extends State<_AnimatedRefreshButton> {
           padding: const EdgeInsets.symmetric(horizontal: BauhausDesign.space2),
           decoration: BoxDecoration(
             color: _isPressed
-                ? BauhausDesign.neutral.withValues(alpha: 0.1)
-                : BauhausDesign.surfaceWhite,
-            border: Border.all(color: BauhausDesign.textDark, width: 2),
+                ? colorScheme.outline.withValues(alpha: 0.1)
+                : colorScheme.surface,
+            border: Border.all(color: colorScheme.outline, width: 2),
           ),
-          child: const Icon(
-            Icons.refresh,
-            size: 14,
-            color: BauhausDesign.textDark,
-          ),
+          child: Icon(Icons.refresh, size: 14, color: colorScheme.onSurface),
         ),
       ),
     );

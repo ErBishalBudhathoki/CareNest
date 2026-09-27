@@ -157,7 +157,9 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: isHighlight ? FontWeight.bold : FontWeight.normal,
-                color: isHighlight ? Colors.orange[700] : null,
+                color: isHighlight
+                    ? Theme.of(context).colorScheme.primary
+                    : null,
               ),
             ),
           ),
@@ -198,10 +200,14 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
                   style: const TextStyle(fontSize: 12),
                 ),
                 const SizedBox(width: 6),
-                const Tooltip(
+                Tooltip(
                   message:
                       'Exact hours shown up to 4 decimals (seconds included). Total = Hours × Rate.',
-                  child: Icon(Icons.info_outline, size: 14, color: Colors.grey),
+                  child: Icon(
+                    Icons.info_outline,
+                    size: 14,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
@@ -334,7 +340,10 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
                     padding: const EdgeInsets.only(top: 4),
                     child: Text(
                       'No client selected; save as organization rate.',
-                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
               ],

@@ -138,6 +138,7 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     Widget card = MouseRegion(
       onEnter: (_) => _onHover(true),
       onExit: (_) => _onHover(false),
@@ -157,23 +158,23 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          widget.data.surfaceColor ?? Colors.white,
-                          (widget.data.surfaceColor ?? Colors.white)
+                          widget.data.surfaceColor ?? colorScheme.surface,
+                          (widget.data.surfaceColor ?? colorScheme.surface)
                               .withValues(alpha: 0.1),
                         ],
                       ),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black12,
+                      color: colorScheme.shadow.withValues(alpha: 0.07),
                       blurRadius: 8,
                       offset: Offset(0, 4),
                     ),
                   ],
                   border: widget.data.showBorder
                       ? Border.all(
-                          color: (widget.data.color ?? const Color(0xFFE0E0E0))
-                              .withValues(alpha: 0.1),
+                          color: (widget.data.color ?? colorScheme.outline)
+                              .withValues(alpha: 0.5),
                           width: 1,
                         )
                       : null,
@@ -182,16 +183,16 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildHeader(),
+                    _buildHeader(context),
                     const SizedBox(height: 8.0),
-                    _buildValue(),
+                    _buildValue(context),
                     if (widget.data.trend != null) ...[
                       const SizedBox(height: 4.0),
-                      _buildTrendIndicator(),
+                      _buildTrendIndicator(context),
                     ],
                     if (widget.data.subtitle != null) ...[
                       const SizedBox(height: 16.0),
-                      _buildSubtitle(),
+                      _buildSubtitle(context),
                     ],
                   ],
                 ),
@@ -250,11 +251,12 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
     }
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
         if (widget.data.icon != null) ...[
-          _buildIcon(),
+          _buildIcon(context),
           const SizedBox(width: 8.0),
         ],
         Expanded(
@@ -262,7 +264,7 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
             widget.data.title,
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)
                 .copyWith(
-                  color: widget.data.titleColor ?? const Color(0xFF6B7280),
+                  color: widget.data.titleColor ?? colorScheme.onSurfaceVariant,
                   letterSpacing: 0.5,
                 ),
             overflow: TextOverflow.ellipsis,
@@ -274,7 +276,7 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
             icon: Icon(
               widget.data.actionIcon,
               size: 16,
-              color: const Color(0xFF9CA3AF),
+              color: colorScheme.onSurfaceVariant,
             ),
             onPressed: widget.data.onActionTap,
             padding: EdgeInsets.zero,
@@ -284,28 +286,32 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
     );
   }
 
-  Widget _buildIcon() {
+  Widget _buildIcon(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: (widget.data.color ?? const Color(0xFF667EEA)).withValues(alpha: 0.1),
+        color: (widget.data.color ?? colorScheme.primary).withValues(
+          alpha: 0.1,
+        ),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(
         widget.data.icon!,
-        color: widget.data.color ?? const Color(0xFF667EEA),
+        color: widget.data.color ?? colorScheme.primary,
         size: 20,
       ),
     );
   }
 
-  Widget _buildValue() {
+  Widget _buildValue(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Text(
       widget.data.value,
       style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700)
           .copyWith(
-            color: widget.data.valueColor ?? const Color(0xFF1F2937),
+            color: widget.data.valueColor ?? colorScheme.onSurface,
             letterSpacing: -0.5,
           ),
       overflow: TextOverflow.ellipsis,
@@ -313,10 +319,11 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
     );
   }
 
-  Widget _buildTrendIndicator() {
+  Widget _buildTrendIndicator(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final trend = widget.data.trend!;
     final isPositive = trend.isPositive;
-    final color = isPositive ? Colors.green : Colors.red;
+    final color = isPositive ? colorScheme.secondary : colorScheme.error;
 
     return Row(
       children: [
@@ -352,18 +359,19 @@ class _EnhancedStatCardState extends State<EnhancedStatCard>
             style: const TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w500,
-            ).copyWith(color: const Color(0xFF9CA3AF)),
+            ).copyWith(color: colorScheme.onSurfaceVariant),
           ),
         ],
       ],
     );
   }
 
-  Widget _buildSubtitle() {
+  Widget _buildSubtitle(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Text(
       widget.data.subtitle!,
       style: const TextStyle(fontSize: 12).copyWith(
-        color: widget.data.subtitleColor ?? const Color(0xFF6B7280),
+        color: widget.data.subtitleColor ?? colorScheme.onSurfaceVariant,
         height: 1.3,
       ),
       overflow: TextOverflow.ellipsis,

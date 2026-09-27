@@ -35,6 +35,8 @@ class AuthValidationWidget extends StatefulWidget {
 
 class _AuthValidationWidgetState extends State<AuthValidationWidget>
     with TickerProviderStateMixin {
+  ColorScheme get _colorScheme => Theme.of(context).colorScheme;
+
   late AnimationController _validationController;
   late Animation<double> _validationAnimation;
   late AnimationController _shakeController;
@@ -200,14 +202,14 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(color: _getBorderColor(), width: 1),
-                  color: BauhausDesign.backgroundLight,
+                  color: _colorScheme.surface,
                 ),
                 child: TextField(
                   controller: widget.controller,
                   obscureText: widget.obscureText,
                   style: BauhausDesign.getTextTheme(context).bodyMedium
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: _colorScheme.onSurface,
                         fontWeight: FontWeight.w500,
                       ),
                   decoration: InputDecoration(
@@ -223,11 +225,13 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
                       vertical: 16,
                     ),
                     labelStyle: TextStyle(
-                      color: BauhausDesign.textMuted,
+                      color: _colorScheme.onSurfaceVariant,
                       fontSize: 14,
                     ),
                     hintStyle: TextStyle(
-                      color: BauhausDesign.textMuted.withValues(alpha: 0.5),
+                      color: _colorScheme.onSurfaceVariant.withValues(
+                        alpha: 0.5,
+                      ),
                       fontSize: 16,
                     ),
                   ),
@@ -251,7 +255,7 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
                                   Icon(
                                     Icons.warning_amber_outlined,
                                     size: 16,
-                                    color: BauhausDesign.error,
+                                    color: _colorScheme.error,
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
@@ -259,7 +263,7 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
                                       _errorMessage ?? '',
                                       style: TextStyle(
                                         fontSize: 12,
-                                        color: BauhausDesign.error,
+                                        color: _colorScheme.error,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -289,7 +293,7 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
           widget.obscureText
               ? Icons.visibility_off_outlined
               : Icons.visibility_outlined,
-          color: BauhausDesign.textMuted,
+          color: _colorScheme.onSurfaceVariant,
         ),
       );
     }
@@ -300,7 +304,7 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
         builder: (context, child) {
           return Icon(
             _isValid ? Icons.check_circle_outline : Icons.cancel_outlined,
-            color: _isValid ? BauhausDesign.success : BauhausDesign.error,
+            color: _isValid ? _colorScheme.secondary : _colorScheme.error,
           );
         },
       );
@@ -311,16 +315,16 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
 
   Color _getBorderColor() {
     if (!widget.showValidation || !_hasBeenTouched) {
-      return BauhausDesign.neutral;
+      return _colorScheme.outline;
     }
-    return _isValid ? BauhausDesign.success : BauhausDesign.error;
+    return _isValid ? _colorScheme.secondary : _colorScheme.error;
   }
 
   Color _getIconColor() {
     if (!widget.showValidation || !_hasBeenTouched) {
-      return BauhausDesign.textMuted;
+      return _colorScheme.onSurfaceVariant;
     }
-    return _isValid ? BauhausDesign.success : BauhausDesign.error;
+    return _isValid ? _colorScheme.secondary : _colorScheme.error;
   }
 
   Widget _buildPasswordStrengthIndicator() {
@@ -339,7 +343,10 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
             children: [
               Text(
                 'Password strength: ',
-                style: TextStyle(fontSize: 12, color: BauhausDesign.textMuted),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: _colorScheme.onSurfaceVariant,
+                ),
               ),
               Text(
                 strengthText,
@@ -355,7 +362,7 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
           LinearProgressIndicator(
             value: strength / 4,
             valueColor: AlwaysStoppedAnimation<Color>(strengthColor),
-            backgroundColor: BauhausDesign.neutral.withValues(alpha: 0.3),
+            backgroundColor: _colorScheme.outline.withValues(alpha: 0.3),
             minHeight: 3,
           ),
         ],
@@ -397,16 +404,16 @@ class _AuthValidationWidgetState extends State<AuthValidationWidget>
     switch (strength) {
       case 0:
       case 1:
-        return BauhausDesign.error;
+        return _colorScheme.error;
       case 2:
-        return Colors.orange;
+        return _colorScheme.primary;
       case 3:
-        return Colors.yellow.shade700;
+        return _colorScheme.primary;
       case 4:
       case 5:
-        return BauhausDesign.success;
+        return _colorScheme.secondary;
       default:
-        return BauhausDesign.error;
+        return _colorScheme.error;
     }
   }
 }

@@ -45,7 +45,7 @@ class OvertimeHeatmap extends StatelessWidget {
             'OVERTIME HOTSPOTS',
             style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
               fontWeight: FontWeight.w900,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 16),
@@ -102,7 +102,7 @@ class OvertimeHeatmap extends StatelessWidget {
                           width: 32,
                           height: 32,
                           decoration: BoxDecoration(
-                            color: _getColor(metric.totalHours),
+                            color: _getColor(context, metric.totalHours),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Center(
@@ -111,7 +111,7 @@ class OvertimeHeatmap extends StatelessWidget {
                               style: TextStyle(
                                 color: metric.totalHours > 40
                                     ? Colors.white
-                                    : BauhausDesign.textDark,
+                                    : Theme.of(context).colorScheme.onSurface,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 12,
                               ),
@@ -175,10 +175,10 @@ class OvertimeHeatmap extends StatelessWidget {
     return days[weekday - 1];
   }
 
-  Color _getColor(double hours) {
+  Color _getColor(BuildContext context, double hours) {
     if (hours > 40) return BauhausDesign.error;
     if (hours >= 35) return BauhausDesign.warning;
-    return BauhausDesign.surfaceWhite;
+    return Theme.of(context).colorScheme.surface;
   }
 
   String _getInitials(String name) {
@@ -234,7 +234,9 @@ class _DayBar extends StatelessWidget {
           style: TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.bold,
-            color: isWeekend ? BauhausDesign.secondary : BauhausDesign.textDark,
+            color: isWeekend
+                ? BauhausDesign.secondary
+                : Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ],

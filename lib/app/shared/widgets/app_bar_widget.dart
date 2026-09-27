@@ -1,5 +1,4 @@
 import 'package:carenest/app/shared/widgets/profile_placeholder_widget.dart';
-import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:carenest/app/shared/widgets/profile_image_widget.dart';
@@ -25,21 +24,16 @@ class CustomAppBar extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      color: theme.colorScheme.surface,
+      color: theme.colorScheme.inverseSurface,
       child: AppBar(
         toolbarHeight: 70.0,
         elevation: 0,
-        surfaceTintColor: theme.colorScheme.surface,
+        surfaceTintColor: theme.colorScheme.inverseSurface,
         scrolledUnderElevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: theme.colorScheme.surface,
-          // Bauhaus surfaces are always light, so status bar icons stay dark.
-          statusBarIconBrightness: Brightness.dark,
-          statusBarBrightness: Brightness.light,
-        ),
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         centerTitle: false,
         titleTextStyle: theme.textTheme.headlineMedium?.copyWith(
-          color: BauhausDesign.surfaceWhite,
+          color: theme.colorScheme.onInverseSurface,
         ),
         title: ProfilePlaceholder(firstName: firstName, lastName: lastName),
         actions: [
@@ -68,35 +62,45 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final bool showBackButton;
   final List<Widget>? actions;
-  final Color backgroundColor;
-  final Color foregroundColor;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
 
   const AppBarWidget({
     super.key,
     required this.title,
     this.showBackButton = true,
     this.actions,
-    this.backgroundColor = BauhausDesign.neutral,
-    this.foregroundColor = BauhausDesign.surfaceWhite,
+    this.backgroundColor,
+    this.foregroundColor,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final resolvedBackground =
+        backgroundColor ?? theme.colorScheme.inverseSurface;
+    final resolvedForeground =
+        foregroundColor ??
+        (backgroundColor == null
+            ? theme.colorScheme.onInverseSurface
+            : ThemeData.estimateBrightnessForColor(resolvedBackground) ==
+                  Brightness.dark
+            ? theme.colorScheme.surface
+            : theme.colorScheme.onSurface);
     return AppBar(
       title: Text(
         title,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: theme.textTheme.titleLarge?.copyWith(
-          color: foregroundColor,
+          color: resolvedForeground,
           fontWeight: FontWeight.bold,
           fontSize: 20,
         ),
       ),
       centerTitle: true,
-      backgroundColor: backgroundColor,
-      foregroundColor: foregroundColor,
+      backgroundColor: resolvedBackground,
+      foregroundColor: resolvedForeground,
       surfaceTintColor: Colors.transparent,
       scrolledUnderElevation: 0,
       systemOverlayStyle: SystemUiOverlayStyle.light,
@@ -111,7 +115,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       actions: actions,
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(2.0),
-        child: Container(color: foregroundColor, height: 2.0),
+        child: Container(color: resolvedForeground, height: 2.0),
       ),
     );
   }

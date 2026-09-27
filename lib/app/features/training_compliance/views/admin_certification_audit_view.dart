@@ -34,22 +34,30 @@ class _AdminCertificationAuditViewState
     final state = ref.watch(certificationsViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.certificationAuditTitle,
-          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onSecondary,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onSecondary,
+        ),
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: BauhausDesign.neutral, height: 2),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 2,
+          ),
         ),
       ),
       body: state.isLoading
@@ -79,7 +87,7 @@ class _AdminCertificationAuditViewState
   Widget _buildAuditCard(BuildContext context, Certification cert) {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: BauhausDesign.cardDecoration,
+      decoration: BauhausDesign.cardDecorationFor(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -100,13 +108,18 @@ class _AdminCertificationAuditViewState
                 decoration: BoxDecoration(
                   color: BauhausDesign.warning,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
-                  border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 1.5,
+                  ),
                 ),
                 child: Text(
                   cert.status.toUpperCase(),
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).labelLarge?.copyWith(color: Colors.white, fontSize: 10),
+                  style: BauhausDesign.getTextTheme(context).labelLarge
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontSize: 10,
+                      ),
                 ),
               ),
             ],
@@ -204,10 +217,13 @@ class _AdminCertificationAuditViewState
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          backgroundColor: BauhausDesign.surfaceLight,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
           ),
           title: Text(
             '$actionLabel Certification',
@@ -223,7 +239,7 @@ class _AdminCertificationAuditViewState
               const SizedBox(height: BauhausDesign.space3),
               TextFormField(
                 controller: numberController,
-                decoration: BauhausDesign.inputDecoration('').copyWith(
+                decoration: BauhausDesign.inputDecoration(context, '').copyWith(
                   labelText: 'Certification / NDIS Check Number (Optional)',
                 ),
               ),
@@ -247,8 +263,10 @@ class _AdminCertificationAuditViewState
                 child: Container(
                   padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.backgroundLight,
-                    border: Border.all(color: BauhausDesign.neutral),
+                    color: Theme.of(context).colorScheme.onSecondary,
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -268,6 +286,7 @@ class _AdminCertificationAuditViewState
               TextFormField(
                 controller: notesController,
                 decoration: BauhausDesign.inputDecoration(
+                  context,
                   '',
                 ).copyWith(labelText: 'Audit Notes (Optional)'),
                 maxLines: 2,
@@ -279,9 +298,9 @@ class _AdminCertificationAuditViewState
               onPressed: () => Navigator.pop(context),
               child: Text(
                 AppLocalizations.of(context)!.cancelButton,
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).labelLarge?.copyWith(color: BauhausDesign.textDark),
+                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
             ),
             BauhausButton(

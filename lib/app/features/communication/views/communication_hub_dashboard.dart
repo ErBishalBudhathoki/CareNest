@@ -76,14 +76,14 @@ class _CommunicationHubDashboardState
     final state = ref.watch(communicationViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         title: Text(
           'COMMUNICATION HUB',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onSecondary,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -93,7 +93,7 @@ class _CommunicationHubDashboardState
         children: [
           // Tab Selector
           Container(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
             child: LayoutBuilder(
               builder: (context, constraints) {
                 if (constraints.maxWidth < 520) {
@@ -148,16 +148,19 @@ class _CommunicationHubDashboardState
           decoration: BoxDecoration(
             color: isSelected
                 ? BauhausDesign.secondary
-                : BauhausDesign.surfaceWhite,
+                : Theme.of(context).colorScheme.surface,
             border: Border(
               bottom: BorderSide(
                 color: isSelected
                     ? BauhausDesign.secondary
-                    : BauhausDesign.neutral,
+                    : Theme.of(context).colorScheme.outline,
                 width: isSelected ? 4 : 2,
               ),
               right: index < 2
-                  ? const BorderSide(color: BauhausDesign.neutral, width: 2)
+                  ? BorderSide(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 2,
+                    )
                   : BorderSide.none,
             ),
           ),
@@ -166,8 +169,10 @@ class _CommunicationHubDashboardState
             textAlign: TextAlign.center,
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
               color: isSelected
-                  ? BauhausDesign.surfaceWhite
-                  : BauhausDesign.textDark.withValues(alpha: 0.7),
+                  ? Theme.of(context).colorScheme.onSecondary
+                  : Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.7),
               fontWeight: FontWeight.w900,
               letterSpacing: 1.2,
             ),
@@ -187,16 +192,19 @@ class _CommunicationHubDashboardState
         decoration: BoxDecoration(
           color: isSelected
               ? BauhausDesign.secondary
-              : BauhausDesign.surfaceWhite,
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
+              : Theme.of(context).colorScheme.surface,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
         ),
         child: Text(
           label,
           textAlign: TextAlign.center,
           style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
             color: isSelected
-                ? BauhausDesign.surfaceWhite
-                : BauhausDesign.textDark,
+                ? Theme.of(context).colorScheme.onSecondary
+                : Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w900,
             letterSpacing: 1.1,
           ),
@@ -233,8 +241,13 @@ class _CommunicationHubDashboardState
               width: 52,
               height: 52,
               decoration: BoxDecoration(
-                color: BauhausDesign.secondary.withValues(alpha: 0.1),
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                // Opaque fill: a translucent one lets the opaque zero-blur
+                // black `shadowHardXs` bleed through and render the tile black.
+                color: Theme.of(context).colorScheme.surface,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
                 boxShadow: const [BauhausDesign.shadowHardXs],
               ),
               child: const Icon(
@@ -246,14 +259,16 @@ class _CommunicationHubDashboardState
             title: Text(
               conversation.participantName,
               style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.bold,
               ),
             ),
             subtitle: Text(
               conversation.lastMessage,
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                color: BauhausDesign.textDark.withValues(alpha: 0.6),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -267,7 +282,7 @@ class _CommunicationHubDashboardState
                     decoration: BoxDecoration(
                       color: BauhausDesign.primary,
                       border: Border.all(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.outline,
                         width: 1.5,
                       ),
                     ),
@@ -275,12 +290,15 @@ class _CommunicationHubDashboardState
                       '${conversation.unreadCount}',
                       style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
-                            color: BauhausDesign.surfaceWhite,
+                            color: Theme.of(context).colorScheme.onPrimary,
                             fontWeight: FontWeight.w900,
                           ),
                     ),
                   )
-                : const Icon(Icons.chevron_right, color: BauhausDesign.neutral),
+                : Icon(
+                    Icons.chevron_right,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
             onTap: () {
               ref
                   .read(communicationViewModelProvider.notifier)
@@ -322,11 +340,13 @@ class _CommunicationHubDashboardState
                             decoration: BoxDecoration(
                               color: sel
                                   ? BauhausDesign.secondary
-                                  : BauhausDesign.surfaceOffWhite,
+                                  : Theme.of(
+                                      context,
+                                    ).colorScheme.surfaceContainer,
                               border: Border.all(
                                 color: sel
                                     ? BauhausDesign.secondary
-                                    : BauhausDesign.neutral,
+                                    : Theme.of(context).colorScheme.outline,
                                 width: 2,
                               ),
                               boxShadow: sel
@@ -340,8 +360,10 @@ class _CommunicationHubDashboardState
                                   .labelSmall
                                   ?.copyWith(
                                     color: sel
-                                        ? BauhausDesign.surfaceWhite
-                                        : BauhausDesign.textDark,
+                                        ? Theme.of(context).colorScheme.surface
+                                        : Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface,
                                     fontWeight: FontWeight.w800,
                                     letterSpacing: 1.2,
                                   ),
@@ -384,9 +406,9 @@ class _CommunicationHubDashboardState
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.surfaceOffWhite,
+                        color: Theme.of(context).colorScheme.surfaceContainer,
                         border: Border.all(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.outline,
                           width: 2,
                         ),
                       ),
@@ -394,7 +416,7 @@ class _CommunicationHubDashboardState
                         child: DropdownButton<String>(
                           isExpanded: true,
                           value: _selectedGroup,
-                          dropdownColor: BauhausDesign.surfaceWhite,
+                          dropdownColor: Theme.of(context).colorScheme.surface,
                           items:
                               [
                                     'All Workers',
@@ -609,6 +631,10 @@ class _CommunicationHubDashboardState
         .where((b) => !b.acknowledgments.contains(currentUserId))
         .toList();
     final hasActive = active.isNotEmpty;
+    final colorScheme = Theme.of(context).colorScheme;
+    final bannerForeground = hasActive
+        ? colorScheme.onSecondary
+        : colorScheme.onInverseSurface;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
@@ -622,8 +648,8 @@ class _CommunicationHubDashboardState
               Container(
                 width: double.infinity,
                 color: hasActive
-                    ? BauhausDesign.secondary
-                    : BauhausDesign.neutral,
+                    ? colorScheme.secondary
+                    : colorScheme.inverseSurface,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 14,
                   vertical: 10,
@@ -632,7 +658,7 @@ class _CommunicationHubDashboardState
                   children: [
                     Icon(
                       hasActive ? Icons.campaign : Icons.campaign_outlined,
-                      color: Colors.white,
+                      color: bannerForeground,
                       size: 16,
                     ),
                     const SizedBox(width: 8),
@@ -642,16 +668,16 @@ class _CommunicationHubDashboardState
                           : 'BROADCAST CHANNEL',
                       style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
-                            color: Colors.white,
+                            color: bannerForeground,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 1.5,
                           ),
                     ),
                     const Spacer(),
                     IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.refresh,
-                        color: Colors.white,
+                        color: bannerForeground,
                         size: 16,
                       ),
                       onPressed: () {
@@ -671,19 +697,19 @@ class _CommunicationHubDashboardState
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: hasActive
-                      ? const Color(0xFFF0F7FF)
-                      : BauhausDesign.surfaceOffWhite,
+                      ? colorScheme.secondaryContainer
+                      : colorScheme.surfaceContainer,
                   border: Border.all(
                     color: hasActive
                         ? BauhausDesign.secondary
-                        : BauhausDesign.neutral,
+                        : Theme.of(context).colorScheme.outline,
                     width: 2,
                   ),
                   boxShadow: [
                     BoxShadow(
                       color: hasActive
                           ? BauhausDesign.secondary
-                          : BauhausDesign.neutral,
+                          : Theme.of(context).colorScheme.outline,
                       offset: const Offset(4, 4),
                       blurRadius: 0,
                     ),
@@ -732,9 +758,9 @@ class _CommunicationHubDashboardState
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.campaign,
-                              color: Colors.white,
+                              color: colorScheme.onSecondary,
                               size: 14,
                             ),
                             const SizedBox(width: 8),
@@ -743,7 +769,7 @@ class _CommunicationHubDashboardState
                               style: BauhausDesign.getTextTheme(context)
                                   .labelSmall
                                   ?.copyWith(
-                                    color: Colors.white,
+                                    color: colorScheme.onSecondary,
                                     fontWeight: FontWeight.w800,
                                     letterSpacing: 1.5,
                                   ),
@@ -791,6 +817,7 @@ class _CommunicationHubDashboardState
   }
 
   void _showBroadcastDialog(BuildContext context, CommunicationState state) {
+    final colorScheme = Theme.of(context).colorScheme;
     final msgCtrl = TextEditingController();
     String type = _broadcastType;
     String group = _selectedGroup;
@@ -802,8 +829,11 @@ class _CommunicationHubDashboardState
         insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: Container(
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            color: Theme.of(context).colorScheme.surface,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             boxShadow: const [
               BoxShadow(
                 color: BauhausDesign.secondary,
@@ -819,20 +849,24 @@ class _CommunicationHubDashboardState
               children: [
                 Container(
                   width: double.infinity,
-                  color: BauhausDesign.neutral,
+                  color: colorScheme.inverseSurface,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 12,
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.campaign, color: Colors.white, size: 16),
+                      Icon(
+                        Icons.campaign,
+                        color: colorScheme.onInverseSurface,
+                        size: 16,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'SEND BROADCAST',
                         style: BauhausDesign.getTextTheme(context).titleSmall
                             ?.copyWith(
-                              color: Colors.white,
+                              color: colorScheme.onInverseSurface,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 1.8,
                             ),
@@ -875,11 +909,15 @@ class _CommunicationHubDashboardState
                                   decoration: BoxDecoration(
                                     color: sel
                                         ? BauhausDesign.secondary
-                                        : BauhausDesign.surfaceOffWhite,
+                                        : Theme.of(
+                                            context,
+                                          ).colorScheme.surfaceContainer,
                                     border: Border.all(
                                       color: sel
                                           ? BauhausDesign.secondary
-                                          : BauhausDesign.neutral,
+                                          : Theme.of(
+                                              context,
+                                            ).colorScheme.outline,
                                       width: 2,
                                     ),
                                   ),
@@ -890,8 +928,8 @@ class _CommunicationHubDashboardState
                                         .labelSmall
                                         ?.copyWith(
                                           color: sel
-                                              ? Colors.white
-                                              : BauhausDesign.textDark,
+                                              ? colorScheme.onSecondary
+                                              : colorScheme.onSurface,
                                           fontWeight: FontWeight.w800,
                                           letterSpacing: 1,
                                         ),
@@ -915,9 +953,11 @@ class _CommunicationHubDashboardState
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           decoration: BoxDecoration(
-                            color: BauhausDesign.surfaceOffWhite,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainer,
                             border: Border.all(
-                              color: BauhausDesign.neutral,
+                              color: Theme.of(context).colorScheme.outline,
                               width: 2,
                             ),
                           ),
@@ -925,7 +965,9 @@ class _CommunicationHubDashboardState
                             child: DropdownButton<String>(
                               isExpanded: true,
                               value: group,
-                              dropdownColor: BauhausDesign.surfaceWhite,
+                              dropdownColor: Theme.of(
+                                context,
+                              ).colorScheme.surface,
                               items:
                                   [
                                         'All Workers',
@@ -963,19 +1005,21 @@ class _CommunicationHubDashboardState
                           style: BauhausDesign.getTextTheme(context).bodyMedium,
                           decoration: InputDecoration(
                             filled: true,
-                            fillColor: BauhausDesign.surfaceOffWhite,
+                            fillColor: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainer,
                             hintText: 'Type your broadcast message...',
-                            border: const OutlineInputBorder(
+                            border: OutlineInputBorder(
                               borderRadius: BorderRadius.zero,
                               borderSide: BorderSide(
-                                color: BauhausDesign.neutral,
+                                color: Theme.of(context).colorScheme.outline,
                                 width: 2,
                               ),
                             ),
-                            enabledBorder: const OutlineInputBorder(
+                            enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.zero,
                               borderSide: BorderSide(
-                                color: BauhausDesign.neutral,
+                                color: Theme.of(context).colorScheme.outline,
                                 width: 2,
                               ),
                             ),
@@ -1000,9 +1044,13 @@ class _CommunicationHubDashboardState
                                     vertical: 12,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: BauhausDesign.surfaceOffWhite,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surfaceContainer,
                                     border: Border.all(
-                                      color: BauhausDesign.neutral,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.outline,
                                       width: 1.5,
                                     ),
                                   ),
@@ -1057,7 +1105,9 @@ class _CommunicationHubDashboardState
                                   decoration: BoxDecoration(
                                     color: BauhausDesign.secondary,
                                     border: Border.all(
-                                      color: BauhausDesign.neutral,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.outline,
                                       width: 1.5,
                                     ),
                                     boxShadow: const [
@@ -1070,7 +1120,7 @@ class _CommunicationHubDashboardState
                                     style: BauhausDesign.getTextTheme(context)
                                         .labelSmall
                                         ?.copyWith(
-                                          color: Colors.white,
+                                          color: colorScheme.onSecondary,
                                           fontWeight: FontWeight.w800,
                                           letterSpacing: 1.5,
                                         ),
@@ -1094,27 +1144,31 @@ class _CommunicationHubDashboardState
 
   void _showConversationDialog(BuildContext context, String participantName) {
     final state = ref.read(communicationViewModelProvider);
+    final colorScheme = Theme.of(context).colorScheme;
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: BauhausDesign.backgroundLight,
-        shape: const RoundedRectangleBorder(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.zero,
-          side: BorderSide(color: BauhausDesign.neutral, width: 3),
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 3,
+          ),
         ),
         title: Container(
           padding: const EdgeInsets.all(16),
-          decoration: const BoxDecoration(
-            color: BauhausDesign.secondary,
+          decoration: BoxDecoration(
+            color: colorScheme.secondary,
             border: Border(
-              bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+              bottom: BorderSide(color: colorScheme.outline, width: 2),
             ),
           ),
           child: Text(
             participantName.toUpperCase(),
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-              color: BauhausDesign.surfaceWhite,
+              color: Theme.of(context).colorScheme.onSecondary,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.5,
             ),
@@ -1125,10 +1179,12 @@ class _CommunicationHubDashboardState
           width: double.maxFinite,
           height: 400,
           child: state.messages.isEmpty
-              ? const Center(
+              ? Center(
                   child: Text(
                     'No messages',
-                    style: TextStyle(color: BauhausDesign.textDark),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                 )
               : ListView.builder(
@@ -1138,17 +1194,18 @@ class _CommunicationHubDashboardState
                     return ListTile(
                       title: Text(
                         message.message,
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
+                            ?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
                       ),
                       subtitle: Text(
                         message.sentAt,
                         style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
-                              color: BauhausDesign.textDark.withValues(
-                                alpha: 0.7,
-                              ),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.7),
                             ),
                       ),
                     );
@@ -1180,9 +1237,12 @@ class _CommsBroadcastTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
         ),
       ),
       padding: const EdgeInsets.all(14),
@@ -1195,13 +1255,16 @@ class _CommsBroadcastTile extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: BauhausDesign.secondary,
-                  border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 1.5,
+                  ),
                 ),
                 child: Text(
                   broadcast.type.toUpperCase(),
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onSecondary,
                         fontWeight: FontWeight.bold,
                         fontSize: 10,
                       ),
@@ -1214,7 +1277,9 @@ class _CommsBroadcastTile extends StatelessWidget {
                   style: BauhausDesign.getTextTheme(context).bodySmall
                       ?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: BauhausDesign.textDark.withValues(alpha: 0.7),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -1224,7 +1289,7 @@ class _CommsBroadcastTile extends StatelessWidget {
                 '${broadcast.createdAt.hour}:${broadcast.createdAt.minute.toString().padLeft(2, '0')}',
                 style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ],
@@ -1234,7 +1299,7 @@ class _CommsBroadcastTile extends StatelessWidget {
             broadcast.message,
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               height: 1.4,
             ),
           ),
@@ -1276,8 +1341,11 @@ class _CommsBroadcastHistoryTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1296,7 +1364,9 @@ class _CommsBroadcastHistoryTile extends StatelessWidget {
               Text(
                 timeAgo,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textDark.withValues(alpha: 0.6),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.6),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -1306,7 +1376,7 @@ class _CommsBroadcastHistoryTile extends StatelessWidget {
           Text(
             broadcast.message,
             style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
             maxLines: 2,
@@ -1315,13 +1385,19 @@ class _CommsBroadcastHistoryTile extends StatelessWidget {
           const SizedBox(height: 8),
           Row(
             children: [
-              const Icon(Icons.group, size: 12, color: BauhausDesign.neutral),
+              Icon(
+                Icons.group,
+                size: 12,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
               const SizedBox(width: 4),
               Text(
                 broadcast.group,
                 style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
                   fontSize: 10,
-                  color: BauhausDesign.textDark.withValues(alpha: 0.7),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
               const Spacer(),

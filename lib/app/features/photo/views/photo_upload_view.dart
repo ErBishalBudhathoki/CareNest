@@ -43,13 +43,17 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
     required Color backgroundColor,
   }) {
     if (!mounted) return;
+    final colorScheme = Theme.of(context).colorScheme;
+    final foregroundColor = backgroundColor == colorScheme.secondary
+        ? colorScheme.onSecondary
+        : colorScheme.onPrimary;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           message,
           style: BauhausDesign.getTextTheme(
             context,
-          ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+          ).bodyMedium?.copyWith(color: foregroundColor),
         ),
         backgroundColor: backgroundColor,
         behavior: SnackBarBehavior.floating,
@@ -79,24 +83,28 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
         uiSettings: [
           AndroidUiSettings(
             toolbarTitle: 'Crop Photo',
-            toolbarColor: BauhausDesign.primary,
-            toolbarWidgetColor: BauhausDesign.surfaceWhite,
+            toolbarColor: Theme.of(context).colorScheme.primary,
+            toolbarWidgetColor: Theme.of(context).colorScheme.onPrimary,
             initAspectRatio: CropAspectRatioPreset.square,
             lockAspectRatio: true,
             hideBottomControls:
                 true, // Hide bottom controls to avoid navigation bar interference
             statusBarLight: false,
-            activeControlsWidgetColor: BauhausDesign.primary,
-            cropFrameColor: BauhausDesign.primary,
-            cropGridColor: BauhausDesign.primary.withValues(alpha: 0.5),
-            dimmedLayerColor: Colors.black.withValues(alpha: 0.8),
+            activeControlsWidgetColor: Theme.of(context).colorScheme.primary,
+            cropFrameColor: Theme.of(context).colorScheme.primary,
+            cropGridColor: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.5),
+            dimmedLayerColor: Theme.of(
+              context,
+            ).colorScheme.inverseSurface.withValues(alpha: 0.8),
             showCropGrid: true,
             // Additional settings to prevent navigation bar interference
             cropFrameStrokeWidth: 3,
             cropGridStrokeWidth: 1,
             cropGridRowCount: 3,
             cropGridColumnCount: 3,
-            backgroundColor: Colors.black,
+            backgroundColor: Theme.of(context).colorScheme.inverseSurface,
           ),
           IOSUiSettings(
             title: 'Crop Photo',
@@ -191,26 +199,26 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         elevation: 0,
         surfaceTintColor: Colors.transparent,
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         scrolledUnderElevation: 0,
         title: Text(
           'Profile Photo',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             fontWeight: FontWeight.w600,
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onInverseSurface,
           ),
         ),
         centerTitle: true,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back_ios,
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onInverseSurface,
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
@@ -255,16 +263,17 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
           textAlign: TextAlign.center,
           style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: BauhausDesign.space3),
         Text(
           'A great photo builds trust and makes your profile stand out.',
           textAlign: TextAlign.center,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).bodyLarge?.copyWith(color: BauhausDesign.textMuted, height: 1.5),
+          style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            height: 1.5,
+          ),
         ),
       ],
     );
@@ -332,7 +341,10 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         boxShadow: const [BauhausDesign.shadowHard],
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
       ),
       child: ClipOval(child: Image.file(_imageFile!, fit: BoxFit.cover)),
     );
@@ -386,9 +398,8 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
               const SizedBox(width: BauhausDesign.space3),
               Text(
                 'A Few Quick Tips',
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).headlineSmall?.copyWith(color: BauhausDesign.textDark),
+                style: BauhausDesign.getTextTheme(context).headlineSmall
+                    ?.copyWith(color: Theme.of(context).colorScheme.onSurface),
               ),
             ],
           ),
@@ -421,9 +432,10 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
         Expanded(
           child: Text(
             text,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyLarge?.copyWith(color: BauhausDesign.textDark, height: 1.4),
+            style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+              height: 1.4,
+            ),
           ),
         ),
       ],

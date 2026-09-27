@@ -11,7 +11,6 @@ const _paper = BauhausDesign.neoPaper;
 const _signal = BauhausDesign.neoSignal;
 const _danger = BauhausDesign.neoDanger;
 const _highlight = BauhausDesign.neoHighlight;
-const _rangeLight = Color(0xFFD6E4FF);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Public API
@@ -420,7 +419,7 @@ class _BauhausDateRangePickerDialogState
       bg = _signal;
       fg = _paper;
     } else if (inRange) {
-      bg = _rangeLight;
+      bg = Theme.of(context).colorScheme.primaryContainer;
       fg = _signal;
     }
 

@@ -272,7 +272,7 @@ class _FinancialIntelligenceDashboardState
     final error = analyticsState.error ?? cashState.error ?? revenueState.error;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _buildAppBar(context),
       body: organizationId == null || organizationId.isEmpty
           ? _buildMissingOrganizationState(context)
@@ -335,7 +335,7 @@ class _FinancialIntelligenceDashboardState
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      foregroundColor: BauhausDesign.surfaceWhite,
+      foregroundColor: Theme.of(context).colorScheme.onPrimary,
       systemOverlayStyle: SystemUiOverlayStyle.light,
       backgroundColor: BauhausDesign.primary,
       elevation: 0,
@@ -343,13 +343,16 @@ class _FinancialIntelligenceDashboardState
       title: Text(
         'FINANCIAL INTELLIGENCE',
         style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-          color: BauhausDesign.surfaceWhite,
+          color: Theme.of(context).colorScheme.onPrimary,
           letterSpacing: 0.6,
           fontWeight: FontWeight.w700,
         ),
       ),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: BauhausDesign.surfaceWhite),
+        icon: Icon(
+          Icons.arrow_back,
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
         onPressed: () => Navigator.pop(context),
       ),
       bottom: PreferredSize(
@@ -362,7 +365,10 @@ class _FinancialIntelligenceDashboardState
             ),
             Expanded(
               flex: 5,
-              child: Container(height: 8, color: BauhausDesign.surfaceWhite),
+              child: Container(
+                height: 8,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
             ),
             Expanded(
               flex: 2,
@@ -403,14 +409,17 @@ class _FinancialIntelligenceDashboardState
       decoration: BoxDecoration(
         color: BauhausDesign.error.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.2,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
+          Icon(
             Icons.error_outline_rounded,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onErrorContainer,
             size: 18,
           ),
           const SizedBox(width: BauhausDesign.space2),
@@ -418,7 +427,7 @@ class _FinancialIntelligenceDashboardState
             child: Text(
               error,
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onErrorContainer,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -439,9 +448,12 @@ class _FinancialIntelligenceDashboardState
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Stack(
@@ -529,9 +541,12 @@ class _FinancialIntelligenceDashboardState
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceOffWhite,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.5,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -555,7 +570,7 @@ class _FinancialIntelligenceDashboardState
           Text(
             'Net Cash Position',
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -571,7 +586,7 @@ class _FinancialIntelligenceDashboardState
           Text(
             'Cashflow change: $varianceLabel',
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -663,7 +678,10 @@ class _FinancialIntelligenceDashboardState
       decoration: BoxDecoration(
         color: metric.accent.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.2,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -673,11 +691,15 @@ class _FinancialIntelligenceDashboardState
             height: 36,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-              border: Border.all(color: BauhausDesign.neutral),
+              border: Border.all(color: Theme.of(context).colorScheme.outline),
             ),
-            child: Icon(metric.icon, color: BauhausDesign.textDark, size: 18),
+            child: Icon(
+              metric.icon,
+              color: Theme.of(context).colorScheme.onSurface,
+              size: 18,
+            ),
           ),
           const SizedBox(width: BauhausDesign.space2),
           Expanded(
@@ -688,7 +710,7 @@ class _FinancialIntelligenceDashboardState
                   metric.title,
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -697,7 +719,7 @@ class _FinancialIntelligenceDashboardState
                   metric.value,
                   style: BauhausDesign.getTextTheme(context).titleMedium
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w800,
                       ),
                 ),
@@ -734,9 +756,12 @@ class _FinancialIntelligenceDashboardState
         Container(
           padding: const EdgeInsets.all(BauhausDesign.space3),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             boxShadow: const [BauhausDesign.shadowHardSm],
           ),
           child: LayoutBuilder(
@@ -766,7 +791,9 @@ class _FinancialIntelligenceDashboardState
                           horizontal: BauhausDesign.space2,
                         ),
                         height: 1,
-                        color: BauhausDesign.neutral.withValues(alpha: 0.22),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.outline.withValues(alpha: 0.22),
                       ),
                   ],
                 ],
@@ -785,9 +812,12 @@ class _FinancialIntelligenceDashboardState
         vertical: BauhausDesign.space2,
       ),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceOffWhite,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral, width: 1),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
@@ -813,7 +843,7 @@ class _FinancialIntelligenceDashboardState
         text,
         textAlign: alignRight ? TextAlign.right : TextAlign.left,
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-          color: BauhausDesign.textDark,
+          color: Theme.of(context).colorScheme.onSurface,
           fontWeight: FontWeight.w800,
         ),
       ),
@@ -846,7 +876,7 @@ class _FinancialIntelligenceDashboardState
                     row.name,
                     style: BauhausDesign.getTextTheme(context).labelLarge
                         ?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w700,
                         ),
                   ),
@@ -860,7 +890,7 @@ class _FinancialIntelligenceDashboardState
               row.revenue,
               textAlign: TextAlign.right,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -871,7 +901,7 @@ class _FinancialIntelligenceDashboardState
               row.margin,
               textAlign: TextAlign.right,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -882,7 +912,7 @@ class _FinancialIntelligenceDashboardState
               row.runway,
               textAlign: TextAlign.right,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -899,13 +929,15 @@ class _FinancialIntelligenceDashboardState
                 decoration: BoxDecoration(
                   color: row.accent.withValues(alpha: 0.16),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                 ),
                 child: Text(
                   row.confidence,
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w800,
                       ),
                 ),
@@ -922,9 +954,12 @@ class _FinancialIntelligenceDashboardState
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceOffWhite,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.2,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -945,7 +980,7 @@ class _FinancialIntelligenceDashboardState
                   row.name,
                   style: BauhausDesign.getTextTheme(context).labelLarge
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -958,13 +993,15 @@ class _FinancialIntelligenceDashboardState
                 decoration: BoxDecoration(
                   color: row.accent.withValues(alpha: 0.16),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                 ),
                 child: Text(
                   row.confidence,
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w800,
                       ),
                 ),
@@ -990,9 +1027,12 @@ class _FinancialIntelligenceDashboardState
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space2),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral, width: 1),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1008,7 +1048,7 @@ class _FinancialIntelligenceDashboardState
           Text(
             value,
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -1095,9 +1135,12 @@ class _FinancialIntelligenceDashboardState
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Column(
@@ -1112,12 +1155,15 @@ class _FinancialIntelligenceDashboardState
             decoration: BoxDecoration(
               color: lane.accent.withValues(alpha: 0.16),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-              border: Border.all(color: BauhausDesign.neutral, width: 1.2),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1.2,
+              ),
             ),
             child: Text(
               lane.title,
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -1142,9 +1188,12 @@ class _FinancialIntelligenceDashboardState
         child: Container(
           padding: const EdgeInsets.all(BauhausDesign.space3),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceOffWhite,
+            color: Theme.of(context).colorScheme.surfaceContainer,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            border: Border.all(color: BauhausDesign.neutral, width: 1.2),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 1.2,
+            ),
           ),
           child: Row(
             children: [
@@ -1155,12 +1204,14 @@ class _FinancialIntelligenceDashboardState
                 decoration: BoxDecoration(
                   color: module.accent.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                 ),
                 child: Icon(
                   module.icon,
                   size: 18,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(width: BauhausDesign.space2),
@@ -1172,7 +1223,7 @@ class _FinancialIntelligenceDashboardState
                       module.title,
                       style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w700,
                           ),
                     ),
@@ -1180,7 +1231,7 @@ class _FinancialIntelligenceDashboardState
                       module.description,
                       style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w600,
                           ),
                     ),
@@ -1188,10 +1239,10 @@ class _FinancialIntelligenceDashboardState
                 ),
               ),
               const SizedBox(width: BauhausDesign.space2),
-              const Icon(
+              Icon(
                 Icons.arrow_forward_rounded,
                 size: 16,
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ],
           ),
@@ -1221,9 +1272,12 @@ class _FinancialIntelligenceDashboardState
         Container(
           padding: const EdgeInsets.all(BauhausDesign.space4),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             boxShadow: const [BauhausDesign.shadowHard],
           ),
           child: Column(
@@ -1238,15 +1292,18 @@ class _FinancialIntelligenceDashboardState
                 width: double.infinity,
                 padding: const EdgeInsets.all(BauhausDesign.space3),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceOffWhite,
+                  color: Theme.of(context).colorScheme.surfaceContainer,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                  border: Border.all(color: BauhausDesign.neutral, width: 1.2),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 1.2,
+                  ),
                 ),
                 child: Text(
                   'Signal: ladder is generated from backend position and forecast data for your organization.',
                   style: BauhausDesign.getTextTheme(context).bodySmall
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w600,
                       ),
                 ),
@@ -1273,9 +1330,12 @@ class _FinancialIntelligenceDashboardState
           return Container(
             padding: const EdgeInsets.all(BauhausDesign.space2),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceOffWhite,
+              color: Theme.of(context).colorScheme.surfaceContainer,
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-              border: Border.all(color: BauhausDesign.neutral, width: 1),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1,
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1286,7 +1346,7 @@ class _FinancialIntelligenceDashboardState
                       point.label,
                       style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w700,
                           ),
                     ),
@@ -1295,7 +1355,7 @@ class _FinancialIntelligenceDashboardState
                       '${point.value.toStringAsFixed(0)}d',
                       style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w800,
                           ),
                     ),
@@ -1305,9 +1365,11 @@ class _FinancialIntelligenceDashboardState
                 Container(
                   height: 14,
                   decoration: BoxDecoration(
-                    color: BauhausDesign.surfaceWhite,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                    border: Border.all(color: BauhausDesign.neutral),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
                   ),
                   alignment: Alignment.centerLeft,
                   child: FractionallySizedBox(
@@ -1334,7 +1396,7 @@ class _FinancialIntelligenceDashboardState
               child: Text(
                 point.label,
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -1343,9 +1405,11 @@ class _FinancialIntelligenceDashboardState
               child: Container(
                 height: 14,
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceOffWhite,
+                  color: Theme.of(context).colorScheme.surfaceContainer,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                 ),
                 alignment: Alignment.centerLeft,
                 child: FractionallySizedBox(
@@ -1368,7 +1432,7 @@ class _FinancialIntelligenceDashboardState
                 '${point.value.toStringAsFixed(0)}d',
                 textAlign: TextAlign.right,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -1393,9 +1457,12 @@ class _FinancialIntelligenceDashboardState
         Container(
           padding: const EdgeInsets.symmetric(vertical: BauhausDesign.space3),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             boxShadow: const [BauhausDesign.shadowHard],
           ),
           child: SingleChildScrollView(
@@ -1425,7 +1492,10 @@ class _FinancialIntelligenceDashboardState
       decoration: BoxDecoration(
         color: item.accent.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.2,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1437,11 +1507,17 @@ class _FinancialIntelligenceDashboardState
                 height: 34,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceWhite,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                 ),
-                child: Icon(item.icon, size: 18, color: BauhausDesign.textDark),
+                child: Icon(
+                  item.icon,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
               const SizedBox(width: BauhausDesign.space2),
               Expanded(
@@ -1451,7 +1527,7 @@ class _FinancialIntelligenceDashboardState
                   overflow: TextOverflow.ellipsis,
                   style: BauhausDesign.getTextTheme(context).labelLarge
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -1464,7 +1540,7 @@ class _FinancialIntelligenceDashboardState
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -1487,13 +1563,15 @@ class _FinancialIntelligenceDashboardState
                 decoration: BoxDecoration(
                   color: item.accent.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                 ),
                 child: Text(
                   item.severity.toUpperCase(),
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w800,
                       ),
                 ),
@@ -1525,17 +1603,24 @@ class _FinancialIntelligenceDashboardState
           decoration: BoxDecoration(
             color: accent.withValues(alpha: 0.14),
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-            border: Border.all(color: BauhausDesign.neutral, width: 1.2),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 1.2,
+            ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 16, color: BauhausDesign.textDark),
+              Icon(
+                icon,
+                size: 16,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
               const SizedBox(width: BauhausDesign.space1),
               Text(
                 label,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -1559,12 +1644,15 @@ class _FinancialIntelligenceDashboardState
       decoration: BoxDecoration(
         color: accent.withValues(alpha: 0.16),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.1),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.1,
+        ),
       ),
       child: Text(
         text,
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-          color: BauhausDesign.textDark,
+          color: Theme.of(context).colorScheme.onSurface,
           fontWeight: FontWeight.w800,
         ),
       ),
@@ -2097,7 +2185,10 @@ class _KpiChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: accent.withValues(alpha: 0.16),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral, width: 1),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2105,7 +2196,7 @@ class _KpiChip extends StatelessWidget {
           Text(
             label,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -2113,7 +2204,7 @@ class _KpiChip extends StatelessWidget {
           Text(
             value,
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w800,
             ),
           ),

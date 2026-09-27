@@ -105,10 +105,12 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     Color headerColor = BauhausDesign.primary,
     BauhausActionVariant confirmVariant = BauhausActionVariant.primary,
   }) async {
-    final headerForeground =
-        ThemeData.estimateBrightnessForColor(headerColor) == Brightness.dark
-        ? BauhausDesign.surfaceWhite
-        : BauhausDesign.textDark;
+    final colorScheme = Theme.of(context).colorScheme;
+    final headerForeground = headerColor == BauhausDesign.error
+        ? colorScheme.onError
+        : headerColor == BauhausDesign.secondary
+        ? colorScheme.onSecondary
+        : colorScheme.onPrimary;
 
     final result = await showDialog<bool>(
       context: context,
@@ -123,8 +125,11 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
           child: Container(
             width: _dialogWidth(dialogContext, maxWidth: 520),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
-              border: Border.all(color: BauhausDesign.neutral, width: 3),
+              color: Theme.of(context).colorScheme.surface,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 3,
+              ),
               boxShadow: const [BauhausDesign.shadowHard],
             ),
             child: Column(
@@ -140,7 +145,7 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                     color: headerColor,
                     border: Border(
                       bottom: BorderSide(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.outline,
                         width: 3,
                       ),
                     ),
@@ -168,9 +173,10 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                   padding: const EdgeInsets.all(BauhausDesign.space4),
                   child: Text(
                     message,
-                    style: BauhausDesign.getTextTheme(
-                      dialogContext,
-                    ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                    style: BauhausDesign.getTextTheme(dialogContext).bodyMedium
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                   ),
                 ),
                 Padding(
@@ -226,8 +232,11 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
           child: Container(
             width: _dialogWidth(dialogContext, maxWidth: 560),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
-              border: Border.all(color: BauhausDesign.neutral, width: 3),
+              color: Theme.of(context).colorScheme.surface,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 3,
+              ),
               boxShadow: const [BauhausDesign.shadowHard],
             ),
             child: Column(
@@ -239,20 +248,20 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                     horizontal: BauhausDesign.space4,
                     vertical: BauhausDesign.space3,
                   ),
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: BauhausDesign.error,
                     border: Border(
                       bottom: BorderSide(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.outline,
                         width: 3,
                       ),
                     ),
                   ),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.delete_forever_outlined,
-                        color: BauhausDesign.surfaceWhite,
+                        color: Theme.of(context).colorScheme.onError,
                         size: 22,
                       ),
                       const SizedBox(width: BauhausDesign.space2),
@@ -262,7 +271,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                           style: BauhausDesign.getTextTheme(dialogContext)
                               .titleMedium
                               ?.copyWith(
-                                color: BauhausDesign.surfaceWhite,
+                                color: Theme.of(
+                                  dialogContext,
+                                ).colorScheme.onError,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 0.6,
                               ),
@@ -378,6 +389,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     final dialogColor = restoreAfterSave
         ? BauhausDesign.warning
         : BauhausDesign.secondary;
+    final dialogForeground = dialogColor == BauhausDesign.secondary
+        ? Theme.of(context).colorScheme.onSecondary
+        : Theme.of(context).colorScheme.onPrimary;
     final saveButtonText = restoreAfterSave ? 'Update & Restore' : 'Save';
     final saveButtonVariant = restoreAfterSave
         ? BauhausActionVariant.warning
@@ -401,8 +415,11 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
               child: Container(
                 width: _dialogWidth(dialogContext, maxWidth: 760),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceWhite,
-                  border: Border.all(color: BauhausDesign.neutral, width: 3),
+                  color: Theme.of(context).colorScheme.surface,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 3,
+                  ),
                   boxShadow: const [BauhausDesign.shadowHard],
                 ),
                 child: Column(
@@ -416,9 +433,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                       ),
                       decoration: BoxDecoration(
                         color: dialogColor,
-                        border: const Border(
+                        border: Border(
                           bottom: BorderSide(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.outline,
                             width: 3,
                           ),
                         ),
@@ -429,7 +446,7 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                             restoreAfterSave
                                 ? Icons.restore_from_trash_rounded
                                 : Icons.edit_note_rounded,
-                            color: BauhausDesign.surfaceWhite,
+                            color: dialogForeground,
                             size: 22,
                           ),
                           const SizedBox(width: BauhausDesign.space2),
@@ -439,7 +456,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                               style: BauhausDesign.getTextTheme(dialogContext)
                                   .titleMedium
                                   ?.copyWith(
-                                    color: BauhausDesign.surfaceWhite,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onError,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: 0.8,
                                   ),
@@ -524,7 +543,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                       BauhausDesign.getTextTheme(
                                         dialogContext,
                                       ).labelMedium?.copyWith(
-                                        color: BauhausDesign.textDark,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
                                         fontWeight: FontWeight.w800,
                                         letterSpacing: 0.7,
                                       ),
@@ -854,6 +875,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
   void _showActivationProgressSnackBar(String email) {
     if (!mounted) return;
     final messenger = ScaffoldMessenger.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+    final foregroundColor = colorScheme.onSecondary;
     messenger
       ..hideCurrentSnackBar()
       ..showSnackBar(
@@ -866,14 +889,12 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
           ),
           content: Row(
             children: [
-              const SizedBox(
+              SizedBox(
                 width: 16,
                 height: 16,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    BauhausDesign.surfaceWhite,
-                  ),
+                  valueColor: AlwaysStoppedAnimation<Color>(foregroundColor),
                 ),
               ),
               const SizedBox(width: BauhausDesign.space3),
@@ -882,7 +903,7 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                   'Sending activation email to $email...',
                   style: BauhausDesign.getTextTheme(
                     context,
-                  ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+                  ).bodyMedium?.copyWith(color: foregroundColor),
                 ),
               ),
             ],
@@ -900,6 +921,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     final backgroundColor = isError
         ? BauhausDesign.error
         : BauhausDesign.success;
+    final foregroundColor = isError
+        ? Theme.of(context).colorScheme.onError
+        : Theme.of(context).colorScheme.onSecondary;
     final icon = isError ? Icons.error_outline : Icons.check_circle_outline;
 
     messenger
@@ -913,14 +937,14 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
           ),
           content: Row(
             children: [
-              Icon(icon, color: BauhausDesign.surfaceWhite),
+              Icon(icon, color: foregroundColor),
               const SizedBox(width: BauhausDesign.space2),
               Expanded(
                 child: Text(
                   message,
                   style: BauhausDesign.getTextTheme(
                     context,
-                  ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+                  ).bodyMedium?.copyWith(color: foregroundColor),
                 ),
               ),
             ],
@@ -947,8 +971,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
       icon = Icons.schedule_rounded;
     } else {
       label = 'Not Activated';
-      backgroundColor = BauhausDesign.neutral.withValues(alpha: 0.14);
-      foregroundColor = BauhausDesign.textMuted;
+      backgroundColor = Theme.of(context).colorScheme.surfaceContainer;
+      foregroundColor = Theme.of(context).colorScheme.onSurfaceVariant;
       icon = Icons.person_outline_rounded;
     }
 
@@ -1116,16 +1140,16 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.backgroundLight,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         centerTitle: true,
         title: Text(
           l10n.clients,
           style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         actions: [
@@ -1254,7 +1278,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                   .titleMedium
                                   ?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: BauhausDesign.textDark,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
                                   ),
                             ),
                           ),
@@ -1277,7 +1303,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
             Padding(
               padding: EdgeInsets.symmetric(vertical: BauhausDesign.space4),
               child: Divider(
-                color: BauhausDesign.neutral.withValues(alpha: 0.2),
+                color: Theme.of(
+                  context,
+                ).colorScheme.outline.withValues(alpha: 0.2),
                 height: 1,
               ),
             ),
@@ -1310,7 +1338,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
             ],
             SizedBox(height: BauhausDesign.space4),
             Divider(
-              color: BauhausDesign.neutral.withValues(alpha: 0.2),
+              color: Theme.of(
+                context,
+              ).colorScheme.outline.withValues(alpha: 0.2),
               height: 1,
             ),
             SizedBox(height: BauhausDesign.space4),
@@ -1376,7 +1406,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
             if (!isHistoryMode && !client.isActivated) ...[
               SizedBox(height: BauhausDesign.space4),
               Divider(
-                color: BauhausDesign.neutral.withValues(alpha: 0.2),
+                color: Theme.of(
+                  context,
+                ).colorScheme.outline.withValues(alpha: 0.2),
                 height: 1,
               ),
               SizedBox(height: BauhausDesign.space4),
@@ -1432,9 +1464,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
         Expanded(
           child: Text(
             text,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

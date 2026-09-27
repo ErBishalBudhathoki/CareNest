@@ -60,23 +60,26 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
     debugPrint('InvoicingEmailView key: ${widget.genKey}');
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: BauhausDesign.backgroundLight,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
-        foregroundColor: BauhausDesign.textDark,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
         leading: Center(
           child: Container(
             margin: const EdgeInsets.only(left: BauhausDesign.space2),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceLight,
-              border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+              color: Theme.of(context).colorScheme.surface,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.onSurface,
+                width: 1.5,
+              ),
               borderRadius: BorderRadius.zero,
               boxShadow: const [BauhausDesign.shadowHardXs],
             ),
             child: IconButton(
               padding: EdgeInsets.zero,
-              icon: const Icon(
+              icon: Icon(
                 Icons.arrow_back_ios_new,
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 size: 18,
               ),
               onPressed: () => Navigator.of(context).pop(),
@@ -86,7 +89,7 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
         title: Text(
           'INVOICING EMAIL',
           style: BauhausDesign.getTextTheme(context).headlineLarge!.copyWith(
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -94,12 +97,12 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
-            color: BauhausDesign.neutral,
+            color: Theme.of(context).colorScheme.onSurface,
             height: 2.0, // Bold border at bottom of AppBar
           ),
         ),
       ),
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Container(
         width: double.infinity,
         padding: EdgeInsets.all(24.0),
@@ -194,7 +197,10 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
               decoration: BoxDecoration(
                 color: BauhausDesign.error,
                 borderRadius: BorderRadius.zero,
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 2,
+                ),
               ),
               child: Image.asset(
                 'assets/icons/3D Icons/3dicons-flash-dynamic-color.png',
@@ -234,9 +240,12 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
             Container(
               padding: const EdgeInsets.all(BauhausDesign.space4),
               decoration: BoxDecoration(
-                color: BauhausDesign.backgroundLight,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.zero,
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 2,
+                ),
               ),
               child: Image.asset(
                 'assets/icons/3D Icons/3dicons-mail-dynamic-color.png',
@@ -289,14 +298,17 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
             decoration: BoxDecoration(
               color: BauhausDesign.primary,
               borderRadius: BorderRadius.zero,
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.onSurface,
+                width: 2,
+              ),
               boxShadow: const [BauhausDesign.shadowHardSm],
             ),
             child: Text(
               'ADD EMAIL DETAILS',
               textAlign: TextAlign.center,
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                color: BauhausDesign.surfaceWhite,
+                color: Theme.of(context).colorScheme.surface,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 0.4,
               ),
@@ -334,7 +346,7 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
                     color: BauhausDesign.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.zero,
                     border: Border.all(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.onSurface,
                       width: 1.5,
                     ),
                   ),
@@ -353,16 +365,17 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
                         'CONFIGURATION',
                         style: BauhausDesign.getTextTheme(context).labelLarge!
                             .copyWith(
-                              color: BauhausDesign.neutral,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.w700,
                             ),
                       ),
                       const SizedBox(height: BauhausDesign.space1),
                       Text(
                         'Email settings ready',
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodyMedium!.copyWith(color: BauhausDesign.textDark),
+                        style: BauhausDesign.getTextTheme(context).bodyMedium!
+                            .copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
                       ),
                     ],
                   ),
@@ -377,7 +390,7 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
                         BauhausDesign.success, // Use success green for Active
                     borderRadius: BorderRadius.zero,
                     border: Border.all(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.onSurface,
                       width: 1.5,
                     ),
                     boxShadow: const [BauhausDesign.shadowHardXs],
@@ -386,7 +399,7 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
                     'ACTIVE',
                     style: BauhausDesign.getTextTheme(context).labelLarge!
                         .copyWith(
-                          color: BauhausDesign.surfaceLight,
+                          color: Theme.of(context).colorScheme.onPrimary,
                           fontSize: 12,
                         ),
                   ),
@@ -405,9 +418,8 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
               children: [
                 Text(
                   'DETAILS',
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).headlineLarge!.copyWith(color: BauhausDesign.textDark),
+                  style: BauhausDesign.getTextTheme(context).headlineLarge!
+                      .copyWith(color: Theme.of(context).colorScheme.onSurface),
                 ),
                 const SizedBox(height: BauhausDesign.space4),
 
@@ -472,10 +484,10 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.backgroundLight,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.zero,
         border: Border.all(
-          color: BauhausDesign.neutral,
+          color: Theme.of(context).colorScheme.onSurface,
           width: 1.5, // Thicker border
         ),
         boxShadow: const [BauhausDesign.shadowHardXs], // Subtle depth
@@ -485,9 +497,12 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space2),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceLight,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.zero,
-              border: Border.all(color: BauhausDesign.textDark, width: 1.5),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.onSurface,
+                width: 1.5,
+              ),
             ),
             child:
                 iconWidget ??
@@ -506,7 +521,9 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
                   label.toUpperCase(),
                   style: BauhausDesign.getTextTheme(context).labelLarge!
                       .copyWith(
-                        color: BauhausDesign.textDark, // Darker text
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface, // Darker text
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.5,
@@ -517,7 +534,7 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
                   value,
                   style: BauhausDesign.getTextTheme(context).bodyLarge!
                       .copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w600,
                       ),
                 ),
@@ -538,9 +555,12 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
 
   BoxDecoration _panelDecoration() {
     return BoxDecoration(
-      color: BauhausDesign.surfaceWhite,
+      color: Theme.of(context).colorScheme.surface,
       borderRadius: BorderRadius.zero,
-      border: Border.all(color: BauhausDesign.neutral, width: 2),
+      border: Border.all(
+        color: Theme.of(context).colorScheme.onSurface,
+        width: 2,
+      ),
       boxShadow: const [BauhausDesign.shadowHardSm],
     );
   }

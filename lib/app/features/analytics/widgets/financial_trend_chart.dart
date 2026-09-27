@@ -20,7 +20,7 @@ class FinancialTrendChart extends StatelessWidget {
             'FINANCIAL TREND',
             style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
               fontWeight: FontWeight.w900,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 16),
@@ -34,11 +34,16 @@ class FinancialTrendChart extends StatelessWidget {
                       barTouchData: BarTouchData(
                         enabled: true,
                         touchTooltipData: BarTouchTooltipData(
-                          getTooltipColor: (_) => BauhausDesign.neutral,
+                          getTooltipColor: (_) =>
+                              Theme.of(context).colorScheme.inverseSurface,
                           getTooltipItem: (group, groupIndex, rod, rodIndex) {
                             return BarTooltipItem(
                               '${rod.toY.toInt()}',
-                              TextStyle(color: BauhausDesign.surfaceWhite),
+                              TextStyle(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onInverseSurface,
+                              ),
                             );
                           },
                         ),
@@ -99,19 +104,19 @@ class FinancialTrendChart extends StatelessWidget {
                         show: true,
                         drawVerticalLine: true,
                         getDrawingHorizontalLine: (value) => FlLine(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.outline,
                           strokeWidth: 0.5,
                           dashArray: [5, 5],
                         ),
                         getDrawingVerticalLine: (value) => FlLine(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.outline,
                           strokeWidth: 0.5,
                         ),
                       ),
                       borderData: FlBorderData(
                         show: true,
                         border: Border.all(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.outline,
                           width: 2,
                         ),
                       ),

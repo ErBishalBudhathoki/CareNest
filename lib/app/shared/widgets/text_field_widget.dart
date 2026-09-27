@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class TextFieldWidget extends ConsumerWidget {
   final TextEditingController controller;
@@ -48,6 +47,8 @@ class TextFieldWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return ValueListenableBuilder<bool>(
       valueListenable: obscureTextNotifier,
       builder: (context, isObscure, child) {
@@ -74,12 +75,23 @@ class TextFieldWidget extends ConsumerWidget {
             }
           },
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
-          style: BauhausDesign.getTextTheme(context).bodyLarge,
-          decoration: BauhausDesign.inputDecoration(hintText).copyWith(
+          style: theme.textTheme.bodyLarge,
+          decoration: InputDecoration(
+            filled: theme.inputDecorationTheme.filled,
+            fillColor: theme.inputDecorationTheme.fillColor,
+            contentPadding: theme.inputDecorationTheme.contentPadding,
+            border: theme.inputDecorationTheme.border,
+            enabledBorder: theme.inputDecorationTheme.enabledBorder,
+            focusedBorder: theme.inputDecorationTheme.focusedBorder,
+            errorBorder: theme.inputDecorationTheme.errorBorder,
+            focusedErrorBorder: theme.inputDecorationTheme.focusedErrorBorder,
+            hintStyle: theme.inputDecorationTheme.hintStyle,
+            errorStyle: theme.inputDecorationTheme.errorStyle,
+            hintText: hintText,
             prefixIcon:
                 prefixIcon ??
                 (prefixIconData != null
-                    ? Icon(prefixIconData, color: BauhausDesign.textMuted)
+                    ? Icon(prefixIconData, color: colorScheme.onSurfaceVariant)
                     : null),
             suffixIcon: suffixIconClickable
                 ? IconButton(
@@ -90,7 +102,7 @@ class TextFieldWidget extends ConsumerWidget {
                           : (isObscure
                                 ? Icons.visibility_off
                                 : Icons.visibility),
-                      color: BauhausDesign.textMuted,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                     onPressed: () {
                       obscureTextNotifier.value = !obscureTextNotifier.value;
@@ -98,7 +110,10 @@ class TextFieldWidget extends ConsumerWidget {
                   )
                 : (suffixIcon ??
                       (suffixIconData != null
-                          ? Icon(suffixIconData, color: BauhausDesign.textMuted)
+                          ? Icon(
+                              suffixIconData,
+                              color: colorScheme.onSurfaceVariant,
+                            )
                           : null)),
           ),
         );

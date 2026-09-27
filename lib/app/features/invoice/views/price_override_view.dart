@@ -765,26 +765,31 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           l10n.priceOverrideTitle,
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
             fontWeight: FontWeight.bold,
           ),
         ),
         backgroundColor: BauhausDesign.primary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
         shadowColor: Colors.transparent,
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: BauhausDesign.neutral, height: 1),
+          child: Container(
+            color: Theme.of(context).colorScheme.onSurface,
+            height: 1,
+          ),
         ),
       ),
       body: Stack(
@@ -802,9 +807,10 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                       const SizedBox(height: BauhausDesign.space3),
                       Text(
                         l10n.noNdisItemsFound,
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).titleLarge?.copyWith(color: BauhausDesign.textDark),
+                        style: BauhausDesign.getTextTheme(context).titleLarge
+                            ?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
                       ),
                       const SizedBox(height: BauhausDesign.space2),
                       Text(
@@ -848,9 +854,11 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border(bottom: BorderSide(color: BauhausDesign.neutral)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border(
+          bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1004,9 +1012,11 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
             Container(
               padding: const EdgeInsets.all(BauhausDesign.space3),
               decoration: BoxDecoration(
-                color: BauhausDesign.backgroundLight,
+                color: Theme.of(context).colorScheme.onPrimary,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                border: Border.all(color: BauhausDesign.neutral),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
               child: Column(
                 children: [
@@ -1081,12 +1091,12 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                 decoration: BoxDecoration(
                   color: (_isClientSpecific[id] == true)
                       ? BauhausDesign.success.withValues(alpha: 0.05)
-                      : BauhausDesign.backgroundLight,
+                      : Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                   border: Border.all(
                     color: (_isClientSpecific[id] == true)
                         ? BauhausDesign.success
-                        : BauhausDesign.neutral,
+                        : Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 child: Row(
@@ -1364,7 +1374,9 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
             value,
             style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
-              color: isWarning ? displayColor : BauhausDesign.textDark,
+              color: isWarning
+                  ? displayColor
+                  : Theme.of(context).colorScheme.onSurface,
             ),
           ),
           if (isWarning)
@@ -1387,9 +1399,11 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
     final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border(top: BorderSide(color: BauhausDesign.neutral)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border(
+          top: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+        ),
       ),
       child: Row(
         children: [

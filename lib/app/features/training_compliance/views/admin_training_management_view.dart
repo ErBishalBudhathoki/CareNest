@@ -29,22 +29,29 @@ class _AdminTrainingManagementViewState
     final state = ref.watch(trainingViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.manageTrainingTitle,
-          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onSecondary,
+          ),
         ),
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onSecondary,
+        ),
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: BauhausDesign.neutral, height: 2),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 2,
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -52,11 +59,11 @@ class _AdminTrainingManagementViewState
         backgroundColor: BauhausDesign.primary,
         label: Text(
           AppLocalizations.of(context)!.addModuleButton,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).labelLarge?.copyWith(color: Colors.white),
+          style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
         ),
-        icon: const Icon(Icons.add, color: Colors.white),
+        icon: Icon(Icons.add, color: Theme.of(context).colorScheme.onPrimary),
       ),
       body: state.isLoading
           ? const Center(
@@ -85,7 +92,7 @@ class _AdminTrainingManagementViewState
   Widget _buildModuleCard(BuildContext context, TrainingModule module) {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: BauhausDesign.cardDecoration,
+      decoration: BauhausDesign.cardDecorationFor(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -103,14 +110,16 @@ class _AdminTrainingManagementViewState
                   vertical: BauhausDesign.space1,
                 ),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.neutral,
+                  color: Theme.of(context).colorScheme.outline,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                 ),
                 child: Text(
                   module.contentType,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).labelLarge?.copyWith(color: Colors.white, fontSize: 10),
+                  style: BauhausDesign.getTextTheme(context).labelLarge
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onInverseSurface,
+                        fontSize: 10,
+                      ),
                 ),
               ),
             ],
@@ -336,20 +345,23 @@ class _EditTrainingModuleDialogState
     final screenWidth = MediaQuery.of(context).size.width;
     final dialogWidth = screenWidth > 560 ? 520.0 : screenWidth - 32;
     final dropdownTextStyle =
-        BauhausDesign.getTextTheme(
-          context,
-        ).bodyMedium?.copyWith(color: BauhausDesign.textDark) ??
-        const TextStyle(color: BauhausDesign.textDark);
+        BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+          color: Theme.of(context).colorScheme.onSurface,
+        ) ??
+        TextStyle(color: Theme.of(context).colorScheme.onSurface);
 
     return AlertDialog(
-      backgroundColor: BauhausDesign.surfaceLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       insetPadding: const EdgeInsets.symmetric(
         horizontal: BauhausDesign.space4,
         vertical: BauhausDesign.space4,
       ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
       ),
       title: Text(
         AppLocalizations.of(context)!.editButton,
@@ -365,9 +377,10 @@ class _EditTrainingModuleDialogState
               children: [
                 TextFormField(
                   controller: _titleController,
-                  decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(context)!.titleLabel,
-                  ),
+                  decoration: BauhausDesign.inputDecoration(context, '')
+                      .copyWith(
+                        labelText: AppLocalizations.of(context)!.titleLabel,
+                      ),
                   validator: (v) => v?.isEmpty == true
                       ? AppLocalizations.of(context)!.requiredValidation
                       : null,
@@ -375,9 +388,12 @@ class _EditTrainingModuleDialogState
                 const SizedBox(height: BauhausDesign.space3),
                 TextFormField(
                   controller: _descController,
-                  decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(context)!.descriptionLabel,
-                  ),
+                  decoration: BauhausDesign.inputDecoration(context, '')
+                      .copyWith(
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.descriptionLabel,
+                      ),
                   validator: (v) => v?.isEmpty == true
                       ? AppLocalizations.of(context)!.requiredValidation
                       : null,
@@ -386,11 +402,14 @@ class _EditTrainingModuleDialogState
                 const SizedBox(height: BauhausDesign.space3),
                 DropdownButtonFormField<String>(
                   initialValue: _contentType,
-                  decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(context)!.contentTypeLabel,
-                  ),
-                  dropdownColor: BauhausDesign.surfaceLight,
-                  iconEnabledColor: BauhausDesign.textDark,
+                  decoration: BauhausDesign.inputDecoration(context, '')
+                      .copyWith(
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.contentTypeLabel,
+                      ),
+                  dropdownColor: Theme.of(context).colorScheme.surface,
+                  iconEnabledColor: Theme.of(context).colorScheme.onSurface,
                   style: dropdownTextStyle,
                   items: ['Video', 'Text', 'Link']
                       .map(
@@ -406,9 +425,12 @@ class _EditTrainingModuleDialogState
                 if (_contentType == 'Video' || _contentType == 'Link')
                   TextFormField(
                     controller: _contentUrlController,
-                    decoration: BauhausDesign.inputDecoration('').copyWith(
-                      labelText: AppLocalizations.of(context)!.contentUrlLabel,
-                    ),
+                    decoration: BauhausDesign.inputDecoration(context, '')
+                        .copyWith(
+                          labelText: AppLocalizations.of(
+                            context,
+                          )!.contentUrlLabel,
+                        ),
                     validator: (v) => v?.isEmpty == true
                         ? AppLocalizations.of(context)!.requiredValidation
                         : null,
@@ -416,11 +438,12 @@ class _EditTrainingModuleDialogState
                 if (_contentType == 'Text')
                   TextFormField(
                     controller: _contentTextController,
-                    decoration: BauhausDesign.inputDecoration('').copyWith(
-                      labelText: AppLocalizations.of(context)!.contentLabel(
-                        AppLocalizations.of(context)!.articleType,
-                      ),
-                    ),
+                    decoration: BauhausDesign.inputDecoration(context, '')
+                        .copyWith(
+                          labelText: AppLocalizations.of(context)!.contentLabel(
+                            AppLocalizations.of(context)!.articleType,
+                          ),
+                        ),
                     validator: (v) => v?.isEmpty == true
                         ? AppLocalizations.of(context)!.requiredValidation
                         : null,
@@ -429,11 +452,12 @@ class _EditTrainingModuleDialogState
                 const SizedBox(height: BauhausDesign.space3),
                 TextFormField(
                   controller: _durationController,
-                  decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(
-                      context,
-                    )!.durationMinutesLabel,
-                  ),
+                  decoration: BauhausDesign.inputDecoration(context, '')
+                      .copyWith(
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.durationMinutesLabel,
+                      ),
                   validator: (v) => v?.isEmpty == true
                       ? AppLocalizations.of(context)!.requiredValidation
                       : null,
@@ -448,9 +472,9 @@ class _EditTrainingModuleDialogState
           onPressed: () => Navigator.pop(context),
           child: Text(
             AppLocalizations.of(context)!.cancelButton,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).labelLarge?.copyWith(color: BauhausDesign.textDark),
+            style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
         ),
         BauhausButton(
@@ -494,20 +518,23 @@ class _AddTrainingModuleDialogState
     final screenWidth = MediaQuery.of(context).size.width;
     final dialogWidth = screenWidth > 560 ? 520.0 : screenWidth - 32;
     final dropdownTextStyle =
-        BauhausDesign.getTextTheme(
-          context,
-        ).bodyMedium?.copyWith(color: BauhausDesign.textDark) ??
-        const TextStyle(color: BauhausDesign.textDark);
+        BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+          color: Theme.of(context).colorScheme.onSurface,
+        ) ??
+        TextStyle(color: Theme.of(context).colorScheme.onSurface);
 
     return AlertDialog(
-      backgroundColor: BauhausDesign.surfaceLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       insetPadding: const EdgeInsets.symmetric(
         horizontal: BauhausDesign.space4,
         vertical: BauhausDesign.space4,
       ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
       ),
       title: Text(
         AppLocalizations.of(context)!.addModuleTitle,
@@ -523,9 +550,10 @@ class _AddTrainingModuleDialogState
               children: [
                 TextFormField(
                   controller: _titleController,
-                  decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(context)!.titleLabel,
-                  ),
+                  decoration: BauhausDesign.inputDecoration(context, '')
+                      .copyWith(
+                        labelText: AppLocalizations.of(context)!.titleLabel,
+                      ),
                   validator: (v) => v?.isEmpty == true
                       ? AppLocalizations.of(context)!.requiredValidation
                       : null,
@@ -533,9 +561,12 @@ class _AddTrainingModuleDialogState
                 const SizedBox(height: BauhausDesign.space3),
                 TextFormField(
                   controller: _descController,
-                  decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(context)!.descriptionLabel,
-                  ),
+                  decoration: BauhausDesign.inputDecoration(context, '')
+                      .copyWith(
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.descriptionLabel,
+                      ),
                   validator: (v) => v?.isEmpty == true
                       ? AppLocalizations.of(context)!.requiredValidation
                       : null,
@@ -544,11 +575,14 @@ class _AddTrainingModuleDialogState
                 const SizedBox(height: BauhausDesign.space3),
                 DropdownButtonFormField<String>(
                   initialValue: _contentType,
-                  decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(context)!.contentTypeLabel,
-                  ),
-                  dropdownColor: BauhausDesign.surfaceLight,
-                  iconEnabledColor: BauhausDesign.textDark,
+                  decoration: BauhausDesign.inputDecoration(context, '')
+                      .copyWith(
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.contentTypeLabel,
+                      ),
+                  dropdownColor: Theme.of(context).colorScheme.surface,
+                  iconEnabledColor: Theme.of(context).colorScheme.onSurface,
                   style: dropdownTextStyle,
                   items: ['Video', 'Text', 'Link']
                       .map(
@@ -564,9 +598,12 @@ class _AddTrainingModuleDialogState
                 if (_contentType == 'Video' || _contentType == 'Link')
                   TextFormField(
                     controller: _contentUrlController,
-                    decoration: BauhausDesign.inputDecoration('').copyWith(
-                      labelText: AppLocalizations.of(context)!.contentUrlLabel,
-                    ),
+                    decoration: BauhausDesign.inputDecoration(context, '')
+                        .copyWith(
+                          labelText: AppLocalizations.of(
+                            context,
+                          )!.contentUrlLabel,
+                        ),
                     validator: (v) => v?.isEmpty == true
                         ? AppLocalizations.of(context)!.requiredValidation
                         : null,
@@ -574,11 +611,12 @@ class _AddTrainingModuleDialogState
                 if (_contentType == 'Text')
                   TextFormField(
                     controller: _contentTextController,
-                    decoration: BauhausDesign.inputDecoration('').copyWith(
-                      labelText: AppLocalizations.of(context)!.contentLabel(
-                        AppLocalizations.of(context)!.articleType,
-                      ),
-                    ),
+                    decoration: BauhausDesign.inputDecoration(context, '')
+                        .copyWith(
+                          labelText: AppLocalizations.of(context)!.contentLabel(
+                            AppLocalizations.of(context)!.articleType,
+                          ),
+                        ),
                     validator: (v) => v?.isEmpty == true
                         ? AppLocalizations.of(context)!.requiredValidation
                         : null,
@@ -587,11 +625,12 @@ class _AddTrainingModuleDialogState
                 const SizedBox(height: BauhausDesign.space3),
                 TextFormField(
                   controller: _durationController,
-                  decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(
-                      context,
-                    )!.durationMinutesLabel,
-                  ),
+                  decoration: BauhausDesign.inputDecoration(context, '')
+                      .copyWith(
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.durationMinutesLabel,
+                      ),
                   validator: (v) => v?.isEmpty == true
                       ? AppLocalizations.of(context)!.requiredValidation
                       : null,
@@ -606,9 +645,9 @@ class _AddTrainingModuleDialogState
           onPressed: () => Navigator.pop(context),
           child: Text(
             AppLocalizations.of(context)!.cancelButton,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).labelLarge?.copyWith(color: BauhausDesign.textDark),
+            style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
         ),
         BauhausButton(

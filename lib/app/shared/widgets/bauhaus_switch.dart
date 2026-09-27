@@ -30,29 +30,6 @@ class _BauhausSwitchState extends State<BauhausSwitch>
   late AnimationController _controller;
   late Animation<double> _animation;
 
-  Color get _activeColor {
-    switch (widget.variant) {
-      case BauhausSwitchVariant.primary:
-        return BauhausDesign.primary;
-      case BauhausSwitchVariant.secondary:
-        return BauhausDesign.secondary;
-      case BauhausSwitchVariant.neutral:
-        return BauhausDesign.neutral;
-    }
-  }
-
-  Color get _inactiveColor => BauhausDesign.surfaceWhite;
-
-  Color get _trackBorderColor {
-    if (!widget.enabled) return BauhausDesign.neutral.withValues(alpha: 0.3);
-    return BauhausDesign.neutral;
-  }
-
-  Color get _thumbBorderColor {
-    if (!widget.enabled) return BauhausDesign.neutral.withValues(alpha: 0.5);
-    return BauhausDesign.neutral;
-  }
-
   @override
   void initState() {
     super.initState();
@@ -86,19 +63,43 @@ class _BauhausSwitchState extends State<BauhausSwitch>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final activeColor = switch (widget.variant) {
+      BauhausSwitchVariant.primary => colorScheme.primary,
+      BauhausSwitchVariant.secondary => colorScheme.secondary,
+      BauhausSwitchVariant.neutral => colorScheme.inverseSurface,
+    };
+    final inactiveColor = colorScheme.surface;
+    final trackBorderColor = widget.enabled
+        ? colorScheme.outline
+        : colorScheme.outline.withValues(alpha: 0.3);
+    final thumbBorderColor = widget.enabled
+        ? colorScheme.outline
+        : colorScheme.outline.withValues(alpha: 0.5);
+
     return GestureDetector(
       onTap: widget.enabled ? () => widget.onChanged(!widget.value) : null,
       child: AnimatedBuilder(
         animation: _animation,
         builder: (context, child) {
+          final trackColor = Color.lerp(
+            inactiveColor,
+            activeColor,
+            _animation.value,
+          )!;
+          // The thumb must contrast with the track it sits on. A fixed
+          // `colorScheme.surface` thumb disappeared against the dark inactive
+          // track in dark mode.
+          final thumbColor = BauhausDesign.readableOnColor(trackColor);
+
           return Container(
             width: 56,
             height: 32,
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              color: Color.lerp(_inactiveColor, _activeColor, _animation.value),
+              color: trackColor,
               borderRadius: BorderRadius.zero,
-              border: Border.all(color: _trackBorderColor, width: 2.0),
+              border: Border.all(color: trackBorderColor, width: 2.0),
             ),
             child: Stack(
               children: [
@@ -112,9 +113,9 @@ class _BauhausSwitchState extends State<BauhausSwitch>
                     width: 20,
                     height: 20,
                     decoration: BoxDecoration(
-                      color: BauhausDesign.surfaceWhite,
+                      color: thumbColor,
                       borderRadius: BorderRadius.zero,
-                      border: Border.all(color: _thumbBorderColor, width: 2.0),
+                      border: Border.all(color: thumbBorderColor, width: 2.0),
                       boxShadow: const [BauhausDesign.shadowHardSm],
                     ),
                   ),

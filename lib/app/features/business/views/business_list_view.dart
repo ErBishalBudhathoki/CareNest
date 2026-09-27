@@ -66,10 +66,12 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
     Color headerColor = BauhausDesign.primary,
     BauhausActionVariant confirmVariant = BauhausActionVariant.primary,
   }) async {
-    final headerForeground =
-        ThemeData.estimateBrightnessForColor(headerColor) == Brightness.dark
-        ? BauhausDesign.surfaceWhite
-        : BauhausDesign.textDark;
+    final colorScheme = Theme.of(context).colorScheme;
+    final headerForeground = headerColor == BauhausDesign.error
+        ? colorScheme.onError
+        : headerColor == BauhausDesign.secondary
+        ? colorScheme.onSecondary
+        : colorScheme.onPrimary;
 
     final result = await showDialog<bool>(
       context: context,
@@ -84,8 +86,11 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
           child: Container(
             width: _dialogWidth(dialogContext, maxWidth: 520),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
-              border: Border.all(color: BauhausDesign.neutral, width: 3),
+              color: Theme.of(context).colorScheme.surface,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 3,
+              ),
               boxShadow: const [BauhausDesign.shadowHard],
             ),
             child: Column(
@@ -99,9 +104,9 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
                   ),
                   decoration: BoxDecoration(
                     color: headerColor,
-                    border: const Border(
+                    border: Border(
                       bottom: BorderSide(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.outline,
                         width: 3,
                       ),
                     ),
@@ -129,9 +134,10 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
                   padding: const EdgeInsets.all(BauhausDesign.space4),
                   child: Text(
                     message,
-                    style: BauhausDesign.getTextTheme(
-                      dialogContext,
-                    ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                    style: BauhausDesign.getTextTheme(dialogContext).bodyMedium
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                   ),
                 ),
                 Padding(
@@ -214,8 +220,11 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
               child: Container(
                 width: _dialogWidth(dialogContext, maxWidth: 760),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceWhite,
-                  border: Border.all(color: BauhausDesign.neutral, width: 3),
+                  color: Theme.of(context).colorScheme.surface,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 3,
+                  ),
                   boxShadow: const [BauhausDesign.shadowHard],
                 ),
                 child: Column(
@@ -227,20 +236,20 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
                         horizontal: BauhausDesign.space4,
                         vertical: BauhausDesign.space3,
                       ),
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         color: BauhausDesign.secondary,
                         border: Border(
                           bottom: BorderSide(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.outline,
                             width: 3,
                           ),
                         ),
                       ),
                       child: Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.edit_note_rounded,
-                            color: BauhausDesign.surfaceWhite,
+                            color: Theme.of(context).colorScheme.surface,
                             size: 22,
                           ),
                           const SizedBox(width: BauhausDesign.space2),
@@ -250,7 +259,9 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
                               style: BauhausDesign.getTextTheme(dialogContext)
                                   .titleMedium
                                   ?.copyWith(
-                                    color: BauhausDesign.surfaceWhite,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surface,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: 0.8,
                                   ),
@@ -523,16 +534,16 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.backgroundLight,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         centerTitle: true,
         title: Text(
           l10n.businessesTitle,
           style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         actions: [
@@ -636,7 +647,7 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
                       style: BauhausDesign.getTextTheme(context).titleMedium
                           ?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                     ),
                     SizedBox(height: BauhausDesign.space1),
@@ -661,7 +672,9 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
           Padding(
             padding: EdgeInsets.symmetric(vertical: BauhausDesign.space4),
             child: Divider(
-              color: BauhausDesign.neutral.withValues(alpha: 0.2),
+              color: Theme.of(
+                context,
+              ).colorScheme.outline.withValues(alpha: 0.2),
               height: 1,
             ),
           ),
@@ -681,7 +694,7 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
             ),
           SizedBox(height: BauhausDesign.space4),
           Divider(
-            color: BauhausDesign.neutral.withValues(alpha: 0.2),
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
             height: 1,
           ),
           SizedBox(height: BauhausDesign.space4),
@@ -721,9 +734,9 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
         Expanded(
           child: Text(
             text,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

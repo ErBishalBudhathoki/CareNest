@@ -9,6 +9,7 @@ class CardLabelTextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final screenSize = MediaQuery.of(context).size;
     final isSmallScreen = screenSize.height < 700;
 
@@ -16,7 +17,7 @@ class CardLabelTextWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
       margin: const EdgeInsets.only(bottom: 8.0),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
+        color: colorScheme.surface.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Row(
@@ -25,12 +26,12 @@ class CardLabelTextWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8.0),
             decoration: BoxDecoration(
-              color: const Color(0xFF667EEA).withValues(alpha: 0.1),
+              color: colorScheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4.0),
             ),
             child: Icon(
               iconData,
-              color: const Color(0xFF667EEA),
+              color: colorScheme.primary,
               size: isSmallScreen ? 18 : 22,
             ),
           ),
@@ -52,7 +53,7 @@ class CardLabelTextWidget extends StatelessWidget {
                                   fontWeight: FontWeight.w500,
                                 ))
                           .copyWith(
-                            color: const Color(0xFF667EEA),
+                            color: colorScheme.primary,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.3,
                           ),
@@ -65,7 +66,7 @@ class CardLabelTextWidget extends StatelessWidget {
                               ? const TextStyle(fontSize: 14)
                               : const TextStyle(fontSize: 16))
                           .copyWith(
-                            color: const Color(0xFF1F2937),
+                            color: colorScheme.onSurface,
                             fontWeight: FontWeight.w500,
                             height: 1.3,
                           ),

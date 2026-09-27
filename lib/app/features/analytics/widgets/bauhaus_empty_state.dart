@@ -16,7 +16,7 @@ class BauhausEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     return BauhausContainer(
       height: height,
-      color: BauhausDesign.surfaceWhite,
+      color: Theme.of(context).colorScheme.surface,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -25,11 +25,17 @@ class BauhausEmptyState extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
-                color: BauhausDesign.backgroundLight,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
+                color: Theme.of(context).colorScheme.surface,
               ),
               child: Center(
-                child: Icon(Icons.info_outline, color: BauhausDesign.neutral),
+                child: Icon(
+                  Icons.info_outline,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -38,7 +44,9 @@ class BauhausEmptyState extends StatelessWidget {
               style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
-                color: BauhausDesign.textDark, // Ensure visible text
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface, // Ensure visible text
               ),
               textAlign: TextAlign.center,
             ),

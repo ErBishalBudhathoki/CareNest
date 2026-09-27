@@ -19,28 +19,33 @@ class AdminMileageDashboard extends ConsumerWidget {
     final textTheme = BauhausDesign.getTextTheme(context);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceLight,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       appBar: AppBar(
         title: Text(
           'MILEAGE ADMIN',
           style: textTheme.displaySmall?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
           ),
         ),
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),
-          child: Container(color: BauhausDesign.neutral, height: 2),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 2,
+          ),
         ),
-        iconTheme: const IconThemeData(color: BauhausDesign.neutral),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: Icon(Icons.settings),
             onPressed: () {
               Navigator.push(
                 context,
@@ -61,23 +66,23 @@ class AdminMileageDashboard extends ConsumerWidget {
             ),
             padding: const EdgeInsets.all(BauhausDesign.space3),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceLight,
+              color: Theme.of(context).colorScheme.surfaceContainer,
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
               boxShadow: const [BauhausDesign.shadowHardSm],
             ),
             child: Row(
               children: [
-                const Icon(
-                  Icons.local_shipping,
-                  color: BauhausDesign.secondary,
-                ),
+                Icon(Icons.local_shipping, color: BauhausDesign.secondary),
                 const SizedBox(width: BauhausDesign.space3),
                 Expanded(
                   child: Text(
                     'Trips to review',
                     style: textTheme.bodyMedium?.copyWith(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -89,12 +94,15 @@ class AdminMileageDashboard extends ConsumerWidget {
                   ),
                   decoration: BoxDecoration(
                     color: BauhausDesign.warning,
-                    border: Border.all(color: BauhausDesign.neutral, width: 1),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 1,
+                    ),
                   ),
                   child: Text(
                     '${viewModel.pendingTripsCount}',
                     style: textTheme.labelSmall?.copyWith(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -110,9 +118,12 @@ class AdminMileageDashboard extends ConsumerWidget {
             ),
             padding: const EdgeInsets.all(BauhausDesign.space3),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceLight,
+              color: Theme.of(context).colorScheme.surfaceContainer,
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
               boxShadow: const [BauhausDesign.shadowHardSm],
             ),
             child: Row(
@@ -140,7 +151,7 @@ class AdminMileageDashboard extends ConsumerWidget {
                       Text(
                         'RATE',
                         style: textTheme.labelLarge?.copyWith(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.onSurface,
                           letterSpacing: 1.2,
                         ),
                       ),
@@ -162,7 +173,7 @@ class AdminMileageDashboard extends ConsumerWidget {
                           decoration: BoxDecoration(
                             color: BauhausDesign.accent,
                             border: Border.all(
-                              color: BauhausDesign.neutral,
+                              color: Theme.of(context).colorScheme.outline,
                               width: 2,
                             ),
                             boxShadow: const [BauhausDesign.shadowHardSm],
@@ -174,14 +185,16 @@ class AdminMileageDashboard extends ConsumerWidget {
                                 '\$${settingsState.reimbursementRate.toStringAsFixed(2)} / mi',
                                 style: textTheme.bodyLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: BauhausDesign.textDark,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              const Icon(
+                              Icon(
                                 Icons.edit,
                                 size: 14,
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ],
                           ),
@@ -218,7 +231,7 @@ class AdminMileageDashboard extends ConsumerWidget {
                     child: Text(
                       'NO TRIPS FOUND',
                       style: textTheme.headlineLarge?.copyWith(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   )
@@ -248,12 +261,14 @@ class AdminMileageDashboard extends ConsumerWidget {
                           },
                           child: Container(
                             decoration: BoxDecoration(
-                              color: BauhausDesign.surfaceLight,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainer,
                               borderRadius: BorderRadius.circular(
                                 BauhausDesign.radiusSm,
                               ),
                               border: Border.all(
-                                color: BauhausDesign.neutral,
+                                color: Theme.of(context).colorScheme.outline,
                                 width: 2,
                               ),
                               boxShadow: const [BauhausDesign.shadowHardSm],
@@ -272,7 +287,9 @@ class AdminMileageDashboard extends ConsumerWidget {
                                       shape: BoxShape.rectangle, // Square
                                       color: _getStatusColor(trip.status),
                                       border: Border.all(
-                                        color: BauhausDesign.neutral,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.outline,
                                         width: 1.5,
                                       ),
                                     ),
@@ -288,13 +305,17 @@ class AdminMileageDashboard extends ConsumerWidget {
                                           '${trip.employee?.firstName ?? 'Unknown'} ${trip.employee?.lastName ?? ''}',
                                           style: textTheme.bodyLarge?.copyWith(
                                             fontWeight: FontWeight.bold,
-                                            color: BauhausDesign.textDark,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onSurface,
                                           ),
                                         ),
                                         Text(
                                           '${trip.distance} mi • ${trip.tripType.replaceAll('_', ' ')}',
                                           style: textTheme.bodyMedium?.copyWith(
-                                            color: BauhausDesign.textMuted,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onSurfaceVariant,
                                           ),
                                         ),
                                         const SizedBox(
@@ -315,7 +336,9 @@ class AdminMileageDashboard extends ConsumerWidget {
                                                   trip.status,
                                                 ).withValues(alpha: 0.18),
                                                 border: Border.all(
-                                                  color: BauhausDesign.neutral,
+                                                  color: Theme.of(
+                                                    context,
+                                                  ).colorScheme.outline,
                                                   width: 1.2,
                                                 ),
                                               ),
@@ -325,8 +348,9 @@ class AdminMileageDashboard extends ConsumerWidget {
                                                     ?.copyWith(
                                                       fontWeight:
                                                           FontWeight.w700,
-                                                      color: BauhausDesign
-                                                          .textDark,
+                                                      color: Theme.of(
+                                                        context,
+                                                      ).colorScheme.onSurface,
                                                     ),
                                               ),
                                             ),
@@ -336,9 +360,11 @@ class AdminMileageDashboard extends ConsumerWidget {
                                     ),
                                   ),
                                   // Action Icon
-                                  const Icon(
+                                  Icon(
                                     Icons.chevron_right,
-                                    color: BauhausDesign.neutral,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
                                     size: 28,
                                   ),
                                 ],

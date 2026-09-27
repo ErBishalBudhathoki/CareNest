@@ -21,6 +21,7 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
     final dashboardState = ref.watch(workerDashboardViewModelProvider);
     final currentUserAsync = ref.watch(currentUserProvider);
     final currentUser = currentUserAsync.value;
+    final colorScheme = Theme.of(context).colorScheme;
 
     void openScanInvoice() {
       final orgId = currentUser?.organizationId ?? '';
@@ -43,33 +44,33 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: BauhausTheme.white,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.workerDashboardTitle,
           style: BauhausTheme.headerStyle.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: colorScheme.onInverseSurface,
           ),
         ),
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: colorScheme.inverseSurface,
+        foregroundColor: colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(color: colorScheme.onInverseSurface),
         actions: [
           IconButton(
             tooltip: 'Scan Invoice',
-            icon: const Icon(
+            icon: Icon(
               Icons.document_scanner_outlined,
-              color: BauhausDesign.surfaceWhite,
+              color: colorScheme.onInverseSurface,
             ),
             onPressed: openScanInvoice,
           ),
           IconButton(
-            icon: const Icon(Icons.refresh, color: BauhausDesign.surfaceWhite),
+            icon: Icon(Icons.refresh, color: colorScheme.onInverseSurface),
             onPressed: () =>
                 ref.read(workerDashboardViewModelProvider.notifier).refresh(),
           ),
@@ -169,7 +170,8 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
                     style: TextStyle(color: BauhausTheme.white),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: BauhausTheme.black,
+                    backgroundColor: colorScheme.inverseSurface,
+                    foregroundColor: colorScheme.onInverseSurface,
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.zero,
                     ),
@@ -190,7 +192,9 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
               if (data.recentExpenses.isEmpty)
                 Text(
                   AppLocalizations.of(context)!.noRecentExpenses,
-                  style: BauhausTheme.bodyStyle.copyWith(color: Colors.grey),
+                  style: BauhausTheme.bodyStyle.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                 )
               else
                 for (var e in data.recentExpenses)
@@ -233,6 +237,8 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
     BuildContext context,
     List<dynamic> broadcasts,
   ) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       children: broadcasts.map((b) {
         return Container(
@@ -240,10 +246,10 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
           margin: const EdgeInsets.only(bottom: 16),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(0xFFE63946), // Strong Red
-            border: Border.all(color: Colors.black, width: 2),
+            color: colorScheme.error,
+            border: Border.all(color: colorScheme.outline, width: 2),
             boxShadow: const [
-              BoxShadow(color: Colors.black, offset: Offset(4, 4)),
+              BoxShadow(color: BauhausDesign.neoInk, offset: Offset(4, 4)),
             ],
           ),
           child: Column(
@@ -251,9 +257,9 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.warning_amber_rounded,
-                    color: Colors.white,
+                    color: colorScheme.onError,
                     size: 28,
                   ),
                   const SizedBox(width: 12),
@@ -261,7 +267,7 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
                     child: Text(
                       'EMERGENCY ALERT',
                       style: GoogleFonts.outfit(
-                        color: Colors.white,
+                        color: colorScheme.onError,
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.5,
@@ -274,7 +280,7 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
               Text(
                 b.message,
                 style: GoogleFonts.inter(
-                  color: Colors.white,
+                  color: colorScheme.onError,
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                   height: 1.4,
@@ -288,8 +294,8 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
                     // Logic to acknowledge could be added here
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
+                    backgroundColor: colorScheme.inverseSurface,
+                    foregroundColor: colorScheme.onInverseSurface,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.zero,

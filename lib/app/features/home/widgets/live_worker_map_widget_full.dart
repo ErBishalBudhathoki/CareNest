@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:carenest/app/shared/theme/bauhaus_colors.dart';
 import '../models/dashboard_models.dart';
 
 class LiveWorkerMapWidgetFull extends StatefulWidget {
@@ -25,6 +24,8 @@ class LiveWorkerMapWidgetFull extends StatefulWidget {
 }
 
 class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
+  ColorScheme get _colorScheme => Theme.of(context).colorScheme;
+
   GoogleMapController? _mapController;
   Set<Marker> _markers = {};
   WorkerLocation? _selectedWorker;
@@ -136,39 +137,35 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: BauhausColors.primaryYellow.withValues(alpha: 0.1),
+              color: _colorScheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(
-              Icons.map,
-              color: BauhausColors.primaryYellow,
-              size: 24,
-            ),
+            child: Icon(Icons.map, color: _colorScheme.primary, size: 24),
           ),
           const SizedBox(width: 12),
-          const Text(
+          Text(
             'Live Worker Locations',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: BauhausColors.textDark,
+              color: _colorScheme.onSurface,
             ),
           ),
           const Spacer(),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: BauhausColors.accentGreen,
+              color: _colorScheme.secondary,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                const Icon(Icons.circle, size: 8, color: Colors.white),
+                Icon(Icons.circle, size: 8, color: _colorScheme.onSecondary),
                 const SizedBox(width: 4),
                 Text(
                   '${widget.workerLocations!.length} active',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: _colorScheme.onSecondary,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
@@ -286,7 +283,7 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
     return Tooltip(
       message: tooltip,
       child: Material(
-        color: Colors.white,
+        color: _colorScheme.surface,
         elevation: 4,
         borderRadius: BorderRadius.circular(8),
         child: InkWell(
@@ -296,7 +293,7 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-            child: Icon(icon, size: 20, color: BauhausColors.textDark),
+            child: Icon(icon, size: 20, color: _colorScheme.onSurface),
           ),
         ),
       ),
@@ -314,7 +311,7 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: _colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -335,10 +332,10 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
                   Expanded(
                     child: Text(
                       _selectedWorker!.workerName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: BauhausColors.textDark,
+                        color: _colorScheme.onSurface,
                       ),
                     ),
                   ),
@@ -377,18 +374,18 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.person_outline,
                       size: 14,
-                      color: BauhausColors.textMedium,
+                      color: _colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
                         'Client: ${_selectedWorker!.currentClientName}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: BauhausColors.textMedium,
+                          color: _colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ),
@@ -399,17 +396,17 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.schedule,
                       size: 14,
-                      color: BauhausColors.textMedium,
+                      color: _colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: 6),
                     Text(
                       'Next: ${_selectedWorker!.nextAppointmentTime}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: BauhausColors.textMedium,
+                        color: _colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -427,8 +424,8 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
                       icon: const Icon(Icons.info_outline, size: 16),
                       label: const Text('View Details'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: BauhausColors.primaryBlue,
-                        foregroundColor: Colors.white,
+                        backgroundColor: _colorScheme.secondary,
+                        foregroundColor: _colorScheme.onSecondary,
                         padding: const EdgeInsets.symmetric(vertical: 8),
                       ),
                     ),
@@ -443,10 +440,8 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
                       icon: const Icon(Icons.phone, size: 16),
                       label: const Text('Call'),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: BauhausColors.primaryBlue,
-                        side: const BorderSide(
-                          color: BauhausColors.primaryBlue,
-                        ),
+                        foregroundColor: _colorScheme.secondary,
+                        side: BorderSide(color: _colorScheme.secondary),
                         padding: const EdgeInsets.symmetric(vertical: 8),
                       ),
                     ),
@@ -463,19 +458,19 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
   Widget _buildWorkerList() {
     return Positioned.fill(
       child: Container(
-        color: Colors.white,
+        color: _colorScheme.surface,
         child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  const Text(
+                  Text(
                     'Worker List',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: BauhausColors.textDark,
+                      color: _colorScheme.onSurface,
                     ),
                   ),
                   const Spacer(),
@@ -551,10 +546,10 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
                     children: [
                       Text(
                         worker.workerName,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: BauhausColors.textDark,
+                          color: _colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -566,9 +561,9 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
                         const SizedBox(height: 2),
                         Text(
                           worker.currentClientName!,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 11,
-                            color: BauhausColors.textMedium,
+                            color: _colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -637,25 +632,32 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: const SizedBox(
+      child: SizedBox(
         height: 400,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.location_off, size: 48, color: Colors.grey),
+              Icon(
+                Icons.location_off,
+                size: 48,
+                color: _colorScheme.onSurfaceVariant,
+              ),
               SizedBox(height: 16),
               Text(
                 'No active workers',
                 style: TextStyle(
-                  color: Colors.grey,
+                  color: _colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               SizedBox(height: 4),
               Text(
                 'Worker locations will appear here',
-                style: TextStyle(color: Colors.grey, fontSize: 12),
+                style: TextStyle(
+                  color: _colorScheme.onSurfaceVariant,
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
@@ -667,15 +669,15 @@ class _LiveWorkerMapWidgetFullState extends State<LiveWorkerMapWidgetFull> {
   Color _getStatusColor(WorkerStatus status) {
     switch (status) {
       case WorkerStatus.available:
-        return BauhausColors.accentGreen;
+        return _colorScheme.secondary;
       case WorkerStatus.enRoute:
-        return BauhausColors.primaryBlue;
+        return _colorScheme.secondary;
       case WorkerStatus.atAppointment:
-        return BauhausColors.primaryYellow;
+        return _colorScheme.primary;
       case WorkerStatus.onBreak:
-        return BauhausColors.accentOrange;
+        return _colorScheme.primary;
       case WorkerStatus.offline:
-        return Colors.grey;
+        return _colorScheme.onSurfaceVariant;
     }
   }
 

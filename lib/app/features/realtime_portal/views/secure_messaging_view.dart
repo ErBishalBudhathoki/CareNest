@@ -476,13 +476,14 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(messagingViewModelProvider);
+    final colorScheme = Theme.of(context).colorScheme;
 
     if (_isBootstrapping) {
       return Scaffold(
-        backgroundColor: BauhausDesign.backgroundLight,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
           backgroundColor: BauhausDesign.secondary,
-          foregroundColor: BauhausDesign.surfaceWhite,
+          foregroundColor: colorScheme.onSecondary,
           systemOverlayStyle: SystemUiOverlayStyle.light,
           scrolledUnderElevation: 0,
           surfaceTintColor: Colors.transparent,
@@ -497,7 +498,10 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
           ),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.5),
-            child: Container(color: BauhausDesign.neutral, height: 1.5),
+            child: Container(
+              color: Theme.of(context).colorScheme.outline,
+              height: 1.5,
+            ),
           ),
         ),
         body: const Center(
@@ -510,10 +514,10 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
 
     if (_identityError != null) {
       return Scaffold(
-        backgroundColor: BauhausDesign.backgroundLight,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
           backgroundColor: BauhausDesign.secondary,
-          foregroundColor: BauhausDesign.surfaceWhite,
+          foregroundColor: colorScheme.onSecondary,
           systemOverlayStyle: SystemUiOverlayStyle.light,
           scrolledUnderElevation: 0,
           surfaceTintColor: Colors.transparent,
@@ -528,7 +532,10 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
           ),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.5),
-            child: Container(color: BauhausDesign.neutral, height: 1.5),
+            child: Container(
+              color: Theme.of(context).colorScheme.outline,
+              height: 1.5,
+            ),
           ),
         ),
         body: Center(
@@ -536,36 +543,36 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
             padding: const EdgeInsets.all(BauhausDesign.space6),
             child: Container(
               padding: const EdgeInsets.all(BauhausDesign.space6),
-              decoration: BauhausDesign.cardDecoration,
+              decoration: BauhausDesign.cardDecorationFor(context),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.error_outline,
                     size: 48,
                     color: BauhausDesign.primary,
                   ),
-                  const SizedBox(height: BauhausDesign.space4),
+                  SizedBox(height: BauhausDesign.space4),
                   Text(
                     _identityError!,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.inter(
                       fontSize: BauhausDesign.fontMd,
                       fontWeight: FontWeight.w600,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
-                  const SizedBox(height: BauhausDesign.space6),
+                  SizedBox(height: BauhausDesign.space6),
                   ElevatedButton(
                     onPressed: _bootstrap,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: BauhausDesign.primary,
-                      foregroundColor: Colors.white,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
                       elevation: 0,
-                      shape: const RoundedRectangleBorder(
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                         side: BorderSide(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.outline,
                           width: 2,
                         ),
                       ),
@@ -588,10 +595,10 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
     }
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.surface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -613,27 +620,30 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
                   : 'WORKER COMMUNICATION',
               style: BauhausDesign.neoMonoStyle(
                 context,
-                color: BauhausDesign.surfaceWhite,
+                color: Theme.of(context).colorScheme.surface,
                 fontSize: 10,
               ),
             ),
           ],
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: BauhausDesign.primary),
+          icon: Icon(Icons.arrow_back_ios, color: BauhausDesign.primary),
           onPressed: () => Navigator.pop(context),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.5),
-          child: Container(color: BauhausDesign.neutral, height: 1.5),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 1.5,
+          ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: BauhausDesign.primary),
+            icon: Icon(Icons.refresh, color: BauhausDesign.primary),
             onPressed: _loadConversations,
           ),
           IconButton(
-            icon: const Icon(Icons.info_outline, color: BauhausDesign.primary),
+            icon: Icon(Icons.info_outline, color: BauhausDesign.primary),
             onPressed: _showEncryptionInfo,
           ),
         ],
@@ -658,32 +668,32 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
         child: Container(
           margin: const EdgeInsets.all(BauhausDesign.space6),
           padding: const EdgeInsets.all(BauhausDesign.space6),
-          decoration: BauhausDesign.cardDecoration,
+          decoration: BauhausDesign.cardDecorationFor(context),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
+              Icon(
                 Icons.chat_bubble_outline,
                 size: 64,
                 color: BauhausDesign.primary,
               ),
-              const SizedBox(height: BauhausDesign.space4),
+              SizedBox(height: BauhausDesign.space4),
               Text(
                 'No Conversations',
                 style: BauhausDesign.getTextTheme(context).headlineLarge
                     ?.copyWith(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.bold,
                     ),
               ),
-              const SizedBox(height: BauhausDesign.space2),
+              SizedBox(height: BauhausDesign.space2),
               Text(
                 'Messages for active service shifts will appear here.',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
                   fontSize: BauhausDesign.fontMd,
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -711,7 +721,7 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
 
     return Container(
       margin: const EdgeInsets.only(bottom: BauhausDesign.space4),
-      decoration: BauhausDesign.cardDecoration,
+      decoration: BauhausDesign.cardDecorationFor(context),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -727,17 +737,17 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
                   decoration: BoxDecoration(
                     color: BauhausDesign.primaryBlue,
                     border: Border.all(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.outline,
                       width: BauhausDesign.borderThick,
                     ),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.person,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onInverseSurface,
                     size: 24,
                   ),
                 ),
-                const SizedBox(width: BauhausDesign.space4),
+                SizedBox(width: BauhausDesign.space4),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -747,15 +757,15 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontLg,
                           fontWeight: FontWeight.bold,
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
-                      const SizedBox(height: BauhausDesign.space1),
+                      SizedBox(height: BauhausDesign.space1),
                       Text(
                         _sanitizePreview(conversation.lastMessage),
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontMd,
-                          color: BauhausDesign.textMuted,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -773,7 +783,7 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
                     decoration: BoxDecoration(
                       color: BauhausDesign.primaryRed,
                       border: Border.all(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.outline,
                         width: BauhausDesign.borderThin,
                       ),
                     ),
@@ -781,15 +791,15 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
                       unread.toString(),
                       style: BauhausDesign.neoMonoStyle(
                         context,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onTertiary,
                         fontSize: BauhausDesign.fontXs,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                const Icon(
+                Icon(
                   Icons.arrow_forward_ios,
-                  color: BauhausDesign.neutral,
+                  color: Theme.of(context).colorScheme.onSurface,
                   size: 16,
                 ),
               ],
@@ -806,11 +816,11 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
         // Solid black bottom border on active channel status block
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          decoration: const BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
             border: Border(
               bottom: BorderSide(
-                color: BauhausDesign.neutral,
+                color: Theme.of(context).colorScheme.outline,
                 width: BauhausDesign.borderThick,
               ),
             ),
@@ -818,8 +828,8 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.lock, color: BauhausDesign.success, size: 16),
-              const SizedBox(width: 8),
+              Icon(Icons.lock, color: BauhausDesign.success, size: 16),
+              SizedBox(width: 8),
               Text(
                 'ENCRYPTED CHANNEL ACTIVE',
                 style: BauhausDesign.neoMonoStyle(
@@ -837,13 +847,13 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
               ? Center(
                   child: Container(
                     padding: const EdgeInsets.all(BauhausDesign.space4),
-                    decoration: BauhausDesign.cardDecoration,
+                    decoration: BauhausDesign.cardDecorationFor(context),
                     child: Text(
                       'No messages yet',
                       style: GoogleFonts.inter(
                         fontSize: BauhausDesign.fontMd,
                         fontWeight: FontWeight.w600,
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),
@@ -895,11 +905,11 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
         // Message composer with heavy border and solid outline button
         Container(
           padding: const EdgeInsets.all(BauhausDesign.space4),
-          decoration: const BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
             border: Border(
               top: BorderSide(
-                color: BauhausDesign.neutral,
+                color: Theme.of(context).colorScheme.outline,
                 width: BauhausDesign.borderThick,
               ),
             ),
@@ -912,30 +922,35 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
                   child: TextField(
                     controller: _messageController,
                     style: GoogleFonts.inter(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: BauhausDesign.fontMd,
                       fontWeight: FontWeight.w500,
                     ),
-                    cursorColor: BauhausDesign.neutral,
+                    cursorColor: Theme.of(context).colorScheme.onSurface,
                     decoration: BauhausDesign.inputDecoration(
+                      context,
                       'Type a message...',
                     ),
                   ),
                 ),
-                const SizedBox(width: BauhausDesign.space3),
+                SizedBox(width: BauhausDesign.space3),
                 Container(
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
                     color: BauhausDesign.primary,
                     border: Border.all(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.outline,
                       width: BauhausDesign.borderThick,
                     ),
                     boxShadow: const [BauhausDesign.shadowHardSm],
                   ),
                   child: IconButton(
-                    icon: const Icon(Icons.send, color: Colors.white, size: 18),
+                    icon: Icon(
+                      Icons.send,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      size: 18,
+                    ),
                     onPressed: state.isSending ? null : _sendMessage,
                   ),
                 ),
@@ -951,21 +966,24 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: BauhausDesign.backgroundLight,
-        shape: const RoundedRectangleBorder(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.zero,
-          side: BorderSide(color: BauhausDesign.neutral, width: 2.5),
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2.5,
+          ),
         ),
         title: Row(
           children: [
-            const Icon(Icons.lock, color: BauhausDesign.success, size: 24),
-            const SizedBox(width: 12),
+            Icon(Icons.lock, color: BauhausDesign.success, size: 24),
+            SizedBox(width: 12),
             Text(
               'SECURITY INFO',
               style: BauhausDesign.getTextTheme(context).headlineMedium
                   ?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
             ),
           ],
@@ -979,10 +997,10 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
               style: GoogleFonts.inter(
                 fontSize: BauhausDesign.fontMd,
                 fontWeight: FontWeight.bold,
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             _buildEncryptionFeature('AES-256 message encryption'),
             _buildEncryptionFeature('Authenticated API requests'),
             _buildEncryptionFeature('Shift-scoped conversation access'),
@@ -1008,18 +1026,14 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
       padding: const EdgeInsets.only(bottom: BauhausDesign.space2),
       child: Row(
         children: [
-          const Icon(
-            Icons.check_circle,
-            color: BauhausDesign.success,
-            size: 18,
-          ),
-          const SizedBox(width: 10),
+          Icon(Icons.check_circle, color: BauhausDesign.success, size: 18),
+          SizedBox(width: 10),
           Expanded(
             child: Text(
               text,
               style: GoogleFonts.inter(
                 fontSize: BauhausDesign.fontMd,
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w500,
               ),
             ),

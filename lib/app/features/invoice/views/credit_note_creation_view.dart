@@ -98,7 +98,7 @@ class _CreditNoteCreationViewState
     final isLoading = state.isLoading;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBarWidget(title: 'Issue Credit Note'),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(BauhausDesign.space4),

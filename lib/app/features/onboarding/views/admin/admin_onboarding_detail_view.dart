@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import '../../providers/onboarding_providers.dart';
 import '../../models/employee_document.dart';
 
@@ -10,6 +9,7 @@ class AdminOnboardingDetailView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
     final state = ref.watch(adminOnboardingViewModelProvider);
     final record = state.selectedRecord;
     final user = state.selectedUser;
@@ -27,8 +27,8 @@ class AdminOnboardingDetailView extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: colorScheme.secondary,
+        foregroundColor: colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -39,7 +39,7 @@ class AdminOnboardingDetailView extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildStatusCard(record.status),
+            _buildStatusCard(record.status, colorScheme),
             const SizedBox(height: 24),
             const Text(
               'Documents',
@@ -60,8 +60,8 @@ class AdminOnboardingDetailView extends ConsumerWidget {
                 onPressed: () => _finalize(context, ref, record.userId),
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
+                  backgroundColor: colorScheme.secondary,
+                  foregroundColor: colorScheme.onSecondary,
                 ),
                 child: const Text('Finalize & Approve Onboarding'),
               ),
@@ -71,20 +71,20 @@ class AdminOnboardingDetailView extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatusCard(String status) {
+  Widget _buildStatusCard(String status, ColorScheme colorScheme) {
     Color color;
     switch (status) {
       case 'completed':
-        color = Colors.green;
+        color = colorScheme.secondary;
         break;
       case 'submitted':
-        color = Colors.orange;
+        color = colorScheme.primary;
         break;
       case 'rejected':
-        color = Colors.red;
+        color = colorScheme.error;
         break;
       default:
-        color = Colors.blue;
+        color = colorScheme.secondary;
     }
 
     return Card(
@@ -110,6 +110,8 @@ class AdminOnboardingDetailView extends ConsumerWidget {
     WidgetRef ref,
     EmployeeDocument doc,
   ) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
@@ -122,12 +124,15 @@ class AdminOnboardingDetailView extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: const Icon(Icons.check_circle_outline, color: Colors.green),
+              icon: Icon(
+                Icons.check_circle_outline,
+                color: colorScheme.secondary,
+              ),
               onPressed: () => _verifyDoc(context, ref, doc.id!, 'verified'),
               tooltip: 'Approve',
             ),
             IconButton(
-              icon: const Icon(Icons.cancel_outlined, color: Colors.red),
+              icon: Icon(Icons.cancel_outlined, color: colorScheme.error),
               onPressed: () => _verifyDoc(context, ref, doc.id!, 'rejected'),
               tooltip: 'Reject',
             ),

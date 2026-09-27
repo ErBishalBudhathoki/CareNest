@@ -21,11 +21,14 @@ class BauhausTimerControl extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        border: Border.all(color: BauhausDesign.textDark, width: 3),
-        boxShadow: const [
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 3,
+        ),
+        boxShadow: [
           BoxShadow(
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             offset: Offset(4, 4),
             blurRadius: 0,
           ),
@@ -37,8 +40,8 @@ class BauhausTimerControl extends StatelessWidget {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 12),
-            decoration: const BoxDecoration(
-              color: BauhausDesign.textDark, // Black Header
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.onSurface, // Black Header
             ),
             child: Text(
               "SHIFT TIMER CONTROL",
@@ -47,7 +50,7 @@ class BauhausTimerControl extends StatelessWidget {
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.2,
-                color: BauhausDesign.surfaceLight,
+                color: Theme.of(context).colorScheme.surface,
               ),
             ),
           ),
@@ -65,11 +68,13 @@ class BauhausTimerControl extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isRunning
                         ? BauhausDesign.success.withValues(alpha: 0.1)
-                        : BauhausDesign.neutral.withValues(alpha: 0.1),
+                        : Theme.of(
+                            context,
+                          ).colorScheme.outline.withValues(alpha: 0.1),
                     border: Border.all(
                       color: isRunning
                           ? BauhausDesign.success
-                          : BauhausDesign.neutral,
+                          : Theme.of(context).colorScheme.outline,
                       width: 2,
                     ),
                   ),
@@ -78,7 +83,7 @@ class BauhausTimerControl extends StatelessWidget {
                     style: GoogleFonts.jetBrainsMono(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       letterSpacing: 2.0,
                     ),
                   ),
@@ -96,11 +101,13 @@ class BauhausTimerControl extends StatelessWidget {
                         backgroundColor: isRunning
                             ? BauhausDesign.error
                             : BauhausDesign.success,
-                        foregroundColor: BauhausDesign.surfaceLight,
+                        foregroundColor: isRunning
+                            ? Theme.of(context).colorScheme.onError
+                            : Theme.of(context).colorScheme.onSecondary,
                         elevation: 0,
                         shape: const RoundedRectangleBorder(), // Rectangle
-                        side: const BorderSide(
-                          color: BauhausDesign.textDark,
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.onSurface,
                           width: 3,
                         ),
                         padding: EdgeInsets.zero,
@@ -112,8 +119,9 @@ class BauhausTimerControl extends StatelessWidget {
                           Icon(
                             isRunning ? Icons.stop : Icons.play_arrow,
                             size: 32,
-                            color: BauhausDesign
-                                .textDark, // Dark icon for contrast
+                            color: isRunning
+                                ? Theme.of(context).colorScheme.onError
+                                : Theme.of(context).colorScheme.onSecondary,
                           ),
                           const SizedBox(width: 12),
                           Text(
@@ -121,7 +129,9 @@ class BauhausTimerControl extends StatelessWidget {
                             style: GoogleFonts.oswald(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: BauhausDesign.textDark, // Dark text
+                              color: isRunning
+                                  ? Theme.of(context).colorScheme.onError
+                                  : Theme.of(context).colorScheme.onSecondary,
                             ),
                           ),
                         ],
@@ -142,9 +152,9 @@ class BauhausTimerControl extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.warning_amber_rounded,
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                         const SizedBox(width: 12),
                         Text(
@@ -152,7 +162,7 @@ class BauhausTimerControl extends StatelessWidget {
                           style: GoogleFonts.oswald(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       ],

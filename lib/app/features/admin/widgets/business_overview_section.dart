@@ -21,7 +21,7 @@ class BusinessOverviewSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final child = Container(
-      decoration: const BoxDecoration(color: Colors.white),
+      decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(24, 40, 24, 10),
         child: Column(
@@ -32,7 +32,7 @@ class BusinessOverviewSection extends StatelessWidget {
               style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
-                color: BauhausDesign.neutral,
+                color: Theme.of(context).colorScheme.onSurface,
                 letterSpacing: -0.5,
               ),
             ),
@@ -40,7 +40,7 @@ class BusinessOverviewSection extends StatelessWidget {
             Text(
               'Track your business performance at a glance',
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.neutral,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -136,9 +136,12 @@ class BusinessOverviewSection extends StatelessWidget {
           width: 140,
           margin: const EdgeInsets.only(right: 16),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceLight,
+            color: Theme.of(context).colorScheme.surfaceContainer,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             boxShadow: const [BauhausDesign.shadowHard],
           ),
           child: Padding(
@@ -153,14 +156,14 @@ class BusinessOverviewSection extends StatelessWidget {
                     color: color,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                     border: Border.all(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.onSurface,
                       width: 1.5,
                     ),
                     boxShadow: const [BauhausDesign.shadowHardSm],
                   ),
                   child: Icon(
                     icon,
-                    color: BauhausDesign.surfaceLight,
+                    color: BauhausDesign.readableOnColor(color),
                     size: 18,
                   ),
                 ),
@@ -178,7 +181,7 @@ class BusinessOverviewSection extends StatelessWidget {
                           style: BauhausDesign.getTextTheme(context).titleMedium
                               ?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: BauhausDesign.neutral,
+                                color: Theme.of(context).colorScheme.onSurface,
                                 letterSpacing: -0.5,
                               ),
                           maxLines: 1,
@@ -189,7 +192,9 @@ class BusinessOverviewSection extends StatelessWidget {
                         title,
                         style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
-                              color: BauhausDesign.neutral,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                               height: 1.1,
                               fontWeight: FontWeight.w600,
                             ),

@@ -37,14 +37,14 @@ class _IncidentManagementViewState
     final state = ref.watch(incidentManagementViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         title: Text(
           'INCIDENT MANAGEMENT',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onSecondary,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -124,9 +124,9 @@ class _IncidentManagementViewState
               ],
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'Incident frequency has decreased by 15% compared to last month. Most incidents occur during evening shifts.',
-              style: TextStyle(color: BauhausDesign.textDark),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
             ),
           ],
         ),
@@ -149,9 +149,9 @@ class _IncidentManagementViewState
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           subtitle: Text(incident.reportedAt),
-          trailing: const Icon(
+          trailing: Icon(
             Icons.chevron_right,
-            color: BauhausDesign.neutral,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ),

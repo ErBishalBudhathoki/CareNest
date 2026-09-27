@@ -28,6 +28,8 @@ class FeedbackFormView extends StatefulWidget {
 }
 
 class _FeedbackFormViewState extends State<FeedbackFormView> {
+  ColorScheme get _colorScheme => Theme.of(context).colorScheme;
+
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -129,7 +131,7 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: _colorScheme.surface,
       appBar: AppBar(
         title: Text(
           l10n?.feedbackTitle ?? 'Submit Feedback',
@@ -138,20 +140,23 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: _colorScheme.inverseSurface,
+        foregroundColor: _colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: BauhausDesign.primary),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: _colorScheme.onInverseSurface,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: BauhausDesign.neutral, height: 1.5),
+          child: Container(color: _colorScheme.outline, height: 1.5),
         ),
       ),
       body: _submitted ? _buildSuccessState(l10n) : _buildForm(l10n),
@@ -183,7 +188,7 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
               l10n?.feedbackSuccess ?? 'Thank you for your feedback!',
               style: BauhausDesign.getTextTheme(context).headlineSmall
                   ?.copyWith(
-                    color: BauhausDesign.textDark,
+                    color: _colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
                   ),
               textAlign: TextAlign.center,
@@ -194,7 +199,7 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
                   'Your feedback helps us improve CareNest.',
               style: BauhausDesign.getTextTheme(
                 context,
-              ).bodyLarge?.copyWith(color: BauhausDesign.textMuted),
+              ).bodyLarge?.copyWith(color: _colorScheme.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: BauhausDesign.space6),
@@ -204,11 +209,11 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
               child: ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: BauhausDesign.primary,
-                  foregroundColor: BauhausDesign.surfaceWhite,
+                  backgroundColor: _colorScheme.primary,
+                  foregroundColor: _colorScheme.onPrimary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                    side: BorderSide(color: BauhausDesign.neutral, width: 2),
+                    side: BorderSide(color: _colorScheme.outline, width: 2),
                   ),
                 ),
                 child: Text(
@@ -239,7 +244,7 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
                   'Describe the issue or share your suggestions',
               style: BauhausDesign.getTextTheme(
                 context,
-              ).bodyLarge?.copyWith(color: BauhausDesign.textMuted),
+              ).bodyLarge?.copyWith(color: _colorScheme.onSurfaceVariant),
             ),
             const SizedBox(height: BauhausDesign.space5),
 
@@ -247,7 +252,7 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
             Text(
               l10n?.feedbackTitleLabel ?? 'Issue Title',
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                color: BauhausDesign.textDark,
+                color: _colorScheme.onSurface,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -258,20 +263,14 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
                 hintText:
                     l10n?.feedbackTitleHint ?? 'Brief summary of the issue',
                 filled: true,
-                fillColor: BauhausDesign.surfaceWhite,
+                fillColor: _colorScheme.surface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  borderSide: BorderSide(
-                    color: BauhausDesign.neutral,
-                    width: 2,
-                  ),
+                  borderSide: BorderSide(color: _colorScheme.outline, width: 2),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  borderSide: BorderSide(
-                    color: BauhausDesign.neutral,
-                    width: 2,
-                  ),
+                  borderSide: BorderSide(color: _colorScheme.outline, width: 2),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
@@ -294,7 +293,7 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
             Text(
               l10n?.feedbackDescriptionLabel ?? 'Description',
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                color: BauhausDesign.textDark,
+                color: _colorScheme.onSurface,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -307,20 +306,14 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
                     l10n?.feedbackDescriptionHint ??
                     'What happened? What did you expect to happen?',
                 filled: true,
-                fillColor: BauhausDesign.surfaceWhite,
+                fillColor: _colorScheme.surface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  borderSide: BorderSide(
-                    color: BauhausDesign.neutral,
-                    width: 2,
-                  ),
+                  borderSide: BorderSide(color: _colorScheme.outline, width: 2),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  borderSide: BorderSide(
-                    color: BauhausDesign.neutral,
-                    width: 2,
-                  ),
+                  borderSide: BorderSide(color: _colorScheme.outline, width: 2),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
@@ -379,8 +372,8 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
                   onPressed: () =>
                       CrashlyticsService.instance.forceCrashForTesting(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: BauhausDesign.error,
-                    foregroundColor: BauhausDesign.surfaceWhite,
+                    backgroundColor: _colorScheme.error,
+                    foregroundColor: _colorScheme.onError,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(
                         BauhausDesign.radiusMd,
@@ -403,12 +396,12 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
               child: ElevatedButton(
                 onPressed: _isSubmitting ? null : _submitFeedback,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: BauhausDesign.primary,
-                  foregroundColor: BauhausDesign.surfaceWhite,
-                  disabledBackgroundColor: BauhausDesign.neutral,
+                  backgroundColor: _colorScheme.primary,
+                  foregroundColor: _colorScheme.onPrimary,
+                  disabledBackgroundColor: _colorScheme.surfaceContainerHighest,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                    side: BorderSide(color: BauhausDesign.neutral, width: 2),
+                    side: BorderSide(color: _colorScheme.outline, width: 2),
                   ),
                 ),
                 child: _isSubmitting
@@ -418,7 +411,7 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            BauhausDesign.surfaceWhite,
+                            _colorScheme.onPrimary,
                           ),
                         ),
                       )

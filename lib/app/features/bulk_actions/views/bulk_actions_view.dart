@@ -50,16 +50,18 @@ class _BulkActionsViewState extends ConsumerState<BulkActionsView>
       appBar: AppBar(
         title: const Text('Bulk Actions'),
         backgroundColor: BauhausDesign.primary,
-        foregroundColor: Colors.white,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
           labelPadding: const EdgeInsets.symmetric(horizontal: 16),
           indicatorSize: TabBarIndicatorSize.tab,
-          indicatorColor: Colors.white,
+          indicatorColor: Theme.of(context).colorScheme.onPrimary,
           physics: const BouncingScrollPhysics(),
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
+          labelColor: Theme.of(context).colorScheme.onPrimary,
+          unselectedLabelColor: Theme.of(
+            context,
+          ).colorScheme.onPrimary.withValues(alpha: 0.7),
           labelStyle: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w700,
@@ -93,7 +95,11 @@ class _BulkActionsViewState extends ConsumerState<BulkActionsView>
 // Shared list-state helpers
 // ============================================================================
 
-Widget _buildTabError(String message, VoidCallback onRetry) {
+Widget _buildTabError(
+  BuildContext context,
+  String message,
+  VoidCallback onRetry,
+) {
   return Center(
     child: Padding(
       padding: const EdgeInsets.all(24),
@@ -105,7 +111,10 @@ Widget _buildTabError(String message, VoidCallback onRetry) {
           Text(
             message,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 14, color: BauhausDesign.textDark),
+            style: TextStyle(
+              fontSize: 14,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: 16),
           ElevatedButton.icon(
@@ -114,7 +123,7 @@ Widget _buildTabError(String message, VoidCallback onRetry) {
             label: const Text('RETRY'),
             style: ElevatedButton.styleFrom(
               backgroundColor: BauhausDesign.primary,
-              foregroundColor: Colors.white,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
         ],
@@ -299,7 +308,7 @@ class _BulkTimesheetTabState extends ConsumerState<_BulkTimesheetTab> {
         // Action Bar
         Container(
           padding: const EdgeInsets.all(16),
-          color: BauhausDesign.surfaceOffWhite,
+          color: Theme.of(context).colorScheme.surfaceContainer,
           child: LayoutBuilder(
             builder: (context, constraints) {
               final isCompact = constraints.maxWidth < 900;
@@ -312,7 +321,7 @@ class _BulkTimesheetTabState extends ConsumerState<_BulkTimesheetTab> {
                 label: const Text('APPROVE'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: BauhausDesign.success,
-                  foregroundColor: Colors.white,
+                  foregroundColor: Theme.of(context).colorScheme.onSecondary,
                 ),
               );
               final rejectButton = ElevatedButton.icon(
@@ -324,7 +333,7 @@ class _BulkTimesheetTabState extends ConsumerState<_BulkTimesheetTab> {
                 label: const Text('REJECT'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: BauhausDesign.error,
-                  foregroundColor: Colors.white,
+                  foregroundColor: Theme.of(context).colorScheme.onError,
                 ),
               );
 
@@ -387,7 +396,7 @@ class _BulkTimesheetTabState extends ConsumerState<_BulkTimesheetTab> {
       return const Center(child: CircularProgressIndicator());
     }
     if (_error != null) {
-      return _buildTabError(_error!, _loadTimesheets);
+      return _buildTabError(context, _error!, _loadTimesheets);
     }
     if (_timesheets.isEmpty) {
       return Center(
@@ -504,7 +513,7 @@ class _BulkInvoiceTabState extends ConsumerState<_BulkInvoiceTab> {
         // Action Bar
         Container(
           padding: const EdgeInsets.all(16),
-          color: BauhausDesign.surfaceOffWhite,
+          color: Theme.of(context).colorScheme.surfaceContainer,
           child: Column(
             children: [
               LayoutBuilder(
@@ -521,7 +530,9 @@ class _BulkInvoiceTabState extends ConsumerState<_BulkInvoiceTab> {
                     label: const Text('PREVIEW'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: BauhausDesign.secondary,
-                      foregroundColor: Colors.white,
+                      foregroundColor: Theme.of(
+                        context,
+                      ).colorScheme.onSecondary,
                     ),
                   );
                   final generateButton = ElevatedButton.icon(
@@ -535,7 +546,7 @@ class _BulkInvoiceTabState extends ConsumerState<_BulkInvoiceTab> {
                     label: const Text('GENERATE'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: BauhausDesign.primary,
-                      foregroundColor: Colors.white,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
                     ),
                   );
 
@@ -610,7 +621,7 @@ class _BulkInvoiceTabState extends ConsumerState<_BulkInvoiceTab> {
       return const Center(child: CircularProgressIndicator());
     }
     if (_error != null) {
-      return _buildTabError(_error!, _loadAppointments);
+      return _buildTabError(context, _error!, _loadAppointments);
     }
     if (_appointments.isEmpty) {
       return Center(
@@ -814,7 +825,7 @@ class _BulkAssignmentTabState extends ConsumerState<_BulkAssignmentTab> {
         // Action Bar
         Container(
           padding: const EdgeInsets.all(16),
-          color: BauhausDesign.surfaceOffWhite,
+          color: Theme.of(context).colorScheme.surfaceContainer,
           child: LayoutBuilder(
             builder: (context, constraints) {
               final isCompact = constraints.maxWidth < 900;
@@ -826,7 +837,7 @@ class _BulkAssignmentTabState extends ConsumerState<_BulkAssignmentTab> {
                 label: const Text('SUGGEST'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: BauhausDesign.secondary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: Theme.of(context).colorScheme.onSecondary,
                 ),
               );
               final assignButton = ElevatedButton.icon(
@@ -837,7 +848,7 @@ class _BulkAssignmentTabState extends ConsumerState<_BulkAssignmentTab> {
                 label: const Text('ASSIGN'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: BauhausDesign.primary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 ),
               );
 
@@ -900,7 +911,7 @@ class _BulkAssignmentTabState extends ConsumerState<_BulkAssignmentTab> {
       return const Center(child: CircularProgressIndicator());
     }
     if (_error != null) {
-      return _buildTabError(_error!, _loadShifts);
+      return _buildTabError(context, _error!, _loadShifts);
     }
     if (_shifts.isEmpty) {
       return Center(
@@ -1202,7 +1213,7 @@ class _BulkMessagingTabState extends ConsumerState<_BulkMessagingTab> {
                 label: const Text('SEND NOW'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: BauhausDesign.primary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   minimumSize: const Size.fromHeight(48),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -1259,7 +1270,7 @@ class _BulkMessagingTabState extends ConsumerState<_BulkMessagingTab> {
       );
     }
     if (_error != null) {
-      return _buildTabError(_error!, _loadUsers);
+      return _buildTabError(context, _error!, _loadUsers);
     }
     if (_users.isEmpty) {
       return Center(
@@ -1271,7 +1282,7 @@ class _BulkMessagingTabState extends ConsumerState<_BulkMessagingTab> {
     }
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: BauhausDesign.neutral),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Column(

@@ -22,24 +22,27 @@ class AnalyticsDashboardView extends ConsumerWidget {
     final analyticsState = ref.watch(analyticsControllerProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           'WORKFORCE ANALYTICS',
           style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
             fontWeight: FontWeight.w700,
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onSecondary,
           ),
         ),
         centerTitle: true,
         backgroundColor: BauhausDesign.success,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        shape: const Border(
-          bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
         ),
       ),
       body: CustomScrollView(
@@ -58,12 +61,12 @@ class AnalyticsDashboardView extends ConsumerWidget {
                   Container(
                     padding: const EdgeInsets.all(BauhausDesign.space3),
                     decoration: BoxDecoration(
-                      color: BauhausDesign.surfaceLight,
+                      color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(
                         BauhausDesign.radiusSm,
                       ),
                       border: Border.all(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.outline,
                         width: 2,
                       ),
                       boxShadow: const [BauhausDesign.shadowHardSm],
@@ -76,7 +79,7 @@ class AnalyticsDashboardView extends ConsumerWidget {
                           style: BauhausDesign.getTextTheme(context).labelMedium
                               ?.copyWith(
                                 fontWeight: FontWeight.w900,
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                         ),
                         const SizedBox(width: 8),
@@ -95,7 +98,7 @@ class AnalyticsDashboardView extends ConsumerWidget {
                       child: Container(
                         padding: const EdgeInsets.all(BauhausDesign.space3),
                         decoration: BoxDecoration(
-                          color: BauhausDesign.surfaceLight,
+                          color: Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(
                             BauhausDesign.radiusSm,
                           ),
@@ -119,7 +122,9 @@ class AnalyticsDashboardView extends ConsumerWidget {
                                     .titleMedium
                                     ?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                      color: BauhausDesign.textDark,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
                                     ),
                               ),
                             ),
@@ -202,12 +207,15 @@ class AnalyticsDashboardView extends ConsumerWidget {
   ) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: BauhausDesign.surfaceWhite,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       builder: (context) => Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -218,7 +226,7 @@ class AnalyticsDashboardView extends ConsumerWidget {
               style: BauhausDesign.getTextTheme(context).headlineSmall
                   ?.copyWith(
                     fontWeight: FontWeight.w900,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
             ),
             const SizedBox(height: 24),
@@ -254,22 +262,7 @@ class AnalyticsDashboardView extends ConsumerWidget {
                     start: currentFilter.startDate,
                     end: currentFilter.endDate,
                   ),
-                  builder: (context, child) {
-                    return Theme(
-                      data: Theme.of(context).copyWith(
-                        colorScheme: ColorScheme.light(
-                          primary: BauhausDesign.primary,
-                          onPrimary: BauhausDesign.surfaceWhite,
-                          surface: BauhausDesign.surfaceWhite,
-                          onSurface: BauhausDesign.textDark,
-                        ),
-                        dialogTheme: DialogThemeData(
-                          backgroundColor: BauhausDesign.surfaceWhite,
-                        ),
-                      ),
-                      child: child!,
-                    );
-                  },
+                  builder: (context, child) => child!,
                 );
                 if (picked != null) {
                   ref
@@ -294,9 +287,12 @@ class _DashboardStatusStrip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Row(
@@ -307,7 +303,7 @@ class _DashboardStatusStrip extends StatelessWidget {
             child: Text(
               'Monitoring period',
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -319,12 +315,15 @@ class _DashboardStatusStrip extends StatelessWidget {
             ),
             decoration: BoxDecoration(
               color: BauhausDesign.secondary,
-              border: Border.all(color: BauhausDesign.neutral, width: 1),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1,
+              ),
             ),
             child: Text(
               activeLabel,
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.surfaceLight,
+                color: Theme.of(context).colorScheme.onSecondary,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -348,8 +347,11 @@ class _FilterOption extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
         decoration: BoxDecoration(
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
-          color: BauhausDesign.surfaceWhite,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
+          color: Theme.of(context).colorScheme.surface,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -358,12 +360,14 @@ class _FilterOption extends StatelessWidget {
               label,
               style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: BauhausDesign.textDark, // Ensure visible text
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface, // Ensure visible text
               ),
             ),
             Icon(
               Icons.arrow_forward,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ), // Ensure visible icon
           ],
         ),
@@ -385,8 +389,11 @@ class _DateFilterButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          color: Theme.of(context).colorScheme.surface,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
         ),
         child: Row(
           children: [
@@ -394,14 +401,16 @@ class _DateFilterButton extends StatelessWidget {
               currentRange,
               style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: BauhausDesign.textDark, // Ensure visible text
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface, // Ensure visible text
               ),
             ),
             const SizedBox(width: 8),
             Icon(
               Icons.calendar_today,
               size: 16,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ), // Ensure visible icon
           ],
         ),

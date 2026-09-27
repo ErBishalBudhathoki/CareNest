@@ -22,10 +22,7 @@ class PriceHistoryView extends ConsumerStatefulWidget {
 
 class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
     with SingleTickerProviderStateMixin {
-  static const Color _screenGray = Color(0xFFE3E3E3);
-  static const Color _inkBlack = Color(0xFF171717);
   static const Color _accentRed = Color(0xFFE21F26);
-  static const Color _panelWhite = Color(0xFFF8F8F8);
 
   late final TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
@@ -103,7 +100,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
     final detailRows = detailAsync.value ?? const <Map<String, dynamic>>[];
 
     return Scaffold(
-      backgroundColor: _screenGray,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(pricingLiveRecordsProvider(widget.organizationId));
@@ -164,13 +161,13 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
 
   Widget _buildHeader(AppLocalizations l10n) {
     return Container(
-      color: _screenGray,
+      color: Theme.of(context).colorScheme.surface,
       child: SafeArea(
         bottom: false,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(8, 8, 8, 20),
           child: Container(
-            color: _screenGray,
+            color: Theme.of(context).colorScheme.surface,
             padding: const EdgeInsets.fromLTRB(0, 0, 0, 2),
             child: Column(
               children: [
@@ -182,13 +179,16 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                         width: 34,
                         height: 34,
                         decoration: BoxDecoration(
-                          color: _panelWhite,
-                          border: Border.all(color: _inkBlack, width: 2),
+                          color: Theme.of(context).colorScheme.surface,
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            width: 2,
+                          ),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.arrow_back,
                           size: 18,
-                          color: _inkBlack,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -200,7 +200,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                             .headlineMedium
                             ?.copyWith(
                               fontWeight: FontWeight.w800,
-                              color: _inkBlack,
+                              color: Theme.of(context).colorScheme.onSurface,
                               letterSpacing: 0.4,
                             ),
                       ),
@@ -215,7 +215,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                         l10n.trackPricingChanges,
                         style: BauhausDesign.getTextTheme(context).labelLarge
                             ?.copyWith(
-                              color: _inkBlack,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.w700,
                             ),
                       ),
@@ -227,13 +227,16 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                       ),
                       decoration: BoxDecoration(
                         color: _accentRed,
-                        border: Border.all(color: _inkBlack, width: 2),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          width: 2,
+                        ),
                       ),
                       child: Text(
                         l10n.systemActive.toUpperCase(),
                         style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
-                              color: BauhausDesign.surfaceWhite,
+                              color: Theme.of(context).colorScheme.surface,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 0.6,
                             ),
@@ -242,7 +245,11 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                   ],
                 ),
                 const SizedBox(height: 10),
-                const Divider(color: _inkBlack, height: 1, thickness: 1),
+                Divider(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  height: 1,
+                  thickness: 1,
+                ),
               ],
             ),
           ),
@@ -316,8 +323,11 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
         return Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: _panelWhite,
-            border: Border.all(color: _inkBlack, width: 2),
+            color: Theme.of(context).colorScheme.surface,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.onSurface,
+              width: 2,
+            ),
           ),
           child: Row(
             children: [
@@ -326,12 +336,15 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                 height: 24,
                 decoration: BoxDecoration(
                   color: card['color'] as Color,
-                  border: Border.all(color: _inkBlack, width: 2),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 2,
+                  ),
                 ),
                 child: Icon(
                   card['icon'] as IconData,
                   size: 12,
-                  color: BauhausDesign.surfaceWhite,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
               ),
               const SizedBox(width: 8),
@@ -346,7 +359,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                       overflow: TextOverflow.ellipsis,
                       style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
-                            color: _inkBlack,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w900,
                           ),
                     ),
@@ -371,18 +384,23 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
   Widget _buildTabs(AppLocalizations l10n) {
     return Container(
       decoration: BoxDecoration(
-        color: _panelWhite,
-        border: Border.all(color: _inkBlack, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
       ),
       child: TabBar(
         controller: _tabController,
-        indicator: const BoxDecoration(color: _inkBlack),
+        indicator: BoxDecoration(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
         indicatorSize: TabBarIndicatorSize.tab,
         indicatorPadding: EdgeInsets.zero,
         padding: const EdgeInsets.symmetric(horizontal: 8),
         labelPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        labelColor: BauhausDesign.surfaceWhite,
-        unselectedLabelColor: _inkBlack,
+        labelColor: Theme.of(context).colorScheme.surface,
+        unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
         labelStyle: BauhausDesign.getTextTheme(
           context,
         ).labelSmall?.copyWith(fontWeight: FontWeight.w900),
@@ -430,8 +448,11 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: _panelWhite,
-        border: Border.all(color: _inkBlack, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
       ),
       child: Column(
         children: [
@@ -439,17 +460,26 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
             controller: _searchController,
             decoration: InputDecoration(
               hintText: l10n.searchHistoryHint,
-              prefixIcon: const Icon(Icons.search, color: _inkBlack),
+              prefixIcon: Icon(
+                Icons.search,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
               isDense: true,
               filled: true,
-              fillColor: BauhausDesign.surfaceWhite,
-              enabledBorder: const OutlineInputBorder(
+              fillColor: Theme.of(context).colorScheme.surface,
+              enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
-                borderSide: BorderSide(color: _inkBlack, width: 2),
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 2,
+                ),
               ),
-              focusedBorder: const OutlineInputBorder(
+              focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
-                borderSide: BorderSide(color: _inkBlack, width: 2),
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 2,
+                ),
               ),
             ),
           ),
@@ -475,14 +505,21 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         decoration: BoxDecoration(
-          color: selected ? _inkBlack : BauhausDesign.surfaceWhite,
-          border: Border.all(color: _inkBlack, width: 2),
+          color: selected
+              ? Theme.of(context).colorScheme.onSurface
+              : Theme.of(context).colorScheme.surface,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
         ),
         child: Text(
           label,
           textAlign: TextAlign.center,
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-            color: selected ? BauhausDesign.surfaceWhite : _inkBlack,
+            color: selected
+                ? Theme.of(context).colorScheme.surface
+                : Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w900,
           ),
         ),
@@ -506,8 +543,11 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: _panelWhite,
-            border: Border.all(color: _inkBlack, width: 2),
+            color: Theme.of(context).colorScheme.surface,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.onSurface,
+              width: 2,
+            ),
           ),
           child: Column(
             children: [
@@ -530,9 +570,11 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                           overflow: TextOverflow.ellipsis,
                           style:
                               (BauhausDesign.getTextTheme(context).labelSmall ??
-                                      const TextStyle(fontSize: 12))
+                                      TextStyle(fontSize: 12))
                                   .copyWith(
-                                    color: BauhausDesign.textDark,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
                                     fontWeight: FontWeight.w700,
                                   ),
                         ),
@@ -559,9 +601,11 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                           overflow: TextOverflow.ellipsis,
                           style:
                               (BauhausDesign.getTextTheme(context).labelSmall ??
-                                      const TextStyle(fontSize: 12))
+                                      TextStyle(fontSize: 12))
                                   .copyWith(
-                                    color: BauhausDesign.textDark,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
                                     fontWeight: FontWeight.w700,
                                   ),
                         ),
@@ -674,17 +718,20 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
   }) {
     final baseStyle =
         BauhausDesign.getTextTheme(context).labelSmall ??
-        const TextStyle(fontSize: 12);
+        TextStyle(fontSize: 12);
     final dropdownTextStyle = baseStyle.copyWith(
-      color: BauhausDesign.textDark,
+      color: Theme.of(context).colorScheme.onSurface,
       fontWeight: FontWeight.w700,
     );
     final bool hasItems = items.isNotEmpty;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: _inkBlack, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -700,8 +747,8 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
             style: dropdownTextStyle,
           ),
           style: dropdownTextStyle,
-          dropdownColor: BauhausDesign.surfaceWhite,
-          iconEnabledColor: _inkBlack,
+          dropdownColor: Theme.of(context).colorScheme.surface,
+          iconEnabledColor: Theme.of(context).colorScheme.onSurface,
           isExpanded: true,
           items: items,
           onChanged: hasItems ? onChanged : null,
@@ -719,8 +766,11 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: _panelWhite,
-        border: Border.all(color: _inkBlack, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -728,7 +778,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
           Text(
             title.toUpperCase(),
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: _inkBlack,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -736,7 +786,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
           Text(
             value,
             style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-              color: _inkBlack,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -763,8 +813,11 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: _panelWhite,
-        border: Border.all(color: _inkBlack, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
       ),
       child: Row(
         children: [
@@ -777,7 +830,10 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: BauhausDesign.getTextTheme(context).labelSmall
-                      ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w900),
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontWeight: FontWeight.w900,
+                      ),
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -794,7 +850,10 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                       ? AppLocalizations.of(context)!.moduleNoDataYet
                       : _formatDate(time),
                   style: BauhausDesign.getTextTheme(context).labelSmall
-                      ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w700),
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
               ],
             ),
@@ -804,13 +863,16 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: statusColor,
-              border: Border.all(color: _inkBlack, width: 1),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.onSurface,
+                width: 1,
+              ),
             ),
             child: Text(
               status.toUpperCase(),
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).labelSmall?.copyWith(color: BauhausDesign.surfaceWhite),
+              style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                color: Theme.of(context).colorScheme.surface,
+              ),
             ),
           ),
         ],
@@ -830,7 +892,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
         normalized.contains('needs')) {
       return BauhausDesign.warning;
     }
-    return BauhausDesign.neutral;
+    return Theme.of(context).colorScheme.onSurface;
   }
 
   Widget _buildEmpty(String text) {
@@ -838,8 +900,11 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _panelWhite,
-        border: Border.all(color: _inkBlack, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
       ),
       child: Text(
         text,

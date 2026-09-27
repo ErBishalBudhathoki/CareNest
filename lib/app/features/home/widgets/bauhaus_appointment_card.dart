@@ -15,6 +15,8 @@ class BauhausAppointmentCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     // Extract Data
     Map<String, dynamic>? clientDetails;
     if (appointment['clientDetails'] != null) {
@@ -67,11 +69,11 @@ class BauhausAppointmentCard extends ConsumerWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        border: Border.all(color: BauhausDesign.textDark, width: 3),
-        boxShadow: const [
+        color: colorScheme.surface,
+        border: Border.all(color: colorScheme.outline, width: 3),
+        boxShadow: [
           BoxShadow(
-            color: BauhausDesign.textDark,
+            color: colorScheme.shadow,
             offset: Offset(4, 4),
             blurRadius: 0,
           ),
@@ -95,9 +97,9 @@ class BauhausAppointmentCard extends ConsumerWidget {
                         vertical: BauhausDesign.space1,
                       ),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.primary, // Red background
+                        color: colorScheme.primary, // Red background
                         border: Border.all(
-                          color: BauhausDesign.textDark,
+                          color: colorScheme.outline,
                           width: 2,
                         ),
                       ),
@@ -106,7 +108,7 @@ class BauhausAppointmentCard extends ConsumerWidget {
                         style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: BauhausDesign.surfaceWhite,
+                              color: colorScheme.onPrimary,
                             ),
                       ),
                     ),
@@ -123,17 +125,17 @@ class BauhausAppointmentCard extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.all(BauhausDesign.space1),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.surfaceWhite,
+                        color: colorScheme.surface,
                         border: Border.all(
-                          color: BauhausDesign.textDark,
+                          color: colorScheme.outline,
                           width: 2,
                         ),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.arrow_forward,
                         size: 16,
-                        color: BauhausDesign.textDark,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                   ],
@@ -148,7 +150,7 @@ class BauhausAppointmentCard extends ConsumerWidget {
                   style: BauhausDesign.getTextTheme(context).headlineMedium
                       ?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: BauhausDesign.textDark,
+                        color: colorScheme.onSurface,
                         height: 1.1,
                       ),
                 ),
@@ -157,10 +159,10 @@ class BauhausAppointmentCard extends ConsumerWidget {
                 // Time & Location
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.access_time,
                       size: 18,
-                      color: BauhausDesign.neutral,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: BauhausDesign.space2),
                     Text(
@@ -168,7 +170,7 @@ class BauhausAppointmentCard extends ConsumerWidget {
                       style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: BauhausDesign.textDark,
+                            color: colorScheme.onSurface,
                           ),
                     ),
                   ],
@@ -187,17 +189,18 @@ class BauhausAppointmentCard extends ConsumerWidget {
     required bool isOvertime,
     required bool isClockedIn,
   }) {
-    Color badgeColor = BauhausDesign.success;
+    final colorScheme = Theme.of(context).colorScheme;
+    Color badgeColor = colorScheme.secondary;
     String badgeText = 'IN PROGRESS';
 
     if (isOvertime) {
-      badgeColor = BauhausDesign.warning;
+      badgeColor = colorScheme.primary;
       badgeText = 'OVERTIME';
     } else if (isOverdue) {
-      badgeColor = BauhausDesign.error;
+      badgeColor = colorScheme.error;
       badgeText = 'OVERDUE';
     } else if (!isClockedIn) {
-      badgeColor = BauhausDesign.warning;
+      badgeColor = colorScheme.primary;
       badgeText = 'CLOCK IN';
     }
 
@@ -208,10 +211,10 @@ class BauhausAppointmentCard extends ConsumerWidget {
       ),
       decoration: BoxDecoration(
         color: badgeColor,
-        border: Border.all(color: BauhausDesign.textDark, width: 2),
-        boxShadow: const [
+        border: Border.all(color: colorScheme.outline, width: 2),
+        boxShadow: [
           BoxShadow(
-            color: BauhausDesign.textDark,
+            color: colorScheme.shadow,
             offset: Offset(2, 2),
             blurRadius: 0,
           ),
@@ -221,9 +224,11 @@ class BauhausAppointmentCard extends ConsumerWidget {
         badgeText,
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
           fontWeight: FontWeight.w800,
-          color: badgeColor == BauhausDesign.warning
-              ? BauhausDesign.textDark
-              : BauhausDesign.surfaceWhite,
+          color: badgeColor == colorScheme.primary
+              ? colorScheme.onPrimary
+              : badgeColor == colorScheme.error
+              ? colorScheme.onError
+              : colorScheme.onSecondary,
           letterSpacing: 0.4,
         ),
       ),

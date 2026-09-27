@@ -14,7 +14,7 @@ class AdminRequestsView extends ConsumerWidget {
     final requestsState = ref.watch(adminRequestsViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _buildAppBar(
         context,
         onRefresh: () async {
@@ -78,10 +78,13 @@ class AdminRequestsView extends ConsumerWidget {
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: Container(
-        decoration: const BoxDecoration(
-          color: BauhausDesign.surfaceLight,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceContainer,
           border: Border(
-            bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+            bottom: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
           ),
         ),
         child: SafeArea(
@@ -92,9 +95,9 @@ class AdminRequestsView extends ConsumerWidget {
             child: Row(
               children: [
                 IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.arrow_back,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
@@ -104,15 +107,16 @@ class AdminRequestsView extends ConsumerWidget {
                     'Approvals Dashboard',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).displaySmall?.copyWith(color: BauhausDesign.textDark),
+                    style: BauhausDesign.getTextTheme(context).displaySmall
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.refresh,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                   onPressed: onRefresh,
                 ),
@@ -134,20 +138,23 @@ class AdminRequestsView extends ConsumerWidget {
       ),
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Row(
         children: [
-          const Icon(Icons.fact_check, color: BauhausDesign.secondary),
+          Icon(Icons.fact_check, color: BauhausDesign.secondary),
           const SizedBox(width: BauhausDesign.space3),
           Expanded(
             child: Text(
               'Pending approvals',
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -201,10 +208,10 @@ class _RequestCardState extends ConsumerState<_RequestCard> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: BauhausDesign.surfaceWhite,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-            side: const BorderSide(color: BauhausDesign.neoDanger, width: 3),
+            side: BorderSide(color: BauhausDesign.neoDanger, width: 3),
           ),
           title: Text(
             'Confirm Account Deletion',
@@ -214,9 +221,9 @@ class _RequestCardState extends ConsumerState<_RequestCard> {
           ),
           content: Text(
             'Approving this request will immediately deactivate the user account and schedule it for permanent deletion in 90 days.\n\nAre you sure you want to proceed?',
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           actions: [
             TextButton(
@@ -241,7 +248,7 @@ class _RequestCardState extends ConsumerState<_RequestCard> {
     final borderColor = isError ? BauhausDesign.error : BauhausDesign.success;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: BauhausDesign.surfaceLight,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
@@ -250,7 +257,7 @@ class _RequestCardState extends ConsumerState<_RequestCard> {
         content: Text(
           message,
           style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -266,9 +273,12 @@ class _RequestCardState extends ConsumerState<_RequestCard> {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Column(
@@ -295,16 +305,16 @@ class _RequestCardState extends ConsumerState<_RequestCard> {
           Text(
             'Request from ${widget.request.createdBy}',
             style: BauhausDesign.getTextTheme(context).titleSmall?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: BauhausDesign.space1),
           Text(
             'Created: ${widget.request.createdAt != null ? dateFormat.format(widget.request.createdAt!) : "Unknown"}',
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space3),
           if (widget.request.details.isNotEmpty)
@@ -318,16 +328,17 @@ class _RequestCardState extends ConsumerState<_RequestCard> {
                       '${e.key}: ',
                       style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w700,
                           ),
                     ),
                     Expanded(
                       child: Text(
                         e.value.toString(),
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodySmall?.copyWith(color: BauhausDesign.textDark),
+                        style: BauhausDesign.getTextTheme(context).bodySmall
+                            ?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
                       ),
                     ),
                   ],
@@ -340,7 +351,7 @@ class _RequestCardState extends ConsumerState<_RequestCard> {
             Text(
               'Note: ${widget.request.note}',
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontStyle: FontStyle.italic,
               ),
             ),

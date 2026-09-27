@@ -67,25 +67,28 @@ class _AddUpdateInvoicingEmailViewState
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: BauhausDesign.primary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         title: Text(
           'Add Invoicing Email Details',
           style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onPrimary,
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: BauhausDesign.neutral, height: 1),
+          child: Container(
+            color: Theme.of(context).colorScheme.onSurface,
+            height: 1,
+          ),
         ),
       ),
       body: Form(
@@ -107,7 +110,7 @@ class _AddUpdateInvoicingEmailViewState
                         color: BauhausDesign.primary,
                         borderRadius: BorderRadius.zero,
                         border: Border.all(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.onSurface,
                           width: 2,
                         ),
                         boxShadow: const [BauhausDesign.shadowHardSm],
@@ -315,7 +318,7 @@ class _AddUpdateInvoicingEmailViewState
                         color: BauhausDesign.primary,
                         borderRadius: BorderRadius.zero,
                         border: Border.all(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.onSurface,
                           width: 2,
                         ),
                         boxShadow: const [BauhausDesign.shadowHardSm],
@@ -325,7 +328,7 @@ class _AddUpdateInvoicingEmailViewState
                         textAlign: TextAlign.center,
                         style: BauhausDesign.getTextTheme(context).labelLarge
                             ?.copyWith(
-                              color: BauhausDesign.surfaceWhite,
+                              color: Theme.of(context).colorScheme.onPrimary,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 0.4,
                             ),
@@ -346,9 +349,12 @@ class _AddUpdateInvoicingEmailViewState
     Widget? prefixIcon,
     Widget? suffixIcon,
   }) {
-    const border = OutlineInputBorder(
+    final border = OutlineInputBorder(
       borderRadius: BorderRadius.zero,
-      borderSide: BorderSide(color: BauhausDesign.neutral, width: 2),
+      borderSide: BorderSide(
+        color: Theme.of(context).colorScheme.onSurface,
+        width: 2,
+      ),
     );
 
     return InputDecoration(
@@ -357,7 +363,7 @@ class _AddUpdateInvoicingEmailViewState
         context,
       ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
       filled: true,
-      fillColor: BauhausDesign.surfaceWhite,
+      fillColor: Theme.of(context).colorScheme.surface,
       contentPadding: const EdgeInsets.symmetric(
         horizontal: BauhausDesign.space4,
         vertical: BauhausDesign.space3,
@@ -385,18 +391,18 @@ class _AddUpdateInvoicingEmailViewState
     return Text(
       text,
       style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-        color: BauhausDesign.textDark,
+        color: Theme.of(context).colorScheme.onSurface,
         fontWeight: FontWeight.w700,
       ),
     );
   }
 
   BoxDecoration _panelDecoration() {
-    return const BoxDecoration(
-      color: BauhausDesign.surfaceWhite,
+    return BoxDecoration(
+      color: Theme.of(context).colorScheme.surface,
       borderRadius: BorderRadius.zero,
       border: Border.fromBorderSide(
-        BorderSide(color: BauhausDesign.neutral, width: 2),
+        BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2),
       ),
       boxShadow: [BauhausDesign.shadowHardSm],
     );

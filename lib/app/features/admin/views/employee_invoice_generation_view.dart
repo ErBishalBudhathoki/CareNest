@@ -616,7 +616,7 @@ class _EmployeeInvoiceGenerationViewState
         content: Text(
           message,
           style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-            color: BauhausDesign.surfaceLight,
+            color: Theme.of(context).colorScheme.surfaceContainer,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -624,7 +624,10 @@ class _EmployeeInvoiceGenerationViewState
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-          side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
         ),
         margin: const EdgeInsets.all(BauhausDesign.space4),
       ),
@@ -647,10 +650,10 @@ class _EmployeeInvoiceGenerationViewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -663,13 +666,15 @@ class _EmployeeInvoiceGenerationViewState
               color: Colors.transparent,
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               border: Border.all(
-                color: BauhausDesign.surfaceWhite.withValues(alpha: 0.5),
+                color: Theme.of(
+                  context,
+                ).colorScheme.surface.withValues(alpha: 0.5),
                 width: 1.5,
               ),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.arrow_back_ios_new_rounded,
-              color: BauhausDesign.surfaceWhite,
+              color: Theme.of(context).colorScheme.surface,
               size: 16,
             ),
           ),
@@ -681,14 +686,14 @@ class _EmployeeInvoiceGenerationViewState
               'Employee Invoice',
               style: BauhausDesign.getTextTheme(context).headlineLarge
                   ?.copyWith(
-                    color: BauhausDesign.surfaceWhite,
+                    color: Theme.of(context).colorScheme.surface,
                     fontWeight: FontWeight.w800,
                   ),
             ),
             Text(
               widget.organizationName ?? '',
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                color: BauhausDesign.neutral,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -696,7 +701,10 @@ class _EmployeeInvoiceGenerationViewState
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4),
-          child: Container(height: 4, color: BauhausDesign.neutral),
+          child: Container(
+            height: 4,
+            color: Theme.of(context).colorScheme.outline,
+          ),
         ),
       ),
       body: _isLoadingEmployees
@@ -712,10 +720,13 @@ class _EmployeeInvoiceGenerationViewState
       child: Container(
         padding: const EdgeInsets.all(BauhausDesign.space6),
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceLight,
+          color: Theme.of(context).colorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
-          boxShadow: const [BauhausDesign.shadowHard],
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
+          boxShadow: [BauhausDesign.shadowHard],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -725,13 +736,16 @@ class _EmployeeInvoiceGenerationViewState
               decoration: BoxDecoration(
                 color: BauhausDesign.secondary,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 1.5,
+                ),
               ),
-              child: const SizedBox(
+              child: SizedBox(
                 width: 24,
                 height: 24,
                 child: CircularProgressIndicator(
-                  color: BauhausDesign.surfaceLight,
+                  color: Theme.of(context).colorScheme.surfaceContainer,
                   strokeWidth: 3,
                 ),
               ),
@@ -740,7 +754,7 @@ class _EmployeeInvoiceGenerationViewState
             Text(
               label,
               style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -757,10 +771,13 @@ class _EmployeeInvoiceGenerationViewState
         child: Container(
           padding: const EdgeInsets.all(BauhausDesign.space6),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceLight,
+            color: Theme.of(context).colorScheme.surfaceContainer,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
-            boxShadow: const [BauhausDesign.shadowHard],
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
+            boxShadow: [BauhausDesign.shadowHard],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -770,11 +787,14 @@ class _EmployeeInvoiceGenerationViewState
                 decoration: BoxDecoration(
                   color: BauhausDesign.error,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 1.5,
+                  ),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.error_outline_rounded,
-                  color: BauhausDesign.surfaceLight,
+                  color: Theme.of(context).colorScheme.surfaceContainer,
                   size: 28,
                 ),
               ),
@@ -783,7 +803,7 @@ class _EmployeeInvoiceGenerationViewState
                 message,
                 textAlign: TextAlign.center,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -792,11 +812,11 @@ class _EmployeeInvoiceGenerationViewState
                 onPressed: _fetchEmployees,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: BauhausDesign.primary,
-                  foregroundColor: BauhausDesign.textDark,
+                  foregroundColor: Theme.of(context).colorScheme.onSurface,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                    side: const BorderSide(
-                      color: BauhausDesign.neutral,
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.outline,
                       width: 2,
                     ),
                   ),
@@ -839,12 +859,6 @@ class _EmployeeInvoiceGenerationViewState
     );
   }
 
-  // Neo-Brutalist Color Palette
-  static const Color _neoBlue = Color(0xFF1A237E);
-  static const Color _neoRed = Color(0xFFD50000);
-  static const Color _neoGreen = Color(0xFF00C853);
-  static const Color _neoBlack = Color(0xFF000000);
-  static const Color _neoWhite = Color(0xFFFFFFFF);
   static const double _neoBorderWidth = 2.5;
 
   Widget _buildSelectionPanel() {
@@ -853,11 +867,18 @@ class _EmployeeInvoiceGenerationViewState
     return Container(
       margin: const EdgeInsets.only(right: 8, bottom: 8),
       decoration: BoxDecoration(
-        color: _neoBlue,
+        color: Theme.of(context).colorScheme.primary,
         borderRadius: BorderRadius.circular(0), // Sharp corners
-        border: Border.all(color: _neoBlack, width: _neoBorderWidth),
-        boxShadow: const [
-          BoxShadow(color: _neoBlack, offset: Offset(8, 8), blurRadius: 0),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: _neoBorderWidth,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).colorScheme.onSurface,
+            offset: Offset(8, 8),
+            blurRadius: 0,
+          ),
         ],
       ),
       padding: const EdgeInsets.all(24),
@@ -868,11 +889,11 @@ class _EmployeeInvoiceGenerationViewState
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            decoration: const BoxDecoration(
-              color: _neoBlack,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.onSurface,
               boxShadow: [
                 BoxShadow(
-                  color: _neoWhite,
+                  color: Theme.of(context).colorScheme.surface,
                   offset: Offset(4, 4),
                   blurRadius: 0,
                 ),
@@ -881,7 +902,7 @@ class _EmployeeInvoiceGenerationViewState
             child: Text(
               '1) SELECT EMPLOYEES & CLIENTS',
               style: GoogleFonts.oswald(
-                color: _neoWhite,
+                color: Theme.of(context).colorScheme.surface,
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.0,
@@ -909,12 +930,16 @@ class _EmployeeInvoiceGenerationViewState
   Widget _buildSectionHeader(String title) {
     return Row(
       children: [
-        Container(width: 8, height: 24, color: _neoRed),
+        Container(
+          width: 8,
+          height: 24,
+          color: Theme.of(context).colorScheme.error,
+        ),
         const SizedBox(width: 12),
         Text(
           title,
           style: GoogleFonts.oswald(
-            color: _neoWhite,
+            color: Theme.of(context).colorScheme.surface,
             fontSize: 20,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
@@ -930,13 +955,19 @@ class _EmployeeInvoiceGenerationViewState
       // Keeping height constraint but updating style.
       height: 260,
       decoration: BoxDecoration(
-        color: _neoWhite,
-        border: Border.all(color: _neoBlack, width: _neoBorderWidth),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: _neoBorderWidth,
+        ),
       ),
       child: ListView.separated(
         itemCount: _employees.length,
-        separatorBuilder: (_, _) =>
-            const Divider(height: 1, thickness: 1.5, color: _neoBlack),
+        separatorBuilder: (_, _) => Divider(
+          height: 1,
+          thickness: 1.5,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
         itemBuilder: (context, index) {
           final e = _employees[index];
           final email = e['email']?.toString() ?? '';
@@ -961,7 +992,7 @@ class _EmployeeInvoiceGenerationViewState
                         Text(
                           (name.isNotEmpty ? name : 'UNKNOWN').toUpperCase(),
                           style: GoogleFonts.oswald(
-                            color: _neoBlack,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                           ),
@@ -970,7 +1001,9 @@ class _EmployeeInvoiceGenerationViewState
                         Text(
                           email,
                           style: GoogleFonts.robotoMono(
-                            color: _neoBlack.withValues(alpha: 0.6),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.6),
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),
@@ -994,14 +1027,21 @@ class _EmployeeInvoiceGenerationViewState
       width: 24,
       height: 24,
       decoration: BoxDecoration(
-        color: _neoWhite,
-        border: Border.all(color: _neoBlack, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
       ),
       padding: const EdgeInsets.all(2), // Gap between border and fill
       child: isSelected
           ? Container(
-              color: _neoRed,
-              child: const Icon(Icons.check, size: 14, color: _neoWhite),
+              color: Theme.of(context).colorScheme.error,
+              child: Icon(
+                Icons.check,
+                size: 14,
+                color: Theme.of(context).colorScheme.surface,
+              ),
             )
           : null,
     );
@@ -1027,10 +1067,17 @@ class _EmployeeInvoiceGenerationViewState
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: _neoWhite,
-        border: Border.all(color: _neoBlack, width: _neoBorderWidth),
-        boxShadow: const [
-          BoxShadow(color: _neoBlack, offset: Offset(4, 4), blurRadius: 0),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: _neoBorderWidth,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).colorScheme.onSurface,
+            offset: Offset(4, 4),
+            blurRadius: 0,
+          ),
         ],
       ),
       child: Stack(
@@ -1046,13 +1093,13 @@ class _EmployeeInvoiceGenerationViewState
                   horizontal: 16,
                   vertical: 8,
                 ),
-                collapsedIconColor: _neoBlack,
-                iconColor: _neoBlack,
+                collapsedIconColor: Theme.of(context).colorScheme.onSurface,
+                iconColor: Theme.of(context).colorScheme.onSurface,
                 title: Text(
                   (employee.name.isNotEmpty ? employee.name : employee.email)
                       .toUpperCase(),
                   style: GoogleFonts.oswald(
-                    color: _neoBlack,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                   ),
@@ -1060,7 +1107,9 @@ class _EmployeeInvoiceGenerationViewState
                 subtitle: Text(
                   employee.email,
                   style: GoogleFonts.robotoMono(
-                    color: _neoBlack.withValues(alpha: 0.6),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
@@ -1070,18 +1119,18 @@ class _EmployeeInvoiceGenerationViewState
                   children: [
                     if (employee.isLoadingClients ||
                         employee.isLoadingBankDetails)
-                      const SizedBox(
+                      SizedBox(
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2.5,
-                          color: _neoBlack,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       )
                     else if (!isValid)
-                      const Icon(
+                      Icon(
                         Icons.error_outline_rounded,
-                        color: _neoRed,
+                        color: Theme.of(context).colorScheme.error,
                         size: 24,
                       )
                     else
@@ -1089,18 +1138,24 @@ class _EmployeeInvoiceGenerationViewState
                         width: 24,
                         height: 24,
                         decoration: BoxDecoration(
-                          color: _neoGreen,
+                          color: Theme.of(context).colorScheme.secondary,
                           shape: BoxShape.circle,
-                          border: Border.all(color: _neoBlack, width: 1.5),
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            width: 1.5,
+                          ),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.check,
-                          color: _neoWhite,
+                          color: Theme.of(context).colorScheme.surface,
                           size: 16,
                         ),
                       ),
                     const SizedBox(width: 12),
-                    const Icon(Icons.expand_more, color: _neoBlack),
+                    Icon(
+                      Icons.expand_more,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ],
                 ),
                 children: [
@@ -1109,7 +1164,10 @@ class _EmployeeInvoiceGenerationViewState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Divider(color: _neoBlack, thickness: 1),
+                        Divider(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          thickness: 1,
+                        ),
                         const SizedBox(height: 16),
                         _buildEmployeeClientModeToggle(employee),
                         const SizedBox(height: 16),
@@ -1136,7 +1194,7 @@ class _EmployeeInvoiceGenerationViewState
             top: 0,
             bottom: 0,
             width: 6,
-            child: Container(color: _neoRed),
+            child: Container(color: Theme.of(context).colorScheme.error),
           ),
         ],
       ),
@@ -1149,8 +1207,11 @@ class _EmployeeInvoiceGenerationViewState
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: _neoWhite,
-        border: Border.all(color: _neoBlack, width: _neoBorderWidth),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: _neoBorderWidth,
+        ),
       ),
       child: Column(
         children: [
@@ -1197,17 +1258,22 @@ class _EmployeeInvoiceGenerationViewState
             height: 20,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: _neoBlack, width: 2),
-              color: isSelected ? _neoBlack : _neoWhite,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.onSurface,
+                width: 2,
+              ),
+              color: isSelected
+                  ? Theme.of(context).colorScheme.onSurface
+                  : Theme.of(context).colorScheme.surface,
             ),
             child: isSelected
                 ? Center(
                     child: Container(
                       width: 8,
                       height: 8,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: _neoWhite,
+                        color: Theme.of(context).colorScheme.surface,
                       ),
                     ),
                   )
@@ -1221,7 +1287,7 @@ class _EmployeeInvoiceGenerationViewState
                 Text(
                   title,
                   style: GoogleFonts.oswald(
-                    color: _neoBlack,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
@@ -1229,7 +1295,9 @@ class _EmployeeInvoiceGenerationViewState
                 Text(
                   subtitle,
                   style: GoogleFonts.robotoMono(
-                    color: _neoBlack.withValues(alpha: 0.6),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
                   ),
@@ -1253,13 +1321,19 @@ class _EmployeeInvoiceGenerationViewState
     return Container(
       height: 220,
       decoration: BoxDecoration(
-        color: _neoWhite,
-        border: Border.all(color: _neoBlack, width: _neoBorderWidth),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: _neoBorderWidth,
+        ),
       ),
       child: ListView.separated(
         itemCount: employee.clients.length,
-        separatorBuilder: (_, _) =>
-            const Divider(height: 1, thickness: 1.5, color: _neoBlack),
+        separatorBuilder: (_, _) => Divider(
+          height: 1,
+          thickness: 1.5,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
         itemBuilder: (context, index) {
           final c = employee.clients[index];
           final email = c['clientEmail']?.toString() ?? '';
@@ -1276,7 +1350,11 @@ class _EmployeeInvoiceGenerationViewState
                     (e) => e.copyWith(selectedClientEmail: email),
                   ),
             child: Container(
-              color: isSelected ? _neoBlack.withValues(alpha: 0.05) : null,
+              color: isSelected
+                  ? Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.05)
+                  : null,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
@@ -1288,8 +1366,10 @@ class _EmployeeInvoiceGenerationViewState
                           (name.isNotEmpty ? name : 'UNKNOWN').toUpperCase(),
                           style: GoogleFonts.oswald(
                             color: isDisabled
-                                ? _neoBlack.withValues(alpha: 0.4)
-                                : _neoBlack,
+                                ? Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface.withValues(alpha: 0.4)
+                                : Theme.of(context).colorScheme.onSurface,
                             fontSize: 14,
                             fontWeight: isSelected
                                 ? FontWeight.w700
@@ -1300,8 +1380,11 @@ class _EmployeeInvoiceGenerationViewState
                           email,
                           style: GoogleFonts.robotoMono(
                             color: isDisabled
-                                ? _neoBlack.withValues(alpha: 0.3)
-                                : _neoBlack.withValues(alpha: 0.6),
+                                ? Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface.withValues(alpha: 0.3)
+                                : Theme.of(context).colorScheme.onSurface
+                                      .withValues(alpha: 0.6),
                             fontSize: 10,
                           ),
                         ),
@@ -1312,13 +1395,16 @@ class _EmployeeInvoiceGenerationViewState
                     Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: _neoGreen,
+                        color: Theme.of(context).colorScheme.secondary,
                         shape: BoxShape.circle,
-                        border: Border.all(color: _neoBlack, width: 1.5),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          width: 1.5,
+                        ),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.check,
-                        color: _neoWhite,
+                        color: Theme.of(context).colorScheme.surface,
                         size: 12,
                       ),
                     ),
@@ -1336,13 +1422,16 @@ class _EmployeeInvoiceGenerationViewState
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _neoWhite,
-        border: Border.all(color: _neoBlack, width: _neoBorderWidth),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: _neoBorderWidth,
+        ),
       ),
       child: Text(
         text,
         style: GoogleFonts.robotoMono(
-          color: _neoBlack.withValues(alpha: 0.7),
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
           fontSize: 12,
           fontWeight: FontWeight.w600,
         ),
@@ -1356,18 +1445,25 @@ class _EmployeeInvoiceGenerationViewState
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: _neoRed,
-        border: Border.all(color: _neoBlack, width: _neoBorderWidth),
+        color: Theme.of(context).colorScheme.error,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: _neoBorderWidth,
+        ),
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline, color: _neoWhite, size: 20),
+          Icon(
+            Icons.error_outline,
+            color: Theme.of(context).colorScheme.surface,
+            size: 20,
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               text.toUpperCase(),
               style: GoogleFonts.oswald(
-                color: _neoWhite,
+                color: Theme.of(context).colorScheme.surface,
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
               ),
@@ -1388,21 +1484,28 @@ class _EmployeeInvoiceGenerationViewState
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: _neoRed,
-        border: Border.all(color: _neoBlack, width: _neoBorderWidth),
+        color: Theme.of(context).colorScheme.error,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: _neoBorderWidth,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.error_outline, color: _neoWhite, size: 20),
+              Icon(
+                Icons.error_outline,
+                color: Theme.of(context).colorScheme.surface,
+                size: 20,
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   text,
                   style: GoogleFonts.robotoMono(
-                    color: _neoWhite,
+                    color: Theme.of(context).colorScheme.surface,
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                     height: 1.4,
@@ -1420,14 +1523,17 @@ class _EmployeeInvoiceGenerationViewState
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                      color: _neoWhite,
-                      border: Border.all(color: _neoBlack, width: 1.5),
+                      color: Theme.of(context).colorScheme.surface,
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        width: 1.5,
+                      ),
                     ),
                     child: Text(
                       'SET NOW',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.oswald(
-                        color: _neoBlack,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                       ),
@@ -1444,14 +1550,19 @@ class _EmployeeInvoiceGenerationViewState
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                      color: _neoRed.withValues(alpha: 0.6),
-                      border: Border.all(color: _neoWhite, width: 1.5),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.error.withValues(alpha: 0.6),
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.surface,
+                        width: 1.5,
+                      ),
                     ),
                     child: Text(
                       'LATER',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.oswald(
-                        color: _neoWhite,
+                        color: Theme.of(context).colorScheme.surface,
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                       ),
@@ -1466,17 +1577,21 @@ class _EmployeeInvoiceGenerationViewState
     );
   }
 
-  static const Color _neoYellow = Color(0xFFFFC107);
-  static const Color _neoBeige = Color(0xFFF0F0E8);
-
   Widget _buildConfigurationPanel() {
     return Container(
       margin: const EdgeInsets.only(right: 8, bottom: 8),
       decoration: BoxDecoration(
-        color: _neoWhite,
-        border: Border.all(color: _neoBlack, width: _neoBorderWidth),
-        boxShadow: const [
-          BoxShadow(color: _neoBlack, offset: Offset(8, 8), blurRadius: 0),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: _neoBorderWidth,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).colorScheme.onSurface,
+            offset: Offset(8, 8),
+            blurRadius: 0,
+          ),
         ],
       ),
       child: Column(
@@ -1485,17 +1600,20 @@ class _EmployeeInvoiceGenerationViewState
           // Header
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            color: _neoYellow,
+            color: Theme.of(context).colorScheme.primary,
             child: Text(
               '2) CONFIGURE & GENERATE',
               style: GoogleFonts.oswald(
-                color: _neoBlack,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
               ),
             ),
           ),
-          Container(height: _neoBorderWidth, color: _neoBlack),
+          Container(
+            height: _neoBorderWidth,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
 
           // Selection Summary
           _buildNeoSelectionSummary(),
@@ -1503,11 +1621,11 @@ class _EmployeeInvoiceGenerationViewState
           // Invoice Options Header
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            color: _neoBlack,
+            color: Theme.of(context).colorScheme.onSurface,
             child: Text(
               'INVOICE OPTIONS',
               style: GoogleFonts.oswald(
-                color: _neoWhite,
+                color: Theme.of(context).colorScheme.surface,
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.0,
@@ -1516,7 +1634,7 @@ class _EmployeeInvoiceGenerationViewState
           ),
 
           // Options List
-          _buildNeoOptionsList(),
+          _buildNeoOptionsList(context),
 
           // Date Range (Red Box)
           _buildNeoDateRange(),
@@ -1524,11 +1642,14 @@ class _EmployeeInvoiceGenerationViewState
           // Bank Details
           _buildNeoBankDetails(),
 
-          Container(height: _neoBorderWidth, color: _neoBlack),
+          Container(
+            height: _neoBorderWidth,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
 
           // Generate Section
           Container(
-            color: _neoBeige,
+            color: Theme.of(context).colorScheme.surfaceContainer,
             padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1555,7 +1676,7 @@ class _EmployeeInvoiceGenerationViewState
       ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
 
     return Container(
-      color: _neoWhite,
+      color: Theme.of(context).colorScheme.surface,
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1566,18 +1687,18 @@ class _EmployeeInvoiceGenerationViewState
               Text(
                 'SELECTION SUMMARY',
                 style: GoogleFonts.oswald(
-                  color: _neoBlack,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                 ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                color: _neoBlack,
+                color: Theme.of(context).colorScheme.onSurface,
                 child: Text(
                   '${selected.length} Selected',
                   style: GoogleFonts.robotoMono(
-                    color: _neoWhite,
+                    color: Theme.of(context).colorScheme.surface,
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                   ),
@@ -1590,7 +1711,9 @@ class _EmployeeInvoiceGenerationViewState
             Text(
               'No employees selected',
               style: GoogleFonts.robotoMono(
-                color: _neoBlack.withValues(alpha: 0.6),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             )
           else
@@ -1603,7 +1726,9 @@ class _EmployeeInvoiceGenerationViewState
                         ? e.selectedClientEmail
                         : 'No client selected');
 
-              final bulletColor = index % 2 == 0 ? _neoBlue : _neoRed;
+              final bulletColor = index % 2 == 0
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.error;
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: 8),
@@ -1615,7 +1740,7 @@ class _EmployeeInvoiceGenerationViewState
                       child: RichText(
                         text: TextSpan(
                           style: GoogleFonts.robotoMono(
-                            color: _neoBlack,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 12,
                           ),
                           children: [
@@ -1628,7 +1753,9 @@ class _EmployeeInvoiceGenerationViewState
                             TextSpan(
                               text: ': $clientLabel',
                               style: TextStyle(
-                                color: _neoBlack.withValues(alpha: 0.7),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.7),
                               ),
                             ),
                           ],
@@ -1644,10 +1771,11 @@ class _EmployeeInvoiceGenerationViewState
     );
   }
 
-  Widget _buildNeoOptionsList() {
+  Widget _buildNeoOptionsList(BuildContext context) {
     return Column(
       children: [
         _buildNeoSwitchTile(
+          context: context,
           title: 'Apply Minimum Engagement (2h)',
           subtitle: 'Automatically adjust short shifts (< 2h) to 2 hours',
           value: _applyMinEngagement,
@@ -1655,16 +1783,18 @@ class _EmployeeInvoiceGenerationViewState
               ? null
               : (v) => setState(() => _applyMinEngagement = v),
         ),
-        Container(height: 1, color: _neoBlack),
+        Container(height: 1, color: Theme.of(context).colorScheme.onSurface),
         _buildNeoSwitchTile(
+          context: context,
           title: 'Include Approved Expenses',
           value: _includeExpenses,
           onChanged: _selectedEmployeesByEmail.isEmpty
               ? null
               : (v) => setState(() => _includeExpenses = v),
         ),
-        Container(height: 1, color: _neoBlack),
+        Container(height: 1, color: Theme.of(context).colorScheme.onSurface),
         _buildNeoSwitchTile(
+          context: context,
           title: 'Include Tax',
           value: _includeTax,
           onChanged: _selectedEmployeesByEmail.isEmpty
@@ -1672,9 +1802,9 @@ class _EmployeeInvoiceGenerationViewState
               : (v) => setState(() => _includeTax = v),
         ),
         if (_includeTax) ...[
-          Container(height: 1, color: _neoBlack),
+          Container(height: 1, color: Theme.of(context).colorScheme.onSurface),
           Container(
-            color: _neoBeige,
+            color: Theme.of(context).colorScheme.surfaceContainer,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             child: Row(
               children: [
@@ -1682,7 +1812,7 @@ class _EmployeeInvoiceGenerationViewState
                   child: Text(
                     'Tax Rate',
                     style: GoogleFonts.oswald(
-                      color: _neoBlack,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                     ),
@@ -1702,28 +1832,31 @@ class _EmployeeInvoiceGenerationViewState
                     decoration: InputDecoration(
                       suffixText: '%',
                       filled: true,
-                      fillColor: _neoWhite,
+                      fillColor: Theme.of(context).colorScheme.surface,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 8,
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.zero,
-                        borderSide: const BorderSide(
-                          color: _neoBlack,
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.onSurface,
                           width: 1.5,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.zero,
-                        borderSide: const BorderSide(
-                          color: _neoBlack,
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.onSurface,
                           width: 1.5,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.zero,
-                        borderSide: const BorderSide(color: _neoBlue, width: 2),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 2,
+                        ),
                       ),
                     ),
                     onChanged: (v) {
@@ -1742,13 +1875,14 @@ class _EmployeeInvoiceGenerationViewState
   }
 
   Widget _buildNeoSwitchTile({
+    required BuildContext context,
     required String title,
     String? subtitle,
     required bool value,
     required ValueChanged<bool>? onChanged,
   }) {
     return Container(
-      color: _neoBeige,
+      color: Theme.of(context).colorScheme.surfaceContainer,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
         children: [
@@ -1759,7 +1893,7 @@ class _EmployeeInvoiceGenerationViewState
                 Text(
                   title,
                   style: GoogleFonts.oswald(
-                    color: _neoBlack,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
@@ -1769,7 +1903,9 @@ class _EmployeeInvoiceGenerationViewState
                   Text(
                     subtitle,
                     style: GoogleFonts.robotoMono(
-                      color: _neoBlack.withValues(alpha: 0.6),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
                       fontSize: 10,
                     ),
                   ),
@@ -1784,8 +1920,11 @@ class _EmployeeInvoiceGenerationViewState
               width: 48,
               height: 24,
               decoration: BoxDecoration(
-                color: _neoWhite,
-                border: Border.all(color: _neoBlack, width: 1.5),
+                color: Theme.of(context).colorScheme.surface,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 1.5,
+                ),
               ),
               child: Stack(
                 children: [
@@ -1798,8 +1937,15 @@ class _EmployeeInvoiceGenerationViewState
                       width: 24,
                       height: 24,
                       decoration: BoxDecoration(
-                        color: value ? _neoBlue : Colors.grey[300],
-                        border: Border.all(color: _neoBlack, width: 1.5),
+                        color: value
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainerHighest,
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          width: 1.5,
+                        ),
                       ),
                     ),
                   ),
@@ -1822,7 +1968,7 @@ class _EmployeeInvoiceGenerationViewState
       onTap: _selectedEmployeesByEmail.isEmpty ? null : _pickDateRange,
       child: Container(
         width: double.infinity,
-        color: _neoRed,
+        color: Theme.of(context).colorScheme.error,
         padding: const EdgeInsets.all(20),
         child: Stack(
           children: [
@@ -1832,7 +1978,9 @@ class _EmployeeInvoiceGenerationViewState
                 Text(
                   'DATE RANGE',
                   style: GoogleFonts.oswald(
-                    color: _neoWhite.withValues(alpha: 0.8),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surface.withValues(alpha: 0.8),
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
@@ -1842,7 +1990,7 @@ class _EmployeeInvoiceGenerationViewState
                 Text(
                   startText,
                   style: GoogleFonts.oswald(
-                    color: _neoWhite,
+                    color: Theme.of(context).colorScheme.surface,
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
                   ),
@@ -1850,7 +1998,9 @@ class _EmployeeInvoiceGenerationViewState
                 Text(
                   'to $endText',
                   style: GoogleFonts.oswald(
-                    color: _neoWhite.withValues(alpha: 0.9),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surface.withValues(alpha: 0.9),
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
                   ),
@@ -1863,11 +2013,14 @@ class _EmployeeInvoiceGenerationViewState
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  border: Border.all(color: _neoWhite, width: 2),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.surface,
+                    width: 2,
+                  ),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.calendar_today_outlined,
-                  color: _neoWhite,
+                  color: Theme.of(context).colorScheme.surface,
                   size: 20,
                 ),
               ),
@@ -1880,17 +2033,17 @@ class _EmployeeInvoiceGenerationViewState
 
   Widget _buildNeoBankDetails() {
     return Container(
-      color: _neoWhite,
+      color: Theme.of(context).colorScheme.surface,
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
           tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-          iconColor: _neoBlack,
-          collapsedIconColor: _neoBlack,
+          iconColor: Theme.of(context).colorScheme.onSurface,
+          collapsedIconColor: Theme.of(context).colorScheme.onSurface,
           title: Text(
             'Employee Bank Details',
             style: GoogleFonts.oswald(
-              color: _neoBlack,
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: 16,
               fontWeight: FontWeight.w700,
             ),
@@ -1898,13 +2051,18 @@ class _EmployeeInvoiceGenerationViewState
           subtitle: Text(
             'ADMIN BANK DETAILS WILL NOT BE USED.',
             style: GoogleFonts.robotoMono(
-              color: _neoBlack.withValues(alpha: 0.5),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.5),
               fontSize: 10,
               fontWeight: FontWeight.w700,
             ),
           ),
           children: [
-            Container(height: 1, color: _neoBlack),
+            Container(
+              height: 1,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             // Re-use existing bank details list logic but simplified/styled if needed
             // For now, using the logic from original code but wrapping in padding
             _buildBankDetailsList(),
@@ -1927,9 +2085,12 @@ class _EmployeeInvoiceGenerationViewState
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
           decoration: isLast
               ? null
-              : const BoxDecoration(
+              : BoxDecoration(
                   border: Border(
-                    bottom: BorderSide(color: _neoBlack, width: 1.5),
+                    bottom: BorderSide(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      width: 1.5,
+                    ),
                   ),
                 ),
           child: SizedBox(
@@ -1943,7 +2104,7 @@ class _EmployeeInvoiceGenerationViewState
                   style: GoogleFonts.oswald(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: _neoBlack,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -1952,7 +2113,7 @@ class _EmployeeInvoiceGenerationViewState
                     'No bank details found',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.robotoMono(
-                      color: _neoRed,
+                      color: Theme.of(context).colorScheme.error,
                       fontWeight: FontWeight.w500,
                     ),
                   )
@@ -1962,7 +2123,7 @@ class _EmployeeInvoiceGenerationViewState
                     textAlign: TextAlign.center,
                     style: GoogleFonts.robotoMono(
                       fontSize: 12,
-                      color: _neoBlack,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -1972,7 +2133,7 @@ class _EmployeeInvoiceGenerationViewState
                     textAlign: TextAlign.center,
                     style: GoogleFonts.robotoMono(
                       fontSize: 12,
-                      color: _neoBlack,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -1982,7 +2143,7 @@ class _EmployeeInvoiceGenerationViewState
                     textAlign: TextAlign.center,
                     style: GoogleFonts.robotoMono(
                       fontSize: 12,
-                      color: _neoBlack,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -1992,7 +2153,7 @@ class _EmployeeInvoiceGenerationViewState
                   Container(
                     width: 100, // Short divider line
                     height: 1.5,
-                    color: _neoBlack,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ],
               ],
@@ -2012,7 +2173,7 @@ class _EmployeeInvoiceGenerationViewState
         Text(
           'GENERATE',
           style: GoogleFonts.oswald(
-            color: _neoBlack,
+            color: Theme.of(context).colorScheme.onSurface,
             fontSize: 12,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
@@ -2025,11 +2186,18 @@ class _EmployeeInvoiceGenerationViewState
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 20),
             decoration: BoxDecoration(
-              color: canGenerate ? _neoRed : _neoBlack.withValues(alpha: 0.35),
-              border: Border.all(color: _neoBlack, width: _neoBorderWidth),
-              boxShadow: const [
+              color: canGenerate
+                  ? Theme.of(context).colorScheme.error
+                  : Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.35),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.onSurface,
+                width: _neoBorderWidth,
+              ),
+              boxShadow: [
                 BoxShadow(
-                  color: _neoBlack,
+                  color: Theme.of(context).colorScheme.onSurface,
                   offset: Offset(4, 4),
                   blurRadius: 0,
                 ),
@@ -2039,11 +2207,11 @@ class _EmployeeInvoiceGenerationViewState
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (_isGenerating) ...[
-                  const SizedBox(
+                  SizedBox(
                     width: 16,
                     height: 16,
                     child: CircularProgressIndicator(
-                      color: _neoWhite,
+                      color: Theme.of(context).colorScheme.surface,
                       strokeWidth: 2.2,
                     ),
                   ),
@@ -2053,7 +2221,7 @@ class _EmployeeInvoiceGenerationViewState
                   _isGenerating ? 'GENERATING PDF...' : 'GENERATE PDF',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.oswald(
-                    color: _neoWhite,
+                    color: Theme.of(context).colorScheme.surface,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.0,
@@ -2062,7 +2230,10 @@ class _EmployeeInvoiceGenerationViewState
                 ),
                 if (!_isGenerating) ...[
                   const SizedBox(width: 12),
-                  const Icon(Icons.arrow_forward, color: _neoWhite),
+                  Icon(
+                    Icons.arrow_forward,
+                    color: Theme.of(context).colorScheme.surface,
+                  ),
                 ],
               ],
             ),
@@ -2073,7 +2244,9 @@ class _EmployeeInvoiceGenerationViewState
           Text(
             'Building invoices and generating PDFs. Please wait...',
             style: GoogleFonts.robotoMono(
-              color: _neoBlack.withValues(alpha: 0.7),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.7),
               fontSize: 11,
               fontWeight: FontWeight.w600,
             ),
@@ -2086,10 +2259,17 @@ class _EmployeeInvoiceGenerationViewState
   Widget _buildGeneratedPdfsSection() {
     return Container(
       decoration: BoxDecoration(
-        color: _neoWhite,
-        border: Border.all(color: _neoBlack, width: _neoBorderWidth),
-        boxShadow: const [
-          BoxShadow(color: _neoBlack, offset: Offset(8, 8), blurRadius: 0),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: _neoBorderWidth,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).colorScheme.onSurface,
+            offset: Offset(8, 8),
+            blurRadius: 0,
+          ),
         ],
       ),
       padding: const EdgeInsets.all(24),
@@ -2103,14 +2283,18 @@ class _EmployeeInvoiceGenerationViewState
               Text(
                 'GENERATED PDFS',
                 style: GoogleFonts.oswald(
-                  color: _neoBlack,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.0,
                 ),
               ),
               const SizedBox(height: 8),
-              Container(width: 60, height: 4, color: _neoRed),
+              Container(
+                width: 60,
+                height: 4,
+                color: Theme.of(context).colorScheme.error,
+              ),
             ],
           ),
           const SizedBox(height: 32),
@@ -2118,8 +2302,11 @@ class _EmployeeInvoiceGenerationViewState
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: _generatedResults.length,
-            separatorBuilder: (_, _) =>
-                const Divider(height: 1, color: _neoBlack, thickness: 1.5),
+            separatorBuilder: (_, _) => Divider(
+              height: 1,
+              color: Theme.of(context).colorScheme.onSurface,
+              thickness: 1.5,
+            ),
             itemBuilder: (context, index) {
               final item = _generatedResults[index];
               final path = item.pdfPath;
@@ -2152,7 +2339,7 @@ class _EmployeeInvoiceGenerationViewState
                           Text(
                             name,
                             style: GoogleFonts.robotoMono(
-                              color: _neoBlack,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
                             ),
@@ -2161,7 +2348,9 @@ class _EmployeeInvoiceGenerationViewState
                           Text(
                             size,
                             style: GoogleFonts.robotoMono(
-                              color: _neoBlack.withValues(alpha: 0.5),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.5),
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                             ),
@@ -2188,11 +2377,14 @@ class _EmployeeInvoiceGenerationViewState
                           vertical: 8,
                         ),
                         decoration: BoxDecoration(
-                          color: _neoRed,
-                          border: Border.all(color: _neoBlack, width: 1.5),
-                          boxShadow: const [
+                          color: Theme.of(context).colorScheme.error,
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            width: 1.5,
+                          ),
+                          boxShadow: [
                             BoxShadow(
-                              color: _neoBlack,
+                              color: Theme.of(context).colorScheme.onSurface,
                               offset: Offset(2, 2),
                               blurRadius: 0,
                             ),
@@ -2201,7 +2393,7 @@ class _EmployeeInvoiceGenerationViewState
                         child: Text(
                           'PDF',
                           style: GoogleFonts.oswald(
-                            color: _neoWhite,
+                            color: Theme.of(context).colorScheme.surface,
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 1.0,
@@ -2224,14 +2416,17 @@ class _EmployeeInvoiceGenerationViewState
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
       ),
       child: Text(
         text,
         style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-          color: BauhausDesign.neutral,
+          color: Theme.of(context).colorScheme.outline,
           fontWeight: FontWeight.w700,
         ),
       ),

@@ -39,7 +39,7 @@ class TimesheetHistoryView extends ConsumerWidget {
     final historyAsync = ref.watch(timesheetHistoryProvider(email));
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceWhite,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _buildBauhausAppBar(context),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -121,10 +121,13 @@ class TimesheetHistoryView extends ConsumerWidget {
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: Container(
-        decoration: const BoxDecoration(
-          color: BauhausDesign.surfaceLight,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
           border: Border(
-            bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+            bottom: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
           ),
         ),
         child: SafeArea(
@@ -142,9 +145,10 @@ class TimesheetHistoryView extends ConsumerWidget {
                 const SizedBox(width: BauhausDesign.space2),
                 Text(
                   AppLocalizations.of(context)!.historyTitle,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).displaySmall?.copyWith(color: BauhausDesign.textDark),
+                  style: BauhausDesign.getTextTheme(context).displaySmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 ),
                 const Spacer(),
               ],
@@ -196,10 +200,13 @@ class TimesheetHistoryView extends ConsumerWidget {
             ),
             decoration: BoxDecoration(
               color: BauhausDesign.accent, // Yellow accent
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
-              boxShadow: const [
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
+              boxShadow: [
                 BoxShadow(
-                  color: BauhausDesign.neutral,
+                  color: Theme.of(context).colorScheme.outline,
                   offset: Offset(2, 2),
                   blurRadius: 0,
                 ),
@@ -210,13 +217,18 @@ class TimesheetHistoryView extends ConsumerWidget {
               style: GoogleFonts.oswald(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 letterSpacing: 1.5,
               ),
             ),
           ),
           const SizedBox(width: BauhausDesign.space2),
-          Expanded(child: Container(height: 2, color: BauhausDesign.neutral)),
+          Expanded(
+            child: Container(
+              height: 2,
+              color: Theme.of(context).colorScheme.outline,
+            ),
+          ),
         ],
       ),
     );
@@ -273,11 +285,14 @@ class TimesheetHistoryView extends ConsumerWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: BauhausDesign.space2),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2.5),
-        boxShadow: const [
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2.5,
+        ),
+        boxShadow: [
           BoxShadow(
-            color: BauhausDesign.neutral,
+            color: Theme.of(context).colorScheme.outline,
             offset: Offset(6, 6),
             blurRadius: 0,
           ),
@@ -309,7 +324,9 @@ class TimesheetHistoryView extends ConsumerWidget {
                                 style: GoogleFonts.oswald(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
-                                  color: BauhausDesign.textDark,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   letterSpacing: 0.5,
                                 ),
                               ),
@@ -322,9 +339,13 @@ class TimesheetHistoryView extends ConsumerWidget {
                                       vertical: 2,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: BauhausDesign.surfaceOffWhite,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.surfaceContainer,
                                       border: Border.all(
-                                        color: BauhausDesign.neutral,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.outline,
                                         width: 1,
                                       ),
                                     ),
@@ -335,7 +356,9 @@ class TimesheetHistoryView extends ConsumerWidget {
                                       style: GoogleFonts.inter(
                                         fontSize: 9,
                                         fontWeight: FontWeight.w800,
-                                        color: BauhausDesign.textDark,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
                                         letterSpacing: 0.5,
                                       ),
                                     ),
@@ -354,7 +377,7 @@ class TimesheetHistoryView extends ConsumerWidget {
                           decoration: BoxDecoration(
                             color: BauhausDesign.accent, // Yellow accent
                             border: Border.all(
-                              color: BauhausDesign.neutral,
+                              color: Theme.of(context).colorScheme.outline,
                               width: 2,
                             ),
                             boxShadow: const [BauhausDesign.shadowHardSm],
@@ -364,7 +387,7 @@ class TimesheetHistoryView extends ConsumerWidget {
                             style: GoogleFonts.robotoMono(
                               fontWeight: FontWeight.w900,
                               fontSize: 14,
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         ),
@@ -379,11 +402,13 @@ class TimesheetHistoryView extends ConsumerWidget {
                         horizontal: BauhausDesign.space2,
                       ),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.surfaceOffWhite.withValues(
-                          alpha: 0.3,
-                        ),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainer.withValues(alpha: 0.3),
                         border: Border.all(
-                          color: BauhausDesign.neutral.withValues(alpha: 0.15),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.outline.withValues(alpha: 0.15),
                           width: 1,
                         ),
                       ),
@@ -473,7 +498,9 @@ class TimesheetHistoryView extends ConsumerWidget {
           style: GoogleFonts.inter(
             fontSize: 9,
             fontWeight: FontWeight.w800,
-            color: hasWork ? BauhausDesign.secondary : BauhausDesign.textMuted,
+            color: hasWork
+                ? BauhausDesign.secondary
+                : Theme.of(context).colorScheme.onSurfaceVariant,
             letterSpacing: 0.5,
           ),
         ),
@@ -485,11 +512,13 @@ class TimesheetHistoryView extends ConsumerWidget {
           decoration: BoxDecoration(
             color: hasWork
                 ? BauhausDesign.secondary
-                : BauhausDesign.surfaceWhite,
+                : Theme.of(context).colorScheme.surface,
             border: Border.all(
               color: hasWork
-                  ? BauhausDesign.neutral
-                  : BauhausDesign.neutral.withValues(alpha: 0.2),
+                  ? Theme.of(context).colorScheme.outline
+                  : Theme.of(
+                      context,
+                    ).colorScheme.outline.withValues(alpha: 0.2),
               width: hasWork ? 1.5 : 1,
             ),
             boxShadow: hasWork ? const [BauhausDesign.shadowHardXs] : null,
@@ -499,7 +528,9 @@ class TimesheetHistoryView extends ConsumerWidget {
             style: GoogleFonts.robotoMono(
               fontSize: 12,
               fontWeight: FontWeight.w700,
-              color: hasWork ? Colors.white : BauhausDesign.textMuted,
+              color: hasWork
+                  ? Theme.of(context).colorScheme.onSecondary
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ),
@@ -509,7 +540,9 @@ class TimesheetHistoryView extends ConsumerWidget {
           style: GoogleFonts.robotoMono(
             fontSize: 9,
             fontWeight: FontWeight.w700,
-            color: hasWork ? BauhausDesign.textDark : BauhausDesign.textMuted,
+            color: hasWork
+                ? Theme.of(context).colorScheme.onSurface
+                : Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
       ],
@@ -547,9 +580,11 @@ class TimesheetHistoryView extends ConsumerWidget {
         vertical: BauhausDesign.space2,
       ),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceOffWhite.withValues(alpha: 0.5),
+        color: Theme.of(
+          context,
+        ).colorScheme.surfaceContainer.withValues(alpha: 0.5),
         border: Border.all(
-          color: BauhausDesign.neutral.withValues(alpha: 0.2),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -566,17 +601,17 @@ class TimesheetHistoryView extends ConsumerWidget {
                   style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     letterSpacing: 0.5,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.schedule_outlined,
                       size: 12,
-                      color: BauhausDesign.textMuted,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: 4),
                     Flexible(
@@ -584,7 +619,9 @@ class TimesheetHistoryView extends ConsumerWidget {
                         '$startTime - $endTime',
                         style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
-                              color: BauhausDesign.textMuted,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                               fontWeight: FontWeight.w500,
                             ),
                         overflow: TextOverflow.ellipsis,
@@ -599,15 +636,18 @@ class TimesheetHistoryView extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
-              border: Border.all(color: BauhausDesign.neutral, width: 1),
+              color: Theme.of(context).colorScheme.surface,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1,
+              ),
             ),
             child: Text(
               durationStr,
               style: GoogleFonts.robotoMono(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ),

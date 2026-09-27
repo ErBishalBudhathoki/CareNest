@@ -293,8 +293,11 @@ class _ClientAndAppointmentDetailsState
           child: Container(
             padding: const EdgeInsets.all(BauhausDesign.space5),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              color: Theme.of(context).colorScheme.surface,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
               boxShadow: const [BauhausDesign.shadowHardLg],
             ),
             child: Column(
@@ -317,7 +320,7 @@ class _ClientAndAppointmentDetailsState
                   'Client: ${activeClientEmail ?? 'Unknown'}\n\n'
                   'Please stop the current timer before starting a new one.',
                   style: GoogleFonts.inter(
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 14,
                     height: 1.4,
                   ),
@@ -326,9 +329,9 @@ class _ClientAndAppointmentDetailsState
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: BauhausDesign.neutral,
+                    color: Theme.of(context).colorScheme.outline,
                     border: Border.all(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.outline,
                       width: 1.5,
                     ),
                     boxShadow: const [BauhausDesign.shadowHardSm],
@@ -343,7 +346,7 @@ class _ClientAndAppointmentDetailsState
                           'OK',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.oswald(
-                            color: BauhausDesign.surfaceWhite,
+                            color: Theme.of(context).colorScheme.surface,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.0,
                           ),
@@ -560,8 +563,11 @@ class _ClientAndAppointmentDetailsState
           child: Container(
             padding: const EdgeInsets.all(BauhausDesign.space5),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              color: Theme.of(context).colorScheme.surface,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
               boxShadow: const [BauhausDesign.shadowHardLg],
             ),
             child: Column(
@@ -584,7 +590,7 @@ class _ClientAndAppointmentDetailsState
                   'Time: ${shift['startTime']} - ${shift['endTime']}\n'
                   'Break: ${shift['break'] ?? 'None'}',
                   style: GoogleFonts.inter(
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 14,
                     height: 1.4,
                   ),
@@ -597,7 +603,7 @@ class _ClientAndAppointmentDetailsState
                         decoration: BoxDecoration(
                           color: BauhausDesign.success,
                           border: Border.all(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.outline,
                             width: 1.5,
                           ),
                           boxShadow: const [BauhausDesign.shadowHardSm],
@@ -612,7 +618,7 @@ class _ClientAndAppointmentDetailsState
                                 'CONFIRM',
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.oswald(
-                                  color: BauhausDesign.surfaceWhite,
+                                  color: Theme.of(context).colorScheme.surface,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1.0,
                                 ),
@@ -628,7 +634,7 @@ class _ClientAndAppointmentDetailsState
                         decoration: BoxDecoration(
                           color: BauhausDesign.accent,
                           border: Border.all(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.outline,
                             width: 1.5,
                           ),
                           boxShadow: const [BauhausDesign.shadowHardSm],
@@ -643,7 +649,9 @@ class _ClientAndAppointmentDetailsState
                                 'RE-SELECT',
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.oswald(
-                                  color: BauhausDesign.textDark,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1.0,
                                 ),
@@ -659,9 +667,9 @@ class _ClientAndAppointmentDetailsState
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: BauhausDesign.surfaceOffWhite,
+                    color: Theme.of(context).colorScheme.surfaceContainer,
                     border: Border.all(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.outline,
                       width: 1.5,
                     ),
                     boxShadow: const [BauhausDesign.shadowHardSm],
@@ -676,7 +684,7 @@ class _ClientAndAppointmentDetailsState
                           'CANCEL & KEEP TIMER RUNNING',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.oswald(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.0,
                           ),
@@ -703,8 +711,11 @@ class _ClientAndAppointmentDetailsState
           child: Container(
             padding: const EdgeInsets.all(BauhausDesign.space5),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              color: Theme.of(context).colorScheme.surface,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
               boxShadow: const [BauhausDesign.shadowHardLg],
             ),
             child: Column(
@@ -724,7 +735,7 @@ class _ClientAndAppointmentDetailsState
                 Text(
                   'You cancelled ending the shift. Do you want to resume the timer where it left off?',
                   style: GoogleFonts.inter(
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 14,
                     height: 1.4,
                   ),
@@ -737,7 +748,7 @@ class _ClientAndAppointmentDetailsState
                         decoration: BoxDecoration(
                           color: BauhausDesign.success,
                           border: Border.all(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.outline,
                             width: 1.5,
                           ),
                           boxShadow: const [BauhausDesign.shadowHardSm],
@@ -752,7 +763,7 @@ class _ClientAndAppointmentDetailsState
                                 'RESUME TIMER',
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.oswald(
-                                  color: BauhausDesign.surfaceWhite,
+                                  color: Theme.of(context).colorScheme.surface,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1.0,
                                 ),
@@ -766,9 +777,9 @@ class _ClientAndAppointmentDetailsState
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
-                          color: BauhausDesign.surfaceOffWhite,
+                          color: Theme.of(context).colorScheme.surfaceContainer,
                           border: Border.all(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.outline,
                             width: 1.5,
                           ),
                           boxShadow: const [BauhausDesign.shadowHardSm],
@@ -783,7 +794,9 @@ class _ClientAndAppointmentDetailsState
                                 'DISCARD TIMER',
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.oswald(
-                                  color: BauhausDesign.textDark,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1.0,
                                 ),
@@ -813,8 +826,11 @@ class _ClientAndAppointmentDetailsState
           child: Container(
             padding: const EdgeInsets.all(BauhausDesign.space5),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              color: Theme.of(context).colorScheme.surface,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
               boxShadow: const [BauhausDesign.shadowHardLg],
             ),
             child: Column(
@@ -835,7 +851,7 @@ class _ClientAndAppointmentDetailsState
                   'Selected shift is invalid.\n\nError: $errorMessage\n\n'
                   'Please select the correct shift, or resume the timer.',
                   style: GoogleFonts.inter(
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 14,
                     height: 1.4,
                   ),
@@ -846,7 +862,7 @@ class _ClientAndAppointmentDetailsState
                   decoration: BoxDecoration(
                     color: BauhausDesign.accent,
                     border: Border.all(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.outline,
                       width: 1.5,
                     ),
                     boxShadow: const [BauhausDesign.shadowHardSm],
@@ -861,7 +877,7 @@ class _ClientAndAppointmentDetailsState
                           'RE-SELECT CORRECT SHIFT',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.oswald(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.0,
                           ),
@@ -878,7 +894,7 @@ class _ClientAndAppointmentDetailsState
                         decoration: BoxDecoration(
                           color: BauhausDesign.success,
                           border: Border.all(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.outline,
                             width: 1.5,
                           ),
                           boxShadow: const [BauhausDesign.shadowHardSm],
@@ -893,7 +909,7 @@ class _ClientAndAppointmentDetailsState
                                 'RESUME TIMER',
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.oswald(
-                                  color: BauhausDesign.surfaceWhite,
+                                  color: Theme.of(context).colorScheme.surface,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1.0,
                                 ),
@@ -907,9 +923,9 @@ class _ClientAndAppointmentDetailsState
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
-                          color: BauhausDesign.surfaceOffWhite,
+                          color: Theme.of(context).colorScheme.surfaceContainer,
                           border: Border.all(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.outline,
                             width: 1.5,
                           ),
                           boxShadow: const [BauhausDesign.shadowHardSm],
@@ -924,7 +940,9 @@ class _ClientAndAppointmentDetailsState
                                 'DISCARD TIMER',
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.oswald(
-                                  color: BauhausDesign.textDark,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1.0,
                                 ),
@@ -985,8 +1003,11 @@ class _ClientAndAppointmentDetailsState
           child: Container(
             padding: const EdgeInsets.all(BauhausDesign.space5),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              color: Theme.of(context).colorScheme.surface,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
               boxShadow: const [BauhausDesign.shadowHardLg],
             ),
             child: Column(
@@ -998,7 +1019,7 @@ class _ClientAndAppointmentDetailsState
                   style: GoogleFonts.oswald(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
-                    color: BauhausDesign.neutral,
+                    color: Theme.of(context).colorScheme.onSurface,
                     letterSpacing: 1.0,
                   ),
                 ),
@@ -1008,27 +1029,30 @@ class _ClientAndAppointmentDetailsState
                   style: GoogleFonts.robotoMono(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
-                    color: BauhausDesign.neutral,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: BauhausDesign.space4),
                 DropdownButtonFormField<String>(
                   initialValue: urgency,
-                  dropdownColor: BauhausDesign.surfaceWhite,
-                  iconEnabledColor: BauhausDesign.neutral,
+                  dropdownColor: Theme.of(context).colorScheme.surface,
+                  iconEnabledColor: Theme.of(
+                    context,
+                  ).colorScheme.onSurfaceVariant,
                   style: GoogleFonts.roboto(
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 14,
                   ),
-                  decoration: BauhausDesign.inputDecoration('Urgency').copyWith(
-                    labelText: 'URGENCY',
-                    labelStyle: GoogleFonts.oswald(
-                      color: BauhausDesign.neutral,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
+                  decoration: BauhausDesign.inputDecoration(context, 'Urgency')
+                      .copyWith(
+                        labelText: 'URGENCY',
+                        labelStyle: GoogleFonts.oswald(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
                   items: ['Low', 'Medium', 'High']
                       .map(
                         (e) => DropdownMenuItem(
@@ -1036,7 +1060,7 @@ class _ClientAndAppointmentDetailsState
                           child: Text(
                             e,
                             style: GoogleFonts.roboto(
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontSize: 14,
                             ),
                           ),
@@ -1048,15 +1072,16 @@ class _ClientAndAppointmentDetailsState
                 const SizedBox(height: BauhausDesign.space3),
                 TextField(
                   controller: reasonController,
-                  decoration: BauhausDesign.inputDecoration('Reason').copyWith(
-                    labelText: 'REASON',
-                    labelStyle: GoogleFonts.oswald(
-                      color: BauhausDesign.neutral,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
+                  decoration: BauhausDesign.inputDecoration(context, 'Reason')
+                      .copyWith(
+                        labelText: 'REASON',
+                        labelStyle: GoogleFonts.oswald(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
                   maxLines: 2,
                 ),
                 if (error != null) ...[
@@ -1072,9 +1097,9 @@ class _ClientAndAppointmentDetailsState
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
-                          color: BauhausDesign.surfaceWhite,
+                          color: Theme.of(context).colorScheme.surface,
                           border: Border.all(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.outline,
                             width: 1.5,
                           ),
                           boxShadow: const [BauhausDesign.shadowHardSm],
@@ -1089,7 +1114,9 @@ class _ClientAndAppointmentDetailsState
                                 'CANCEL',
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.oswald(
-                                  color: BauhausDesign.neutral,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1.0,
                                 ),
@@ -1105,7 +1132,7 @@ class _ClientAndAppointmentDetailsState
                         decoration: BoxDecoration(
                           color: BauhausDesign.primary,
                           border: Border.all(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.outline,
                             width: 1.5,
                           ),
                           boxShadow: const [BauhausDesign.shadowHardSm],
@@ -1188,7 +1215,7 @@ class _ClientAndAppointmentDetailsState
                                 'OFFER',
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.oswald(
-                                  color: BauhausDesign.surfaceWhite,
+                                  color: Theme.of(context).colorScheme.surface,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1.0,
                                 ),
@@ -1230,9 +1257,13 @@ class _ClientAndAppointmentDetailsState
         width: 32,
         height: 32,
         decoration: BoxDecoration(
-          color: isPast ? Colors.grey[200] : BauhausDesign.accent,
+          color: isPast
+              ? Theme.of(context).colorScheme.surfaceContainer
+              : BauhausDesign.accent,
           border: Border.all(
-            color: isPast ? BauhausDesign.textMuted : BauhausDesign.neutral,
+            color: isPast
+                ? Theme.of(context).colorScheme.onSurfaceVariant
+                : Theme.of(context).colorScheme.outline,
             width: 1.5,
           ),
           boxShadow: isPast ? null : const [BauhausDesign.shadowHardXs],
@@ -1243,7 +1274,9 @@ class _ClientAndAppointmentDetailsState
             onTap: isPast ? null : () => _showSwapOfferDialog(shift),
             child: Icon(
               Icons.swap_horiz,
-              color: isPast ? BauhausDesign.textMuted : BauhausDesign.neutral,
+              color: isPast
+                  ? Theme.of(context).colorScheme.onSurfaceVariant
+                  : Theme.of(context).colorScheme.onSurface,
               size: 18,
             ),
           ),
@@ -1269,8 +1302,11 @@ class _ClientAndAppointmentDetailsState
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space4),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              color: Theme.of(context).colorScheme.surface,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
               boxShadow: const [BauhausDesign.shadowHard],
             ),
             child: const CircularProgressIndicator(
@@ -1282,7 +1318,7 @@ class _ClientAndAppointmentDetailsState
           Text(
             'LOADING APPOINTMENT DETAILS...',
             style: GoogleFonts.oswald(
-              color: BauhausDesign.neutral,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.bold,
               fontSize: 14,
               letterSpacing: 1.0,
@@ -1387,7 +1423,7 @@ class _ClientAndAppointmentDetailsState
 
   Widget _buildTableHeader(String title) {
     return Container(
-      color: BauhausDesign.neutral,
+      color: Theme.of(context).colorScheme.outline,
       padding: const EdgeInsets.symmetric(
         vertical: BauhausDesign.space3,
         horizontal: BauhausDesign.space1,
@@ -1397,7 +1433,7 @@ class _ClientAndAppointmentDetailsState
         textAlign: TextAlign.center,
         style: GoogleFonts.oswald(
           fontWeight: FontWeight.bold,
-          color: BauhausDesign.surfaceWhite,
+          color: Theme.of(context).colorScheme.surface,
           fontSize: 12,
           letterSpacing: 0.5,
         ),
@@ -1416,8 +1452,8 @@ class _ClientAndAppointmentDetailsState
     return TableRow(
       decoration: BoxDecoration(
         color: index.isEven
-            ? BauhausDesign.backgroundLight
-            : BauhausDesign.surfaceWhite,
+            ? Theme.of(context).colorScheme.surface
+            : Theme.of(context).colorScheme.surface,
       ),
       children: [
         _buildTableCell(date),
@@ -1440,7 +1476,7 @@ class _ClientAndAppointmentDetailsState
         textAlign: TextAlign.center,
         style: GoogleFonts.robotoMono(
           fontSize: 12,
-          color: BauhausDesign.textDark,
+          color: Theme.of(context).colorScheme.onSurface,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -1453,7 +1489,7 @@ class _ClientAndAppointmentDetailsState
         child: Container(
           margin: const EdgeInsets.all(BauhausDesign.space6),
           padding: const EdgeInsets.all(BauhausDesign.space5),
-          decoration: BauhausDesign.cardDecoration,
+          decoration: BauhausDesign.cardDecorationFor(context),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -1473,7 +1509,7 @@ class _ClientAndAppointmentDetailsState
               Text(
                 'NO CLIENT DATA FOUND',
                 style: GoogleFonts.oswald(
-                  color: BauhausDesign.neutral,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                   letterSpacing: 1.0,
@@ -1497,7 +1533,7 @@ class _ClientAndAppointmentDetailsState
         child: Container(
           margin: const EdgeInsets.all(BauhausDesign.space6),
           padding: const EdgeInsets.all(BauhausDesign.space5),
-          decoration: BauhausDesign.cardDecoration,
+          decoration: BauhausDesign.cardDecorationFor(context),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -1517,7 +1553,7 @@ class _ClientAndAppointmentDetailsState
               Text(
                 'NO CLIENT DETAILS FOUND',
                 style: GoogleFonts.oswald(
-                  color: BauhausDesign.neutral,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                   letterSpacing: 1.0,
@@ -1582,7 +1618,7 @@ class _ClientAndAppointmentDetailsState
     return ScaleTransition(
       scale: _scaleAnimation,
       child: Container(
-        decoration: BauhausDesign.cardDecoration,
+        decoration: BauhausDesign.cardDecorationFor(context),
         child: Padding(
           padding: const EdgeInsets.all(BauhausDesign.space5),
           child: Column(
@@ -1595,13 +1631,13 @@ class _ClientAndAppointmentDetailsState
                     decoration: BoxDecoration(
                       color: BauhausDesign.secondary,
                       border: Border.all(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.outline,
                         width: 2,
                       ),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.favorite,
-                      color: BauhausDesign.surfaceWhite,
+                      color: Theme.of(context).colorScheme.surface,
                       size: 24,
                     ),
                   ),
@@ -1613,7 +1649,7 @@ class _ClientAndAppointmentDetailsState
                         Text(
                           'PREFERENCES & CARE',
                           style: GoogleFonts.oswald(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.0,
@@ -1623,7 +1659,11 @@ class _ClientAndAppointmentDetailsState
                         Text(
                           'Important client needs',
                           style: BauhausDesign.getTextTheme(context).bodyMedium
-                              ?.copyWith(color: BauhausDesign.textMuted),
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                         ),
                       ],
                     ),
@@ -1785,7 +1825,7 @@ class _ClientAndAppointmentDetailsState
     }
 
     return Container(
-      decoration: BauhausDesign.cardDecoration,
+      decoration: BauhausDesign.cardDecorationFor(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1797,11 +1837,14 @@ class _ClientAndAppointmentDetailsState
                   padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
                     color: BauhausDesign.success,
-                    border: Border.all(color: BauhausDesign.neutral, width: 2),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 2,
+                    ),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.history,
-                    color: BauhausDesign.surfaceWhite,
+                    color: Theme.of(context).colorScheme.surface,
                     size: 24,
                   ),
                 ),
@@ -1812,7 +1855,7 @@ class _ClientAndAppointmentDetailsState
                     Text(
                       'RECENT VISITS',
                       style: GoogleFonts.oswald(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.0,
@@ -1821,19 +1864,22 @@ class _ClientAndAppointmentDetailsState
                     const SizedBox(height: BauhausDesign.space1),
                     Text(
                       'Previous shifts logged',
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          const Divider(
+          Divider(
             height: 1,
             thickness: 1.5,
-            color: BauhausDesign.neutral,
+            color: Theme.of(context).colorScheme.outline,
           ),
           ...recentVisits.asMap().entries.map((entry) {
             final idx = entry.key;
@@ -1844,9 +1890,9 @@ class _ClientAndAppointmentDetailsState
             return Container(
               decoration: BoxDecoration(
                 border: idx < recentVisits.length - 1
-                    ? const Border(
+                    ? Border(
                         bottom: BorderSide(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.outline,
                           width: 1.5,
                         ),
                       )
@@ -1877,7 +1923,7 @@ class _ClientAndAppointmentDetailsState
                 title: Text(
                   visit['date'] ?? 'Unknown Date',
                   style: GoogleFonts.oswald(
-                    color: BauhausDesign.neutral,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -1886,7 +1932,7 @@ class _ClientAndAppointmentDetailsState
                   '${visit['startTime']} - ${visit['endTime']}${isAttended ? '' : ' (NOT ATTENDED)'}',
                   style: GoogleFonts.robotoMono(
                     color: isAttended
-                        ? BauhausDesign.textMuted
+                        ? Theme.of(context).colorScheme.onSurfaceVariant
                         : BauhausDesign.error,
                     fontSize: 12,
                     fontWeight: isAttended
@@ -1906,7 +1952,7 @@ class _ClientAndAppointmentDetailsState
     return ScaleTransition(
       scale: _scaleAnimation,
       child: Container(
-        decoration: BauhausDesign.cardDecoration,
+        decoration: BauhausDesign.cardDecorationFor(context),
         child: Padding(
           padding: const EdgeInsets.all(BauhausDesign.space5),
           child: Column(
@@ -1919,13 +1965,13 @@ class _ClientAndAppointmentDetailsState
                     decoration: BoxDecoration(
                       color: BauhausDesign.primary,
                       border: Border.all(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.outline,
                         width: 2,
                       ),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.person,
-                      color: BauhausDesign.surfaceWhite,
+                      color: Theme.of(context).colorScheme.surface,
                       size: 24,
                     ),
                   ),
@@ -1937,7 +1983,7 @@ class _ClientAndAppointmentDetailsState
                         Text(
                           'CLIENT INFORMATION',
                           style: GoogleFonts.oswald(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.0,
@@ -1947,7 +1993,11 @@ class _ClientAndAppointmentDetailsState
                         Text(
                           'Personal details and contact information',
                           style: BauhausDesign.getTextTheme(context).bodyMedium
-                              ?.copyWith(color: BauhausDesign.textMuted),
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                         ),
                       ],
                     ),
@@ -2005,7 +2055,10 @@ class _ClientAndAppointmentDetailsState
       height: 48,
       decoration: BoxDecoration(
         color: BauhausDesign.accent,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Material(
@@ -2027,9 +2080,9 @@ class _ClientAndAppointmentDetailsState
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
+              Icon(
                 Icons.directions,
-                color: BauhausDesign.neutral,
+                color: Theme.of(context).colorScheme.onSurface,
                 size: 22,
               ),
               const SizedBox(width: BauhausDesign.space2),
@@ -2038,7 +2091,7 @@ class _ClientAndAppointmentDetailsState
                         'Get Directions')
                     .toUpperCase(),
                 style: GoogleFonts.oswald(
-                  color: BauhausDesign.neutral,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                   letterSpacing: 1.0,
@@ -2060,10 +2113,17 @@ class _ClientAndAppointmentDetailsState
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space2),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
-              border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+              color: Theme.of(context).colorScheme.surface,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1.5,
+              ),
             ),
-            child: Icon(icon, size: 16, color: BauhausDesign.neutral),
+            child: Icon(
+              icon,
+              size: 16,
+              color: Theme.of(context).colorScheme.outline,
+            ),
           ),
           const SizedBox(width: BauhausDesign.space3),
           Expanded(
@@ -2073,7 +2133,7 @@ class _ClientAndAppointmentDetailsState
                 Text(
                   label.toUpperCase(),
                   style: GoogleFonts.oswald(
-                    color: BauhausDesign.textMuted,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
@@ -2083,7 +2143,7 @@ class _ClientAndAppointmentDetailsState
                 Text(
                   value,
                   style: GoogleFonts.inter(
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
@@ -2098,7 +2158,7 @@ class _ClientAndAppointmentDetailsState
 
   Widget _buildScheduleCard() {
     return Container(
-      decoration: BauhausDesign.cardDecoration,
+      decoration: BauhausDesign.cardDecorationFor(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2110,11 +2170,14 @@ class _ClientAndAppointmentDetailsState
                   padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
                     color: BauhausDesign.accent,
-                    border: Border.all(color: BauhausDesign.neutral, width: 2),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 2,
+                    ),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.schedule,
-                    color: BauhausDesign.surfaceWhite,
+                    color: Theme.of(context).colorScheme.surface,
                     size: 24,
                   ),
                 ),
@@ -2125,7 +2188,7 @@ class _ClientAndAppointmentDetailsState
                     Text(
                       'SCHEDULE DETAILS',
                       style: GoogleFonts.oswald(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.0,
@@ -2134,9 +2197,12 @@ class _ClientAndAppointmentDetailsState
                     const SizedBox(height: BauhausDesign.space1),
                     Text(
                       'Appointment dates and times',
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                   ],
                 ),
@@ -2149,16 +2215,19 @@ class _ClientAndAppointmentDetailsState
               vertical: BauhausDesign.space2,
             ),
             decoration: BoxDecoration(
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
             ),
             child: Table(
-              border: const TableBorder(
+              border: TableBorder(
                 horizontalInside: BorderSide(
-                  color: BauhausDesign.neutral,
+                  color: Theme.of(context).colorScheme.outline,
                   width: 1.5,
                 ),
                 verticalInside: BorderSide(
-                  color: BauhausDesign.neutral,
+                  color: Theme.of(context).colorScheme.outline,
                   width: 1.5,
                 ),
               ),
@@ -2185,8 +2254,11 @@ class _ClientAndAppointmentDetailsState
 
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Padding(
@@ -2205,9 +2277,9 @@ class _ClientAndAppointmentDetailsState
                       horizontal: BauhausDesign.space6,
                     ),
                     decoration: BoxDecoration(
-                      color: BauhausDesign.surfaceWhite,
+                      color: Theme.of(context).colorScheme.surface,
                       border: Border.all(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.outline,
                         width: 2,
                       ),
                       boxShadow: const [BauhausDesign.shadowHardSm],
@@ -2229,7 +2301,7 @@ class _ClientAndAppointmentDetailsState
                         fontWeight: FontWeight.bold,
                         color: isRunning
                             ? BauhausDesign.success
-                            : BauhausDesign.neutral,
+                            : Theme.of(context).colorScheme.onSurface,
                         letterSpacing: 1.5,
                       ),
                     ),
@@ -2248,7 +2320,10 @@ class _ClientAndAppointmentDetailsState
                   color: isRunning
                       ? BauhausDesign.primary
                       : BauhausDesign.success,
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 2,
+                  ),
                   boxShadow: const [BauhausDesign.shadowHard],
                 ),
                 child: Material(
@@ -2296,7 +2371,7 @@ class _ClientAndAppointmentDetailsState
                         Icon(
                           isRunning ? Icons.stop : Icons.play_arrow,
                           size: 24,
-                          color: BauhausDesign.surfaceWhite,
+                          color: Theme.of(context).colorScheme.surface,
                         ),
                         const SizedBox(width: BauhausDesign.space2),
                         Text(
@@ -2305,7 +2380,7 @@ class _ClientAndAppointmentDetailsState
                           style: GoogleFonts.oswald(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: BauhausDesign.surfaceWhite,
+                            color: Theme.of(context).colorScheme.surface,
                             letterSpacing: 1.0,
                           ),
                         ),
@@ -2331,7 +2406,10 @@ class _ClientAndAppointmentDetailsState
           margin: const EdgeInsets.only(bottom: BauhausDesign.space4),
           decoration: BoxDecoration(
             color: BauhausDesign.accent,
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             boxShadow: const [BauhausDesign.shadowHard],
           ),
           child: Material(
@@ -2350,14 +2428,18 @@ class _ClientAndAppointmentDetailsState
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.map, size: 24, color: BauhausDesign.neutral),
+                  Icon(
+                    Icons.map,
+                    size: 24,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     'VIEW IN MAP',
                     style: GoogleFonts.oswald(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.onSurface,
                       letterSpacing: 1.0,
                     ),
                   ),
@@ -2373,7 +2455,10 @@ class _ClientAndAppointmentDetailsState
           height: 56,
           decoration: BoxDecoration(
             color: BauhausDesign.primary,
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             boxShadow: const [BauhausDesign.shadowHard],
           ),
           child: Material(
@@ -2394,10 +2479,10 @@ class _ClientAndAppointmentDetailsState
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.note_add,
                     size: 24,
-                    color: BauhausDesign.surfaceWhite,
+                    color: Theme.of(context).colorScheme.surface,
                   ),
                   const SizedBox(width: 8),
                   Text(
@@ -2405,7 +2490,7 @@ class _ClientAndAppointmentDetailsState
                     style: GoogleFonts.oswald(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: BauhausDesign.surfaceWhite,
+                      color: Theme.of(context).colorScheme.surface,
                       letterSpacing: 1.0,
                     ),
                   ),
@@ -2430,19 +2515,19 @@ class _ClientAndAppointmentDetailsState
         }
 
         return Scaffold(
-          backgroundColor: BauhausDesign.backgroundLight,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           appBar: AppBar(
             title: Text(
               'CLIENT DETAILS',
               style: GoogleFonts.oswald(
-                color: BauhausDesign.surfaceWhite,
+                color: Theme.of(context).colorScheme.onSecondary,
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
                 letterSpacing: 1.5,
               ),
             ),
             backgroundColor: BauhausDesign.secondary,
-            foregroundColor: BauhausDesign.surfaceWhite,
+            foregroundColor: Theme.of(context).colorScheme.onSecondary,
             systemOverlayStyle: SystemUiOverlayStyle.light,
             scrolledUnderElevation: 0,
             surfaceTintColor: Colors.transparent,
@@ -2452,16 +2537,19 @@ class _ClientAndAppointmentDetailsState
               padding: const EdgeInsets.all(BauhausDesign.space2),
               child: Container(
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceWhite,
-                  border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                  color: Theme.of(context).colorScheme.surface,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 1.5,
+                  ),
                 ),
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: () => Navigator.of(context).pop(),
-                    child: const Icon(
+                    child: Icon(
                       Icons.arrow_back,
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.outline,
                       size: 20,
                     ),
                   ),
@@ -2470,7 +2558,10 @@ class _ClientAndAppointmentDetailsState
             ),
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(2),
-              child: Container(color: BauhausDesign.neutral, height: 2),
+              child: Container(
+                color: Theme.of(context).colorScheme.outline,
+                height: 2,
+              ),
             ),
           ),
           body: isInitCompleted

@@ -52,19 +52,22 @@ class _AdminFamilyManagementViewState
     );
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: BauhausDesign.warning,
         title: Text(
           'FAMILY ADMINISTRATION',
           style: textTheme.headlineMedium?.copyWith(
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.8,
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: BauhausDesign.textDark),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -80,12 +83,13 @@ class _AdminFamilyManagementViewState
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: BauhausDesign.textDark,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         onPressed: () => _showAddMemberDialog(),
-        icon: const Icon(Icons.person_add_rounded, color: Colors.white),
+        icon: Icon(Icons.person_add_rounded),
         label: const Text(
           'ADD MEMBER',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -97,9 +101,12 @@ class _AdminFamilyManagementViewState
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
-          bottom: BorderSide(color: BauhausDesign.neutral, width: 1.5),
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 1.5,
+          ),
         ),
       ),
       child: Column(
@@ -108,11 +115,13 @@ class _AdminFamilyManagementViewState
           Text(
             'Managing Access For:',
             style: textTheme.labelSmall?.copyWith(
-              color: BauhausDesign.textDark.withValues(alpha: 0.6),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.6),
               fontWeight: FontWeight.w800,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             client.displayName,
             style: textTheme.headlineMedium?.copyWith(
@@ -122,7 +131,9 @@ class _AdminFamilyManagementViewState
           ),
           Text(
             client.clientEmail,
-            style: textTheme.bodySmall?.copyWith(color: BauhausDesign.textDark),
+            style: textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
         ],
       ),
@@ -143,14 +154,17 @@ class _AdminFamilyManagementViewState
     return ListView.separated(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       itemCount: state.members.length,
-      separatorBuilder: (_, _) => const SizedBox(height: BauhausDesign.space3),
+      separatorBuilder: (_, _) => SizedBox(height: BauhausDesign.space3),
       itemBuilder: (context, index) {
         final member = state.members[index];
         return Container(
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 1.5,
+            ),
             boxShadow: const [BauhausDesign.shadowHardSm],
           ),
           child: ListTile(
@@ -160,33 +174,35 @@ class _AdminFamilyManagementViewState
             ),
             title: Text(
               member.name.isNotEmpty ? member.name : member.email,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w800,
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (member.name.isNotEmpty) ...[
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2),
                   Text(
                     member.email,
                     style: TextStyle(
-                      color: BauhausDesign.textDark.withValues(alpha: 0.6),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Row(
                   children: [
                     _buildBadge(
                       member.relationship.toUpperCase(),
                       BauhausDesign.secondary,
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     _buildBadge(
                       member.status.toUpperCase(),
                       member.status == 'active'
@@ -198,7 +214,7 @@ class _AdminFamilyManagementViewState
               ],
             ),
             trailing: IconButton(
-              icon: const Icon(
+              icon: Icon(
                 Icons.delete_outline_rounded,
                 color: BauhausDesign.error,
               ),
@@ -251,7 +267,7 @@ class _AdminFamilyManagementViewState
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             TextField(
               controller: _emailController,
               decoration: const InputDecoration(
@@ -259,7 +275,7 @@ class _AdminFamilyManagementViewState
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             DropdownButtonFormField<String>(
               initialValue: _selectedRelation,
               decoration: const InputDecoration(
@@ -281,9 +297,9 @@ class _AdminFamilyManagementViewState
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
+            child: Text(
               'CANCEL',
-              style: TextStyle(color: BauhausDesign.textDark),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
             ),
           ),
           ElevatedButton(
@@ -323,10 +339,10 @@ class _AdminFamilyManagementViewState
                 Navigator.pop(context);
               }
             },
-            child: const Text(
+            child: Text(
               'INVITE',
               style: TextStyle(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),

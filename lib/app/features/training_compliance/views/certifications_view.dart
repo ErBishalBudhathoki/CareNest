@@ -42,22 +42,30 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
         .toList();
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.certificationsTitle,
-          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onSecondary,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onSecondary,
+        ),
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: BauhausDesign.neutral, height: 2),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 2,
+          ),
         ),
       ),
       body: state.isLoading
@@ -116,7 +124,9 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
                                     style: BauhausDesign.getTextTheme(context)
                                         .headlineLarge
                                         ?.copyWith(
-                                          color: BauhausDesign.textDark,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface,
                                           fontWeight: FontWeight.w700,
                                         ),
                                   ),
@@ -164,7 +174,9 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
                                     .bodyMedium
                                     ?.copyWith(
                                       fontStyle: FontStyle.italic,
-                                      color: BauhausDesign.textMuted,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
                                     ),
                               ),
                             ],
@@ -231,7 +243,7 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
         color = BauhausDesign.error;
         break;
       case 'expired':
-        color = BauhausDesign.neutral;
+        color = Theme.of(context).colorScheme.outline;
         break;
       default:
         color = BauhausDesign.warning;
@@ -244,14 +256,18 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
       ),
       decoration: BoxDecoration(
         color: color,
-        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.5,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Text(
         status.toUpperCase(),
-        style: BauhausDesign.getTextTheme(
-          context,
-        ).labelLarge?.copyWith(color: BauhausDesign.surfaceWhite, fontSize: 10),
+        style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+          color: Theme.of(context).colorScheme.surface,
+          fontSize: 10,
+        ),
       ),
     );
   }
@@ -306,7 +322,7 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
                           style: BauhausDesign.getTextTheme(context)
                               .headlineLarge
                               ?.copyWith(
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                                 fontWeight: FontWeight.w700,
                               ),
                         ),
@@ -349,7 +365,11 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
                         Text(
                           statusLabel,
                           style: BauhausDesign.getTextTheme(context).labelLarge
-                              ?.copyWith(color: BauhausDesign.textMuted),
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                         ),
                     ],
                   ),
@@ -456,8 +476,11 @@ class _EditCertificationDialogState
       backgroundColor: Colors.transparent,
       child: Container(
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceLight,
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          color: Theme.of(context).colorScheme.surface,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
           boxShadow: const [BauhausDesign.shadowHard],
         ),
         padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -475,7 +498,7 @@ class _EditCertificationDialogState
               const SizedBox(height: BauhausDesign.space4),
               TextFormField(
                 controller: _nameController,
-                decoration: BauhausDesign.inputDecoration('').copyWith(
+                decoration: BauhausDesign.inputDecoration(context, '').copyWith(
                   labelText: AppLocalizations.of(
                     context,
                   )!.certificationNameLabel,
@@ -487,7 +510,7 @@ class _EditCertificationDialogState
               const SizedBox(height: BauhausDesign.space3),
               TextFormField(
                 controller: _issuerController,
-                decoration: BauhausDesign.inputDecoration('').copyWith(
+                decoration: BauhausDesign.inputDecoration(context, '').copyWith(
                   labelText: AppLocalizations.of(context)!.issuerFieldLabel,
                 ),
                 validator: (v) => v?.isEmpty == true
@@ -497,7 +520,7 @@ class _EditCertificationDialogState
               const SizedBox(height: BauhausDesign.space3),
               TextFormField(
                 controller: _numberController,
-                decoration: BauhausDesign.inputDecoration('').copyWith(
+                decoration: BauhausDesign.inputDecoration(context, '').copyWith(
                   labelText: 'Certification / NDIS Check Number (Optional)',
                 ),
               ),
@@ -519,8 +542,10 @@ class _EditCertificationDialogState
                 child: Container(
                   padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.backgroundLight,
-                    border: Border.all(color: BauhausDesign.neutral),
+                    color: Theme.of(context).colorScheme.surface,
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -539,7 +564,7 @@ class _EditCertificationDialogState
               const SizedBox(height: BauhausDesign.space3),
               TextFormField(
                 controller: _notesController,
-                decoration: BauhausDesign.inputDecoration('').copyWith(
+                decoration: BauhausDesign.inputDecoration(context, '').copyWith(
                   labelText: AppLocalizations.of(context)!.notesOptionalLabel,
                 ),
                 maxLines: 2,
@@ -634,8 +659,11 @@ class _UploadCertificationDialogState
       backgroundColor: Colors.transparent,
       child: Container(
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceLight,
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          color: Theme.of(context).colorScheme.surface,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
           boxShadow: const [BauhausDesign.shadowHard],
         ),
         padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -655,9 +683,10 @@ class _UploadCertificationDialogState
                 if (requirements.isNotEmpty) ...[
                   DropdownButtonFormField<String>(
                     initialValue: _selectedRequirementId,
-                    decoration: BauhausDesign.inputDecoration('').copyWith(
-                      labelText: 'Certification Requirement (Optional)',
-                    ),
+                    decoration: BauhausDesign.inputDecoration(context, '')
+                        .copyWith(
+                          labelText: 'Certification Requirement (Optional)',
+                        ),
                     items: requirements
                         .map(
                           (req) => DropdownMenuItem(
@@ -682,11 +711,12 @@ class _UploadCertificationDialogState
                 ],
                 TextFormField(
                   controller: _nameController,
-                  decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(
-                      context,
-                    )!.certificationNameLabel,
-                  ),
+                  decoration: BauhausDesign.inputDecoration(context, '')
+                      .copyWith(
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.certificationNameLabel,
+                      ),
                   validator: (v) => v?.isEmpty == true
                       ? AppLocalizations.of(context)!.requiredValidation
                       : null,
@@ -694,9 +724,12 @@ class _UploadCertificationDialogState
                 const SizedBox(height: BauhausDesign.space3),
                 TextFormField(
                   controller: _issuerController,
-                  decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(context)!.issuerFieldLabel,
-                  ),
+                  decoration: BauhausDesign.inputDecoration(context, '')
+                      .copyWith(
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.issuerFieldLabel,
+                      ),
                   validator: (v) => v?.isEmpty == true
                       ? AppLocalizations.of(context)!.requiredValidation
                       : null,
@@ -704,9 +737,11 @@ class _UploadCertificationDialogState
                 const SizedBox(height: BauhausDesign.space3),
                 TextFormField(
                   controller: _numberController,
-                  decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: 'Certification / NDIS Check Number (Optional)',
-                  ),
+                  decoration: BauhausDesign.inputDecoration(context, '')
+                      .copyWith(
+                        labelText:
+                            'Certification / NDIS Check Number (Optional)',
+                      ),
                 ),
                 const SizedBox(height: BauhausDesign.space3),
                 GestureDetector(
@@ -724,8 +759,10 @@ class _UploadCertificationDialogState
                   child: Container(
                     padding: const EdgeInsets.all(BauhausDesign.space3),
                     decoration: BoxDecoration(
-                      color: BauhausDesign.backgroundLight,
-                      border: Border.all(color: BauhausDesign.neutral),
+                      color: Theme.of(context).colorScheme.onSecondary,
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -759,8 +796,10 @@ class _UploadCertificationDialogState
                     decoration: BoxDecoration(
                       color: _selectedFile != null
                           ? BauhausDesign.primary.withValues(alpha: 0.1)
-                          : BauhausDesign.backgroundLight,
-                      border: Border.all(color: BauhausDesign.neutral),
+                          : Theme.of(context).colorScheme.surface,
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -784,9 +823,12 @@ class _UploadCertificationDialogState
                 const SizedBox(height: BauhausDesign.space3),
                 TextFormField(
                   controller: _notesController,
-                  decoration: BauhausDesign.inputDecoration('').copyWith(
-                    labelText: AppLocalizations.of(context)!.notesOptionalLabel,
-                  ),
+                  decoration: BauhausDesign.inputDecoration(context, '')
+                      .copyWith(
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.notesOptionalLabel,
+                      ),
                   maxLines: 2,
                 ),
                 const SizedBox(height: BauhausDesign.space4),

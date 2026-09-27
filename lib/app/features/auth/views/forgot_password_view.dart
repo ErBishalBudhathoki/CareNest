@@ -45,6 +45,7 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
     final isSmallScreen = size.width < 400;
 
@@ -52,13 +53,13 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
       SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: BauhausDesign.backgroundLight,
+        systemNavigationBarColor: colorScheme.surface,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -103,6 +104,8 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
   }
 
   Widget _buildHeader(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -147,7 +150,7 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
             AppLocalizations.of(context)!.forgotPasswordHeader,
             textAlign: TextAlign.center,
             style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-              color: BauhausDesign.textDark,
+              color: colorScheme.onSurface,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -157,9 +160,10 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
           Text(
             AppLocalizations.of(context)!.forgotPasswordSubtitle,
             textAlign: TextAlign.center,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyLarge?.copyWith(color: BauhausDesign.textMuted, height: 1.5),
+            style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+              height: 1.5,
+            ),
           ),
         ],
       ),
@@ -171,6 +175,8 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
     ForgotPasswordViewModel viewModel,
     bool isSmallScreen,
   ) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return BauhausCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -181,7 +187,7 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
             label: AppLocalizations.of(context)!.emailAddressLabel,
             hintText: AppLocalizations.of(context)!.enterEmailHint,
             keyboardType: TextInputType.emailAddress,
-            prefixIcon: Icon(Iconsax.sms, color: BauhausDesign.textMuted),
+            prefixIcon: Icon(Iconsax.sms, color: colorScheme.onSurfaceVariant),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return AppLocalizations.of(context)!.emailRequired;
@@ -217,6 +223,8 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
   }
 
   Widget _buildBackToLogin(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Center(
       child: TextButton(
         onPressed: () => Navigator.of(context).pop(),
@@ -225,7 +233,7 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
             text: '${AppLocalizations.of(context)!.rememberPassword} ',
             style: BauhausDesign.getTextTheme(
               context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+            ).bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
             children: [
               TextSpan(
                 text: AppLocalizations.of(context)!.loginLink,

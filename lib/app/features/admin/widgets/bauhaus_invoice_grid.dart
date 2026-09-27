@@ -36,7 +36,10 @@ class BauhausActionBlock extends StatelessWidget {
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            border: Border.all(color: BauhausDesign.neutral, width: 2.5),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2.5,
+            ),
             boxShadow: const [BauhausDesign.shadowHard],
           ),
           padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -48,12 +51,19 @@ class BauhausActionBlock extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space3),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceLight,
+                  color: Theme.of(context).colorScheme.surfaceContainer,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 2,
+                  ),
                   boxShadow: const [BauhausDesign.shadowHardSm],
                 ),
-                child: Icon(icon, size: 28, color: BauhausDesign.textDark),
+                child: Icon(
+                  icon,
+                  size: 28,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
               const Spacer(),
               // Title
@@ -115,7 +125,10 @@ class BauhausWideActionBlock extends StatelessWidget {
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            border: Border.all(color: BauhausDesign.neutral, width: 2.5),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2.5,
+            ),
             boxShadow: const [BauhausDesign.shadowHard],
           ),
           padding: const EdgeInsets.symmetric(
@@ -128,12 +141,19 @@ class BauhausWideActionBlock extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space3),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceLight,
+                  color: Theme.of(context).colorScheme.surfaceContainer,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 2,
+                  ),
                   boxShadow: const [BauhausDesign.shadowHardSm],
                 ),
-                child: Icon(icon, size: 28, color: BauhausDesign.textDark),
+                child: Icon(
+                  icon,
+                  size: 28,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
               const SizedBox(width: BauhausDesign.space4),
               // Text Content
@@ -166,7 +186,9 @@ class BauhausWideActionBlock extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceLight.withValues(alpha: 0.3),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainer.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusXs),
                   border: Border.all(
                     color: textColor.withValues(alpha: 0.3),
@@ -219,14 +241,14 @@ class BauhausInvoiceGrid extends StatelessWidget {
             vertical: BauhausDesign.space2,
           ),
           decoration: BoxDecoration(
-            color: BauhausDesign.neutral,
+            color: Theme.of(context).colorScheme.outline,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusXs),
           ),
           child: Text(
             l10n.invoiceManagement.toUpperCase(),
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
               fontWeight: FontWeight.w900,
-              color: BauhausDesign.textLight,
+              color: Theme.of(context).colorScheme.onInverseSurface,
               letterSpacing: 1.0,
             ),
           ),
@@ -242,7 +264,7 @@ class BauhausInvoiceGrid extends StatelessWidget {
                 title: l10n.generate,
                 subtitle: l10n.generateSubtitle,
                 backgroundColor: BauhausDesign.primary,
-                textColor: BauhausDesign.textDark,
+                textColor: Theme.of(context).colorScheme.onSurface,
                 onTap: onGenerateInvoice,
                 height: 160,
               ),
@@ -254,7 +276,7 @@ class BauhausInvoiceGrid extends StatelessWidget {
                 title: l10n.allInvoices,
                 subtitle: l10n.allInvoicesSubtitle,
                 backgroundColor: BauhausDesign.secondary,
-                textColor: BauhausDesign.textLight,
+                textColor: Theme.of(context).colorScheme.onInverseSurface,
                 onTap: onAllInvoices,
                 height: 160,
               ),
@@ -269,7 +291,7 @@ class BauhausInvoiceGrid extends StatelessWidget {
           title: l10n.employeeInvoice,
           subtitle: l10n.employeeInvoiceSubtitle,
           backgroundColor: BauhausDesign.primary,
-          textColor: BauhausDesign.textDark,
+          textColor: Theme.of(context).colorScheme.onSurface,
           onTap: onEmployeeInvoice,
         ),
         const SizedBox(height: BauhausDesign.space3),
@@ -280,7 +302,7 @@ class BauhausInvoiceGrid extends StatelessWidget {
           title: l10n.enhancedInvoice,
           subtitle: l10n.enhancedInvoiceSubtitle,
           backgroundColor: BauhausDesign.accent,
-          textColor: BauhausDesign.textDark,
+          textColor: Theme.of(context).colorScheme.onSurface,
           onTap: onEnhancedInvoice,
         ),
         const SizedBox(height: BauhausDesign.space3),
@@ -291,7 +313,7 @@ class BauhausInvoiceGrid extends StatelessWidget {
           title: l10n.invoiceList,
           subtitle: l10n.invoiceListSubtitle,
           backgroundColor: BauhausDesign.success,
-          textColor: BauhausDesign.textDark,
+          textColor: Theme.of(context).colorScheme.onSurface,
           onTap: onInvoiceList,
         ),
       ],

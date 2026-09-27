@@ -55,7 +55,7 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
     );
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceWhite,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: FadeTransition(
         opacity: _fadeIn,
         child: CustomScrollView(
@@ -90,7 +90,9 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                           style: GoogleFonts.inter(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             letterSpacing: 2,
                           ),
                         ),
@@ -158,19 +160,22 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
 
   // ─── Sliver Header ───────────────────────────────────────
   Widget _buildSliverHeader(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return SliverAppBar(
       expandedHeight: 130,
       collapsedHeight: 62,
       pinned: true,
-      backgroundColor: BauhausDesign.neutral,
+      backgroundColor: colorScheme.inverseSurface,
+      foregroundColor: colorScheme.onInverseSurface,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: BauhausDesign.textLight),
+        icon: Icon(Icons.arrow_back, color: colorScheme.onInverseSurface),
         onPressed: () => Navigator.pop(context),
       ),
       actions: [
         IconButton(
           tooltip: 'Refresh',
-          icon: const Icon(Icons.refresh, color: BauhausDesign.textLight),
+          icon: Icon(Icons.refresh, color: colorScheme.onInverseSurface),
           onPressed: () {
             HapticFeedback.lightImpact();
             ref.read(teamViewModelProvider.notifier).loadMyTeams();
@@ -188,12 +193,12 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
           style: GoogleFonts.oswald(
             fontSize: 20,
             fontWeight: FontWeight.w700,
-            color: BauhausDesign.textLight,
+            color: colorScheme.onInverseSurface,
             letterSpacing: 2,
           ),
         ),
         background: Container(
-          color: BauhausDesign.neutral,
+          color: colorScheme.inverseSurface,
           child: const SizedBox.shrink(),
         ),
       ),
@@ -202,6 +207,7 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
 
   // ─── Emergency Broadcast Banner ───────────────────────────
   Widget _buildBroadcastBanner(BuildContext context, dynamic viewModel) {
+    final colorScheme = Theme.of(context).colorScheme;
     final currentUserId = ref.watch(userIdProvider);
     final allBroadcasts =
         viewModel.activeBroadcasts as List<EmergencyBroadcast>;
@@ -222,7 +228,7 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
           // Header bar
           Container(
             width: double.infinity,
-            color: hasActive ? const Color(0xFF8B0000) : BauhausDesign.neutral,
+            color: hasActive ? colorScheme.error : colorScheme.inverseSurface,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             child: Row(
               children: [
@@ -230,7 +236,9 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                   hasActive
                       ? Icons.warning_amber_rounded
                       : Icons.campaign_outlined,
-                  color: BauhausDesign.textLight,
+                  color: hasActive
+                      ? colorScheme.onError
+                      : colorScheme.onInverseSurface,
                   size: 16,
                 ),
                 const SizedBox(width: 8),
@@ -241,7 +249,9 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                   style: GoogleFonts.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
-                    color: BauhausDesign.textLight,
+                    color: hasActive
+                        ? colorScheme.onError
+                        : colorScheme.onInverseSurface,
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -253,19 +263,15 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
             width: double.infinity,
             decoration: BoxDecoration(
               color: hasActive
-                  ? const Color(0xFFFFF5F5)
-                  : BauhausDesign.surfaceOffWhite,
+                  ? colorScheme.errorContainer
+                  : colorScheme.surfaceContainer,
               border: Border.all(
-                color: hasActive
-                    ? BauhausDesign.primary
-                    : BauhausDesign.neutral,
+                color: hasActive ? colorScheme.error : colorScheme.outline,
                 width: 2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: hasActive
-                      ? BauhausDesign.primary
-                      : BauhausDesign.neutral,
+                  color: hasActive ? colorScheme.error : colorScheme.outline,
                   offset: const Offset(4, 4),
                   blurRadius: 0,
                 ),
@@ -292,7 +298,7 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                           style: GoogleFonts.inter(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       ],
@@ -318,14 +324,14 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                     onTap: () => _showEmergencyDialog(context, viewModel),
                     child: Container(
                       width: double.infinity,
-                      color: BauhausDesign.primary,
+                      color: colorScheme.primary,
                       padding: const EdgeInsets.symmetric(vertical: 11),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.campaign,
-                            color: Colors.white,
+                            color: colorScheme.onPrimary,
                             size: 14,
                           ),
                           const SizedBox(width: 8),
@@ -334,7 +340,7 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                             style: GoogleFonts.inter(
                               fontSize: 11,
                               fontWeight: FontWeight.w800,
-                              color: Colors.white,
+                              color: colorScheme.onPrimary,
                               letterSpacing: 1.5,
                             ),
                           ),
@@ -363,7 +369,7 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
             style: GoogleFonts.oswald(
               fontSize: 12,
               fontWeight: FontWeight.w700,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               letterSpacing: 2.5,
             ),
           ),
@@ -379,15 +385,24 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(24),
-        decoration: const BoxDecoration(
-          color: BauhausDesign.surfaceOffWhite,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceContainer,
           border: Border(
             left: BorderSide(color: BauhausDesign.accent, width: 4),
-            right: BorderSide(color: BauhausDesign.neutral, width: 2),
-            top: BorderSide(color: BauhausDesign.neutral, width: 2),
-            bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+            right: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
+            top: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
+            bottom: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
           ),
-          boxShadow: [BauhausDesign.shadowHard],
+          boxShadow: const [BauhausDesign.shadowHard],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -397,7 +412,7 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
               style: GoogleFonts.oswald(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 letterSpacing: 1.5,
               ),
             ),
@@ -407,7 +422,7 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
               style: GoogleFonts.inter(
                 fontSize: 13,
                 fontWeight: FontWeight.w400,
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 height: 1.6,
               ),
             ),
@@ -424,13 +439,25 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          color: Color(0xFFFFF5F5),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.errorContainer,
           border: Border(
-            left: BorderSide(color: BauhausDesign.primary, width: 4),
-            right: BorderSide(color: BauhausDesign.neutral, width: 2),
-            top: BorderSide(color: BauhausDesign.neutral, width: 2),
-            bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+            left: BorderSide(
+              color: Theme.of(context).colorScheme.error,
+              width: 4,
+            ),
+            right: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
+            top: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
+            bottom: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
           ),
         ),
         child: Row(
@@ -447,7 +474,7 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                 style: GoogleFonts.inter(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ),
@@ -459,28 +486,30 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
 
   // ─── FAB ──────────────────────────────────────────────────
   Widget _buildFAB(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return GestureDetector(
       onTap: () {
         HapticFeedback.mediumImpact();
         _showCreateTeamDialog(context);
       },
       child: Container(
-        decoration: const BoxDecoration(
-          color: BauhausDesign.secondary,
-          boxShadow: [BauhausDesign.shadowHardLg],
+        decoration: BoxDecoration(
+          color: colorScheme.secondary,
+          boxShadow: const [BauhausDesign.shadowHardLg],
         ),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.add, color: Colors.white, size: 18),
+            Icon(Icons.add, color: colorScheme.onSecondary, size: 18),
             const SizedBox(width: 6),
             Text(
               'NEW TEAM',
               style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: FontWeight.w800,
-                color: Colors.white,
+                color: colorScheme.onSecondary,
                 letterSpacing: 1.5,
               ),
             ),
@@ -541,6 +570,7 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
 
   // ─── Emergency Dialog ─────────────────────────────────────
   void _showEmergencyDialog(BuildContext context, dynamic viewModel) {
+    final colorScheme = Theme.of(context).colorScheme;
     final msgCtrl = TextEditingController();
     final teams = viewModel.teams as List<Team>;
     final selectedTeamIds = <String>{};
@@ -561,13 +591,13 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
-                color: const Color(0xFFFFF3E0),
+                color: colorScheme.tertiaryContainer,
                 child: Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.info_outline,
                       size: 14,
-                      color: Color(0xFFE65100),
+                      color: colorScheme.onTertiaryContainer,
                     ),
                     const SizedBox(width: 8),
                     Expanded(
@@ -576,7 +606,7 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                         style: GoogleFonts.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFFE65100),
+                          color: colorScheme.onTertiaryContainer,
                         ),
                       ),
                     ),
@@ -617,17 +647,19 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                         }
                       });
                     },
-                    selectedColor: BauhausDesign.primary,
-                    checkmarkColor: Colors.white,
-                    backgroundColor: BauhausDesign.surfaceOffWhite,
+                    selectedColor: colorScheme.primary,
+                    checkmarkColor: colorScheme.onPrimary,
+                    backgroundColor: colorScheme.surfaceContainer,
                     labelStyle: GoogleFonts.oswald(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
-                      color: isSelected ? Colors.white : BauhausDesign.textDark,
+                      color: isSelected
+                          ? colorScheme.onPrimary
+                          : colorScheme.onSurface,
                     ),
-                    shape: const RoundedRectangleBorder(
+                    shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.zero,
-                      side: BorderSide(color: BauhausDesign.neutral, width: 2),
+                      side: BorderSide(color: colorScheme.outline, width: 2),
                     ),
                   );
                 }).toList(),
@@ -668,10 +700,10 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                                   'Emergency broadcast sent!',
                                   style: GoogleFonts.inter(
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.white,
+                                    color: colorScheme.onPrimary,
                                   ),
                                 ),
-                                backgroundColor: BauhausDesign.primary,
+                                backgroundColor: colorScheme.primary,
                                 behavior: SnackBarBehavior.floating,
                               ),
                             );
@@ -684,10 +716,10 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                                   'Failed to send broadcast: $e',
                                   style: GoogleFonts.inter(
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.white,
+                                    color: colorScheme.onError,
                                   ),
                                 ),
-                                backgroundColor: Colors.red,
+                                backgroundColor: colorScheme.error,
                                 behavior: SnackBarBehavior.floating,
                               ),
                             );
@@ -766,18 +798,26 @@ class _TeamCardState extends ConsumerState<_TeamCard>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final initial = widget.team.name.isNotEmpty
         ? widget.team.name[0].toUpperCase()
         : '?';
+    final avatarForeground = _accent == colorScheme.primary
+        ? colorScheme.onPrimary
+        : _accent == colorScheme.secondary
+        ? colorScheme.onSecondary
+        : colorScheme.onInverseSurface;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: colorScheme.surface,
+        border: Border.all(color: colorScheme.outline, width: 2),
         boxShadow: [
           BoxShadow(
-            color: _expanded ? _accent.withValues(alpha: 0.85) : Colors.black,
+            color: _expanded
+                ? _accent.withValues(alpha: 0.85)
+                : BauhausDesign.neoInk,
             offset: const Offset(5, 5),
             blurRadius: 0,
           ),
@@ -807,9 +847,7 @@ class _TeamCardState extends ConsumerState<_TeamCard>
                       style: GoogleFonts.oswald(
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
-                        color: _accent == BauhausDesign.accent
-                            ? BauhausDesign.neutral
-                            : Colors.white,
+                        color: avatarForeground,
                       ),
                     ),
                   ),
@@ -823,7 +861,7 @@ class _TeamCardState extends ConsumerState<_TeamCard>
                           style: GoogleFonts.oswald(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             letterSpacing: 0.5,
                           ),
                         ),
@@ -834,7 +872,9 @@ class _TeamCardState extends ConsumerState<_TeamCard>
                           style: GoogleFonts.inter(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -874,9 +914,9 @@ class _TeamCardState extends ConsumerState<_TeamCard>
                   AnimatedRotation(
                     turns: _expanded ? 0.5 : 0,
                     duration: const Duration(milliseconds: 240),
-                    child: const Icon(
+                    child: Icon(
                       Icons.keyboard_arrow_down,
-                      color: BauhausDesign.textDark,
+                      color: colorScheme.onSurface,
                       size: 22,
                     ),
                   ),
@@ -892,7 +932,7 @@ class _TeamCardState extends ConsumerState<_TeamCard>
               children: [
                 Container(
                   height: 1,
-                  color: BauhausDesign.neutral.withValues(alpha: 0.18),
+                  color: colorScheme.outline.withValues(alpha: 0.18),
                 ),
                 if (widget.team.members.isEmpty)
                   Padding(
@@ -904,7 +944,7 @@ class _TeamCardState extends ConsumerState<_TeamCard>
                       'No members yet — invite someone below.',
                       style: GoogleFonts.inter(
                         fontSize: 12,
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   )
@@ -915,7 +955,7 @@ class _TeamCardState extends ConsumerState<_TeamCard>
                   onTap: () => _showInviteDialog(context),
                   child: Container(
                     width: double.infinity,
-                    color: BauhausDesign.surfaceOffWhite,
+                    color: colorScheme.surfaceContainer,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 14,
                       vertical: 10,
@@ -926,9 +966,9 @@ class _TeamCardState extends ConsumerState<_TeamCard>
                           width: 28,
                           height: 28,
                           color: _accent,
-                          child: const Icon(
+                          child: Icon(
                             Icons.person_add,
-                            color: Colors.white,
+                            color: avatarForeground,
                             size: 14,
                           ),
                         ),
@@ -938,14 +978,14 @@ class _TeamCardState extends ConsumerState<_TeamCard>
                           style: GoogleFonts.inter(
                             fontSize: 11,
                             fontWeight: FontWeight.w800,
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             letterSpacing: 1.5,
                           ),
                         ),
                         const Spacer(),
-                        const Icon(
+                        Icon(
                           Icons.chevron_right,
-                          color: BauhausDesign.textMuted,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           size: 18,
                         ),
                       ],
@@ -961,6 +1001,12 @@ class _TeamCardState extends ConsumerState<_TeamCard>
   }
 
   void _showInviteDialog(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final accentForeground = _accent == colorScheme.primary
+        ? colorScheme.onPrimary
+        : _accent == colorScheme.secondary
+        ? colorScheme.onSecondary
+        : colorScheme.onInverseSurface;
     String selectedRole = 'member';
     TeamMember? selectedUser;
 
@@ -986,27 +1032,27 @@ class _TeamCardState extends ConsumerState<_TeamCard>
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
-                  decoration: const BoxDecoration(
-                    color: BauhausDesign.surfaceOffWhite,
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainer,
                     border: Border.fromBorderSide(
-                      BorderSide(color: BauhausDesign.neutral, width: 2),
+                      BorderSide(color: colorScheme.outline, width: 2),
                     ),
                   ),
                   child: Text(
                     'No available users to invite.',
                     style: GoogleFonts.inter(
                       fontSize: 13,
-                      color: BauhausDesign.textMuted,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 )
               else
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: const BoxDecoration(
-                    color: BauhausDesign.surfaceOffWhite,
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainer,
                     border: Border.fromBorderSide(
-                      BorderSide(color: BauhausDesign.neutral, width: 2),
+                      BorderSide(color: colorScheme.outline, width: 2),
                     ),
                   ),
                   child: DropdownButtonHideUnderline(
@@ -1016,15 +1062,15 @@ class _TeamCardState extends ConsumerState<_TeamCard>
                       hint: Text(
                         'Select an organization member',
                         style: GoogleFonts.inter(
-                          color: BauhausDesign.textMuted,
+                          color: colorScheme.onSurfaceVariant,
                           fontSize: 13,
                         ),
                       ),
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.keyboard_arrow_down,
-                        color: BauhausDesign.textDark,
+                        color: colorScheme.onSurface,
                       ),
-                      dropdownColor: BauhausDesign.surfaceWhite,
+                      dropdownColor: colorScheme.surface,
                       items: selectableUsers.map((user) {
                         final label = user.displayName.isNotEmpty
                             ? '${user.displayName} (${user.email})'
@@ -1036,7 +1082,7 @@ class _TeamCardState extends ConsumerState<_TeamCard>
                             style: GoogleFonts.inter(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         );
@@ -1063,9 +1109,9 @@ class _TeamCardState extends ConsumerState<_TeamCard>
                         decoration: BoxDecoration(
                           color: isSelected
                               ? _accent
-                              : BauhausDesign.surfaceOffWhite,
+                              : colorScheme.surfaceContainer,
                           border: Border.all(
-                            color: isSelected ? _accent : BauhausDesign.neutral,
+                            color: isSelected ? _accent : colorScheme.outline,
                             width: 2,
                           ),
                           boxShadow: isSelected
@@ -1079,10 +1125,8 @@ class _TeamCardState extends ConsumerState<_TeamCard>
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
                             color: isSelected
-                                ? (_accent == BauhausDesign.accent
-                                      ? BauhausDesign.neutral
-                                      : Colors.white)
-                                : BauhausDesign.textDark,
+                                ? accentForeground
+                                : colorScheme.onSurface,
                             letterSpacing: 1.2,
                           ),
                         ),
@@ -1105,9 +1149,7 @@ class _TeamCardState extends ConsumerState<_TeamCard>
                     child: _NeoFilledButton(
                       label: 'SEND INVITE',
                       color: _accent,
-                      textColor: _accent == BauhausDesign.accent
-                          ? BauhausDesign.neutral
-                          : Colors.white,
+                      textColor: accentForeground,
                       onTap: () async {
                         if (selectedUser == null) return;
                         final email = selectedUser!.email;
@@ -1125,11 +1167,11 @@ class _TeamCardState extends ConsumerState<_TeamCard>
                               content: Text(
                                 'Invite sent to $email',
                                 style: GoogleFonts.inter(
-                                  color: Colors.white,
+                                  color: colorScheme.onSecondary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              backgroundColor: BauhausDesign.success,
+                              backgroundColor: colorScheme.secondary,
                               behavior: SnackBarBehavior.floating,
                             ),
                           );
@@ -1296,12 +1338,12 @@ class _MemberRow extends StatelessWidget {
   static const _roleColors = {
     'manager': BauhausDesign.primary,
     'admin': BauhausDesign.secondary,
-    'member': BauhausDesign.textMuted,
   };
 
   @override
   Widget build(BuildContext context) {
-    final roleColor = _roleColors[member.role] ?? BauhausDesign.textMuted;
+    final colorScheme = Theme.of(context).colorScheme;
+    final roleColor = _roleColors[member.role] ?? colorScheme.onSurfaceVariant;
     final isActive = member.status == 'active';
 
     // Prefer display name, fall back to email, never show raw ID
@@ -1320,7 +1362,7 @@ class _MemberRow extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: BauhausDesign.neutral.withValues(alpha: 0.14),
+            color: colorScheme.outline.withValues(alpha: 0.14),
             width: 1,
           ),
         ),
@@ -1333,7 +1375,9 @@ class _MemberRow extends StatelessWidget {
             height: 8,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isActive ? BauhausDesign.success : BauhausDesign.textMuted,
+              color: isActive
+                  ? BauhausDesign.success
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(width: 10),
@@ -1346,7 +1390,7 @@ class _MemberRow extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -1356,7 +1400,7 @@ class _MemberRow extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 11,
                       fontWeight: FontWeight.w400,
-                      color: BauhausDesign.textMuted,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -1394,6 +1438,7 @@ class _HistoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final initiatorName = broadcast.initiatorName ?? 'Admin';
     final ackCount = broadcast.acknowledgments.length;
     final dateStr =
@@ -1403,8 +1448,8 @@ class _HistoryTile extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceOffWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+        color: colorScheme.surfaceContainer,
+        border: Border.all(color: colorScheme.outline, width: 1.5),
         boxShadow: const [BauhausDesign.shadowHardXs],
       ),
       child: Row(
@@ -1412,11 +1457,11 @@ class _HistoryTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: BauhausDesign.neutral.withValues(alpha: 0.08),
+              color: colorScheme.outline.withValues(alpha: 0.08),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.history,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               size: 16,
             ),
           ),
@@ -1430,7 +1475,7 @@ class _HistoryTile extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -1440,7 +1485,7 @@ class _HistoryTile extends StatelessWidget {
                   'By $initiatorName  ·  $dateStr',
                   style: GoogleFonts.inter(
                     fontSize: 10,
-                    color: BauhausDesign.textMuted,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.2,
                   ),
@@ -1452,9 +1497,9 @@ class _HistoryTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
+              color: colorScheme.surface,
               border: Border.all(
-                color: BauhausDesign.neutral.withValues(alpha: 0.2),
+                color: colorScheme.outline.withValues(alpha: 0.2),
               ),
             ),
             child: Text(
@@ -1462,7 +1507,7 @@ class _HistoryTile extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 9,
                 fontWeight: FontWeight.w900,
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 letterSpacing: 0.5,
               ),
             ),
@@ -1481,12 +1526,14 @@ class _BroadcastTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: BauhausDesign.primary.withValues(alpha: 0.2),
+            color: colorScheme.primary.withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -1494,9 +1541,9 @@ class _BroadcastTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
+          Icon(
             Icons.warning_amber_rounded,
-            color: BauhausDesign.primary,
+            color: colorScheme.primary,
             size: 18,
           ),
           const SizedBox(width: 10),
@@ -1509,7 +1556,7 @@ class _BroadcastTile extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     height: 1.5,
                   ),
                 ),
@@ -1519,7 +1566,7 @@ class _BroadcastTile extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 9,
                     fontWeight: FontWeight.w700,
-                    color: BauhausDesign.textMuted,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -1531,16 +1578,16 @@ class _BroadcastTile extends StatelessWidget {
             onTap: onAcknowledge,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: const BoxDecoration(
-                color: BauhausDesign.neutral,
-                boxShadow: [BauhausDesign.shadowHardXs],
+              decoration: BoxDecoration(
+                color: colorScheme.inverseSurface,
+                boxShadow: const [BauhausDesign.shadowHardXs],
               ),
               child: Text(
                 'ACK',
                 style: GoogleFonts.inter(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
-                  color: Colors.white,
+                  color: colorScheme.onInverseSurface,
                   letterSpacing: 1.2,
                 ),
               ),
@@ -1570,13 +1617,15 @@ class _NeoBrutalistDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       child: Container(
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          color: colorScheme.surface,
+          border: Border.all(color: colorScheme.outline, width: 2),
           boxShadow: [
             BoxShadow(
               color: accentColor,
@@ -1592,18 +1641,22 @@ class _NeoBrutalistDialog extends StatelessWidget {
             // Header
             Container(
               width: double.infinity,
-              color: BauhausDesign.neutral,
+              color: colorScheme.inverseSurface,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
-                  Icon(titleIcon, color: BauhausDesign.textLight, size: 16),
+                  Icon(
+                    titleIcon,
+                    color: colorScheme.onInverseSurface,
+                    size: 16,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     title,
                     style: GoogleFonts.oswald(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
-                      color: BauhausDesign.textLight,
+                      color: colorScheme.onInverseSurface,
                       letterSpacing: 1.8,
                     ),
                   ),
@@ -1641,7 +1694,7 @@ class _InputLabel extends StatelessWidget {
       style: GoogleFonts.inter(
         fontSize: 10,
         fontWeight: FontWeight.w800,
-        color: BauhausDesign.textDark,
+        color: Theme.of(context).colorScheme.onSurface,
         letterSpacing: 2,
       ),
     );
@@ -1652,17 +1705,19 @@ class _NeoTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
   final int maxLines;
-  final Color focusBorderColor;
+  final Color? focusBorderColor;
 
   const _NeoTextField({
     required this.controller,
     required this.hint,
     this.maxLines = 1,
-    this.focusBorderColor = BauhausDesign.secondary,
+    this.focusBorderColor,
   });
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return TextField(
       controller: controller,
       autofocus: maxLines == 1,
@@ -1670,27 +1725,30 @@ class _NeoTextField extends StatelessWidget {
       style: GoogleFonts.inter(
         fontSize: 14,
         fontWeight: FontWeight.w500,
-        color: BauhausDesign.textDark,
+        color: Theme.of(context).colorScheme.onSurface,
       ),
       decoration: InputDecoration(
         filled: true,
-        fillColor: BauhausDesign.surfaceOffWhite,
+        fillColor: colorScheme.surfaceContainer,
         hintText: hint,
         hintStyle: GoogleFonts.inter(
-          color: BauhausDesign.textMuted,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
           fontSize: 13,
         ),
-        border: const OutlineInputBorder(
+        border: OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: BauhausDesign.neutral, width: 2),
+          borderSide: BorderSide(color: colorScheme.outline, width: 2),
         ),
-        enabledBorder: const OutlineInputBorder(
+        enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: BauhausDesign.neutral, width: 2),
+          borderSide: BorderSide(color: colorScheme.outline, width: 2),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: focusBorderColor, width: 2),
+          borderSide: BorderSide(
+            color: focusBorderColor ?? colorScheme.primary,
+            width: 2,
+          ),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 12,
@@ -1704,25 +1762,27 @@ class _NeoTextField extends StatelessWidget {
 class _NeoFilledButton extends StatelessWidget {
   final String label;
   final Color color;
-  final Color textColor;
+  final Color? textColor;
   final VoidCallback onTap;
 
   const _NeoFilledButton({
     required this.label,
     required this.color,
-    this.textColor = Colors.white,
+    this.textColor,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
           color: color,
-          border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+          border: Border.all(color: colorScheme.outline, width: 1.5),
           boxShadow: const [BauhausDesign.shadowHardSm],
         ),
         alignment: Alignment.center,
@@ -1731,7 +1791,7 @@ class _NeoFilledButton extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w800,
-            color: textColor,
+            color: textColor ?? colorScheme.onInverseSurface,
             letterSpacing: 1.5,
           ),
         ),
@@ -1748,14 +1808,16 @@ class _NeoOutlineButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: const BoxDecoration(
-          color: BauhausDesign.surfaceOffWhite,
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainer,
           border: Border.fromBorderSide(
-            BorderSide(color: BauhausDesign.neutral, width: 1.5),
+            BorderSide(color: colorScheme.outline, width: 1.5),
           ),
         ),
         alignment: Alignment.center,
@@ -1764,7 +1826,7 @@ class _NeoOutlineButton extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w700,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             letterSpacing: 1.5,
           ),
         ),

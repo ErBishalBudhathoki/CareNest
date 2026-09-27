@@ -42,8 +42,8 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         padding: const EdgeInsets.all(BauhausDesign.space4),
-        decoration: const BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(BauhausDesign.radiusLg),
           ),
@@ -57,7 +57,9 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: BauhausDesign.neutral.withValues(alpha: 0.3),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.outline.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -154,7 +156,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
     final userEmail = prefs.getUserEmail() ?? '';
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Column(
         children: [
           const BauhausOfflineBanner(),
@@ -170,8 +172,12 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                     expandedHeight: 120,
                     floating: true,
                     pinned: true,
-                    backgroundColor: BauhausDesign.neutral,
-                    foregroundColor: BauhausDesign.surfaceWhite,
+                    backgroundColor: Theme.of(
+                      context,
+                    ).colorScheme.inverseSurface,
+                    foregroundColor: Theme.of(
+                      context,
+                    ).colorScheme.onInverseSurface,
                     surfaceTintColor: Colors.transparent,
                     scrolledUnderElevation: 0,
                     elevation: 0,
@@ -186,10 +192,12 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                         style: BauhausDesign.getTextTheme(context).headlineSmall
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: BauhausDesign.surfaceWhite,
+                              color: Theme.of(context).colorScheme.surface,
                             ),
                       ),
-                      background: Container(color: BauhausDesign.neutral),
+                      background: Container(
+                        color: Theme.of(context).colorScheme.inverseSurface,
+                      ),
                     ),
                     actions: [
                       Padding(
@@ -207,7 +215,9 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                       preferredSize: const Size.fromHeight(1),
                       child: Container(
                         height: 1,
-                        color: BauhausDesign.neutral.withValues(alpha: 0.2),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.outline.withValues(alpha: 0.2),
                       ),
                     ),
                   ),
@@ -386,7 +396,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
               child: Text(
                 AppLocalizations.of(context)!.errorLoadingRequests,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -422,18 +432,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
       firstDate: DateTime(2020),
       lastDate: DateTime(2030),
       initialDateRange: _selectedDateRange,
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: BauhausDesign.primary,
-              onPrimary: BauhausDesign.surfaceWhite,
-              onSurface: BauhausDesign.textDark,
-            ),
-          ),
-          child: child!,
-        );
-      },
+      builder: (context, child) => child!,
     );
     if (picked != null) {
       setState(() => _selectedDateRange = picked);
@@ -457,16 +456,21 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
           vertical: BauhausDesign.space2,
         ),
         decoration: BoxDecoration(
-          color: selected ? BauhausDesign.neutral : BauhausDesign.surfaceWhite,
-          border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+          color: selected
+              ? Theme.of(context).colorScheme.inverseSurface
+              : Theme.of(context).colorScheme.surface,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 1.5,
+          ),
           boxShadow: selected ? const [BauhausDesign.shadowHardSm] : [],
         ),
         child: Text(
           label.toUpperCase(),
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
             color: selected
-                ? BauhausDesign.surfaceWhite
-                : BauhausDesign.textDark,
+                ? Theme.of(context).colorScheme.onInverseSurface
+                : Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -755,7 +759,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
               padding: const EdgeInsets.all(BauhausDesign.space2),
               width: double.infinity,
               decoration: BoxDecoration(
-                color: BauhausDesign.neutral.withValues(alpha: 0.05),
+                color: Theme.of(context).colorScheme.surfaceContainer,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               ),
               child: Text(

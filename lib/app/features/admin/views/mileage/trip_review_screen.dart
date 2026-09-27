@@ -64,25 +64,30 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
     }
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           'REVIEW TRIP',
           style: textTheme.displaySmall?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
           ),
         ),
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),
-          child: Container(color: BauhausDesign.neutral, height: 2),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 2,
+          ),
         ),
-        iconTheme: const IconThemeData(color: BauhausDesign.neutral),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
         actions: [
           IconButton(
             icon: Icon(_isEditing ? Icons.close : Icons.edit),
@@ -110,9 +115,9 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
               child: Container(
                 height: 220,
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceLight,
+                  color: Theme.of(context).colorScheme.surfaceContainer,
                   border: Border.all(
-                    color: BauhausDesign.neutral,
+                    color: Theme.of(context).colorScheme.outline,
                     width: BauhausDesign.borderThick,
                   ),
                 ),
@@ -126,15 +131,17 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                         showMyLocation: false,
                       )
                     : Container(
-                        color: BauhausDesign.neutral.withValues(alpha: 0.08),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.outline.withValues(alpha: 0.08),
                         alignment: Alignment.center,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.map,
                               size: 48,
-                              color: BauhausDesign.neutral,
+                              color: Theme.of(context).colorScheme.outline,
                             ),
                             const SizedBox(height: 8),
                             Text(
@@ -145,7 +152,9 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                             Text(
                               'No tracked route data on this trip',
                               style: textTheme.bodySmall?.copyWith(
-                                color: BauhausDesign.textMuted,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ],
@@ -158,7 +167,7 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
               Text(
                 'Tracked route points: ${routePoints.length}',
                 style: textTheme.bodySmall?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             const SizedBox(height: BauhausDesign.space6),
@@ -184,7 +193,7 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
             if (_isEditing)
               TextField(
                 controller: _distanceController,
-                decoration: BauhausDesign.inputDecoration(''),
+                decoration: BauhausDesign.inputDecoration(context, ''),
                 keyboardType: TextInputType.number,
                 style: textTheme.bodyLarge,
               )
@@ -197,7 +206,7 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
             if (_isEditing)
               TextField(
                 controller: _clientIdController,
-                decoration: BauhausDesign.inputDecoration(''),
+                decoration: BauhausDesign.inputDecoration(context, ''),
                 style: textTheme.bodyLarge,
               )
             else
@@ -210,7 +219,7 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
               BauhausButton(
                 text: 'SAVE CHANGES',
                 backgroundColor: BauhausDesign.accent,
-                textColor: BauhausDesign.textDark,
+                textColor: Theme.of(context).colorScheme.onSurface,
                 onPressed: () async {
                   final success = await ref
                       .read(adminMileageViewModelProvider.notifier)
@@ -299,7 +308,7 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
       child: Text(
         text,
         style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-          color: BauhausDesign.neutral.withValues(alpha: 0.6),
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
           letterSpacing: 1.2,
         ),
       ),
@@ -329,8 +338,11 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Row(
@@ -340,7 +352,10 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
             height: 14,
             decoration: BoxDecoration(
               color: statusColor,
-              border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1.5,
+              ),
             ),
           ),
           const SizedBox(width: BauhausDesign.space3),
@@ -351,7 +366,7 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                 Text(
                   decisionText,
                   style: textTheme.bodyLarge?.copyWith(
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -359,7 +374,7 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                 Text(
                   subtitle,
                   style: textTheme.bodySmall?.copyWith(
-                    color: BauhausDesign.textMuted,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],

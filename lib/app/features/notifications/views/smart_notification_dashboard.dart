@@ -39,8 +39,8 @@ class _SmartNotificationDashboardState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
@@ -48,10 +48,10 @@ class _SmartNotificationDashboardState
         title: const Text('Smart Notifications'),
         bottom: TabBar(
           controller: _tabController,
-          labelColor: BauhausDesign.surfaceWhite,
-          unselectedLabelColor: BauhausDesign.surfaceWhite.withValues(
-            alpha: 0.6,
-          ),
+          labelColor: Theme.of(context).colorScheme.onInverseSurface,
+          unselectedLabelColor: Theme.of(
+            context,
+          ).colorScheme.onInverseSurface.withValues(alpha: 0.6),
           indicatorColor: BauhausDesign.accent,
           indicatorWeight: 3,
           tabs: const [
@@ -103,7 +103,9 @@ class AiPredictionsTab extends ConsumerWidget {
               label: Text(
                 '${(prediction.confidenceScore * 100).toInt()}% Conf',
               ),
-              backgroundColor: Colors.blue.withValues(alpha: 0.1),
+              backgroundColor: Theme.of(
+                context,
+              ).colorScheme.secondary.withValues(alpha: 0.1),
             ),
           ),
         );
@@ -195,7 +197,10 @@ class SnoozeRulesTab extends ConsumerWidget {
                       'Snooze: ${rule.snoozeDurationMinutes} mins',
                     ),
                     trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
+                      icon: Icon(
+                        Icons.delete,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
                       onPressed: () {
                         if (rule.id != null) {
                           ref

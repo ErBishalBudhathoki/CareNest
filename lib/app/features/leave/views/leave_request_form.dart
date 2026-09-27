@@ -104,14 +104,16 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
     final viewModel = ref.watch(leaveViewModelProvider(widget.userEmail));
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.newRequestTitle,
-          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSecondary,
+          ),
         ),
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -123,7 +125,10 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: BauhausDesign.neutral, height: 1),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 1,
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -138,9 +143,10 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
               DropdownButtonFormField<String>(
                 initialValue: _selectedLeaveType,
                 decoration: BauhausDesign.inputDecoration(
+                  context,
                   AppLocalizations.of(context)!.selectLeaveTypeHint,
                 ),
-                dropdownColor: BauhausDesign.surfaceWhite,
+                dropdownColor: Theme.of(context).colorScheme.surface,
                 items: _leaveTypes.map((type) {
                   return DropdownMenuItem(
                     value: type,
@@ -162,16 +168,7 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
                     firstDate: DateTime.now(),
                     lastDate: DateTime.now().add(const Duration(days: 365)),
                     builder: (context, child) {
-                      return Theme(
-                        data: Theme.of(context).copyWith(
-                          colorScheme: const ColorScheme.light(
-                            primary: BauhausDesign.primary,
-                            onPrimary: BauhausDesign.surfaceWhite,
-                            onSurface: BauhausDesign.textDark,
-                          ),
-                        ),
-                        child: child!,
-                      );
+                      return Theme(data: Theme.of(context), child: child!);
                     },
                   );
                   if (picked != null) {
@@ -187,8 +184,11 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
                     vertical: 16,
                   ),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.surfaceWhite,
-                    border: Border.all(color: BauhausDesign.neutral, width: 1),
+                    color: Theme.of(context).colorScheme.surface,
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 1,
+                    ),
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   ),
                   child: Row(
@@ -201,13 +201,15 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
                         style: BauhausDesign.getTextTheme(context).bodyMedium
                             ?.copyWith(
                               color: _selectedDateRange == null
-                                  ? BauhausDesign.textMuted
-                                  : BauhausDesign.textDark,
+                                  ? Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant
+                                  : Theme.of(context).colorScheme.onSurface,
                             ),
                       ),
-                      const Icon(
+                      Icon(
                         Icons.calendar_today,
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ],
                   ),

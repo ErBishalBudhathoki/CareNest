@@ -121,7 +121,7 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
       },
       child: Scaffold(
         key: _scaffoldKey,
-        backgroundColor: BauhausDesign.backgroundLight,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: _buildAppBar(context),
         body: FadeTransition(
           opacity: _fadeAnimation,
@@ -180,27 +180,34 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
     return AppBar(
       elevation: 0,
       backgroundColor: BauhausDesign.primary,
-      foregroundColor: BauhausDesign.surfaceWhite,
+      foregroundColor: Theme.of(context).colorScheme.onPrimary,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Select Client',
             style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-              color: BauhausDesign.surfaceWhite,
+              color: Theme.of(context).colorScheme.onPrimary,
               fontWeight: FontWeight.bold,
             ),
           ),
           Text(
             'for ${widget.userName}',
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-              color: BauhausDesign.surfaceWhite.withValues(alpha: 0.7),
+              color: Theme.of(
+                context,
+              ).colorScheme.onPrimary.withValues(alpha: 0.7),
             ),
           ),
         ],
       ),
       leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios, color: BauhausDesign.surfaceWhite),
+        icon: Icon(
+          Icons.arrow_back_ios,
+          // Must match the title: this app bar plane is the fixed yellow
+          // `primary`, so its glyphs stay ink in both themes.
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
         tooltip: AppLocalizations.of(context)!.backButton,
         onPressed: _returnToAdminDashboard,
       ),
@@ -220,9 +227,12 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
               bottom: BauhausDesign.space4,
             ),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-              border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1.5,
+              ),
               boxShadow: const [BauhausDesign.shadowSoft],
             ),
             child: TextField(
@@ -230,15 +240,22 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
               onChanged: _filterClients,
               decoration: InputDecoration(
                 hintText: AppLocalizations.of(context)!.searchClientsHint,
-                hintStyle: BauhausDesign.getTextTheme(
-                  context,
-                ).bodyLarge?.copyWith(color: BauhausDesign.textMuted),
+                hintStyle: BauhausDesign.getTextTheme(context).bodyLarge
+                    ?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                 filled: false,
                 fillColor: Colors.transparent,
-                prefixIcon: Icon(Icons.search, color: BauhausDesign.textMuted),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
                 suffixIcon: _isSearching
                     ? IconButton(
-                        icon: Icon(Icons.clear, color: BauhausDesign.textMuted),
+                        icon: Icon(
+                          Icons.clear,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                         tooltip: AppLocalizations.of(context)!.clearSearch,
                         onPressed: () {
                           _searchController.clear();
@@ -267,14 +284,17 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
             bottom: BauhausDesign.space4,
           ),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 1.5,
+            ),
             boxShadow: const [BauhausDesign.shadowSoft],
           ),
           child: IconButton(
             icon: const Icon(Icons.sort_by_alpha),
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             tooltip: _sortAscending ? l10n.sortAZ : l10n.sortZA,
             onPressed: () => setState(() => _sortAscending = !_sortAscending),
           ),
@@ -340,10 +360,16 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
             child: Container(
               margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
               decoration: BoxDecoration(
-                color: BauhausDesign.surfaceWhite,
+                // The card is a themed surface, so it must use `surface` rather
+                // than `onPrimary` (near-black in light mode, which rendered a
+                // black card with black text).
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 boxShadow: const [BauhausDesign.shadowSoft],
-                border: Border.all(color: BauhausDesign.neutral, width: 1),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 1,
+                ),
               ),
               child: Material(
                 color: Colors.transparent,
@@ -390,7 +416,9 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
                                     .bodyLarge
                                     ?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                      color: BauhausDesign.textDark,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
                                     ),
                               ),
                               const SizedBox(height: BauhausDesign.space1),
@@ -398,7 +426,11 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
                                 client.clientEmail,
                                 style: BauhausDesign.getTextTheme(context)
                                     .bodyMedium
-                                    ?.copyWith(color: BauhausDesign.textMuted),
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                    ),
                               ),
                             ],
                           ),
@@ -406,7 +438,7 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
                         // Arrow icon
                         Icon(
                           Icons.arrow_forward_ios,
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           size: 16,
                         ),
                       ],
@@ -469,9 +501,9 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
           const SizedBox(height: BauhausDesign.space4),
           Text(
             AppLocalizations.of(context)!.loadingClients,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyLarge?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -488,16 +520,16 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
           const SizedBox(height: BauhausDesign.space4),
           Text(
             AppLocalizations.of(context)!.errorLoadingClients(error),
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).headlineSmall?.copyWith(color: BauhausDesign.textDark),
+            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space2),
           Text(
             error,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: BauhausDesign.space6),
@@ -517,20 +549,24 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.people_outline, size: 64, color: BauhausDesign.neutral),
+          Icon(
+            Icons.people_outline,
+            size: 64,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
           const SizedBox(height: BauhausDesign.space4),
           Text(
             AppLocalizations.of(context)!.noClientsFound,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).headlineSmall?.copyWith(color: BauhausDesign.textDark),
+            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space2),
           Text(
             AppLocalizations.of(context)!.noClientsAvailable,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space6),
           BauhausButton(
@@ -556,20 +592,24 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.search_off, size: 64, color: BauhausDesign.neutral),
+          Icon(
+            Icons.search_off,
+            size: 64,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
           const SizedBox(height: BauhausDesign.space4),
           Text(
             AppLocalizations.of(context)!.noResultsFound,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).headlineSmall?.copyWith(color: BauhausDesign.textDark),
+            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space2),
           Text(
             AppLocalizations.of(context)!.adjustSearchTerms,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space6),
           BauhausButton(

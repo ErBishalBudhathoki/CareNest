@@ -43,14 +43,14 @@ class _MedicationManagementViewState
     final state = ref.watch(medicationViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         title: Text(
           'MEDICATION MGMT',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onSecondary,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -125,11 +125,11 @@ class _MedicationManagementViewState
                         ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
+                  Text(
                     'Overall medication regimen is well-balanced and safe.',
                     style: TextStyle(
                       fontSize: 12,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ],
@@ -161,27 +161,33 @@ class _MedicationManagementViewState
               showDialog(
                 context: context,
                 builder: (dialogContext) => AlertDialog(
-                  backgroundColor: BauhausDesign.surfaceWhite,
+                  backgroundColor: Theme.of(context).colorScheme.surface,
                   title: Text(
                     alert.title ?? 'Medication Alert',
-                    style: BauhausDesign.getTextTheme(
-                      dialogContext,
-                    ).titleLarge?.copyWith(color: BauhausDesign.textDark),
+                    style: BauhausDesign.getTextTheme(dialogContext).titleLarge
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                   ),
                   content: Text(
                     alert.message ?? 'Details...',
-                    style: BauhausDesign.getTextTheme(
-                      dialogContext,
-                    ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                    style: BauhausDesign.getTextTheme(dialogContext).bodyMedium
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                   ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.of(dialogContext).pop(),
                       child: Text(
                         AppLocalizations.of(dialogContext)!.closeButton,
-                        style: BauhausDesign.getTextTheme(
-                          dialogContext,
-                        ).labelLarge?.copyWith(color: BauhausDesign.textMuted),
+                        style: BauhausDesign.getTextTheme(dialogContext)
+                            .labelLarge
+                            ?.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
                       ),
                     ),
                   ],
@@ -223,7 +229,9 @@ class _MedicationManagementViewState
               borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
                 value: state.compliance!.overallCompliance,
-                backgroundColor: BauhausDesign.neutral.withValues(alpha: 0.2),
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.outline.withValues(alpha: 0.2),
                 color: BauhausDesign.success,
                 minHeight: 12,
               ),

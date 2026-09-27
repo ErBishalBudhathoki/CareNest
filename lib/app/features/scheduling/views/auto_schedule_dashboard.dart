@@ -16,19 +16,21 @@ class AutoScheduleDashboard extends ConsumerWidget {
     final viewModel = ref.watch(shiftMatchingViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        backgroundColor: BauhausDesign.textDark,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
         title: Text(
           'AUTO-SCHEDULE',
           style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onInverseSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onInverseSurface,
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -80,7 +82,11 @@ class AutoScheduleDashboard extends ConsumerWidget {
                                 'Automatically assign optimal workers to shifts',
                                 style: BauhausDesign.getTextTheme(context)
                                     .bodyMedium
-                                    ?.copyWith(color: BauhausDesign.textDark),
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
+                                    ),
                               ),
                             ],
                           );
@@ -106,7 +112,9 @@ class AutoScheduleDashboard extends ConsumerWidget {
                                     style: BauhausDesign.getTextTheme(context)
                                         .bodyMedium
                                         ?.copyWith(
-                                          color: BauhausDesign.textDark,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface,
                                         ),
                                   ),
                                 ],
@@ -198,7 +206,11 @@ class AutoScheduleDashboard extends ConsumerWidget {
                             'TOTAL SHIFTS',
                             style: BauhausDesign.getTextTheme(context)
                                 .bodyMedium
-                                ?.copyWith(color: BauhausDesign.textDark),
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                ),
                           ),
                           Text(
                             '${viewModel.autoFillResult!.totalShifts}',
@@ -253,8 +265,8 @@ class AutoScheduleDashboard extends ConsumerWidget {
                       if (viewModel.autoFillResult!.optimizationSummary !=
                           null) ...[
                         const SizedBox(height: 16),
-                        const Divider(
-                          color: BauhausDesign.neutral,
+                        Divider(
+                          color: Theme.of(context).colorScheme.outline,
                           thickness: 1,
                         ),
                         const SizedBox(height: 16),
@@ -344,9 +356,9 @@ class AutoScheduleDashboard extends ConsumerWidget {
             const SizedBox(height: 12),
             Text(
               title,
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).bodySmall?.copyWith(color: BauhausDesign.textDark),
+              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
             const SizedBox(height: 4),
             Text(

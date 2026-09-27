@@ -29,7 +29,7 @@ class MileageTrackerView extends ConsumerWidget {
             content: Text(
               error,
               style: textTheme.bodyMedium?.copyWith(
-                color: BauhausDesign.surfaceWhite,
+                color: Theme.of(context).colorScheme.onError,
               ),
             ),
             backgroundColor: BauhausDesign.error,
@@ -39,10 +39,10 @@ class MileageTrackerView extends ConsumerWidget {
     });
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -51,14 +51,17 @@ class MileageTrackerView extends ConsumerWidget {
         title: Text(
           'MILEAGE TRACKER',
           style: textTheme.headlineMedium?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onInverseSurface,
             fontWeight: FontWeight.w900,
             letterSpacing: 1.5,
           ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),
-          child: Container(color: BauhausDesign.neutral, height: 2),
+          child: Container(
+            color: Theme.of(context).colorScheme.inverseSurface,
+            height: 2,
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -75,14 +78,17 @@ class MileageTrackerView extends ConsumerWidget {
               ),
               decoration: BoxDecoration(
                 color: BauhausDesign.accent,
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
                 boxShadow: const [BauhausDesign.shadowHardSm],
               ),
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.info_outline,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     size: 20,
                   ),
                   const SizedBox(width: BauhausDesign.space3),
@@ -90,7 +96,7 @@ class MileageTrackerView extends ConsumerWidget {
                     'Reimbursement Rate: \$0.99 / km', // Dynamic in future
                     style: textTheme.labelMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ],
@@ -189,9 +195,10 @@ class MileageTrackerView extends ConsumerWidget {
                 SnackBar(
                   content: Text(
                     'Trip saved successfully!',
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+                    style: BauhausDesign.getTextTheme(context).bodyMedium
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSecondary,
+                        ),
                   ),
                   backgroundColor: BauhausDesign.success,
                 ),
@@ -237,9 +244,8 @@ class _EndTripDialogState extends State<_EndTripDialog> {
           children: [
             Text(
               'Trip Complete',
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).headlineSmall?.copyWith(color: BauhausDesign.textDark),
+              style: BauhausDesign.getTextTheme(context).headlineSmall
+                  ?.copyWith(color: Theme.of(context).colorScheme.onSurface),
             ),
             const SizedBox(height: BauhausDesign.space4),
             Text(
@@ -278,8 +284,11 @@ class _EndTripDialogState extends State<_EndTripDialog> {
               else
                 DropdownButtonFormField<String>(
                   initialValue: _selectedClientId,
-                  decoration: BauhausDesign.inputDecoration('Select Client'),
-                  dropdownColor: BauhausDesign.surfaceWhite,
+                  decoration: BauhausDesign.inputDecoration(
+                    context,
+                    'Select Client',
+                  ),
+                  dropdownColor: Theme.of(context).colorScheme.surface,
                   items: widget.clients
                       .map(
                         (client) => DropdownMenuItem(

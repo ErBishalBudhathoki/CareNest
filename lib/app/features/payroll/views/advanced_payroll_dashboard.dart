@@ -144,7 +144,7 @@ class _AdvancedPayrollDashboardState
     final error = _normalizeError(state.error);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _buildAppBar(context),
       body: _activeOrganizationId == null
           ? _buildMissingOrganizationState(context)
@@ -238,7 +238,7 @@ class _AdvancedPayrollDashboardState
     final textTheme = BauhausDesign.getTextTheme(context);
 
     return AppBar(
-      foregroundColor: BauhausDesign.surfaceWhite,
+      foregroundColor: Theme.of(context).colorScheme.onSecondary,
       systemOverlayStyle: SystemUiOverlayStyle.light,
       backgroundColor: BauhausDesign.success,
       elevation: 0,
@@ -246,13 +246,16 @@ class _AdvancedPayrollDashboardState
       title: Text(
         'ADVANCED PAYROLL',
         style: textTheme.headlineMedium?.copyWith(
-          color: BauhausDesign.surfaceWhite,
+          color: Theme.of(context).colorScheme.onSecondary,
           fontWeight: FontWeight.w800,
           letterSpacing: 0.8,
         ),
       ),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: BauhausDesign.surfaceWhite),
+        icon: Icon(
+          Icons.arrow_back,
+          color: Theme.of(context).colorScheme.onSecondary,
+        ),
         onPressed: () => Navigator.pop(context),
       ),
       bottom: PreferredSize(
@@ -261,7 +264,10 @@ class _AdvancedPayrollDashboardState
           children: [
             Expanded(
               flex: 3,
-              child: Container(height: 8, color: BauhausDesign.surfaceWhite),
+              child: Container(
+                height: 8,
+                color: Theme.of(context).colorScheme.onSecondary,
+              ),
             ),
             Expanded(
               flex: 2,
@@ -303,14 +309,17 @@ class _AdvancedPayrollDashboardState
       decoration: BoxDecoration(
         color: BauhausDesign.error.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.2,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
+          Icon(
             Icons.error_outline_rounded,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             size: 18,
           ),
           const SizedBox(width: BauhausDesign.space2),
@@ -318,7 +327,7 @@ class _AdvancedPayrollDashboardState
             child: Text(
               error,
               style: textTheme.bodySmall?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -334,9 +343,12 @@ class _AdvancedPayrollDashboardState
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Padding(
@@ -353,13 +365,13 @@ class _AdvancedPayrollDashboardState
                     color: BauhausDesign.success.withValues(alpha: 0.16),
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                     border: Border.all(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.outline,
                       width: 1.4,
                     ),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.payments_rounded,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     size: 28,
                   ),
                 ),
@@ -371,7 +383,7 @@ class _AdvancedPayrollDashboardState
                       Text(
                         'Payroll Operations Deck',
                         style: textTheme.headlineMedium?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w800,
                         ),
                       ),
@@ -379,7 +391,7 @@ class _AdvancedPayrollDashboardState
                       Text(
                         'Organization: ${_activeOrganizationId ?? 'Unavailable'}',
                         style: textTheme.bodySmall?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -402,18 +414,18 @@ class _AdvancedPayrollDashboardState
                 final periodCard = Container(
                   padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.surfaceOffWhite,
+                    color: Theme.of(context).colorScheme.surfaceContainer,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                     border: Border.all(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.outline,
                       width: 1.2,
                     ),
                   ),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.calendar_month_rounded,
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         size: 18,
                       ),
                       const SizedBox(width: BauhausDesign.space2),
@@ -421,7 +433,7 @@ class _AdvancedPayrollDashboardState
                         child: Text(
                           'Pay Period: $_selectedPeriod',
                           style: textTheme.bodySmall?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -433,10 +445,10 @@ class _AdvancedPayrollDashboardState
                 final runSummary = Container(
                   padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.surfaceOffWhite,
+                    color: Theme.of(context).colorScheme.surfaceContainer,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                     border: Border.all(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.outline,
                       width: 1.2,
                     ),
                   ),
@@ -445,7 +457,7 @@ class _AdvancedPayrollDashboardState
                         ? 'No payroll records yet for this period.'
                         : '${summary.totalEmployees} employee(s) in current run.',
                     style: textTheme.bodySmall?.copyWith(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -513,12 +525,15 @@ class _AdvancedPayrollDashboardState
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.18),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
-        border: Border.all(color: BauhausDesign.neutral, width: 1),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1,
+        ),
       ),
       child: Text(
         label,
         style: textTheme.labelSmall?.copyWith(
-          color: BauhausDesign.textDark,
+          color: Theme.of(context).colorScheme.onSurface,
           fontWeight: FontWeight.w800,
           letterSpacing: 0.5,
         ),
@@ -533,18 +548,25 @@ class _AdvancedPayrollDashboardState
   }) {
     return OutlinedButton.icon(
       onPressed: onPressed,
-      icon: Icon(icon, size: 16, color: BauhausDesign.textDark),
+      icon: Icon(
+        icon,
+        size: 16,
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
       label: Text(
         label,
-        style: const TextStyle(
-          color: BauhausDesign.textDark,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface,
           fontSize: 12,
           fontWeight: FontWeight.w700,
         ),
       ),
       style: OutlinedButton.styleFrom(
-        side: const BorderSide(color: BauhausDesign.neutral, width: 1.2),
-        backgroundColor: BauhausDesign.surfaceOffWhite,
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.2,
+        ),
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         ),
@@ -583,7 +605,7 @@ class _AdvancedPayrollDashboardState
               Text(
                 title,
                 style: textTheme.headlineLarge?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -591,7 +613,7 @@ class _AdvancedPayrollDashboardState
               Text(
                 subtitle,
                 style: textTheme.bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -689,9 +711,12 @@ class _AdvancedPayrollDashboardState
 
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.4),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.4,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Column(
@@ -713,13 +738,17 @@ class _AdvancedPayrollDashboardState
               children: [
                 Row(
                   children: [
-                    Icon(metric.icon, size: 18, color: BauhausDesign.textDark),
+                    Icon(
+                      metric.icon,
+                      size: 18,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                     const SizedBox(width: BauhausDesign.space2),
                     Expanded(
                       child: Text(
                         metric.label,
                         style: textTheme.labelLarge?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -730,7 +759,7 @@ class _AdvancedPayrollDashboardState
                 Text(
                   metric.value,
                   style: textTheme.headlineMedium?.copyWith(
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -738,7 +767,7 @@ class _AdvancedPayrollDashboardState
                 Text(
                   metric.detail,
                   style: textTheme.bodySmall?.copyWith(
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -762,15 +791,18 @@ class _AdvancedPayrollDashboardState
       return Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          border: Border.all(color: BauhausDesign.neutral, width: 1.4),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 1.4,
+          ),
         ),
         padding: const EdgeInsets.all(BauhausDesign.space4),
         child: Text(
           'No gross payroll data available for this period.',
           style: textTheme.bodyMedium?.copyWith(
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -794,9 +826,12 @@ class _AdvancedPayrollDashboardState
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.4),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.4,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -806,7 +841,7 @@ class _AdvancedPayrollDashboardState
           Text(
             'Gross Payroll: ${_formatCurrency(gross)}',
             style: textTheme.titleMedium?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -886,12 +921,15 @@ class _AdvancedPayrollDashboardState
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.16),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
-        border: Border.all(color: BauhausDesign.neutral, width: 1),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1,
+        ),
       ),
       child: Text(
         '$label ${_formatCurrencyCompact(value)} (${_formatPercent(ratio)})',
         style: textTheme.bodySmall?.copyWith(
-          color: BauhausDesign.textDark,
+          color: Theme.of(context).colorScheme.onSurface,
           fontWeight: FontWeight.w700,
         ),
       ),
@@ -957,12 +995,21 @@ class _AdvancedPayrollDashboardState
 
   Widget _buildActionTile(BuildContext context, _ActionTileData action) {
     final textTheme = BauhausDesign.getTextTheme(context);
+    final colorScheme = Theme.of(context).colorScheme;
+    final foregroundColor = action.accent == colorScheme.error
+        ? colorScheme.onError
+        : action.accent == colorScheme.secondary
+        ? colorScheme.onSecondary
+        : colorScheme.onPrimary;
 
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.4),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.4,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Padding(
@@ -976,15 +1023,22 @@ class _AdvancedPayrollDashboardState
               decoration: BoxDecoration(
                 color: action.accent.withValues(alpha: 0.16),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                border: Border.all(color: BauhausDesign.neutral, width: 1.1),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 1.1,
+                ),
               ),
-              child: Icon(action.icon, color: BauhausDesign.textDark, size: 22),
+              child: Icon(
+                action.icon,
+                color: Theme.of(context).colorScheme.onSurface,
+                size: 22,
+              ),
             ),
             const SizedBox(height: BauhausDesign.space2),
             Text(
               action.title,
               style: textTheme.labelLarge?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -992,7 +1046,7 @@ class _AdvancedPayrollDashboardState
             Text(
               action.detail,
               style: textTheme.bodySmall?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -1005,7 +1059,7 @@ class _AdvancedPayrollDashboardState
                 label: Text(action.buttonLabel),
                 style: ElevatedButton.styleFrom(
                   elevation: 0,
-                  foregroundColor: BauhausDesign.surfaceWhite,
+                  foregroundColor: foregroundColor,
                   backgroundColor: action.accent,
                   padding: const EdgeInsets.symmetric(
                     vertical: BauhausDesign.space2,
@@ -1036,9 +1090,12 @@ class _AdvancedPayrollDashboardState
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.4),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.4,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -1048,7 +1105,7 @@ class _AdvancedPayrollDashboardState
           Text(
             'User ${calculation.userId} • ${calculation.period}',
             style: textTheme.titleMedium?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -1099,15 +1156,18 @@ class _AdvancedPayrollDashboardState
       return Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          border: Border.all(color: BauhausDesign.neutral, width: 1.4),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 1.4,
+          ),
         ),
         padding: const EdgeInsets.all(BauhausDesign.space4),
         child: Text(
           'No employee payroll records found for $_selectedPeriod.',
           style: textTheme.bodyMedium?.copyWith(
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -1120,9 +1180,12 @@ class _AdvancedPayrollDashboardState
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.4),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.4,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       padding: const EdgeInsets.all(BauhausDesign.space3),
@@ -1159,14 +1222,17 @@ class _AdvancedPayrollDashboardState
               height: 28,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: BauhausDesign.surfaceOffWhite,
+                color: Theme.of(context).colorScheme.surfaceContainer,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                border: Border.all(color: BauhausDesign.neutral, width: 1),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 1,
+                ),
               ),
               child: Text(
                 '$rank',
                 style: textTheme.bodySmall?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -1179,7 +1245,7 @@ class _AdvancedPayrollDashboardState
                   Text(
                     employee.userName,
                     style: textTheme.labelLarge?.copyWith(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -1187,7 +1253,7 @@ class _AdvancedPayrollDashboardState
                   Text(
                     'Gross ${_formatCurrency(employee.grossPay)} • Net ${_formatCurrency(employee.netPay)}',
                     style: textTheme.bodySmall?.copyWith(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -1202,12 +1268,15 @@ class _AdvancedPayrollDashboardState
               decoration: BoxDecoration(
                 color: BauhausDesign.success.withValues(alpha: 0.16),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                border: Border.all(color: BauhausDesign.neutral, width: 1),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 1,
+                ),
               ),
               child: Text(
                 _formatPercent(conversion),
                 style: textTheme.bodySmall?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -1226,10 +1295,10 @@ class _AdvancedPayrollDashboardState
                   height: 8,
                   width: totalWidth,
                   decoration: BoxDecoration(
-                    color: BauhausDesign.surfaceOffWhite,
+                    color: Theme.of(context).colorScheme.surfaceContainer,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                     border: Border.all(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.outline,
                       width: 0.8,
                     ),
                   ),

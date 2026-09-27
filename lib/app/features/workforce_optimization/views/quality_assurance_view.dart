@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/quality_assurance_viewmodel.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
 import 'package:carenest/app/features/workforce_optimization/utils/workforce_export_helper.dart';
@@ -38,30 +37,32 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
   Widget build(BuildContext context) {
     final state = ref.watch(qualityAssuranceViewModelProvider);
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: AppColors.colorBackground,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: colorScheme.secondary,
+        foregroundColor: colorScheme.onSecondary,
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Quality Assurance',
           style: TextStyle(
-            color: AppColors.colorWhite,
+            color: colorScheme.onSecondary,
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.colorWhite),
+          icon: Icon(Icons.arrow_back, color: colorScheme.onSecondary),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: AppColors.colorWhite),
+            icon: Icon(Icons.refresh, color: colorScheme.onSecondary),
             onPressed: _loadData,
           ),
         ],
@@ -109,9 +110,11 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
           Text(
             error,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
-              color: Color(0xFF666666), // BauhausDesign.textMuted
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurfaceVariant, // BauhausDesign.textMuted
             ),
           ),
         ],
@@ -146,12 +149,14 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: AppColors.colorWhite.withValues(alpha: 0.2),
+              color: Theme.of(
+                context,
+              ).colorScheme.surface.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.verified_outlined,
-              color: AppColors.colorWhite,
+              color: Theme.of(context).colorScheme.surface,
               size: 32,
             ),
           ),
@@ -159,19 +164,22 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   'Quality Control',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.colorWhite,
+                    color: Theme.of(context).colorScheme.surface,
                   ),
                 ),
                 SizedBox(height: 4),
                 Text(
                   'Automated quality checks',
-                  style: TextStyle(fontSize: 14, color: AppColors.colorWhite),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.surface,
+                  ),
                 ),
               ],
             ),
@@ -205,7 +213,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
         Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: AppColors.colorWhite,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
@@ -274,7 +282,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
         else
           Container(
             decoration: BoxDecoration(
-              color: AppColors.colorWhite,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
@@ -300,10 +308,10 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
 
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: Color(0xFF1A1A1A),
+            color: Theme.of(context).colorScheme.outline,
             width: 2,
           ), // BauhausDesign.neutral
         ),
@@ -330,7 +338,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
               children: [
                 Text(
                   result.checkName ?? 'Unknown',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: AppColors.colorFontPrimary,
@@ -373,7 +381,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: AppColors.colorWhite,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
@@ -415,10 +423,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
         Expanded(
           child: Text(
             label,
-            style: const TextStyle(
-              fontSize: 16,
-              color: AppColors.colorFontPrimary,
-            ),
+            style: TextStyle(fontSize: 16, color: AppColors.colorFontPrimary),
           ),
         ),
         Text(
@@ -437,27 +442,29 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: AppColors.colorWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Color(0xFF1A1A1A),
+          color: Theme.of(context).colorScheme.outline,
           width: 2,
         ), // BauhausDesign.neutral
       ),
       child: Center(
         child: Column(
           children: [
-            const Icon(
+            Icon(
               Icons.inbox_outlined,
               size: 48,
-              color: Color(0xFF666666),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ), // BauhausDesign.textMuted
             const SizedBox(height: 12),
             Text(
               message,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
-                color: Color(0xFF666666), // BauhausDesign.textMuted
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurfaceVariant, // BauhausDesign.textMuted
               ),
             ),
           ],
@@ -490,7 +497,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
             label: const Text('Run Audit'),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.colorPrimary,
-              foregroundColor: AppColors.colorWhite,
+              foregroundColor: Theme.of(context).colorScheme.surface,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),

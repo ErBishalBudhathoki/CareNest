@@ -71,6 +71,7 @@ class _SuperannuationFormState extends ConsumerState<SuperannuationForm> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final isApra = _fundType == _FundType.apra;
 
     return Form(
@@ -93,9 +94,9 @@ class _SuperannuationFormState extends ConsumerState<SuperannuationForm> {
               height: 48,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: BauhausDesign.surfaceWhite,
+                color: colorScheme.surface,
                 border: Border.all(
-                  color: BauhausDesign.neoInk.withValues(alpha: 0.3),
+                  color: colorScheme.outline.withValues(alpha: 0.3),
                   width: 2,
                 ),
               ),
@@ -103,7 +104,7 @@ class _SuperannuationFormState extends ConsumerState<SuperannuationForm> {
                 'Skip for now',
                 style: BauhausDesign.neoMonoStyle(
                   context,
-                  color: BauhausDesign.textMuted,
+                  color: colorScheme.onSurfaceVariant,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.8,
@@ -357,6 +358,8 @@ class _Option extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -364,11 +367,11 @@ class _Option extends StatelessWidget {
         height: 64,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isSelected ? BauhausDesign.neoInk : BauhausDesign.surfaceWhite,
+          color: isSelected ? colorScheme.inverseSurface : colorScheme.surface,
           border: Border.all(
             color: isSelected
-                ? BauhausDesign.neoInk
-                : BauhausDesign.neoInk.withValues(alpha: 0.5),
+                ? colorScheme.outline
+                : colorScheme.outline.withValues(alpha: 0.5),
             width: isSelected ? 2.5 : 2,
           ),
           boxShadow: isSelected ? const [BauhausDesign.shadowHardSm] : const [],
@@ -379,8 +382,8 @@ class _Option extends StatelessWidget {
           style: BauhausDesign.neoMonoStyle(
             context,
             color: isSelected
-                ? BauhausDesign.surfaceWhite
-                : BauhausDesign.textDark,
+                ? colorScheme.onInverseSurface
+                : colorScheme.onSurface,
             fontSize: 12,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.5,

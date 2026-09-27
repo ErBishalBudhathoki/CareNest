@@ -10,6 +10,27 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+InputDecoration _activeInputDecoration(BuildContext context, String hint) {
+  final colorScheme = Theme.of(context).colorScheme;
+  return InputDecoration(
+    filled: true,
+    fillColor: colorScheme.surfaceContainer,
+    hintText: hint,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.zero,
+      borderSide: BorderSide(color: colorScheme.outline, width: 2),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.zero,
+      borderSide: BorderSide(color: colorScheme.outline, width: 2),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.zero,
+      borderSide: BorderSide(color: colorScheme.primary, width: 2),
+    ),
+  );
+}
+
 class ClientAppointmentDetailView extends ConsumerWidget {
   final String assignmentId;
   final String scheduleId;
@@ -28,17 +49,19 @@ class ClientAppointmentDetailView extends ConsumerWidget {
     );
     final appointmentState = ref.watch(clientAppointmentDetailProvider(params));
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: colorScheme.secondary,
+        foregroundColor: colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: BauhausDesign.surfaceWhite),
+          icon: Icon(Icons.arrow_back, color: colorScheme.onSecondary),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
@@ -46,14 +69,12 @@ class ClientAppointmentDetailView extends ConsumerWidget {
           style: GoogleFonts.oswald(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.surfaceWhite,
+            color: colorScheme.onSecondary,
             letterSpacing: 1,
           ),
         ),
         centerTitle: true,
-        shape: const Border(
-          bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
-        ),
+        shape: Border(bottom: BorderSide(color: colorScheme.outline, width: 2)),
       ),
       body: appointmentState.when(
         data: (appointment) => _buildContent(context, ref, appointment),
@@ -123,14 +144,26 @@ class ClientAppointmentDetailView extends ConsumerWidget {
     final status = appointment.status.isNotEmpty
         ? appointment.status
         : 'Scheduled';
+    final colorScheme = Theme.of(context).colorScheme;
+    final statusColor = _getStatusColor(context, status);
+    final statusForeground = statusColor == colorScheme.error
+        ? colorScheme.onError
+        : statusColor == colorScheme.secondary
+        ? colorScheme.onSecondary
+        : statusColor == colorScheme.primary
+        ? colorScheme.onPrimary
+        : colorScheme.onInverseSurface;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.secondary,
+        color: colorScheme.secondary,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Column(
@@ -138,13 +171,13 @@ class ClientAppointmentDetailView extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space4),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite.withValues(alpha: 0.2),
+              color: colorScheme.onSecondary.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.calendar_today,
               size: 40,
-              color: BauhausDesign.surfaceWhite,
+              color: colorScheme.onSecondary,
             ),
           ),
           const SizedBox(height: BauhausDesign.space4),
@@ -153,7 +186,7 @@ class ClientAppointmentDetailView extends ConsumerWidget {
             style: GoogleFonts.inter(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: BauhausDesign.surfaceWhite.withValues(alpha: 0.8),
+              color: colorScheme.onSecondary.withValues(alpha: 0.8),
               letterSpacing: 1.5,
             ),
           ),
@@ -163,7 +196,7 @@ class ClientAppointmentDetailView extends ConsumerWidget {
             style: GoogleFonts.oswald(
               fontSize: 28,
               fontWeight: FontWeight.bold,
-              color: BauhausDesign.surfaceWhite,
+              color: colorScheme.onSecondary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -174,24 +207,20 @@ class ClientAppointmentDetailView extends ConsumerWidget {
               vertical: BauhausDesign.space2,
             ),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.access_time,
-                  color: BauhausDesign.secondary,
-                  size: 18,
-                ),
+                Icon(Icons.access_time, color: colorScheme.secondary, size: 18),
                 const SizedBox(width: BauhausDesign.space2),
                 Text(
                   '${appointment.startTime} - ${appointment.endTime}',
                   style: GoogleFonts.oswald(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: BauhausDesign.secondary,
+                    color: colorScheme.secondary,
                   ),
                 ),
               ],
@@ -204,7 +233,7 @@ class ClientAppointmentDetailView extends ConsumerWidget {
               vertical: BauhausDesign.space1,
             ),
             decoration: BoxDecoration(
-              color: _getStatusColor(status),
+              color: statusColor,
               borderRadius: BorderRadius.circular(BauhausDesign.radiusXs),
             ),
             child: Text(
@@ -212,7 +241,7 @@ class ClientAppointmentDetailView extends ConsumerWidget {
               style: GoogleFonts.inter(
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
-                color: BauhausDesign.surfaceWhite,
+                color: statusForeground,
                 letterSpacing: 1,
               ),
             ),
@@ -248,7 +277,7 @@ class ClientAppointmentDetailView extends ConsumerWidget {
               Text(
                 'SUPPORT WORKER',
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   letterSpacing: 1,
                 ),
               ),
@@ -262,8 +291,11 @@ class ClientAppointmentDetailView extends ConsumerWidget {
                 height: 60,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: BauhausDesign.backgroundLight,
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  color: Theme.of(context).colorScheme.surface,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 2,
+                  ),
                   image: employee.photo != null
                       ? DecorationImage(
                           image: NetworkImage(employee.photo!),
@@ -274,7 +306,7 @@ class ClientAppointmentDetailView extends ConsumerWidget {
                 child: employee.photo == null
                     ? Icon(
                         Icons.person,
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         size: 30,
                       )
                     : null,
@@ -296,7 +328,9 @@ class ClientAppointmentDetailView extends ConsumerWidget {
                         children: [
                           Icon(
                             Icons.phone_outlined,
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             size: 14,
                           ),
                           const SizedBox(width: BauhausDesign.space1),
@@ -304,7 +338,11 @@ class ClientAppointmentDetailView extends ConsumerWidget {
                             employee.phone!,
                             style: BauhausDesign.getTextTheme(context)
                                 .bodyMedium
-                                ?.copyWith(color: BauhausDesign.textMuted),
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
                           ),
                         ],
                       ),
@@ -355,7 +393,7 @@ class ClientAppointmentDetailView extends ConsumerWidget {
               Text(
                 'SERVICE DETAILS',
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   letterSpacing: 1,
                 ),
               ),
@@ -412,7 +450,7 @@ class ClientAppointmentDetailView extends ConsumerWidget {
               Text(
                 'LOCATION',
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   letterSpacing: 1,
                 ),
               ),
@@ -423,17 +461,19 @@ class ClientAppointmentDetailView extends ConsumerWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(BauhausDesign.space4),
             decoration: BoxDecoration(
-              color: BauhausDesign.backgroundLight,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               border: Border.all(
-                color: BauhausDesign.neutral.withValues(alpha: 0.3),
+                color: Theme.of(
+                  context,
+                ).colorScheme.outline.withValues(alpha: 0.3),
               ),
             ),
             child: Row(
               children: [
                 Icon(
                   Icons.home_outlined,
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   size: 20,
                 ),
                 const SizedBox(width: BauhausDesign.space3),
@@ -470,15 +510,19 @@ class ClientAppointmentDetailView extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.neutral.withValues(alpha: 0.1),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.outline.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(
-                    color: BauhausDesign.neutral.withValues(alpha: 0.3),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.outline.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Icon(
                   Icons.notes_outlined,
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   size: 18,
                 ),
               ),
@@ -486,7 +530,7 @@ class ClientAppointmentDetailView extends ConsumerWidget {
               Text(
                 'NOTES',
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   letterSpacing: 1,
                 ),
               ),
@@ -497,10 +541,12 @@ class ClientAppointmentDetailView extends ConsumerWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(BauhausDesign.space4),
             decoration: BoxDecoration(
-              color: BauhausDesign.backgroundLight,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               border: Border.all(
-                color: BauhausDesign.neutral.withValues(alpha: 0.3),
+                color: Theme.of(
+                  context,
+                ).colorScheme.outline.withValues(alpha: 0.3),
               ),
             ),
             child: Text(
@@ -521,7 +567,11 @@ class ClientAppointmentDetailView extends ConsumerWidget {
   ) {
     return Row(
       children: [
-        Icon(icon, color: BauhausDesign.textMuted, size: 18),
+        Icon(
+          icon,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+          size: 18,
+        ),
         const SizedBox(width: BauhausDesign.space3),
         Expanded(
           child: Column(
@@ -529,9 +579,9 @@ class ClientAppointmentDetailView extends ConsumerWidget {
             children: [
               Text(
                 label,
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               Text(
                 value,
@@ -553,12 +603,17 @@ class ClientAppointmentDetailView extends ConsumerWidget {
   ) {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border(top: BorderSide(color: BauhausDesign.neutral, width: 2)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border(
+          top: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Color(0x1A000000),
+            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: Offset(0, -4),
           ),
@@ -600,7 +655,7 @@ class ClientAppointmentDetailView extends ConsumerWidget {
     }
   }
 
-  Color _getStatusColor(String status) {
+  Color _getStatusColor(BuildContext context, String status) {
     switch (status.toLowerCase()) {
       case 'scheduled':
       case 'confirmed':
@@ -612,7 +667,7 @@ class ClientAppointmentDetailView extends ConsumerWidget {
       case 'completed':
         return BauhausDesign.secondary;
       default:
-        return BauhausDesign.neutral;
+        return Theme.of(context).colorScheme.inverseSurface;
     }
   }
 
@@ -622,15 +677,16 @@ class ClientAppointmentDetailView extends ConsumerWidget {
     String type,
     ClientAppointmentDetail appointment,
   ) {
+    final colorScheme = Theme.of(context).colorScheme;
     final noteController = TextEditingController();
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+          side: BorderSide(color: colorScheme.outline, width: 2),
         ),
         title: Row(
           children: [
@@ -647,7 +703,7 @@ class ClientAppointmentDetailView extends ConsumerWidget {
               type == 'change' ? 'Request Change' : 'Report Issue',
               style: GoogleFonts.oswald(
                 fontWeight: FontWeight.bold,
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ],
@@ -659,25 +715,27 @@ class ClientAppointmentDetailView extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(BauhausDesign.space3),
               decoration: BoxDecoration(
-                color: BauhausDesign.backgroundLight,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                 border: Border.all(
-                  color: BauhausDesign.neutral.withValues(alpha: 0.3),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.outline.withValues(alpha: 0.3),
                 ),
               ),
               child: Text(
                 type == 'change'
                     ? 'Describe the changes you need for this appointment.'
                     : 'Describe the issue or concern regarding this appointment.',
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
             const SizedBox(height: BauhausDesign.space4),
             TextField(
               controller: noteController,
-              decoration: BauhausDesign.inputDecoration('Enter details...'),
+              decoration: _activeInputDecoration(context, 'Enter details...'),
               maxLines: 4,
             ),
           ],
@@ -687,7 +745,7 @@ class ClientAppointmentDetailView extends ConsumerWidget {
             onPressed: () => Navigator.pop(context),
             child: Text(
               'CANCEL',
-              style: TextStyle(color: BauhausDesign.neutral),
+              style: TextStyle(color: Theme.of(context).colorScheme.outline),
             ),
           ),
           ElevatedButton(
@@ -695,7 +753,9 @@ class ClientAppointmentDetailView extends ConsumerWidget {
               backgroundColor: type == 'change'
                   ? BauhausDesign.secondary
                   : BauhausDesign.error,
-              foregroundColor: BauhausDesign.surfaceWhite,
+              foregroundColor: type == 'change'
+                  ? colorScheme.onSecondary
+                  : colorScheme.onError,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               ),

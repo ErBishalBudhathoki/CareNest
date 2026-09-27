@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:carenest/app/shared/theme/bauhaus_colors.dart';
 import '../models/dashboard_models.dart';
 
 class RevenueChartWidget extends StatelessWidget {
@@ -15,12 +14,14 @@ class RevenueChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     if (isLoading) {
       return _buildLoadingState();
     }
 
     if (revenueData == null) {
-      return _buildEmptyState();
+      return _buildEmptyState(context);
     }
 
     return Card(
@@ -36,50 +37,51 @@ class RevenueChartWidget extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: BauhausColors.accentGreen.withValues(alpha: 0.1),
+                    color: colorScheme.secondary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.trending_up,
-                    color: BauhausColors.accentGreen,
+                    color: colorScheme.secondary,
                     size: 24,
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Text(
+                Text(
                   'Revenue Trends',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: BauhausColors.textDark,
+                    color: colorScheme.onSurface,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            _buildComparisonCards(),
+            _buildComparisonCards(context),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'Last 7 Days',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: BauhausColors.textDark,
+                color: colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 12),
-            SizedBox(height: 200, child: _buildChart()),
+            SizedBox(height: 200, child: _buildChart(context)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildComparisonCards() {
+  Widget _buildComparisonCards(BuildContext context) {
     return Row(
       children: [
         Expanded(
           child: _buildComparisonCard(
+            context,
             label: 'Today vs Yesterday',
             value: revenueData!.todayVsYesterdayPercent,
             trend: revenueData!.todayTrend,
@@ -89,6 +91,7 @@ class RevenueChartWidget extends StatelessWidget {
         const SizedBox(width: 8),
         Expanded(
           child: _buildComparisonCard(
+            context,
             label: 'Week to Date',
             value: revenueData!.weekVsLastWeekPercent,
             trend: revenueData!.weekTrend,
@@ -98,6 +101,7 @@ class RevenueChartWidget extends StatelessWidget {
         const SizedBox(width: 8),
         Expanded(
           child: _buildComparisonCard(
+            context,
             label: 'Month to Date',
             value: revenueData!.monthVsLastMonthPercent,
             trend: revenueData!.monthTrend,
@@ -108,13 +112,15 @@ class RevenueChartWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildComparisonCard({
+  Widget _buildComparisonCard(
+    BuildContext context, {
     required String label,
     required double value,
     required TrendDirection trend,
     required double amount,
   }) {
-    final color = _getTrendColor(trend);
+    final colorScheme = Theme.of(context).colorScheme;
+    final color = _getTrendColor(trend, colorScheme);
     final icon = _getTrendIcon(trend);
 
     return Container(
@@ -129,20 +135,17 @@ class RevenueChartWidget extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 10,
-              color: BauhausColors.textMedium,
-            ),
+            style: TextStyle(fontSize: 10, color: colorScheme.onSurfaceVariant),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 6),
           Text(
             '\$${amount.toStringAsFixed(0)}',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: BauhausColors.textDark,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 4),
@@ -165,7 +168,8 @@ class RevenueChartWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildChart() {
+  Widget _buildChart(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final spots = revenueData!.last7Days
         .asMap()
         .entries
@@ -180,7 +184,7 @@ class RevenueChartWidget extends StatelessWidget {
           horizontalInterval: 1000,
           getDrawingHorizontalLine: (value) {
             return FlLine(
-              color: Colors.grey.withValues(alpha: 0.1),
+              color: colorScheme.outline.withValues(alpha: 0.1),
               strokeWidth: 1,
             );
           },
@@ -206,8 +210,8 @@ class RevenueChartWidget extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(
                       '${date.day}/${date.month}',
-                      style: const TextStyle(
-                        color: BauhausColors.textMedium,
+                      style: TextStyle(
+                        color: colorScheme.onSurfaceVariant,
                         fontSize: 10,
                       ),
                     ),
@@ -225,8 +229,8 @@ class RevenueChartWidget extends StatelessWidget {
               getTitlesWidget: (value, meta) {
                 return Text(
                   '\$${(value / 1000).toStringAsFixed(0)}k',
-                  style: const TextStyle(
-                    color: BauhausColors.textMedium,
+                  style: TextStyle(
+                    color: colorScheme.onSurfaceVariant,
                     fontSize: 10,
                   ),
                 );
@@ -243,7 +247,7 @@ class RevenueChartWidget extends StatelessWidget {
           LineChartBarData(
             spots: spots,
             isCurved: true,
-            color: BauhausColors.accentGreen,
+            color: colorScheme.secondary,
             barWidth: 3,
             isStrokeCapRound: true,
             dotData: FlDotData(
@@ -251,15 +255,15 @@ class RevenueChartWidget extends StatelessWidget {
               getDotPainter: (spot, percent, barData, index) {
                 return FlDotCirclePainter(
                   radius: 4,
-                  color: BauhausColors.accentGreen,
+                  color: colorScheme.secondary,
                   strokeWidth: 2,
-                  strokeColor: Colors.white,
+                  strokeColor: colorScheme.surface,
                 );
               },
             ),
             belowBarData: BarAreaData(
               show: true,
-              color: BauhausColors.accentGreen.withValues(alpha: 0.1),
+              color: colorScheme.secondary.withValues(alpha: 0.1),
             ),
           ),
         ],
@@ -278,18 +282,27 @@ class RevenueChartWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: const Padding(
-        padding: EdgeInsets.all(32),
+      child: Padding(
+        padding: const EdgeInsets.all(32),
         child: Center(
           child: Column(
             children: [
-              Icon(Icons.show_chart, size: 48, color: Colors.grey),
+              Icon(
+                Icons.show_chart,
+                size: 48,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               SizedBox(height: 16),
-              Text('No revenue data', style: TextStyle(color: Colors.grey)),
+              Text(
+                'No revenue data',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
             ],
           ),
         ),
@@ -297,14 +310,14 @@ class RevenueChartWidget extends StatelessWidget {
     );
   }
 
-  Color _getTrendColor(TrendDirection trend) {
+  Color _getTrendColor(TrendDirection trend, ColorScheme colorScheme) {
     switch (trend) {
       case TrendDirection.up:
-        return BauhausColors.accentGreen;
+        return colorScheme.secondary;
       case TrendDirection.down:
-        return BauhausColors.primaryRed;
+        return colorScheme.error;
       case TrendDirection.flat:
-        return BauhausColors.textMedium;
+        return colorScheme.onSurfaceVariant;
     }
   }
 

@@ -38,7 +38,7 @@ class _EnhancedPredictiveInsightsViewState
     final state = ref.watch(predictiveInsightsViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBarWidget(
         title: 'Predictive Insights',
         showBackButton: true,
@@ -54,7 +54,7 @@ class _EnhancedPredictiveInsightsViewState
       body: Column(
         children: [
           Container(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
             child: TabBar(
               controller: _tabController,
               isScrollable: true,
@@ -148,7 +148,7 @@ class _EnhancedPredictiveInsightsViewState
                         style: GoogleFonts.inter(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       Text(
@@ -171,7 +171,7 @@ class _EnhancedPredictiveInsightsViewState
                     decoration: BoxDecoration(
                       color: trendColor,
                       border: Border.all(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.outline,
                         width: 2,
                       ),
                     ),
@@ -180,7 +180,7 @@ class _EnhancedPredictiveInsightsViewState
                       style: GoogleFonts.inter(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
-                        color: BauhausDesign.surfaceWhite,
+                        color: _foregroundFor(trendColor),
                       ),
                     ),
                   ),
@@ -193,7 +193,7 @@ class _EnhancedPredictiveInsightsViewState
             style: GoogleFonts.inter(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               letterSpacing: 0.5,
             ),
           ),
@@ -218,7 +218,7 @@ class _EnhancedPredictiveInsightsViewState
                           style: GoogleFonts.inter(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                         Text(
@@ -291,7 +291,7 @@ class _EnhancedPredictiveInsightsViewState
               style: GoogleFonts.inter(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: BauhausDesign.space2),
@@ -342,7 +342,7 @@ class _EnhancedPredictiveInsightsViewState
                         style: GoogleFonts.inter(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       Text(
@@ -365,7 +365,7 @@ class _EnhancedPredictiveInsightsViewState
             style: GoogleFonts.inter(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               letterSpacing: 0.5,
             ),
           ),
@@ -411,7 +411,9 @@ class _EnhancedPredictiveInsightsViewState
                                 style: GoogleFonts.inter(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: BauhausDesign.textDark,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                 ),
                               ),
                               Text(
@@ -432,7 +434,7 @@ class _EnhancedPredictiveInsightsViewState
                           decoration: BoxDecoration(
                             color: riskColor,
                             border: Border.all(
-                              color: BauhausDesign.neutral,
+                              color: Theme.of(context).colorScheme.outline,
                               width: 2,
                             ),
                           ),
@@ -441,7 +443,7 @@ class _EnhancedPredictiveInsightsViewState
                             style: GoogleFonts.inter(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
-                              color: BauhausDesign.surfaceWhite,
+                              color: _foregroundFor(riskColor),
                             ),
                           ),
                         ),
@@ -452,9 +454,9 @@ class _EnhancedPredictiveInsightsViewState
                       Container(
                         padding: const EdgeInsets.all(BauhausDesign.space2),
                         decoration: BoxDecoration(
-                          color: BauhausDesign.surfaceOffWhite,
+                          color: Theme.of(context).colorScheme.surfaceContainer,
                           border: Border.all(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.outline,
                             width: 1,
                           ),
                         ),
@@ -466,7 +468,7 @@ class _EnhancedPredictiveInsightsViewState
                               style: GoogleFonts.inter(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                             const SizedBox(height: BauhausDesign.space1),
@@ -491,7 +493,9 @@ class _EnhancedPredictiveInsightsViewState
                                             factor.description,
                                             style: GoogleFonts.inter(
                                               fontSize: 11,
-                                              color: BauhausDesign.textDark,
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.onSurface,
                                             ),
                                           ),
                                         ),
@@ -527,7 +531,9 @@ class _EnhancedPredictiveInsightsViewState
                                 prediction.recommendations.first,
                                 style: GoogleFonts.inter(
                                   fontSize: 11,
-                                  color: BauhausDesign.textDark,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                 ),
                               ),
                             ),
@@ -561,7 +567,7 @@ class _EnhancedPredictiveInsightsViewState
             style: GoogleFonts.inter(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               letterSpacing: 0.5,
             ),
           ),
@@ -585,7 +591,7 @@ class _EnhancedPredictiveInsightsViewState
                           decoration: BoxDecoration(
                             color: BauhausDesign.primary,
                             border: Border.all(
-                              color: BauhausDesign.neutral,
+                              color: Theme.of(context).colorScheme.outline,
                               width: 2,
                             ),
                           ),
@@ -594,7 +600,7 @@ class _EnhancedPredictiveInsightsViewState
                             style: GoogleFonts.inter(
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
-                              color: BauhausDesign.surfaceWhite,
+                              color: _foregroundFor(BauhausDesign.primary),
                             ),
                           ),
                         );
@@ -608,7 +614,9 @@ class _EnhancedPredictiveInsightsViewState
                                 style: GoogleFonts.inter(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: BauhausDesign.textDark,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                 ),
                               ),
                               const SizedBox(height: BauhausDesign.space2),
@@ -625,7 +633,9 @@ class _EnhancedPredictiveInsightsViewState
                                 style: GoogleFonts.inter(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: BauhausDesign.textDark,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -671,7 +681,9 @@ class _EnhancedPredictiveInsightsViewState
                                 forecast.capacityRecommendation,
                                 style: GoogleFonts.inter(
                                   fontSize: 11,
-                                  color: BauhausDesign.textDark,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                 ),
                               ),
                             ),
@@ -734,7 +746,7 @@ class _EnhancedPredictiveInsightsViewState
                             style: GoogleFonts.inter(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                           Text(
@@ -756,7 +768,7 @@ class _EnhancedPredictiveInsightsViewState
                       decoration: BoxDecoration(
                         color: riskColor,
                         border: Border.all(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.outline,
                           width: 2,
                         ),
                       ),
@@ -765,8 +777,7 @@ class _EnhancedPredictiveInsightsViewState
                         style: GoogleFonts.inter(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
-                          color: BauhausDesign.surfaceWhite,
-                          letterSpacing: 0.5,
+                          color: _foregroundFor(riskColor),
                         ),
                       ),
                     ),
@@ -817,7 +828,7 @@ class _EnhancedPredictiveInsightsViewState
               style: GoogleFonts.inter(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 letterSpacing: 0.5,
               ),
             ),
@@ -858,7 +869,7 @@ class _EnhancedPredictiveInsightsViewState
                               style: GoogleFonts.inter(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                             Text(
@@ -881,7 +892,7 @@ class _EnhancedPredictiveInsightsViewState
                         decoration: BoxDecoration(
                           color: severityColor,
                           border: Border.all(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.outline,
                             width: 1,
                           ),
                         ),
@@ -890,8 +901,7 @@ class _EnhancedPredictiveInsightsViewState
                           style: GoogleFonts.inter(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
-                            color: BauhausDesign.surfaceWhite,
-                            letterSpacing: 0.5,
+                            color: _foregroundFor(severityColor),
                           ),
                         ),
                       ),
@@ -929,6 +939,15 @@ class _EnhancedPredictiveInsightsViewState
         ),
       ],
     );
+  }
+
+  Color _foregroundFor(Color color) {
+    final colorScheme = Theme.of(context).colorScheme;
+    if (color == BauhausDesign.error) return colorScheme.onError;
+    if (color == BauhausDesign.success || color == BauhausDesign.secondary) {
+      return colorScheme.onSecondary;
+    }
+    return colorScheme.onPrimary;
   }
 
   Color _getConfidenceColor(double confidence) {

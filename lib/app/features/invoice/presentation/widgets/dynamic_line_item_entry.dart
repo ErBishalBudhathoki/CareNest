@@ -34,12 +34,20 @@ class _DynamicLineItemEntryState extends State<DynamicLineItemEntry> {
         return Tooltip(
           message:
               item.validationMessage ?? 'Price is compliant with NDIS caps',
-          child: const Icon(Icons.check_circle, color: Colors.green, size: 16),
+          child: Icon(
+            Icons.check_circle,
+            color: Theme.of(context).colorScheme.secondary,
+            size: 16,
+          ),
         );
       case PriceComplianceStatus.nonCompliant:
         return Tooltip(
           message: item.validationMessage ?? 'Price exceeds NDIS caps',
-          child: const Icon(Icons.warning, color: Colors.orange, size: 16),
+          child: Icon(
+            Icons.warning,
+            color: Theme.of(context).colorScheme.primary,
+            size: 16,
+          ),
         );
       case PriceComplianceStatus.unknown:
       default:
@@ -93,7 +101,11 @@ class _DynamicLineItemEntryState extends State<DynamicLineItemEntry> {
           padding: const EdgeInsets.symmetric(vertical: 24.0),
           child: Column(
             children: [
-              const Icon(Icons.list_alt_outlined, size: 48, color: Colors.grey),
+              Icon(
+                Icons.list_alt_outlined,
+                size: 48,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               const SizedBox(height: 8),
               const Text('No invoice items have been generated.'),
               const SizedBox(height: 16),
@@ -239,7 +251,9 @@ class _DynamicLineItemEntryState extends State<DynamicLineItemEntry> {
                                     'Use ${item.recommendedPrice?.toStringAsFixed(2)}',
                                     style: TextStyle(
                                       fontSize: 10,
-                                      color: Colors.blue,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.secondary,
                                       decoration: TextDecoration.underline,
                                     ),
                                   ),
@@ -250,7 +264,10 @@ class _DynamicLineItemEntryState extends State<DynamicLineItemEntry> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.redAccent),
+                      icon: Icon(
+                        Icons.delete,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
                       onPressed: () => _removeItem(idx),
                       tooltip: 'Remove Item',
                     ),

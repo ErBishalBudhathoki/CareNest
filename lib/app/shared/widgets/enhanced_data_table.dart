@@ -73,49 +73,51 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
   @override
   Widget build(BuildContext context) {
     if (widget.isLoading) {
-      return _buildLoadingState();
+      return _buildLoadingState(context);
     }
 
     if (widget.rows.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(context);
     }
 
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: widget.padding ?? const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: colorScheme.surface,
+        border: Border.all(color: colorScheme.outline, width: 2),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: widget.responsive
-          ? _buildResponsiveTable()
-          : _buildStandardTable(),
+          ? _buildResponsiveTable(context)
+          : _buildStandardTable(context),
     );
   }
 
-  Widget _buildResponsiveTable() {
+  Widget _buildResponsiveTable(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isMobile = constraints.maxWidth < 768;
 
         if (isMobile) {
-          return _buildMobileCards();
+          return _buildMobileCards(context);
         } else {
-          return _buildStandardTable();
+          return _buildStandardTable(context);
         }
       },
     );
   }
 
-  Widget _buildStandardTable() {
+  Widget _buildStandardTable(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         // Header
         Container(
-          decoration: const BoxDecoration(
-            color: BauhausDesign.surfaceOffWhite,
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceContainer,
             border: Border(
-              bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+              bottom: BorderSide(color: colorScheme.outline, width: 2),
             ),
           ),
           child: SingleChildScrollView(
@@ -127,7 +129,7 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
               showCheckboxColumn: widget.showCheckboxColumn,
               onSelectAll: widget.onSelectAll,
               headingRowColor: WidgetStateProperty.all(
-                BauhausDesign.surfaceOffWhite,
+                colorScheme.surfaceContainer,
               ),
               headingTextStyle: BauhausDesign.neoMonoStyle(
                 context,
@@ -166,30 +168,35 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
     );
   }
 
-  Widget _buildMobileCards() {
+  Widget _buildMobileCards(BuildContext context) {
     return ListView.builder(
       controller: _verticalController,
       shrinkWrap: true,
       itemCount: widget.rows.length,
       itemBuilder: (context, index) {
         final row = widget.rows[index];
-        return _buildMobileCard(row, index);
+        return _buildMobileCard(context, row, index);
       },
     );
   }
 
-  Widget _buildMobileCard(EnhancedDataRow row, int index) {
+  Widget _buildMobileCard(
+    BuildContext context,
+    EnhancedDataRow row,
+    int index,
+  ) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.only(bottom: 8.0),
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
         color: row.selected
-            ? BauhausDesign.accent.withValues(alpha: 0.15)
-            : BauhausDesign.surfaceWhite,
+            ? colorScheme.tertiary.withValues(alpha: 0.15)
+            : colorScheme.surface,
         border: Border.all(
           color: row.selected
-              ? BauhausDesign.neutral
-              : BauhausDesign.neutral.withValues(alpha: 0.4),
+              ? colorScheme.outline
+              : colorScheme.outline.withValues(alpha: 0.4),
           width: 2,
         ),
         boxShadow: const [BauhausDesign.shadowHardSm],
@@ -214,7 +221,7 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
                     style: BauhausDesign.neoMonoStyle(
                       context,
                       fontSize: 11,
-                      color: BauhausDesign.textMuted,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),
@@ -241,12 +248,13 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
     return '';
   }
 
-  Widget _buildLoadingState() {
+  Widget _buildLoadingState(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(32.0),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: colorScheme.surface,
+        border: Border.all(color: colorScheme.outline, width: 2),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Center(
@@ -256,18 +264,16 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const CircularProgressIndicator(
+              CircularProgressIndicator(
                 strokeWidth: 3,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  BauhausDesign.primary,
-                ),
+                valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
               ),
               const SizedBox(height: 12.0),
               Text(
                 'Loading data...',
                 style: BauhausDesign.neoMonoStyle(
                   context,
-                  color: BauhausDesign.textMuted,
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -277,12 +283,13 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(32.0),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: colorScheme.surface,
+        border: Border.all(color: colorScheme.outline, width: 2),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Center(
@@ -294,13 +301,13 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.surfaceOffWhite,
-                    border: Border.all(color: BauhausDesign.neutral, width: 2),
+                    color: colorScheme.surfaceContainer,
+                    border: Border.all(color: colorScheme.outline, width: 2),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.inbox_outlined,
                     size: 48,
-                    color: BauhausDesign.textMuted,
+                    color: colorScheme.onSurfaceVariant,
                     semanticLabel: 'No data',
                   ),
                 ),
@@ -310,8 +317,9 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
-                  style: BauhausDesign.getTextTheme(context).titleSmall
-                      ?.copyWith(color: BauhausDesign.textDark),
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).titleSmall?.copyWith(color: colorScheme.onSurface),
                 ),
                 if (widget.onRetry != null) ...[
                   const SizedBox(height: 16.0),
@@ -321,11 +329,8 @@ class _EnhancedDataTableState extends State<EnhancedDataTable> {
                       widget.onRetry?.call();
                     },
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: BauhausDesign.textDark,
-                      side: const BorderSide(
-                        color: BauhausDesign.neutral,
-                        width: 2,
-                      ),
+                      foregroundColor: colorScheme.onSurface,
+                      side: BorderSide(color: colorScheme.outline, width: 2),
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                       ),
@@ -423,10 +428,7 @@ class EnhancedDataCell {
         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4),
         decoration: BoxDecoration(
           color: (color ?? statusColor).withValues(alpha: 0.12),
-          border: Border.all(
-            color: BauhausDesign.neutral,
-            width: 1.5,
-          ),
+          border: Border.all(color: BauhausDesign.neutral, width: 1.5),
         ),
         child: Text(
           status,
@@ -448,11 +450,7 @@ class EnhancedDataCell {
           return Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: IconButton(
-              icon: Icon(
-                action.icon,
-                size: 20,
-                color: action.color ?? BauhausDesign.textDark,
-              ),
+              icon: Icon(action.icon, size: 20, color: action.color),
               onPressed: () {
                 HapticFeedback.lightImpact();
                 action.onPressed();

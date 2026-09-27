@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/features/analytics/theme/bauhaus_theme.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import '../models/multi_org_rollup_model.dart';
@@ -43,32 +42,33 @@ class _MultiOrgRollupViewState extends ConsumerState<MultiOrgRollupView> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = BauhausDesign.getTextTheme(context);
+
     return Scaffold(
-      backgroundColor: BauhausTheme.white,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.multiOrgRollupTitle,
-          style: BauhausTheme.headerStyle.copyWith(
-            color: BauhausDesign.surfaceWhite,
+          style: textTheme.titleLarge?.copyWith(
+            color: colorScheme.onInverseSurface,
           ),
         ),
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: colorScheme.inverseSurface,
+        foregroundColor: colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(color: colorScheme.onInverseSurface),
       ),
       body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: BauhausTheme.blue),
-            )
+          ? Center(child: CircularProgressIndicator(color: colorScheme.primary))
           : _error != null
           ? Center(
               child: Text(
                 _error!,
-                style: BauhausTheme.bodyStyle.copyWith(color: BauhausTheme.red),
+                style: textTheme.bodyLarge?.copyWith(color: colorScheme.error),
               ),
             )
           : _orgs.isEmpty
@@ -76,16 +76,13 @@ class _MultiOrgRollupViewState extends ConsumerState<MultiOrgRollupView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.business_rounded,
                     size: 64,
-                    color: Colors.grey,
+                    color: colorScheme.onSurfaceVariant,
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    'No Organization Data',
-                    style: BauhausTheme.subHeaderStyle,
-                  ),
+                  Text('No Organization Data', style: textTheme.titleMedium),
                 ],
               ),
             )
@@ -97,8 +94,10 @@ class _MultiOrgRollupViewState extends ConsumerState<MultiOrgRollupView> {
                 return Container(
                   margin: const EdgeInsets.only(bottom: 16),
                   padding: const EdgeInsets.all(16),
-                  decoration: BauhausTheme.blockDecoration.copyWith(
-                    border: Border.all(color: BauhausTheme.black, width: 2),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainer,
+                    border: Border.all(color: colorScheme.outline, width: 2),
+                    boxShadow: const [BauhausDesign.shadowHard],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,21 +106,24 @@ class _MultiOrgRollupViewState extends ConsumerState<MultiOrgRollupView> {
                         org.organizationName.isNotEmpty
                             ? org.organizationName
                             : AppLocalizations.of(context)!.unknownOrg,
-                        style: BauhausTheme.subHeaderStyle,
+                        style: textTheme.titleMedium,
                       ),
                       const SizedBox(height: 12),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           _buildStat(
+                            context,
                             AppLocalizations.of(context)!.clientsCaps,
                             org.clientCount.toString(),
                           ),
                           _buildStat(
+                            context,
                             AppLocalizations.of(context)!.invoicesCaps,
                             org.invoiceCount.toString(),
                           ),
                           _buildStat(
+                            context,
                             AppLocalizations.of(context)!.revenueCaps,
                             '\$${org.revenue.toStringAsFixed(2)}',
                           ),
@@ -135,14 +137,21 @@ class _MultiOrgRollupViewState extends ConsumerState<MultiOrgRollupView> {
     );
   }
 
-  Widget _buildStat(String label, String value) {
+  Widget _buildStat(BuildContext context, String label, String value) {
+    final textTheme = BauhausDesign.getTextTheme(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label.toUpperCase(), style: BauhausTheme.labelStyle),
+        Text(
+          label.toUpperCase(),
+          style: textTheme.labelMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
         Text(
           value,
-          style: BauhausTheme.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+          style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
       ],
     );

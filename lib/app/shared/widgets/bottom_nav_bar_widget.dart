@@ -178,20 +178,16 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
 
     return Scaffold(
       body: IndexedStack(index: _selectedIndex, children: screens),
-      bottomNavigationBar: _buildBottomBar(),
+      bottomNavigationBar: _buildBottomBar(context),
     );
   }
 
-  Widget _buildBottomBar() {
+  Widget _buildBottomBar(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        border: Border(
-          top: BorderSide(
-            color: BauhausDesign.neutral.withValues(alpha: 0.2),
-            width: 1,
-          ),
-        ),
+        color: colorScheme.surfaceContainerLow,
+        border: Border(top: BorderSide(color: colorScheme.outline, width: 2)),
       ),
       child: SafeArea(
         top: false,
@@ -200,22 +196,23 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: _buildNavItems(),
+            children: _buildNavItems(context),
           ),
         ),
       ),
     );
   }
 
-  List<Widget> _buildNavItems() {
+  List<Widget> _buildNavItems(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final items = <Widget>[
       _buildNavItem(
         0,
         Icons.home,
         Icons.home_outlined,
         'HOME',
-        BauhausDesign.primary,
-        BauhausDesign.textLight,
+        colorScheme.primary,
+        colorScheme.onPrimary,
       ),
     ];
 
@@ -227,8 +224,8 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
           Icons.how_to_reg,
           Icons.how_to_reg_outlined,
           'ASSIGN',
-          BauhausDesign.accent,
-          BauhausDesign.textDark,
+          colorScheme.tertiary,
+          colorScheme.onTertiary,
         ),
       );
       indexOffset = 2;
@@ -240,8 +237,8 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
         Icons.settings,
         Icons.settings_outlined,
         'SETTINGS',
-        BauhausDesign.neutral,
-        BauhausDesign.textLight,
+        colorScheme.inverseSurface,
+        colorScheme.onInverseSurface,
       ),
     );
 
@@ -274,30 +271,39 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
           constraints: const BoxConstraints(minWidth: 72, minHeight: 48),
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: isSelected
-              ? _buildActiveItem(activeIcon, label, activeBg, activeContent)
-              : _buildInactiveItem(inactiveIcon, label),
+              ? _buildActiveItem(
+                  context,
+                  activeIcon,
+                  label,
+                  activeBg,
+                  activeContent,
+                )
+              : _buildInactiveItem(context, inactiveIcon, label),
         ),
       ),
     );
   }
 
   Widget _buildActiveItem(
+    BuildContext context,
     IconData icon,
     String label,
     Color bgColor,
     Color contentColor,
   ) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Container(
       width: 72,
       padding: const EdgeInsets.symmetric(vertical: 6),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        borderRadius: BorderRadius.zero,
+        border: Border.all(color: colorScheme.outline, width: 2.5),
         boxShadow: const [
           BoxShadow(
-            color: BauhausDesign.neutral,
-            offset: Offset(1.5, 1.5),
+            color: BauhausDesign.neoInk,
+            offset: Offset(3, 3),
             blurRadius: 0,
           ),
         ],
@@ -312,12 +318,9 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
+            style: theme.textTheme.labelSmall?.copyWith(
               color: contentColor,
-              fontWeight: FontWeight.w900,
               fontSize: 10,
-              fontFamily: 'Inter',
-              letterSpacing: 0.5,
             ),
           ),
         ],
@@ -325,21 +328,19 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
     );
   }
 
-  Widget _buildInactiveItem(IconData icon, String label) {
+  Widget _buildInactiveItem(BuildContext context, IconData icon, String label) {
+    final theme = Theme.of(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 20, color: BauhausDesign.neutral),
+        Icon(icon, size: 20, color: theme.colorScheme.onSurfaceVariant),
         const SizedBox(height: 4),
         Text(
           label,
-          style: const TextStyle(
-            color: BauhausDesign.neutral,
-            fontWeight: FontWeight.w900,
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
             fontSize: 10,
-            fontFamily: 'Inter',
-            letterSpacing: 0.5,
           ),
         ),
       ],

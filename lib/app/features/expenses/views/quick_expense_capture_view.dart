@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
-import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:carenest/app/features/analytics/theme/bauhaus_theme.dart';
@@ -47,17 +46,21 @@ class _QuickExpenseCaptureViewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BauhausTheme.black,
+      backgroundColor: Theme.of(context).colorScheme.inverseSurface,
       appBar: AppBar(
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         title: Text(
           AppLocalizations.of(context)!.quickCaptureTitle,
-          style: BauhausTheme.headerStyle.copyWith(color: BauhausTheme.white),
+          style: BauhausTheme.headerStyle.copyWith(
+            color: Theme.of(context).colorScheme.onInverseSurface,
+          ),
         ),
-        backgroundColor: BauhausTheme.black,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
         elevation: 0,
-        iconTheme: const IconThemeData(color: BauhausTheme.white),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onInverseSurface,
+        ),
       ),
       body: _isCapturing ? _buildCaptureLauncher() : _buildConfirmation(),
     );
@@ -65,8 +68,10 @@ class _QuickExpenseCaptureViewState
 
   Widget _buildCaptureLauncher() {
     if (_isProcessing) {
-      return const Center(
-        child: CircularProgressIndicator(color: BauhausTheme.white),
+      return Center(
+        child: CircularProgressIndicator(
+          color: Theme.of(context).colorScheme.onInverseSurface,
+        ),
       );
     }
     return SafeArea(
@@ -75,11 +80,17 @@ class _QuickExpenseCaptureViewState
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.camera_alt, size: 72, color: BauhausTheme.white),
+            Icon(
+              Icons.camera_alt,
+              size: 72,
+              color: Theme.of(context).colorScheme.onInverseSurface,
+            ),
             const SizedBox(height: 24),
             Text(
               'Scan a receipt with the native camera or pick from gallery.',
-              style: BauhausTheme.bodyStyle.copyWith(color: BauhausTheme.white),
+              style: BauhausTheme.bodyStyle.copyWith(
+                color: Theme.of(context).colorScheme.onInverseSurface,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -91,7 +102,9 @@ class _QuickExpenseCaptureViewState
                     child: ElevatedButton(
                       onPressed: _scanWithNativeCamera,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: BauhausTheme.black,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.inverseSurface,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(0),
                         ),
@@ -99,7 +112,7 @@ class _QuickExpenseCaptureViewState
                       child: Text(
                         'Open Camera',
                         style: BauhausTheme.subHeaderStyle.copyWith(
-                          color: BauhausTheme.white,
+                          color: Theme.of(context).colorScheme.onInverseSurface,
                         ),
                       ),
                     ),
@@ -112,7 +125,9 @@ class _QuickExpenseCaptureViewState
                     child: ElevatedButton(
                       onPressed: _scanFromGallery,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: BauhausTheme.black,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.inverseSurface,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(0),
                         ),
@@ -120,7 +135,7 @@ class _QuickExpenseCaptureViewState
                       child: Text(
                         'Open Gallery',
                         style: BauhausTheme.subHeaderStyle.copyWith(
-                          color: BauhausTheme.white,
+                          color: Theme.of(context).colorScheme.onInverseSurface,
                         ),
                       ),
                     ),
@@ -136,7 +151,7 @@ class _QuickExpenseCaptureViewState
 
   Widget _buildConfirmation() {
     return Container(
-      color: BauhausTheme.white,
+      color: Theme.of(context).colorScheme.surface,
       padding: const EdgeInsets.all(24),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -151,7 +166,7 @@ class _QuickExpenseCaptureViewState
             Container(
               height: 300,
               width: double.infinity,
-              color: Colors.grey[300],
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               child: Center(
                 child: Text(AppLocalizations.of(context)!.capturedReceipt),
               ),
@@ -160,7 +175,9 @@ class _QuickExpenseCaptureViewState
           const SizedBox(height: 24),
           Text(
             AppLocalizations.of(context)!.receiptScanned,
-            style: BauhausTheme.headerStyle,
+            style: BauhausTheme.headerStyle.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: 12),
           if (_ocrResult != null) ...[
@@ -168,7 +185,9 @@ class _QuickExpenseCaptureViewState
               _ocrResult!.merchant.isNotEmpty
                   ? _ocrResult!.merchant
                   : 'Unknown Merchant',
-              style: BauhausTheme.bodyStyle.copyWith(color: BauhausTheme.blue),
+              style: BauhausTheme.bodyStyle.copyWith(
+                color: Theme.of(context).colorScheme.secondary,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
@@ -187,7 +206,7 @@ class _QuickExpenseCaptureViewState
             child: ElevatedButton(
               onPressed: _navigateToAddExpenseFromState,
               style: ElevatedButton.styleFrom(
-                backgroundColor: BauhausTheme.black,
+                backgroundColor: Theme.of(context).colorScheme.inverseSurface,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(0),
                 ),
@@ -195,7 +214,7 @@ class _QuickExpenseCaptureViewState
               child: Text(
                 AppLocalizations.of(context)!.confirmAndEdit,
                 style: BauhausTheme.subHeaderStyle.copyWith(
-                  color: BauhausTheme.white,
+                  color: Theme.of(context).colorScheme.onInverseSurface,
                 ),
               ),
             ),
@@ -366,7 +385,7 @@ class _QuickExpenseCaptureViewState
     final result = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: BauhausTheme.black,
+      backgroundColor: Theme.of(context).colorScheme.inverseSurface,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       builder: (ctx) {
         return SafeArea(
@@ -379,14 +398,14 @@ class _QuickExpenseCaptureViewState
                 Text(
                   localizations.permissionRequired,
                   style: BauhausTheme.headerStyle.copyWith(
-                    color: BauhausTheme.white,
+                    color: Theme.of(context).colorScheme.onInverseSurface,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   message,
                   style: BauhausTheme.bodyStyle.copyWith(
-                    color: BauhausTheme.white,
+                    color: Theme.of(context).colorScheme.onInverseSurface,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -398,7 +417,9 @@ class _QuickExpenseCaptureViewState
                         child: ElevatedButton(
                           onPressed: () => Navigator.pop(ctx, false),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: BauhausTheme.black,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.inverseSurface,
                             shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.zero,
                             ),
@@ -406,7 +427,9 @@ class _QuickExpenseCaptureViewState
                           child: Text(
                             localizations.cancelButtonCaps,
                             style: BauhausTheme.subHeaderStyle.copyWith(
-                              color: BauhausTheme.white,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onInverseSurface,
                             ),
                           ),
                         ),
@@ -419,7 +442,9 @@ class _QuickExpenseCaptureViewState
                         child: ElevatedButton(
                           onPressed: () => Navigator.pop(ctx, true),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: BauhausTheme.black,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.inverseSurface,
                             shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.zero,
                             ),
@@ -427,7 +452,9 @@ class _QuickExpenseCaptureViewState
                           child: Text(
                             localizations.grantPermission,
                             style: BauhausTheme.subHeaderStyle.copyWith(
-                              color: BauhausTheme.white,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onInverseSurface,
                             ),
                           ),
                         ),
@@ -451,7 +478,7 @@ class _QuickExpenseCaptureViewState
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: BauhausTheme.black,
+      backgroundColor: Theme.of(context).colorScheme.inverseSurface,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       builder: (ctx) {
         return SafeArea(
@@ -464,14 +491,14 @@ class _QuickExpenseCaptureViewState
                 Text(
                   title,
                   style: BauhausTheme.headerStyle.copyWith(
-                    color: BauhausTheme.white,
+                    color: Theme.of(context).colorScheme.onInverseSurface,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   message,
                   style: BauhausTheme.bodyStyle.copyWith(
-                    color: BauhausTheme.white,
+                    color: Theme.of(context).colorScheme.onInverseSurface,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -485,7 +512,9 @@ class _QuickExpenseCaptureViewState
                             await openAppSettings();
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: BauhausTheme.black,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.inverseSurface,
                             shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.zero,
                             ),
@@ -493,7 +522,9 @@ class _QuickExpenseCaptureViewState
                           child: Text(
                             'Open Settings',
                             style: BauhausTheme.subHeaderStyle.copyWith(
-                              color: BauhausTheme.white,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onInverseSurface,
                             ),
                           ),
                         ),
@@ -510,7 +541,9 @@ class _QuickExpenseCaptureViewState
                             await _scanWithNativeCamera();
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: BauhausTheme.black,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.inverseSurface,
                             shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.zero,
                             ),
@@ -518,7 +551,9 @@ class _QuickExpenseCaptureViewState
                           child: Text(
                             'Retry',
                             style: BauhausTheme.subHeaderStyle.copyWith(
-                              color: BauhausTheme.white,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onInverseSurface,
                             ),
                           ),
                         ),

@@ -22,7 +22,7 @@ class ReliabilityTable extends StatelessWidget {
             'RELIABILITY METRICS',
             style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
               fontWeight: FontWeight.w900,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 16),
@@ -41,14 +41,19 @@ class ReliabilityTable extends StatelessWidget {
               },
               border: TableBorder(
                 horizontalInside: BorderSide(
-                  color: BauhausDesign.neutral,
+                  color: Theme.of(context).colorScheme.outline,
                   width: 1,
                 ),
-                bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+                bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
               ),
               children: [
                 TableRow(
-                  decoration: BoxDecoration(color: BauhausDesign.neutral),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.inverseSurface,
+                  ),
                   children: [
                     _HeaderCell('EMPLOYEE', align: TextAlign.left),
                     _HeaderCell('SCHED.'),
@@ -103,7 +108,7 @@ class _HeaderCell extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         textAlign: align,
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-          color: BauhausDesign.surfaceWhite,
+          color: Theme.of(context).colorScheme.onInverseSurface,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -131,7 +136,9 @@ class _DataCell extends StatelessWidget {
         maxLines: 1,
         textAlign: align,
         style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-          color: isAlert ? BauhausDesign.error : BauhausDesign.textDark,
+          color: isAlert
+              ? BauhausDesign.error
+              : Theme.of(context).colorScheme.onSurface,
           fontWeight: isAlert ? FontWeight.bold : FontWeight.normal,
         ),
       ),

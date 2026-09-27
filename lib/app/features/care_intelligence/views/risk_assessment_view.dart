@@ -43,14 +43,14 @@ class _RiskAssessmentViewState extends ConsumerState<RiskAssessmentView> {
     final state = ref.watch(riskPredictionViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         title: Text(
           'RISK ASSESSMENT',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onSecondary,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -152,7 +152,9 @@ class _RiskAssessmentViewState extends ConsumerState<RiskAssessmentView> {
                     'Based on recent incident patterns and health indicators.',
                     style: BauhausDesign.getTextTheme(context).bodySmall
                         ?.copyWith(
-                          color: BauhausDesign.textDark.withValues(alpha: 0.7),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                   ),
                 ],
@@ -188,9 +190,9 @@ class _RiskAssessmentViewState extends ConsumerState<RiskAssessmentView> {
               ],
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'High risk detected due to recent medication changes and mobility patterns.',
-              style: TextStyle(color: BauhausDesign.textDark),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
             ),
             const SizedBox(height: 16),
             BauhausActionButton(
@@ -240,7 +242,10 @@ class _RiskAssessmentViewState extends ConsumerState<RiskAssessmentView> {
           subtitle,
           style: BauhausDesign.getTextTheme(context).bodySmall,
         ),
-        trailing: const Icon(Icons.chevron_right, color: BauhausDesign.neutral),
+        trailing: Icon(
+          Icons.chevron_right,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
       ),
     );
   }

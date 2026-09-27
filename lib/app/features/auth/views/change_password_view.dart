@@ -35,6 +35,8 @@ class ChangePasswordView extends ConsumerStatefulWidget {
 }
 
 class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
+  ColorScheme get _colorScheme => Theme.of(context).colorScheme;
+
   final _formKey = GlobalKey<FormState>();
   final _currentController = TextEditingController();
   final _newController = TextEditingController();
@@ -219,17 +221,17 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
         : l10n.changePasswordSubtitle;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: _colorScheme.surface,
       appBar: AppBar(
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: _colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        backgroundColor: BauhausDesign.secondary,
+        backgroundColor: _colorScheme.secondary,
         elevation: 0,
         leading: Navigator.of(context).canPop()
             ? IconButton(
-                icon: const Icon(
+                icon: Icon(
                   Icons.arrow_back_ios_new,
-                  color: BauhausDesign.surfaceWhite,
+                  color: _colorScheme.surface,
                 ),
                 onPressed: () => Navigator.of(context).pop(),
               )
@@ -237,7 +239,7 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
         title: Text(
           pageTitle.toUpperCase(),
           style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: _colorScheme.onSecondary,
             letterSpacing: 1.0,
             fontWeight: FontWeight.w900,
           ),
@@ -245,7 +247,7 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: BauhausDesign.neutral),
+          child: Container(height: 1, color: _colorScheme.outline),
         ),
       ),
       body: GestureDetector(
@@ -417,7 +419,7 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
       decoration: BoxDecoration(
         color: BauhausDesign.secondary,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(color: _colorScheme.outline, width: 2),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Column(
@@ -432,12 +434,9 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: BauhausDesign.surfaceWhite,
+                    color: _colorScheme.onSecondary,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                    border: Border.all(
-                      color: BauhausDesign.neutral,
-                      width: 1.5,
-                    ),
+                    border: Border.all(color: _colorScheme.outline, width: 1.5),
                   ),
                   alignment: Alignment.center,
                   child: const Icon(
@@ -455,7 +454,7 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
                         title.toUpperCase(),
                         style: BauhausDesign.getTextTheme(context).titleLarge
                             ?.copyWith(
-                              color: BauhausDesign.surfaceWhite,
+                              color: _colorScheme.onSecondary,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 0.8,
                             ),
@@ -465,7 +464,7 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
                         subtitle,
                         style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
-                              color: BauhausDesign.surfaceWhite.withValues(
+                              color: _colorScheme.onSecondary.withValues(
                                 alpha: 0.92,
                               ),
                             ),
@@ -482,10 +481,10 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
               horizontal: BauhausDesign.space4,
               vertical: BauhausDesign.space3,
             ),
-            decoration: const BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
+            decoration: BoxDecoration(
+              color: _colorScheme.surface,
               border: Border(
-                top: BorderSide(color: BauhausDesign.neutral, width: 2),
+                top: BorderSide(color: _colorScheme.outline, width: 2),
               ),
             ),
             child: Text(
@@ -509,9 +508,9 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: _colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(color: _colorScheme.outline, width: 2),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Column(
@@ -550,7 +549,9 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
   }
 
   Widget _buildRuleRow({required String text, required bool isMet}) {
-    final color = isMet ? BauhausDesign.success : BauhausDesign.textMuted;
+    final color = isMet
+        ? _colorScheme.secondary
+        : _colorScheme.onSurfaceVariant;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(
@@ -558,9 +559,9 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
         vertical: BauhausDesign.space2,
       ),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceOffWhite,
+        color: _colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral),
+        border: Border.all(color: _colorScheme.outline),
       ),
       child: Row(
         children: [

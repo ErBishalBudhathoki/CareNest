@@ -50,7 +50,10 @@ class FallbackPriceDialog extends StatelessWidget {
               padding: const EdgeInsets.only(top: 8),
               child: Text(
                 errorText!,
-                style: const TextStyle(color: Colors.red, fontSize: 12),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.error,
+                  fontSize: 12,
+                ),
               ),
             ),
         ],
@@ -77,12 +80,12 @@ class FallbackPriceDialog extends StatelessWidget {
                   onSave(parsed);
                 },
           child: isSaving
-              ? const SizedBox(
+              ? SizedBox(
                   width: 16,
                   height: 16,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
                 )
               : const Text('Save'),

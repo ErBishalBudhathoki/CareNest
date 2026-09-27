@@ -8,6 +8,7 @@ import 'package:carenest/app/core/providers/app_providers.dart'
 import 'package:image_picker/image_picker.dart';
 import 'package:carenest/app/core/services/file_upload_service.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
@@ -131,22 +132,6 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: BauhausDesign.primary,
-              onPrimary: Colors.white,
-              surface: BauhausDesign.surfaceWhite,
-              onSurface: BauhausDesign.textDark,
-            ),
-            dialogTheme: DialogThemeData(
-              backgroundColor: BauhausDesign.surfaceWhite,
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
     if (picked != null) {
       setState(() {
@@ -461,21 +446,23 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        backgroundColor: BauhausDesign.secondary,
+        backgroundColor: colorScheme.secondary,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: BauhausDesign.surfaceWhite),
+          icon: Icon(Icons.close, color: colorScheme.onSecondary),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           l10n.editDetailsTitle.toUpperCase(),
           style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: colorScheme.onSecondary,
             fontWeight: FontWeight.w900,
             letterSpacing: 1.0,
           ),
@@ -484,24 +471,27 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
         actions: [
           TextButton.icon(
             onPressed: _loading ? null : _saveOrganization,
-            icon: const Icon(
+            icon: Icon(
               Icons.check_circle_outline,
-              color: BauhausDesign.surfaceWhite,
+              color: colorScheme.onSecondary,
               size: 18,
             ),
             label: Text(
               l10n.saveChanges.toUpperCase(),
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.surfaceWhite,
+                color: colorScheme.onSecondary,
                 fontWeight: FontWeight.w900,
               ),
             ),
           ),
-          const SizedBox(width: BauhausDesign.space1),
+          SizedBox(width: BauhausDesign.space1),
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: BauhausDesign.neutral),
+          child: Container(
+            height: 1,
+            color: Theme.of(context).colorScheme.outline,
+          ),
         ),
       ),
       body: _loading
@@ -521,7 +511,7 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                 child: Column(
                   children: [
                     _buildEditHeader(context),
-                    const SizedBox(height: BauhausDesign.space4),
+                    SizedBox(height: BauhausDesign.space4),
                     _buildSectionCard(
                       context,
                       title: l10n.generalInformation,
@@ -534,13 +524,13 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                           controller: _nameController,
                           hintText: l10n.organizationNameHint,
                         ),
-                        const SizedBox(height: BauhausDesign.space4),
+                        SizedBox(height: BauhausDesign.space4),
                         BauhausTextField(
                           label: l10n.tradingNameLabel.toUpperCase(),
                           controller: _tradingNameController,
                           hintText: l10n.enterTradingName,
                         ),
-                        const SizedBox(height: BauhausDesign.space4),
+                        SizedBox(height: BauhausDesign.space4),
                         BauhausTextField(
                           label: l10n.taxIdAbn.toUpperCase(),
                           controller: _abnController,
@@ -558,7 +548,7 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: BauhausDesign.space4),
+                    SizedBox(height: BauhausDesign.space4),
                     _buildSectionCard(
                       context,
                       title: l10n.contactDetails,
@@ -571,40 +561,31 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                           controller: _emailController,
                           hintText: l10n.emailHint,
                           keyboardType: TextInputType.emailAddress,
-                          prefixIcon: const Icon(
-                            Icons.email_outlined,
-                            size: 20,
-                          ),
+                          prefixIcon: Icon(Icons.email_outlined, size: 20),
                         ),
-                        const SizedBox(height: BauhausDesign.space4),
+                        SizedBox(height: BauhausDesign.space4),
                         BauhausTextField(
                           label: l10n.phoneNumber.toUpperCase(),
                           controller: _phoneController,
                           hintText: l10n.phoneNumber,
                           keyboardType: TextInputType.phone,
-                          prefixIcon: const Icon(
-                            Icons.phone_outlined,
-                            size: 20,
-                          ),
+                          prefixIcon: Icon(Icons.phone_outlined, size: 20),
                         ),
-                        const SizedBox(height: BauhausDesign.space4),
+                        SizedBox(height: BauhausDesign.space4),
                         BauhausTextField(
                           label: l10n.websiteLabel.toUpperCase(),
                           controller: _websiteController,
                           hintText: 'example.com',
                           keyboardType: TextInputType.url,
-                          prefixIcon: const Icon(
-                            Icons.public_outlined,
-                            size: 20,
-                          ),
+                          prefixIcon: Icon(Icons.public_outlined, size: 20),
                         ),
-                        const SizedBox(height: BauhausDesign.space4),
+                        SizedBox(height: BauhausDesign.space4),
                         BauhausTextField(
                           label: l10n.addressLine1.toUpperCase(),
                           controller: _streetController,
                           hintText: l10n.enterStreetAddress,
                         ),
-                        const SizedBox(height: BauhausDesign.space4),
+                        SizedBox(height: BauhausDesign.space4),
                         Row(
                           children: [
                             Expanded(
@@ -614,7 +595,7 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                                 hintText: l10n.city,
                               ),
                             ),
-                            const SizedBox(width: BauhausDesign.space4),
+                            SizedBox(width: BauhausDesign.space4),
                             Expanded(
                               child: BauhausTextField(
                                 label: l10n.postcodeLabel.toUpperCase(),
@@ -625,7 +606,7 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: BauhausDesign.space4),
+                        SizedBox(height: BauhausDesign.space4),
                         BauhausTextField(
                           label: l10n.stateRegion.toUpperCase(),
                           controller: _stateController,
@@ -633,7 +614,7 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: BauhausDesign.space4),
+                    SizedBox(height: BauhausDesign.space4),
                     _buildSectionCard(
                       context,
                       title: l10n.banking,
@@ -646,13 +627,13 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                           controller: _bankNameController,
                           hintText: l10n.enterBankName,
                         ),
-                        const SizedBox(height: BauhausDesign.space4),
+                        SizedBox(height: BauhausDesign.space4),
                         BauhausTextField(
                           label: 'ACCOUNT NAME',
                           controller: _accountNameController,
                           hintText: 'Enter account name',
                         ),
-                        const SizedBox(height: BauhausDesign.space4),
+                        SizedBox(height: BauhausDesign.space4),
                         Row(
                           children: [
                             Expanded(
@@ -668,7 +649,7 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                                 inputFormatters: [_BsbInputFormatter()],
                               ),
                             ),
-                            const SizedBox(width: BauhausDesign.space4),
+                            SizedBox(width: BauhausDesign.space4),
                             Expanded(
                               child: BauhausTextField(
                                 label: l10n.accountNoLabel.toUpperCase(),
@@ -686,7 +667,7 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: BauhausDesign.space4),
+                        SizedBox(height: BauhausDesign.space4),
                         Container(
                           padding: const EdgeInsets.all(BauhausDesign.space3),
                           decoration: BoxDecoration(
@@ -697,25 +678,27 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                               BauhausDesign.radiusSm,
                             ),
                             border: Border.all(
-                              color: BauhausDesign.neutral,
+                              color: Theme.of(context).colorScheme.outline,
                               width: 1.5,
                             ),
                           ),
                           child: Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.warning_amber_rounded,
                                 color: BauhausDesign.warning,
                                 size: 20,
                               ),
-                              const SizedBox(width: BauhausDesign.space3),
+                              SizedBox(width: BauhausDesign.space3),
                               Expanded(
                                 child: Text(
                                   l10n.bankingWarning,
                                   style: BauhausDesign.getTextTheme(context)
                                       .bodySmall
                                       ?.copyWith(
-                                        color: BauhausDesign.textDark,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
                                         fontWeight: FontWeight.w600,
                                       ),
                                 ),
@@ -725,7 +708,7 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: BauhausDesign.space4),
+                    SizedBox(height: BauhausDesign.space4),
                     _buildSectionCard(
                       context,
                       title: l10n.ndisRegistration,
@@ -736,11 +719,15 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                         Container(
                           padding: const EdgeInsets.all(BauhausDesign.space3),
                           decoration: BoxDecoration(
-                            color: BauhausDesign.surfaceOffWhite,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainer,
                             borderRadius: BorderRadius.circular(
                               BauhausDesign.radiusMd,
                             ),
-                            border: Border.all(color: BauhausDesign.neutral),
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.outline,
+                            ),
                           ),
                           child: Row(
                             children: [
@@ -757,31 +744,33 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                                             letterSpacing: 0.8,
                                           ),
                                     ),
-                                    const SizedBox(
-                                      height: BauhausDesign.space1,
-                                    ),
+                                    SizedBox(height: BauhausDesign.space1),
                                     Text(
                                       l10n.isNdisRegistered,
                                       style: BauhausDesign.getTextTheme(context)
                                           .bodySmall
                                           ?.copyWith(
-                                            color: BauhausDesign.textMuted,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onSurfaceVariant,
                                           ),
                                     ),
                                   ],
                                 ),
                               ),
-                              Switch.adaptive(
+                              // Bauhaus switch: zero radius, 2px borders, hard
+                              // shadow, themed track/thumb. `Switch.adaptive`
+                              // renders a rounded pill and is off-spec.
+                              BauhausSwitch(
                                 value: _isRegistered,
                                 onChanged: (val) =>
                                     setState(() => _isRegistered = val),
-                                activeThumbColor: BauhausDesign.primary,
                               ),
                             ],
                           ),
                         ),
                         if (_isRegistered) ...[
-                          const SizedBox(height: BauhausDesign.space4),
+                          SizedBox(height: BauhausDesign.space4),
                           BauhausTextField(
                             label: l10n.registrationNumberLabel.toUpperCase(),
                             controller: _registrationNumberController,
@@ -795,7 +784,7 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                               LengthLimitingTextInputFormatter(8),
                             ],
                           ),
-                          const SizedBox(height: BauhausDesign.space4),
+                          SizedBox(height: BauhausDesign.space4),
                           InkWell(
                             onTap: () =>
                                 _selectDate(context, _expiryDateController),
@@ -804,9 +793,11 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                                 label: l10n.expiryDateLabel.toUpperCase(),
                                 controller: _expiryDateController,
                                 hintText: l10n.expiryDateHint,
-                                suffixIcon: const Icon(
+                                suffixIcon: Icon(
                                   Icons.calendar_today,
-                                  color: BauhausDesign.textMuted,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                 ),
                               ),
                             ),
@@ -814,7 +805,7 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                         ],
                       ],
                     ),
-                    const SizedBox(height: BauhausDesign.space8),
+                    SizedBox(height: BauhausDesign.space8),
                     Row(
                       children: [
                         Expanded(
@@ -822,19 +813,25 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                             text: l10n.cancelButton.toUpperCase(),
                             onPressed: () => Navigator.pop(context),
                             isOutlined: true,
-                            backgroundColor: BauhausDesign.neutral,
-                            textColor: BauhausDesign.neutral,
+                            // `isOutlined` forces the background to
+                            // `colorScheme.surface`, so only the label/border
+                            // colour can be set. Passing a `backgroundColor` here
+                            // is silently discarded — which previously left
+                            // `surface` text on a `surface` fill.
+                            textColor: Theme.of(context).colorScheme.onSurface,
                             isFullWidth: true,
                           ),
                         ),
-                        const SizedBox(width: BauhausDesign.space3),
+                        SizedBox(width: BauhausDesign.space3),
                         Expanded(
                           child: BauhausActionButton(
                             text: l10n.saveChanges.toUpperCase(),
                             onPressed: _loading ? null : _saveOrganization,
                             isFullWidth: true,
                             backgroundColor: BauhausDesign.primary,
-                            textColor: BauhausDesign.surfaceWhite,
+                            textColor: BauhausDesign.readableOnColor(
+                              BauhausDesign.primary,
+                            ),
                           ),
                         ),
                       ],
@@ -863,7 +860,10 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
       decoration: BoxDecoration(
         color: BauhausDesign.secondary,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Column(
@@ -883,9 +883,9 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                         height: 76,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: BauhausDesign.surfaceWhite,
+                          color: Theme.of(context).colorScheme.surface,
                           border: Border.all(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.outline,
                             width: 2,
                           ),
                           image: _logoFile != null
@@ -901,7 +901,7 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                                     : null),
                         ),
                         child: (_logoFile == null && _logoUrl == null)
-                            ? const Icon(
+                            ? Icon(
                                 Icons.business_rounded,
                                 size: 36,
                                 color: BauhausDesign.primary,
@@ -915,18 +915,22 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                       decoration: BoxDecoration(
                         color: BauhausDesign.accent,
                         shape: BoxShape.circle,
-                        border: Border.all(color: BauhausDesign.neutral),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
                       ),
                       alignment: Alignment.center,
-                      child: const Icon(
+                      child: Icon(
                         Icons.camera_alt_outlined,
                         size: 14,
-                        color: BauhausDesign.neutral,
+                        color: BauhausDesign.readableOnColor(
+                          BauhausDesign.accent,
+                        ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(width: BauhausDesign.space3),
+                SizedBox(width: BauhausDesign.space3),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -936,32 +940,34 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                         style: BauhausDesign.getTextTheme(context)
                             .headlineMedium
                             ?.copyWith(
-                              color: BauhausDesign.surfaceWhite,
+                              color: Theme.of(context).colorScheme.surface,
                               fontWeight: FontWeight.w900,
                             ),
                       ),
-                      const SizedBox(height: BauhausDesign.space1),
+                      SizedBox(height: BauhausDesign.space1),
                       Text(
                         l10n.tapToChangeLogo,
                         style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
-                              color: BauhausDesign.surfaceWhite.withValues(
-                                alpha: 0.85,
-                              ),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.surface.withValues(alpha: 0.85),
                             ),
                       ),
-                      const SizedBox(height: BauhausDesign.space2),
+                      SizedBox(height: BauhausDesign.space2),
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: BauhausDesign.space2,
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: BauhausDesign.surfaceWhite,
+                          color: Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(
                             BauhausDesign.radiusSm,
                           ),
-                          border: Border.all(color: BauhausDesign.neutral),
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
                         ),
                         child: Text(
                           'ID: $shortId',
@@ -983,22 +989,25 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
             width: double.infinity,
             padding: const EdgeInsets.all(BauhausDesign.space4),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: const BorderRadius.vertical(
                 bottom: Radius.circular(BauhausDesign.radiusLg - 2),
               ),
               border: Border(
-                top: BorderSide(color: BauhausDesign.neutral, width: 2),
+                top: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
               ),
             ),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.qr_code_2_outlined,
-                  color: BauhausDesign.neutral,
+                  color: Theme.of(context).colorScheme.onSurface,
                   size: 18,
                 ),
-                const SizedBox(width: BauhausDesign.space2),
+                SizedBox(width: BauhausDesign.space2),
                 Text(
                   '${l10n.organizationCode.toUpperCase()}: ',
                   style: BauhausDesign.getTextTheme(context).labelSmall
@@ -1032,14 +1041,14 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
         vertical: 4,
       ),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral),
+        border: Border.all(color: Theme.of(context).colorScheme.onSurface),
       ),
       child: Text(
         label,
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-          color: BauhausDesign.neutral,
+          color: Theme.of(context).colorScheme.onSurface,
           fontWeight: FontWeight.w900,
           letterSpacing: 0.6,
         ),
@@ -1058,9 +1067,12 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Column(
@@ -1077,15 +1089,19 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
+                        // Sits inside the opaque card, so the card's hard
+                        // shadow cannot bleed through this translucent fill.
                         color: accentColor.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(
                           BauhausDesign.radiusSm,
                         ),
-                        border: Border.all(color: BauhausDesign.neutral),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
                       child: Icon(icon, color: accentColor, size: 20),
                     ),
-                    const SizedBox(width: BauhausDesign.space3),
+                    SizedBox(width: BauhausDesign.space3),
                     Expanded(
                       child: Text(
                         title.toUpperCase(),
@@ -1097,12 +1113,12 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                       ),
                     ),
                     if (badge != null) ...[
-                      const SizedBox(width: BauhausDesign.space2),
+                      SizedBox(width: BauhausDesign.space2),
                       badge,
                     ],
                   ],
                 ),
-                const SizedBox(height: BauhausDesign.space4),
+                SizedBox(height: BauhausDesign.space4),
                 ...children,
               ],
             ),
@@ -1126,7 +1142,7 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
         color: (isValid ? BauhausDesign.success : BauhausDesign.warning)
             .withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral),
+        border: Border.all(color: Theme.of(context).colorScheme.onSurface),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -1136,11 +1152,11 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
             color: isValid ? BauhausDesign.success : BauhausDesign.warning,
             size: 12,
           ),
-          const SizedBox(width: 4),
+          SizedBox(width: 4),
           Text(
             isValid ? AppLocalizations.of(context)!.validBadge : 'CHECK',
             style: TextStyle(
-              color: BauhausDesign.neutral,
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: 10,
               fontWeight: FontWeight.w900,
             ),

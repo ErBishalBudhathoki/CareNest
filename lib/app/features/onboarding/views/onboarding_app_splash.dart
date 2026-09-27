@@ -64,9 +64,10 @@ class _OnboardingAppSplashState extends State<OnboardingAppSplash>
   @override
   Widget build(BuildContext context) {
     final theme = BauhausDesign.getTextTheme(context);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.background,
+      backgroundColor: colorScheme.surface,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(BauhausDesign.space8),
@@ -83,7 +84,7 @@ class _OnboardingAppSplashState extends State<OnboardingAppSplash>
                     OnboardingContent.tagline,
                     textAlign: TextAlign.center,
                     style: theme.headlineLarge?.copyWith(
-                      color: BauhausDesign.textDark,
+                      color: colorScheme.onSurface,
                       fontWeight: FontWeight.w600,
                       height: 1.35,
                     ),
@@ -103,19 +104,21 @@ class _LogoMark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       width: 96,
       height: 96,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: BauhausDesign.primary,
-        border: Border.all(color: BauhausDesign.neoInk, width: 3),
+        color: colorScheme.primary,
+        border: Border.all(color: colorScheme.outline, width: 3),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Text(
         OnboardingContent.appName[0],
         style: BauhausDesign.getTextTheme(context).displayLarge?.copyWith(
-          color: BauhausDesign.surfaceWhite,
+          color: colorScheme.onPrimary,
           fontWeight: FontWeight.w900,
           fontSize: 48,
         ),

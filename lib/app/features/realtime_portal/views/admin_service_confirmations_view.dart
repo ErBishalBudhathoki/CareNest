@@ -47,43 +47,44 @@ class AdminServiceConfirmationsView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final historyState = ref.watch(adminClientServiceHistoryProvider(clientId));
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.secondary,
+        backgroundColor: colorScheme.secondary,
         elevation: 0,
         title: Text(
           'Service Confirmation Ledger',
           style: GoogleFonts.oswald(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.surfaceWhite,
+            color: colorScheme.onSecondary,
             letterSpacing: 1.1,
           ),
         ),
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: BauhausDesign.surfaceWhite,
-          ),
+          icon: Icon(Icons.arrow_back_ios, color: colorScheme.onSecondary),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
             onPressed: () =>
                 ref.invalidate(adminClientServiceHistoryProvider(clientId)),
-            icon: const Icon(Icons.refresh),
+            icon: Icon(Icons.refresh),
             tooltip: 'Refresh Ledger',
           ),
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.5),
-          child: Container(color: BauhausDesign.neutral, height: 1.5),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 1.5,
+          ),
         ),
       ),
       body: Column(
@@ -120,7 +121,7 @@ class AdminServiceConfirmationsView extends ConsumerWidget {
                   padding: const EdgeInsets.all(BauhausDesign.space4),
                   itemCount: history.length + 1,
                   separatorBuilder: (_, _) =>
-                      const SizedBox(height: BauhausDesign.space4),
+                      SizedBox(height: BauhausDesign.space4),
                   itemBuilder: (context, index) {
                     if (index == 0) {
                       return const BauhausSectionHeader(
@@ -149,11 +150,11 @@ class AdminServiceConfirmationsView extends ConsumerWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
           bottom: BorderSide(
-            color: BauhausDesign.neutral,
+            color: Theme.of(context).colorScheme.outline,
             width: BauhausDesign.borderThick,
           ),
         ),
@@ -165,12 +166,12 @@ class AdminServiceConfirmationsView extends ConsumerWidget {
             'ACTIVE CLIENT',
             style: BauhausDesign.neoMonoStyle(
               context,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: 10,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             clientName,
             style: GoogleFonts.oswald(
@@ -180,12 +181,12 @@ class AdminServiceConfirmationsView extends ConsumerWidget {
               letterSpacing: 0.5,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             'Client ID: $clientId',
             style: GoogleFonts.shareTechMono(
               fontSize: 11,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -210,8 +211,11 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Padding(
@@ -228,9 +232,9 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.backgroundLight,
+                    color: Theme.of(context).colorScheme.surface,
                     border: Border.all(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.outline,
                       width: 1.5,
                     ),
                   ),
@@ -239,7 +243,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                     style: GoogleFonts.shareTechMono(
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ),
@@ -276,27 +280,27 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: BauhausDesign.space3),
+            SizedBox(height: BauhausDesign.space3),
             Text(
               service.serviceName.toUpperCase(),
               style: GoogleFonts.oswald(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 letterSpacing: 0.5,
               ),
             ),
-            const SizedBox(height: 2),
+            SizedBox(height: 2),
             Text(
               '${service.startTime} - ${service.endTime} • Worker: ${service.workerName}',
               style: GoogleFonts.inter(
                 fontSize: BauhausDesign.fontSm,
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
               ),
             ),
             if (hasVerification) ...[
-              const SizedBox(height: BauhausDesign.space3),
+              SizedBox(height: BauhausDesign.space3),
               Row(
                 children: [
                   Row(
@@ -309,7 +313,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: BauhausDesign.space3),
+                  SizedBox(width: BauhausDesign.space3),
                   if (service.feedback != null && service.feedback!.isNotEmpty)
                     Expanded(
                       child: Text(
@@ -317,7 +321,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontSm,
                           fontStyle: FontStyle.italic,
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -326,7 +330,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                 ],
               ),
             ],
-            const SizedBox(height: BauhausDesign.space4),
+            SizedBox(height: BauhausDesign.space4),
             Row(
               children: [
                 Expanded(
@@ -358,7 +362,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: BauhausDesign.surfaceWhite,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(BauhausDesign.radiusLg),
@@ -375,7 +379,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
               maxHeight: MediaQuery.of(context).size.height * 0.85,
             ),
             child: detailState.when(
-              loading: () => const SizedBox(
+              loading: () => SizedBox(
                 height: 300,
                 child: Center(child: BauhausLoadingState()),
               ),
@@ -390,7 +394,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                       style: GoogleFonts.inter(
                         fontSize: BauhausDesign.fontMd,
                         fontWeight: FontWeight.bold,
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),
@@ -406,7 +410,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontMd,
                           fontWeight: FontWeight.bold,
-                          color: BauhausDesign.textMuted,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ),
@@ -426,7 +430,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                             vertical: BauhausDesign.space3,
                           ),
                           decoration: BoxDecoration(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.outline,
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -451,9 +455,9 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.close_rounded,
-                                color: BauhausDesign.neutral,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                               onPressed: () => Navigator.pop(context),
                             ),
@@ -461,7 +465,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                         ),
                       ),
                       Divider(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.outline,
                         height: 1.5,
                         thickness: 1.5,
                       ),
@@ -472,13 +476,22 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Summary Section
-                            _buildSummaryItem('Worker', service.workerName),
-                            _buildSummaryItem('Service', service.serviceName),
                             _buildSummaryItem(
+                              context,
+                              'Worker',
+                              service.workerName,
+                            ),
+                            _buildSummaryItem(
+                              context,
+                              'Service',
+                              service.serviceName,
+                            ),
+                            _buildSummaryItem(
+                              context,
                               'Date/Time',
                               '${service.date} • ${service.startTime} - ${service.endTime}',
                             ),
-                            const SizedBox(height: BauhausDesign.space4),
+                            SizedBox(height: BauhausDesign.space4),
 
                             // Rating Section
                             Text(
@@ -489,12 +502,14 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                 fontSize: 11,
                               ),
                             ),
-                            const SizedBox(height: BauhausDesign.space2),
+                            SizedBox(height: BauhausDesign.space2),
                             Container(
                               padding: const EdgeInsets.all(
                                 BauhausDesign.space4,
                               ),
-                              decoration: BauhausDesign.cardDecoration,
+                              decoration: BauhausDesign.cardDecorationFor(
+                                context,
+                              ),
                               width: double.infinity,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -513,15 +528,15 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                   ),
                                   if (confirmation.feedback != null &&
                                       confirmation.feedback!.isNotEmpty) ...[
-                                    const SizedBox(
-                                      height: BauhausDesign.space3,
-                                    ),
+                                    SizedBox(height: BauhausDesign.space3),
                                     Text(
                                       '"${confirmation.feedback}"',
                                       style: GoogleFonts.inter(
                                         fontSize: BauhausDesign.fontMd,
                                         fontStyle: FontStyle.italic,
-                                        color: BauhausDesign.textDark,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
                                         height: 1.4,
                                       ),
                                     ),
@@ -529,7 +544,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                 ],
                               ),
                             ),
-                            const SizedBox(height: BauhausDesign.space5),
+                            SizedBox(height: BauhausDesign.space5),
 
                             // Checklist Section
                             Text(
@@ -540,21 +555,25 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                 fontSize: 11,
                               ),
                             ),
-                            const SizedBox(height: BauhausDesign.space2),
+                            SizedBox(height: BauhausDesign.space2),
                             if (confirmation.checklist == null ||
                                 confirmation.checklist!.isEmpty)
                               Text(
                                 'No tasks configured for this shift.',
                                 style: GoogleFonts.inter(
-                                  color: BauhausDesign.textMuted,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                 ),
                               )
                             else
                               Container(
                                 decoration: BoxDecoration(
-                                  color: BauhausDesign.surfaceWhite,
+                                  color: Theme.of(context).colorScheme.surface,
                                   border: Border.all(
-                                    color: BauhausDesign.neutral,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.outline,
                                     width: 2,
                                   ),
                                 ),
@@ -563,7 +582,9 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: confirmation.checklist!.length,
                                   separatorBuilder: (_, _) => Divider(
-                                    color: BauhausDesign.neutral,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.outline,
                                     height: 1,
                                   ),
                                   itemBuilder: (context, idx) {
@@ -576,7 +597,9 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                             : Icons.check_box_outline_blank,
                                         color: completed
                                             ? BauhausDesign.success
-                                            : BauhausDesign.textMuted,
+                                            : Theme.of(
+                                                context,
+                                              ).colorScheme.onSurfaceVariant,
                                       ),
                                       title: Text(
                                         item.item,
@@ -587,8 +610,12 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                               ? TextDecoration.lineThrough
                                               : null,
                                           color: completed
-                                              ? BauhausDesign.textMuted
-                                              : BauhausDesign.textDark,
+                                              ? Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurfaceVariant
+                                              : Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurface,
                                         ),
                                       ),
                                       trailing: item.required
@@ -624,7 +651,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                   },
                                 ),
                               ),
-                            const SizedBox(height: BauhausDesign.space5),
+                            SizedBox(height: BauhausDesign.space5),
 
                             // Signature Section
                             Text(
@@ -635,12 +662,14 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                 fontSize: 11,
                               ),
                             ),
-                            const SizedBox(height: BauhausDesign.space2),
+                            SizedBox(height: BauhausDesign.space2),
                             Container(
                               padding: const EdgeInsets.all(
                                 BauhausDesign.space4,
                               ),
-                              decoration: BauhausDesign.cardDecoration,
+                              decoration: BauhausDesign.cardDecorationFor(
+                                context,
+                              ),
                               width: double.infinity,
                               height: 120,
                               child: Column(
@@ -649,9 +678,11 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                   Icon(
                                     Icons.draw_rounded,
                                     size: 36,
-                                    color: BauhausDesign.neutral,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
                                   ),
-                                  const SizedBox(height: 8),
+                                  SizedBox(height: 8),
                                   Text(
                                     'ELECTRONIC SIGNATURE SECURED',
                                     style: GoogleFonts.shareTechMono(
@@ -660,18 +691,20 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                       color: BauhausDesign.success,
                                     ),
                                   ),
-                                  const SizedBox(height: 2),
+                                  SizedBox(height: 2),
                                   Text(
                                     'Signature ID: ${confirmation.signatureId} • Secured: ${DateFormat('yyyy-MM-dd HH:mm').format(confirmation.timestamp)}',
                                     style: GoogleFonts.shareTechMono(
                                       fontSize: 9,
-                                      color: BauhausDesign.textMuted,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            const SizedBox(height: BauhausDesign.space5),
+                            SizedBox(height: BauhausDesign.space5),
 
                             // Incidents Section (if any reported)
                             if (confirmation.incidents != null &&
@@ -685,7 +718,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                   color: BauhausDesign.warning,
                                 ),
                               ),
-                              const SizedBox(height: BauhausDesign.space2),
+                              SizedBox(height: BauhausDesign.space2),
                               ...confirmation.incidents!.map(
                                 (incident) => Container(
                                   margin: const EdgeInsets.only(bottom: 8),
@@ -711,7 +744,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                             Icons.warning_amber_rounded,
                                             color: BauhausDesign.warning,
                                           ),
-                                          const SizedBox(width: 8),
+                                          SizedBox(width: 8),
                                           Text(
                                             '${incident.category.toUpperCase()} (${incident.severity.toUpperCase()})',
                                             style: GoogleFonts.shareTechMono(
@@ -721,12 +754,14 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 4),
+                                      SizedBox(height: 4),
                                       Text(
                                         incident.description,
                                         style: GoogleFonts.inter(
                                           fontSize: 13,
-                                          color: BauhausDesign.textDark,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface,
                                         ),
                                       ),
                                     ],
@@ -753,23 +788,26 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildSummaryItem(String label, String value) {
+  Widget _buildSummaryItem(BuildContext context, String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
       child: RichText(
         text: TextSpan(
-          style: GoogleFonts.inter(fontSize: 14, color: BauhausDesign.textDark),
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           children: [
             TextSpan(
               text: '$label: ',
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
             TextSpan(
               text: value,
-              style: const TextStyle(fontWeight: FontWeight.w600),
+              style: TextStyle(fontWeight: FontWeight.w600),
             ),
           ],
         ),

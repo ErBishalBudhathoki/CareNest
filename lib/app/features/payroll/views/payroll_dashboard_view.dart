@@ -31,7 +31,7 @@ class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: BauhausDesign.primary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -141,25 +141,25 @@ class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
           'Total Gross Pay',
           '\$${summary.summary.totalGrossPay.toStringAsFixed(2)}',
           Icons.attach_money,
-          Colors.green,
+          Theme.of(context).colorScheme.secondary,
         ),
         _buildMetricCard(
           'Total Hours',
           '${summary.summary.totalHours.toStringAsFixed(2)}h',
           Icons.access_time,
-          Colors.blue,
+          Theme.of(context).colorScheme.primary,
         ),
         _buildMetricCard(
           'Tax Withheld',
           '\$${summary.summary.totalTax.toStringAsFixed(2)}',
           Icons.account_balance,
-          Colors.orange,
+          Theme.of(context).colorScheme.tertiary,
         ),
         _buildMetricCard(
           'Superannuation',
           '\$${summary.summary.totalSuper.toStringAsFixed(2)}',
           Icons.trending_up,
-          Colors.purple,
+          Theme.of(context).colorScheme.error,
         ),
       ],
     );
@@ -189,7 +189,10 @@ class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                   Text(
                     value,
@@ -304,14 +307,17 @@ class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
               children: [
                 Text(
                   '\$${employee.grossPay.toStringAsFixed(2)}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.green,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
                 Text(
                   'Tax: \$${employee.tax.toStringAsFixed(0)}',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
@@ -360,17 +366,17 @@ class _PayrollDashboardViewState extends ConsumerState<PayrollDashboardView> {
             ),
             if (employee.anomalies.isNotEmpty) ...[
               const Divider(),
-              const Text(
+              Text(
                 'Anomalies:',
                 style: TextStyle(
-                  color: Colors.red,
+                  color: Theme.of(context).colorScheme.error,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               ...employee.anomalies.map(
                 (a) => Text(
                   '• ${a.description}',
-                  style: const TextStyle(color: Colors.red),
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
               ),
             ],

@@ -42,7 +42,7 @@ class UtilizationGauge extends StatelessWidget {
                 style: BauhausDesign.getTextTheme(context).headlineSmall
                     ?.copyWith(
                       fontWeight: FontWeight.w900,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
               ),
               Container(
@@ -73,7 +73,7 @@ class UtilizationGauge extends StatelessWidget {
                 style: BauhausDesign.getTextTheme(context).displayMedium
                     ?.copyWith(
                       fontWeight: FontWeight.w900,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 48,
                     ),
               ),
@@ -93,7 +93,7 @@ class UtilizationGauge extends StatelessWidget {
           const SizedBox(height: 8),
           LinearProgressIndicator(
             value: (avgUtilization / 100).clamp(0.0, 1.0),
-            backgroundColor: BauhausDesign.neutral.withValues(alpha: 0.1),
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
             color: statusColor,
             minHeight: 12,
             borderRadius: BorderRadius.circular(6),
@@ -133,9 +133,9 @@ class UtilizationGauge extends StatelessWidget {
                             Container(
                               height: 8,
                               decoration: BoxDecoration(
-                                color: BauhausDesign.neutral.withValues(
-                                  alpha: 0.1,
-                                ),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.surfaceContainer,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),

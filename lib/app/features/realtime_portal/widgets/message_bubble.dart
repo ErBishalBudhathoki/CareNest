@@ -14,6 +14,8 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: BauhausDesign.space4),
       child: Row(
@@ -28,13 +30,17 @@ class MessageBubble extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: BauhausDesign.secondary,
+                color: colorScheme.secondary,
                 border: Border.all(
-                  color: BauhausDesign.neutral,
+                  color: colorScheme.outline,
                   width: BauhausDesign.borderThick,
                 ),
               ),
-              child: const Icon(Icons.person, color: Colors.white, size: 16),
+              child: Icon(
+                Icons.person,
+                color: colorScheme.onSecondary,
+                size: 16,
+              ),
             ),
             const SizedBox(width: BauhausDesign.space2),
           ],
@@ -42,10 +48,11 @@ class MessageBubble extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(BauhausDesign.space4),
               decoration: BoxDecoration(
-                // Me: Tangerine Yellow; Partner: Pure White
-                color: isMe ? BauhausDesign.accent : Colors.white,
+                color: isMe
+                    ? colorScheme.tertiaryContainer
+                    : colorScheme.surface,
                 border: Border.all(
-                  color: BauhausDesign.neutral,
+                  color: colorScheme.outline,
                   width: BauhausDesign.borderThick,
                 ),
                 boxShadow: const [BauhausDesign.shadowHardSm],
@@ -74,7 +81,9 @@ class MessageBubble extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: BauhausDesign.fontMd,
                       fontWeight: FontWeight.w500,
-                      color: BauhausDesign.textDark,
+                      color: isMe
+                          ? colorScheme.onTertiaryContainer
+                          : colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: BauhausDesign.space2),
@@ -86,7 +95,9 @@ class MessageBubble extends StatelessWidget {
                         _formatTime(message.timestamp),
                         style: BauhausDesign.neoMonoStyle(
                           context,
-                          color: BauhausDesign.textMuted,
+                          color: isMe
+                              ? colorScheme.onTertiaryContainer
+                              : colorScheme.onSurfaceVariant,
                           fontSize: BauhausDesign.fontXxs,
                         ),
                       ),
@@ -96,8 +107,8 @@ class MessageBubble extends StatelessWidget {
                           message.read ? Icons.done_all : Icons.done,
                           size: 14,
                           color: message.read
-                              ? BauhausDesign.success
-                              : BauhausDesign.textMuted,
+                              ? colorScheme.secondary
+                              : colorScheme.onTertiaryContainer,
                         ),
                       ],
                     ],
@@ -113,13 +124,13 @@ class MessageBubble extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: BauhausDesign.primary,
+                color: colorScheme.primary,
                 border: Border.all(
-                  color: BauhausDesign.neutral,
+                  color: colorScheme.outline,
                   width: BauhausDesign.borderThick,
                 ),
               ),
-              child: const Icon(Icons.person, color: Colors.white, size: 16),
+              child: Icon(Icons.person, color: colorScheme.onPrimary, size: 16),
             ),
           ],
         ],

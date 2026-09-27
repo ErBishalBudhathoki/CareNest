@@ -41,14 +41,14 @@ class _CarePlanBuilderViewState extends ConsumerState<CarePlanBuilderView> {
     final state = ref.watch(carePlanViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         title: Text(
           'CARE PLAN BUILDER',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onSecondary,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -113,7 +113,9 @@ class _CarePlanBuilderViewState extends ConsumerState<CarePlanBuilderView> {
             Text(
               'Generated on: ${DateTime.now().toLocal().toString().split(' ')[0]}',
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.textDark.withValues(alpha: 0.5),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.5),
               ),
             ),
             const SizedBox(height: 12),
@@ -124,9 +126,9 @@ class _CarePlanBuilderViewState extends ConsumerState<CarePlanBuilderView> {
               ).titleMedium?.copyWith(fontWeight: FontWeight.w900),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'This care plan has been customized based on recent assessments, risk factors, and desired outcomes.',
-              style: TextStyle(color: BauhausDesign.textDark),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
             ),
           ],
         ),
@@ -149,9 +151,9 @@ class _CarePlanBuilderViewState extends ConsumerState<CarePlanBuilderView> {
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           subtitle: Text(goal.description ?? 'Goal description...'),
-          trailing: const Icon(
+          trailing: Icon(
             Icons.chevron_right,
-            color: BauhausDesign.neutral,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ),

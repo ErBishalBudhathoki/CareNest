@@ -25,7 +25,7 @@ class DateFormatSettingsView extends ConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _buildBauhausAppBar(context),
       body: vm.isLoading
           ? const Center(
@@ -50,7 +50,7 @@ class DateFormatSettingsView extends ConsumerWidget {
                             ),
                             border: Border.all(color: BauhausDesign.primary),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.event_outlined,
                             color: BauhausDesign.primary,
                           ),
@@ -62,7 +62,9 @@ class DateFormatSettingsView extends ConsumerWidget {
                             style: BauhausDesign.getTextTheme(context)
                                 .bodyMedium
                                 ?.copyWith(
-                                  color: BauhausDesign.textDark,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   fontWeight: FontWeight.w500,
                                 ),
                           ),
@@ -130,9 +132,11 @@ class DateFormatSettingsView extends ConsumerWidget {
                                   SnackBar(
                                     content: Row(
                                       children: [
-                                        const Icon(
+                                        Icon(
                                           Icons.check_circle,
-                                          color: BauhausDesign.surfaceWhite,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSecondary,
                                         ),
                                         const SizedBox(
                                           width: BauhausDesign.space3,
@@ -145,8 +149,9 @@ class DateFormatSettingsView extends ConsumerWidget {
                                               BauhausDesign.getTextTheme(
                                                 context,
                                               ).bodyMedium?.copyWith(
-                                                color:
-                                                    BauhausDesign.surfaceWhite,
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.onSecondary,
                                               ),
                                         ),
                                       ],
@@ -157,8 +162,10 @@ class DateFormatSettingsView extends ConsumerWidget {
                                       borderRadius: BorderRadius.circular(
                                         BauhausDesign.radiusMd,
                                       ),
-                                      side: const BorderSide(
-                                        color: BauhausDesign.neutral,
+                                      side: BorderSide(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.outline,
                                         width: 1.5,
                                       ),
                                     ),
@@ -182,10 +189,13 @@ class DateFormatSettingsView extends ConsumerWidget {
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: Container(
-        decoration: const BoxDecoration(
-          color: BauhausDesign.surfaceLight,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
           border: Border(
-            bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+            bottom: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
           ),
         ),
         child: SafeArea(
@@ -228,12 +238,12 @@ class DateFormatSettingsView extends ConsumerWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(BauhausDesign.space4),
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceLight,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
           border: Border.all(
             color: isSelected
                 ? BauhausDesign.primary
-                : BauhausDesign.neutral.withValues(alpha: 0.3),
+                : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1.5,
           ),
           boxShadow: isSelected ? const [BauhausDesign.shadowHardSm] : [],
@@ -252,7 +262,7 @@ class DateFormatSettingsView extends ConsumerWidget {
                 icon,
                 color: isSelected
                     ? BauhausDesign.primary
-                    : BauhausDesign.neutral,
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
                 size: 24,
               ),
             ),
@@ -267,8 +277,8 @@ class DateFormatSettingsView extends ConsumerWidget {
                         ?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: isSelected
-                              ? BauhausDesign.textDark
-                              : BauhausDesign.neutral,
+                              ? Theme.of(context).colorScheme.onSurface
+                              : Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                   ),
                   const SizedBox(height: 2),
@@ -285,14 +295,14 @@ class DateFormatSettingsView extends ConsumerWidget {
               Container(
                 width: 24,
                 height: 24,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: BauhausDesign.primary,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.check,
                   size: 16,
-                  color: BauhausDesign.surfaceWhite,
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
           ],

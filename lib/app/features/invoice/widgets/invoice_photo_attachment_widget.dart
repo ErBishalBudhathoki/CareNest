@@ -135,7 +135,7 @@ class _InvoicePhotoAttachmentWidgetState
           AndroidUiSettings(
             toolbarTitle: 'Crop Invoice Photo',
             toolbarColor: BauhausDesign.primary,
-            toolbarWidgetColor: BauhausDesign.surfaceWhite,
+            toolbarWidgetColor: Theme.of(context).colorScheme.surface,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false,
             hideBottomControls:
@@ -209,8 +209,8 @@ class _InvoicePhotoAttachmentWidgetState
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        decoration: const BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: SafeArea(
@@ -222,7 +222,7 @@ class _InvoicePhotoAttachmentWidgetState
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: BauhausDesign.neutral,
+                  color: Theme.of(context).colorScheme.onSurface,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -300,11 +300,7 @@ class _InvoicePhotoAttachmentWidgetState
         children: [
           Row(
             children: [
-              const Icon(
-                Icons.attach_file,
-                color: BauhausDesign.primary,
-                size: 20,
-              ),
+              Icon(Icons.attach_file, color: BauhausDesign.primary, size: 20),
               const SizedBox(width: BauhausDesign.space2),
               Text(
                 'Invoice Attachments',
@@ -338,7 +334,7 @@ class _InvoicePhotoAttachmentWidgetState
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.onSurface,
                           width: 1,
                         ),
                       ),
@@ -359,13 +355,13 @@ class _InvoicePhotoAttachmentWidgetState
                         onTap: () => _removePhoto(index),
                         child: Container(
                           padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             color: BauhausDesign.error,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.close,
-                            color: BauhausDesign.surfaceWhite,
+                            color: Theme.of(context).colorScheme.onError,
                             size: 16,
                           ),
                         ),
@@ -406,7 +402,7 @@ class _InvoicePhotoAttachmentWidgetState
                       : Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.add_photo_alternate_outlined,
                               color: BauhausDesign.primary,
                               size: 32,
@@ -434,7 +430,7 @@ class _InvoicePhotoAttachmentWidgetState
             controller: _descriptionController,
             label: 'Photo Description (Optional)',
             hintText: 'Describe the attached photos...',
-            prefixIcon: const Icon(
+            prefixIcon: Icon(
               Icons.description_outlined,
               color: BauhausDesign.textMuted,
             ),

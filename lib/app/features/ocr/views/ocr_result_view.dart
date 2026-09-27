@@ -11,19 +11,24 @@ class OcrResultView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF9F6),
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: Text(
           'VERIFY DETAILS',
           style: GoogleFonts.bebasNeue(
-            color: const Color(0xFF1D3557),
+            color: colorScheme.secondary,
             fontSize: 24,
             letterSpacing: 1.5,
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF1D3557)),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
           onPressed: () => ref.read(ocrViewModelProvider).clear(),
         ),
         backgroundColor: Colors.transparent,
@@ -34,8 +39,8 @@ class OcrResultView extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionHeader('MERCHANT'),
-            _buildBauhausInput(initialValue: result.merchant),
+            _buildSectionHeader(context, 'MERCHANT'),
+            _buildBauhausInput(context, initialValue: result.merchant),
 
             const SizedBox(height: 24),
 
@@ -45,8 +50,8 @@ class OcrResultView extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildSectionHeader('DATE'),
-                      _buildBauhausInput(initialValue: result.date),
+                      _buildSectionHeader(context, 'DATE'),
+                      _buildBauhausInput(context, initialValue: result.date),
                     ],
                   ),
                 ),
@@ -55,8 +60,9 @@ class OcrResultView extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildSectionHeader('AMOUNT'),
+                      _buildSectionHeader(context, 'AMOUNT'),
                       _buildBauhausInput(
+                        context,
                         initialValue: result.totalAmount.toStringAsFixed(2),
                         prefix: '\$',
                       ),
@@ -68,11 +74,11 @@ class OcrResultView extends ConsumerWidget {
 
             const SizedBox(height: 32),
 
-            _buildSectionHeader('RAW TEXT PREVIEW'),
+            _buildSectionHeader(context, 'RAW TEXT PREVIEW'),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
-              color: const Color(0xFFE0E0E0),
+              color: colorScheme.surfaceContainer,
               child: Text(
                 result.rawText,
                 style: GoogleFonts.robotoMono(fontSize: 12),
@@ -88,7 +94,8 @@ class OcrResultView extends ConsumerWidget {
               height: 56,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1D3557), // Navy
+                  backgroundColor: colorScheme.secondary,
+                  foregroundColor: colorScheme.onSecondary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(0),
                   ),
@@ -102,7 +109,7 @@ class OcrResultView extends ConsumerWidget {
                   'CONFIRM & SAVE',
                   style: GoogleFonts.bebasNeue(
                     fontSize: 24,
-                    color: Colors.white,
+                    color: colorScheme.onSecondary,
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -114,7 +121,7 @@ class OcrResultView extends ConsumerWidget {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(BuildContext context, String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Text(
@@ -122,23 +129,27 @@ class OcrResultView extends ConsumerWidget {
         style: GoogleFonts.archivo(
           fontSize: 14,
           fontWeight: FontWeight.bold,
-          color: const Color(0xFFE63946), // Red
+          color: Theme.of(context).colorScheme.tertiary,
           letterSpacing: 1,
         ),
       ),
     );
   }
 
-  Widget _buildBauhausInput({required String initialValue, String? prefix}) {
+  Widget _buildBauhausInput(
+    BuildContext context, {
+    required String initialValue,
+    String? prefix,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.black, width: 2),
+        color: colorScheme.surface,
+        border: Border.all(color: colorScheme.outline, width: 2),
         boxShadow: [
           BoxShadow(
-            color: const Color(
-              0xFFF4A261,
-            ).withValues(alpha: 0.4), // Orange tint
+            color: colorScheme.primary.withValues(alpha: 0.4),
             offset: const Offset(4, 4),
             blurRadius: 0,
           ),
@@ -146,7 +157,11 @@ class OcrResultView extends ConsumerWidget {
       ),
       child: TextFormField(
         initialValue: initialValue,
-        style: GoogleFonts.archivo(fontSize: 18, fontWeight: FontWeight.w500),
+        style: GoogleFonts.archivo(
+          color: colorScheme.onSurface,
+          fontSize: 18,
+          fontWeight: FontWeight.w500,
+        ),
         decoration: InputDecoration(
           prefixText: prefix,
           border: InputBorder.none,

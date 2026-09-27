@@ -29,25 +29,30 @@ class NotificationSettingsView extends ConsumerWidget {
     );
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onInverseSurface,
+        ),
         title: Text(
           'Notification Settings',
           style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
             fontWeight: FontWeight.w700,
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
           ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),
-          child: Container(height: 2, color: BauhausDesign.surfaceWhite),
+          child: Container(
+            height: 2,
+            color: Theme.of(context).colorScheme.surface,
+          ),
         ),
       ),
       body: preferencesState.when(
@@ -168,9 +173,11 @@ class NotificationSettingsView extends ConsumerWidget {
           child: Container(
             padding: const EdgeInsets.all(BauhausDesign.space4),
             decoration: BoxDecoration(
-              color: BauhausDesign.warning.withValues(alpha: 0.12),
+              // Opaque fill: a translucent one lets the opaque zero-blur black
+              // `shadowHardSm` bleed through and render the card black.
+              color: Theme.of(context).colorScheme.surface,
               border: Border.all(
-                color: BauhausDesign.neutral,
+                color: Theme.of(context).colorScheme.outline,
                 width: BauhausDesign.borderThick,
               ),
               boxShadow: const [BauhausDesign.shadowHardSm],
@@ -180,9 +187,9 @@ class NotificationSettingsView extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.notifications_off_outlined,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                     const SizedBox(width: BauhausDesign.space2),
                     Expanded(
@@ -190,7 +197,7 @@ class NotificationSettingsView extends ConsumerWidget {
                         l10n.notificationsDisabledTitle,
                         style: BauhausDesign.getTextTheme(context).titleMedium
                             ?.copyWith(
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.w700,
                             ),
                       ),
@@ -200,9 +207,10 @@ class NotificationSettingsView extends ConsumerWidget {
                 const SizedBox(height: BauhausDesign.space2),
                 Text(
                   l10n.notificationsDisabledMessage,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 ),
                 const SizedBox(height: BauhausDesign.space3),
                 BauhausActionButton(
@@ -239,7 +247,7 @@ class NotificationSettingsView extends ConsumerWidget {
         title,
         style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
           fontWeight: FontWeight.w700,
-          color: BauhausDesign.textDark,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
     );
@@ -261,8 +269,11 @@ class NotificationSettingsView extends ConsumerWidget {
             margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
             padding: const EdgeInsets.all(BauhausDesign.space3),
             decoration: BoxDecoration(
-              border: Border.all(color: BauhausDesign.neutral, width: 1.5),
-              color: BauhausDesign.surfaceLight,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1.5,
+              ),
+              color: Theme.of(context).colorScheme.surfaceContainer,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,7 +284,7 @@ class NotificationSettingsView extends ConsumerWidget {
                       icon: _getCategoryIcon(category),
                       color: isEnabled
                           ? BauhausDesign.secondary
-                          : BauhausDesign.textMuted,
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: BauhausDesign.space3),
                     Expanded(
@@ -286,7 +297,9 @@ class NotificationSettingsView extends ConsumerWidget {
                                 .labelLarge
                                 ?.copyWith(
                                   fontWeight: FontWeight.w700,
-                                  color: BauhausDesign.textDark,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                 ),
                           ),
                           const SizedBox(height: BauhausDesign.space1),
@@ -295,7 +308,11 @@ class NotificationSettingsView extends ConsumerWidget {
                                 ? '${channels.length} channel(s) enabled'
                                 : 'Disabled',
                             style: BauhausDesign.getTextTheme(context).bodySmall
-                                ?.copyWith(color: BauhausDesign.textMuted),
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
                           ),
                         ],
                       ),
@@ -318,14 +335,14 @@ class NotificationSettingsView extends ConsumerWidget {
                   Container(
                     width: double.infinity,
                     height: 1,
-                    color: BauhausDesign.neutral,
+                    color: Theme.of(context).colorScheme.outline,
                   ),
                   const SizedBox(height: BauhausDesign.space3),
                   Text(
                     'Delivery Channels',
                     style: BauhausDesign.getTextTheme(context).labelLarge
                         ?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w700,
                         ),
                   ),
@@ -443,8 +460,11 @@ class NotificationSettingsView extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(BauhausDesign.space3),
               decoration: BoxDecoration(
-                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
-                color: BauhausDesign.backgroundLight,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 1.5,
+                ),
+                color: Theme.of(context).colorScheme.surfaceContainer,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -462,15 +482,16 @@ class NotificationSettingsView extends ConsumerWidget {
                           style: BauhausDesign.getTextTheme(context).labelLarge
                               ?.copyWith(
                                 fontWeight: FontWeight.w700,
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                         ),
                       ),
                       Text(
                         '${preferences.geofenceRadiusKm.toStringAsFixed(1)} km',
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).labelLarge?.copyWith(color: BauhausDesign.textDark),
+                        style: BauhausDesign.getTextTheme(context).labelLarge
+                            ?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
                       ),
                     ],
                   ),
@@ -482,9 +503,9 @@ class NotificationSettingsView extends ConsumerWidget {
                         enabledThumbRadius: 10,
                       ),
                       activeTrackColor: BauhausDesign.secondary,
-                      inactiveTrackColor: BauhausDesign.neutral.withValues(
-                        alpha: 0.2,
-                      ),
+                      inactiveTrackColor: Theme.of(
+                        context,
+                      ).colorScheme.outline.withValues(alpha: 0.2),
                       thumbColor: BauhausDesign.accent,
                       overlayShape: SliderComponentShape.noOverlay,
                     ),
@@ -611,8 +632,11 @@ class NotificationSettingsView extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
-        color: BauhausDesign.surfaceLight,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.5,
+        ),
+        color: Theme.of(context).colorScheme.surface,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -628,16 +652,17 @@ class NotificationSettingsView extends ConsumerWidget {
                   style: BauhausDesign.getTextTheme(context).labelLarge
                       ?.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                 ),
                 if (subtitle != null) ...[
                   const SizedBox(height: BauhausDesign.space1),
                   Text(
                     subtitle,
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                    style: BauhausDesign.getTextTheme(context).bodySmall
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                   ),
                 ],
               ],
@@ -662,8 +687,11 @@ class NotificationSettingsView extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.all(BauhausDesign.space3),
         decoration: BoxDecoration(
-          border: Border.all(color: BauhausDesign.neutral, width: 1.5),
-          color: BauhausDesign.surfaceLight,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 1.5,
+          ),
+          color: Theme.of(context).colorScheme.surface,
         ),
         child: Row(
           children: [
@@ -673,7 +701,7 @@ class NotificationSettingsView extends ConsumerWidget {
               child: Text(
                 label,
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -681,12 +709,15 @@ class NotificationSettingsView extends ConsumerWidget {
             Text(
               value,
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
             const SizedBox(width: BauhausDesign.space2),
-            const Icon(Icons.chevron_right, color: BauhausDesign.textDark),
+            Icon(
+              Icons.chevron_right,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ],
         ),
       ),
@@ -708,9 +739,9 @@ class NotificationSettingsView extends ConsumerWidget {
           Expanded(
             child: Text(
               label,
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
           ),
         ],

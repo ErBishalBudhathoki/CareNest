@@ -15,6 +15,7 @@ class PhotoDisplayWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     // debugPrint("\n\nphotoData: $photoData\n\n");
     return Container(
       width: size,
@@ -27,12 +28,12 @@ class PhotoDisplayWidget extends StatelessWidget {
                 image: AssetImage('assets/icons/profile_placeholder.png'),
                 fit: BoxFit.cover,
               ),
-        border: Border.all(color: const Color(0xFF14B8A6), width: 2),
-        boxShadow: const [
+        border: Border.all(color: colorScheme.secondary, width: 2),
+        boxShadow: [
           BoxShadow(
-            color: Colors.black26,
+            color: colorScheme.shadow.withValues(alpha: 0.15),
             blurRadius: 8.0,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/firebase_auth_provider.dart';
-import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 
 class BauhausLoginView extends ConsumerStatefulWidget {
@@ -124,17 +123,17 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
 
   @override
   Widget build(BuildContext context) {
-    // Bauhaus Palette
-    const colorRed = BauhausDesign.primary;
-    const colorBlue = BauhausDesign.secondary;
-    const colorYellow = BauhausDesign.accent;
-    const colorBlack = BauhausDesign.neutral;
-    const colorWhite = BauhausDesign.backgroundLight;
+    final colorScheme = Theme.of(context).colorScheme;
+    final colorRed = colorScheme.primary;
+    final colorBlue = colorScheme.secondary;
+    final colorYellow = colorScheme.primary;
+    final colorBlack = colorScheme.onSurface;
+    final colorWhite = colorScheme.surface;
 
     return Scaffold(
       backgroundColor: colorWhite,
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: colorBlue))
+          ? Center(child: CircularProgressIndicator(color: colorBlue))
           : SingleChildScrollView(
               child: SizedBox(
                 height: MediaQuery.of(context).size.height,
@@ -147,7 +146,7 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
                       child: Container(
                         width: 200,
                         height: 200,
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           color: colorYellow,
                           shape: BoxShape.circle,
                         ),
@@ -182,9 +181,9 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
                         margin: const EdgeInsets.all(24),
                         padding: const EdgeInsets.all(32),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: colorScheme.surface,
                           border: Border.all(color: colorBlack, width: 3),
-                          boxShadow: const [
+                          boxShadow: [
                             BoxShadow(
                               color: colorBlack,
                               offset: Offset(8, 8),
@@ -218,19 +217,21 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
                                   ),
                                   child: Text(
                                     _errorMessage!,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: colorRed,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
                               _buildBauhausTextField(
+                                context,
                                 controller: _emailController,
                                 label: 'EMAIL',
                                 icon: Icons.email_outlined,
                               ),
                               const SizedBox(height: 24),
                               _buildBauhausTextField(
+                                context,
                                 controller: _passwordController,
                                 label: 'PASSWORD',
                                 icon: Icons.lock_outline,
@@ -244,7 +245,7 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
                                   onPressed: _onLogin,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: colorRed,
-                                    foregroundColor: BauhausDesign.surfaceWhite,
+                                    foregroundColor: colorScheme.onPrimary,
                                     shape: const RoundedRectangleBorder(
                                       borderRadius:
                                           BorderRadius.zero, // Sharp corners
@@ -272,7 +273,8 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
     );
   }
 
-  Widget _buildBauhausTextField({
+  Widget _buildBauhausTextField(
+    BuildContext context, {
     required TextEditingController controller,
     required String label,
     required IconData icon,
@@ -283,36 +285,45 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 12,
             letterSpacing: 1.2,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
         TextFormField(
           controller: controller,
           obscureText: isObscure,
-          style: const TextStyle(color: BauhausDesign.textDark),
-          cursorColor: BauhausDesign.primary,
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+          cursorColor: Theme.of(context).colorScheme.primary,
           decoration: InputDecoration(
-            prefixIcon: Icon(icon, color: BauhausDesign.textMuted),
-            filled: true,
-            fillColor: BauhausDesign.surfaceWhite,
-            border: const OutlineInputBorder(
-              borderSide: BorderSide(color: BauhausDesign.neutral, width: 1),
-              borderRadius: BorderRadius.zero,
+            prefixIcon: Icon(
+              icon,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: BauhausDesign.neutral,
+            filled: true,
+            fillColor: Theme.of(context).colorScheme.surface,
+            border: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.outline,
                 width: 1,
               ),
               borderRadius: BorderRadius.zero,
             ),
-            focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: BauhausDesign.primary, width: 2),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1,
+              ),
+              borderRadius: BorderRadius.zero,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.primary,
+                width: 2,
+              ),
               borderRadius: BorderRadius.zero,
             ),
           ),

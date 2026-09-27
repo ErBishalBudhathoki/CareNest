@@ -53,14 +53,16 @@ class BauhausCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     Widget card = Container(
       margin: margin,
       padding: padding,
-      decoration: BauhausDesign.cardDecoration.copyWith(
-        color: backgroundColor ?? BauhausDesign.surfaceWhite,
-        border: borderColor != null
-            ? Border.all(color: borderColor!, width: 1.5)
-            : null,
+      decoration: BauhausDesign.cardDecorationFor(context).copyWith(
+        color: backgroundColor ?? colorScheme.surfaceContainerLow,
+        border: Border.all(
+          color: borderColor ?? colorScheme.outline,
+          width: 2.5,
+        ),
       ),
       child: child,
     );
@@ -70,7 +72,7 @@ class BauhausCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+          borderRadius: BorderRadius.zero,
           child: card,
         ),
       );
@@ -104,10 +106,11 @@ class BauhausStatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final isPositiveChange = changePercentage != null && changePercentage! > 0;
     final changeColor = isPositiveChange
-        ? BauhausDesign.success
-        : BauhausDesign.warning;
+        ? colorScheme.secondary
+        : colorScheme.primary;
 
     return BauhausCard(
       onTap: onTap,
@@ -116,10 +119,9 @@ class BauhausStatCard extends StatelessWidget {
           final isCompact = constraints.maxHeight < 110;
           final titleStyle = BauhausDesign.getTextTheme(
             context,
-          ).bodyMedium?.copyWith(color: BauhausDesign.textMuted);
-          final subtitleStyle = BauhausDesign.getTextTheme(
-            context,
-          ).bodyMedium?.copyWith(color: BauhausDesign.textMuted, fontSize: 12);
+          ).bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant);
+          final subtitleStyle = BauhausDesign.getTextTheme(context).bodyMedium
+              ?.copyWith(color: colorScheme.onSurfaceVariant, fontSize: 12);
 
           if (isCompact) {
             final valueStyle =
@@ -134,20 +136,18 @@ class BauhausStatCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(BauhausDesign.space1),
                       decoration: BoxDecoration(
-                        color: (iconColor ?? BauhausDesign.primary).withValues(
+                        color: (iconColor ?? colorScheme.primary).withValues(
                           alpha: 0.1,
                         ),
-                        borderRadius: BorderRadius.circular(
-                          BauhausDesign.radiusSm,
-                        ),
+                        borderRadius: BorderRadius.zero,
                         border: Border.all(
-                          color: BauhausDesign.neutral,
+                          color: colorScheme.outline,
                           width: 1,
                         ),
                       ),
                       child: Icon(
                         icon,
-                        color: iconColor ?? BauhausDesign.primary,
+                        color: iconColor ?? colorScheme.primary,
                         size: 16,
                       ),
                     ),
@@ -156,9 +156,7 @@ class BauhausStatCard extends StatelessWidget {
                       child: isLoading
                           ? Container(
                               height: 18,
-                              color: BauhausDesign.neutral.withValues(
-                                alpha: 0.1,
-                              ),
+                              color: colorScheme.outline.withValues(alpha: 0.1),
                             )
                           : FittedBox(
                               fit: BoxFit.scaleDown,
@@ -194,20 +192,15 @@ class BauhausStatCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(BauhausDesign.space2),
                     decoration: BoxDecoration(
-                      color: (iconColor ?? BauhausDesign.primary).withValues(
+                      color: (iconColor ?? colorScheme.primary).withValues(
                         alpha: 0.1,
                       ),
-                      borderRadius: BorderRadius.circular(
-                        BauhausDesign.radiusSm,
-                      ),
-                      border: Border.all(
-                        color: BauhausDesign.neutral,
-                        width: 1,
-                      ),
+                      borderRadius: BorderRadius.zero,
+                      border: Border.all(color: colorScheme.outline, width: 1),
                     ),
                     child: Icon(
                       icon,
-                      color: iconColor ?? BauhausDesign.primary,
+                      color: iconColor ?? colorScheme.primary,
                       size: 20,
                     ),
                   ),
@@ -220,11 +213,9 @@ class BauhausStatCard extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: changeColor.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(
-                          BauhausDesign.radiusSm,
-                        ),
+                        borderRadius: BorderRadius.zero,
                         border: Border.all(
-                          color: BauhausDesign.neutral,
+                          color: colorScheme.outline,
                           width: 1,
                         ),
                       ),
@@ -255,7 +246,7 @@ class BauhausStatCard extends StatelessWidget {
                 Container(
                   height: 24,
                   width: 80,
-                  color: BauhausDesign.neutral.withValues(alpha: 0.1),
+                  color: colorScheme.outline.withValues(alpha: 0.1),
                 )
               else
                 FittedBox(
@@ -310,25 +301,26 @@ class BauhausCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Theme(
-      data: Theme.of(context).copyWith(
+      data: theme.copyWith(
         checkboxTheme: CheckboxThemeData(
           fillColor: WidgetStateProperty.resolveWith<Color?>((states) {
             if (states.contains(WidgetState.disabled)) {
-              return null;
+              return colorScheme.surfaceContainerHighest;
             }
             if (states.contains(WidgetState.selected)) {
-              return activeColor ?? BauhausDesign.primary;
+              return activeColor ?? colorScheme.primary;
             }
-            return BauhausDesign.surfaceWhite;
+            return colorScheme.surface;
           }),
           checkColor: WidgetStateProperty.all(
-            checkColor ?? BauhausDesign.surfaceWhite,
+            checkColor ??
+                (value ? colorScheme.onPrimary : colorScheme.onSurface),
           ),
-          side: const BorderSide(color: BauhausDesign.neutral, width: 1.5),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-          ),
+          side: BorderSide(color: colorScheme.outline, width: 2),
+          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
         ),
       ),
       child: Checkbox(value: value, onChanged: onChanged),
@@ -411,50 +403,51 @@ class BauhausChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color effectiveColor = color ?? BauhausDesign.primary;
-    Color textColor = BauhausDesign.textDark;
+    final colorScheme = Theme.of(context).colorScheme;
+    Color effectiveColor = color ?? colorScheme.primary;
+    Color textColor = colorScheme.onPrimary;
 
     if (color == null) {
       switch (variant) {
         case BauhausChipVariant.primary:
-          effectiveColor = BauhausDesign.primary;
-          textColor = BauhausDesign.surfaceWhite;
+          effectiveColor = colorScheme.primary;
+          textColor = colorScheme.onPrimary;
           break;
         case BauhausChipVariant.secondary:
-          effectiveColor = BauhausDesign.secondary;
-          textColor = BauhausDesign.surfaceWhite;
+          effectiveColor = colorScheme.secondary;
+          textColor = colorScheme.onSecondary;
           break;
         case BauhausChipVariant.success:
-          effectiveColor = BauhausDesign.success;
-          textColor = BauhausDesign.surfaceWhite;
+          effectiveColor = colorScheme.secondary;
+          textColor = colorScheme.onSecondary;
           break;
         case BauhausChipVariant.warning:
-          effectiveColor = BauhausDesign.warning;
-          textColor = BauhausDesign.textDark;
+          effectiveColor = colorScheme.primary;
+          textColor = colorScheme.onPrimary;
           break;
         case BauhausChipVariant.error:
-          effectiveColor = BauhausDesign.error;
-          textColor = BauhausDesign.surfaceWhite;
+          effectiveColor = colorScheme.tertiary;
+          textColor = colorScheme.onTertiary;
           break;
         case BauhausChipVariant.info:
-          effectiveColor = BauhausDesign.info;
-          textColor = BauhausDesign.surfaceWhite;
+          effectiveColor = colorScheme.secondary;
+          textColor = colorScheme.onSecondary;
           break;
         case BauhausChipVariant.outlined:
-          effectiveColor = BauhausDesign.surfaceWhite;
-          textColor = BauhausDesign.textDark;
+          effectiveColor = colorScheme.surface;
+          textColor = colorScheme.onSurface;
           break;
         case BauhausChipVariant.neutral:
-          effectiveColor = BauhausDesign.neutral;
-          textColor = BauhausDesign.surfaceWhite;
+          effectiveColor = colorScheme.inverseSurface;
+          textColor = colorScheme.onInverseSurface;
           break;
       }
     }
 
     if (isSelected) {
       if (variant == BauhausChipVariant.outlined) {
-        effectiveColor = BauhausDesign.primary;
-        textColor = BauhausDesign.surfaceWhite;
+        effectiveColor = colorScheme.primary;
+        textColor = colorScheme.onPrimary;
       }
     }
 
@@ -462,7 +455,8 @@ class BauhausChip extends StatelessWidget {
           onTap: onTap,
           child: Container(
             padding: _padding,
-            decoration: BauhausDesign.chipDecoration(
+            decoration: BauhausDesign.chipDecorationFor(
+              context,
               selected:
                   isSelected ||
                   (onTap == null && variant != BauhausChipVariant.outlined),
@@ -479,8 +473,8 @@ class BauhausChip extends StatelessWidget {
                         (isSelected ||
                             (onTap == null &&
                                 variant != BauhausChipVariant.outlined))
-                        ? BauhausDesign.surfaceWhite
-                        : BauhausDesign.textDark,
+                        ? textColor
+                        : colorScheme.onSurface,
                   ),
                   const SizedBox(width: BauhausDesign.space2),
                 ],
@@ -494,10 +488,8 @@ class BauhausChip extends StatelessWidget {
                               (isSelected ||
                                   (onTap == null &&
                                       variant != BauhausChipVariant.outlined))
-                              ? (variant == BauhausChipVariant.warning
-                                    ? BauhausDesign.textDark
-                                    : BauhausDesign.surfaceWhite)
-                              : BauhausDesign.textDark,
+                              ? textColor
+                              : colorScheme.onSurface,
                         ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -535,6 +527,8 @@ class BauhausSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Row(
       children: [
         Expanded(
@@ -547,22 +541,32 @@ class BauhausSearchBar extends StatelessWidget {
                 onSubmitted: onSubmitted,
                 textInputAction: TextInputAction.search,
                 onTapOutside: (_) => FocusScope.of(context).unfocus(),
-                decoration: BauhausDesign.inputDecoration(hintText).copyWith(
+                decoration: InputDecoration(
+                  filled: theme.inputDecorationTheme.filled,
+                  fillColor: theme.inputDecorationTheme.fillColor,
+                  contentPadding: theme.inputDecorationTheme.contentPadding,
+                  border: theme.inputDecorationTheme.border,
+                  enabledBorder: theme.inputDecorationTheme.enabledBorder,
+                  focusedBorder: theme.inputDecorationTheme.focusedBorder,
+                  errorBorder: theme.inputDecorationTheme.errorBorder,
+                  focusedErrorBorder:
+                      theme.inputDecorationTheme.focusedErrorBorder,
+                  hintStyle: theme.inputDecorationTheme.hintStyle,
+                  errorStyle: theme.inputDecorationTheme.errorStyle,
+                  hintText: hintText,
                   prefixIcon:
                       prefixIcon ??
-                      const Icon(
+                      Icon(
                         Icons.search,
-                        color: BauhausDesign.textMuted,
+                        color: colorScheme.onSurfaceVariant,
                         semanticLabel: 'Search',
                       ),
                   suffixIcon: value.text.isNotEmpty
                       ? IconButton(
-                          tooltip: AppLocalizations.of(
-                            context,
-                          )!.clearSearch,
-                          icon: const Icon(
+                          tooltip: AppLocalizations.of(context)!.clearSearch,
+                          icon: Icon(
                             Icons.clear,
-                            color: BauhausDesign.textMuted,
+                            color: colorScheme.onSurfaceVariant,
                           ),
                           onPressed: () {
                             controller.clear();
@@ -631,6 +635,8 @@ class BauhausTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -638,7 +644,7 @@ class BauhausTextField extends StatelessWidget {
           Text(
             label!,
             style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-              color: BauhausDesign.textDark,
+              color: colorScheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -659,8 +665,19 @@ class BauhausTextField extends StatelessWidget {
           enabled: enabled,
           readOnly: readOnly,
           inputFormatters: inputFormatters,
-          style: BauhausDesign.getTextTheme(context).bodyMedium,
-          decoration: BauhausDesign.inputDecoration(hintText ?? '').copyWith(
+          style: theme.textTheme.bodyMedium,
+          decoration: InputDecoration(
+            filled: theme.inputDecorationTheme.filled,
+            fillColor: theme.inputDecorationTheme.fillColor,
+            contentPadding: theme.inputDecorationTheme.contentPadding,
+            border: theme.inputDecorationTheme.border,
+            enabledBorder: theme.inputDecorationTheme.enabledBorder,
+            focusedBorder: theme.inputDecorationTheme.focusedBorder,
+            errorBorder: theme.inputDecorationTheme.errorBorder,
+            focusedErrorBorder: theme.inputDecorationTheme.focusedErrorBorder,
+            hintStyle: theme.inputDecorationTheme.hintStyle,
+            errorStyle: theme.inputDecorationTheme.errorStyle,
+            hintText: hintText,
             prefixIcon: prefixIcon,
             suffixIcon: suffixIcon,
             enabled: enabled,
@@ -705,52 +722,51 @@ class BauhausActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color effectiveBg = backgroundColor ?? BauhausDesign.primary;
-    Color effectiveText = textColor ?? BauhausDesign.surfaceWhite;
+    final colorScheme = Theme.of(context).colorScheme;
+    Color effectiveBg = backgroundColor ?? colorScheme.primary;
+    Color effectiveText = textColor ?? colorScheme.onPrimary;
 
     if (backgroundColor == null) {
       switch (variant) {
         case BauhausActionVariant.primary:
-          effectiveBg = BauhausDesign.primary;
-          effectiveText = BauhausDesign.surfaceWhite;
+          effectiveBg = colorScheme.primary;
+          effectiveText = colorScheme.onPrimary;
           break;
         case BauhausActionVariant.secondary:
-          effectiveBg = BauhausDesign.surfaceWhite;
-          effectiveText = BauhausDesign.primary;
+          effectiveBg = colorScheme.surface;
+          effectiveText = colorScheme.primary;
           break;
         case BauhausActionVariant.success:
-          effectiveBg = BauhausDesign.success;
-          effectiveText = BauhausDesign.surfaceWhite;
+          effectiveBg = colorScheme.secondary;
+          effectiveText = colorScheme.onSecondary;
           break;
         case BauhausActionVariant.warning:
-          effectiveBg = BauhausDesign.warning;
-          effectiveText = BauhausDesign.textDark;
+          effectiveBg = colorScheme.primary;
+          effectiveText = colorScheme.onPrimary;
           break;
         case BauhausActionVariant.error:
         case BauhausActionVariant.danger:
-          effectiveBg = BauhausDesign.error;
-          effectiveText = BauhausDesign.surfaceWhite;
+          effectiveBg = colorScheme.tertiary;
+          effectiveText = colorScheme.onTertiary;
           break;
         case BauhausActionVariant.info:
-          effectiveBg = BauhausDesign.info;
-          effectiveText = BauhausDesign.surfaceWhite;
+          effectiveBg = colorScheme.secondary;
+          effectiveText = colorScheme.onSecondary;
           break;
         case BauhausActionVariant.ghost:
           effectiveBg = Colors.transparent;
-          effectiveText = BauhausDesign.textDark;
+          effectiveText = colorScheme.onSurface;
           break;
         case BauhausActionVariant.neutral:
-          effectiveBg = BauhausDesign.surfaceWhite;
-          effectiveText = BauhausDesign.textDark;
+          effectiveBg = colorScheme.surface;
+          effectiveText = colorScheme.onSurface;
           break;
       }
     }
 
     if (isOutlined) {
-      effectiveText =
-          textColor ??
-          effectiveBg; // Text color matches the 'color' of the button unless explicit textColor provided
-      effectiveBg = BauhausDesign.surfaceWhite;
+      effectiveText = textColor ?? colorScheme.primary;
+      effectiveBg = colorScheme.surface;
     }
 
     // Ghost variant special handling
@@ -789,22 +805,18 @@ class BauhausActionButton extends StatelessWidget {
     final button = Container(
       decoration: BoxDecoration(
         color: effectiveBg,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+        borderRadius: BorderRadius.zero,
         border: Border.all(
-          color: isOutlined ? effectiveText : BauhausDesign.neutral,
-          width: 1.5,
+          color: isOutlined ? effectiveText : colorScheme.outline,
+          width: 2.5,
         ),
-        boxShadow:
-            isOutlined ||
-                backgroundColor == BauhausDesign.neutral.withValues(alpha: 0.2)
-            ? [] // No shadow for outlined or disabled/neutral-ghost buttons
-            : [BauhausDesign.shadowHard],
+        boxShadow: isOutlined ? const [] : const [BauhausDesign.shadowHard],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: isLoading ? null : onPressed,
-          borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+          borderRadius: BorderRadius.zero,
           child: Padding(
             padding: EdgeInsets.symmetric(
               horizontal: isSmall ? BauhausDesign.space3 : BauhausDesign.space6,
@@ -886,77 +898,79 @@ class BauhausIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     Color effectiveBg;
     Color effectiveIconColor;
-    Color effectiveBorderColor = BauhausDesign.neutral;
+    Color effectiveBorderColor = colorScheme.outline;
 
     switch (variant) {
       case BauhausActionVariant.primary:
-        effectiveBg = BauhausDesign.primary;
-        effectiveIconColor = BauhausDesign.surfaceWhite;
-        effectiveBorderColor = BauhausDesign.primary;
+        effectiveBg = colorScheme.primary;
+        effectiveIconColor = colorScheme.onPrimary;
+        effectiveBorderColor = colorScheme.primary;
         break;
       case BauhausActionVariant.secondary:
-        effectiveBg = BauhausDesign.secondary;
-        effectiveIconColor = BauhausDesign.surfaceWhite;
-        effectiveBorderColor = BauhausDesign.secondary;
+        effectiveBg = colorScheme.secondary;
+        effectiveIconColor = colorScheme.onSecondary;
+        effectiveBorderColor = colorScheme.secondary;
         break;
       case BauhausActionVariant.neutral:
-        effectiveBg = BauhausDesign.surfaceWhite;
-        effectiveIconColor = BauhausDesign.textDark;
-        effectiveBorderColor = BauhausDesign.neutral;
+        effectiveBg = colorScheme.surface;
+        effectiveIconColor = colorScheme.onSurface;
+        effectiveBorderColor = colorScheme.outline;
         break;
       case BauhausActionVariant.ghost:
         effectiveBg = Colors.transparent;
-        effectiveIconColor = BauhausDesign.textDark;
+        effectiveIconColor = colorScheme.onSurface;
         effectiveBorderColor = Colors.transparent;
         break;
       default:
-        effectiveBg = BauhausDesign.surfaceWhite;
-        effectiveIconColor = BauhausDesign.textDark;
-        effectiveBorderColor = BauhausDesign.neutral;
+        effectiveBg = colorScheme.surface;
+        effectiveIconColor = colorScheme.onSurface;
+        effectiveBorderColor = colorScheme.outline;
     }
 
     Widget button = Semantics(
       button: true,
       enabled: onPressed != null,
       label: tooltip ?? icon.toString(),
-      child: Container(
-              constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-              width: isSmall ? 48 : 48,
-              height: isSmall ? 48 : 48,
-              decoration: BoxDecoration(
-                color: effectiveBg,
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                border: variant != BauhausActionVariant.ghost
-                    ? Border.all(color: effectiveBorderColor, width: 2)
-                    : null,
-                boxShadow: variant != BauhausActionVariant.ghost
-                    ? const [BauhausDesign.shadowHardSm]
-                    : null,
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: onPressed,
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  child: Center(
-                    child: Icon(
-                      icon,
-                      color: effectiveIconColor,
-                      size: isSmall ? 18 : 22,
-                      semanticLabel: tooltip,
+      child:
+          Container(
+                constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+                width: isSmall ? 48 : 48,
+                height: isSmall ? 48 : 48,
+                decoration: BoxDecoration(
+                  color: effectiveBg,
+                  borderRadius: BorderRadius.zero,
+                  border: variant != BauhausActionVariant.ghost
+                      ? Border.all(color: effectiveBorderColor, width: 2.5)
+                      : null,
+                  boxShadow: variant != BauhausActionVariant.ghost
+                      ? const [BauhausDesign.shadowHardSm]
+                      : null,
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: onPressed,
+                    borderRadius: BorderRadius.zero,
+                    child: Center(
+                      child: Icon(
+                        icon,
+                        color: effectiveIconColor,
+                        size: isSmall ? 18 : 22,
+                        semanticLabel: tooltip,
+                      ),
                     ),
                   ),
                 ),
+              )
+              .animate(target: onPressed != null ? 1 : 0)
+              .scale(
+                begin: const Offset(1, 1),
+                end: const Offset(0.95, 0.95),
+                duration: 100.ms,
               ),
-            )
-            .animate(target: onPressed != null ? 1 : 0)
-            .scale(
-              begin: const Offset(1, 1),
-              end: const Offset(0.95, 0.95),
-              duration: 100.ms,
-            ),
     );
 
     if (tooltip != null) {
@@ -1006,6 +1020,7 @@ class BauhausEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(BauhausDesign.space8),
@@ -1015,18 +1030,18 @@ class BauhausEmptyState extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(BauhausDesign.space6),
               decoration: BoxDecoration(
-                color: BauhausDesign.surfaceWhite,
-                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                color: colorScheme.surfaceContainerLow,
+                border: Border.all(color: colorScheme.outline, width: 2.5),
                 boxShadow: const [BauhausDesign.shadowHard],
               ),
-              child: Icon(icon, size: 48, color: BauhausDesign.textMuted),
+              child: Icon(icon, size: 48, color: colorScheme.onSurfaceVariant),
             ),
             const SizedBox(height: BauhausDesign.space6),
             Text(
               title,
               style: BauhausDesign.getTextTheme(
                 context,
-              ).headlineMedium?.copyWith(color: BauhausDesign.textDark),
+              ).headlineMedium?.copyWith(color: colorScheme.onSurface),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: BauhausDesign.space3),
@@ -1034,7 +1049,7 @@ class BauhausEmptyState extends StatelessWidget {
               _effectiveMessage,
               style: BauhausDesign.getTextTheme(
                 context,
-              ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+              ).bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             if (_effectiveAction != null) ...[
@@ -1068,6 +1083,7 @@ class BauhausActionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
       child: BauhausCard(
@@ -1083,14 +1099,14 @@ class BauhausActionTile extends StatelessWidget {
               height: 48,
               padding: const EdgeInsets.all(BauhausDesign.space2),
               decoration: BoxDecoration(
-                color: (color ?? BauhausDesign.primary).withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                border: Border.all(color: BauhausDesign.neutral, width: 1),
+                color: (color ?? colorScheme.primary).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.zero,
+                border: Border.all(color: colorScheme.outline, width: 1.5),
               ),
               alignment: Alignment.center,
               child: IconTheme(
                 data: IconThemeData(
-                  color: color ?? BauhausDesign.primary,
+                  color: color ?? colorScheme.primary,
                   size: 24,
                 ),
                 child: icon,
@@ -1106,7 +1122,7 @@ class BauhausActionTile extends StatelessWidget {
                     style: BauhausDesign.getTextTheme(context).labelLarge
                         ?.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: BauhausDesign.textDark,
+                          color: colorScheme.onSurface,
                         ),
                   ),
                   if (subtitle != null) ...[
@@ -1115,7 +1131,7 @@ class BauhausActionTile extends StatelessWidget {
                       subtitle!,
                       style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w600,
                           ),
                     ),
@@ -1128,13 +1144,13 @@ class BauhausActionTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space1),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.backgroundLight,
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral),
+                  color: colorScheme.surfaceContainer,
+                  borderRadius: BorderRadius.zero,
+                  border: Border.all(color: colorScheme.outline, width: 1.5),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.chevron_right_rounded,
-                  color: BauhausDesign.textDark,
+                  color: colorScheme.onSurface,
                   size: 16,
                 ),
               ),
@@ -1164,6 +1180,7 @@ class BauhausSectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: padding ?? EdgeInsets.zero,
       child: Row(
@@ -1179,7 +1196,7 @@ class BauhausSectionHeader extends StatelessWidget {
                   style: BauhausDesign.getTextTheme(context).headlineSmall
                       ?.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: BauhausDesign.textDark,
+                        color: colorScheme.onSurface,
                       ),
                 ),
                 if (subtitle != null) ...[
@@ -1188,7 +1205,7 @@ class BauhausSectionHeader extends StatelessWidget {
                     subtitle!,
                     style: BauhausDesign.getTextTheme(
                       context,
-                    ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                    ).bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
                   ),
                 ],
               ],
@@ -1247,12 +1264,13 @@ class BauhausLoadingState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(BauhausDesign.primary),
+            valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
             strokeWidth: 3,
           ),
           if (showMessage) ...[
@@ -1261,7 +1279,7 @@ class BauhausLoadingState extends StatelessWidget {
               message ?? 'Loading...',
               style: BauhausDesign.getTextTheme(
                 context,
-              ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+              ).bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
             ),
           ],
         ],
@@ -1286,7 +1304,8 @@ class BauhausProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progressColor = color ?? BauhausDesign.primary;
+    final colorScheme = Theme.of(context).colorScheme;
+    final progressColor = color ?? colorScheme.primary;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1312,9 +1331,9 @@ class BauhausProgressIndicator extends StatelessWidget {
         Container(
           height: height,
           decoration: BoxDecoration(
-            color: BauhausDesign.neutral.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
-            border: Border.all(color: BauhausDesign.neutral, width: 1),
+            color: colorScheme.surfaceContainerHigh,
+            borderRadius: BorderRadius.zero,
+            border: Border.all(color: colorScheme.outline, width: 1.5),
           ),
           child: FractionallySizedBox(
             alignment: Alignment.centerLeft,
@@ -1322,7 +1341,7 @@ class BauhausProgressIndicator extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 color: progressColor,
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
+                borderRadius: BorderRadius.zero,
               ),
             ),
           ),

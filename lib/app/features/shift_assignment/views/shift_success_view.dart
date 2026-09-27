@@ -24,7 +24,7 @@ class ShiftSuccessView extends StatelessWidget {
     final textTheme = BauhausDesign.getTextTheme(context);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _buildBauhausAppBar(context),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -35,7 +35,9 @@ class ShiftSuccessView extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(BauhausDesign.space3),
               decoration: BoxDecoration(
-                color: BauhausDesign.success.withValues(alpha: 0.1),
+                // Opaque fill: a translucent one lets the opaque zero-blur
+                // black `shadowHardXs` bleed through and render the row black.
+                color: Theme.of(context).colorScheme.surface,
                 border: Border.all(color: BauhausDesign.success, width: 2),
                 boxShadow: const [BauhausDesign.shadowHardXs],
               ),
@@ -46,13 +48,13 @@ class ShiftSuccessView extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: BauhausDesign.success,
                       border: Border.all(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.outline,
                         width: 2,
                       ),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.check,
-                      color: BauhausDesign.textLight,
+                      color: Theme.of(context).colorScheme.onSecondary,
                       size: 24,
                     ),
                   ),
@@ -74,8 +76,11 @@ class ShiftSuccessView extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(BauhausDesign.space3),
               decoration: BoxDecoration(
-                color: BauhausDesign.surfaceLight,
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                color: Theme.of(context).colorScheme.surface,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
                 boxShadow: const [BauhausDesign.shadowHardXs],
               ),
               child: Column(
@@ -91,7 +96,9 @@ class ShiftSuccessView extends StatelessWidget {
                   const SizedBox(height: BauhausDesign.space3),
                   Container(
                     height: 2,
-                    color: BauhausDesign.neutral.withValues(alpha: 0.2),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.outline.withValues(alpha: 0.2),
                   ),
                   const SizedBox(height: BauhausDesign.space3),
                   _buildDetailRow(
@@ -111,15 +118,18 @@ class ShiftSuccessView extends StatelessWidget {
                 vertical: BauhausDesign.space2,
               ),
               decoration: BoxDecoration(
-                color: BauhausDesign.textDark,
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                color: Theme.of(context).colorScheme.onSurface,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
                 boxShadow: const [BauhausDesign.shadowHardXs],
               ),
               child: Text(
                 AppLocalizations.of(context)!.assignedShifts.toUpperCase(),
                 style: textTheme.labelMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: BauhausDesign.textLight,
+                  color: Theme.of(context).colorScheme.surface,
                   letterSpacing: 1,
                 ),
               ),
@@ -129,8 +139,11 @@ class ShiftSuccessView extends StatelessWidget {
               width: double.infinity,
               constraints: const BoxConstraints(minHeight: 220),
               decoration: BoxDecoration(
-                color: BauhausDesign.surfaceLight,
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                color: Theme.of(context).colorScheme.surface,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
                 boxShadow: const [BauhausDesign.shadowHardXs],
               ),
               child: ShiftDetailsWidget(shiftData: shiftData),
@@ -145,10 +158,13 @@ class ShiftSuccessView extends StatelessWidget {
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: Container(
-        decoration: const BoxDecoration(
-          color: BauhausDesign.surfaceLight,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
           border: Border(
-            bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+            bottom: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
           ),
         ),
         child: SafeArea(
@@ -160,9 +176,9 @@ class ShiftSuccessView extends StatelessWidget {
               children: [
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.arrow_back,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(width: BauhausDesign.space2),
@@ -170,7 +186,7 @@ class ShiftSuccessView extends StatelessWidget {
                   AppLocalizations.of(context)!.shiftDetails.toUpperCase(),
                   style: BauhausDesign.getTextTheme(context).displaySmall
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.bold,
                       ),
                 ),
@@ -209,7 +225,7 @@ class ShiftSuccessView extends StatelessWidget {
                 label,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: BauhausDesign.neutral,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   letterSpacing: 1,
                 ),
               ),
@@ -217,7 +233,7 @@ class ShiftSuccessView extends StatelessWidget {
                 value,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),

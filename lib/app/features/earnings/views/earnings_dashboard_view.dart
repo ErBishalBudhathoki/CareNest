@@ -47,10 +47,10 @@ class EarningsDashboardView extends ConsumerWidget {
     final rangeLabel = _formatRangeLabel(state.period, range.start, range.end);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: BauhausDesign.primary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -58,21 +58,24 @@ class EarningsDashboardView extends ConsumerWidget {
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),
-          child: Container(color: BauhausDesign.surfaceWhite, height: 2),
+          child: Container(
+            color: Theme.of(context).colorScheme.onPrimary,
+            height: 2,
+          ),
         ),
         title: Text(
           l10n?.earningsDashboardTitle ?? 'Earnings Dashboard',
           style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onPrimary,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.0,
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.download_rounded,
-              color: BauhausDesign.surfaceWhite,
+              color: Theme.of(context).colorScheme.surface,
             ),
             tooltip: l10n?.generatePayslip ?? 'Generate payslip',
             onPressed: () {
@@ -166,10 +169,10 @@ class EarningsDashboardView extends ConsumerWidget {
                           horizontal: 12,
                           vertical: 8,
                         ),
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           border: Border(
                             left: BorderSide(
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                               width: 4,
                             ),
                           ),
@@ -262,12 +265,18 @@ class EarningsDashboardView extends ConsumerWidget {
           children: [
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: BauhausDesign.textDark, width: 2),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 2,
+                ),
                 borderRadius: BorderRadius.circular(4),
-                boxShadow: const [
-                  BoxShadow(color: BauhausDesign.neutral, offset: Offset(2, 2)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).colorScheme.outline,
+                    offset: Offset(2, 2),
+                  ),
                 ],
-                color: BauhausDesign.surfaceLight,
+                color: Theme.of(context).colorScheme.onPrimary,
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -281,7 +290,7 @@ class EarningsDashboardView extends ConsumerWidget {
                   Container(
                     width: 2,
                     height: 40,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                   _buildToggleItem(
                     context: context,
@@ -295,7 +304,7 @@ class EarningsDashboardView extends ConsumerWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _buildNavButton(Icons.arrow_back, onPrevious),
+                _buildNavButton(context, Icons.arrow_back, onPrevious),
                 const SizedBox(width: 8),
                 Text(
                   rangeLabel.toUpperCase(),
@@ -303,11 +312,11 @@ class EarningsDashboardView extends ConsumerWidget {
                       ?.copyWith(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                 ),
                 const SizedBox(width: 8),
-                _buildNavButton(Icons.arrow_forward, onNext),
+                _buildNavButton(context, Icons.arrow_forward, onNext),
               ],
             ),
           ],
@@ -325,7 +334,9 @@ class EarningsDashboardView extends ConsumerWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        color: isSelected ? BauhausDesign.textDark : Colors.transparent,
+        color: isSelected
+            ? Theme.of(context).colorScheme.onSurface
+            : Colors.transparent,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Text(
           label,
@@ -333,24 +344,35 @@ class EarningsDashboardView extends ConsumerWidget {
             fontSize: 16,
             fontWeight: FontWeight.bold,
             color: isSelected
-                ? BauhausDesign.surfaceLight
-                : BauhausDesign.textDark,
+                ? Theme.of(context).colorScheme.surface
+                : Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildNavButton(IconData icon, VoidCallback onTap) {
+  Widget _buildNavButton(
+    BuildContext context,
+    IconData icon,
+    VoidCallback onTap,
+  ) {
     return InkWell(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          border: Border.all(color: BauhausDesign.textDark, width: 2),
-          color: BauhausDesign.surfaceLight,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+          color: Theme.of(context).colorScheme.surface,
         ),
-        child: Icon(icon, size: 20, color: BauhausDesign.textDark),
+        child: Icon(
+          icon,
+          size: 20,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
       ),
     );
   }
@@ -380,28 +402,34 @@ class EarningsDashboardView extends ConsumerWidget {
           style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(width: 12),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            border: Border.all(color: BauhausDesign.textDark, width: 2),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.onSurface,
+              width: 2,
+            ),
             borderRadius: BorderRadius.circular(0),
-            boxShadow: const [
-              BoxShadow(color: BauhausDesign.neutral, offset: Offset(2, 2)),
+            boxShadow: [
+              BoxShadow(
+                color: Theme.of(context).colorScheme.outline,
+                offset: Offset(2, 2),
+              ),
             ],
-            color: BauhausDesign.surfaceLight,
+            color: Theme.of(context).colorScheme.surface,
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<TaxFrequency>(
               value: value,
-              icon: const Icon(
+              icon: Icon(
                 Icons.arrow_drop_down,
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
-              dropdownColor: BauhausDesign.surfaceLight,
+              dropdownColor: Theme.of(context).colorScheme.surface,
               onChanged: (v) {
                 if (v == null) return;
                 onChanged(v);
@@ -415,7 +443,7 @@ class EarningsDashboardView extends ConsumerWidget {
                         style: BauhausDesign.getTextTheme(context).bodyMedium
                             ?.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                       ),
                     ),
@@ -436,7 +464,7 @@ class EarningsDashboardView extends ConsumerWidget {
     final currencyFormat = _audCurrencyFormat();
 
     return Container(
-      decoration: BauhausDesign.cardDecoration,
+      decoration: BauhausDesign.cardDecorationFor(context),
       padding: const EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -446,7 +474,7 @@ class EarningsDashboardView extends ConsumerWidget {
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: BauhausDesign.neutral,
+              color: Theme.of(context).colorScheme.outline,
             ),
           ),
           const SizedBox(height: 16),
@@ -471,9 +499,10 @@ class EarningsDashboardView extends ConsumerWidget {
                     ),
                     Text(
                       AppLocalizations.of(context)!.totalEarningsTitle,
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).labelLarge?.copyWith(color: BauhausDesign.textDark),
+                      style: BauhausDesign.getTextTheme(context).labelLarge
+                          ?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
                     ),
                   ],
                 ),
@@ -492,24 +521,25 @@ class EarningsDashboardView extends ConsumerWidget {
                             ?.copyWith(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                       ),
                     ),
                     Text(
                       AppLocalizations.of(context)!.totalHoursTitle,
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).labelLarge?.copyWith(color: BauhausDesign.textDark),
+                      style: BauhausDesign.getTextTheme(context).labelLarge
+                          ?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
                     ),
                   ],
                 ),
               ),
             ],
           ),
-          const Divider(
+          Divider(
             height: 32,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             thickness: 1,
           ),
           Row(
@@ -524,7 +554,7 @@ class EarningsDashboardView extends ConsumerWidget {
                   style: BauhausDesign.getTextTheme(context).bodyMedium
                       ?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -534,10 +564,12 @@ class EarningsDashboardView extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: BauhausDesign.success,
-                  border: Border.all(color: BauhausDesign.textDark),
-                  boxShadow: const [
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  boxShadow: [
                     BoxShadow(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       offset: Offset(2, 2),
                     ),
                   ],
@@ -548,7 +580,7 @@ class EarningsDashboardView extends ConsumerWidget {
                       ?.copyWith(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                 ),
               ),
@@ -566,9 +598,9 @@ class EarningsDashboardView extends ConsumerWidget {
     final currencyFormat = _audCurrencyFormat();
 
     return Container(
-      decoration: BauhausDesign.cardDecoration.copyWith(
-        color: BauhausDesign.backgroundLight,
-      ),
+      decoration: BauhausDesign.cardDecorationFor(
+        context,
+      ).copyWith(color: Theme.of(context).colorScheme.surface),
       padding: const EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -607,7 +639,7 @@ class EarningsDashboardView extends ConsumerWidget {
                   style: BauhausDesign.getTextTheme(context).bodyMedium
                       ?.copyWith(
                         fontWeight: FontWeight.w500,
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.end,
@@ -635,16 +667,17 @@ class EarningsDashboardView extends ConsumerWidget {
                           DateFormat(
                             'MMM dd',
                           ).format(DateTime.parse(item.date)),
-                          style: BauhausDesign.getTextTheme(
-                            context,
-                          ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                          style: BauhausDesign.getTextTheme(context).bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
                         ),
                         Text(
                           '${item.hours} ${AppLocalizations.of(context)!.hoursAbbrev}',
                           style: BauhausDesign.getTextTheme(context).labelLarge
                               ?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                         ),
                       ],
@@ -666,9 +699,9 @@ class EarningsDashboardView extends ConsumerWidget {
       return Center(
         child: Text(
           AppLocalizations.of(context)!.noDataForChart,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).bodyMedium?.copyWith(color: BauhausDesign.neutral),
+          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
       );
     }
@@ -685,18 +718,22 @@ class EarningsDashboardView extends ConsumerWidget {
     final highlighted = ref.watch(earningsChartHighlightProvider);
     final displayValue = highlighted ?? maxEarnings;
     final notifier = ref.read(earningsChartHighlightProvider.notifier);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFF05050B), Color(0xFF0D0D14)],
+          colors: [
+            colorScheme.inverseSurface,
+            colorScheme.inverseSurface.withValues(alpha: 0.82),
+          ],
         ),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x66000000),
+            color: colorScheme.inverseSurface.withValues(alpha: 0.4),
             blurRadius: 24,
             offset: Offset(0, 12),
           ),
@@ -735,7 +772,8 @@ class EarningsDashboardView extends ConsumerWidget {
                               style: BauhausDesign.getTextTheme(context)
                                   .labelSmall
                                   ?.copyWith(
-                                    color: Colors.white70,
+                                    color: colorScheme.onInverseSurface
+                                        .withValues(alpha: 0.7),
                                     fontSize: 10,
                                   ),
                             );
@@ -759,20 +797,24 @@ class EarningsDashboardView extends ConsumerWidget {
                         spotIndexes
                             .map(
                               (index) => TouchedSpotIndicatorData(
-                                FlLine(color: Colors.white24, strokeWidth: 1),
+                                FlLine(
+                                  color: colorScheme.onInverseSurface
+                                      .withValues(alpha: 0.3),
+                                  strokeWidth: 1,
+                                ),
                                 const FlDotData(show: false),
                               ),
                             )
                             .toList(),
                     touchSpotThreshold: 30,
                     touchTooltipData: LineTouchTooltipData(
-                      getTooltipColor: (_) => Colors.white70,
+                      getTooltipColor: (_) => colorScheme.inverseSurface,
                       getTooltipItems: (spots) => spots
                           .map(
                             (spot) => LineTooltipItem(
                               'AUD ${spot.y.toStringAsFixed(0)}',
-                              const TextStyle(
-                                color: Colors.black,
+                              TextStyle(
+                                color: colorScheme.onInverseSurface,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -797,23 +839,23 @@ class EarningsDashboardView extends ConsumerWidget {
                       spots: spots,
                       isCurved: true,
                       preventCurveOverShooting: true,
-                      color: Colors.redAccent,
+                      color: colorScheme.error,
                       barWidth: 3,
                       dotData: const FlDotData(show: false),
                       belowBarData: BarAreaData(
                         show: true,
                         gradient: LinearGradient(
                           colors: [
-                            Colors.redAccent.withValues(alpha: 0.2),
-                            Colors.red.shade900.withValues(alpha: 0.8),
+                            colorScheme.error.withValues(alpha: 0.2),
+                            colorScheme.error.withValues(alpha: 0.8),
                           ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                         ),
                       ),
-                      shadow: const Shadow(
+                      shadow: Shadow(
                         blurRadius: 20,
-                        color: Color(0x99FF2E2E),
+                        color: colorScheme.error.withValues(alpha: 0.6),
                         offset: Offset(0, 10),
                       ),
                     ),
@@ -831,14 +873,19 @@ class EarningsDashboardView extends ConsumerWidget {
                 Text(
                   'EXPENSES',
                   style: BauhausDesign.getTextTheme(context).labelSmall
-                      ?.copyWith(color: Colors.white70, letterSpacing: 1.5),
+                      ?.copyWith(
+                        color: colorScheme.onInverseSurface.withValues(
+                          alpha: 0.7,
+                        ),
+                        letterSpacing: 1.5,
+                      ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'AUD ${displayValue.toStringAsFixed(0)}',
                   style: BauhausDesign.getTextTheme(context).headlineMedium
                       ?.copyWith(
-                        color: Colors.white,
+                        color: colorScheme.onInverseSurface,
                         fontWeight: FontWeight.bold,
                       ),
                 ),
@@ -858,7 +905,7 @@ class EarningsDashboardView extends ConsumerWidget {
     final currencyFormat = _audCurrencyFormat();
 
     return Container(
-      decoration: BauhausDesign.cardDecoration,
+      decoration: BauhausDesign.cardDecorationFor(context),
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: history
@@ -873,9 +920,10 @@ class EarningsDashboardView extends ConsumerWidget {
                         DateFormat(
                           'EEE, MMM d',
                         ).format(DateTime.parse(item.date)).toUpperCase(),
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).labelLarge?.copyWith(color: BauhausDesign.textDark),
+                        style: BauhausDesign.getTextTheme(context).labelLarge
+                            ?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -922,7 +970,7 @@ class EarningsDashboardView extends ConsumerWidget {
     }
 
     return Container(
-      decoration: BauhausDesign.cardDecoration,
+      decoration: BauhausDesign.cardDecorationFor(context),
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -932,7 +980,7 @@ class EarningsDashboardView extends ConsumerWidget {
             style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 12),
@@ -950,16 +998,17 @@ class EarningsDashboardView extends ConsumerWidget {
                           style: BauhausDesign.getTextTheme(context).bodyMedium
                               ?.copyWith(
                                 fontWeight: FontWeight.w500,
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                         ),
                       ),
                       const SizedBox(width: 12),
                       Text(
                         '${item.hours.toStringAsFixed(1)}H',
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
+                            ?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
                       ),
                       const SizedBox(width: 12),
                       Text(
@@ -967,7 +1016,7 @@ class EarningsDashboardView extends ConsumerWidget {
                         style: BauhausDesign.getTextTheme(context).bodyMedium
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                       ),
                     ],
@@ -1004,7 +1053,7 @@ class EarningsDashboardView extends ConsumerWidget {
     final estimated = viewModel.calculateTax(periodEarnings, frequency);
 
     return Container(
-      decoration: BauhausDesign.cardDecoration,
+      decoration: BauhausDesign.cardDecorationFor(context),
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1021,9 +1070,10 @@ class EarningsDashboardView extends ConsumerWidget {
           const SizedBox(height: 4),
           Text(
             AppLocalizations.of(context)!.taxEstimatorSubtitle,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(fontSize: 12, color: BauhausDesign.neutral),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              fontSize: 12,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: 16),
           _buildTaxRow(
@@ -1033,7 +1083,7 @@ class EarningsDashboardView extends ConsumerWidget {
             currencyFormat,
             isBold: true,
           ),
-          const Divider(color: BauhausDesign.textDark, thickness: 1),
+          Divider(color: Theme.of(context).colorScheme.onSurface, thickness: 1),
           _buildTaxRow(
             context,
             AppLocalizations.of(context)!.estimatedTax,
@@ -1041,7 +1091,7 @@ class EarningsDashboardView extends ConsumerWidget {
             currencyFormat,
             color: BauhausDesign.error,
           ),
-          const Divider(color: BauhausDesign.textDark, thickness: 1),
+          Divider(color: Theme.of(context).colorScheme.onSurface, thickness: 1),
           _buildTaxRow(
             context,
             AppLocalizations.of(context)!.netPay,
@@ -1078,7 +1128,7 @@ class EarningsDashboardView extends ConsumerWidget {
             format.format(value),
             style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
               fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-              color: color ?? BauhausDesign.textDark,
+              color: color ?? Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ],

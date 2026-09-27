@@ -20,8 +20,16 @@ class ButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveBackgroundColor = buttonColor ?? BauhausDesign.primary;
-    final effectiveTextColor = textColor ?? BauhausDesign.surfaceWhite;
+    final colorScheme = Theme.of(context).colorScheme;
+    final effectiveBackgroundColor = buttonColor ?? colorScheme.primary;
+    final effectiveTextColor =
+        textColor ??
+        (buttonColor == null
+            ? colorScheme.onPrimary
+            : ThemeData.estimateBrightnessForColor(buttonColor!) ==
+                  Brightness.dark
+            ? colorScheme.surface
+            : colorScheme.onSurface);
     final isDisabled = onPressed == null;
 
     return Semantics(
@@ -29,57 +37,57 @@ class ButtonWidget extends StatelessWidget {
       enabled: !isDisabled && !isLoading,
       label: isLoading ? '$buttonText, loading' : buttonText,
       child: Container(
-      decoration: BoxDecoration(
-        color: isDisabled
-            ? BauhausDesign.surfaceOffWhite
-            : effectiveBackgroundColor,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
-        boxShadow: isDisabled ? [] : [BauhausDesign.shadowHard],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: isLoading ? null : onPressed,
+        decoration: BoxDecoration(
+          color: isDisabled
+              ? colorScheme.surfaceContainerHighest
+              : effectiveBackgroundColor,
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          child: Container(
-            constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
-            padding: const EdgeInsets.symmetric(
-              horizontal: BauhausDesign.space6,
-              vertical: BauhausDesign.space3,
-            ),
-            alignment: Alignment.center,
-            child: isLoading
-                ? Semantics(
-                    liveRegion: true,
-                    label: 'Loading',
-                    child: SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          effectiveTextColor,
+          border: Border.all(color: colorScheme.outline, width: 1.5),
+          boxShadow: isDisabled ? [] : [BauhausDesign.shadowHard],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: isLoading ? null : onPressed,
+            borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+            child: Container(
+              constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+              padding: const EdgeInsets.symmetric(
+                horizontal: BauhausDesign.space6,
+                vertical: BauhausDesign.space3,
+              ),
+              alignment: Alignment.center,
+              child: isLoading
+                  ? Semantics(
+                      liveRegion: true,
+                      label: 'Loading',
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            effectiveTextColor,
+                          ),
                         ),
                       ),
+                    )
+                  : Text(
+                      buttonText,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        color: isDisabled
+                            ? colorScheme.onSurfaceVariant
+                            : effectiveTextColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                  )
-                : Text(
-                    buttonText,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(
-                      color: isDisabled
-                          ? BauhausDesign.textMuted
-                          : effectiveTextColor,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
+            ),
           ),
         ),
-      ),
       ),
     );
   }

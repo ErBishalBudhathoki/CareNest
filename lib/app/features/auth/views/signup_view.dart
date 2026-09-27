@@ -24,6 +24,8 @@ class SignUpView extends ConsumerStatefulWidget {
 
 class _SignUpViewState extends ConsumerState<SignUpView>
     with TickerProviderStateMixin {
+  ColorScheme get _colorScheme => Theme.of(context).colorScheme;
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(
     debugLabel: 'signup_scaffold_key',
   );
@@ -47,10 +49,10 @@ class _SignUpViewState extends ConsumerState<SignUpView>
 
     // Set system UI overlay style
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: BauhausDesign.surfaceLight,
+        systemNavigationBarColor: Theme.of(context).colorScheme.surface,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
@@ -106,7 +108,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: _colorScheme.surface,
       body: NotificationListener<OverscrollIndicatorNotification>(
         onNotification: (notification) {
           notification.disallowIndicator();
@@ -125,7 +127,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
               scrolledUnderElevation: 0,
               shadowColor: Colors.transparent,
               surfaceTintColor: Colors.transparent,
-              backgroundColor: BauhausDesign.backgroundLight,
+              backgroundColor: _colorScheme.surface,
               leading: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: BauhausIconButton(
@@ -149,7 +151,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
                   return Stack(
                     fit: StackFit.expand,
                     children: [
-                      Container(color: BauhausDesign.backgroundLight),
+                      Container(color: _colorScheme.surface),
                       if (!isCollapsed)
                         IgnorePointer(
                           child: BauhausLiquidAnimation(
@@ -173,14 +175,14 @@ class _SignUpViewState extends ConsumerState<SignUpView>
                           right: 72,
                           child: IgnorePointer(
                             child: Container(
-                              color: BauhausDesign.backgroundLight,
+                              color: _colorScheme.surface,
                               child: Text(
                                 AppLocalizations.of(context)!.signupTitle,
                                 textAlign: TextAlign.center,
                                 style: BauhausDesign.getTextTheme(context)
                                     .titleMedium
                                     ?.copyWith(
-                                      color: BauhausDesign.textDark,
+                                      color: _colorScheme.onSurface,
                                       fontWeight: FontWeight.w700,
                                     ),
                               ),
@@ -237,12 +239,12 @@ class _SignUpViewState extends ConsumerState<SignUpView>
           decoration: BoxDecoration(
             color: BauhausDesign.secondary,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            border: Border.all(color: _colorScheme.outline, width: 2),
             boxShadow: const [BauhausDesign.shadowHard],
           ),
           child: Icon(
             Iconsax.user_add,
-            color: BauhausDesign.surfaceLight,
+            color: _colorScheme.onSecondary,
             size: 36,
           ),
         ),
@@ -250,7 +252,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
         Text(
           AppLocalizations.of(context)!.signupTitle,
           style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
-            color: BauhausDesign.textDark,
+            color: _colorScheme.onSurface,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
@@ -259,7 +261,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
         Text(
           AppLocalizations.of(context)!.signupSubtitle,
           style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-            color: BauhausDesign.neutral,
+            color: _colorScheme.onSurface,
             fontWeight: FontWeight.w400,
             height: 1.4,
           ),
@@ -275,7 +277,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
   ) {
     return Container(
       padding: const EdgeInsets.all(32),
-      decoration: BauhausDesign.cardDecoration,
+      decoration: BauhausDesign.cardDecorationFor(context),
       child: Form(
         key: _formKey,
         child: Column(
@@ -308,7 +310,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
           AppLocalizations.of(context)!.personalInfoSection,
           style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: BauhausDesign.textDark,
+            color: _colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -319,7 +321,10 @@ class _SignUpViewState extends ConsumerState<SignUpView>
                 controller: signupViewModel.model.firstNameController,
                 label: AppLocalizations.of(context)!.firstNameHint,
                 hintText: 'John',
-                prefixIcon: Icon(Iconsax.user, color: BauhausDesign.textMuted),
+                prefixIcon: Icon(
+                  Iconsax.user,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return AppLocalizations.of(context)!.firstNameRequired;
@@ -337,7 +342,10 @@ class _SignUpViewState extends ConsumerState<SignUpView>
                 controller: signupViewModel.model.lastNameController,
                 label: AppLocalizations.of(context)!.lastNameHint,
                 hintText: 'Doe',
-                prefixIcon: Icon(Iconsax.user, color: BauhausDesign.textMuted),
+                prefixIcon: Icon(
+                  Iconsax.user,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return AppLocalizations.of(context)!.lastNameRequired;
@@ -356,7 +364,10 @@ class _SignUpViewState extends ConsumerState<SignUpView>
           controller: signupViewModel.model.emailController,
           label: AppLocalizations.of(context)!.emailLabel,
           hintText: 'john@example.com',
-          prefixIcon: Icon(Iconsax.sms, color: BauhausDesign.textMuted),
+          prefixIcon: Icon(
+            Iconsax.sms,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
           keyboardType: TextInputType.emailAddress,
           validator: (value) {
             if (value == null ||
@@ -376,7 +387,10 @@ class _SignUpViewState extends ConsumerState<SignUpView>
           controller: signupViewModel.model.abnController,
           label: AppLocalizations.of(context)!.abnHint,
           hintText: '11 digits (numbers only)',
-          prefixIcon: Icon(Iconsax.building_4, color: BauhausDesign.textMuted),
+          prefixIcon: Icon(
+            Iconsax.building_4,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
           keyboardType: TextInputType.number,
           inputFormatters: [
             FilteringTextInputFormatter.digitsOnly,
@@ -410,12 +424,12 @@ class _SignUpViewState extends ConsumerState<SignUpView>
           AppLocalizations.of(context)!.accountTypeSection,
           style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: BauhausDesign.textDark,
+            color: _colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
         BauhausCard(
-          backgroundColor: BauhausDesign.backgroundLight,
+          backgroundColor: _colorScheme.surface,
           borderColor: BauhausDesign.primary.withValues(alpha: 0.2),
           padding: EdgeInsets.zero,
           child: RadioGroup<String>(
@@ -435,7 +449,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
                 ),
                 Container(
                   height: 1,
-                  color: BauhausDesign.neutral.withValues(alpha: 0.1),
+                  color: _colorScheme.outline.withValues(alpha: 0.1),
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                 ),
                 _buildRoleOption(
@@ -477,14 +491,14 @@ class _SignUpViewState extends ConsumerState<SignUpView>
               decoration: BoxDecoration(
                 color: isSelected
                     ? BauhausDesign.primary.withValues(alpha: 0.1)
-                    : BauhausDesign.neutral.withValues(alpha: 0.05),
+                    : _colorScheme.onSurface.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
               ),
               child: Icon(
                 icon,
                 color: isSelected
                     ? BauhausDesign.primary
-                    : BauhausDesign.neutral.withValues(alpha: 0.5),
+                    : _colorScheme.onSurface.withValues(alpha: 0.5),
                 size: 24,
               ),
             ),
@@ -498,7 +512,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
                     style: BauhausDesign.getTextTheme(context).bodyLarge
                         ?.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: BauhausDesign.textDark,
+                          color: _colorScheme.onSurface,
                         ),
                   ),
                   const SizedBox(height: 4),
@@ -506,7 +520,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
                     subtitle,
                     style: BauhausDesign.getTextTheme(
                       context,
-                    ).bodySmall?.copyWith(color: BauhausDesign.neutral),
+                    ).bodySmall?.copyWith(color: _colorScheme.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -526,12 +540,12 @@ class _SignUpViewState extends ConsumerState<SignUpView>
           AppLocalizations.of(context)!.organizationSetupSection,
           style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: BauhausDesign.textDark,
+            color: _colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
         BauhausCard(
-          backgroundColor: BauhausDesign.surfaceWhite,
+          backgroundColor: _colorScheme.surface,
           borderColor: BauhausDesign.secondary.withValues(alpha: 0.2),
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -553,14 +567,13 @@ class _SignUpViewState extends ConsumerState<SignUpView>
                           style: BauhausDesign.getTextTheme(context).bodyLarge
                               ?.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: BauhausDesign.textDark,
+                                color: _colorScheme.onSurface,
                               ),
                         ),
                         Text(
                           AppLocalizations.of(context)!.createNewOrgDesc,
-                          style: BauhausDesign.getTextTheme(
-                            context,
-                          ).bodySmall?.copyWith(color: BauhausDesign.neutral),
+                          style: BauhausDesign.getTextTheme(context).bodySmall
+                              ?.copyWith(color: _colorScheme.onSurfaceVariant),
                         ),
                       ],
                     ),
@@ -583,7 +596,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
                   hintText: AppLocalizations.of(context)!.organizationNameHint,
                   prefixIcon: Icon(
                     Iconsax.building_4,
-                    color: BauhausDesign.textMuted,
+                    color: _colorScheme.onSurfaceVariant,
                   ),
                   validator: (value) {
                     if (signupViewModel.model.isCreatingOrganization &&
@@ -615,19 +628,19 @@ class _SignUpViewState extends ConsumerState<SignUpView>
           AppLocalizations.of(context)!.joinOrgSection,
           style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: BauhausDesign.textDark,
+            color: _colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
         BauhausCard(
-          backgroundColor: BauhausDesign.surfaceWhite,
-          borderColor: BauhausDesign.neutral.withValues(alpha: 0.2),
+          backgroundColor: _colorScheme.surface,
+          borderColor: _colorScheme.outline.withValues(alpha: 0.2),
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
               Row(
                 children: [
-                  Icon(Iconsax.people, color: BauhausDesign.neutral, size: 24),
+                  Icon(Iconsax.people, color: _colorScheme.onSurface, size: 24),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -638,14 +651,13 @@ class _SignUpViewState extends ConsumerState<SignUpView>
                           style: BauhausDesign.getTextTheme(context).bodyLarge
                               ?.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: BauhausDesign.textDark,
+                                color: _colorScheme.onSurface,
                               ),
                         ),
                         Text(
                           AppLocalizations.of(context)!.joinExistingOrgDesc,
-                          style: BauhausDesign.getTextTheme(
-                            context,
-                          ).bodySmall?.copyWith(color: BauhausDesign.neutral),
+                          style: BauhausDesign.getTextTheme(context).bodySmall
+                              ?.copyWith(color: _colorScheme.onSurfaceVariant),
                         ),
                       ],
                     ),
@@ -666,7 +678,10 @@ class _SignUpViewState extends ConsumerState<SignUpView>
                   controller: signupViewModel.model.organizationCodeController,
                   label: AppLocalizations.of(context)!.organizationCodeHint,
                   hintText: 'Enter code',
-                  prefixIcon: Icon(Iconsax.key, color: BauhausDesign.textMuted),
+                  prefixIcon: Icon(
+                    Iconsax.key,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                   validator: (value) {
                     if (signupViewModel.model.isJoiningOrganization &&
                         (value == null || value.isEmpty)) {
@@ -697,7 +712,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
           AppLocalizations.of(context)!.securitySection,
           style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: BauhausDesign.textDark,
+            color: _colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -705,12 +720,15 @@ class _SignUpViewState extends ConsumerState<SignUpView>
           controller: signupViewModel.model.passwordController,
           label: AppLocalizations.of(context)!.passwordLabel,
           hintText: AppLocalizations.of(context)!.passwordMinLength,
-          prefixIcon: Icon(Iconsax.lock, color: BauhausDesign.textMuted),
+          prefixIcon: Icon(
+            Iconsax.lock,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
           obscureText: !_isPasswordVisible,
           suffixIcon: IconButton(
             icon: Icon(
               _isPasswordVisible ? Iconsax.eye : Iconsax.eye_slash,
-              color: BauhausDesign.textMuted,
+              color: _colorScheme.onSurfaceVariant,
             ),
             onPressed: () {
               setState(() {
@@ -733,12 +751,15 @@ class _SignUpViewState extends ConsumerState<SignUpView>
           controller: signupViewModel.model.confirmPasswordController,
           label: AppLocalizations.of(context)!.confirmPasswordHint,
           hintText: 'Re-enter password',
-          prefixIcon: Icon(Iconsax.lock, color: BauhausDesign.textMuted),
+          prefixIcon: Icon(
+            Iconsax.lock,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
           obscureText: !_isConfirmPasswordVisible,
           suffixIcon: IconButton(
             icon: Icon(
               _isConfirmPasswordVisible ? Iconsax.eye : Iconsax.eye_slash,
-              color: BauhausDesign.textMuted,
+              color: _colorScheme.onSurfaceVariant,
             ),
             onPressed: () {
               setState(() {
@@ -775,7 +796,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
             isLoading: isLoading,
             icon: Iconsax.user_add,
             backgroundColor: BauhausDesign.secondary,
-            textColor: Colors.white,
+            textColor: _colorScheme.onSecondary,
             onPressed: () => _handleSignup(signupViewModel, flushBarWidget),
           );
         },
@@ -847,7 +868,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
           AppLocalizations.of(context)!.alreadyHaveAccount,
           style: BauhausDesign.getTextTheme(
             context,
-          ).bodyMedium?.copyWith(color: BauhausDesign.neutral),
+          ).bodyMedium?.copyWith(color: _colorScheme.onSurface),
         ),
         const SizedBox(width: 6),
         GestureDetector(

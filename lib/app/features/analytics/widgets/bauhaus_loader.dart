@@ -21,7 +21,10 @@ class BauhausLoader extends StatelessWidget {
                 height: size,
                 decoration: BoxDecoration(
                   color: color,
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 2,
+                  ),
                 ),
               )
               .animate(onPlay: (controller) => controller.repeat())

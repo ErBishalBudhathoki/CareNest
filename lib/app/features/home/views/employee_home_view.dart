@@ -60,6 +60,8 @@ class EmployeeHomeView extends ConsumerStatefulWidget {
 }
 
 class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
+  ColorScheme get _colorScheme => Theme.of(context).colorScheme;
+
   final PageController _pageController = PageController();
   Timer? _broadcastPollTimer;
   dynamic eml;
@@ -402,7 +404,7 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
     });
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: _colorScheme.surface,
       body: Stack(
         children: [
           // Background pattern
@@ -418,7 +420,7 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
           RefreshIndicator(
             onRefresh: _refreshData,
             color: BauhausDesign.primary,
-            backgroundColor: BauhausDesign.surfaceWhite,
+            backgroundColor: _colorScheme.surface,
             strokeWidth: 3,
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -724,7 +726,7 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                             context,
                           )!.earningsDesc,
                           icon: Icons.monetization_on_outlined,
-                          baseColor: const Color(0xFF4CAF50), // Green
+                          baseColor: _colorScheme.secondary,
                           actionLabel: AppLocalizations.of(
                             context,
                           )!.viewEarnings,
@@ -832,10 +834,10 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            decoration: const BoxDecoration(
-              color: BauhausDesign.textDark, // Black Header
+            decoration: BoxDecoration(
+              color: _colorScheme.inverseSurface, // Black Header
               border: Border(
-                bottom: BorderSide(color: BauhausDesign.textDark, width: 0),
+                bottom: BorderSide(color: _colorScheme.outline, width: 0),
               ),
             ),
             child: Row(
@@ -846,12 +848,12 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                   style: BauhausDesign.getTextTheme(context).titleMedium
                       ?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: BauhausDesign.surfaceWhite,
+                        color: _colorScheme.onInverseSurface,
                       ),
                 ),
-                const Icon(
+                Icon(
                   Icons.account_balance,
-                  color: BauhausDesign.surfaceWhite,
+                  color: _colorScheme.onInverseSurface,
                   size: 18,
                 ),
               ],
@@ -901,9 +903,8 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                       const SizedBox(height: 8),
                       Text(
                         maskedAccount,
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).labelMedium?.copyWith(color: BauhausDesign.neutral),
+                        style: BauhausDesign.getTextTheme(context).labelMedium
+                            ?.copyWith(color: _colorScheme.onSurfaceVariant),
                       ),
                       const SizedBox(height: 24),
                       SizedBox(
@@ -939,8 +940,8 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
       height: 120,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral.withValues(alpha: 0.3)),
+        color: _colorScheme.surface,
+        border: Border.all(color: _colorScheme.outline.withValues(alpha: 0.3)),
       ),
       child: const Center(child: BauhausLoadingState(showMessage: false)),
     );
@@ -957,10 +958,10 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
           margin: const EdgeInsets.only(bottom: 24),
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: const Color(0xFFE63946), // Bauhaus Red
-            border: Border.all(color: Colors.black, width: 2),
-            boxShadow: const [
-              BoxShadow(color: Colors.black, offset: Offset(4, 4)),
+            color: _colorScheme.error, // Bauhaus Red
+            border: Border.all(color: _colorScheme.outline, width: 2),
+            boxShadow: [
+              BoxShadow(color: _colorScheme.shadow, offset: const Offset(4, 4)),
             ],
           ),
           child: Column(
@@ -968,9 +969,9 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
             children: [
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.warning_amber_rounded,
-                    color: Colors.white,
+                    color: _colorScheme.onError,
                     size: 32,
                   ),
                   const SizedBox(width: 12),
@@ -978,7 +979,7 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                     child: Text(
                       'EMERGENCY ALERT',
                       style: GoogleFonts.outfit(
-                        color: Colors.white,
+                        color: _colorScheme.onError,
                         fontSize: 20,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.5,
@@ -991,7 +992,7 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
               Text(
                 b.message,
                 style: GoogleFonts.inter(
-                  color: Colors.white,
+                  color: _colorScheme.onError,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   height: 1.4,
@@ -1017,15 +1018,15 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                                 context,
                               )!.acknowledgeFailed(e.toString()),
                             ),
-                            backgroundColor: Colors.black,
+                            backgroundColor: _colorScheme.inverseSurface,
                           ),
                         );
                       }
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
+                    backgroundColor: _colorScheme.inverseSurface,
+                    foregroundColor: _colorScheme.onInverseSurface,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.zero,

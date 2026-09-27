@@ -8,6 +8,7 @@ class OrganizationSwitcher extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
     final orgState = ref.watch(organizationProvider);
     final userOrgs = orgState.userOrganizations;
     // We assume currentOrganization has an 'id' field if it's not null,
@@ -24,8 +25,8 @@ class OrganizationSwitcher extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          border: Border.all(color: BauhausDesign.neutral),
-          color: Colors.white,
+          border: Border.all(color: colorScheme.outline),
+          color: colorScheme.surface,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -37,8 +38,8 @@ class OrganizationSwitcher extends ConsumerWidget {
               child: Center(
                 child: Text(
                   currentOrgName.isNotEmpty ? currentOrgName[0] : 'O',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: colorScheme.onInverseSurface,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -72,8 +73,8 @@ class OrganizationSwitcher extends ConsumerWidget {
                     child: Center(
                       child: Text(
                         name.isNotEmpty ? name[0] : 'O',
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: colorScheme.onInverseSurface,
                           fontSize: 12,
                         ),
                       ),

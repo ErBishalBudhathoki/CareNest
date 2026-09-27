@@ -35,27 +35,27 @@ class AdminFeedbackFeedView extends ConsumerWidget {
     final feedbackState = ref.watch(adminFeedbackFeedProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.neutral,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
         elevation: 0,
         title: Text(
           'Client Feedback',
           style: GoogleFonts.oswald(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
             letterSpacing: 1.1,
           ),
         ),
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         actions: [
           IconButton(
             onPressed: () => ref.invalidate(adminFeedbackFeedProvider),
-            icon: const Icon(Icons.refresh),
+            icon: Icon(Icons.refresh),
             tooltip: 'Refresh',
           ),
         ],
@@ -81,7 +81,7 @@ class AdminFeedbackFeedView extends ConsumerWidget {
 
           return RefreshIndicator(
             color: BauhausDesign.primary,
-            backgroundColor: BauhausDesign.surfaceWhite,
+            backgroundColor: Theme.of(context).colorScheme.surface,
             onRefresh: () async {
               ref.invalidate(adminFeedbackFeedProvider);
               await ref.read(adminFeedbackFeedProvider.future);
@@ -139,7 +139,7 @@ class _FeedbackCard extends StatelessWidget {
                     color: BauhausDesign.primary.withValues(alpha: 0.3),
                   ),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.rate_review_outlined,
                   color: BauhausDesign.primary,
                   size: 20,
@@ -159,9 +159,12 @@ class _FeedbackCard extends StatelessWidget {
                     const SizedBox(height: BauhausDesign.space1),
                     Text(
                       'Client: $clientName',
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                      style: BauhausDesign.getTextTheme(context).bodySmall
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                   ],
                 ),
@@ -172,9 +175,9 @@ class _FeedbackCard extends StatelessWidget {
           const SizedBox(height: BauhausDesign.space3),
           Text(
             'Worker: $workerName',
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space2),
           if (comments.isNotEmpty)
@@ -185,16 +188,16 @@ class _FeedbackCard extends StatelessWidget {
           else
             Text(
               'No additional comments provided.',
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           const SizedBox(height: BauhausDesign.space3),
           Text(
             submittedAt,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -227,12 +230,16 @@ class _RatingPill extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.star, size: 14, color: BauhausDesign.surfaceWhite),
+          Icon(
+            Icons.star,
+            size: 14,
+            color: Theme.of(context).colorScheme.surface,
+          ),
           const SizedBox(width: BauhausDesign.space1),
           Text(
             safeRating.toString(),
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: BauhausDesign.surfaceWhite,
+              color: Theme.of(context).colorScheme.surface,
               fontWeight: FontWeight.w700,
             ),
           ),

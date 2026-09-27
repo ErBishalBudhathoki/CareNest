@@ -80,11 +80,18 @@ class _NotificationHistoryViewState
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.notifications_none, size: 64, color: Colors.grey),
+          Icon(
+            Icons.notifications_none,
+            size: 64,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'No notifications yet',
-            style: TextStyle(fontSize: 18, color: Colors.grey),
+            style: TextStyle(
+              fontSize: 18,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -95,15 +102,24 @@ class _NotificationHistoryViewState
     NotificationModel notification,
     dynamic notifier,
   ) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Card(
-      color: notification.isRead ? Colors.white : Colors.blue.shade50,
+      color: notification.isRead
+          ? colorScheme.surface
+          : colorScheme.secondaryContainer,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: notification.isRead
-              ? Colors.grey.shade300
-              : Colors.blue,
-          child: Icon(_getIconForType(notification.type), color: Colors.white),
+              ? colorScheme.surfaceContainerHigh
+              : colorScheme.secondary,
+          child: Icon(
+            _getIconForType(notification.type),
+            color: notification.isRead
+                ? colorScheme.onSurfaceVariant
+                : colorScheme.onSecondary,
+          ),
         ),
         title: Text(
           notification.title,
@@ -121,7 +137,10 @@ class _NotificationHistoryViewState
             const SizedBox(height: 4),
             Text(
               notification.timeAgo,
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),

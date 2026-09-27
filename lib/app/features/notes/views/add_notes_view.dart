@@ -103,22 +103,22 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
 
   @override
   Widget build(BuildContext context) {
-    // Single Bauhaus light theme — fixed colors, never derived from OS
-    // dark mode.
-    const textColor = BauhausDesign.textDark;
-    const hintColor = BauhausDesign.textMuted;
+    final textColor = Theme.of(context).colorScheme.onSurface;
+    final hintColor = Theme.of(context).colorScheme.onSurfaceVariant;
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: BauhausDesign.surfaceLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           'Add Notes',
-          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onInverseSurface,
+          ),
         ),
         elevation: 0.0,
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -132,7 +132,10 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: BauhausDesign.neutral, height: 1),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 1,
+          ),
         ),
       ),
       body: Padding(
@@ -185,8 +188,8 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
                   : 'Speech not available',
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
                 color: (!_isInitialized || !_speechEnabled)
-                    ? BauhausDesign.textMuted
-                    : BauhausDesign.textDark,
+                    ? Theme.of(context).colorScheme.onSurfaceVariant
+                    : Theme.of(context).colorScheme.onSurface,
               ),
               textAlign: TextAlign.center,
               maxLines: 2,
@@ -203,18 +206,23 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: (!_isInitialized || !_speechEnabled || _isSaving)
-                        ? BauhausDesign.neutral.withValues(alpha: 0.3)
+                        ? Theme.of(
+                            context,
+                          ).colorScheme.outline.withValues(alpha: 0.3)
                         : BauhausDesign.primary,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                    border: Border.all(color: BauhausDesign.neutral, width: 2),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 2,
+                    ),
                     boxShadow: const [BauhausDesign.shadowHard],
                   ),
                   child: Center(
                     child: Icon(
                       _speechToText.isNotListening ? Icons.mic_off : Icons.mic,
                       color: (!_isInitialized || !_speechEnabled || _isSaving)
-                          ? BauhausDesign.textMuted
-                          : BauhausDesign.surfaceWhite,
+                          ? Theme.of(context).colorScheme.onSurfaceVariant
+                          : Theme.of(context).colorScheme.onPrimary,
                       size: 28,
                     ),
                   ),
@@ -243,9 +251,11 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
       SnackBar(
         content: Text(
           message,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+            color: isError
+                ? Theme.of(context).colorScheme.onError
+                : Theme.of(context).colorScheme.onSecondary,
+          ),
         ),
         backgroundColor: isError ? BauhausDesign.error : BauhausDesign.success,
       ),

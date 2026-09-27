@@ -78,9 +78,10 @@ class _OnboardingAppPersonalizationState
   @override
   Widget build(BuildContext context) {
     final theme = BauhausDesign.getTextTheme(context);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.background,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(
@@ -102,7 +103,7 @@ class _OnboardingAppPersonalizationState
                       'Skip',
                       style: BauhausDesign.neoMonoStyle(
                         context,
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.5,
@@ -119,7 +120,7 @@ class _OnboardingAppPersonalizationState
                   child: Text(
                     'What brings you\nto CareNest?',
                     style: theme.displayMedium?.copyWith(
-                      color: BauhausDesign.textDark,
+                      color: colorScheme.onSurface,
                       fontWeight: FontWeight.w800,
                       height: 1.2,
                     ),
@@ -133,7 +134,7 @@ class _OnboardingAppPersonalizationState
                   'Choose up to 3. We\'ll tailor your '
                   'experience.',
                   style: theme.bodyLarge?.copyWith(
-                    color: BauhausDesign.textMuted,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     height: 1.5,
                   ),
                 ),
@@ -184,6 +185,8 @@ class _OptionChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -194,13 +197,11 @@ class _OptionChip extends StatelessWidget {
           vertical: BauhausDesign.space4,
         ),
         decoration: BoxDecoration(
-          color: isSelected
-              ? BauhausDesign.primary
-              : BauhausDesign.surfaceWhite,
+          color: isSelected ? BauhausDesign.primary : colorScheme.surface,
           border: Border.all(
             color: isSelected
-                ? BauhausDesign.neoInk
-                : BauhausDesign.neoInk.withValues(alpha: 0.6),
+                ? colorScheme.outline
+                : colorScheme.outline.withValues(alpha: 0.6),
             width: isSelected ? 3.0 : 2.0,
           ),
           boxShadow: isSelected
@@ -213,16 +214,16 @@ class _OptionChip extends StatelessWidget {
               isSelected ? Icons.check_box : Icons.check_box_outline_blank,
               size: 24,
               color: isSelected
-                  ? BauhausDesign.surfaceWhite
-                  : BauhausDesign.textMuted,
+                  ? colorScheme.onPrimary
+                  : colorScheme.onSurfaceVariant,
             ),
             const SizedBox(width: BauhausDesign.space3),
             Text(
               label,
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
                 color: isSelected
-                    ? BauhausDesign.surfaceWhite
-                    : BauhausDesign.textDark,
+                    ? colorScheme.onPrimary
+                    : colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -241,6 +242,8 @@ class _NextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return SizedBox(
       height: 56,
       child: GestureDetector(
@@ -250,10 +253,12 @@ class _NextButton extends StatelessWidget {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: enabled
-                ? BauhausDesign.neoInk
-                : BauhausDesign.surfaceOffWhite,
+                ? colorScheme.inverseSurface
+                : colorScheme.surfaceContainerHighest,
             border: Border.all(
-              color: enabled ? BauhausDesign.neoInk : BauhausDesign.textMuted,
+              color: enabled
+                  ? colorScheme.outline
+                  : colorScheme.onSurfaceVariant,
               width: 2.5,
             ),
             boxShadow: enabled ? const [BauhausDesign.shadowHard] : const [],
@@ -262,8 +267,8 @@ class _NextButton extends StatelessWidget {
             'Continue',
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
               color: enabled
-                  ? BauhausDesign.surfaceWhite
-                  : BauhausDesign.textMuted,
+                  ? colorScheme.onInverseSurface
+                  : colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.5,
             ),

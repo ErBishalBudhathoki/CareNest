@@ -35,10 +35,10 @@ class InvoiceAIConsentView extends ConsumerWidget {
     final textTheme = BauhausDesign.getTextTheme(context);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: BauhausDesign.primary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -47,10 +47,13 @@ class InvoiceAIConsentView extends ConsumerWidget {
           padding: const EdgeInsets.all(8.0),
           child: IconButton(
             onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+            icon: Icon(Icons.arrow_back_ios_new, size: 20),
             style: IconButton.styleFrom(
               backgroundColor: BauhausDesign.surfaceOffWhite,
-              side: const BorderSide(color: BauhausDesign.neutral, width: 1.5),
+              side: BorderSide(
+                color: Theme.of(context).colorScheme.onSurface,
+                width: 1.5,
+              ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               ),
@@ -60,13 +63,16 @@ class InvoiceAIConsentView extends ConsumerWidget {
         title: Text(
           'AI CONSENT',
           style: textTheme.headlineMedium?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
             fontWeight: FontWeight.w700,
           ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),
-          child: Container(color: BauhausDesign.neutral, height: 2),
+          child: Container(
+            color: Theme.of(context).colorScheme.onSurface,
+            height: 2,
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -78,14 +84,17 @@ class InvoiceAIConsentView extends ConsumerWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(BauhausDesign.space4),
               decoration: BoxDecoration(
-                color: BauhausDesign.surfaceWhite,
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                color: Theme.of(context).colorScheme.onPrimary,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 2,
+                ),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.shield_outlined,
                     color: BauhausDesign.primary,
                     size: 32,
@@ -94,7 +103,7 @@ class InvoiceAIConsentView extends ConsumerWidget {
                   Text(
                     'AI-Powered Invoicing uses Google Gemini',
                     style: textTheme.titleLarge?.copyWith(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -106,7 +115,7 @@ class InvoiceAIConsentView extends ConsumerWidget {
                     'Gemini model through our secure server (Google Cloud '
                     'Vertex AI).',
                     style: textTheme.bodyMedium?.copyWith(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: BauhausDesign.space3),
@@ -115,7 +124,7 @@ class InvoiceAIConsentView extends ConsumerWidget {
                     'information is only used to provide the AI features you '
                     'request.',
                     style: textTheme.bodyMedium?.copyWith(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontStyle: FontStyle.italic,
                     ),
                   ),
@@ -133,7 +142,7 @@ class InvoiceAIConsentView extends ConsumerWidget {
                       child: Text(
                         'I AGREE - ENABLE AI FEATURES',
                         style: textTheme.labelLarge?.copyWith(
-                          color: BauhausDesign.surfaceWhite,
+                          color: Theme.of(context).colorScheme.onPrimary,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1.1,
                         ),
@@ -145,9 +154,11 @@ class InvoiceAIConsentView extends ConsumerWidget {
                     width: double.infinity,
                     child: OutlinedButton(
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: BauhausDesign.textDark,
-                        side: const BorderSide(
-                          color: BauhausDesign.neutral,
+                        foregroundColor: Theme.of(
+                          context,
+                        ).colorScheme.onSurface,
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.onSurface,
                           width: 2,
                         ),
                         padding: const EdgeInsets.symmetric(
@@ -158,7 +169,7 @@ class InvoiceAIConsentView extends ConsumerWidget {
                       child: Text(
                         'NOT NOW',
                         style: textTheme.labelLarge?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1.1,
                         ),

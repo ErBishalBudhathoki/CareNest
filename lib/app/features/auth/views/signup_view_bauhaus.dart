@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/firebase_auth_provider.dart';
-import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 
 class BauhausSignupView extends ConsumerStatefulWidget {
@@ -13,6 +12,8 @@ class BauhausSignupView extends ConsumerStatefulWidget {
 }
 
 class _BauhausSignupViewState extends ConsumerState<BauhausSignupView> {
+  ColorScheme get _colorScheme => Theme.of(context).colorScheme;
+
   final _emailController = TextEditingController();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
@@ -91,11 +92,11 @@ class _BauhausSignupViewState extends ConsumerState<BauhausSignupView> {
         if (mounted) {
           // Show success message
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text(
                 'Account created! Please verify your email and login.',
               ),
-              backgroundColor: Colors.green,
+              backgroundColor: Theme.of(context).colorScheme.secondary,
             ),
           );
 
@@ -131,26 +132,27 @@ class _BauhausSignupViewState extends ConsumerState<BauhausSignupView> {
 
   @override
   Widget build(BuildContext context) {
-    const colorRed = Color(0xFFD62D24);
-    const colorBlue = Color(0xFF1E5AA8);
-    const colorBlack = Color(0xFF1A1A1A);
+    final colorScheme = Theme.of(context).colorScheme;
+    final colorRed = colorScheme.error;
+    final colorBlue = colorScheme.secondary;
+    final colorBlack = colorScheme.onSurface;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: colorScheme.secondary,
+        foregroundColor: colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: BauhausDesign.surfaceWhite),
+          icon: Icon(Icons.arrow_back, color: colorScheme.onSecondary),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: colorBlue))
+          ? Center(child: CircularProgressIndicator(color: colorBlue))
           : SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
@@ -178,7 +180,7 @@ class _BauhausSignupViewState extends ConsumerState<BauhausSignupView> {
                           ),
                           child: Text(
                             _errorMessage!,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: colorRed,
                               fontWeight: FontWeight.bold,
                             ),
@@ -248,7 +250,7 @@ class _BauhausSignupViewState extends ConsumerState<BauhausSignupView> {
                           onPressed: _onRegister,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: colorBlue,
-                            foregroundColor: Colors.white,
+                            foregroundColor: colorScheme.onSecondary,
                             shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.zero,
                             ),
@@ -283,8 +285,8 @@ class _BauhausSignupViewState extends ConsumerState<BauhausSignupView> {
   }
 
   Widget _buildIndicator(String text, bool met) {
-    const colorGreen = Color(0xFF008f39);
-    const colorRed = Color(0xFFD62D24);
+    final colorGreen = _colorScheme.secondary;
+    final colorRed = _colorScheme.error;
 
     return Row(
       children: [
@@ -329,19 +331,19 @@ class _BauhausSignupViewState extends ConsumerState<BauhausSignupView> {
           keyboardType: inputType,
           onChanged: onChanged,
           decoration: InputDecoration(
-            prefixIcon: Icon(icon, color: Colors.black),
+            prefixIcon: Icon(icon, color: _colorScheme.onSurface),
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: _colorScheme.surfaceContainerLow,
             border: const OutlineInputBorder(
               borderSide: BorderSide.none,
               borderRadius: BorderRadius.zero,
             ),
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey[300]!),
+              borderSide: BorderSide(color: _colorScheme.outline),
               borderRadius: BorderRadius.zero,
             ),
-            focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black, width: 2),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: _colorScheme.primary, width: 2),
               borderRadius: BorderRadius.zero,
             ),
           ),

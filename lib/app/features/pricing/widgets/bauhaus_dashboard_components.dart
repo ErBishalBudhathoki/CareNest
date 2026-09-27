@@ -277,7 +277,7 @@ class BauhausActivityItem extends StatelessWidget {
               Container(
                 width: 2,
                 height: 40,
-                color: BauhausDesign.neutral,
+                color: Theme.of(context).colorScheme.onSurface,
                 margin: const EdgeInsets.symmetric(vertical: 4.0),
               ),
           ],
@@ -336,12 +336,17 @@ class BauhausLoadingSkeleton extends StatelessWidget {
           width: width,
           height: height,
           decoration: BoxDecoration(
-            color: BauhausDesign.neutral.withValues(alpha: 0.3),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(borderRadius),
           ),
         )
         .animate(onPlay: (controller) => controller.repeat())
-        .shimmer(duration: 1500.ms, color: Colors.white.withValues(alpha: 0.5));
+        .shimmer(
+          duration: 1500.ms,
+          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
+        );
   }
 }
 

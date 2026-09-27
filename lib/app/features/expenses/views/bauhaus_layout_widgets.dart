@@ -25,9 +25,15 @@ class MondrianGrid extends StatelessWidget {
           padding: const EdgeInsets.all(BauhausDesign.space6),
           decoration: BoxDecoration(
             color: BauhausDesign.primary,
-            border: Border.all(color: BauhausDesign.neutral, width: 3),
-            boxShadow: const [
-              BoxShadow(color: BauhausDesign.neutral, offset: Offset(8, 8)),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.onSurface,
+              width: 3,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Theme.of(context).colorScheme.onSurface,
+                offset: Offset(8, 8),
+              ),
             ],
           ),
           child: Column(
@@ -36,7 +42,7 @@ class MondrianGrid extends StatelessWidget {
               Text(
                 'TOTAL SPEND',
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.surfaceLight,
+                  color: Theme.of(context).colorScheme.onPrimary,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.5,
                 ),
@@ -46,7 +52,7 @@ class MondrianGrid extends StatelessWidget {
                 totalAmount,
                 style: BauhausDesign.getTextTheme(context).displayLarge
                     ?.copyWith(
-                      color: BauhausDesign.surfaceLight,
+                      color: Theme.of(context).colorScheme.onPrimary,
                       fontWeight: FontWeight.bold,
                       height: 1.0,
                     ),
@@ -66,10 +72,13 @@ class MondrianGrid extends StatelessWidget {
                 padding: const EdgeInsets.all(BauhausDesign.space4),
                 decoration: BoxDecoration(
                   color: BauhausDesign.accent,
-                  border: Border.all(color: BauhausDesign.neutral, width: 3),
-                  boxShadow: const [
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 3,
+                  ),
+                  boxShadow: [
                     BoxShadow(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.onSurface,
                       offset: Offset(6, 6),
                     ),
                   ],
@@ -77,17 +86,17 @@ class MondrianGrid extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.pending_actions,
                       size: 32,
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                     const SizedBox(height: BauhausDesign.space4),
                     Text(
                       pendingAmount,
                       style: BauhausDesign.getTextTheme(context).headlineMedium
                           ?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.bold,
                           ),
                     ),
@@ -95,7 +104,7 @@ class MondrianGrid extends StatelessWidget {
                       'PENDING',
                       style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w700,
                           ),
                     ),
@@ -111,10 +120,13 @@ class MondrianGrid extends StatelessWidget {
                 padding: const EdgeInsets.all(BauhausDesign.space4),
                 decoration: BoxDecoration(
                   color: BauhausDesign.secondary,
-                  border: Border.all(color: BauhausDesign.neutral, width: 3),
-                  boxShadow: const [
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 3,
+                  ),
+                  boxShadow: [
                     BoxShadow(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.onSurface,
                       offset: Offset(6, 6),
                     ),
                   ],
@@ -122,17 +134,17 @@ class MondrianGrid extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.check_circle_outline,
                       size: 32,
-                      color: BauhausDesign.surfaceLight,
+                      color: Theme.of(context).colorScheme.onSecondary,
                     ),
                     const SizedBox(height: BauhausDesign.space4),
                     Text(
                       approvedAmount,
                       style: BauhausDesign.getTextTheme(context).headlineMedium
                           ?.copyWith(
-                            color: BauhausDesign.surfaceLight,
+                            color: Theme.of(context).colorScheme.onSecondary,
                             fontWeight: FontWeight.bold,
                           ),
                     ),
@@ -140,7 +152,7 @@ class MondrianGrid extends StatelessWidget {
                       'APPROVED',
                       style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
-                            color: BauhausDesign.surfaceLight,
+                            color: Theme.of(context).colorScheme.onSecondary,
                             fontWeight: FontWeight.w700,
                           ),
                     ),
@@ -181,15 +193,24 @@ class DataStrip extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: BauhausDesign.space2),
         width: double.infinity,
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceLight,
+          color: Theme.of(context).colorScheme.surface,
           border: Border(
-            top: BorderSide(color: BauhausDesign.neutral, width: 2),
-            bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+            top: BorderSide(
+              color: Theme.of(context).colorScheme.onSurface,
+              width: 2,
+            ),
+            bottom: BorderSide(
+              color: Theme.of(context).colorScheme.onSurface,
+              width: 2,
+            ),
             left: BorderSide(
-              color: BauhausDesign.neutral,
+              color: Theme.of(context).colorScheme.onSurface,
               width: 6,
             ), // Thick left border
-            right: BorderSide(color: BauhausDesign.neutral, width: 1),
+            right: BorderSide(
+              color: Theme.of(context).colorScheme.onSurface,
+              width: 1,
+            ),
           ),
         ),
         child: Padding(
@@ -207,7 +228,7 @@ class DataStrip extends StatelessWidget {
                       title.toUpperCase(),
                       style: BauhausDesign.getTextTheme(context).titleMedium
                           ?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w600,
                           ),
                       maxLines: 1,
@@ -218,7 +239,7 @@ class DataStrip extends StatelessWidget {
                       subtitle,
                       style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w500,
                           ),
                     ),
@@ -232,7 +253,7 @@ class DataStrip extends StatelessWidget {
                     rightValue,
                     style: BauhausDesign.getTextTheme(context).bodyMedium
                         ?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.bold,
                         ),
                   ),
@@ -243,12 +264,14 @@ class DataStrip extends StatelessWidget {
                         horizontal: 4,
                         vertical: 2,
                       ),
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.inverseSurface,
                       child: Text(
                         status!.toUpperCase(),
                         style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
-                              color: BauhausDesign.surfaceLight,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onInverseSurface,
                               fontSize: 8,
                               fontWeight: FontWeight.w900,
                             ),
@@ -292,14 +315,17 @@ class BlockTabSelector extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? BauhausDesign.neutral
-                    : BauhausDesign.surfaceLight,
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                    ? Theme.of(context).colorScheme.inverseSurface
+                    : Theme.of(context).colorScheme.surface,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 2,
+                ),
                 boxShadow: isSelected
                     ? [] // No shadow when pressed "down"
                     : [
-                        const BoxShadow(
-                          color: BauhausDesign.neutral,
+                        BoxShadow(
+                          color: Theme.of(context).colorScheme.onSurface,
                           offset: Offset(4, 4),
                         ),
                       ],
@@ -311,8 +337,8 @@ class BlockTabSelector extends StatelessWidget {
                 tabs[index].toUpperCase(),
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
                   color: isSelected
-                      ? BauhausDesign.surfaceLight
-                      : BauhausDesign.textDark,
+                      ? Theme.of(context).colorScheme.onInverseSurface
+                      : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.0,
                 ),

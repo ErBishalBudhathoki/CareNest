@@ -30,7 +30,7 @@ class EmployeeStatusCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                _buildAvatar(),
+                _buildAvatar(context),
                 const SizedBox(width: BauhausDesign.space4),
                 Expanded(
                   child: Column(
@@ -41,7 +41,7 @@ class EmployeeStatusCard extends StatelessWidget {
                         style: BauhausDesign.getTextTheme(context).bodyLarge
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                       ),
                       const SizedBox(height: 2),
@@ -69,25 +69,27 @@ class EmployeeStatusCard extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatar() {
+  Widget _buildAvatar(BuildContext context) {
     return Container(
       width: 50,
       height: 50,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: BauhausDesign.neutral.withValues(alpha: 0.1),
-        border: Border.all(color: _getStatusColor(), width: 2),
+        color: Theme.of(
+          context,
+        ).colorScheme.surfaceContainer.withValues(alpha: 0.1),
+        border: Border.all(color: _getStatusColor(context), width: 2),
       ),
       child:
           (employee.photoData != null && employee.photoData!.isNotEmpty) ||
               (employee.profileImage != null &&
                   employee.profileImage!.isNotEmpty)
-          ? ClipOval(child: _buildProfileImage())
-          : _buildDefaultAvatar(),
+          ? ClipOval(child: _buildProfileImage(context))
+          : _buildDefaultAvatar(context),
     );
   }
 
-  Widget _buildProfileImage() {
+  Widget _buildProfileImage(BuildContext context) {
     return EmployeeProfileImage(
       profileImage: employee.profileImage,
       photoData: employee.photoData,
@@ -95,31 +97,33 @@ class EmployeeStatusCard extends StatelessWidget {
       filename: employee.filename,
       size: 50.0,
       isActive: employee.status == WorkStatus.active,
-      statusColor: _getStatusIndicatorColor(),
+      statusColor: _getStatusIndicatorColor(context),
       onTap: onTap,
     );
   }
 
-  Widget _buildDefaultAvatar() {
+  Widget _buildDefaultAvatar(BuildContext context) {
     return Container(
       width: 50.0,
       height: 50.0,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: BauhausDesign.neutral.withValues(alpha: 0.1),
+        color: Theme.of(
+          context,
+        ).colorScheme.surfaceContainer.withValues(alpha: 0.1),
       ),
       child: Icon(Icons.person, size: 30.0, color: BauhausDesign.textMuted),
     );
   }
 
-  Color? _getStatusIndicatorColor() {
+  Color? _getStatusIndicatorColor(BuildContext context) {
     switch (employee.status) {
       case WorkStatus.active:
         return BauhausDesign.success;
       case WorkStatus.onBreak:
         return BauhausDesign.warning;
       case WorkStatus.offline:
-        return BauhausDesign.neutral;
+        return Theme.of(context).colorScheme.onSurfaceVariant;
       case WorkStatus.clockedOut:
         return BauhausDesign.error;
     }
@@ -161,7 +165,7 @@ class EmployeeStatusCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.backgroundLight,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
       ),
       child: Column(
@@ -215,9 +219,9 @@ class EmployeeStatusCard extends StatelessWidget {
           Expanded(
             child: Text(
               value,
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).bodySmall?.copyWith(color: BauhausDesign.textDark),
+              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
               textAlign: TextAlign.end,
             ),
           ),
@@ -226,7 +230,7 @@ class EmployeeStatusCard extends StatelessWidget {
     );
   }
 
-  Color _getStatusColor() {
+  Color _getStatusColor(BuildContext context) {
     switch (employee.status) {
       case WorkStatus.active:
         return BauhausDesign.success;
@@ -234,7 +238,7 @@ class EmployeeStatusCard extends StatelessWidget {
         return BauhausDesign.warning;
       case WorkStatus.offline:
       case WorkStatus.clockedOut:
-        return BauhausDesign.neutral;
+        return Theme.of(context).colorScheme.onSurfaceVariant;
     }
   }
 

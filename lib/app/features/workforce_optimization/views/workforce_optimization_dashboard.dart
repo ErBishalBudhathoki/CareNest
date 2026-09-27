@@ -281,7 +281,7 @@ class _WorkforceOptimizationDashboardState
         qualityState.error;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _buildAppBar(context),
       body: organizationId == null || organizationId.isEmpty
           ? _buildMissingOrganizationState(context)
@@ -331,22 +331,24 @@ class _WorkforceOptimizationDashboardState
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return AppBar(
-      foregroundColor: BauhausDesign.surfaceWhite,
+      foregroundColor: colorScheme.onSecondary,
       systemOverlayStyle: SystemUiOverlayStyle.light,
-      backgroundColor: BauhausDesign.secondary,
+      backgroundColor: colorScheme.secondary,
       elevation: 0,
       titleSpacing: 0,
       title: Text(
         'WORKFORCE OPTIMIZATION',
         style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-          color: BauhausDesign.surfaceWhite,
+          color: colorScheme.onSecondary,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.7,
         ),
       ),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: BauhausDesign.surfaceWhite),
+        icon: Icon(Icons.arrow_back, color: colorScheme.onSecondary),
         onPressed: () => Navigator.pop(context),
       ),
       bottom: PreferredSize(
@@ -359,7 +361,7 @@ class _WorkforceOptimizationDashboardState
             ),
             Expanded(
               flex: 4,
-              child: Container(height: 8, color: BauhausDesign.surfaceWhite),
+              child: Container(height: 8, color: colorScheme.surface),
             ),
             Expanded(
               flex: 3,
@@ -378,9 +380,12 @@ class _WorkforceOptimizationDashboardState
   Widget _buildOperationsDeck(BuildContext context, _WorkforceSummary summary) {
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Padding(
@@ -420,9 +425,12 @@ class _WorkforceOptimizationDashboardState
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceOffWhite,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.5,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -446,7 +454,7 @@ class _WorkforceOptimizationDashboardState
           Text(
             summary.primaryMetricLabel,
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -469,7 +477,7 @@ class _WorkforceOptimizationDashboardState
                   summary.primaryMetricSuffix,
                   style: BauhausDesign.getTextTheme(context).bodySmall
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w600,
                       ),
                 ),
@@ -480,7 +488,7 @@ class _WorkforceOptimizationDashboardState
           Text(
             summary.primaryDetail,
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -550,7 +558,10 @@ class _WorkforceOptimizationDashboardState
       decoration: BoxDecoration(
         color: accent.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.3),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.3,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -560,11 +571,15 @@ class _WorkforceOptimizationDashboardState
             height: 34,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-              border: Border.all(color: BauhausDesign.neutral),
+              border: Border.all(color: Theme.of(context).colorScheme.outline),
             ),
-            child: Icon(icon, size: 18, color: BauhausDesign.textDark),
+            child: Icon(
+              icon,
+              size: 18,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           const SizedBox(width: BauhausDesign.space2),
           Expanded(
@@ -575,7 +590,7 @@ class _WorkforceOptimizationDashboardState
                   title,
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -584,7 +599,7 @@ class _WorkforceOptimizationDashboardState
                   value,
                   style: BauhausDesign.getTextTheme(context).titleMedium
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w800,
                       ),
                 ),
@@ -593,7 +608,7 @@ class _WorkforceOptimizationDashboardState
                   detail,
                   style: BauhausDesign.getTextTheme(context).bodySmall
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w600,
                       ),
                 ),
@@ -652,9 +667,12 @@ class _WorkforceOptimizationDashboardState
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.5,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Row(
@@ -666,9 +684,13 @@ class _WorkforceOptimizationDashboardState
             decoration: BoxDecoration(
               color: metric.accent.withValues(alpha: 0.18),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-              border: Border.all(color: BauhausDesign.neutral),
+              border: Border.all(color: Theme.of(context).colorScheme.outline),
             ),
-            child: Icon(metric.icon, size: 18, color: BauhausDesign.textDark),
+            child: Icon(
+              metric.icon,
+              size: 18,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           const SizedBox(width: BauhausDesign.space2),
           Expanded(
@@ -679,7 +701,7 @@ class _WorkforceOptimizationDashboardState
                   metric.label,
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -688,7 +710,7 @@ class _WorkforceOptimizationDashboardState
                   metric.value,
                   style: BauhausDesign.getTextTheme(context).titleMedium
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w800,
                       ),
                 ),
@@ -761,9 +783,12 @@ class _WorkforceOptimizationDashboardState
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Column(
@@ -778,7 +803,10 @@ class _WorkforceOptimizationDashboardState
             decoration: BoxDecoration(
               color: lane.accent.withValues(alpha: 0.16),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-              border: Border.all(color: BauhausDesign.neutral, width: 1.2),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1.2,
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -787,7 +815,7 @@ class _WorkforceOptimizationDashboardState
                   lane.title,
                   style: BauhausDesign.getTextTheme(context).labelLarge
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -795,7 +823,7 @@ class _WorkforceOptimizationDashboardState
                   lane.subtitle,
                   style: BauhausDesign.getTextTheme(context).bodySmall
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w600,
                       ),
                 ),
@@ -822,9 +850,12 @@ class _WorkforceOptimizationDashboardState
         child: Container(
           padding: const EdgeInsets.all(BauhausDesign.space3),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceOffWhite,
+            color: Theme.of(context).colorScheme.surfaceContainer,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            border: Border.all(color: BauhausDesign.neutral, width: 1.2),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 1.2,
+            ),
           ),
           child: Row(
             children: [
@@ -835,12 +866,14 @@ class _WorkforceOptimizationDashboardState
                 decoration: BoxDecoration(
                   color: module.accent.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                 ),
                 child: Icon(
                   module.icon,
                   size: 18,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(width: BauhausDesign.space2),
@@ -852,7 +885,7 @@ class _WorkforceOptimizationDashboardState
                       module.title,
                       style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w700,
                           ),
                     ),
@@ -860,7 +893,7 @@ class _WorkforceOptimizationDashboardState
                       module.description,
                       style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w600,
                           ),
                     ),
@@ -868,9 +901,9 @@ class _WorkforceOptimizationDashboardState
                 ),
               ),
               const SizedBox(width: BauhausDesign.space2),
-              const Icon(
+              Icon(
                 Icons.arrow_forward_rounded,
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 size: 16,
               ),
             ],
@@ -896,9 +929,12 @@ class _WorkforceOptimizationDashboardState
         Container(
           padding: const EdgeInsets.all(BauhausDesign.space4),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             boxShadow: const [BauhausDesign.shadowHard],
           ),
           child: Column(
@@ -951,12 +987,15 @@ class _WorkforceOptimizationDashboardState
       decoration: BoxDecoration(
         color: accent.withValues(alpha: 0.18),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral, width: 1),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1,
+        ),
       ),
       child: Text(
         text,
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-          color: BauhausDesign.textDark,
+          color: Theme.of(context).colorScheme.onSurface,
           fontWeight: FontWeight.w800,
         ),
       ),
@@ -971,21 +1010,27 @@ class _WorkforceOptimizationDashboardState
           child: Text(
             day.day,
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w700,
             ),
           ),
         ),
-        Expanded(child: _buildHeatCell(day.morning, BauhausDesign.secondary)),
+        Expanded(
+          child: _buildHeatCell(context, day.morning, BauhausDesign.secondary),
+        ),
         const SizedBox(width: BauhausDesign.space2),
-        Expanded(child: _buildHeatCell(day.afternoon, BauhausDesign.primary)),
+        Expanded(
+          child: _buildHeatCell(context, day.afternoon, BauhausDesign.primary),
+        ),
         const SizedBox(width: BauhausDesign.space2),
-        Expanded(child: _buildHeatCell(day.evening, BauhausDesign.accent)),
+        Expanded(
+          child: _buildHeatCell(context, day.evening, BauhausDesign.accent),
+        ),
       ],
     );
   }
 
-  Widget _buildHeatCell(double value, Color accent) {
+  Widget _buildHeatCell(BuildContext context, double value, Color accent) {
     final opacity = 0.18 + (value * 0.65);
     final percent = (value * 100).round();
     return Container(
@@ -994,12 +1039,15 @@ class _WorkforceOptimizationDashboardState
       decoration: BoxDecoration(
         color: accent.withValues(alpha: opacity),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral, width: 1),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1,
+        ),
       ),
       child: Text(
         '$percent%',
-        style: const TextStyle(
-          color: BauhausDesign.textDark,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface,
           fontWeight: FontWeight.w700,
           fontSize: 12,
         ),
@@ -1018,9 +1066,12 @@ class _WorkforceOptimizationDashboardState
         const SizedBox(height: BauhausDesign.space3),
         Container(
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             boxShadow: const [BauhausDesign.shadowHard],
           ),
           child: LayoutBuilder(
@@ -1041,7 +1092,9 @@ class _WorkforceOptimizationDashboardState
                               : BauhausDesign.space4,
                         ),
                         height: 1,
-                        color: BauhausDesign.neutral.withValues(alpha: 0.25),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.outline.withValues(alpha: 0.25),
                       ),
                   ],
                 ],
@@ -1060,7 +1113,7 @@ class _WorkforceOptimizationDashboardState
         vertical: BauhausDesign.space3,
       ),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceOffWhite,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(BauhausDesign.radiusLg - 1),
           topRight: Radius.circular(BauhausDesign.radiusLg - 1),
@@ -1073,7 +1126,7 @@ class _WorkforceOptimizationDashboardState
             child: Text(
               'Area',
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -1082,7 +1135,7 @@ class _WorkforceOptimizationDashboardState
             child: Text(
               'Event',
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -1094,7 +1147,7 @@ class _WorkforceOptimizationDashboardState
               'Time',
               textAlign: TextAlign.right,
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -1106,7 +1159,7 @@ class _WorkforceOptimizationDashboardState
               'Status',
               textAlign: TextAlign.right,
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -1127,7 +1180,7 @@ class _WorkforceOptimizationDashboardState
             child: Text(
               log.area,
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -1136,7 +1189,7 @@ class _WorkforceOptimizationDashboardState
             child: Text(
               log.event,
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -1148,7 +1201,7 @@ class _WorkforceOptimizationDashboardState
               log.timestamp,
               textAlign: TextAlign.right,
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -1166,13 +1219,15 @@ class _WorkforceOptimizationDashboardState
                 decoration: BoxDecoration(
                   color: log.accent.withValues(alpha: 0.16),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                 ),
                 child: Text(
                   log.status.toUpperCase(),
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w800,
                       ),
                 ),
@@ -1197,7 +1252,7 @@ class _WorkforceOptimizationDashboardState
                   log.area,
                   style: BauhausDesign.getTextTheme(context).labelLarge
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -1210,13 +1265,15 @@ class _WorkforceOptimizationDashboardState
                 decoration: BoxDecoration(
                   color: log.accent.withValues(alpha: 0.16),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                 ),
                 child: Text(
                   log.status.toUpperCase(),
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w800,
                       ),
                 ),
@@ -1227,7 +1284,7 @@ class _WorkforceOptimizationDashboardState
           Text(
             log.event,
             style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -1235,7 +1292,7 @@ class _WorkforceOptimizationDashboardState
           Text(
             log.timestamp,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -1251,16 +1308,16 @@ class _WorkforceOptimizationDashboardState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.business_rounded,
               size: 44,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             const SizedBox(height: BauhausDesign.space2),
             Text(
               'Organization not available',
               style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -1269,7 +1326,7 @@ class _WorkforceOptimizationDashboardState
               'Set organization context to load Workforce Optimization data.',
               textAlign: TextAlign.center,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -1286,7 +1343,10 @@ class _WorkforceOptimizationDashboardState
       decoration: BoxDecoration(
         color: BauhausDesign.error.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.2,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1301,7 +1361,7 @@ class _WorkforceOptimizationDashboardState
             child: Text(
               error,
               style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -1579,12 +1639,15 @@ class _WorkforceOptimizationDashboardState
       decoration: BoxDecoration(
         color: accent.withValues(alpha: 0.16),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.1),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.1,
+        ),
       ),
       child: Text(
         text,
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-          color: BauhausDesign.textDark,
+          color: Theme.of(context).colorScheme.onSurface,
           fontWeight: FontWeight.w800,
         ),
       ),
@@ -1611,17 +1674,24 @@ class _WorkforceOptimizationDashboardState
           decoration: BoxDecoration(
             color: accent.withValues(alpha: 0.14),
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-            border: Border.all(color: BauhausDesign.neutral, width: 1.2),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 1.2,
+            ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 16, color: BauhausDesign.textDark),
+              Icon(
+                icon,
+                size: 16,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
               const SizedBox(width: BauhausDesign.space1),
               Text(
                 label,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w800,
                 ),
               ),

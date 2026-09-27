@@ -153,13 +153,16 @@ class _ScheduleDashboardScreenState
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.check_circle, color: BauhausDesign.surfaceWhite),
+            Icon(
+              Icons.check_circle,
+              color: Theme.of(context).colorScheme.surface,
+            ),
             const SizedBox(width: BauhausDesign.space3),
             Expanded(
               child: Text(
                 message,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.surfaceWhite,
+                  color: Theme.of(context).colorScheme.surface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -170,7 +173,10 @@ class _ScheduleDashboardScreenState
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          side: const BorderSide(color: BauhausDesign.neutral, width: 1.5),
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 1.5,
+          ),
         ),
       ),
     );
@@ -181,13 +187,16 @@ class _ScheduleDashboardScreenState
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.error_outline, color: BauhausDesign.surfaceWhite),
+            Icon(
+              Icons.error_outline,
+              color: Theme.of(context).colorScheme.surface,
+            ),
             const SizedBox(width: BauhausDesign.space3),
             Expanded(
               child: Text(
                 message,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.surfaceWhite,
+                  color: Theme.of(context).colorScheme.surface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -198,7 +207,10 @@ class _ScheduleDashboardScreenState
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          side: const BorderSide(color: BauhausDesign.neutral, width: 1.5),
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 1.5,
+          ),
         ),
       ),
     );
@@ -207,7 +219,7 @@ class _ScheduleDashboardScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _buildBauhausAppBar(),
       body: _isLoading
           ? const Center(
@@ -230,7 +242,7 @@ class _ScheduleDashboardScreenState
   PreferredSizeWidget _buildBauhausAppBar() {
     return AppBar(
       backgroundColor: BauhausDesign.secondary,
-      foregroundColor: BauhausDesign.surfaceWhite,
+      foregroundColor: Theme.of(context).colorScheme.onSecondary,
       systemOverlayStyle: SystemUiOverlayStyle.light,
       scrolledUnderElevation: 0,
       surfaceTintColor: Colors.transparent,
@@ -242,7 +254,9 @@ class _ScheduleDashboardScreenState
       ),
       title: Text(
         AppLocalizations.of(context)!.scheduleTitle,
-        style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(color: BauhausDesign.surfaceWhite),
+        style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+          color: Theme.of(context).colorScheme.onSecondary,
+        ),
       ),
       actions: [
         Padding(
@@ -252,7 +266,10 @@ class _ScheduleDashboardScreenState
       ],
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(2),
-        child: Container(color: BauhausDesign.neutral, height: 2),
+        child: Container(
+          color: Theme.of(context).colorScheme.outline,
+          height: 2,
+        ),
       ),
     );
   }
@@ -264,17 +281,20 @@ class _ScheduleDashboardScreenState
         vertical: BauhausDesign.space1,
       ),
       decoration: BoxDecoration(
-        color: BauhausDesign.backgroundLight,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral, width: 1),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1,
+        ),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: _selectedFilter,
           isDense: true,
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_drop_down,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
           items: [
             DropdownMenuItem(
@@ -369,10 +389,13 @@ class _ScheduleDashboardScreenState
 
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceLight,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
-          bottom: BorderSide(color: BauhausDesign.neutral, width: 1),
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 1,
+          ),
         ),
       ),
       child: Row(
@@ -392,9 +415,8 @@ class _ScheduleDashboardScreenState
             child: Center(
               child: Text(
                 '${dateFormat.format(startOfWeek)} - ${dateFormat.format(endOfWeek)}',
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).titleMedium?.copyWith(color: BauhausDesign.textDark),
+                style: BauhausDesign.getTextTheme(context).titleMedium
+                    ?.copyWith(color: Theme.of(context).colorScheme.onSurface),
               ),
             ),
           ),
@@ -509,9 +531,9 @@ class _ScheduleDashboardScreenState
               'EEE, MMM d',
               AppLocalizations.of(context)!.localeName,
             ).format(date),
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).labelLarge?.copyWith(color: BauhausDesign.surfaceWhite),
+            style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+              color: Theme.of(context).colorScheme.surface,
+            ),
           ),
         ),
         if (isToday) ...[
@@ -529,7 +551,7 @@ class _ScheduleDashboardScreenState
             child: Text(
               'TODAY',
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -614,7 +636,7 @@ class _ScheduleDashboardScreenState
                     style: BauhausDesign.getTextTheme(context).bodyMedium
                         ?.copyWith(
                           color: shift.employeeEmail != null
-                              ? BauhausDesign.neutral
+                              ? Theme.of(context).colorScheme.onSurface
                               : BauhausDesign.primary,
                           fontWeight: shift.employeeEmail != null
                               ? FontWeight.normal
@@ -857,13 +879,16 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
       ),
       child: Container(
         padding: const EdgeInsets.all(BauhausDesign.space6),
         constraints: const BoxConstraints(maxWidth: 400),
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceLight,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
           boxShadow: [BauhausDesign.shadowHard],
         ),
@@ -911,14 +936,15 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                   initialValue: _selectedClientEmail,
                   decoration:
                       BauhausDesign.inputDecoration(
+                        context,
                         AppLocalizations.of(context)!.clientEmailLabel,
                       ).copyWith(
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.person,
-                          color: BauhausDesign.textMuted,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                         filled: true,
-                        fillColor: BauhausDesign.surfaceWhite,
+                        fillColor: Theme.of(context).colorScheme.surface,
                       ),
                   items: _clients
                       .map((client) {
@@ -935,7 +961,11 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                             overflow: TextOverflow.ellipsis,
                             style: BauhausDesign.getTextTheme(context)
                                 .bodyMedium
-                                ?.copyWith(color: BauhausDesign.textDark),
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                ),
                           ),
                         );
                       })
@@ -947,14 +977,15 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                       ? AppLocalizations.of(context)!.requiredField
                       : null,
                   isExpanded: true,
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.arrow_drop_down,
-                    color: BauhausDesign.neutral,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
-                  dropdownColor: BauhausDesign.surfaceWhite,
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                  dropdownColor: Theme.of(context).colorScheme.surface,
                 ),
               const SizedBox(height: BauhausDesign.space4),
               if (!_isFetchingData) ...[
@@ -962,14 +993,15 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                   initialValue: _selectedEmployeeEmail,
                   decoration:
                       BauhausDesign.inputDecoration(
+                        context,
                         'Assign Employee (Optional)',
                       ).copyWith(
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.badge,
-                          color: BauhausDesign.textMuted,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                         filled: true,
-                        fillColor: BauhausDesign.surfaceWhite,
+                        fillColor: Theme.of(context).colorScheme.surface,
                       ),
                   items: [
                     DropdownMenuItem<String>(
@@ -990,7 +1022,11 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                             overflow: TextOverflow.ellipsis,
                             style: BauhausDesign.getTextTheme(context)
                                 .bodyMedium
-                                ?.copyWith(color: BauhausDesign.textDark),
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                ),
                           ),
                         );
                       },
@@ -999,14 +1035,15 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                   onChanged: (value) =>
                       setState(() => _selectedEmployeeEmail = value),
                   isExpanded: true,
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.arrow_drop_down,
-                    color: BauhausDesign.neutral,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
-                  dropdownColor: BauhausDesign.surfaceWhite,
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                  dropdownColor: Theme.of(context).colorScheme.surface,
                 ),
                 const SizedBox(height: BauhausDesign.space4),
               ],
@@ -1026,17 +1063,7 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                     firstDate: DateTime.now(),
                     lastDate: DateTime.now().add(const Duration(days: 365)),
                     builder: (context, child) {
-                      return Theme(
-                        data: ThemeData.light().copyWith(
-                          colorScheme: const ColorScheme.light(
-                            primary: BauhausDesign.primary,
-                            onPrimary: BauhausDesign.surfaceWhite,
-                            surface: BauhausDesign.surfaceLight,
-                            onSurface: BauhausDesign.textDark,
-                          ),
-                        ),
-                        child: child!,
-                      );
+                      return Theme(data: Theme.of(context), child: child!);
                     },
                   );
                   if (date != null) {
@@ -1046,15 +1073,17 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                 child: Container(
                   padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
-                    border: Border.all(color: BauhausDesign.neutral),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   ),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.calendar_today,
                         size: 16,
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(width: BauhausDesign.space2),
                       Text(
@@ -1062,9 +1091,10 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                           'MMM dd, yyyy',
                           AppLocalizations.of(context)!.localeName,
                         ).format(_selectedDate),
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
+                            ?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
                       ),
                     ],
                   ),
@@ -1105,9 +1135,10 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                     onPressed: () => Navigator.of(context).pop(),
                     child: Text(
                       AppLocalizations.of(context)!.cancelButton,
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).labelLarge?.copyWith(color: BauhausDesign.neutral),
+                      style: BauhausDesign.getTextTheme(context).labelLarge
+                          ?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
                     ),
                   ),
                   const SizedBox(width: BauhausDesign.space3),
@@ -1136,17 +1167,7 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
           context: context,
           initialTime: time,
           builder: (context, child) {
-            return Theme(
-              data: ThemeData.light().copyWith(
-                colorScheme: const ColorScheme.light(
-                  primary: BauhausDesign.primary, // clock hand color
-                  onPrimary: BauhausDesign.surfaceWhite,
-                  surface: BauhausDesign.surfaceLight, // background color
-                  onSurface: BauhausDesign.textDark, // text color
-                ),
-              ),
-              child: child!,
-            );
+            return Theme(data: Theme.of(context), child: child!);
           },
         );
         if (newTime != null) {
@@ -1156,22 +1177,22 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
       child: Container(
         padding: const EdgeInsets.all(BauhausDesign.space3),
         decoration: BoxDecoration(
-          border: Border.all(color: BauhausDesign.neutral),
+          border: Border.all(color: Theme.of(context).colorScheme.outline),
           borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         ),
         child: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.access_time,
               size: 16,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             const SizedBox(width: BauhausDesign.space2),
             Text(
               time.format(context),
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
           ],
         ),

@@ -96,11 +96,14 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
           duration: const Duration(milliseconds: 200),
           margin: EdgeInsets.zero,
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceLight,
+            color: Theme.of(context).colorScheme.surface,
             boxShadow: _isHovered
                 ? const [BauhausDesign.shadowHardSm]
                 : const [BauhausDesign.shadowHardXs],
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
           ),
           transform: Matrix4.identity()
             ..scaleByDouble(
@@ -150,7 +153,11 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
           ),
         ),
         const Spacer(),
-        const Icon(Icons.schedule, color: BauhausDesign.neutral, size: 20.0),
+        Icon(
+          Icons.schedule,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+          size: 20.0,
+        ),
       ],
     );
   }
@@ -233,7 +240,7 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
               Text(
                 value,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -253,7 +260,7 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
       ),
       child: Row(
         children: [
-          const Icon(Icons.timer, color: BauhausDesign.success, size: 18.0),
+          Icon(Icons.timer, color: BauhausDesign.success, size: 18.0),
           const SizedBox(width: BauhausDesign.space2),
           Text(
             '${AppLocalizations.of(context)!.timeWorked}: ',

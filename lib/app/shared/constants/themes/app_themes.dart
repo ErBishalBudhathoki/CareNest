@@ -1,11 +1,7 @@
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
 import 'package:pinput/pinput.dart';
 import 'package:carenest/app/shared/constants/values/themes/app_theme_config.dart';
-
-import '../values/dimens/app_dimens.dart';
 
 class AppTheme {
   final defaultPinTheme = PinTheme(
@@ -13,64 +9,18 @@ class AppTheme {
     height: 56,
     textStyle: const TextStyle(
       fontSize: AppThemeConfig.fontSizeExtraLarge,
-      color: AppColors.colorGrey700,
+      color: BauhausDesign.textDark,
       fontWeight: AppThemeConfig.fontWeightSemiBold,
+      fontFamily: 'Space Mono',
     ),
     decoration: BoxDecoration(
-      border: Border.all(color: AppColors.colorGrey200),
-      borderRadius: BorderRadius.circular(AppThemeConfig.radiusXL),
+      border: Border.all(color: BauhausDesign.neutral, width: 2.5),
+      borderRadius: BorderRadius.zero,
     ),
   );
 
-  // Use the centralized theme configuration
-  static ThemeData get lightTheme => AppThemeConfig.lightTheme;
-  static ThemeData get darkTheme => AppThemeConfig.darkTheme;
+  static ThemeData get lightTheme => BauhausDesign.lightTheme;
+  static ThemeData get darkTheme => BauhausDesign.darkTheme;
 
-  // Legacy theme data for backward compatibility - now uses centralized config
-  static ThemeData themeData = ThemeData(
-    primaryColor: AppColors.colorPrimary,
-    primaryColorDark: AppColors.colorSecondary,
-    brightness: Brightness.light,
-    appBarTheme: const AppBarTheme(
-      iconTheme: IconThemeData(color: AppColors.colorWhite),
-      systemOverlayStyle: SystemUiOverlayStyle.light,
-    ),
-    textTheme: const TextTheme(
-      titleLarge: TextStyle(
-        color: AppColors.colorFontPrimary,
-        fontSize: AppDimens.fontSizeLarge,
-        fontWeight: FontWeight.w900,
-        fontFamily: 'Lato',
-      ),
-      bodyLarge: TextStyle(
-        color: AppColors.colorFontPrimary,
-        fontSize: AppDimens.fontSizeMedium,
-        fontWeight: FontWeight.w900,
-        fontFamily: 'Lato',
-      ),
-      bodyMedium: TextStyle(
-        color: AppColors.colorFontPrimary,
-        fontSize: AppDimens.fontSizeNormal,
-        fontWeight: FontWeight.w500,
-        fontFamily: 'Lato',
-      ),
-      labelLarge: TextStyle(
-        color: AppColors.colorPrimary,
-        fontSize: AppDimens.fontSizeXXXMedium,
-        fontWeight: FontWeight.w900,
-        fontFamily: 'Lato',
-      ),
-      titleMedium: TextStyle(
-        color: AppColors.colorWhite,
-        fontSize: AppDimens.fontSizeMedium,
-        fontWeight: FontWeight.w900,
-        fontFamily: 'Lato',
-      ),
-    ),
-    colorScheme: ThemeData().colorScheme.copyWith(
-      secondary: AppColors.colorAccent,
-      primary: AppColors.colorPrimary,
-      onPrimary: AppColors.colorPrimary,
-    ),
-  );
+  static ThemeData themeData = BauhausDesign.lightTheme;
 }

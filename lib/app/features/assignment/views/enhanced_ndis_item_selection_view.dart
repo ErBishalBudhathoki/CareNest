@@ -11,6 +11,7 @@ import 'package:carenest/app/features/invoice/models/ndis_matcher.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/utils/logging.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/features/pricing/viewmodels/scoped_pricing_editor.dart';
@@ -809,23 +810,24 @@ class _EnhancedNdisItemSelectionViewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //backgroundColor: BauhausDesign.background,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         title: Text(
           'Select NDIS Item',
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).titleLarge?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onInverseSurface,
+          ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: BauhausDesign.neutral),
+          child: Container(
+            color: Theme.of(context).colorScheme.onInverseSurface,
+          ),
         ),
       ),
       body: Column(
@@ -836,10 +838,11 @@ class _EnhancedNdisItemSelectionViewState
               children: [
                 TextField(
                   onChanged: _filterNdisItems,
-                  decoration: BauhausDesign.defaultInputDecoration.copyWith(
-                    labelText: 'Search by Item Number or Description',
-                    prefixIcon: const Icon(Icons.search),
-                  ),
+                  decoration: BauhausDesign.inputDecorationFor(context)
+                      .copyWith(
+                        labelText: 'Search by Item Number or Description',
+                        prefixIcon: const Icon(Icons.search),
+                      ),
                 ),
                 const SizedBox(height: BauhausDesign.space2),
                 Row(
@@ -849,14 +852,17 @@ class _EnhancedNdisItemSelectionViewState
                         'Show legacy catalogue items',
                         style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
-                              color: BauhausDesign.textMuted,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                               fontWeight: FontWeight.w700,
                             ),
                       ),
                     ),
-                    Switch(
+                    // Bauhaus switch: zero radius, 2px borders, hard shadow,
+                    // themed track/thumb — unlike Material's rounded `Switch`.
+                    BauhausSwitch(
                       value: _showLegacyItems,
-                      activeColor: BauhausDesign.primary,
                       onChanged: (value) {
                         setState(() {
                           _showLegacyItems = value;
@@ -888,7 +894,11 @@ class _EnhancedNdisItemSelectionViewState
                         child: Text(
                           AppLocalizations.of(context)!.pricingCapsNotice,
                           style: BauhausDesign.getTextTheme(context).labelSmall
-                              ?.copyWith(color: BauhausDesign.textMuted),
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                         ),
                       ),
                       if (_isLoadingCustomPrices) ...[
@@ -963,14 +973,17 @@ class _EnhancedNdisItemSelectionViewState
         ),
         decoration: BoxDecoration(
           color: expired ? BauhausDesign.error : BauhausDesign.warning,
-          border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 1.5,
+          ),
         ),
         child: Text(
           expired ? 'LEGACY — EXPIRED $dateText' : 'LEGACY — EXPIRES $dateText',
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
             color: expired
-                ? BauhausDesign.surfaceWhite
-                : BauhausDesign.textDark,
+                ? Theme.of(context).colorScheme.surface
+                : Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w800,
             fontSize: 10,
           ),
@@ -1019,7 +1032,11 @@ class _EnhancedNdisItemSelectionViewState
                             item.itemNumber,
                             style: BauhausDesign.getTextTheme(context)
                                 .labelSmall
-                                ?.copyWith(color: BauhausDesign.textMuted),
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
                           ),
                           if (item.isLegacy) ...[
                             const SizedBox(height: BauhausDesign.space1),
@@ -1063,7 +1080,9 @@ class _EnhancedNdisItemSelectionViewState
                                 style: BauhausDesign.getTextTheme(context)
                                     .labelSmall
                                     ?.copyWith(
-                                      color: BauhausDesign.textMuted,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
                                       fontSize: 10,
                                     ),
                               ),
@@ -1075,7 +1094,9 @@ class _EnhancedNdisItemSelectionViewState
                             style: BauhausDesign.getTextTheme(context)
                                 .labelSmall
                                 ?.copyWith(
-                                  color: BauhausDesign.textMuted,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                   fontSize: 10,
                                 ),
                           ),
@@ -1091,7 +1112,9 @@ class _EnhancedNdisItemSelectionViewState
                                 : Icons.attach_money,
                             color: showOverride
                                 ? BauhausDesign.primary
-                                : BauhausDesign.textMuted,
+                                : Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                           ),
                           onPressed: () =>
                               _togglePriceOverride(item.itemNumber),
@@ -1107,7 +1130,9 @@ class _EnhancedNdisItemSelectionViewState
                           icon: Icon(
                             Icons.arrow_forward_ios,
                             size: 16,
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                           onPressed: () => _selectItem(item),
                           padding: EdgeInsets.zero,
@@ -1143,17 +1168,21 @@ class _EnhancedNdisItemSelectionViewState
         ? BauhausDesign.secondary
         : BauhausDesign.warning;
     final scopeTextColor = isClientScopeSelected
-        ? BauhausDesign.surfaceWhite
-        : BauhausDesign.textDark;
+        ? Theme.of(context).colorScheme.surface
+        : Theme.of(context).colorScheme.onSurface;
+    // Enabled state uses the primary yellow with a luminance-picked glyph so
+    // the active row reads clearly in both themes. `onSurface` inverted to a
+    // near-white block in dark mode, and `surface` text then vanished on the
+    // light-theme plane.
     final toggleBackground = isCustomEnabled
-        ? BauhausDesign.textDark
-        : BauhausDesign.surfaceLight;
+        ? Theme.of(context).colorScheme.primary
+        : Theme.of(context).colorScheme.surface;
     final toggleTextColor = isCustomEnabled
-        ? BauhausDesign.surfaceWhite
-        : BauhausDesign.textDark;
+        ? BauhausDesign.readableOnColor(Theme.of(context).colorScheme.primary)
+        : Theme.of(context).colorScheme.onSurface;
     final toggleIconColor = isCustomEnabled
-        ? BauhausDesign.surfaceWhite
-        : BauhausDesign.textMuted;
+        ? BauhausDesign.readableOnColor(Theme.of(context).colorScheme.primary)
+        : Theme.of(context).colorScheme.onSurfaceVariant;
     final orgSavedPrice = _getSavedCustomPriceForScope(
       item.itemNumber,
       scope: _scopeOrganization,
@@ -1166,8 +1195,13 @@ class _EnhancedNdisItemSelectionViewState
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceOffWhite,
-        border: Border(top: BorderSide(color: BauhausDesign.neutral, width: 2)),
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        border: Border(
+          top: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1181,7 +1215,10 @@ class _EnhancedNdisItemSelectionViewState
                 ),
                 decoration: BoxDecoration(
                   color: scopeColor,
-                  border: Border.all(color: BauhausDesign.textDark, width: 2),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 2,
+                  ),
                 ),
                 child: Text(
                   scopeLabel,
@@ -1215,8 +1252,11 @@ class _EnhancedNdisItemSelectionViewState
                 child: Container(
                   padding: const EdgeInsets.all(BauhausDesign.space2),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.surfaceLight,
-                    border: Border.all(color: BauhausDesign.neutral, width: 2),
+                    color: Theme.of(context).colorScheme.surface,
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 2,
+                    ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1226,7 +1266,7 @@ class _EnhancedNdisItemSelectionViewState
                         style: BauhausDesign.neoMonoStyle(
                           context,
                           fontSize: 10,
-                          color: BauhausDesign.textMuted,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           letterSpacing: 0.8,
                         ),
                       ),
@@ -1250,8 +1290,11 @@ class _EnhancedNdisItemSelectionViewState
                 child: Container(
                   padding: const EdgeInsets.all(BauhausDesign.space2),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.surfaceLight,
-                    border: Border.all(color: BauhausDesign.neutral, width: 2),
+                    color: Theme.of(context).colorScheme.surface,
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 2,
+                    ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1261,7 +1304,7 @@ class _EnhancedNdisItemSelectionViewState
                         style: BauhausDesign.neoMonoStyle(
                           context,
                           fontSize: 10,
-                          color: BauhausDesign.textMuted,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           letterSpacing: 0.8,
                         ),
                       ),
@@ -1353,7 +1396,10 @@ class _EnhancedNdisItemSelectionViewState
                 padding: const EdgeInsets.all(BauhausDesign.space3),
                 decoration: BoxDecoration(
                   color: toggleBackground,
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 2,
+                  ),
                 ),
                 child: Row(
                   children: [
@@ -1393,7 +1439,7 @@ class _EnhancedNdisItemSelectionViewState
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
               ],
-              decoration: BauhausDesign.defaultInputDecoration.copyWith(
+              decoration: BauhausDesign.inputDecorationFor(context).copyWith(
                 labelText: 'Custom Price (\$/hour)',
                 errorText: cappedPrice == null
                     ? AppLocalizations.of(context)!.pricingCapUnavailable
@@ -1405,10 +1451,10 @@ class _EnhancedNdisItemSelectionViewState
                     : 'This will apply across the organization.',
                 prefixIcon: const Icon(Icons.attach_money),
                 filled: true,
-                fillColor: BauhausDesign.surfaceWhite,
+                fillColor: Theme.of(context).colorScheme.surface,
                 labelStyle: BauhausDesign.getTextTheme(context).bodyMedium
                     ?.copyWith(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w600,
                     ),
                 floatingLabelStyle: BauhausDesign.getTextTheme(context)
@@ -1419,17 +1465,19 @@ class _EnhancedNdisItemSelectionViewState
                     ),
                 hintStyle: BauhausDesign.getTextTheme(context).bodyMedium
                     ?.copyWith(
-                      color: BauhausDesign.textDark.withValues(alpha: 0.96),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.96),
                     ),
                 helperStyle: BauhausDesign.getTextTheme(context).labelMedium
                     ?.copyWith(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w500,
                     ),
-                prefixIconColor: BauhausDesign.textDark,
+                prefixIconColor: Theme.of(context).colorScheme.onSurface,
               ),
               style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -1447,7 +1495,7 @@ class _EnhancedNdisItemSelectionViewState
                     : 'Saved as ORGANIZATION-WIDE pricing.',
                 style: BauhausDesign.getTextTheme(context).labelMedium
                     ?.copyWith(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w600,
                     ),
               ),
@@ -1674,22 +1722,22 @@ class _EnhancedNdisItemSelectionViewState
                 style: ElevatedButton.styleFrom(
                   elevation: 0,
                   backgroundColor: BauhausDesign.primary,
-                  foregroundColor: BauhausDesign.surfaceWhite,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   shadowColor: Colors.transparent,
                   padding: const EdgeInsets.symmetric(
                     vertical: BauhausDesign.space3,
                   ),
-                  side: const BorderSide(
-                    color: BauhausDesign.neutral,
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.outline,
                     width: 2,
                   ),
                 ),
                 child: isSaving
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator(
-                          color: BauhausDesign.surfaceWhite,
+                          color: Theme.of(context).colorScheme.onPrimary,
                           strokeWidth: 2,
                         ),
                       )
@@ -1698,7 +1746,7 @@ class _EnhancedNdisItemSelectionViewState
                             ? 'SAVE CLIENT PRICE'
                             : 'SAVE ORG PRICE',
                         style: BauhausDesign.neoMonoStyle(context).copyWith(
-                          color: BauhausDesign.surfaceWhite,
+                          color: Theme.of(context).colorScheme.onPrimary,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1.0,
                         ),
@@ -1723,12 +1771,12 @@ class _EnhancedNdisItemSelectionViewState
         : BauhausDesign.warning;
     final backgroundColor = isSelected
         ? selectedColor
-        : BauhausDesign.surfaceLight;
+        : Theme.of(context).colorScheme.surface;
     final textColor = isSelected
         ? (scope == _scopeClient
-              ? BauhausDesign.surfaceWhite
-              : BauhausDesign.textDark)
-        : BauhausDesign.textDark;
+              ? Theme.of(context).colorScheme.surface
+              : Theme.of(context).colorScheme.onSurface)
+        : Theme.of(context).colorScheme.onSurface;
 
     return Material(
       color: Colors.transparent,
@@ -1739,7 +1787,10 @@ class _EnhancedNdisItemSelectionViewState
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: backgroundColor,
-            border: Border.all(color: BauhausDesign.textDark, width: 2),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.onSurface,
+              width: 2,
+            ),
           ),
           child: Text(
             label,
@@ -1776,7 +1827,7 @@ class _EnhancedNdisItemSelectionViewState
             style: BauhausDesign.neoMonoStyle(
               context,
               fontSize: 10,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.8,
             ),
@@ -1785,7 +1836,7 @@ class _EnhancedNdisItemSelectionViewState
           Text(
             price != null ? '\$${price.toStringAsFixed(2)}/hr' : 'Not set',
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -1803,14 +1854,26 @@ class _EnhancedNdisItemSelectionViewState
       ),
       initialValue: draft.region,
       isExpanded: true,
-      decoration: BauhausDesign.defaultInputDecoration.copyWith(
-        labelText: l10n.pricingRegionLabel,
-      ),
+      // The menu overlay and the selected/child text both need explicit themed
+      // colours, otherwise the popup renders on a light plane with light text.
+      dropdownColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+      style: BauhausDesign.getTextTheme(
+        context,
+      ).bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+      iconEnabledColor: Theme.of(context).colorScheme.onSurface,
+      decoration: BauhausDesign.inputDecorationFor(
+        context,
+      ).copyWith(labelText: l10n.pricingRegionLabel),
       items: [
         for (final region in pricingRegions)
           DropdownMenuItem(
             value: region,
-            child: Text(pricingRegionLabel(l10n, region)),
+            child: Text(
+              pricingRegionLabel(l10n, region),
+              style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
           ),
       ],
       onChanged: _isSavingCustomPrice[item.itemNumber] == true

@@ -31,18 +31,20 @@ class ExpenseDetailView extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         title: Text(
           l10n.expensesDetailsTitle,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).headlineMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
         ),
         backgroundColor: BauhausDesign.primary,
-        iconTheme: IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -255,7 +257,7 @@ class ExpenseDetailView extends ConsumerWidget {
                     ],
 
                     // Divider
-                    const Divider(color: BauhausDesign.neutral),
+                    Divider(color: Theme.of(context).colorScheme.onSurface),
                     const SizedBox(height: 8),
 
                     // Metadata
@@ -375,7 +377,7 @@ class ExpenseDetailView extends ConsumerWidget {
       builder: (BuildContext context) {
         final l10n = AppLocalizations.of(context)!;
         return AlertDialog(
-          backgroundColor: BauhausDesign.surfaceWhite,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
             l10n.deleteExpenseTitle,
             style: BauhausDesign.getTextTheme(context).headlineMedium,

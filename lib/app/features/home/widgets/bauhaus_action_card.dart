@@ -21,20 +21,23 @@ class BauhausActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final isEnabled = onTap != null;
-    final actionColor = isEnabled ? baseColor : BauhausDesign.neutral;
-    final actionTextColor = isEnabled
-        ? BauhausDesign.surfaceWhite
-        : BauhausDesign.surfaceLight;
+    final actionColor = isEnabled ? baseColor : colorScheme.onSurfaceVariant;
+    final actionTextColor = !isEnabled
+        ? colorScheme.onSurfaceVariant
+        : actionColor == colorScheme.secondary
+        ? colorScheme.onSecondary
+        : colorScheme.onPrimary;
 
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        border: Border.all(color: BauhausDesign.textDark, width: 3),
-        boxShadow: const [
+        color: colorScheme.surface,
+        border: Border.all(color: colorScheme.outline, width: 3),
+        boxShadow: [
           BoxShadow(
-            color: BauhausDesign.textDark,
+            color: colorScheme.shadow,
             offset: Offset(4, 4),
             blurRadius: 0,
           ),
@@ -73,7 +76,7 @@ class BauhausActionCard extends StatelessWidget {
                         style: BauhausDesign.getTextTheme(context).titleLarge
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: BauhausDesign.textDark,
+                              color: colorScheme.onSurface,
                             ),
                       ),
                     ),
@@ -83,7 +86,7 @@ class BauhausActionCard extends StatelessWidget {
                 Text(
                   description,
                   style: BauhausDesign.getTextTheme(context).bodyMedium
-                      ?.copyWith(color: BauhausDesign.textDark, height: 1.5),
+                      ?.copyWith(color: colorScheme.onSurface, height: 1.5),
                 ),
                 const SizedBox(height: BauhausDesign.space5),
                 Align(
@@ -95,13 +98,10 @@ class BauhausActionCard extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: actionColor,
-                      border: Border.all(
-                        color: BauhausDesign.textDark,
-                        width: 2,
-                      ),
-                      boxShadow: const [
+                      border: Border.all(color: colorScheme.outline, width: 2),
+                      boxShadow: [
                         BoxShadow(
-                          color: BauhausDesign.textDark,
+                          color: colorScheme.shadow,
                           offset: Offset(2, 2),
                           blurRadius: 0,
                         ),

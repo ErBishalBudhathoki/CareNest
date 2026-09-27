@@ -13,25 +13,30 @@ class TrainingComplianceHubView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onSecondary,
+        ),
         title: Text(
           AppLocalizations.of(context)!.trainingComplianceTitle,
           style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onSecondary,
             fontWeight: FontWeight.w700,
           ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),
-          child: Container(height: 2, color: BauhausDesign.neutral),
+          child: Container(
+            height: 2,
+            color: Theme.of(context).colorScheme.outline,
+          ),
         ),
       ),
       body: ListView(
@@ -93,8 +98,11 @@ class TrainingComplianceHubView extends ConsumerWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
-          color: BauhausDesign.surfaceLight,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
+          color: Theme.of(context).colorScheme.surface,
           boxShadow: const [BauhausDesign.shadowHard],
         ),
         child: IntrinsicHeight(
@@ -125,7 +133,9 @@ class TrainingComplianceHubView extends ConsumerWidget {
                               style: BauhausDesign.getTextTheme(context)
                                   .labelLarge
                                   ?.copyWith(
-                                    color: BauhausDesign.textDark,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
                                     fontWeight: FontWeight.w800,
                                   ),
                             ),
@@ -134,15 +144,19 @@ class TrainingComplianceHubView extends ConsumerWidget {
                               subtitle,
                               style: BauhausDesign.getTextTheme(context)
                                   .bodySmall
-                                  ?.copyWith(color: BauhausDesign.textMuted),
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                                  ),
                             ),
                           ],
                         ),
                       ),
                       const SizedBox(width: BauhausDesign.space2),
-                      const Icon(
+                      Icon(
                         Icons.chevron_right,
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ],
                   ),

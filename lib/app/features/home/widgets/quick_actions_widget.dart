@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/theme/bauhaus_colors.dart';
 import '../models/dashboard_models.dart';
 
 class QuickActionsWidget extends StatelessWidget {
@@ -16,12 +15,14 @@ class QuickActionsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     if (isLoading) {
       return _buildLoadingState();
     }
 
     if (actions == null || actions!.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(context);
     }
 
     return Card(
@@ -37,22 +38,22 @@ class QuickActionsWidget extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: BauhausColors.primaryBlue.withValues(alpha: 0.1),
+                    color: colorScheme.secondary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.flash_on,
-                    color: BauhausColors.primaryBlue,
+                    color: colorScheme.secondary,
                     size: 24,
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Text(
+                Text(
                   'Quick Actions',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: BauhausColors.textDark,
+                    color: colorScheme.onSurface,
                   ),
                 ),
               ],
@@ -66,7 +67,13 @@ class QuickActionsWidget extends StatelessWidget {
   }
 
   Widget _buildActionTile(BuildContext context, QuickAction action) {
-    final color = _getActionColor(action.type);
+    final colorScheme = Theme.of(context).colorScheme;
+    final color = _getActionColor(action.type, colorScheme);
+    final foregroundColor = color == colorScheme.error
+        ? colorScheme.onError
+        : color == colorScheme.primary
+        ? colorScheme.onPrimary
+        : colorScheme.onSecondary;
     final icon = _getActionIcon(action.type);
 
     return Padding(
@@ -100,10 +107,10 @@ class QuickActionsWidget extends StatelessWidget {
                     children: [
                       Text(
                         action.title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: BauhausColors.textDark,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                       if (action.count > 0) ...[
@@ -128,8 +135,8 @@ class QuickActionsWidget extends StatelessWidget {
                     ),
                     child: Text(
                       action.count.toString(),
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: foregroundColor,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
@@ -160,28 +167,35 @@ class QuickActionsWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: const Padding(
-        padding: EdgeInsets.all(32),
+      child: Padding(
+        padding: const EdgeInsets.all(32),
         child: Center(
           child: Column(
             children: [
-              Icon(Icons.check_circle_outline, size: 48, color: Colors.grey),
+              Icon(
+                Icons.check_circle_outline,
+                size: 48,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               SizedBox(height: 16),
               Text(
                 'All caught up!',
                 style: TextStyle(
-                  color: Colors.grey,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               SizedBox(height: 4),
               Text(
                 'No pending actions',
-                style: TextStyle(color: Colors.grey, fontSize: 12),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
@@ -190,20 +204,20 @@ class QuickActionsWidget extends StatelessWidget {
     );
   }
 
-  Color _getActionColor(QuickActionType type) {
+  Color _getActionColor(QuickActionType type, ColorScheme colorScheme) {
     switch (type) {
       case QuickActionType.approveTimesheets:
-        return BauhausColors.primaryBlue;
+        return colorScheme.secondary;
       case QuickActionType.reviewExpenses:
-        return BauhausColors.accentOrange;
+        return colorScheme.primary;
       case QuickActionType.assignShifts:
-        return BauhausColors.primaryYellow;
+        return colorScheme.primary;
       case QuickActionType.sendMessages:
-        return BauhausColors.accentPurple;
+        return colorScheme.tertiary;
       case QuickActionType.viewReports:
-        return BauhausColors.accentGreen;
+        return colorScheme.secondary;
       case QuickActionType.manageCompliance:
-        return BauhausColors.primaryRed;
+        return colorScheme.error;
     }
   }
 

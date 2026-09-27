@@ -1,5 +1,4 @@
 import 'package:carenest/app/core/providers/app_providers.dart';
-import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:animation_list/animation_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,21 +29,25 @@ class _LineItemsControllerState extends ConsumerState<LineItemsView> {
     });
   }
 
-  Widget _buildTile(String? title, Color? surfaceColor) {
+  Widget _buildTile(BuildContext context, String? title, Color? surfaceColor) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final resolvedSurface = surfaceColor ?? colorScheme.secondary;
+    final textColor =
+        ThemeData.estimateBrightnessForColor(resolvedSurface) == Brightness.dark
+        ? colorScheme.surface
+        : colorScheme.onSurface;
     return Container(
       height: 75,
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(20)),
-        color: surfaceColor,
+        borderRadius: BorderRadius.zero,
+        color: resolvedSurface,
+        border: Border.all(color: colorScheme.outline, width: 2.5),
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(
-          child: Text(
-            title!,
-            style: const TextStyle(fontSize: 16).copyWith(color: Colors.white),
-          ),
+          child: Text(title!, style: TextStyle(fontSize: 16, color: textColor)),
         ),
       ),
     );
@@ -56,11 +59,12 @@ class _LineItemsControllerState extends ConsumerState<LineItemsView> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: colorScheme.inverseSurface,
+        foregroundColor: colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -81,10 +85,7 @@ class _LineItemsControllerState extends ConsumerState<LineItemsView> {
                 children: _lineItems.map((item) {
                   final itemNumber = item['itemNumber'] ?? '';
                   final itemName = item['itemDescription'] ?? '';
-                  return _buildTile(
-                    "$itemNumber\n$itemName",
-                    const Color(0xFF667EEA),
-                  );
+                  return _buildTile(context, "$itemNumber\n$itemName", null);
                 }).toList(),
               );
             }

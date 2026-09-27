@@ -38,14 +38,14 @@ class _HealthMonitoringViewState extends ConsumerState<HealthMonitoringView> {
     final state = ref.watch(intelligenceViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         title: Text(
           'HEALTH MONITORING',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onSecondary,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -129,9 +129,9 @@ class _HealthMonitoringViewState extends ConsumerState<HealthMonitoringView> {
               ],
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'No significant health deviations detected in the last 7 days. Vital signs remain within average range.',
-              style: TextStyle(color: BauhausDesign.textDark),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
             ),
           ],
         ),
@@ -146,6 +146,15 @@ class _HealthMonitoringViewState extends ConsumerState<HealthMonitoringView> {
     required Color color,
     required IconData icon,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final foregroundColor = color == colorScheme.error
+        ? colorScheme.onError
+        : color == colorScheme.secondary
+        ? colorScheme.onSecondary
+        : color == colorScheme.primary
+        ? colorScheme.onPrimary
+        : colorScheme.onTertiary;
+
     return BauhausCard(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -196,8 +205,8 @@ class _HealthMonitoringViewState extends ConsumerState<HealthMonitoringView> {
                   ),
                   child: Text(
                     status.toUpperCase(),
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: foregroundColor,
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                     ),

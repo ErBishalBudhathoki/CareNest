@@ -43,10 +43,7 @@ class NdisPricingManagementView extends ConsumerStatefulWidget {
 
 class _NdisPricingManagementViewState
     extends ConsumerState<NdisPricingManagementView> {
-  static const Color _screenGray = Color(0xFFE3E3E3);
-  static const Color _inkBlack = Color(0xFF171717);
   static const Color _accentRed = Color(0xFFE21F26);
-  static const Color _panelWhite = Color(0xFFF8F8F8);
   static const Color _accentBlue = Color(0xFF0D62B3);
   static const Color _accentYellow = Color(0xFFF5D000);
 
@@ -1096,7 +1093,7 @@ class _NdisPricingManagementViewState
           message,
           style: BauhausDesign.getTextTheme(
             context,
-          ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+          ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.surface),
         ),
         backgroundColor: isError ? BauhausDesign.error : BauhausDesign.success,
         behavior: SnackBarBehavior.floating,
@@ -1112,7 +1109,7 @@ class _NdisPricingManagementViewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _screenGray,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(child: _buildModernHeader()),
@@ -1138,13 +1135,13 @@ class _NdisPricingManagementViewState
 
   Widget _buildModernHeader() {
     return Container(
-      color: _screenGray,
+      color: Theme.of(context).colorScheme.surface,
       child: SafeArea(
         bottom: false,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
           child: Container(
-            color: _screenGray,
+            color: Theme.of(context).colorScheme.surface,
             padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
             child: Column(
               children: [
@@ -1156,13 +1153,16 @@ class _NdisPricingManagementViewState
                         width: 34,
                         height: 34,
                         decoration: BoxDecoration(
-                          color: _panelWhite,
-                          border: Border.all(color: _inkBlack, width: 2),
+                          color: Theme.of(context).colorScheme.surface,
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            width: 2,
+                          ),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.arrow_back,
                           size: 18,
-                          color: _inkBlack,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -1174,7 +1174,7 @@ class _NdisPricingManagementViewState
                             .headlineMedium
                             ?.copyWith(
                               fontWeight: FontWeight.w800,
-                              color: _inkBlack,
+                              color: Theme.of(context).colorScheme.onSurface,
                               letterSpacing: 0.4,
                             ),
                       ),
@@ -1186,12 +1186,15 @@ class _NdisPricingManagementViewState
                         height: 34,
                         decoration: BoxDecoration(
                           color: _accentBlue,
-                          border: Border.all(color: _inkBlack, width: 2),
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            width: 2,
+                          ),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.settings,
                           size: 18,
-                          color: BauhausDesign.surfaceWhite,
+                          color: Theme.of(context).colorScheme.surface,
                         ),
                       ),
                     ),
@@ -1204,7 +1207,7 @@ class _NdisPricingManagementViewState
                       'PRICING ENGINE V2.1',
                       style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
-                            color: _inkBlack,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 0.6,
                           ),
@@ -1217,15 +1220,18 @@ class _NdisPricingManagementViewState
                       ),
                       decoration: BoxDecoration(
                         color: _accentRed,
-                        border: Border.all(color: _inkBlack, width: 2),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          width: 2,
+                        ),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.stop_circle_outlined,
                             size: 10,
-                            color: BauhausDesign.surfaceWhite,
+                            color: Theme.of(context).colorScheme.surface,
                           ),
                           const SizedBox(width: 4),
                           Text(
@@ -1233,7 +1239,7 @@ class _NdisPricingManagementViewState
                             style: BauhausDesign.getTextTheme(context)
                                 .labelSmall
                                 ?.copyWith(
-                                  color: BauhausDesign.surfaceWhite,
+                                  color: Theme.of(context).colorScheme.surface,
                                   fontWeight: FontWeight.w800,
                                   letterSpacing: 0.6,
                                 ),
@@ -1244,7 +1250,11 @@ class _NdisPricingManagementViewState
                   ],
                 ),
                 const SizedBox(height: 10),
-                const Divider(color: _inkBlack, height: 1, thickness: 1),
+                Divider(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  height: 1,
+                  thickness: 1,
+                ),
               ],
             ),
           ),
@@ -1294,24 +1304,34 @@ class _NdisPricingManagementViewState
           height: 46,
           padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            color: _panelWhite,
-            border: Border.all(color: _inkBlack, width: 2),
+            color: Theme.of(context).colorScheme.surface,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.onSurface,
+              width: 2,
+            ),
           ),
           child: Row(
             children: [
-              const Icon(Icons.search, size: 18, color: Colors.black54),
+              Icon(
+                Icons.search,
+                size: 18,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               const SizedBox(width: 6),
               Expanded(
                 child: TextField(
                   controller: _searchController,
                   onChanged: _filterNdisItems,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     border: InputBorder.none,
                     isDense: true,
                     hintText: '01_002_0107_1_1',
                   ),
                   style: BauhausDesign.getTextTheme(context).bodyMedium
-                      ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w600),
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
               ),
             ],
@@ -1332,22 +1352,31 @@ class _NdisPricingManagementViewState
   Widget _buildPricingFilter() {
     return DropdownButtonFormField<String>(
       initialValue: _selectedFilter,
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         isDense: true,
         contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         filled: true,
-        fillColor: _panelWhite,
+        fillColor: Theme.of(context).colorScheme.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: _inkBlack, width: 2),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: _inkBlack, width: 2),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: _inkBlack, width: 2),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
         ),
       ),
       items: ['All', 'Custom', 'Standard', 'High Intensity']
@@ -1369,7 +1398,7 @@ class _NdisPricingManagementViewState
                     ? 'High Intensity'
                     : 'All Cats',
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: _inkBlack,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -1382,30 +1411,42 @@ class _NdisPricingManagementViewState
           _applyFilters();
         });
       },
-      icon: const Icon(Icons.keyboard_arrow_down, color: _inkBlack),
-      dropdownColor: _panelWhite,
+      icon: Icon(
+        Icons.keyboard_arrow_down,
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
+      dropdownColor: Theme.of(context).colorScheme.surface,
     );
   }
 
   Widget _buildStateFilter() {
     return DropdownButtonFormField<String>(
       initialValue: _selectedStateFilter,
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         isDense: true,
         contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         filled: true,
-        fillColor: _panelWhite,
+        fillColor: Theme.of(context).colorScheme.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: _inkBlack, width: 2),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: _inkBlack, width: 2),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: _inkBlack, width: 2),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
         ),
       ),
       items: ['All', 'National', 'Remote', 'Very Remote']
@@ -1415,7 +1456,7 @@ class _NdisPricingManagementViewState
               child: Text(
                 state == 'All' ? 'All Rates' : state,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: _inkBlack,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -1428,8 +1469,11 @@ class _NdisPricingManagementViewState
           _applyFilters();
         });
       },
-      icon: const Icon(Icons.keyboard_arrow_down, color: _inkBlack),
-      dropdownColor: _panelWhite,
+      icon: Icon(
+        Icons.keyboard_arrow_down,
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
+      dropdownColor: Theme.of(context).colorScheme.surface,
     );
   }
 
@@ -1437,8 +1481,11 @@ class _NdisPricingManagementViewState
   Widget _buildInfoBanner() {
     return Container(
       decoration: BoxDecoration(
-        color: _panelWhite,
-        border: Border.all(color: _inkBlack, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1453,13 +1500,13 @@ class _NdisPricingManagementViewState
                   Container(
                     width: 18,
                     height: 18,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: _accentRed,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.info,
-                      color: BauhausDesign.surfaceWhite,
+                      color: Theme.of(context).colorScheme.surface,
                       size: 12,
                     ),
                   ),
@@ -1470,7 +1517,7 @@ class _NdisPricingManagementViewState
                       'Custom pricing overrides standard rates.',
                       style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
-                            color: _inkBlack,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w700,
                             height: 1.35,
                           ),
@@ -1489,7 +1536,7 @@ class _NdisPricingManagementViewState
     return Text(
       text,
       style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-        color: _inkBlack,
+        color: Theme.of(context).colorScheme.onSurface,
         fontWeight: FontWeight.w800,
         letterSpacing: 0.6,
       ),
@@ -1503,7 +1550,7 @@ class _NdisPricingManagementViewState
         hasScrollBody: false,
         child: Center(
           child: CircularProgressIndicator(
-            color: _inkBlack,
+            color: Theme.of(context).colorScheme.onSurface,
             semanticsLabel: AppLocalizations.of(context)!.loadingNdisItems,
           ),
         ),
@@ -1517,7 +1564,11 @@ class _NdisPricingManagementViewState
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.search_off, size: 48, color: Colors.grey[400]),
+              Icon(
+                Icons.search_off,
+                size: 48,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
               const SizedBox(height: 12),
               Text(
                 _searchQuery.isNotEmpty
@@ -1525,7 +1576,9 @@ class _NdisPricingManagementViewState
                         context,
                       )!.noNdisItemsFoundMatch(_searchQuery)
                     : AppLocalizations.of(context)!.noNdisItemsFound,
-                style: TextStyle(color: Colors.grey[600]),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: 8),
               TextButton(
@@ -1589,15 +1642,18 @@ class _NdisPricingManagementViewState
     return Container(
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
-            color: _panelWhite,
-            border: Border.all(color: _inkBlack, width: 2),
+            color: Theme.of(context).colorScheme.surface,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.onSurface,
+              width: 2,
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 width: double.infinity,
-                color: _inkBlack,
+                color: Theme.of(context).colorScheme.inverseSurface,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
                   vertical: 6,
@@ -1608,7 +1664,9 @@ class _NdisPricingManagementViewState
                       'PRICING ITEM',
                       style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
-                            color: BauhausDesign.surfaceWhite,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onInverseSurface,
                             letterSpacing: 0.6,
                             fontWeight: FontWeight.w800,
                           ),
@@ -1618,7 +1676,9 @@ class _NdisPricingManagementViewState
                       '\$',
                       style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
-                            color: BauhausDesign.surfaceWhite,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onInverseSurface,
                             fontWeight: FontWeight.w700,
                           ),
                     ),
@@ -1644,7 +1704,9 @@ class _NdisPricingManagementViewState
                                 style: BauhausDesign.getTextTheme(context)
                                     .headlineMedium
                                     ?.copyWith(
-                                      color: _inkBlack,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
                                       fontWeight: FontWeight.w900,
                                       height: 1.1,
                                     ),
@@ -1655,7 +1717,9 @@ class _NdisPricingManagementViewState
                                 style: BauhausDesign.getTextTheme(context)
                                     .bodySmall
                                     ?.copyWith(
-                                      color: Colors.black54,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
                                       fontWeight: FontWeight.w700,
                                     ),
                               ),
@@ -1672,7 +1736,7 @@ class _NdisPricingManagementViewState
                             showOverride
                                 ? Icons.keyboard_arrow_up
                                 : Icons.keyboard_arrow_down,
-                            color: _inkBlack,
+                            color: Theme.of(context).colorScheme.onSurface,
                             size: 22,
                           ),
                           onPressed: () =>
@@ -1691,16 +1755,14 @@ class _NdisPricingManagementViewState
                         vertical: 9,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF4F4F4),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerLow,
                         border: Border.all(color: _accentRed, width: 2),
                       ),
                       child: Row(
                         children: [
-                          const Icon(
-                            Icons.qr_code_2,
-                            size: 15,
-                            color: _accentRed,
-                          ),
+                          Icon(Icons.qr_code_2, size: 15, color: _accentRed),
                           const SizedBox(width: 8),
                           Text(
                             item.itemNumber,
@@ -1731,13 +1793,16 @@ class _NdisPricingManagementViewState
                       padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
                       decoration: BoxDecoration(
                         color: _accentYellow,
-                        border: Border.all(color: _inkBlack, width: 2),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          width: 2,
+                        ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            color: _inkBlack,
+                            color: Theme.of(context).colorScheme.inverseSurface,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 6,
                               vertical: 2,
@@ -1747,7 +1812,9 @@ class _NdisPricingManagementViewState
                               style: BauhausDesign.getTextTheme(context)
                                   .labelSmall
                                   ?.copyWith(
-                                    color: BauhausDesign.surfaceWhite,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onInverseSurface,
                                     fontWeight: FontWeight.w800,
                                     letterSpacing: 0.4,
                                   ),
@@ -1764,7 +1831,9 @@ class _NdisPricingManagementViewState
                                 style: BauhausDesign.getTextTheme(context)
                                     .displaySmall
                                     ?.copyWith(
-                                      color: _inkBlack,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
                                       fontWeight: FontWeight.w900,
                                       fontSize: 40,
                                     ),
@@ -1777,7 +1846,9 @@ class _NdisPricingManagementViewState
                                   style: BauhausDesign.getTextTheme(context)
                                       .labelLarge
                                       ?.copyWith(
-                                        color: _inkBlack,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
                                         fontWeight: FontWeight.w800,
                                       ),
                                 ),
@@ -1823,16 +1894,21 @@ class _NdisPricingManagementViewState
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 9),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFE5E5E5),
-                  border: Border(top: BorderSide(color: _inkBlack, width: 2)),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                  border: Border(
+                    top: BorderSide(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      width: 2,
+                    ),
+                  ),
                 ),
                 child: Text(
                   updatedText,
                   textAlign: TextAlign.center,
                   style: BauhausDesign.getTextTheme(context).labelLarge
                       ?.copyWith(
-                        color: Colors.black54,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 0.3,
                       ),
@@ -1850,13 +1926,16 @@ class _NdisPricingManagementViewState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       decoration: BoxDecoration(
-        color: const Color(0xFFE8E8E8),
-        border: Border.all(color: _inkBlack, width: 2),
+        color: Theme.of(context).colorScheme.surfaceContainerHigh,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
       ),
       child: Text(
         label,
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-          color: _inkBlack,
+          color: Theme.of(context).colorScheme.onSurface,
           fontWeight: FontWeight.w800,
           letterSpacing: 0.4,
         ),
@@ -1884,14 +1963,17 @@ class _NdisPricingManagementViewState
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
         decoration: BoxDecoration(
           color: expired ? BauhausDesign.error : BauhausDesign.warning,
-          border: Border.all(color: _inkBlack, width: 2),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
         ),
         child: Text(
           expired ? 'LEGACY — EXPIRED $dateText' : 'LEGACY — EXPIRES $dateText',
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
             color: expired
-                ? BauhausDesign.surfaceWhite
-                : BauhausDesign.textDark,
+                ? Theme.of(context).colorScheme.surface
+                : Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w800,
             letterSpacing: 0.4,
           ),
@@ -1903,13 +1985,18 @@ class _NdisPricingManagementViewState
   Widget _buildMetricBlock({
     required String title,
     required String value,
-    Color valueColor = _inkBlack,
+    Color? valueColor,
   }) {
+    final resolvedValueColor =
+        valueColor ?? Theme.of(context).colorScheme.onSurface;
     return Container(
       padding: const EdgeInsets.fromLTRB(8, 7, 8, 9),
       decoration: BoxDecoration(
-        color: const Color(0xFFF0F0F0),
-        border: Border.all(color: _inkBlack, width: 2),
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1917,7 +2004,7 @@ class _NdisPricingManagementViewState
           Text(
             title,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: Colors.black54,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w800,
               letterSpacing: 0.4,
             ),
@@ -1926,7 +2013,7 @@ class _NdisPricingManagementViewState
           Text(
             value,
             style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-              color: valueColor,
+              color: resolvedValueColor,
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -1979,20 +2066,23 @@ class _NdisPricingManagementViewState
 
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F1F1),
-        border: Border.all(color: _inkBlack, width: 2),
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: double.infinity,
-            color: _inkBlack,
+            color: Theme.of(context).colorScheme.inverseSurface,
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             child: Text(
               'CUSTOM PRICING OVERRIDE',
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.surfaceWhite,
+                color: Theme.of(context).colorScheme.onInverseSurface,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 0.6,
               ),
@@ -2006,8 +2096,11 @@ class _NdisPricingManagementViewState
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF8F8F8),
-                    border: Border.all(color: _inkBlack, width: 2),
+                    color: Theme.of(context).colorScheme.surface,
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      width: 2,
+                    ),
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -2028,7 +2121,9 @@ class _NdisPricingManagementViewState
                                 style: BauhausDesign.getTextTheme(context)
                                     .labelSmall
                                     ?.copyWith(
-                                      color: _inkBlack,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
                                       fontWeight: FontWeight.w800,
                                       letterSpacing: 0.5,
                                     ),
@@ -2149,8 +2244,11 @@ class _NdisPricingManagementViewState
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE8E8E8),
-                      border: Border.all(color: _inkBlack, width: 2),
+                      color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        width: 2,
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -2180,7 +2278,9 @@ class _NdisPricingManagementViewState
                             style: BauhausDesign.getTextTheme(context)
                                 .bodyMedium
                                 ?.copyWith(
-                                  color: _inkBlack,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   fontWeight: FontWeight.w700,
                                 ),
                           ),
@@ -2200,8 +2300,11 @@ class _NdisPricingManagementViewState
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: _panelWhite,
-                      border: Border.all(color: _inkBlack, width: 2),
+                      color: Theme.of(context).colorScheme.surface,
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        width: 2,
+                      ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2212,7 +2315,7 @@ class _NdisPricingManagementViewState
                           )!.customPriceHourlyLabel.toUpperCase(),
                           style: BauhausDesign.getTextTheme(context).labelSmall
                               ?.copyWith(
-                                color: _inkBlack,
+                                color: Theme.of(context).colorScheme.onSurface,
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: 0.5,
                               ),
@@ -2231,33 +2334,33 @@ class _NdisPricingManagementViewState
                           style: BauhausDesign.getTextTheme(context)
                               .headlineMedium
                               ?.copyWith(
-                                color: _inkBlack,
+                                color: Theme.of(context).colorScheme.onSurface,
                                 fontWeight: FontWeight.w900,
                               ),
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             isDense: true,
                             prefixText: '\$ ',
                             hintText: '0.00',
                             filled: true,
-                            fillColor: Color(0xFFF8F8F8),
+                            fillColor: Theme.of(context).colorScheme.surface,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.zero,
                               borderSide: BorderSide(
-                                color: _inkBlack,
+                                color: Theme.of(context).colorScheme.onSurface,
                                 width: 2,
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.zero,
                               borderSide: BorderSide(
-                                color: _inkBlack,
+                                color: Theme.of(context).colorScheme.onSurface,
                                 width: 2,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.zero,
                               borderSide: BorderSide(
-                                color: _inkBlack,
+                                color: Theme.of(context).colorScheme.onSurface,
                                 width: 2,
                               ),
                             ),
@@ -2305,14 +2408,17 @@ class _NdisPricingManagementViewState
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFF3CC),
-                      border: Border.all(color: _inkBlack, width: 2),
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        width: 2,
+                      ),
                     ),
                     child: Text(
                       AppLocalizations.of(context)!.customPricingAppliedOrgWide,
                       style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
-                            color: _inkBlack,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w700,
                           ),
                     ),
@@ -2332,11 +2438,13 @@ class _NdisPricingManagementViewState
     bool isPrimary = false,
   }) {
     final backgroundColor = onTap == null
-        ? const Color(0xFFCCCCCC)
-        : (isPrimary ? _accentRed : _panelWhite);
+        ? Theme.of(context).colorScheme.outlineVariant
+        : (isPrimary ? _accentRed : Theme.of(context).colorScheme.surface);
     final textColor = onTap == null
-        ? Colors.black45
-        : (isPrimary ? BauhausDesign.surfaceWhite : _inkBlack);
+        ? Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5)
+        : (isPrimary
+              ? Theme.of(context).colorScheme.surface
+              : Theme.of(context).colorScheme.onSurface);
 
     return InkWell(
       onTap: onTap,
@@ -2345,7 +2453,10 @@ class _NdisPricingManagementViewState
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 9),
         decoration: BoxDecoration(
           color: backgroundColor,
-          border: Border.all(color: _inkBlack, width: 2),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
         ),
         child: Text(
           label,
@@ -2367,8 +2478,11 @@ class _NdisPricingManagementViewState
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
-        color: _panelWhite,
-        border: Border.all(color: _inkBlack, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
       ),
       child: DropdownButtonFormField<PriceRegion>(
         initialValue: selected,

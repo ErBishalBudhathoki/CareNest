@@ -51,20 +51,26 @@ class _GeofenceViewState extends ConsumerState<GeofenceView> {
   }
 
   Widget _buildEmptyState() {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.location_off, size: 64, color: Colors.grey),
+          Icon(
+            Icons.location_off,
+            size: 64,
+            color: colorScheme.onSurfaceVariant,
+          ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'No geofences found',
-            style: TextStyle(fontSize: 18, color: Colors.grey),
+            style: TextStyle(fontSize: 18, color: colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Add a location to get alerts when entering/exiting',
-            style: TextStyle(color: Colors.grey),
+            style: TextStyle(color: colorScheme.onSurfaceVariant),
           ),
         ],
       ),
@@ -80,7 +86,7 @@ class _GeofenceViewState extends ConsumerState<GeofenceView> {
         subtitle: Text('${geofence.address}\nRadius: ${geofence.radius}m'),
         isThreeLine: true,
         trailing: IconButton(
-          icon: const Icon(Icons.delete, color: Colors.red),
+          icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
           onPressed: () => _confirmDelete(geofence, notifier),
         ),
       ),
@@ -100,7 +106,10 @@ class _GeofenceViewState extends ConsumerState<GeofenceView> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(
+              'Delete',
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           ),
         ],
       ),

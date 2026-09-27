@@ -156,8 +156,11 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
               ? EdgeInsets.zero
               : const EdgeInsets.all(BauhausDesign.space6),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceOffWhite,
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            color: Theme.of(context).colorScheme.surfaceContainer,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             boxShadow: [BauhausDesign.shadowHard],
           ),
           child: Form(
@@ -170,21 +173,24 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
                   padding: const EdgeInsets.all(BauhausDesign.space4),
                   decoration: BoxDecoration(
                     color: BauhausDesign.primary,
-                    border: Border.all(color: BauhausDesign.neutral, width: 2),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 2,
+                    ),
                   ),
                   child: Row(
                     children: [
                       Container(
                         width: 40,
                         height: 40,
-                        color: BauhausDesign.surfaceWhite,
+                        color: Theme.of(context).colorScheme.surface,
                         child: Icon(
                           Icons.account_balance,
                           color: BauhausDesign.primary,
                           size: 24,
                         ),
                       ),
-                      const SizedBox(width: BauhausDesign.space3),
+                      SizedBox(width: BauhausDesign.space3),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,19 +200,19 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
                               style: GoogleFonts.inter(
                                 fontSize: BauhausDesign.fontLg,
                                 fontWeight: FontWeight.w700,
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                                 letterSpacing: 0.5,
                               ),
                             ),
-                            const SizedBox(height: 2),
+                            SizedBox(height: 2),
                             Text(
                               'Manage your organization\'s banking information',
                               style: GoogleFonts.inter(
                                 fontSize: BauhausDesign.fontSm,
                                 fontWeight: FontWeight.w400,
-                                color: BauhausDesign.textDark.withValues(
-                                  alpha: 0.7,
-                                ),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.7),
                               ),
                             ),
                           ],
@@ -216,7 +222,7 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
                   ),
                 ),
 
-                const SizedBox(height: BauhausDesign.space6),
+                SizedBox(height: BauhausDesign.space6),
 
                 // Banking Form Fields
                 if (isMobile) ...[
@@ -229,7 +235,7 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
                         ? 'Bank name is required'
                         : null,
                   ),
-                  const SizedBox(height: BauhausDesign.space4),
+                  SizedBox(height: BauhausDesign.space4),
                   _BauhausTextField(
                     controller: _accountNameController,
                     label: 'ACCOUNT NAME',
@@ -238,14 +244,14 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
                         ? 'Account name is required'
                         : null,
                   ),
-                  const SizedBox(height: BauhausDesign.space4),
+                  SizedBox(height: BauhausDesign.space4),
                   _BauhausTextField(
                     controller: _bsbController,
                     label: 'BSB',
                     hint: 'XXX-XXX',
                     validator: _validateBSB,
                   ),
-                  const SizedBox(height: BauhausDesign.space4),
+                  SizedBox(height: BauhausDesign.space4),
                   _BauhausTextField(
                     controller: _accountNumberController,
                     label: 'ACCOUNT NUMBER',
@@ -272,7 +278,7 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
                                   ? 'Bank name is required'
                                   : null,
                             ),
-                            const SizedBox(height: BauhausDesign.space4),
+                            SizedBox(height: BauhausDesign.space4),
                             _BauhausTextField(
                               controller: _accountNameController,
                               label: 'ACCOUNT NAME',
@@ -286,7 +292,7 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
                         ),
                       ),
 
-                      const SizedBox(width: BauhausDesign.space6),
+                      SizedBox(width: BauhausDesign.space6),
 
                       // Right Column
                       Expanded(
@@ -300,7 +306,7 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
                               hint: 'XXX-XXX',
                               validator: _validateBSB,
                             ),
-                            const SizedBox(height: BauhausDesign.space4),
+                            SizedBox(height: BauhausDesign.space4),
                             _BauhausTextField(
                               controller: _accountNumberController,
                               label: 'ACCOUNT NUMBER',
@@ -314,12 +320,12 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
                   ),
                 ],
 
-                const SizedBox(height: BauhausDesign.space6),
+                SizedBox(height: BauhausDesign.space6),
 
                 // Banking Status Card
                 _BauhausBankingStatusCard(organization: widget.organization),
 
-                const SizedBox(height: BauhausDesign.space6),
+                SizedBox(height: BauhausDesign.space6),
 
                 // Action Buttons
                 if (isMobile) ...[
@@ -331,7 +337,7 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
                         onPressed: _isSaving ? null : _saveBankingDetails,
                         isLoading: _isSaving,
                       ),
-                      const SizedBox(height: BauhausDesign.space3),
+                      SizedBox(height: BauhausDesign.space3),
                       _BauhausSecondaryButton(
                         text: 'RESET',
                         onPressed: _isSaving
@@ -370,7 +376,7 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
                         onPressed: _isSaving ? null : _saveBankingDetails,
                         isLoading: _isSaving,
                       ),
-                      const SizedBox(width: BauhausDesign.space3),
+                      SizedBox(width: BauhausDesign.space3),
                       _BauhausSecondaryButton(
                         text: 'RESET',
                         onPressed: _isSaving
@@ -404,7 +410,7 @@ class _BauhausBankingSectionState extends ConsumerState<BauhausBankingSection> {
                 ],
 
                 if (_errorMessage != null) ...[
-                  const SizedBox(height: BauhausDesign.space3),
+                  SizedBox(height: BauhausDesign.space3),
                   Container(
                     padding: const EdgeInsets.all(BauhausDesign.space3),
                     decoration: BoxDecoration(
@@ -453,34 +459,42 @@ class _BauhausTextField extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: BauhausDesign.fontXs,
             fontWeight: FontWeight.w600,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             letterSpacing: 0.5,
           ),
         ),
-        const SizedBox(height: BauhausDesign.space1),
+        SizedBox(height: BauhausDesign.space1),
         TextFormField(
           controller: controller,
           validator: validator,
           style: GoogleFonts.inter(
             fontSize: BauhausDesign.fontMd,
             fontWeight: FontWeight.w500,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: GoogleFonts.inter(
               fontSize: BauhausDesign.fontMd,
               fontWeight: FontWeight.w400,
-              color: BauhausDesign.textDark.withValues(alpha: 0.5),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.5),
             ),
             filled: true,
-            fillColor: Colors.white,
+            fillColor: Theme.of(context).colorScheme.onInverseSurface,
             border: OutlineInputBorder(
-              borderSide: BorderSide(color: BauhausDesign.neutral, width: 2),
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
               borderRadius: BorderRadius.zero,
             ),
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: BauhausDesign.neutral, width: 2),
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
               borderRadius: BorderRadius.zero,
             ),
             focusedBorder: OutlineInputBorder(
@@ -522,11 +536,11 @@ class _BauhausPrimaryButton extends StatelessWidget {
       decoration: BoxDecoration(
         color: isEnabled
             ? BauhausDesign.primary
-            : BauhausDesign.neutral.withValues(alpha: 0.1),
+            : Theme.of(context).colorScheme.outline.withValues(alpha: 0.1),
         border: Border.all(
           color: isEnabled
-              ? BauhausDesign.neutral
-              : BauhausDesign.neutral.withValues(alpha: 0.3),
+              ? Theme.of(context).colorScheme.outline
+              : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
           width: 2,
         ),
         boxShadow: isEnabled ? [BauhausDesign.shadowHard] : [],
@@ -541,11 +555,13 @@ class _BauhausPrimaryButton extends StatelessWidget {
               vertical: BauhausDesign.space3,
             ),
             child: isLoading
-                ? const SizedBox(
+                ? SizedBox(
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).colorScheme.onInverseSurface,
+                      ),
                       strokeWidth: 2,
                     ),
                   )
@@ -555,8 +571,10 @@ class _BauhausPrimaryButton extends StatelessWidget {
                       fontSize: BauhausDesign.fontMd,
                       fontWeight: FontWeight.w600,
                       color: isEnabled
-                          ? Colors.white
-                          : BauhausDesign.textDark.withValues(alpha: 0.3),
+                          ? Theme.of(context).colorScheme.onInverseSurface
+                          : Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.3),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -582,8 +600,8 @@ class _BauhausSecondaryButton extends StatelessWidget {
         color: Colors.transparent,
         border: Border.all(
           color: isEnabled
-              ? BauhausDesign.neutral
-              : BauhausDesign.neutral.withValues(alpha: 0.3),
+              ? Theme.of(context).colorScheme.outline
+              : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
           width: 2,
         ),
         boxShadow: isEnabled ? [BauhausDesign.shadowHardSm] : [],
@@ -603,8 +621,10 @@ class _BauhausSecondaryButton extends StatelessWidget {
                 fontSize: BauhausDesign.fontMd,
                 fontWeight: FontWeight.w600,
                 color: isEnabled
-                    ? BauhausDesign.textDark
-                    : BauhausDesign.textDark.withValues(alpha: 0.3),
+                    ? Theme.of(context).colorScheme.onSurface
+                    : Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.3),
               ),
               textAlign: TextAlign.center,
             ),
@@ -640,8 +660,11 @@ class _BauhausBankingStatusCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: [BauhausDesign.shadowHardSm],
       ),
       child: Column(
@@ -654,17 +677,20 @@ class _BauhausBankingStatusCard extends StatelessWidget {
                   ? BauhausDesign.success
                   : BauhausDesign.warning,
               border: Border(
-                bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+                bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
               ),
             ),
             child: Row(
               children: [
                 Icon(
                   completionPercentage == 100 ? Icons.check_circle : Icons.info,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   size: 20,
                 ),
-                const SizedBox(width: BauhausDesign.space2),
+                SizedBox(width: BauhausDesign.space2),
                 Expanded(
                   child: Text(
                     completionPercentage == 100
@@ -673,7 +699,7 @@ class _BauhausBankingStatusCard extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: BauhausDesign.fontSm,
                       fontWeight: FontWeight.w600,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -691,29 +717,29 @@ class _BauhausBankingStatusCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: BauhausDesign.fontMd,
                     fontWeight: FontWeight.w600,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
-                const SizedBox(height: BauhausDesign.space2),
+                SizedBox(height: BauhausDesign.space2),
                 _BauhausStatusItem(
                   label: 'Bank Name',
                   isComplete: hasBankName,
                   value: organization.bankDetails?.bankName ?? 'Not provided',
                 ),
-                const SizedBox(height: BauhausDesign.space2),
+                SizedBox(height: BauhausDesign.space2),
                 _BauhausStatusItem(
                   label: 'Account Name',
                   isComplete: hasAccountName,
                   value:
                       organization.bankDetails?.accountName ?? 'Not provided',
                 ),
-                const SizedBox(height: BauhausDesign.space2),
+                SizedBox(height: BauhausDesign.space2),
                 _BauhausStatusItem(
                   label: 'BSB',
                   isComplete: hasBSB,
                   value: organization.bankDetails?.bsb ?? 'Not provided',
                 ),
-                const SizedBox(height: BauhausDesign.space2),
+                SizedBox(height: BauhausDesign.space2),
                 _BauhausStatusItem(
                   label: 'Account Number',
                   isComplete: hasAccountNumber,
@@ -748,14 +774,23 @@ class _BauhausStatusItem extends StatelessWidget {
           width: 16,
           height: 16,
           decoration: BoxDecoration(
-            color: isComplete ? BauhausDesign.success : BauhausDesign.neutral,
-            border: Border.all(color: BauhausDesign.neutral, width: 1),
+            color: isComplete
+                ? BauhausDesign.success
+                : Theme.of(context).colorScheme.outline,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 1,
+            ),
           ),
           child: isComplete
-              ? Icon(Icons.check, size: 12, color: BauhausDesign.textDark)
+              ? Icon(
+                  Icons.check,
+                  size: 12,
+                  color: Theme.of(context).colorScheme.onSurface,
+                )
               : null,
         ),
-        const SizedBox(width: BauhausDesign.space2),
+        SizedBox(width: BauhausDesign.space2),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -765,7 +800,9 @@ class _BauhausStatusItem extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: BauhausDesign.fontXs,
                   fontWeight: FontWeight.w600,
-                  color: BauhausDesign.textDark.withValues(alpha: 0.7),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.7),
                   letterSpacing: 0.5,
                 ),
               ),
@@ -774,7 +811,7 @@ class _BauhausStatusItem extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: BauhausDesign.fontSm,
                   fontWeight: FontWeight.w500,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ],

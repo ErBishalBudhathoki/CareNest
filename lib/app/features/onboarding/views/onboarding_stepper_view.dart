@@ -48,6 +48,7 @@ class _OnboardingStepperViewState extends ConsumerState<OnboardingStepperView> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final state = ref.watch(onboardingViewModelProvider);
     final record = state.record;
 
@@ -88,53 +89,53 @@ class _OnboardingStepperViewState extends ConsumerState<OnboardingStepperView> {
       int currentStep = _currentStep!;
 
       final stepConfigs = [
-        const _OnboardingStageConfig(
+        _OnboardingStageConfig(
           label: 'Personal details',
           title: 'Tell us about you',
           subtitle:
               'Add your address and emergency contact so CareNest can keep your profile complete and ready for rostering.',
           assetPath: 'assets/ui_assets_svg/onboarding_personal.svg',
-          accentColor: Color(0xFFEFF4FF),
+          accentColor: colorScheme.surfaceContainerLow,
         ),
-        const _OnboardingStageConfig(
+        _OnboardingStageConfig(
           label: 'Bank details',
           title: 'Set up payroll details',
           subtitle:
               'Add the bank account your wages should be paid into. This only needs to be done once.',
           assetPath: 'assets/ui_assets_svg/onboarding_bank.svg',
-          accentColor: Color(0xFFF2F0FF),
+          accentColor: colorScheme.surfaceContainerLow,
         ),
-        const _OnboardingStageConfig(
+        _OnboardingStageConfig(
           label: 'Tax details',
           title: 'Add your tax information',
           subtitle:
               'Enter your TFN and choose the tax scale that applies to you for payroll setup.',
           assetPath: 'assets/ui_assets_svg/onboarding_tax.svg',
-          accentColor: Color(0xFFEFFBF8),
+          accentColor: colorScheme.surfaceContainerLow,
         ),
-        const _OnboardingStageConfig(
+        _OnboardingStageConfig(
           label: 'Superannuation',
           title: 'Add your super fund details',
           subtitle:
               'Enter the super fund information CareNest needs to process your super contributions correctly.',
           assetPath: 'assets/ui_assets_svg/onboarding_super.svg',
-          accentColor: Color(0xFFF7F3FF),
+          accentColor: colorScheme.surfaceContainerLow,
         ),
-        const _OnboardingStageConfig(
+        _OnboardingStageConfig(
           label: 'Identity documents',
           title: 'Upload identity and verification documents',
           subtitle:
               'Start with your core identity and background-check documents so your profile can be reviewed.',
           assetPath: 'assets/ui_assets_svg/onboarding_identity_docs.svg',
-          accentColor: Color(0xFFFFF7ED),
+          accentColor: colorScheme.surfaceContainerLow,
         ),
-        const _OnboardingStageConfig(
+        _OnboardingStageConfig(
           label: 'Documents',
           title: 'Upload training and compliance documents',
           subtitle:
               'Finish by uploading the certificates and compliance documents needed before onboarding can be submitted.',
           assetPath: 'assets/ui_assets_svg/onboarding_final_docs.svg',
-          accentColor: Color(0xFFF4F8FF),
+          accentColor: colorScheme.surfaceContainerLow,
         ),
       ];
       final config = stepConfigs[currentStep];
@@ -149,13 +150,16 @@ class _OnboardingStepperViewState extends ConsumerState<OnboardingStepperView> {
     }
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceWhite,
+      backgroundColor: colorScheme.surface,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFF6FAFF), Color(0xFFF8FAFF)],
+            colors: [
+              colorScheme.surfaceContainerLow,
+              colorScheme.surfaceContainer,
+            ],
           ),
         ),
         child: SafeArea(
@@ -345,6 +349,7 @@ class _OnboardingStageFrame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = BauhausDesign.getTextTheme(context);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -363,7 +368,7 @@ class _OnboardingStageFrame extends StatelessWidget {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFEFF4FF),
+                      color: colorScheme.surfaceContainerLow,
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
@@ -378,7 +383,7 @@ class _OnboardingStageFrame extends StatelessWidget {
                   Text(
                     '${stepIndex + 1} / $totalSteps',
                     style: theme.bodySmall?.copyWith(
-                      color: BauhausDesign.textMuted,
+                      color: colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -390,9 +395,9 @@ class _OnboardingStageFrame extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: (stepIndex + 1) / totalSteps,
                   minHeight: 7,
-                  backgroundColor: const Color(0xFFE6EBF7),
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                    BauhausDesign.primary,
+                  backgroundColor: colorScheme.surfaceContainerHighest,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    colorScheme.primary,
                   ),
                 ),
               ),
@@ -410,7 +415,7 @@ class _OnboardingStageFrame extends StatelessWidget {
               Text(
                 config.title,
                 style: theme.headlineSmall?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: colorScheme.onSurface,
                   fontWeight: FontWeight.w800,
                   height: 1.15,
                 ),
@@ -419,7 +424,7 @@ class _OnboardingStageFrame extends StatelessWidget {
               Text(
                 config.subtitle,
                 style: theme.bodyMedium?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: colorScheme.onSurfaceVariant,
                   height: 1.45,
                 ),
               ),

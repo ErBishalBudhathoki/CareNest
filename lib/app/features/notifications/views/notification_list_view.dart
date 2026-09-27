@@ -55,7 +55,7 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
     final notificationNotifier = ref.read(notificationProvider.notifier);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -86,10 +86,13 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
         position: _slideAnimation,
         child: Container(
           padding: const EdgeInsets.all(BauhausDesign.space4),
-          decoration: const BoxDecoration(
-            color: BauhausDesign.surfaceLight,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
             border: Border(
-              bottom: BorderSide(color: BauhausDesign.neutral, width: 1),
+              bottom: BorderSide(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1,
+              ),
             ),
           ),
           child: Column(
@@ -197,7 +200,7 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
       child: RefreshIndicator(
         onRefresh: () async => notifier.refresh(),
         color: BauhausDesign.primary,
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         child: ListView.builder(
           padding: const EdgeInsets.all(BauhausDesign.space4),
           itemCount: state.notifications.length,

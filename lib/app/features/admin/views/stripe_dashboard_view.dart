@@ -98,33 +98,36 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
     final organizationId = _resolveOrganizationId();
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           l10n.stripeDashboardTitle,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).displaySmall?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+            color: Theme.of(context).colorScheme.surface,
+          ),
         ),
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.surface),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2.0),
-          child: Container(color: BauhausDesign.neutral, height: 2.0),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 2.0,
+          ),
         ),
       ),
       body: organizationId == null
           ? Center(
               child: Text(
                 l10n.stripeDashboardRefreshFailed,
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             )
           : RefreshIndicator(
@@ -138,9 +141,12 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
                   children: [
                     Text(
                       l10n.stripeDashboardSubtitle,
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                      style: BauhausDesign.getTextTheme(context).bodySmall
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                     const SizedBox(height: BauhausDesign.space4),
                     _buildOverview(context, organizationId),
@@ -171,9 +177,12 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Column(
@@ -182,7 +191,7 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
           Text(
             title,
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -201,12 +210,15 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
       ),
       decoration: BoxDecoration(
         color: color,
-        border: Border.all(color: BauhausDesign.neutral, width: 1),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1,
+        ),
       ),
       child: Text(
         text,
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-          color: BauhausDesign.textDark,
+          color: Theme.of(context).colorScheme.onSurface,
           fontWeight: FontWeight.w800,
         ),
       ),
@@ -241,13 +253,16 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
               vertical: BauhausDesign.space2,
             ),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceLight,
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              color: Theme.of(context).colorScheme.surfaceContainer,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
             ),
             child: Text(
               AppLocalizations.of(context)!.retryButton,
               style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -277,7 +292,7 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
       case 'lost':
         return BauhausDesign.error;
       default:
-        return BauhausDesign.surfaceOffWhite;
+        return Theme.of(context).colorScheme.surfaceContainer;
     }
   }
 
@@ -335,16 +350,17 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
                   '${data['businessName']}',
                   style: BauhausDesign.getTextTheme(context).titleMedium
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
               if ((data['email'] as String?)?.isNotEmpty == true)
                 Text(
                   '${data['email']}',
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
               const SizedBox(height: BauhausDesign.space3),
               Wrap(
@@ -380,7 +396,7 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
                   l10n.stripeRequirementsTitle,
                   style: BauhausDesign.getTextTheme(context).bodyMedium
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -390,7 +406,7 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
                     padding: const EdgeInsets.only(bottom: 4),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.warning_amber_rounded,
                           size: 16,
                           color: BauhausDesign.warning,
@@ -400,7 +416,11 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
                           child: Text(
                             '${req['label'] ?? req['code']}',
                             style: BauhausDesign.getTextTheme(context).bodySmall
-                                ?.copyWith(color: BauhausDesign.textDark),
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                ),
                           ),
                         ),
                       ],
@@ -415,7 +435,7 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
                     decoration: BoxDecoration(
                       color: BauhausDesign.secondary,
                       border: Border.all(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.outline,
                         width: 2,
                       ),
                       boxShadow: const [BauhausDesign.shadowHardSm],
@@ -424,7 +444,9 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
                       l10n.stripeCompleteVerification,
                       style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
-                            color: BauhausDesign.surfaceLight,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainer,
                             fontWeight: FontWeight.w900,
                           ),
                     ),
@@ -434,9 +456,10 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
                 const SizedBox(height: BauhausDesign.space2),
                 Text(
                   l10n.stripeRequirementsNone,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
               ],
             ],
@@ -520,20 +543,24 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
               if (next == null) {
                 return Text(
                   l10n.stripeNoPayouts,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 );
               }
               return Container(
                 padding: const EdgeInsets.all(BauhausDesign.space3),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceOffWhite,
-                  border: Border.all(color: BauhausDesign.neutral, width: 1),
+                  color: Theme.of(context).colorScheme.surfaceContainer,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 1,
+                  ),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.schedule, color: BauhausDesign.secondary),
+                    Icon(Icons.schedule, color: BauhausDesign.secondary),
                     const SizedBox(width: BauhausDesign.space2),
                     Expanded(
                       child: Column(
@@ -544,7 +571,9 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
                             style: BauhausDesign.getTextTheme(context)
                                 .labelSmall
                                 ?.copyWith(
-                                  color: BauhausDesign.textMuted,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                   fontWeight: FontWeight.w700,
                                 ),
                           ),
@@ -553,7 +582,9 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
                             style: BauhausDesign.getTextTheme(context)
                                 .titleMedium
                                 ?.copyWith(
-                                  color: BauhausDesign.textDark,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   fontWeight: FontWeight.w900,
                                 ),
                           ),
@@ -595,15 +626,15 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
         Expanded(
           child: Text(
             label,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
         ),
         Text(
           _money(amount, currency),
           style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w900,
           ),
         ),
@@ -649,15 +680,15 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
                 _money(data['total'], '${data['currency'] ?? 'AUD'}'),
                 style: BauhausDesign.getTextTheme(context).displaySmall
                     ?.copyWith(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w900,
                     ),
               ),
               Text(
                 '${data['invoiceCount'] ?? 0} ${l10n.stripeRevenueInvoices}',
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: BauhausDesign.space3),
               SizedBox(
@@ -750,9 +781,9 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
             title: l10n.stripeRecentPayments,
             child: Text(
               l10n.stripeNoPayments,
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           );
         }
@@ -785,8 +816,11 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
       margin: const EdgeInsets.only(bottom: BauhausDesign.space2),
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceOffWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 1),
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -798,7 +832,7 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
                   '${payment['invoiceNumber']} · ${payment['clientName']}',
                   style: BauhausDesign.getTextTheme(context).bodyMedium
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -817,15 +851,16 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
                 child: Text(
                   '${l10n.stripePaid}: ${_money(payment['paidAmount'])} · '
                   '${l10n.stripeStatus}: ${_money(payment['balanceDue'])}',
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
               ),
               Text(
                 _money(payment['totalAmount']),
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w900,
                 ),
               ),
@@ -847,7 +882,7 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
                   vertical: BauhausDesign.space2,
                 ),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceLight,
+                  color: Theme.of(context).colorScheme.surfaceContainer,
                   border: Border.all(color: BauhausDesign.error, width: 2),
                 ),
                 child: Text(
@@ -878,10 +913,13 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
         ),
         title: Text('${l10n.stripeRefundTitle} $invoiceNumber'),
         content: Column(
@@ -890,9 +928,10 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
           children: [
             Text(
               '${l10n.stripePaid}: ${_money(paidAmount)}',
-              style: BauhausDesign.getTextTheme(
-                dialogContext,
-              ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+              style: BauhausDesign.getTextTheme(dialogContext).bodySmall
+                  ?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
             ),
             const SizedBox(height: BauhausDesign.space2),
             TextField(
@@ -901,6 +940,7 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
                 decimal: true,
               ),
               decoration: BauhausDesign.inputDecoration(
+                context,
                 l10n.stripeRefundAmountHint,
               ),
             ),
@@ -914,7 +954,7 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: BauhausDesign.error,
-              foregroundColor: BauhausDesign.surfaceWhite,
+              foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
             ),
             onPressed: () => Navigator.pop(dialogContext, true),
             child: Text(l10n.stripeRefundConfirm),
@@ -976,25 +1016,30 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
               if (bank != null)
                 Text(
                   '${l10n.stripeBankLabel}: $bank',
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
               if (bank != null) const SizedBox(height: BauhausDesign.space2),
               if (list.isEmpty)
                 Text(
                   l10n.stripeNoPayouts,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
               for (final payout in list)
                 Container(
                   margin: const EdgeInsets.only(bottom: BauhausDesign.space2),
                   padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.surfaceOffWhite,
-                    border: Border.all(color: BauhausDesign.neutral, width: 1),
+                    color: Theme.of(context).colorScheme.surfaceContainer,
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 1,
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -1007,7 +1052,9 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
                               style: BauhausDesign.getTextTheme(context)
                                   .bodyMedium
                                   ?.copyWith(
-                                    color: BauhausDesign.textDark,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
                                     fontWeight: FontWeight.w900,
                                   ),
                             ),
@@ -1016,7 +1063,11 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
                                 '${payout['arrivalDate']}'.split('T').first,
                                 style: BauhausDesign.getTextTheme(context)
                                     .bodySmall
-                                    ?.copyWith(color: BauhausDesign.textMuted),
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                    ),
                               ),
                             if (payout['failureMessage'] != null)
                               Text(
@@ -1072,9 +1123,9 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
             title: l10n.stripeRiskTitle,
             child: Text(
               l10n.stripeRiskEmpty,
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           );
         }
@@ -1100,8 +1151,11 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
       margin: const EdgeInsets.only(bottom: BauhausDesign.space2),
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceOffWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 1),
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1120,7 +1174,7 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
                   '${item['invoiceNumber'] ?? item['id']}',
                   style: BauhausDesign.getTextTheme(context).bodyMedium
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -1128,7 +1182,7 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
               Text(
                 _money(item['amount'], '${item['currency'] ?? 'AUD'}'),
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w900,
                 ),
               ),
@@ -1141,9 +1195,10 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
                 child: Text(
                   '${item['reason'] ?? item['status'] ?? ''}'
                   '${item['dueBy'] != null ? ' · ${l10n.stripeDisputeRespondBy} ${'${item['dueBy']}'.split('T').first}' : ''}',
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
               ),
               _badge(
@@ -1168,13 +1223,16 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
                 ),
                 decoration: BoxDecoration(
                   color: BauhausDesign.secondary,
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 2,
+                  ),
                 ),
                 child: Text(
                   l10n.stripeViewInvoice,
                   style: BauhausDesign.getTextTheme(context).labelMedium
                       ?.copyWith(
-                        color: BauhausDesign.surfaceLight,
+                        color: Theme.of(context).colorScheme.surfaceContainer,
                         fontWeight: FontWeight.w900,
                       ),
                 ),

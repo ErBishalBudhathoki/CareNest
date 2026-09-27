@@ -69,23 +69,24 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
   }
 
   /// Get file color based on type
-  Color _getFileColor(String filePath) {
+  Color _getFileColor(BuildContext context, String filePath) {
+    final colorScheme = Theme.of(context).colorScheme;
     final extension = path.extension(filePath).toLowerCase();
     switch (extension) {
       case '.pdf':
-        return Colors.red;
+        return colorScheme.error;
       case '.doc':
       case '.docx':
-        return Colors.blue;
+        return colorScheme.secondary;
       case '.jpg':
       case '.jpeg':
       case '.png':
       case '.gif':
       case '.bmp':
       case '.webp':
-        return Colors.green;
+        return colorScheme.secondary;
       default:
-        return Colors.grey;
+        return colorScheme.onSurfaceVariant;
     }
   }
 
@@ -409,9 +410,12 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.error_outline, color: Colors.red),
+            Icon(
+              Icons.error_outline,
+              color: Theme.of(context).colorScheme.error,
+            ),
             SizedBox(width: 8),
             Text('Image Load Error'),
           ],
@@ -422,22 +426,24 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
           children: [
             Text(
               'Failed to load image from server:',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-              ).copyWith(color: const Color(0xFF6B7280)),
+              ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.grey[100],
+                color: Theme.of(context).colorScheme.surfaceContainerHigh,
                 borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Colors.grey[300]!),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                ),
               ),
               child: Text(
                 path.basename(filePath),
-                style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+                style: TextStyle(fontFamily: 'monospace', fontSize: 12),
               ),
             ),
             const SizedBox(height: 12),
@@ -445,22 +451,28 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
               'Error details:',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Colors.grey[700],
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
             SizedBox(height: 4.0),
             Container(
               padding: EdgeInsets.all(8.0),
               decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.1),
+                color: Theme.of(
+                  context,
+                ).colorScheme.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(4.0),
-                border: Border.all(color: Colors.red.withValues(alpha: 0.1)),
+                border: Border.all(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.error.withValues(alpha: 0.1),
+                ),
               ),
               child: Text(
                 error,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
-                ).copyWith(color: Colors.red),
+                ).copyWith(color: Theme.of(context).colorScheme.error),
               ),
             ),
             const SizedBox(height: 12),
@@ -487,8 +499,8 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
               (context as Element).markNeedsBuild();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+              foregroundColor: Theme.of(context).colorScheme.onSecondary,
             ),
             child: const Text('Retry'),
           ),
@@ -509,28 +521,34 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
         // Header
         Row(
           children: [
-            const Icon(Icons.attach_file, color: Color(0xFF4CAF50), size: 20),
+            Icon(
+              Icons.attach_file,
+              color: Theme.of(context).colorScheme.secondary,
+              size: 20,
+            ),
             const SizedBox(width: 8),
-            const Text(
+            Text(
               'Receipt Attachments',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF4CAF50),
+                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
             const Spacer(),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: const Color(0xFF4CAF50).withValues(alpha: 0.1),
+                color: Theme.of(
+                  context,
+                ).colorScheme.secondary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 '${filePaths.length} file${filePaths.length == 1 ? '' : 's'}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
-                  color: Color(0xFF4CAF50),
+                  color: Theme.of(context).colorScheme.secondary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -543,9 +561,11 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.grey[50],
+            color: Theme.of(context).colorScheme.surfaceContainerLow,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey[300]!),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant,
+            ),
           ),
           child: GridView.builder(
             shrinkWrap: true,
@@ -568,12 +588,17 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
                 onTap: () => _openFile(context, ref, filePath),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: fileExists
-                          ? _getFileColor(filePath).withValues(alpha: 0.1)
-                          : Colors.red.withValues(alpha: 0.1),
+                          ? _getFileColor(
+                              context,
+                              filePath,
+                            ).withValues(alpha: 0.1)
+                          : Theme.of(
+                              context,
+                            ).colorScheme.error.withValues(alpha: 0.1),
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -592,8 +617,13 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: fileExists
-                                ? _getFileColor(filePath).withValues(alpha: 0.1)
-                                : Colors.red.withValues(alpha: 0.1),
+                                ? _getFileColor(
+                                    context,
+                                    filePath,
+                                  ).withValues(alpha: 0.1)
+                                : Theme.of(
+                                    context,
+                                  ).colorScheme.error.withValues(alpha: 0.1),
                             borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(12),
                               topRight: Radius.circular(12),
@@ -618,7 +648,7 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
                                                   debugPrint(
                                                     'Loading image from URL: $url',
                                                   );
-                                                  return const Center(
+                                                  return Center(
                                                     child:
                                                         CircularProgressIndicator(),
                                                   );
@@ -640,6 +670,7 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
                                                     },
                                                     child:
                                                         _buildImageErrorWidget(
+                                                          context,
                                                           filePath,
                                                           url,
                                                           error.toString(),
@@ -657,14 +688,19 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
                                                       stackTrace,
                                                     ) {
                                                       return _buildFileIcon(
+                                                        context,
                                                         filePath,
                                                         fileExists,
                                                       );
                                                     },
                                               ),
                                       )
-                                    : _buildFileIcon(filePath, fileExists))
-                              : _buildFileIcon(filePath, fileExists),
+                                    : _buildFileIcon(
+                                        context,
+                                        filePath,
+                                        fileExists,
+                                      ))
+                              : _buildFileIcon(context, filePath, fileExists),
                         ),
                       ),
 
@@ -681,11 +717,13 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
                               Flexible(
                                 child: Text(
                                   fileName,
-                                  style: const TextStyle(fontSize: 12).copyWith(
+                                  style: TextStyle(fontSize: 12).copyWith(
                                     fontWeight: FontWeight.bold,
                                     color: fileExists
-                                        ? const Color(0xFF1F2937)
-                                        : Colors.red,
+                                        ? Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface
+                                        : Theme.of(context).colorScheme.error,
                                   ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -696,20 +734,22 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
                                 fileExists
                                     ? _getFileSize(filePath)
                                     : 'File not found',
-                                style: const TextStyle(fontSize: 12).copyWith(
+                                style: TextStyle(fontSize: 12).copyWith(
                                   fontSize: 9,
                                   color: fileExists
-                                      ? const Color(0xFF6B7280)
-                                      : Colors.red,
+                                      ? Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant
+                                      : Theme.of(context).colorScheme.error,
                                 ),
                               ),
                               if (fileExists) ...[
                                 SizedBox(height: 4.0),
                                 Text(
                                   'Tap to view',
-                                  style: const TextStyle(fontSize: 12).copyWith(
+                                  style: TextStyle(fontSize: 12).copyWith(
                                     fontSize: 8,
-                                    color: _getFileColor(filePath),
+                                    color: _getFileColor(context, filePath),
                                     fontStyle: FontStyle.italic,
                                   ),
                                 ),
@@ -733,9 +773,11 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.blue.shade50,
+              color: Theme.of(context).colorScheme.secondaryContainer,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.blue.shade200),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.secondaryContainer,
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -745,7 +787,7 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
                     Icon(
                       Icons.description,
                       size: 16,
-                      color: Colors.blue.shade600,
+                      color: Theme.of(context).colorScheme.onSecondaryContainer,
                     ),
                     const SizedBox(width: 8),
                     Text(
@@ -753,7 +795,9 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blue.shade600,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSecondaryContainer,
                       ),
                     ),
                   ],
@@ -761,7 +805,10 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
                 const SizedBox(height: 4),
                 Text(
                   description!,
-                  style: TextStyle(fontSize: 12, color: Colors.blue.shade700),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(context).colorScheme.onSecondaryContainer,
+                  ),
                 ),
               ],
             ),
@@ -772,23 +819,31 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
   }
 
   /// Build file icon widget
-  Widget _buildFileIcon(String filePath, bool fileExists) {
+  Widget _buildFileIcon(
+    BuildContext context,
+    String filePath,
+    bool fileExists,
+  ) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(
           fileExists ? _getFileIcon(filePath) : Icons.error_outline,
           size: 40,
-          color: fileExists ? _getFileColor(filePath) : Colors.red,
+          color: fileExists
+              ? _getFileColor(context, filePath)
+              : Theme.of(context).colorScheme.error,
         ),
         SizedBox(height: 8.0),
         Text(
           fileExists
               ? path.extension(filePath).toUpperCase().substring(1)
               : 'ERROR',
-          style: const TextStyle(fontSize: 12).copyWith(
+          style: TextStyle(fontSize: 12).copyWith(
             fontWeight: FontWeight.bold,
-            color: fileExists ? _getFileColor(filePath) : Colors.red,
+            color: fileExists
+                ? _getFileColor(context, filePath)
+                : Theme.of(context).colorScheme.error,
           ),
         ),
       ],
@@ -796,42 +851,57 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
   }
 
   /// Build enhanced error widget for image loading failures
-  Widget _buildImageErrorWidget(String filePath, String url, String error) {
+  Widget _buildImageErrorWidget(
+    BuildContext context,
+    String filePath,
+    String url,
+    String error,
+  ) {
     return Container(
       padding: const EdgeInsets.all(8),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.broken_image, size: 32, color: Colors.red.shade400),
+          Icon(
+            Icons.broken_image,
+            size: 32,
+            color: Theme.of(context).colorScheme.error,
+          ),
           const SizedBox(height: 4),
           Text(
             'Image failed to load',
-            style: const TextStyle(
-              fontSize: 12,
-            ).copyWith(fontWeight: FontWeight.bold, color: Colors.red),
+            style: TextStyle(fontSize: 12).copyWith(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.error,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 2),
           Text(
             'Tap to retry',
-            style: const TextStyle(
-              fontSize: 12,
-            ).copyWith(fontSize: 8, color: Colors.red.withValues(alpha: 0.1)),
+            style: TextStyle(fontSize: 12).copyWith(
+              fontSize: 8,
+              color: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: Colors.red.withValues(alpha: 0.1),
+              color: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4.0),
-              border: Border.all(color: Colors.red.withValues(alpha: 0.1)),
+              border: Border.all(
+                color: Theme.of(
+                  context,
+                ).colorScheme.error.withValues(alpha: 0.1),
+              ),
             ),
             child: Text(
               'Server file',
-              style: const TextStyle(fontSize: 12).copyWith(
+              style: TextStyle(fontSize: 12).copyWith(
                 fontSize: 7,
-                color: Colors.red,
+                color: Theme.of(context).colorScheme.error,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -857,18 +927,23 @@ class _FullScreenImageViewer extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: BauhausDesign.primary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
         title: Text(
           path.basename(imagePath),
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.share, color: Colors.white),
+            icon: Icon(
+              Icons.share,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
             onPressed: () {
               // TODO: Implement share functionality
               ScaffoldMessenger.of(context).showSnackBar(
@@ -880,7 +955,7 @@ class _FullScreenImageViewer extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(child: InteractiveViewer(child: _buildImageWidget())),
+      body: Center(child: InteractiveViewer(child: _buildImageWidget(context))),
     );
   }
 
@@ -890,7 +965,7 @@ class _FullScreenImageViewer extends StatelessWidget {
   }
 
   /// Build the appropriate image widget based on file type
-  Widget _buildImageWidget() {
+  Widget _buildImageWidget(BuildContext context) {
     if (isServerFile) {
       final serverUrl = _getServerUrl(imagePath);
       debugPrint('Full-screen viewer loading image from URL: $serverUrl');
@@ -902,15 +977,20 @@ class _FullScreenImageViewer extends StatelessWidget {
         fit: BoxFit.contain,
         placeholder: (context, url) {
           debugPrint('Full-screen placeholder for URL: $url');
-          return const Center(
+          return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularProgressIndicator(color: Colors.white),
+                CircularProgressIndicator(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 SizedBox(height: 16),
                 Text(
                   'Loading image...',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontSize: 16,
+                  ),
                 ),
               ],
             ),
@@ -925,20 +1005,29 @@ class _FullScreenImageViewer extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.broken_image, size: 64, color: Colors.white),
+                  Icon(
+                    Icons.broken_image,
+                    size: 64,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                   const SizedBox(height: 16),
-                  const Text(
+                  Text(
                     'Cannot load server image',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     'This might be due to network issues, an invalid URL, or the image may no longer exist on the server.',
-                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                    style: TextStyle(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.7),
+                      fontSize: 14,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
@@ -950,8 +1039,10 @@ class _FullScreenImageViewer extends StatelessWidget {
                     ),
                     child: Text(
                       'URL: $url',
-                      style: const TextStyle(
-                        color: Colors.white60,
+                      style: TextStyle(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
                         fontSize: 11,
                         fontFamily: 'monospace',
                       ),
@@ -979,11 +1070,15 @@ class _FullScreenImageViewer extends StatelessWidget {
                             );
                           });
                         },
-                        icon: const Icon(Icons.refresh),
+                        icon: Icon(Icons.refresh),
                         label: const Text('Retry'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.secondary,
+                          foregroundColor: Theme.of(
+                            context,
+                          ).colorScheme.onSecondary,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -997,11 +1092,15 @@ class _FullScreenImageViewer extends StatelessWidget {
                             );
                           }
                         },
-                        icon: const Icon(Icons.open_in_new),
+                        icon: Icon(Icons.open_in_new),
                         label: const Text('Open in Browser'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.secondary,
+                          foregroundColor: Theme.of(
+                            context,
+                          ).colorScheme.onSecondary,
                         ),
                       ),
                     ],
@@ -1018,30 +1117,44 @@ class _FullScreenImageViewer extends StatelessWidget {
               File(imagePath),
               fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) {
-                return const Center(
+                return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.broken_image, size: 64, color: Colors.white),
+                      Icon(
+                        Icons.broken_image,
+                        size: 64,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                       SizedBox(height: 16),
                       Text(
                         'Cannot load image',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 16,
+                        ),
                       ),
                     ],
                   ),
                 );
               },
             )
-          : const Center(
+          : Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.error_outline, size: 64, color: Colors.white),
+                  Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                   SizedBox(height: 16),
                   Text(
                     'Image file not found',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontSize: 16,
+                    ),
                   ),
                 ],
               ),

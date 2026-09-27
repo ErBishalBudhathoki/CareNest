@@ -134,7 +134,7 @@ class _ExpensePhotoAttachmentWidgetState
           AndroidUiSettings(
             toolbarTitle: 'Crop Receipt',
             toolbarColor: BauhausDesign.primary,
-            toolbarWidgetColor: BauhausDesign.surfaceWhite,
+            toolbarWidgetColor: Theme.of(context).colorScheme.surface,
             initAspectRatio: CropAspectRatioPreset.ratio4x3,
             lockAspectRatio: false,
             hideBottomControls:
@@ -316,6 +316,7 @@ class _ExpensePhotoAttachmentWidgetState
             controller: _descriptionController,
             decoration:
                 BauhausDesign.inputDecoration(
+                  context,
                   'Photo Description (Optional)',
                 ).copyWith(
                   labelText: 'Photo Description (Optional)',
@@ -374,7 +375,7 @@ class _ExpensePhotoAttachmentWidgetState
                         ),
                         child: Icon(
                           Icons.close,
-                          color: BauhausDesign.surfaceWhite,
+                          color: Theme.of(context).colorScheme.onError,
                           size: 16,
                         ),
                       ),

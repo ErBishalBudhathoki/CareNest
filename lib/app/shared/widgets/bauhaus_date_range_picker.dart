@@ -139,11 +139,11 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
 
   @override
   Widget build(BuildContext context) {
-    // Custom colors from image/Bauhaus system
-    const selectionColor = Color(0xFF0055FF); // Electric Blue
-    const okButtonColor = BauhausDesign.primary; // Red
-    const neutralColor = BauhausDesign.neutral; // Black
-    const surfaceColor = BauhausDesign.surfaceWhite;
+    final colorScheme = Theme.of(context).colorScheme;
+    final selectionColor = colorScheme.secondary;
+    final okButtonColor = colorScheme.primary;
+    final textColor = colorScheme.onSurface;
+    final surfaceColor = colorScheme.surface;
 
     final headerDf = DateFormat('MMM dd, yyyy');
 
@@ -153,9 +153,13 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
       child: Container(
         decoration: BoxDecoration(
           color: surfaceColor,
-          border: Border.all(color: neutralColor, width: 3),
-          boxShadow: const [
-            BoxShadow(color: neutralColor, offset: Offset(8, 8), blurRadius: 0),
+          border: Border.all(color: colorScheme.outline, width: 3),
+          boxShadow: [
+            BoxShadow(
+              color: colorScheme.shadow,
+              offset: Offset(8, 8),
+              blurRadius: 0,
+            ),
           ],
         ),
         child: SingleChildScrollView(
@@ -180,7 +184,7 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
                                 ?.copyWith(
                                   letterSpacing: 1.5,
                                   fontWeight: FontWeight.w900,
-                                  color: neutralColor,
+                                  color: textColor,
                                 ),
                           ),
                           const SizedBox(height: 8),
@@ -194,7 +198,7 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
                                   fontSize: 24,
                                   height: 1.0,
                                   fontWeight: FontWeight.w800,
-                                  color: neutralColor,
+                                  color: textColor,
                                 ),
                           ),
                           Text(
@@ -207,7 +211,7 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
                                   fontSize: 24,
                                   height: 1.0,
                                   fontWeight: FontWeight.w800,
-                                  color: neutralColor,
+                                  color: textColor,
                                 ),
                           ),
                         ],
@@ -216,13 +220,16 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        border: Border.all(color: neutralColor, width: 2.5),
+                        border: Border.all(
+                          color: colorScheme.outline,
+                          width: 2.5,
+                        ),
                         borderRadius: BorderRadius.circular(4),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.calendar_today_outlined,
                         size: 28,
-                        color: neutralColor,
+                        color: textColor,
                       ),
                     ),
                   ],
@@ -242,7 +249,10 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
                           margin: const EdgeInsets.only(top: 24),
                           height: 56,
                           decoration: BoxDecoration(
-                            border: Border.all(color: neutralColor, width: 3),
+                            border: Border.all(
+                              color: colorScheme.outline,
+                              width: 3,
+                            ),
                           ),
                           child: Row(
                             children: [
@@ -257,11 +267,11 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
                                     style: BauhausDesign.getTextTheme(context)
                                         .headlineMedium
                                         ?.copyWith(
-                                          color: Colors.white,
+                                          color: colorScheme.onSecondary,
                                           fontWeight: FontWeight.w700,
                                           fontSize: 18,
                                         ),
-                                    decoration: const InputDecoration(
+                                    decoration: InputDecoration(
                                       border: InputBorder.none,
                                       focusedBorder: InputBorder.none,
                                       enabledBorder: InputBorder.none,
@@ -271,7 +281,8 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
                                       contentPadding: EdgeInsets.zero,
                                       hintText: 'MM/DD/YYYY',
                                       hintStyle: TextStyle(
-                                        color: Colors.white70,
+                                        color: colorScheme.onSecondary
+                                            .withValues(alpha: 0.7),
                                         fontWeight: FontWeight.w600,
                                       ),
                                       filled: false,
@@ -283,7 +294,7 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
                                 ),
                               ),
                               // Divider
-                              Container(width: 3, color: neutralColor),
+                              Container(width: 3, color: colorScheme.outline),
                               // End Date Input
                               Expanded(
                                 child: Container(
@@ -295,11 +306,11 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
                                     style: BauhausDesign.getTextTheme(context)
                                         .headlineMedium
                                         ?.copyWith(
-                                          color: neutralColor,
+                                          color: textColor,
                                           fontWeight: FontWeight.w700,
                                           fontSize: 18,
                                         ),
-                                    decoration: const InputDecoration(
+                                    decoration: InputDecoration(
                                       border: InputBorder.none,
                                       focusedBorder: InputBorder.none,
                                       enabledBorder: InputBorder.none,
@@ -309,7 +320,8 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
                                       contentPadding: EdgeInsets.zero,
                                       hintText: 'MM/DD/YYYY',
                                       hintStyle: TextStyle(
-                                        color: Colors.black38,
+                                        color: colorScheme.onSurfaceVariant
+                                            .withValues(alpha: 0.6),
                                         fontWeight: FontWeight.w600,
                                       ),
                                       filled: false,
@@ -332,15 +344,15 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
                               horizontal: 16,
                               vertical: 6,
                             ),
-                            decoration: const BoxDecoration(
-                              color: neutralColor,
+                            decoration: BoxDecoration(
+                              color: colorScheme.inverseSurface,
                             ),
                             child: Text(
                               'START DATE',
                               style: BauhausDesign.getTextTheme(context)
                                   .labelSmall
                                   ?.copyWith(
-                                    color: surfaceColor,
+                                    color: colorScheme.onInverseSurface,
                                     fontWeight: FontWeight.w900,
                                     fontSize: 11,
                                     letterSpacing: 0.5,
@@ -364,15 +376,15 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
                               horizontal: 16,
                               vertical: 6,
                             ),
-                            decoration: const BoxDecoration(
-                              color: neutralColor,
+                            decoration: BoxDecoration(
+                              color: colorScheme.inverseSurface,
                             ),
                             child: Text(
                               'END DATE',
                               style: BauhausDesign.getTextTheme(context)
                                   .labelSmall
                                   ?.copyWith(
-                                    color: surfaceColor,
+                                    color: colorScheme.onInverseSurface,
                                     fontWeight: FontWeight.w900,
                                     fontSize: 11,
                                     letterSpacing: 0.5,
@@ -393,7 +405,7 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: neutralColor, width: 2.5),
+                    border: Border.all(color: colorScheme.outline, width: 2.5),
                   ),
                   child: TableCalendar(
                     firstDay: widget.firstDate,
@@ -417,65 +429,73 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
                           .copyWith(
                             fontWeight: FontWeight.w700,
                             fontSize: 16,
-                            color: neutralColor,
+                            color: textColor,
                           ),
-                      leftChevronIcon: const Icon(
+                      leftChevronIcon: Icon(
                         Icons.chevron_left,
-                        color: neutralColor,
+                        color: textColor,
                       ),
-                      rightChevronIcon: const Icon(
+                      rightChevronIcon: Icon(
                         Icons.chevron_right,
-                        color: neutralColor,
+                        color: textColor,
                       ),
                       headerPadding: const EdgeInsets.symmetric(vertical: 8),
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         border: Border(
-                          bottom: BorderSide(color: neutralColor, width: 2.5),
+                          bottom: BorderSide(
+                            color: colorScheme.outline,
+                            width: 2.5,
+                          ),
                         ),
                       ),
                     ),
                     daysOfWeekStyle: DaysOfWeekStyle(
-                      weekdayStyle: const TextStyle(
-                        color: neutralColor,
+                      weekdayStyle: TextStyle(
+                        color: textColor,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),
-                      weekendStyle: const TextStyle(
-                        color: neutralColor,
+                      weekendStyle: TextStyle(
+                        color: textColor,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         border: Border(
-                          bottom: BorderSide(color: neutralColor, width: 2.5),
+                          bottom: BorderSide(
+                            color: colorScheme.outline,
+                            width: 2.5,
+                          ),
                         ),
                       ),
                     ),
                     calendarStyle: CalendarStyle(
                       isTodayHighlighted: false,
                       outsideDaysVisible: false,
-                      rangeHighlightColor: selectionColor.withValues(alpha: 0.2),
-                      rangeStartDecoration: const BoxDecoration(
+                      rangeHighlightColor: selectionColor.withValues(
+                        alpha: 0.2,
+                      ),
+                      rangeStartDecoration: BoxDecoration(
                         color: selectionColor,
                         shape: BoxShape.rectangle,
                       ),
-                      rangeEndDecoration: const BoxDecoration(
+                      rangeEndDecoration: BoxDecoration(
                         color: selectionColor,
                         shape: BoxShape.rectangle,
                       ),
-                      withinRangeTextStyle: const TextStyle(
-                        color: neutralColor,
+                      withinRangeTextStyle: TextStyle(
+                        color: colorScheme.onSecondary,
                         fontWeight: FontWeight.bold,
                       ),
-                      defaultTextStyle: const TextStyle(
-                        color: neutralColor,
+                      defaultTextStyle: TextStyle(
+                        color: textColor,
                         fontWeight: FontWeight.w600,
                       ),
-                      weekendTextStyle: const TextStyle(
-                        color: neutralColor,
+                      weekendTextStyle: TextStyle(
+                        color: textColor,
                         fontWeight: FontWeight.w600,
                       ),
-                      selectedDecoration: const BoxDecoration(
+                      selectedDecoration: BoxDecoration(
                         color: selectionColor,
                         shape: BoxShape.rectangle,
                       ),
@@ -496,7 +516,7 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
                         context,
                         label: 'CANCEL',
                         color: surfaceColor,
-                        textColor: neutralColor,
+                        textColor: textColor,
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                     ),
@@ -506,7 +526,7 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
                         context,
                         label: 'OK',
                         color: okButtonColor,
-                        textColor: Colors.white,
+                        textColor: colorScheme.onPrimary,
                         onPressed: () {
                           // Force parse current text values without auto-updating controllers
                           // This ensures manually typed dates are captured even if Enter wasn't pressed
@@ -560,6 +580,7 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
     required Color textColor,
     required VoidCallback onPressed,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onPressed,
       child: Container(
@@ -567,10 +588,10 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: color,
-          border: Border.all(color: BauhausDesign.neutral, width: 3),
-          boxShadow: const [
+          border: Border.all(color: colorScheme.outline, width: 3),
+          boxShadow: [
             BoxShadow(
-              color: BauhausDesign.neutral,
+              color: colorScheme.shadow,
               offset: Offset(4, 4),
               blurRadius: 0,
             ),

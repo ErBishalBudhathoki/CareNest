@@ -81,24 +81,27 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceWhite,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           l10n.allInvoices,
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onPrimary,
             fontWeight: FontWeight.w800,
           ),
         ),
         centerTitle: true,
         backgroundColor: BauhausDesign.primary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         surfaceTintColor: Colors.transparent, // Disable surface tint
         scrolledUnderElevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
-        shape: const Border(
-          bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(56),
@@ -106,11 +109,11 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
             children: [
               TabBar(
                 controller: _tabController,
-                labelColor: BauhausDesign.surfaceWhite,
-                unselectedLabelColor: BauhausDesign.surfaceWhite.withValues(
-                  alpha: 0.65,
-                ),
-                indicatorColor: BauhausDesign.surfaceWhite,
+                labelColor: Theme.of(context).colorScheme.onPrimary,
+                unselectedLabelColor: Theme.of(
+                  context,
+                ).colorScheme.onPrimary.withValues(alpha: 0.65),
+                indicatorColor: Theme.of(context).colorScheme.onPrimary,
                 indicatorWeight: 4,
                 labelStyle: BauhausDesign.getTextTheme(
                   context,
@@ -128,7 +131,10 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: BauhausDesign.surfaceWhite),
+            icon: Icon(
+              Icons.refresh,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
             tooltip: l10n.refreshAction,
             onPressed: _loadInvoices,
           ),
@@ -149,7 +155,10 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
           decoration: BoxDecoration(
             color: BauhausDesign.primary,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.onSurface,
+              width: 2,
+            ),
             boxShadow: const [BauhausDesign.shadowHard],
           ),
           child: Material(
@@ -166,7 +175,10 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
                 );
               },
               borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-              child: const Icon(Icons.add, color: BauhausDesign.surfaceWhite),
+              child: Icon(
+                Icons.add,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
             ),
           ),
         ),
@@ -177,7 +189,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
   Widget _buildSearchAndFilter(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
-      color: BauhausDesign.surfaceWhite,
+      color: Theme.of(context).colorScheme.surface,
       child: Column(
         children: [
           BauhausSearchBar(
@@ -204,7 +216,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
                 l10n.statusLabel,
                 style: BauhausDesign.getTextTheme(context).labelMedium
                     ?.copyWith(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w700,
                     ),
               ),
@@ -215,19 +227,22 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
                     horizontal: BauhausDesign.space3,
                   ),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.surfaceWhite,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                    border: Border.all(color: BauhausDesign.neutral, width: 2),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      width: 2,
+                    ),
                     boxShadow: const [BauhausDesign.shadowHardSm],
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       value: _statusFilter,
                       isExpanded: true,
-                      dropdownColor: BauhausDesign.surfaceWhite,
-                      icon: const Icon(
+                      dropdownColor: Theme.of(context).colorScheme.surface,
+                      icon: Icon(
                         Icons.keyboard_arrow_down_rounded,
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                       items: [
                         DropdownMenuItem(
@@ -253,7 +268,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
                       ],
                       style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w600,
                           ),
                       onChanged: (value) {
@@ -342,7 +357,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
                   style: BauhausDesign.getTextTheme(context).titleMedium
                       ?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -354,9 +369,9 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
           const SizedBox(height: BauhausDesign.space2),
           Text(
             invoice.clientName,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space1),
           Text(
@@ -428,7 +443,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
           l10n.offlineActionBlocked,
           style: BauhausDesign.getTextTheme(
             context,
-          ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+          ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.surface),
         ),
         backgroundColor: BauhausDesign.warning,
       ),
@@ -440,18 +455,18 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: BauhausDesign.surfaceWhite,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
             l10n.markAsPaidTitle,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).titleLarge?.copyWith(color: BauhausDesign.textDark),
+            style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           content: Text(
             l10n.markAsPaidConfirm(invoice.invoiceNumber),
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           actions: [
             TextButton(
@@ -486,9 +501,10 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
                       success
                           ? l10n.markAsPaidSuccess(invoice.invoiceNumber)
                           : l10n.markAsPaidError(invoice.invoiceNumber),
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
+                          ?.copyWith(
+                            color: Theme.of(context).colorScheme.surface,
+                          ),
                     ),
                     backgroundColor: success
                         ? BauhausDesign.success
@@ -627,18 +643,18 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: BauhausDesign.surfaceWhite,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
             l10n.deleteInvoice,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).titleLarge?.copyWith(color: BauhausDesign.textDark),
+            style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           content: Text(
             l10n.deleteInvoiceConfirm(invoice.invoiceNumber),
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           actions: [
             TextButton(

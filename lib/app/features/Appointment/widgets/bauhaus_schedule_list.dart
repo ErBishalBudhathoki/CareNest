@@ -15,9 +15,9 @@ class BauhausScheduleList extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceLight,
+          color: Theme.of(context).colorScheme.surface,
           border: Border.all(
-            color: BauhausDesign.neutral.withValues(alpha: 0.5),
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
           ),
         ),
         child: Center(
@@ -25,7 +25,7 @@ class BauhausScheduleList extends StatelessWidget {
             "NO SCHEDULED SHIFTS",
             style: GoogleFonts.oswald(
               fontSize: 16,
-              color: BauhausDesign.neutral,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -40,11 +40,14 @@ class BauhausScheduleList extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 16),
           width: double.infinity,
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceLight,
-            border: Border.all(color: BauhausDesign.textDark, width: 2),
-            boxShadow: const [
+            color: Theme.of(context).colorScheme.surface,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.onSurface,
+              width: 2,
+            ),
+            boxShadow: [
               BoxShadow(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 offset: Offset(4, 4),
                 blurRadius: 0,
               ),
@@ -67,7 +70,7 @@ class BauhausScheduleList extends StatelessWidget {
                         style: GoogleFonts.oswald(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: BauhausDesign.surfaceLight,
+                          color: Theme.of(context).colorScheme.surface,
                         ),
                       ),
                       Text(
@@ -75,9 +78,9 @@ class BauhausScheduleList extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
-                          color: BauhausDesign.surfaceLight.withValues(
-                            alpha: 0.8,
-                          ),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.surface.withValues(alpha: 0.8),
                         ),
                       ),
                     ],
@@ -92,10 +95,10 @@ class BauhausScheduleList extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.access_time_filled,
                               size: 16,
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                             const SizedBox(width: 8),
                             Text(
@@ -103,7 +106,7 @@ class BauhausScheduleList extends StatelessWidget {
                               style: GoogleFonts.jetBrainsMono(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                           ],
@@ -114,17 +117,19 @@ class BauhausScheduleList extends StatelessWidget {
                             schedule['break'].toString().isNotEmpty)
                           Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.coffee,
                                 size: 14,
-                                color: BauhausDesign.neutral,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                               const SizedBox(width: 8),
                               Text(
                                 "Break: ${schedule['break']}",
                                 style: GoogleFonts.inter(
                                   fontSize: 13,
-                                  color: BauhausDesign.neutral,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                 ),
                               ),
                             ],

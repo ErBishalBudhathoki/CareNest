@@ -14,7 +14,7 @@ class CrossOrgDashboardView extends ConsumerWidget {
     final state = ref.watch(crossOrgViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBarWidget(
         title: 'Cross-Org Analytics',
         showBackButton: true,
@@ -56,16 +56,18 @@ class CrossOrgDashboardView extends ConsumerWidget {
               children: [
                 Text(
                   'Total Consolidated Revenue',
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).titleMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+                  style: BauhausDesign.getTextTheme(context).titleMedium
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
                 ),
                 const SizedBox(height: BauhausDesign.space2),
                 Text(
                   '\$${totalRevenue.toStringAsFixed(2)}',
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).displayLarge?.copyWith(color: BauhausDesign.surfaceWhite),
+                  style: BauhausDesign.getTextTheme(context).displayLarge
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
                 ),
               ],
             ),
@@ -110,7 +112,9 @@ class CrossOrgDashboardView extends ConsumerWidget {
                     const SizedBox(height: BauhausDesign.space2),
                     LinearProgressIndicator(
                       value: totalRevenue > 0 ? org.revenue / totalRevenue : 0,
-                      backgroundColor: BauhausDesign.surfaceOffWhite,
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.surfaceContainer,
                       valueColor: const AlwaysStoppedAnimation<Color>(
                         BauhausDesign.primary,
                       ),

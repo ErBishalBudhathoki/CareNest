@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // StateProvider
 import 'package:carenest/app/features/auth/providers/auth_provider.dart';
-import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class BauhausChangePasswordView extends ConsumerStatefulWidget {
   final bool isForced; // If true, hide back button
@@ -17,6 +16,8 @@ class BauhausChangePasswordView extends ConsumerStatefulWidget {
 
 class _BauhausChangePasswordViewState
     extends ConsumerState<BauhausChangePasswordView> {
+  ColorScheme get _colorScheme => Theme.of(context).colorScheme;
+
   final _currentPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -79,18 +80,22 @@ class _BauhausChangePasswordViewState
 
   @override
   Widget build(BuildContext context) {
-    const colorRed = Color(0xFFD62D24);
-    const colorBlack = Color(0xFF1A1A1A);
+    final colorScheme = Theme.of(context).colorScheme;
+    final colorRed = colorScheme.error;
+    final colorBlack = colorScheme.inverseSurface;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'CHANGE PASSWORD',
-          style: TextStyle(color: BauhausDesign.surfaceWhite, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: colorScheme.onSecondary,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: colorScheme.secondary,
+        foregroundColor: colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -99,7 +104,7 @@ class _BauhausChangePasswordViewState
         leading: widget.isForced
             ? null
             : IconButton(
-                icon: const Icon(Icons.arrow_back, color: colorBlack),
+                icon: Icon(Icons.arrow_back, color: colorScheme.onSecondary),
                 onPressed: () => Navigator.of(context).pop(),
               ),
       ),
@@ -120,7 +125,7 @@ class _BauhausChangePasswordViewState
                       color: colorRed.withValues(alpha: 0.1),
                       border: Border.all(color: colorRed),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Security Alert: Your password is weak or compromised. You must change it to continue.',
                       style: TextStyle(
                         color: colorRed,
@@ -165,7 +170,7 @@ class _BauhausChangePasswordViewState
                     onPressed: _onSubmit,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: colorBlack,
-                      foregroundColor: Colors.white,
+                      foregroundColor: colorScheme.onInverseSurface,
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                       ),
@@ -200,8 +205,8 @@ class _BauhausChangePasswordViewState
   }
 
   Widget _buildIndicator(String text, bool met) {
-    const colorGreen = Color(0xFF008f39);
-    const colorRed = Color(0xFFD62D24);
+    final colorGreen = _colorScheme.secondary;
+    final colorRed = _colorScheme.error;
     return Row(
       children: [
         Icon(
@@ -231,7 +236,7 @@ class _BauhausChangePasswordViewState
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 12,
             letterSpacing: 1.2,
@@ -243,15 +248,15 @@ class _BauhausChangePasswordViewState
           obscureText: isObscure,
           onChanged: onChanged,
           decoration: InputDecoration(
-            prefixIcon: Icon(icon, color: Colors.black),
+            prefixIcon: Icon(icon, color: _colorScheme.onSurface),
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: _colorScheme.surfaceContainerLow,
             border: const OutlineInputBorder(
               borderSide: BorderSide.none,
               borderRadius: BorderRadius.zero,
             ),
-            focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black, width: 2),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: _colorScheme.outline, width: 2),
               borderRadius: BorderRadius.zero,
             ),
           ),
