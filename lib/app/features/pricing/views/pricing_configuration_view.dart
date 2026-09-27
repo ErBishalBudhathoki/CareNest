@@ -125,6 +125,20 @@ class _PricingConfigurationViewState
     super.initState();
     _api = ref.read(app_providers.apiMethodProvider);
     _tabController = TabController(length: 4, vsync: this);
+    _tabController.addListener(_onTabChanged);
+  }
+
+  void _onTabChanged() {
+    if (_tabController.indexIsChanging) return;
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_onTabChanged);
+    _tabController.dispose();
+    _fallbackRateController.dispose();
+    super.dispose();
   }
 
   @override
@@ -134,13 +148,6 @@ class _PricingConfigurationViewState
     _applyLocalizedDefaults(AppLocalizations.of(context)!);
     _didInitializeLocalizedDefaults = true;
     _loadFallbackBaseRate();
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    _fallbackRateController.dispose();
-    super.dispose();
   }
 
   void _applyLocalizedDefaults(AppLocalizations l10n) {
@@ -208,6 +215,13 @@ class _PricingConfigurationViewState
         overflow: TextOverflow.ellipsis,
       ),
       actions: [
+        if (_tabController.index == 1)
+          _buildHeaderActionIcon(
+            icon: Icons.add,
+            tooltip: l10n.addRuleAction,
+            onTap: _addNewRule,
+            color: _accentRed,
+          ),
         Consumer(
           builder: (context, ref, _) {
             final vm = ref.watch(pricingSettingsViewModelProvider);
@@ -240,16 +254,20 @@ class _PricingConfigurationViewState
               ),
               child: Row(
                 children: [
-                  Text(
-                    l10n.pricingConfigurationTitle.toUpperCase(),
-                    style: BauhausDesign.getTextTheme(context).labelLarge
-                        ?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0.6,
-                        ),
+                  Expanded(
+                    child: Text(
+                      l10n.pricingConfigurationTitle.toUpperCase(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: BauhausDesign.getTextTheme(context).labelLarge
+                          ?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.6,
+                          ),
+                    ),
                   ),
-                  const Spacer(),
+                  const SizedBox(width: BauhausDesign.space2),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: BauhausDesign.space3,
@@ -264,6 +282,8 @@ class _PricingConfigurationViewState
                     ),
                     child: Text(
                       l10n.systemActive.toUpperCase(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
                             color: Theme.of(context).colorScheme.surface,
@@ -348,13 +368,12 @@ class _PricingConfigurationViewState
     required String tooltip,
     required VoidCallback? onTap,
     required Color color,
-    bool padEdges = true,
   }) {
     return Padding(
-      padding: EdgeInsets.only(
+      padding: const EdgeInsets.only(
         right: BauhausDesign.space2,
-        top: padEdges ? BauhausDesign.space2 : 0,
-        bottom: padEdges ? BauhausDesign.space2 : 0,
+        top: BauhausDesign.space2,
+        bottom: BauhausDesign.space2,
       ),
       child: Tooltip(
         message: tooltip,
@@ -648,37 +667,22 @@ class _PricingConfigurationViewState
     );
   }
 
+  /// Mirrors [_buildGeneralSettingsTab] exactly: a lone panel title, then
+  /// `space3`, then the sections. A trailing action icon in the title row made
+  /// that row taller than the 16px heading, and the title floated centred
+  /// inside it, so the first card always sat further down than in General
+  /// Settings. The add action therefore lives in the app bar.
   Widget _buildPricingRulesTab() {
-    return Padding(
+    final rules = _getPricingRules(context);
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: _buildPanelTitle(
-                  AppLocalizations.of(context)!.pricingRulesTitle,
-                ),
-              ),
-              _buildHeaderActionIcon(
-                icon: Icons.add,
-                tooltip: AppLocalizations.of(context)!.addRuleAction,
-                onTap: _addNewRule,
-                color: _accentRed,
-                padEdges: false,
-              ),
-            ],
-          ),
-          const SizedBox(height: BauhausDesign.space2),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _getPricingRules(context).length,
-              itemBuilder: (context, index) {
-                final rule = _getPricingRules(context)[index];
-                return _buildPricingRuleCard(rule, index);
-              },
-            ),
+          _buildPanelTitle(AppLocalizations.of(context)!.pricingRulesTitle),
+          const SizedBox(height: BauhausDesign.space3),
+          ...rules.asMap().entries.map(
+            (entry) => _buildPricingRuleCard(entry.value, entry.key),
           ),
         ],
       ),
@@ -819,21 +823,16 @@ class _PricingConfigurationViewState
   }
 
   Widget _buildIntegrationsTab() {
-    return Padding(
+    final integrations = _getIntegrationSettings(context);
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildPanelTitle(AppLocalizations.of(context)!.systemIntegrations),
-          const SizedBox(height: BauhausDesign.space2),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _getIntegrationSettings(context).length,
-              itemBuilder: (context, index) {
-                final integration = _getIntegrationSettings(context)[index];
-                return _buildIntegrationCard(integration, index);
-              },
-            ),
+          const SizedBox(height: BauhausDesign.space3),
+          ...integrations.asMap().entries.map(
+            (entry) => _buildIntegrationCard(entry.value, entry.key),
           ),
         ],
       ),
@@ -1205,14 +1204,19 @@ class _PricingConfigurationViewState
         children: [
           Row(
             children: [
-              Text(
-                label,
-                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontWeight: FontWeight.w700,
+              Expanded(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
               ),
-              const Spacer(),
+              const SizedBox(width: BauhausDesign.space2),
               Text(
                 value.toStringAsFixed(1),
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
