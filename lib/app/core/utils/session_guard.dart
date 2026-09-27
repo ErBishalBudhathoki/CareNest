@@ -7,10 +7,7 @@ import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 /// Backend error codes meaning "the credential you sent is no good".
 /// Matched deliberately narrow: login failures use different codes
 /// (e.g. INVALID_CREDENTIALS), so a wrong password never triggers this.
-const _expiredCredentialCodes = <String>{
-  'TOKEN_EXPIRED',
-  'INVALID_TOKEN',
-};
+const _expiredCredentialCodes = <String>{'TOKEN_EXPIRED', 'INVALID_TOKEN'};
 
 /// True when a decoded backend response means the presented credential is
 /// expired/invalid. Pure logic — unit-tested.

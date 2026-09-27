@@ -50,12 +50,18 @@ void main() {
     });
 
     test('rejects non-http schemes and malformed URLs', () {
-      expect(AuthedNetworkImage.matchesBackendHost('file:///a/b.jpg', backend),
-          isFalse);
-      expect(AuthedNetworkImage.matchesBackendHost('ftp://$backend/x', backend),
-          isFalse);
-      expect(AuthedNetworkImage.matchesBackendHost('not a url', backend),
-          isFalse);
+      expect(
+        AuthedNetworkImage.matchesBackendHost('file:///a/b.jpg', backend),
+        isFalse,
+      );
+      expect(
+        AuthedNetworkImage.matchesBackendHost('ftp://$backend/x', backend),
+        isFalse,
+      );
+      expect(
+        AuthedNetworkImage.matchesBackendHost('not a url', backend),
+        isFalse,
+      );
       expect(AuthedNetworkImage.matchesBackendHost('', backend), isFalse);
     });
   });
@@ -74,10 +80,7 @@ void main() {
   group('AuthedCacheManager', () {
     test('exposes a shared singleton instance', () {
       expect(
-        identical(
-          AuthedCacheManager.instance,
-          AuthedCacheManager.instance,
-        ),
+        identical(AuthedCacheManager.instance, AuthedCacheManager.instance),
         isTrue,
       );
     });

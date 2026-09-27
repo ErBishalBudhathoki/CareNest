@@ -14,10 +14,7 @@ void main() {
     });
 
     test('returns a different client for non-backend hosts', () {
-      final backend = PinnedHttpClient.clientForBackendUrl(
-        baseUrl,
-        backendUri,
-      );
+      final backend = PinnedHttpClient.clientForBackendUrl(baseUrl, backendUri);
       final other = PinnedHttpClient.clientForBackendUrl(baseUrl, otherUri);
       expect(identical(backend, other), isFalse);
     });

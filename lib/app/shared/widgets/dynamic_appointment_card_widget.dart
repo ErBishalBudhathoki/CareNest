@@ -422,7 +422,9 @@ class _DynamicAppointmentCardWidgetState
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: _primaryColor.withValues(alpha: 0.3),
+                                        color: _primaryColor.withValues(
+                                          alpha: 0.3,
+                                        ),
                                         blurRadius: 12,
                                         offset: const Offset(0, 4),
                                       ),
@@ -543,7 +545,10 @@ class _DynamicAppointmentCardWidgetState
                   _errorColor.withValues(alpha: 0.1),
                 ],
               ),
-              border: Border.all(color: _errorColor.withValues(alpha: 0.1), width: 1),
+              border: Border.all(
+                color: _errorColor.withValues(alpha: 0.1),
+                width: 1,
+              ),
               boxShadow: [
                 BoxShadow(
                   color: _errorColor.withValues(alpha: 0.1),

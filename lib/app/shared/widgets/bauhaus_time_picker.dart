@@ -123,7 +123,10 @@ class _BauhausTimePickerDialogState extends State<_BauhausTimePickerDialog> {
               width: 30,
               height: 30,
               decoration: BoxDecoration(
-                border: Border.all(color: _paper.withValues(alpha: 0.5), width: 1.5),
+                border: Border.all(
+                  color: _paper.withValues(alpha: 0.5),
+                  width: 1.5,
+                ),
               ),
               child: const Icon(Icons.close_rounded, color: _paper, size: 16),
             ),
