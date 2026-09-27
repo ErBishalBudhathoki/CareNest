@@ -293,7 +293,11 @@ class _PricingConfigurationViewState
                 indicatorColor: _accentRed,
                 indicatorWeight: 3,
                 labelColor: Theme.of(context).colorScheme.onSurface,
-                unselectedLabelColor: BauhausDesign.textMuted,
+                // Themed: `textMuted` is a fixed dark ink, so unselected tab
+                // labels disappeared on the dark tab bar.
+                unselectedLabelColor: Theme.of(
+                  context,
+                ).colorScheme.onSurfaceVariant,
                 labelStyle: BauhausDesign.getTextTheme(context).labelLarge
                     ?.copyWith(fontWeight: FontWeight.w800, letterSpacing: 0.4),
                 isScrollable: true,
@@ -344,12 +348,13 @@ class _PricingConfigurationViewState
     required String tooltip,
     required VoidCallback? onTap,
     required Color color,
+    bool padEdges = true,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(
+      padding: EdgeInsets.only(
         right: BauhausDesign.space2,
-        top: BauhausDesign.space2,
-        bottom: BauhausDesign.space2,
+        top: padEdges ? BauhausDesign.space2 : 0,
+        bottom: padEdges ? BauhausDesign.space2 : 0,
       ),
       child: Tooltip(
         message: tooltip,
@@ -395,12 +400,12 @@ class _PricingConfigurationViewState
     bool isPrimary = false,
   }) {
     final bg = onTap == null
-        ? BauhausDesign.surfaceOffWhite
+        ? Theme.of(context).colorScheme.surfaceContainerHighest
         : (isPrimary ? _accentRed : Theme.of(context).colorScheme.surface);
     final textColor = onTap == null
-        ? BauhausDesign.textMuted
+        ? Theme.of(context).colorScheme.onSurfaceVariant
         : (isPrimary
-              ? Theme.of(context).colorScheme.surface
+              ? BauhausDesign.readableOnColor(_accentRed)
               : Theme.of(context).colorScheme.onSurface);
 
     return InkWell(
@@ -420,6 +425,10 @@ class _PricingConfigurationViewState
         child: Text(
           label,
           textAlign: TextAlign.center,
+          // Never break a button label across lines.
+          maxLines: 1,
+          softWrap: false,
+          overflow: TextOverflow.ellipsis,
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
             color: textColor,
             fontWeight: FontWeight.w800,
@@ -657,10 +666,11 @@ class _PricingConfigurationViewState
                 tooltip: AppLocalizations.of(context)!.addRuleAction,
                 onTap: _addNewRule,
                 color: _accentRed,
+                padEdges: false,
               ),
             ],
           ),
-          const SizedBox(height: BauhausDesign.space3),
+          const SizedBox(height: BauhausDesign.space2),
           Expanded(
             child: ListView.builder(
               itemCount: _getPricingRules(context).length,
@@ -815,7 +825,7 @@ class _PricingConfigurationViewState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildPanelTitle(AppLocalizations.of(context)!.systemIntegrations),
-          const SizedBox(height: BauhausDesign.space3),
+          const SizedBox(height: BauhausDesign.space2),
           Expanded(
             child: ListView.builder(
               itemCount: _getIntegrationSettings(context).length,
@@ -1219,7 +1229,11 @@ class _PricingConfigurationViewState
             divisions: ((max - min) / 1).round(),
             onChanged: onChanged,
             activeColor: _accentRed,
-            inactiveColor: BauhausDesign.textMuted.withValues(alpha: 0.3),
+            // Themed: the fixed `textMuted` track was near-invisible on the
+            // dark surface. Shapes come from BauhausDesign.sliderTheme.
+            inactiveColor: Theme.of(
+              context,
+            ).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
           ),
         ],
       ),
@@ -1373,13 +1387,14 @@ class _PricingConfigurationViewState
                 ),
               ),
               const SizedBox(width: BauhausDesign.space3),
-              SizedBox(
-                width: BauhausDesign.space16 + BauhausDesign.space5 + 2,
-                child: _buildInlineActionButton(
-                  label: AppLocalizations.of(context)!.configure.toUpperCase(),
-                  onTap: onPressed,
-                  isPrimary: true,
-                ),
+              // No fixed width: the old `space16 + space5 + 2` (86px) left
+              // ~65px for a ~64px "CONFIGURE" label at letterSpacing 0.5, so
+              // the final "E" wrapped onto its own line. Let the button size to
+              // its label instead.
+              _buildInlineActionButton(
+                label: AppLocalizations.of(context)!.configure.toUpperCase(),
+                onTap: onPressed,
+                isPrimary: true,
               ),
             ],
           ),
