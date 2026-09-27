@@ -18,12 +18,17 @@ void main() {
       expect(posture.unknown, isFalse);
     });
 
-    test('null or malformed payload yields unknown (fail open, warn nothing)', () {
-      expect(SecurityPosture.fromMap(null).unknown, isTrue);
-      expect(SecurityPosture.fromMap({}).compromised, isFalse);
-      expect(SecurityPosture.fromMap({'compromised': 'yes'}).compromised,
-          isFalse);
-    });
+    test(
+      'null or malformed payload yields unknown (fail open, warn nothing)',
+      () {
+        expect(SecurityPosture.fromMap(null).unknown, isTrue);
+        expect(SecurityPosture.fromMap({}).compromised, isFalse);
+        expect(
+          SecurityPosture.fromMap({'compromised': 'yes'}).compromised,
+          isFalse,
+        );
+      },
+    );
   });
 
   group('DeviceSecurity.check', () {
@@ -41,14 +46,14 @@ void main() {
     test('returns posture from native shell', () async {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (call) async {
-        expect(call.method, 'getSecurityPosture');
-        return {
-          'compromised': true,
-          'reasons': ['sandbox_escape'],
-          'emulator': false,
-          'debuggable': false,
-        };
-      });
+            expect(call.method, 'getSecurityPosture');
+            return {
+              'compromised': true,
+              'reasons': ['sandbox_escape'],
+              'emulator': false,
+              'debuggable': false,
+            };
+          });
       final posture = await DeviceSecurity.check();
       expect(posture.compromised, isTrue);
       expect(posture.reasons, ['sandbox_escape']);

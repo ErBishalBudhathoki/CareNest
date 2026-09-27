@@ -69,30 +69,33 @@ void main() {
     );
 
     expect(api.lastEndpoint, 'api/payments/create-intent');
-    expect(api.lastBody, {
-      'invoiceId': 'invoice-1',
-      'organizationId': 'org-1',
-    });
+    expect(api.lastBody, {'invoiceId': 'invoice-1', 'organizationId': 'org-1'});
   });
 
-  test('requests subscription status from the billing entitlement route', () async {
-    await repository.getSubscriptionStatus('org-1');
-    expect(api.lastEndpoint, 'api/billing/entitlements?organizationId=org-1');
-  });
+  test(
+    'requests subscription status from the billing entitlement route',
+    () async {
+      await repository.getSubscriptionStatus('org-1');
+      expect(api.lastEndpoint, 'api/billing/entitlements?organizationId=org-1');
+    },
+  );
 
-  test('creates a hosted checkout grant with the invoice and organization', () async {
-    await repository.createHostedCheckoutGrant(
-      organizationId: 'org-1',
-      invoiceId: 'inv-1',
-      ttlMinutes: 60,
-    );
-    expect(api.lastEndpoint, 'api/billing/hosted-checkout/grant');
-    expect(api.lastBody, {
-      'organizationId': 'org-1',
-      'invoiceId': 'inv-1',
-      'ttlMinutes': 60,
-    });
-  });
+  test(
+    'creates a hosted checkout grant with the invoice and organization',
+    () async {
+      await repository.createHostedCheckoutGrant(
+        organizationId: 'org-1',
+        invoiceId: 'inv-1',
+        ttlMinutes: 60,
+      );
+      expect(api.lastEndpoint, 'api/billing/hosted-checkout/grant');
+      expect(api.lastBody, {
+        'organizationId': 'org-1',
+        'invoiceId': 'inv-1',
+        'ttlMinutes': 60,
+      });
+    },
+  );
 
   test('creates a recurring agreement with consent', () async {
     await repository.createRecurringAgreement(

@@ -118,7 +118,7 @@ class AuthedCacheManager extends CacheManager {
       _instance ??= AuthedCacheManager._();
 
   AuthedCacheManager._()
-      : super(Config(key, fileService: _AuthedFileService()));
+    : super(Config(key, fileService: _AuthedFileService()));
 }
 
 class _AuthedFileService extends HttpFileService {

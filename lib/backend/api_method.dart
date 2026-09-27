@@ -451,7 +451,9 @@ class ApiMethod extends ChangeNotifier {
       debugPrint(
         '=== API METHOD DEBUG: Response headers: ${effectiveResponse.headers} ===',
       );
-      debugPrint('=== API METHOD DEBUG: Response body: ${effectiveResponse.body} ===');
+      debugPrint(
+        '=== API METHOD DEBUG: Response body: ${effectiveResponse.body} ===',
+      );
 
       return _handleResponse(effectiveResponse);
     } catch (e) {
@@ -6317,7 +6319,9 @@ class ApiMethod extends ChangeNotifier {
       debugPrint(
         '=== API METHOD DEBUG: PATCH status: ${effectiveResponse.statusCode} ===',
       );
-      debugPrint('=== API METHOD DEBUG: PATCH response: ${effectiveResponse.body} ===');
+      debugPrint(
+        '=== API METHOD DEBUG: PATCH response: ${effectiveResponse.body} ===',
+      );
 
       return _handleResponse(effectiveResponse);
     } catch (e) {
