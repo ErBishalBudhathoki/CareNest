@@ -4,32 +4,28 @@ import 'package:carenest/app/shared/utils/encryption/encrypt_decrypt.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  const testKey =
-      'dGVzdGtleXRlc3RrZXl0ZXN0a2V5dGVzdGtleXRlc3QAAACCCCQ';
+  const testKey = 'dGVzdGtleXRlc3RrZXl0ZXN0a2V5dGVzdGtleXRlc3QAAACCCCQ';
   const testPassword = 'correct horse battery staple!@#';
 
   group('EncryptDecrypt v2 (ChaCha20-Poly1305)', () {
     test('round-trips encrypt -> decrypt', () async {
-      final blob = await EncryptDecrypt.encryptPassword(
-        testPassword,
-        testKey,
-      );
+      final blob = await EncryptDecrypt.encryptPassword(testPassword, testKey);
       expect(blob.startsWith(EncryptDecrypt.versionPrefix), isTrue);
       expect(await EncryptDecrypt.decryptPassword(blob, testKey), testPassword);
     });
 
     test('produces a fresh random nonce on every encryption', () async {
-      final first = await EncryptDecrypt.encryptPassword(
-        testPassword,
-        testKey,
-      );
+      final first = await EncryptDecrypt.encryptPassword(testPassword, testKey);
       final second = await EncryptDecrypt.encryptPassword(
         testPassword,
         testKey,
       );
       // Same plaintext must never yield the same ciphertext (fixes zero-IV).
       expect(first, isNot(equals(second)));
-      expect(await EncryptDecrypt.decryptPassword(first, testKey), testPassword);
+      expect(
+        await EncryptDecrypt.decryptPassword(first, testKey),
+        testPassword,
+      );
       expect(
         await EncryptDecrypt.decryptPassword(second, testKey),
         testPassword,
@@ -37,10 +33,7 @@ void main() {
     });
 
     test('rejects tampered ciphertext', () async {
-      final blob = await EncryptDecrypt.encryptPassword(
-        testPassword,
-        testKey,
-      );
+      final blob = await EncryptDecrypt.encryptPassword(testPassword, testKey);
       final raw = base64Url.decode(
         blob.substring(EncryptDecrypt.versionPrefix.length),
       );
@@ -53,10 +46,7 @@ void main() {
     });
 
     test('rejects wrong key', () async {
-      final blob = await EncryptDecrypt.encryptPassword(
-        testPassword,
-        testKey,
-      );
+      final blob = await EncryptDecrypt.encryptPassword(testPassword, testKey);
       expect(
         await EncryptDecrypt.decryptPassword(blob, 'wrong-key-0123456789'),
         '',
