@@ -66,7 +66,7 @@ class _EnhancedPricingDashboardViewState
 
   Widget _buildModernHeader() {
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).colorScheme.surface,
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -74,13 +74,13 @@ class _EnhancedPricingDashboardViewState
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF1F5F9),
+                  color: Theme.of(context).colorScheme.surfaceContainer,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-                  color: const Color(0xFF475569),
+                  icon: Icon(Icons.arrow_back_ios_new, size: 20),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(width: 16),
@@ -90,16 +90,19 @@ class _EnhancedPricingDashboardViewState
                   children: [
                     Text(
                       AppLocalizations.of(context)!.pricingOverviewTitle,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF0F172A),
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       AppLocalizations.of(context)!.pricingOverviewSubtitle,
-                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
@@ -110,7 +113,9 @@ class _EnhancedPricingDashboardViewState
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.secondary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -119,16 +124,16 @@ class _EnhancedPricingDashboardViewState
                     Container(
                       width: 8,
                       height: 8,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF10B981),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.secondary,
                         shape: BoxShape.circle,
                       ),
                     ),
                     const SizedBox(width: 6),
                     Text(
                       AppLocalizations.of(context)!.systemActive,
-                      style: const TextStyle(
-                        color: Color(0xFF10B981),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -159,7 +164,7 @@ class _EnhancedPricingDashboardViewState
                 value: '23',
                 subtitle: AppLocalizations.of(context)!.newThisMonthStat('3'),
                 icon: Icons.business_center,
-                color: const Color(0xFF6366F1),
+                color: Theme.of(context).colorScheme.tertiary,
               ),
             ),
             const SizedBox(width: 12),
@@ -172,7 +177,7 @@ class _EnhancedPricingDashboardViewState
                   context,
                 )!.vsLastMonthStatRange('5.2'),
                 icon: Icons.trending_up,
-                color: const Color(0xFF10B981),
+                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
             const SizedBox(width: 12),
@@ -185,7 +190,7 @@ class _EnhancedPricingDashboardViewState
                   context,
                 )!.percentageOfTotalStat('87.5'),
                 icon: Icons.check_circle,
-                color: const Color(0xFF3B82F6),
+                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
             const SizedBox(width: 12),
@@ -196,7 +201,7 @@ class _EnhancedPricingDashboardViewState
                 value: '\$24.5K',
                 subtitle: AppLocalizations.of(context)!.growthStatLabel('12.5'),
                 icon: Icons.attach_money,
-                color: const Color(0xFF8B5CF6),
+                color: Theme.of(context).colorScheme.tertiary,
               ),
             ),
           ],
@@ -215,7 +220,7 @@ class _EnhancedPricingDashboardViewState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -239,16 +244,20 @@ class _EnhancedPricingDashboardViewState
                 child: Icon(icon, color: color, size: 20),
               ),
               const Spacer(),
-              Icon(Icons.more_vert, color: Colors.grey[400], size: 16),
+              Icon(
+                Icons.more_vert,
+                color: Theme.of(context).colorScheme.outline,
+                size: 16,
+              ),
             ],
           ),
           const SizedBox(height: 12),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF0F172A),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -258,7 +267,7 @@ class _EnhancedPricingDashboardViewState
             title,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey[600],
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w500,
             ),
             maxLines: 1,
@@ -267,7 +276,10 @@ class _EnhancedPricingDashboardViewState
           const SizedBox(height: 2),
           Text(
             subtitle,
-            style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+            style: TextStyle(
+              fontSize: 12,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -319,7 +331,7 @@ class _EnhancedPricingDashboardViewState
             style: TextStyle(
               fontSize: AppDimens.fontSizeMedium,
               fontWeight: FontWeight.w600,
-              color: AppColors.colorBlack87,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ),
@@ -352,21 +364,21 @@ class _EnhancedPricingDashboardViewState
         label: AppLocalizations.of(context)!.activeRatesStatLabel,
         value: 'active',
         icon: Icons.check_circle,
-        color: AppColors.colorGreen,
+        color: Theme.of(context).colorScheme.secondary,
         count: 45,
       ),
       FilterOption(
         label: AppLocalizations.of(context)!.pendingApprovalFilter,
         value: 'pending',
         icon: Icons.pending,
-        color: AppColors.colorOrange,
+        color: Theme.of(context).colorScheme.primary,
         count: 12,
       ),
       FilterOption(
         label: AppLocalizations.of(context)!.expiredFilter,
         value: 'expired',
         icon: Icons.cancel,
-        color: AppColors.colorRed,
+        color: Theme.of(context).colorScheme.error,
         count: 8,
       ),
     ];
@@ -400,7 +412,7 @@ class _EnhancedPricingDashboardViewState
     return Container(
       margin: const EdgeInsets.all(AppDimens.paddingLarge),
       decoration: BoxDecoration(
-        color: AppColors.colorWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -415,18 +427,23 @@ class _EnhancedPricingDashboardViewState
         children: [
           // Tab Bar
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               border: Border(
-                bottom: BorderSide(color: AppColors.colorGrey300, width: 1),
+                bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                  width: 1,
+                ),
               ),
             ),
             child: TabBar(
               controller: _tabController,
               labelColor: AppColors.colorPrimary,
-              unselectedLabelColor: AppColors.colorGrey600,
+              unselectedLabelColor: Theme.of(
+                context,
+              ).colorScheme.onSurfaceVariant,
               indicatorColor: AppColors.colorPrimary,
               indicatorWeight: 3,
-              labelStyle: const TextStyle(
+              labelStyle: TextStyle(
                 fontSize: AppDimens.fontSizeNormal,
                 fontWeight: FontWeight.w600,
               ),
@@ -486,25 +503,25 @@ class _EnhancedPricingDashboardViewState
     final rows = [
       EnhancedDataRow(
         cells: [
-          EnhancedDataCell(child: const Text('Personal Care')),
-          EnhancedDataCell(child: const Text('\$85.00/hr')),
+          EnhancedDataCell(child: Text('Personal Care')),
+          EnhancedDataCell(child: Text('\$85.00/hr')),
           EnhancedDataCell.status(
             status: AppLocalizations.of(context)!.statusActive,
           ),
-          EnhancedDataCell(child: const Text('2 days ago')),
+          EnhancedDataCell(child: Text('2 days ago')),
           EnhancedDataCell.actions(
             actions: [
               ActionButton(
                 icon: Icons.edit,
                 onPressed: () => _editRate('personal_care'),
                 tooltip: AppLocalizations.of(context)!.editRateTooltip,
-                color: AppColors.colorBlue,
+                color: Theme.of(context).colorScheme.secondary,
               ),
               ActionButton(
                 icon: Icons.history,
                 onPressed: () => _viewRateHistory('personal_care'),
                 tooltip: AppLocalizations.of(context)!.viewHistoryTooltip,
-                color: AppColors.colorGrey600,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ],
           ),

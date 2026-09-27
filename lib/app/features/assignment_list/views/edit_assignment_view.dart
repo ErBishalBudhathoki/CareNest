@@ -234,28 +234,34 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BauhausDesign.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
-          icon: Icon(Icons.arrow_back, color: BauhausDesign.surfaceWhite),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onInverseSurface,
+          ),
         ),
         title: Text(
           'Edit Assignment',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onInverseSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: BauhausDesign.neutral, height: 1),
+          child: Container(
+            color: Theme.of(context).colorScheme.onInverseSurface,
+            height: 1,
+          ),
         ),
         actions: [
           if (isLoading)
@@ -307,7 +313,9 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                               style: BauhausDesign.getTextTheme(context)
                                   .labelMedium
                                   ?.copyWith(
-                                    color: BauhausDesign.textMuted,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
                                     fontWeight: FontWeight.w500,
                                   ),
                             ),
@@ -319,7 +327,7 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                           style: BauhausDesign.getTextTheme(context).bodyLarge
                               ?.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                         ),
                         const SizedBox(height: BauhausDesign.space3),
@@ -336,7 +344,9 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                               style: BauhausDesign.getTextTheme(context)
                                   .labelMedium
                                   ?.copyWith(
-                                    color: BauhausDesign.textMuted,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
                                     fontWeight: FontWeight.w500,
                                   ),
                             ),
@@ -348,7 +358,7 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                           style: BauhausDesign.getTextTheme(context).bodyLarge
                               ?.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                         ),
                       ],
@@ -359,9 +369,10 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                   // NDIS Item Selection
                   Text(
                     'NDIS Item Assignment',
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).titleMedium?.copyWith(color: BauhausDesign.textDark),
+                    style: BauhausDesign.getTextTheme(context).titleMedium
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                   ),
                   const SizedBox(height: BauhausDesign.space3),
                   GestureDetector(
@@ -369,9 +380,11 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                     child: BauhausCard(
                       child: Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.description_outlined,
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                           const SizedBox(width: BauhausDesign.space3),
                           Expanded(
@@ -386,8 +399,12 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                                       ?.copyWith(
                                         fontWeight: FontWeight.w500,
                                         color: _selectedNdisItem != null
-                                            ? BauhausDesign.textDark
-                                            : BauhausDesign.textMuted,
+                                            ? Theme.of(
+                                                context,
+                                              ).colorScheme.onSurface
+                                            : Theme.of(
+                                                context,
+                                              ).colorScheme.onSurfaceVariant,
                                       ),
                                 ),
                                 if (_selectedNdisItem != null) ...[
@@ -397,7 +414,9 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                                     style: BauhausDesign.getTextTheme(context)
                                         .bodySmall
                                         ?.copyWith(
-                                          color: BauhausDesign.textMuted,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
                                         ),
                                   ),
                                 ],
@@ -418,9 +437,11 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                               ),
                             )
                           else
-                            const Icon(
+                            Icon(
                               Icons.chevron_right,
-                              color: BauhausDesign.textMuted,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
                         ],
                       ),
@@ -434,9 +455,10 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                     children: [
                       Text(
                         'Shifts (${dateList.length})',
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).titleMedium?.copyWith(color: BauhausDesign.textDark),
+                        style: BauhausDesign.getTextTheme(context).titleMedium
+                            ?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
                       ),
                       BauhausActionButton(
                         onPressed: () {
@@ -484,10 +506,13 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
           // Bottom Action Bar
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space4),
-            decoration: const BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
               border: Border(
-                top: BorderSide(color: BauhausDesign.neutral, width: 1),
+                top: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 1,
+                ),
               ),
             ),
             child: Row(
@@ -537,9 +562,8 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
             children: [
               Text(
                 'Shift ${index + 1}',
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).titleMedium?.copyWith(color: BauhausDesign.textDark),
+                style: BauhausDesign.getTextTheme(context).titleMedium
+                    ?.copyWith(color: Theme.of(context).colorScheme.onSurface),
               ),
               IconButton(
                 onPressed: () {
@@ -576,11 +600,11 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
           // Date Field
           TextFormField(
             initialValue: dateList.length > index ? dateList[index] : '',
-            decoration: BauhausDesign.defaultInputDecoration.copyWith(
+            decoration: BauhausDesign.inputDecorationFor(context).copyWith(
               labelText: 'Date',
-              prefixIcon: const Icon(
+              prefixIcon: Icon(
                 Icons.calendar_today,
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
             onChanged: (value) {
@@ -599,13 +623,14 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                   initialValue: startTimeList.length > index
                       ? startTimeList[index]
                       : '',
-                  decoration: BauhausDesign.defaultInputDecoration.copyWith(
-                    labelText: 'Start Time',
-                    prefixIcon: const Icon(
-                      Icons.access_time,
-                      color: BauhausDesign.textMuted,
-                    ),
-                  ),
+                  decoration: BauhausDesign.inputDecorationFor(context)
+                      .copyWith(
+                        labelText: 'Start Time',
+                        prefixIcon: Icon(
+                          Icons.access_time,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
                   onChanged: (value) {
                     if (startTimeList.length > index) {
                       startTimeList[index] = value;
@@ -619,13 +644,14 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                   initialValue: endTimeList.length > index
                       ? endTimeList[index]
                       : '',
-                  decoration: BauhausDesign.defaultInputDecoration.copyWith(
-                    labelText: 'End Time',
-                    prefixIcon: const Icon(
-                      Icons.access_time,
-                      color: BauhausDesign.textMuted,
-                    ),
-                  ),
+                  decoration: BauhausDesign.inputDecorationFor(context)
+                      .copyWith(
+                        labelText: 'End Time',
+                        prefixIcon: Icon(
+                          Icons.access_time,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
                   onChanged: (value) {
                     if (endTimeList.length > index) {
                       endTimeList[index] = value;
@@ -640,11 +666,11 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
           // Break Field
           TextFormField(
             initialValue: breakList.length > index ? breakList[index] : '',
-            decoration: BauhausDesign.defaultInputDecoration.copyWith(
+            decoration: BauhausDesign.inputDecorationFor(context).copyWith(
               labelText: 'Break Duration',
-              prefixIcon: const Icon(
+              prefixIcon: Icon(
                 Icons.pause,
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
             onChanged: (value) {
@@ -658,9 +684,9 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
           // High Intensity Toggle
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.flash_on,
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 size: 20,
               ),
               const SizedBox(width: BauhausDesign.space2),
@@ -668,7 +694,7 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                 'High Intensity Support',
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const Spacer(),
@@ -694,12 +720,12 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
             onTap: () => _selectScheduleNdisItem(index),
             child: BauhausCard(
               padding: const EdgeInsets.all(BauhausDesign.space3),
-              backgroundColor: BauhausDesign.backgroundLight,
+              backgroundColor: Theme.of(context).colorScheme.surface,
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.description_outlined,
-                    color: BauhausDesign.textMuted,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     size: 16,
                   ),
                   const SizedBox(width: BauhausDesign.space2),
@@ -714,8 +740,10 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                             color:
                                 scheduleNdisItems.length > index &&
                                     scheduleNdisItems[index] != null
-                                ? BauhausDesign.textDark
-                                : BauhausDesign.textMuted,
+                                ? Theme.of(context).colorScheme.onSurface
+                                : Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                           ),
                     ),
                   ),
@@ -733,9 +761,9 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
                       constraints: const BoxConstraints(),
                     )
                   else
-                    const Icon(
+                    Icon(
                       Icons.chevron_right,
-                      color: BauhausDesign.textMuted,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       size: 16,
                     ),
                 ],

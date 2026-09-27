@@ -16,6 +16,7 @@ class _AddClientDetailsWidgetState extends State<AddClientDetailsWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.40,
       child: Column(
@@ -39,8 +40,8 @@ class _AddClientDetailsWidgetState extends State<AddClientDetailsWidget> {
           PageViewDotIndicator(
             currentItem: _currentPageIndex,
             count: widget.myWidgets.length,
-            unselectedColor: const Color(0xFFD4D4D4),
-            selectedColor: const Color(0xFF667EEA),
+            unselectedColor: colorScheme.surfaceContainerHighest,
+            selectedColor: colorScheme.primary,
             duration: const Duration(milliseconds: 200),
           ),
         ],

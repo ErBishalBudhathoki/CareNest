@@ -98,9 +98,10 @@ class _OnboardingAppSignupState extends State<OnboardingAppSignup>
   @override
   Widget build(BuildContext context) {
     final theme = BauhausDesign.getTextTheme(context);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.background,
+      backgroundColor: colorScheme.surface,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -123,7 +124,7 @@ class _OnboardingAppSignupState extends State<OnboardingAppSignup>
                       Text(
                         OnboardingContent.signupHeadline,
                         style: theme.displayMedium?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: colorScheme.onSurface,
                           fontWeight: FontWeight.w800,
                           height: 1.2,
                         ),
@@ -132,7 +133,7 @@ class _OnboardingAppSignupState extends State<OnboardingAppSignup>
                       Text(
                         OnboardingContent.signupSubtext,
                         style: theme.bodyLarge?.copyWith(
-                          color: BauhausDesign.textMuted,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           height: 1.5,
                         ),
                       ),
@@ -239,6 +240,7 @@ class _Field extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final borderColor = error != null
         ? BauhausDesign.error
         : BauhausDesign.neoInk;
@@ -259,7 +261,7 @@ class _Field extends StatelessWidget {
         const SizedBox(height: BauhausDesign.space2),
         Container(
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
+            color: colorScheme.surface,
             border: Border.all(color: borderColor, width: 2),
             boxShadow: const [BauhausDesign.shadowHardSm],
           ),
@@ -272,12 +274,12 @@ class _Field extends StatelessWidget {
             onSubmitted: onSubmitted,
             style: BauhausDesign.getTextTheme(
               context,
-            ).bodyLarge?.copyWith(color: BauhausDesign.textDark),
+            ).bodyLarge?.copyWith(color: colorScheme.onSurface),
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: BauhausDesign.getTextTheme(
                 context,
-              ).bodyLarge?.copyWith(color: BauhausDesign.textMuted),
+              ).bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: BauhausDesign.space4,
                 vertical: BauhausDesign.space4,
@@ -317,6 +319,8 @@ class _SocialButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -325,19 +329,19 @@ class _SocialButton extends StatelessWidget {
           vertical: BauhausDesign.space3,
         ),
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
-          border: Border.all(color: BauhausDesign.neoInk, width: 2),
+          color: colorScheme.surface,
+          border: Border.all(color: colorScheme.outline, width: 2),
           boxShadow: const [BauhausDesign.shadowHardSm],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 24, color: BauhausDesign.neoInk),
+            Icon(icon, size: 24, color: colorScheme.onSurface),
             const SizedBox(width: BauhausDesign.space2),
             Text(
               label,
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                color: BauhausDesign.textDark,
+                color: colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -404,6 +408,7 @@ class _BrutalistButtonState extends State<_BrutalistButton>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final shadowOffset = _pressed
         ? OnboardingButtonPress.shadowOffsetPressed
         : 4.0;
@@ -420,11 +425,11 @@ class _BrutalistButtonState extends State<_BrutalistButton>
           padding: const EdgeInsets.symmetric(vertical: BauhausDesign.space4),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: BauhausDesign.neoInk,
-            border: Border.all(color: BauhausDesign.neoInk, width: 2.5),
+            color: colorScheme.inverseSurface,
+            border: Border.all(color: colorScheme.outline, width: 2.5),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF000000),
+                color: colorScheme.shadow,
                 offset: Offset(shadowOffset, shadowOffset),
                 blurRadius: 0,
               ),
@@ -433,7 +438,7 @@ class _BrutalistButtonState extends State<_BrutalistButton>
           child: Text(
             widget.label,
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-              color: BauhausDesign.surfaceWhite,
+              color: colorScheme.surface,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.5,
             ),

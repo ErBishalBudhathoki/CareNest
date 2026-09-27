@@ -59,7 +59,7 @@ class _AdminRequestsDashboardViewState
                 backgroundColor: BauhausDesign.primary,
                 action: SnackBarAction(
                   label: 'View',
-                  textColor: BauhausDesign.surfaceWhite,
+                  textColor: Theme.of(context).colorScheme.onPrimary,
                   onPressed: () {
                     _tabController.animateTo(0);
                   },
@@ -74,7 +74,7 @@ class _AdminRequestsDashboardViewState
     final requestsState = ref.watch(adminRequestsViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -88,7 +88,7 @@ class _AdminRequestsDashboardViewState
         title: Text(
           AppLocalizations.of(context)!.requestsDashboardTitle,
           style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onPrimary,
             fontWeight: FontWeight.bold,
             letterSpacing: 0.5,
           ),
@@ -113,7 +113,7 @@ class _AdminRequestsDashboardViewState
           ),
         ],
         backgroundColor: BauhausDesign.primary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60),
           child: Padding(
@@ -123,21 +123,29 @@ class _AdminRequestsDashboardViewState
             ),
             child: Container(
               decoration: BoxDecoration(
-                color: BauhausDesign.surfaceWhite,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                border: Border.all(color: BauhausDesign.neutral, width: 2.0),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2.0,
+                ),
                 boxShadow: const [BauhausDesign.shadowHardXs],
               ),
               child: TabBar(
                 controller: _tabController,
-                labelColor: BauhausDesign.textDark,
-                unselectedLabelColor: BauhausDesign.neutral,
+                labelColor: Theme.of(context).colorScheme.onSurface,
+                unselectedLabelColor: Theme.of(
+                  context,
+                ).colorScheme.onSurfaceVariant,
                 indicatorSize: TabBarIndicatorSize.tab,
                 dividerColor: Colors.transparent,
                 indicator: BoxDecoration(
                   color: BauhausDesign.secondary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 1.5,
+                  ),
                 ),
                 indicatorPadding: const EdgeInsets.all(4),
                 labelStyle: BauhausDesign.getTextTheme(context).labelMedium
@@ -229,14 +237,16 @@ class _AdminRequestsDashboardViewState
                   width: double.infinity,
                   padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.neutral.withValues(alpha: 0.05),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.outline.withValues(alpha: 0.05),
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(BauhausDesign.radiusMd - 1),
                       topRight: Radius.circular(BauhausDesign.radiusMd - 1),
                     ),
-                    border: const Border(
+                    border: Border(
                       bottom: BorderSide(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.outline,
                         width: 1.5,
                       ),
                     ),
@@ -281,7 +291,9 @@ class _AdminRequestsDashboardViewState
                             style: BauhausDesign.getTextTheme(context)
                                 .labelSmall
                                 ?.copyWith(
-                                  color: BauhausDesign.textDark,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   fontWeight: FontWeight.bold,
                                 ),
                           ),
@@ -297,9 +309,9 @@ class _AdminRequestsDashboardViewState
                           child: Container(
                             padding: const EdgeInsets.all(BauhausDesign.space2),
                             decoration: BoxDecoration(
-                              color: BauhausDesign.neutral.withValues(
-                                alpha: 0.05,
-                              ),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.outline.withValues(alpha: 0.05),
                               borderRadius: BorderRadius.circular(
                                 BauhausDesign.radiusSm,
                               ),
@@ -531,9 +543,10 @@ class _AdminRequestsDashboardViewState
                       ),
                       Text(
                         displayClaimant,
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
+                            ?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
                       ),
                     ],
                   ),
@@ -570,7 +583,7 @@ class _AdminRequestsDashboardViewState
             value,
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ),

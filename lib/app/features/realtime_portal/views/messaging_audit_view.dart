@@ -136,12 +136,13 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
   Widget build(BuildContext context) {
     final state = ref.watch(messagingViewModelProvider);
     final isViewingChat = state.activeConversation != null;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: colorScheme.secondary,
+        foregroundColor: colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -153,15 +154,12 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
           style: GoogleFonts.oswald(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.surfaceWhite,
+            color: colorScheme.onSecondary,
             letterSpacing: 1.1,
           ),
         ),
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: BauhausDesign.surfaceWhite,
-          ),
+          icon: Icon(Icons.arrow_back_ios, color: colorScheme.onSecondary),
           onPressed: () {
             if (isViewingChat) {
               ref
@@ -177,13 +175,16 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
             onPressed: isViewingChat
                 ? () => _openConversation(state.activeConversation!)
                 : _loadConversations,
-            icon: const Icon(Icons.refresh, color: BauhausDesign.surfaceWhite),
+            icon: Icon(Icons.refresh, color: colorScheme.onSecondary),
             tooltip: 'Refresh',
           ),
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.5),
-          child: Container(color: BauhausDesign.neutral, height: 1.5),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 1.5,
+          ),
         ),
       ),
       body: Column(
@@ -211,11 +212,11 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
           bottom: BorderSide(
-            color: BauhausDesign.neutral,
+            color: Theme.of(context).colorScheme.outline,
             width: BauhausDesign.borderThick,
           ),
         ),
@@ -227,12 +228,12 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
             isViewingChat ? 'CURRENT AUDITED CLIENT' : 'MESSAGING ARCHIVE FOR',
             style: BauhausDesign.neoMonoStyle(
               context,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: 10,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             _resolvedClientName ?? 'Client',
             style: GoogleFonts.oswald(
@@ -242,12 +243,12 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
               letterSpacing: 0.5,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             'Client ID: ${_resolvedClientId ?? 'client_123'}',
             style: GoogleFonts.shareTechMono(
               fontSize: 11,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -271,7 +272,7 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
     return ListView.separated(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       itemCount: state.conversations.length + 1,
-      separatorBuilder: (_, _) => const SizedBox(height: BauhausDesign.space4),
+      separatorBuilder: (_, _) => SizedBox(height: BauhausDesign.space4),
       itemBuilder: (context, index) {
         if (index == 0) {
           return BauhausSectionHeader(
@@ -294,8 +295,11 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
 
         return Container(
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            color: Theme.of(context).colorScheme.surface,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             boxShadow: const [BauhausDesign.shadowHardSm],
           ),
           child: Material(
@@ -312,17 +316,17 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
                       decoration: BoxDecoration(
                         color: BauhausDesign.secondary,
                         border: Border.all(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.outline,
                           width: 1.5,
                         ),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.forum_rounded,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onSecondary,
                         size: 20,
                       ),
                     ),
-                    const SizedBox(width: BauhausDesign.space4),
+                    SizedBox(width: BauhausDesign.space4),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -332,15 +336,17 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
                             style: GoogleFonts.inter(
                               fontWeight: FontWeight.bold,
                               fontSize: 15,
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: 2),
                           Text(
                             thread.lastMessage ?? 'No messages yet',
                             style: GoogleFonts.inter(
                               fontSize: 13,
-                              color: BauhausDesign.textMuted,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -358,7 +364,7 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
                         decoration: BoxDecoration(
                           color: BauhausDesign.primary,
                           border: Border.all(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.outline,
                             width: 1,
                           ),
                         ),
@@ -367,13 +373,13 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
                           style: GoogleFonts.shareTechMono(
                             fontSize: 9,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.onPrimary,
                           ),
                         ),
                       ),
-                    const Icon(
+                    Icon(
                       Icons.arrow_forward_ios,
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.onSurface,
                       size: 14,
                     ),
                   ],
@@ -401,7 +407,7 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
         // Sub-header displaying counterparts
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          color: BauhausDesign.surfaceWhite,
+          color: Theme.of(context).colorScheme.surface,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -418,13 +424,17 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
                 style: GoogleFonts.shareTechMono(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
           ),
         ),
-        Divider(color: BauhausDesign.neutral, height: 1.5, thickness: 1.5),
+        Divider(
+          color: Theme.of(context).colorScheme.outline,
+          height: 1.5,
+          thickness: 1.5,
+        ),
 
         Expanded(
           child: state.messages.isEmpty
@@ -440,7 +450,7 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
                   padding: const EdgeInsets.all(BauhausDesign.space4),
                   itemCount: state.messages.length,
                   separatorBuilder: (_, _) =>
-                      const SizedBox(height: BauhausDesign.space3),
+                      SizedBox(height: BauhausDesign.space3),
                   itemBuilder: (context, index) {
                     final msg = state.messages[index];
                     final isClient = msg.senderType.toLowerCase() == 'client';
@@ -455,12 +465,16 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
                         ),
                         decoration: BoxDecoration(
                           color: isClient
-                              ? BauhausDesign.surfaceWhite
-                              : BauhausDesign.neutral.withValues(alpha: 0.1),
+                              ? Theme.of(context).colorScheme.surface
+                              : Theme.of(
+                                  context,
+                                ).colorScheme.outline.withValues(alpha: 0.1),
                           border: Border.all(
                             color: isClient
-                                ? BauhausDesign.neutral
-                                : BauhausDesign.neutral.withValues(alpha: 0.5),
+                                ? Theme.of(context).colorScheme.outline
+                                : Theme.of(
+                                    context,
+                                  ).colorScheme.outline.withValues(alpha: 0.5),
                             width: 1.5,
                           ),
                           boxShadow: isClient
@@ -487,23 +501,25 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
                                         : BauhausDesign.secondary,
                                   ),
                                 ),
-                                const SizedBox(width: 16),
+                                SizedBox(width: 16),
                                 Text(
                                   DateFormat('HH:mm').format(msg.timestamp),
                                   style: GoogleFonts.shareTechMono(
                                     fontSize: 10,
-                                    color: BauhausDesign.textMuted,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 6),
+                            SizedBox(height: 6),
                             Text(
                               msg.message,
                               style: GoogleFonts.inter(
                                 fontSize: 14,
                                 height: 1.35,
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -518,10 +534,13 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
         // Return button block
         Container(
           padding: const EdgeInsets.all(BauhausDesign.space4),
-          decoration: const BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
             border: Border(
-              top: BorderSide(color: BauhausDesign.neutral, width: 1.5),
+              top: BorderSide(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1.5,
+              ),
             ),
           ),
           child: Row(

@@ -67,6 +67,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final scheduleArray = widget.assignment['schedule'] ?? [];
     final totalHours = _calculateTotalHours();
     final shiftsCount = scheduleArray.length;
@@ -87,23 +88,23 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Colors.white, Colors.grey.shade50],
+                  colors: [colorScheme.surface, colorScheme.surfaceContainer],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.blue.withValues(alpha: 0.1),
+                    color: colorScheme.primary.withValues(alpha: 0.1),
                     blurRadius: _elevationAnimation.value,
                     offset: Offset(0, _elevationAnimation.value / 2),
                     spreadRadius: 2,
                   ),
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: colorScheme.shadow.withValues(alpha: 0.1),
                     blurRadius: _elevationAnimation.value * 2,
                     offset: Offset(0, _elevationAnimation.value),
                   ),
                 ],
                 border: Border.all(
-                  color: Colors.blue.withValues(alpha: 0.1),
+                  color: colorScheme.primary.withValues(alpha: 0.1),
                   width: 1,
                 ),
               ),
@@ -122,7 +123,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                           shape: BoxShape.circle,
                           gradient: RadialGradient(
                             colors: [
-                              Colors.blue.withValues(alpha: 0.1),
+                              colorScheme.primary.withValues(alpha: 0.1),
                               Colors.transparent,
                             ],
                           ),
@@ -135,15 +136,15 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildHeader(),
+                          _buildHeader(context),
                           const SizedBox(height: 20),
-                          _buildStatsRow(totalHours, shiftsCount),
+                          _buildStatsRow(context, totalHours, shiftsCount),
                           const SizedBox(height: 24),
-                          _buildWeeklyChart(weeklyData),
+                          _buildWeeklyChart(context, weeklyData),
                           const SizedBox(height: 20),
-                          _buildShiftPreview(),
+                          _buildShiftPreview(context),
                           const SizedBox(height: 16),
-                          _buildFooter(),
+                          _buildFooter(context),
                         ],
                       ),
                     ),
@@ -157,7 +158,8 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
         // 3D Avatar
@@ -169,19 +171,19 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Colors.blue.shade400, Colors.blue.shade600],
+              colors: [colorScheme.primary, colorScheme.primary],
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.blue.withValues(alpha: 0.1),
+                color: colorScheme.primary.withValues(alpha: 0.1),
                 blurRadius: 12,
                 offset: const Offset(0, 6),
               ),
             ],
           ),
-          child: const Icon(
+          child: Icon(
             Icons.person_outline,
-            color: Colors.white,
+            color: colorScheme.onPrimary,
             size: 28,
           ),
         ),
@@ -193,10 +195,10 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
               Text(
                 widget.employeeName ??
                     _getDisplayName(widget.assignment['userEmail'] ?? ''),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF1A1A1A),
+                  color: colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 4),
@@ -205,7 +207,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                   Icon(
                     Icons.badge_outlined,
                     size: 14,
-                    color: Colors.grey.shade600,
+                    color: colorScheme.onSurfaceVariant,
                   ),
                   const SizedBox(width: 4),
                   Expanded(
@@ -213,7 +215,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                       'Client: ${widget.clientName ?? _getDisplayName(widget.assignment['clientEmail'] ?? '')}',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey.shade600,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),
@@ -233,19 +235,19 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Colors.orange.shade400, Colors.orange.shade600],
+                colors: [colorScheme.tertiary, colorScheme.tertiary],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.orange.withValues(alpha: 0.1),
+                  color: colorScheme.tertiary.withValues(alpha: 0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
               ],
             ),
-            child: const Icon(
+            child: Icon(
               Icons.edit_outlined,
-              color: Colors.white,
+              color: colorScheme.onTertiary,
               size: 20,
             ),
           ),
@@ -254,34 +256,42 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
     );
   }
 
-  Widget _buildStatsRow(double totalHours, int shiftsCount) {
+  Widget _buildStatsRow(
+    BuildContext context,
+    double totalHours,
+    int shiftsCount,
+  ) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
         Expanded(
           child: _build3DStatCard(
+            context: context,
             icon: Icons.access_time_outlined,
             label: 'Total Hours',
             value: '${totalHours.toStringAsFixed(1)}h',
-            color: Colors.green,
+            color: colorScheme.secondary,
           ),
         ),
         const SizedBox(width: 16),
         Expanded(
           child: _build3DStatCard(
+            context: context,
             icon: Icons.calendar_month_outlined,
             label: 'Shifts',
             value: shiftsCount.toString(),
-            color: Colors.purple,
+            color: colorScheme.tertiary,
           ),
         ),
         const SizedBox(width: 16),
         Expanded(
           child: _build3DStatCard(
+            context: context,
             icon: Icons.check_circle_outline,
             label: 'Avg/Day',
             value:
                 '${(totalHours / math.max(shiftsCount, 1)).toStringAsFixed(1)}h',
-            color: Colors.blue,
+            color: colorScheme.primary,
           ),
         ),
       ],
@@ -289,11 +299,18 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
   }
 
   Widget _build3DStatCard({
+    required BuildContext context,
     required IconData icon,
     required String label,
     required String value,
     required Color color,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final foregroundColor = color == colorScheme.secondary
+        ? colorScheme.onSecondary
+        : color == colorScheme.tertiary
+        ? colorScheme.onTertiary
+        : colorScheme.onPrimary;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -325,7 +342,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                 ),
               ],
             ),
-            child: Icon(icon, color: Colors.white, size: 16),
+            child: Icon(icon, color: foregroundColor, size: 16),
           ),
           const SizedBox(height: 8),
           Text(
@@ -333,19 +350,20 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Color.lerp(color, Colors.black, 0.3)!,
+              color: colorScheme.onSurface,
             ),
           ),
           Text(
             label,
-            style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+            style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildWeeklyChart(List<FlSpot> data) {
+  Widget _buildWeeklyChart(BuildContext context, List<FlSpot> data) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       height: 120,
       padding: const EdgeInsets.all(16),
@@ -354,9 +372,15 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Colors.blue.shade50, Colors.indigo.shade50],
+          colors: [
+            colorScheme.primaryContainer,
+            colorScheme.secondaryContainer,
+          ],
         ),
-        border: Border.all(color: Colors.blue.withValues(alpha: 0.1), width: 1),
+        border: Border.all(
+          color: colorScheme.primary.withValues(alpha: 0.1),
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -366,7 +390,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
               Icon(
                 Icons.bar_chart_outlined,
                 size: 16,
-                color: Colors.blue.shade600,
+                color: colorScheme.primary,
               ),
               const SizedBox(width: 8),
               Text(
@@ -374,7 +398,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF1565C0),
+                  color: colorScheme.primary,
                 ),
               ),
             ],
@@ -393,7 +417,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                       spots: data,
                       isCurved: true,
                       gradient: LinearGradient(
-                        colors: [Colors.blue.shade400, Colors.indigo.shade600],
+                        colors: [colorScheme.primary, colorScheme.secondary],
                       ),
                       barWidth: 3,
                       isStrokeCapRound: true,
@@ -402,9 +426,9 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                         getDotPainter: (spot, percent, barData, index) {
                           return FlDotCirclePainter(
                             radius: 4,
-                            color: Colors.white,
+                            color: colorScheme.surface,
                             strokeWidth: 2,
-                            strokeColor: Colors.blue.shade600,
+                            strokeColor: colorScheme.primary,
                           );
                         },
                       ),
@@ -414,8 +438,8 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Colors.blue.withValues(alpha: 0.1),
-                            Colors.blue.withValues(alpha: 0.1),
+                            colorScheme.primary.withValues(alpha: 0.1),
+                            colorScheme.primary.withValues(alpha: 0.1),
                           ],
                         ),
                       ),
@@ -434,7 +458,8 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
     );
   }
 
-  Widget _buildShiftPreview() {
+  Widget _buildShiftPreview(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final scheduleArray = widget.assignment['schedule'] ?? [];
     final previewCount = math.min(3, scheduleArray.length as int);
 
@@ -443,14 +468,18 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
       children: [
         Row(
           children: [
-            Icon(Icons.event_outlined, size: 16, color: Colors.grey.shade700),
+            Icon(
+              Icons.event_outlined,
+              size: 16,
+              color: colorScheme.onSurfaceVariant,
+            ),
             const SizedBox(width: 8),
             Text(
               'Upcoming Shifts',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: Colors.grey.shade700,
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
           ],
@@ -458,7 +487,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
         const SizedBox(height: 12),
         ...List.generate(previewCount, (index) {
           final shift = scheduleArray[index];
-          return _buildShiftItem(shift, index);
+          return _buildShiftItem(context, shift, index);
         }),
         if (scheduleArray.length > 3)
           Padding(
@@ -467,7 +496,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
               '+${scheduleArray.length - 3} more shifts',
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.blue.shade600,
+                color: colorScheme.primary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -476,7 +505,12 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
     );
   }
 
-  Widget _buildShiftItem(Map<String, dynamic> shift, int index) {
+  Widget _buildShiftItem(
+    BuildContext context,
+    Map<String, dynamic> shift,
+    int index,
+  ) {
+    final colorScheme = Theme.of(context).colorScheme;
     final date = shift['date'] ?? '';
     final startTime = shift['startTime'] ?? '';
     final endTime = shift['endTime'] ?? '';
@@ -487,11 +521,11 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.white,
-        border: Border.all(color: Colors.grey.shade200, width: 1),
+        color: colorScheme.surface,
+        border: Border.all(color: colorScheme.outlineVariant, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: colorScheme.shadow.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -505,8 +539,8 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: isHighIntensity
-                  ? Colors.red.shade400
-                  : Colors.green.shade400,
+                  ? colorScheme.error
+                  : colorScheme.secondary,
             ),
           ),
           const SizedBox(width: 12),
@@ -516,15 +550,18 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
               children: [
                 Text(
                   _formatShiftDate(date),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF1A1A1A),
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 Text(
                   '$startTime - $endTime',
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
@@ -534,14 +571,14 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(6),
-                color: Colors.red.shade50,
+                color: colorScheme.errorContainer,
               ),
               child: Text(
                 'High',
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
-                  color: Colors.red.shade600,
+                  color: colorScheme.onErrorContainer,
                 ),
               ),
             ),
@@ -550,7 +587,8 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
     );
   }
 
-  Widget _buildFooter() {
+  Widget _buildFooter(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final createdAt = widget.assignment['createdAt'] ?? '';
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -560,12 +598,15 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
             Icon(
               Icons.event_available_outlined,
               size: 12,
-              color: Colors.grey.shade500,
+              color: colorScheme.onSurfaceVariant,
             ),
             const SizedBox(width: 4),
             Text(
               'Created ${_formatDate(createdAt)}',
-              style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+              style: TextStyle(
+                fontSize: 11,
+                color: colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),
@@ -574,7 +615,10 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             gradient: LinearGradient(
-              colors: [Colors.blue.shade50, Colors.indigo.shade50],
+              colors: [
+                colorScheme.primaryContainer,
+                colorScheme.secondaryContainer,
+              ],
             ),
           ),
           child: Text(
@@ -582,7 +626,7 @@ class _Enhanced3DAssignmentCardState extends State<Enhanced3DAssignmentCard>
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF1565C0),
+              color: colorScheme.primary,
             ),
           ),
         ),

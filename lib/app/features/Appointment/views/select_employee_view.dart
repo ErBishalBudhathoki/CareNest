@@ -93,9 +93,12 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: BauhausDesign.surfaceWhite,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 1.5,
+                ),
                 boxShadow: const [BauhausDesign.shadowHard],
               ),
               child: Material(
@@ -141,7 +144,7 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                             BauhausDesign.radiusMd,
                           ),
                           borderWidth: 1.5,
-                          borderColor: BauhausDesign.neutral,
+                          borderColor: Theme.of(context).colorScheme.outline,
                           elevation: 0,
                           showLoading: true,
                         ),
@@ -157,7 +160,9 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                                     .titleMedium
                                     ?.copyWith(
                                       fontWeight: FontWeight.w600,
-                                      color: BauhausDesign.textDark,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
                                     ),
                               ),
                               const SizedBox(height: BauhausDesign.space1),
@@ -165,7 +170,11 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                                 user.email,
                                 style: BauhausDesign.getTextTheme(context)
                                     .bodyMedium
-                                    ?.copyWith(color: BauhausDesign.textMuted),
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                    ),
                               ),
                             ],
                           ),
@@ -174,19 +183,21 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                         Container(
                           padding: const EdgeInsets.all(BauhausDesign.space2),
                           decoration: BoxDecoration(
-                            color: BauhausDesign.backgroundLight,
+                            color: Theme.of(context).colorScheme.onSecondary,
                             borderRadius: BorderRadius.circular(
                               BauhausDesign.radiusSm,
                             ),
                             border: Border.all(
-                              color: BauhausDesign.neutral,
+                              color: Theme.of(context).colorScheme.outline,
                               width: 1,
                             ),
                           ),
                           child: Icon(
                             Icons.arrow_forward_ios,
                             size: 16,
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -216,9 +227,12 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                   bottom: BauhausDesign.space2,
                 ),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceWhite,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                  border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 1.5,
+                  ),
                   boxShadow: const [BauhausDesign.shadowSoft],
                 ),
                 child: TextField(
@@ -227,19 +241,23 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                   decoration: InputDecoration(
                     hintText: AppLocalizations.of(context)!.searchEmployeesHint,
                     hintStyle: TextStyle(
-                      color: BauhausDesign.textMuted.withValues(alpha: 0.5),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                     ),
                     filled: false,
                     fillColor: Colors.transparent,
                     prefixIcon: Icon(
                       Icons.search,
-                      color: BauhausDesign.textMuted,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     suffixIcon: _isSearching
                         ? IconButton(
                             icon: Icon(
                               Icons.clear,
-                              color: BauhausDesign.textMuted,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
                             tooltip: l10n.clearSearch,
                             onPressed: () {
@@ -269,14 +287,17 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                 bottom: BauhausDesign.space2,
               ),
               decoration: BoxDecoration(
-                color: BauhausDesign.surfaceWhite,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 1.5,
+                ),
                 boxShadow: const [BauhausDesign.shadowSoft],
               ),
               child: IconButton(
                 icon: const Icon(Icons.sort_by_alpha),
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 tooltip: _sortAscending ? l10n.sortAZ : l10n.sortZA,
                 onPressed: () =>
                     setState(() => _sortAscending = !_sortAscending),
@@ -313,16 +334,26 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
           vertical: BauhausDesign.space2,
         ),
         decoration: BoxDecoration(
-          color: selected ? BauhausDesign.neutral : BauhausDesign.surfaceWhite,
-          border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+          // Selected uses the primary yellow so the active filter reads as
+          // clearly picked in both themes; a fixed `outline` fill would put
+          // dark-on-dark text in dark mode.
+          color: selected
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.surface,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 1.5,
+          ),
           boxShadow: selected ? const [BauhausDesign.shadowHardSm] : [],
         ),
         child: Text(
           label.toUpperCase(),
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
             color: selected
-                ? BauhausDesign.surfaceWhite
-                : BauhausDesign.textDark,
+                ? BauhausDesign.readableOnColor(
+                    Theme.of(context).colorScheme.primary,
+                  )
+                : Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -339,7 +370,7 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
           Icon(
             _isSearching ? Icons.search_off : Icons.people_outline,
             size: 64,
-            color: BauhausDesign.neutral,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
           const SizedBox(height: BauhausDesign.space4),
           Text(
@@ -347,7 +378,7 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
                 ? AppLocalizations.of(context)!.noEmployeesFound
                 : AppLocalizations.of(context)!.noEmployeesYet,
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -356,9 +387,9 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
             _isSearching
                 ? AppLocalizations.of(context)!.adjustSearchTerms
                 : AppLocalizations.of(context)!.addEmployeesToStart,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.neutral),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space6),
           BauhausButton(
@@ -391,16 +422,16 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
           Text(
             AppLocalizations.of(context)!.errorLoadingEmployees,
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: BauhausDesign.space2),
           Text(
             error,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: BauhausDesign.space6),
@@ -436,11 +467,11 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -454,13 +485,16 @@ class _AssignC2EState extends ConsumerState<AssignC2E>
           'Employee List',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             fontWeight: FontWeight.w600,
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onSecondary,
           ),
         ),
         centerTitle: false,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: BauhausDesign.neutral, height: 1.5),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 1.5,
+          ),
         ),
       ),
       body: Column(

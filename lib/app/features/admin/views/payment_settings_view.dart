@@ -87,24 +87,27 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
     final isConnected = stripeCanCharge(statusMap);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           'PAYMENT SETTINGS',
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).displaySmall?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+            color: Theme.of(context).colorScheme.surface,
+          ),
         ),
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.surface),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2.0),
-          child: Container(color: BauhausDesign.neutral, height: 2.0),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 2.0,
+          ),
         ),
       ),
       body: RefreshIndicator(
@@ -128,24 +131,24 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space3),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceLight,
+                  color: Theme.of(context).colorScheme.surfaceContainer,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 2,
+                  ),
                   boxShadow: const [BauhausDesign.shadowHardSm],
                 ),
                 child: Row(
                   children: [
-                    const Icon(
-                      Icons.account_balance,
-                      color: BauhausDesign.secondary,
-                    ),
+                    Icon(Icons.account_balance, color: BauhausDesign.secondary),
                     const SizedBox(width: BauhausDesign.space3),
                     Expanded(
                       child: Text(
                         'Stripe payout account',
                         style: BauhausDesign.getTextTheme(context).bodyMedium
                             ?.copyWith(
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.w700,
                             ),
                       ),
@@ -160,7 +163,7 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                             ? BauhausDesign.success
                             : BauhausDesign.warning,
                         border: Border.all(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.outline,
                           width: 1,
                         ),
                       ),
@@ -168,7 +171,7 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                         isConnected ? 'CONNECTED' : 'ACTION NEEDED',
                         style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.w800,
                             ),
                       ),
@@ -181,7 +184,7 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                 'Connect with Stripe',
                 style: BauhausDesign.getTextTheme(context).titleMedium
                     ?.copyWith(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w700,
                     ),
               ),
@@ -189,16 +192,19 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
               Text(
                 'Link your bank account to receive payments directly from clients. '
                 'We use Stripe Connect to ensure secure and compliant payouts for your NDIS business.',
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
               const SizedBox(height: 24),
               Container(
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceLight,
+                  color: Theme.of(context).colorScheme.surfaceContainer,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 2,
+                  ),
                   boxShadow: const [BauhausDesign.shadowHardSm],
                 ),
                 padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -214,7 +220,7 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                                 ? BauhausDesign.success
                                 : BauhausDesign.warning,
                             border: Border.all(
-                              color: BauhausDesign.neutral,
+                              color: Theme.of(context).colorScheme.outline,
                               width: 2,
                             ),
                           ),
@@ -224,7 +230,7 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                                 : (isLinked
                                       ? Icons.hourglass_empty
                                       : Icons.link),
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             size: 24,
                           ),
                         ),
@@ -244,7 +250,9 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                                 style: BauhausDesign.getTextTheme(context)
                                     .labelLarge
                                     ?.copyWith(
-                                      color: BauhausDesign.textDark,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
                                       fontWeight: FontWeight.w700,
                                     ),
                               ),
@@ -259,7 +267,11 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                                           : 'Connect your account to start accepting payments.'),
                                 style: BauhausDesign.getTextTheme(context)
                                     .bodySmall
-                                    ?.copyWith(color: BauhausDesign.textMuted),
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                    ),
                               ),
                             ],
                           ),
@@ -301,7 +313,7 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                           decoration: BoxDecoration(
                             color: BauhausDesign.secondary,
                             border: Border.all(
-                              color: BauhausDesign.neutral,
+                              color: Theme.of(context).colorScheme.outline,
                               width: 2,
                             ),
                             boxShadow: const [BauhausDesign.shadowHardSm],
@@ -311,7 +323,9 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                             style: BauhausDesign.getTextTheme(context)
                                 .labelLarge
                                 ?.copyWith(
-                                  color: BauhausDesign.surfaceLight,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.surfaceContainer,
                                   fontWeight: FontWeight.w900,
                                 ),
                           ),
@@ -345,7 +359,7 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                           decoration: BoxDecoration(
                             color: BauhausDesign.warning,
                             border: Border.all(
-                              color: BauhausDesign.neutral,
+                              color: Theme.of(context).colorScheme.outline,
                               width: 2,
                             ),
                             boxShadow: const [BauhausDesign.shadowHardSm],
@@ -357,7 +371,9 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                             style: BauhausDesign.getTextTheme(context)
                                 .labelLarge
                                 ?.copyWith(
-                                  color: BauhausDesign.textDark,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   fontWeight: FontWeight.w900,
                                 ),
                           ),
@@ -376,9 +392,11 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                           height: 50,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: BauhausDesign.surfaceLight,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainer,
                             border: Border.all(
-                              color: BauhausDesign.neutral,
+                              color: Theme.of(context).colorScheme.outline,
                               width: 2,
                             ),
                             boxShadow: const [BauhausDesign.shadowHardSm],
@@ -388,7 +406,9 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                             style: BauhausDesign.getTextTheme(context)
                                 .labelLarge
                                 ?.copyWith(
-                                  color: BauhausDesign.textDark,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   fontWeight: FontWeight.w900,
                                 ),
                           ),
@@ -403,7 +423,9 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                           height: 50,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: BauhausDesign.surfaceLight,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainer,
                             border: Border.all(
                               color: BauhausDesign.error,
                               width: 2,
@@ -441,10 +463,13 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
         ),
         title: const Text('Disconnect Stripe?'),
         content: const Text(
@@ -459,7 +484,7 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: BauhausDesign.error,
-              foregroundColor: BauhausDesign.surfaceWhite,
+              foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
             ),
             onPressed: () => Navigator.pop(dialogContext, true),
             child: const Text('DISCONNECT'),
@@ -501,8 +526,11 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Column(
@@ -514,7 +542,7 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
               Text(
                 'APP SUBSCRIPTION',
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w900,
                 ),
               ),
@@ -527,13 +555,16 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
                   color: isActive
                       ? BauhausDesign.success
                       : BauhausDesign.warning,
-                  border: Border.all(color: BauhausDesign.neutral, width: 1),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 1,
+                  ),
                 ),
                 child: Text(
                   statusLabel,
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w800,
                       ),
                 ),
@@ -544,9 +575,9 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
           Text(
             'Activate your CareNest subscription to unlock invoicing, payments, '
             'scheduling and timesheets. Subscriptions are handled by the app store.',
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space3),
           InkWell(
@@ -560,13 +591,16 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: BauhausDesign.secondary,
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
                 boxShadow: const [BauhausDesign.shadowHardSm],
               ),
               child: Text(
                 isActive ? 'MANAGE SUBSCRIPTION' : 'SUBSCRIBE',
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: BauhausDesign.surfaceLight,
+                  color: Theme.of(context).colorScheme.surfaceContainer,
                   fontWeight: FontWeight.w900,
                 ),
               ),

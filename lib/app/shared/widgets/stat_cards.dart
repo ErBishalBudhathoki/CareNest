@@ -69,10 +69,12 @@ class StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     Widget card = Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: BauhausDesign.cardDecoration.copyWith(
-        color: data.surfaceColor ?? BauhausDesign.surfaceWhite,
+      decoration: BauhausDesign.cardDecorationFor(context).copyWith(
+        color: data.surfaceColor ?? colorScheme.surface,
+        border: Border.all(color: colorScheme.outline, width: 2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,14 +107,15 @@ class StatCard extends StatelessWidget {
 
   /// Builds the icon row with icon and value - Fixed overflow issue
   Widget _buildIconRow(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
         // Icon with fixed size
         SizedBox(
           width: 48,
           child: data.iconContainer
-              ? _buildContainerIcon()
-              : _buildSimpleIcon(),
+              ? _buildContainerIcon(context)
+              : _buildSimpleIcon(context),
         ),
         const SizedBox(width: BauhausDesign.space2),
         // Flexible text to prevent overflow
@@ -120,7 +123,7 @@ class StatCard extends StatelessWidget {
           child: Text(
             data.value,
             style: BauhausDesign.getTextTheme(context).displayMedium?.copyWith(
-              color: data.valueColor ?? data.color ?? BauhausDesign.textDark,
+              color: data.valueColor ?? data.color ?? colorScheme.onSurface,
               fontSize: 24, // Adjusted for card size
             ),
             textAlign: TextAlign.right,
@@ -134,10 +137,11 @@ class StatCard extends StatelessWidget {
 
   /// Builds the value row when no icon is present - Fixed overflow issue
   Widget _buildValueRow(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Text(
       data.value,
       style: BauhausDesign.getTextTheme(context).displayMedium?.copyWith(
-        color: data.valueColor ?? data.color ?? BauhausDesign.textDark,
+        color: data.valueColor ?? data.color ?? colorScheme.onSurface,
         fontSize: 24,
       ),
       overflow: TextOverflow.ellipsis,
@@ -147,44 +151,47 @@ class StatCard extends StatelessWidget {
 
   /// Builds the title with proper overflow handling
   Widget _buildTitle(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Text(
       data.title,
       style: BauhausDesign.getTextTheme(
         context,
-      ).labelLarge?.copyWith(color: data.titleColor ?? BauhausDesign.textDark),
+      ).labelLarge?.copyWith(color: data.titleColor ?? colorScheme.onSurface),
       overflow: TextOverflow.ellipsis,
       maxLines: 2,
     );
   }
 
   /// Builds the container-style icon with consistent sizing
-  Widget _buildContainerIcon() {
+  Widget _buildContainerIcon(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       width: 48,
       height: 48,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: (data.color ?? BauhausDesign.neutral).withValues(alpha: 0.1),
+        color: (data.color ?? colorScheme.onSurface).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral, width: 1),
+        border: Border.all(color: colorScheme.outline, width: 1),
       ),
       child: Icon(
         data.icon!,
-        color: data.color ?? BauhausDesign.neutral,
+        color: data.color ?? colorScheme.onSurface,
         size: 24,
       ),
     );
   }
 
   /// Builds the simple icon with consistent sizing
-  Widget _buildSimpleIcon() {
+  Widget _buildSimpleIcon(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       width: 48,
       height: 48,
       alignment: Alignment.center,
       child: Icon(
         data.icon!,
-        color: data.color ?? BauhausDesign.neutral,
+        color: data.color ?? colorScheme.onSurface,
         size: 24,
       ),
     );
@@ -192,6 +199,7 @@ class StatCard extends StatelessWidget {
 
   /// Builds the subtitle section with overflow handling
   Widget _buildSubtitle(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -200,7 +208,7 @@ class StatCard extends StatelessWidget {
         Text(
           data.subtitle!,
           style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-            color: data.subtitleColor ?? BauhausDesign.textMuted,
+            color: data.subtitleColor ?? colorScheme.onSurfaceVariant,
             fontSize: 12,
           ),
           overflow: TextOverflow.ellipsis,

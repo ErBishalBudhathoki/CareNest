@@ -74,21 +74,25 @@ class _NdisItemSelectionViewState extends ConsumerState<NdisItemSelectionView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BauhausDesign.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         title: Text(
           'Select NDIS Item',
-          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onInverseSurface,
+          ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: BauhausDesign.neutral),
+          child: Container(
+            color: Theme.of(context).colorScheme.onInverseSurface,
+          ),
         ),
       ),
       body: Column(
@@ -97,7 +101,7 @@ class _NdisItemSelectionViewState extends ConsumerState<NdisItemSelectionView> {
             padding: const EdgeInsets.all(BauhausDesign.space4),
             child: TextField(
               onChanged: _filterNdisItems,
-              decoration: BauhausDesign.defaultInputDecoration.copyWith(
+              decoration: BauhausDesign.inputDecorationFor(context).copyWith(
                 labelText: 'Search by Item Number or Description',
                 prefixIcon: const Icon(Icons.search),
               ),

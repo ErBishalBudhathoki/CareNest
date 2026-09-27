@@ -27,8 +27,11 @@ class BauhausContainer extends StatelessWidget {
       padding: padding ?? const EdgeInsets.all(BauhausDesign.space4),
       margin: margin,
       decoration: BoxDecoration(
-        color: color ?? BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: color ?? Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         borderRadius: BorderRadius.zero,
       ),
       child: child,

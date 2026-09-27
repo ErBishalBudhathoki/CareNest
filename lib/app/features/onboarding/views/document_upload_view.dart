@@ -34,6 +34,7 @@ class DocumentUploadView extends ConsumerStatefulWidget {
 class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final state = ref.watch(onboardingViewModelProvider);
     final documents = state.documents;
 
@@ -44,7 +45,7 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
           Text(
             widget.title,
             style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-              color: BauhausDesign.textDark,
+              color: colorScheme.onSurface,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -52,7 +53,7 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
           Text(
             widget.description,
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-              color: BauhausDesign.textDark.withValues(alpha: 0.7),
+              color: colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
           const SizedBox(height: 16),
@@ -60,8 +61,7 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: widget.documentTypes.length,
-            separatorBuilder: (ctx, i) =>
-                const Divider(color: BauhausDesign.textDark),
+            separatorBuilder: (ctx, i) => Divider(color: colorScheme.outline),
             itemBuilder: (ctx, index) {
               final docType = widget.documentTypes[index];
               final uploadedDoc = documents.firstWhere(
@@ -87,7 +87,7 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
                   isOptional ? '$docType (Optional)' : docType,
                   style: BauhausDesign.getTextTheme(context).bodyLarge
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: colorScheme.onSurface,
                         fontWeight: FontWeight.w500,
                       ),
                 ),
@@ -95,8 +95,8 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
                   isUploaded ? 'Uploaded' : 'Tap to upload',
                   style: TextStyle(
                     color: isUploaded
-                        ? Colors.green
-                        : BauhausDesign.textDark.withValues(alpha: 0.6),
+                        ? colorScheme.secondary
+                        : colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
                 trailing: isUploaded
@@ -124,10 +124,7 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
                           }
                         },
                       )
-                    : const Icon(
-                        Icons.upload_file,
-                        color: BauhausDesign.textDark,
-                      ),
+                    : Icon(Icons.upload_file, color: colorScheme.onSurface),
                 onTap: isUploaded ? null : () => _pickAndUpload(docType),
               );
             },
@@ -170,9 +167,9 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
               height: 48,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: BauhausDesign.surfaceWhite,
+                color: colorScheme.surface,
                 border: Border.all(
-                  color: BauhausDesign.neoInk.withValues(alpha: 0.3),
+                  color: colorScheme.outline.withValues(alpha: 0.3),
                   width: 2,
                 ),
               ),
@@ -180,7 +177,7 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
                 'Skip for now',
                 style: BauhausDesign.neoMonoStyle(
                   context,
-                  color: BauhausDesign.textMuted,
+                  color: colorScheme.onSurfaceVariant,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.8,

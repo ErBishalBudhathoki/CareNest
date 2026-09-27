@@ -271,7 +271,7 @@ class _RealtimePortalDashboardState
     ]);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _buildAppBar(context),
       body: organizationId == null || organizationId.isEmpty
           ? _buildMissingOrganizationState(context)
@@ -298,16 +298,16 @@ class _RealtimePortalDashboardState
                         children: [
                           if (error != null) ...[
                             _buildErrorBanner(context, error),
-                            const SizedBox(height: BauhausDesign.space4),
+                            SizedBox(height: BauhausDesign.space4),
                           ],
                           _buildContextStrip(context),
-                          const SizedBox(height: BauhausDesign.space4),
+                          SizedBox(height: BauhausDesign.space4),
                           _buildCommandDeck(
                             context,
                             metrics: metrics,
                             hasLiveSignal: trackingState.liveLocation != null,
                           ),
-                          const SizedBox(height: BauhausDesign.space6),
+                          SizedBox(height: BauhausDesign.space6),
                           _buildSectionHeader(
                             context,
                             title: 'Module Control',
@@ -315,9 +315,9 @@ class _RealtimePortalDashboardState
                                 'Each module reflects real backend state and routes to its workflow.',
                             accent: BauhausDesign.secondary,
                           ),
-                          const SizedBox(height: BauhausDesign.space3),
+                          SizedBox(height: BauhausDesign.space3),
                           _buildModuleMatrix(context, moduleTiles),
-                          const SizedBox(height: BauhausDesign.space6),
+                          SizedBox(height: BauhausDesign.space6),
                           _buildSectionHeader(
                             context,
                             title: 'Activity Ledger',
@@ -325,11 +325,11 @@ class _RealtimePortalDashboardState
                                 'Latest platform events across insights, messaging, confirmation, and family access.',
                             accent: BauhausDesign.primary,
                           ),
-                          const SizedBox(height: BauhausDesign.space3),
+                          SizedBox(height: BauhausDesign.space3),
                           _buildActivityLedger(context, activityEntries),
                           if (_activeClientId == null &&
                               !clientState.isLoading) ...[
-                            const SizedBox(height: BauhausDesign.space4),
+                            SizedBox(height: BauhausDesign.space4),
                             _buildClientHint(context, organizationId),
                           ],
                         ],
@@ -352,13 +352,16 @@ class _RealtimePortalDashboardState
       title: Text(
         'REALTIME PORTAL',
         style: textTheme.headlineMedium?.copyWith(
-          color: BauhausDesign.textDark,
+          color: Theme.of(context).colorScheme.onSurface,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.8,
         ),
       ),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: BauhausDesign.textDark),
+        icon: Icon(
+          Icons.arrow_back,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
         onPressed: () => Navigator.pop(context),
       ),
       bottom: PreferredSize(
@@ -371,7 +374,10 @@ class _RealtimePortalDashboardState
             ),
             Expanded(
               flex: 3,
-              child: Container(height: 8, color: BauhausDesign.surfaceWhite),
+              child: Container(
+                height: 8,
+                color: Theme.of(context).colorScheme.surface,
+              ),
             ),
             Expanded(
               flex: 2,
@@ -414,22 +420,25 @@ class _RealtimePortalDashboardState
       decoration: BoxDecoration(
         color: BauhausDesign.error.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.2,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
+          Icon(
             Icons.error_outline_rounded,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             size: 18,
           ),
-          const SizedBox(width: BauhausDesign.space2),
+          SizedBox(width: BauhausDesign.space2),
           Expanded(
             child: Text(
               error,
               style: textTheme.bodySmall?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -448,9 +457,12 @@ class _RealtimePortalDashboardState
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Column(
@@ -484,22 +496,24 @@ class _RealtimePortalDashboardState
             ],
           ),
           if (isAdmin && _loadedOrgId != null) ...[
-            const SizedBox(height: BauhausDesign.space2),
+            SizedBox(height: BauhausDesign.space2),
             Text(
               'Organization Context: $_loadedOrgId • ${clientState.clients.length} clients fetched',
               style: textTheme.bodySmall?.copyWith(
-                color: BauhausDesign.textDark.withValues(alpha: 0.6),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
                 fontSize: 10,
                 fontFamily: 'Courier',
                 fontWeight: FontWeight.w600,
               ),
             ),
           ],
-          const SizedBox(height: BauhausDesign.space2),
+          SizedBox(height: BauhausDesign.space2),
           Text(
             'Auto-sync keeps this dashboard aligned with backend realtime APIs.',
             style: textTheme.bodySmall?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -512,7 +526,7 @@ class _RealtimePortalDashboardState
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: BauhausDesign.surfaceWhite,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(BauhausDesign.radiusLg),
@@ -539,7 +553,7 @@ class _RealtimePortalDashboardState
                     vertical: BauhausDesign.space3,
                   ),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.neutral,
+                    color: Theme.of(context).colorScheme.outline,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -559,11 +573,11 @@ class _RealtimePortalDashboardState
                             .headlineMedium
                             ?.copyWith(
                               fontWeight: FontWeight.w800,
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.refresh_rounded),
+                        icon: Icon(Icons.refresh_rounded),
                         onPressed: () {
                           if (_loadedOrgId != null) {
                             ref
@@ -575,7 +589,10 @@ class _RealtimePortalDashboardState
                     ],
                   ),
                 ),
-                Divider(color: BauhausDesign.neutral, height: 1),
+                Divider(
+                  color: Theme.of(context).colorScheme.outline,
+                  height: 1,
+                ),
                 if (clientState.isLoading)
                   const Padding(
                     padding: EdgeInsets.all(BauhausDesign.space8),
@@ -596,8 +613,10 @@ class _RealtimePortalDashboardState
                     child: ListView.separated(
                       shrinkWrap: true,
                       itemCount: clients.length,
-                      separatorBuilder: (_, _) =>
-                          Divider(color: BauhausDesign.neutral, height: 1),
+                      separatorBuilder: (_, _) => Divider(
+                        color: Theme.of(context).colorScheme.outline,
+                        height: 1,
+                      ),
                       itemBuilder: (context, index) {
                         final client = clients[index];
                         final isSelected = client.id == _activeClientId;
@@ -606,15 +625,17 @@ class _RealtimePortalDashboardState
                           leading: CircleAvatar(
                             backgroundColor: isSelected
                                 ? BauhausDesign.primary
-                                : BauhausDesign.neutral.withValues(alpha: 0.3),
+                                : Theme.of(
+                                    context,
+                                  ).colorScheme.outline.withValues(alpha: 0.3),
                             child: Text(
                               client.displayName.isNotEmpty
                                   ? client.displayName[0].toUpperCase()
                                   : '?',
                               style: TextStyle(
                                 color: isSelected
-                                    ? Colors.white
-                                    : BauhausDesign.textDark,
+                                    ? Theme.of(context).colorScheme.onPrimary
+                                    : Theme.of(context).colorScheme.onSurface,
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
@@ -627,7 +648,7 @@ class _RealtimePortalDashboardState
                                   : FontWeight.w500,
                               color: isSelected
                                   ? BauhausDesign.primary
-                                  : BauhausDesign.textDark,
+                                  : Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                           subtitle: Text(
@@ -637,7 +658,7 @@ class _RealtimePortalDashboardState
                             ).bodySmall?.copyWith(fontSize: 11),
                           ),
                           trailing: isSelected
-                              ? const Icon(
+                              ? Icon(
                                   Icons.check_circle,
                                   color: BauhausDesign.primary,
                                 )
@@ -690,7 +711,9 @@ class _RealtimePortalDashboardState
           color: accent.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
           border: Border.all(
-            color: onTap != null ? accent : BauhausDesign.neutral,
+            color: onTap != null
+                ? accent
+                : Theme.of(context).colorScheme.outline,
             width: onTap != null ? 1.5 : 1,
           ),
         ),
@@ -700,12 +723,12 @@ class _RealtimePortalDashboardState
             Text(
               '$label: $value',
               style: textTheme.bodySmall?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: onTap != null ? FontWeight.w800 : FontWeight.w600,
               ),
             ),
             if (onTap != null) ...[
-              const SizedBox(width: 4),
+              SizedBox(width: 4),
               Icon(Icons.keyboard_arrow_down_rounded, size: 16, color: accent),
             ],
           ],
@@ -723,9 +746,12 @@ class _RealtimePortalDashboardState
 
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Padding(
@@ -742,17 +768,17 @@ class _RealtimePortalDashboardState
                     color: BauhausDesign.accent.withValues(alpha: 0.18),
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                     border: Border.all(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.outline,
                       width: 1.5,
                     ),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.radar_rounded,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     size: 28,
                   ),
                 ),
-                const SizedBox(width: BauhausDesign.space3),
+                SizedBox(width: BauhausDesign.space3),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -760,15 +786,15 @@ class _RealtimePortalDashboardState
                       Text(
                         'Operational Command Deck',
                         style: textTheme.headlineMedium?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const SizedBox(height: BauhausDesign.space1),
+                      SizedBox(height: BauhausDesign.space1),
                       Text(
                         'Metrics below are generated from live realtime-portal endpoints.',
                         style: textTheme.bodyMedium?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -787,12 +813,15 @@ class _RealtimePortalDashboardState
                     borderRadius: BorderRadius.circular(
                       BauhausDesign.radiusFull,
                     ),
-                    border: Border.all(color: BauhausDesign.neutral, width: 1),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 1,
+                    ),
                   ),
                   child: Text(
                     hasLiveSignal ? 'LIVE FEED' : 'SYNCED',
                     style: textTheme.labelSmall?.copyWith(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 0.6,
                     ),
@@ -800,7 +829,7 @@ class _RealtimePortalDashboardState
                 ),
               ],
             ),
-            const SizedBox(height: BauhausDesign.space4),
+            SizedBox(height: BauhausDesign.space4),
             LayoutBuilder(
               builder: (context, constraints) {
                 final columns = constraints.maxWidth >= 1160
@@ -838,9 +867,12 @@ class _RealtimePortalDashboardState
 
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceOffWhite,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.2,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -861,13 +893,17 @@ class _RealtimePortalDashboardState
               children: [
                 Row(
                   children: [
-                    Icon(metric.icon, color: BauhausDesign.textDark, size: 18),
-                    const SizedBox(width: BauhausDesign.space2),
+                    Icon(
+                      metric.icon,
+                      color: Theme.of(context).colorScheme.onSurface,
+                      size: 18,
+                    ),
+                    SizedBox(width: BauhausDesign.space2),
                     Expanded(
                       child: Text(
                         metric.label,
                         style: textTheme.labelLarge?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w700,
                         ),
                         maxLines: 1,
@@ -876,21 +912,21 @@ class _RealtimePortalDashboardState
                     ),
                   ],
                 ),
-                const SizedBox(height: BauhausDesign.space2),
+                SizedBox(height: BauhausDesign.space2),
                 Text(
                   metric.value,
                   style: textTheme.headlineMedium?.copyWith(
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w800,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: BauhausDesign.space1),
+                SizedBox(height: BauhausDesign.space1),
                 Text(
                   metric.detail,
                   style: textTheme.bodySmall?.copyWith(
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w500,
                   ),
                   maxLines: 2,
@@ -923,7 +959,7 @@ class _RealtimePortalDashboardState
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
           ),
         ),
-        const SizedBox(width: BauhausDesign.space3),
+        SizedBox(width: BauhausDesign.space3),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -931,15 +967,15 @@ class _RealtimePortalDashboardState
               Text(
                 title,
                 style: textTheme.headlineLarge?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w800,
                 ),
               ),
-              const SizedBox(height: BauhausDesign.space1),
+              SizedBox(height: BauhausDesign.space1),
               Text(
                 subtitle,
                 style: textTheme.bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -988,9 +1024,12 @@ class _RealtimePortalDashboardState
       onTap: () => _openModule(context, module.module.route),
       child: Container(
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          border: Border.all(color: BauhausDesign.neutral, width: 1.6),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 1.6,
+          ),
           boxShadow: const [BauhausDesign.shadowHardSm],
         ),
         child: Padding(
@@ -1009,75 +1048,78 @@ class _RealtimePortalDashboardState
                         BauhausDesign.radiusSm,
                       ),
                       border: Border.all(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.outline,
                         width: 1,
                       ),
                     ),
                     child: Icon(
                       module.module.icon,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       size: 22,
                     ),
                   ),
-                  const SizedBox(width: BauhausDesign.space2),
+                  SizedBox(width: BauhausDesign.space2),
                   Expanded(
                     child: Text(
                       module.module.title,
                       style: textTheme.labelLarge?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: BauhausDesign.space2),
+              SizedBox(height: BauhausDesign.space2),
               Text(
                 module.module.description,
                 style: textTheme.bodySmall?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w500,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: BauhausDesign.space3),
+              SizedBox(height: BauhausDesign.space3),
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: BoxDecoration(
                   color: module.badgeColor.withValues(alpha: 0.16),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral, width: 1),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 1,
+                  ),
                 ),
                 child: Text(
                   module.status,
                   style: textTheme.bodySmall?.copyWith(
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w700,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(height: BauhausDesign.space2),
+              SizedBox(height: BauhausDesign.space2),
               Row(
                 children: [
                   Expanded(
                     child: Text(
                       module.detail,
                       style: textTheme.bodySmall?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w500,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const SizedBox(width: BauhausDesign.space2),
-                  const Icon(
+                  SizedBox(width: BauhausDesign.space2),
+                  Icon(
                     Icons.arrow_forward_rounded,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     size: 18,
                   ),
                 ],
@@ -1098,9 +1140,12 @@ class _RealtimePortalDashboardState
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.8),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.8,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Padding(
@@ -1120,13 +1165,13 @@ class _RealtimePortalDashboardState
                           color: entries[i].accent.withValues(alpha: 0.16),
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.outline,
                             width: 1,
                           ),
                         ),
                         child: Icon(
                           entries[i].icon,
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           size: 16,
                         ),
                       ),
@@ -1134,11 +1179,13 @@ class _RealtimePortalDashboardState
                         Container(
                           width: 2,
                           height: 34,
-                          color: BauhausDesign.neutral.withValues(alpha: 0.35),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.outline.withValues(alpha: 0.35),
                         ),
                     ],
                   ),
-                  const SizedBox(width: BauhausDesign.space3),
+                  SizedBox(width: BauhausDesign.space3),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1146,23 +1193,23 @@ class _RealtimePortalDashboardState
                         Text(
                           entries[i].title,
                           style: textTheme.labelLarge?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
-                        const SizedBox(height: BauhausDesign.space1),
+                        SizedBox(height: BauhausDesign.space1),
                         Text(
                           entries[i].detail,
                           style: textTheme.bodySmall?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        const SizedBox(height: BauhausDesign.space1),
+                        SizedBox(height: BauhausDesign.space1),
                         Text(
                           entries[i].timeLabel,
                           style: textTheme.bodySmall?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -1172,7 +1219,7 @@ class _RealtimePortalDashboardState
                 ],
               ),
               if (i < entries.length - 1)
-                const SizedBox(height: BauhausDesign.space2),
+                SizedBox(height: BauhausDesign.space2),
             ],
           ],
         ),
@@ -1189,17 +1236,20 @@ class _RealtimePortalDashboardState
       decoration: BoxDecoration(
         color: BauhausDesign.warning.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.2,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
+          Icon(
             Icons.info_outline_rounded,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             size: 18,
           ),
-          const SizedBox(width: BauhausDesign.space2),
+          SizedBox(width: BauhausDesign.space2),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1207,28 +1257,28 @@ class _RealtimePortalDashboardState
                 Text(
                   'No client profiles resolved for this organization.',
                   style: textTheme.bodySmall?.copyWith(
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: BauhausDesign.space1),
+                SizedBox(height: BauhausDesign.space1),
                 Text(
                   'Family access metrics will populate once clients are synced.',
                   style: textTheme.bodySmall?.copyWith(
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: BauhausDesign.space2),
+          SizedBox(width: BauhausDesign.space2),
           TextButton(
             onPressed: () => _initializeDashboard(organizationId, force: true),
             child: Text(
               'SYNC',
               style: textTheme.labelLarge?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -1253,11 +1303,11 @@ class _RealtimePortalDashboardState
         if (route == Routes.secureMessaging) {
           if (_activeClientId == null || _activeClientId!.isEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
+              SnackBar(
                 content: Text(
                   'Please select a client in the context bar first.',
                 ),
-                backgroundColor: BauhausDesign.neutral,
+                backgroundColor: Theme.of(context).colorScheme.onSurface,
               ),
             );
             return;
@@ -1276,11 +1326,11 @@ class _RealtimePortalDashboardState
         if (route == Routes.appointmentTimeline) {
           if (_activeClientId == null || _activeClientId!.isEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
+              SnackBar(
                 content: Text(
                   'Please select a client in the context bar first.',
                 ),
-                backgroundColor: BauhausDesign.neutral,
+                backgroundColor: Theme.of(context).colorScheme.onSurface,
               ),
             );
             return;
@@ -1309,11 +1359,11 @@ class _RealtimePortalDashboardState
         if (route == Routes.serviceConfirmation) {
           if (_activeClientId == null || _activeClientId!.isEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
+              SnackBar(
                 content: Text(
                   'Please select a client in the context bar first.',
                 ),
-                backgroundColor: BauhausDesign.neutral,
+                backgroundColor: Theme.of(context).colorScheme.onSurface,
               ),
             );
             return;
@@ -1363,7 +1413,7 @@ class _RealtimePortalDashboardState
           content: Text(
             'Navigation to ${_humanize(route.replaceAll("/", ""))} failed: $e',
           ),
-          backgroundColor: BauhausDesign.neutral,
+          backgroundColor: Theme.of(context).colorScheme.onSurface,
         ),
       );
     }

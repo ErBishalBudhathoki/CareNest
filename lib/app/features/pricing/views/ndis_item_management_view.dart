@@ -162,7 +162,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: CustomScrollView(
         slivers: [
           _buildModernAppBar(),
@@ -182,28 +182,34 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
           AppLocalizations.of(context)!.ndisItemManagementTitle,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).headlineMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
         ),
         background: Container(color: BauhausDesign.primary),
       ),
       leading: IconButton(
-        icon: const Icon(
+        icon: Icon(
           Icons.arrow_back_ios,
-          color: BauhausDesign.surfaceWhite,
+          color: Theme.of(context).colorScheme.onPrimary,
         ),
         onPressed: () => Navigator.pop(context),
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.download, color: BauhausDesign.surfaceWhite),
+          icon: Icon(
+            Icons.download,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
           onPressed: () {
             _showSnackBar(AppLocalizations.of(context)!.exportComingSoon);
           },
         ),
         IconButton(
-          icon: const Icon(Icons.upload, color: BauhausDesign.surfaceWhite),
+          icon: Icon(
+            Icons.upload,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
           onPressed: () {
             _showSnackBar(AppLocalizations.of(context)!.importComingSoon);
           },
@@ -241,7 +247,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.inbox,
                         size: BauhausDesign.space12,
                         color: BauhausDesign.textMuted,
@@ -276,10 +282,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
                     ),
                     const Spacer(),
                     IconButton(
-                      icon: const Icon(
-                        Icons.delete,
-                        color: BauhausDesign.error,
-                      ),
+                      icon: Icon(Icons.delete, color: BauhausDesign.error),
                       tooltip: AppLocalizations.of(
                         context,
                       )!.deleteSelectedAction,
@@ -307,7 +310,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close),
+                    icon: Icon(Icons.close),
                     tooltip: AppLocalizations.of(context)!.dismissAction,
                     onPressed: () => setState(() => _showOnboarding = false),
                   ),
@@ -485,7 +488,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
           padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
           child: BauhausCard(
             backgroundColor: isActive
-                ? BauhausDesign.surfaceWhite
+                ? Theme.of(context).colorScheme.surface
                 : BauhausDesign.surfaceOffWhite,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -566,7 +569,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
                                 .labelLarge
                                 ?.copyWith(
                                   color: isActive
-                                      ? BauhausDesign.textDark
+                                      ? Theme.of(context).colorScheme.onSurface
                                       : BauhausDesign.textMuted,
                                 ),
                           ),
@@ -698,11 +701,11 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
           heroTag: "fab_add_item",
           onPressed: () => _addNewItem(),
           backgroundColor: BauhausDesign.primary,
-          icon: const Icon(Icons.add, color: BauhausDesign.surfaceWhite),
+          icon: Icon(Icons.add, color: Theme.of(context).colorScheme.onPrimary),
           label: Text(
             AppLocalizations.of(context)!.addItemAction,
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-              color: BauhausDesign.surfaceWhite,
+              color: Theme.of(context).colorScheme.onPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -745,11 +748,11 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          backgroundColor: BauhausDesign.surfaceWhite,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            side: const BorderSide(
-              color: BauhausDesign.neutral,
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.onSurface,
               width: BauhausDesign.borderThick,
             ),
           ),
@@ -888,7 +891,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
           controller: controller,
           maxLines: maxLines,
           keyboardType: keyboardType,
-          decoration: BauhausDesign.inputDecoration(hint),
+          decoration: BauhausDesign.inputDecoration(context, hint),
         ),
       ],
     );
@@ -908,7 +911,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
         DropdownButtonFormField<String>(
           initialValue: value,
           onChanged: onChanged,
-          decoration: BauhausDesign.inputDecoration(''),
+          decoration: BauhausDesign.inputDecoration(context, ''),
           items: items.map((item) {
             return DropdownMenuItem(value: item, child: Text(item));
           }).toList(),
@@ -999,11 +1002,11 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          side: const BorderSide(
-            color: BauhausDesign.neutral,
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
             width: BauhausDesign.borderThick,
           ),
         ),
@@ -1040,7 +1043,7 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
           message,
           style: BauhausDesign.getTextTheme(
             context,
-          ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+          ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.surface),
         ),
         backgroundColor: isError ? BauhausDesign.error : BauhausDesign.success,
         behavior: SnackBarBehavior.floating,
@@ -1055,11 +1058,11 @@ class _NdisItemManagementViewState extends ConsumerState<NdisItemManagementView>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          side: const BorderSide(
-            color: BauhausDesign.neutral,
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
             width: BauhausDesign.borderThick,
           ),
         ),

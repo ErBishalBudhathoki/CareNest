@@ -39,7 +39,7 @@ class _TimesheetViewState extends ConsumerState<TimesheetView> {
     final entriesAsync = ref.watch(timesheetViewModelProvider(email));
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceWhite,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _buildBauhausAppBar(context, ref, email),
       body: Column(
         children: [
@@ -135,10 +135,13 @@ class _TimesheetViewState extends ConsumerState<TimesheetView> {
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: Container(
-        decoration: const BoxDecoration(
-          color: BauhausDesign.surfaceLight,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
           border: Border(
-            bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+            bottom: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
           ),
         ),
         child: SafeArea(
@@ -156,9 +159,10 @@ class _TimesheetViewState extends ConsumerState<TimesheetView> {
                 const SizedBox(width: BauhausDesign.space2),
                 Text(
                   AppLocalizations.of(context)!.timesheetTitle,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).displaySmall?.copyWith(color: BauhausDesign.textDark),
+                  style: BauhausDesign.getTextTheme(context).displaySmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 ),
                 const Spacer(),
                 BauhausIconButton(
@@ -226,10 +230,13 @@ class _WeekRangeHeader extends StatelessWidget {
         horizontal: BauhausDesign.space4,
         vertical: BauhausDesign.space3,
       ),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
-          bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
         ),
       ),
       child: Row(
@@ -249,7 +256,7 @@ class _WeekRangeHeader extends StatelessWidget {
                 style: BauhausDesign.getTextTheme(context).titleMedium
                     ?.copyWith(
                       fontWeight: FontWeight.w900,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       letterSpacing: 1.0,
                     ),
               ),
@@ -334,7 +341,7 @@ class _TimesheetDataBody extends StatelessWidget {
                     style: GoogleFonts.oswald(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       letterSpacing: 1.5,
                     ),
                   ),
@@ -424,8 +431,11 @@ class _SummaryPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Column(
@@ -445,7 +455,7 @@ class _SummaryPanel extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
-                    color: BauhausDesign.textMuted,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     letterSpacing: 1.2,
                   ),
                 ),
@@ -455,7 +465,7 @@ class _SummaryPanel extends StatelessWidget {
                   style: GoogleFonts.robotoMono(
                     fontSize: 22,
                     fontWeight: FontWeight.w700,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ],
@@ -483,7 +493,10 @@ class _TotalPanel extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: BauhausDesign.accent,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Column(
@@ -502,7 +515,9 @@ class _TotalPanel extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
-                    color: BauhausDesign.textDark.withValues(alpha: 0.7),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.7),
                     letterSpacing: 1.2,
                   ),
                 ),
@@ -512,7 +527,7 @@ class _TotalPanel extends StatelessWidget {
                   style: GoogleFonts.robotoMono(
                     fontSize: 22,
                     fontWeight: FontWeight.w700,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 if (absenceDays > 0) ...[
@@ -552,8 +567,11 @@ class _WeeklyProgressBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.5,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -566,7 +584,7 @@ class _WeeklyProgressBar extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   letterSpacing: 1.0,
                 ),
               ),
@@ -575,7 +593,7 @@ class _WeeklyProgressBar extends StatelessWidget {
                 style: GoogleFonts.robotoMono(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ],
@@ -584,8 +602,13 @@ class _WeeklyProgressBar extends StatelessWidget {
           Container(
             height: 10,
             decoration: BoxDecoration(
-              color: BauhausDesign.neutral.withValues(alpha: 0.1),
-              border: Border.all(color: BauhausDesign.neutral, width: 1),
+              color: Theme.of(
+                context,
+              ).colorScheme.outline.withValues(alpha: 0.1),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1,
+              ),
             ),
             child: FractionallySizedBox(
               alignment: Alignment.centerLeft,
@@ -629,8 +652,11 @@ class _DayCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: IntrinsicHeight(
@@ -644,7 +670,9 @@ class _DayCard extends StatelessWidget {
                   ? BauhausDesign.primary
                   : (hasWork
                         ? BauhausDesign.secondary
-                        : BauhausDesign.neutral.withValues(alpha: 0.2)),
+                        : Theme.of(
+                            context,
+                          ).colorScheme.outline.withValues(alpha: 0.2)),
             ),
             // ── Date column ──
             Container(
@@ -665,7 +693,7 @@ class _DayCard extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                       color: isToday
                           ? BauhausDesign.primary
-                          : BauhausDesign.textDark,
+                          : Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   Text(
@@ -678,7 +706,7 @@ class _DayCard extends StatelessWidget {
                       fontWeight: FontWeight.w800,
                       color: isToday
                           ? BauhausDesign.primary
-                          : BauhausDesign.textMuted,
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
                       letterSpacing: 1.0,
                     ),
                   ),
@@ -688,7 +716,9 @@ class _DayCard extends StatelessWidget {
             // ── Vertical divider ──
             Container(
               width: 1.5,
-              color: BauhausDesign.neutral.withValues(alpha: 0.3),
+              color: Theme.of(
+                context,
+              ).colorScheme.outline.withValues(alpha: 0.3),
             ),
             // ── Content ──
             Expanded(
@@ -721,9 +751,13 @@ class _DayCard extends StatelessWidget {
         Container(
           height: 8,
           decoration: BoxDecoration(
-            color: BauhausDesign.neutral.withValues(alpha: 0.08),
+            color: Theme.of(
+              context,
+            ).colorScheme.outline.withValues(alpha: 0.08),
             border: Border.all(
-              color: BauhausDesign.neutral.withValues(alpha: 0.3),
+              color: Theme.of(
+                context,
+              ).colorScheme.outline.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -773,14 +807,17 @@ class _DayCard extends StatelessWidget {
               ),
               decoration: BoxDecoration(
                 color: BauhausDesign.accent,
-                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 1.5,
+                ),
               ),
               child: Text(
                 _formatHoursMinutes(summary.totalSeconds),
                 style: GoogleFonts.robotoMono(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ),
@@ -791,7 +828,11 @@ class _DayCard extends StatelessWidget {
           const SizedBox(height: BauhausDesign.space2),
           Row(
             children: [
-              Icon(Icons.schedule, size: 13, color: BauhausDesign.textMuted),
+              Icon(
+                Icons.schedule,
+                size: 13,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               const SizedBox(width: 4),
               Expanded(
                 child: Text(
@@ -799,7 +840,7 @@ class _DayCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
-                    color: BauhausDesign.textMuted,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -819,7 +860,7 @@ class _DayCard extends StatelessWidget {
           Container(
             width: 8,
             height: 1.5,
-            color: BauhausDesign.neutral.withValues(alpha: 0.3),
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
           ),
           const SizedBox(width: BauhausDesign.space2),
           Text(
@@ -827,7 +868,7 @@ class _DayCard extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: 11,
               fontWeight: FontWeight.w600,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               letterSpacing: 0.5,
             ),
           ),
@@ -835,7 +876,7 @@ class _DayCard extends StatelessWidget {
           Container(
             width: 8,
             height: 1.5,
-            color: BauhausDesign.neutral.withValues(alpha: 0.3),
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
           ),
         ],
       ),
@@ -866,7 +907,7 @@ class _TimeChip extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 10,
             fontWeight: FontWeight.w700,
-            color: BauhausDesign.textMuted,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             letterSpacing: 0.5,
           ),
         ),
@@ -875,7 +916,7 @@ class _TimeChip extends StatelessWidget {
           style: GoogleFonts.robotoMono(
             fontSize: 11,
             fontWeight: FontWeight.w600,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ],
@@ -898,22 +939,26 @@ class _EmptyWeekState extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(BauhausDesign.space6),
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
+          color: Theme.of(context).colorScheme.surface,
           border: Border.all(
-            color: BauhausDesign.neutral.withValues(alpha: 0.3),
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
             width: 1.5,
           ),
         ),
         child: Column(
           children: [
-            Icon(Icons.event_busy, size: 32, color: BauhausDesign.textMuted),
+            Icon(
+              Icons.event_busy,
+              size: 32,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             const SizedBox(height: BauhausDesign.space2),
             Text(
               'NO WORKED TIME',
               style: GoogleFonts.oswald(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 letterSpacing: 1.0,
               ),
             ),
@@ -922,7 +967,7 @@ class _EmptyWeekState extends StatelessWidget {
               '${DateFormat('MMM dd', AppLocalizations.of(context)!.localeName).format(weekStart)} – ${DateFormat('MMM dd', AppLocalizations.of(context)!.localeName).format(weekEnd)}',
               style: GoogleFonts.inter(
                 fontSize: 12,
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
           ],
@@ -946,8 +991,11 @@ class _HistoryBanner extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: BauhausDesign.neutral,
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          color: Theme.of(context).colorScheme.outline,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
           boxShadow: const [BauhausDesign.shadowHard],
         ),
         padding: const EdgeInsets.symmetric(
@@ -956,9 +1004,9 @@ class _HistoryBanner extends StatelessWidget {
         ),
         child: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.history_rounded,
-              color: BauhausDesign.surfaceWhite,
+              color: Theme.of(context).colorScheme.surface,
               size: 20,
             ),
             const SizedBox(width: BauhausDesign.space3),
@@ -968,7 +1016,7 @@ class _HistoryBanner extends StatelessWidget {
                 style: GoogleFonts.oswald(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  color: BauhausDesign.surfaceWhite,
+                  color: Theme.of(context).colorScheme.surface,
                   letterSpacing: 1.5,
                 ),
               ),
@@ -981,21 +1029,24 @@ class _HistoryBanner extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: BauhausDesign.accent,
-                  border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 1.5,
+                  ),
                 ),
                 child: Text(
                   '$entryCount',
                   style: GoogleFonts.robotoMono(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),
             const SizedBox(width: BauhausDesign.space2),
-            const Icon(
+            Icon(
               Icons.arrow_forward,
-              color: BauhausDesign.surfaceWhite,
+              color: Theme.of(context).colorScheme.surface,
               size: 18,
             ),
           ],

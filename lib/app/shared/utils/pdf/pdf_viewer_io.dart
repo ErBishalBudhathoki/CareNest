@@ -116,7 +116,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
             content: const Text(
               'Could not open receipt. Please check your internet connection or browser settings.',
             ),
-            backgroundColor: BauhausDesign.error,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -126,7 +126,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error launching URL: $e'),
-            backgroundColor: BauhausDesign.error,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -210,57 +210,60 @@ class _PdfViewPageState extends State<PdfViewPage> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Attached Receipts',
-              style: BauhausDesign.getTextTheme(context).headlineSmall,
-            ),
-            const SizedBox(height: 20),
-            Flexible(
-              child: ListView.separated(
-                shrinkWrap: true,
-                itemCount: widget.receiptUrls.length,
-                separatorBuilder: (context, index) => const Divider(),
-                itemBuilder: (context, index) {
-                  return Semantics(
-                    button: true,
-                    label: 'Open Receipt ${index + 1}',
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      leading: const Icon(
-                        Icons.description_outlined,
-                        size: 24,
-                        color: BauhausDesign.primary,
-                      ),
-                      title: Text(
-                        'Receipt ${index + 1}',
-                        style: BauhausDesign.getTextTheme(context).bodyLarge,
-                      ),
-                      trailing: const Icon(Icons.open_in_new, size: 20),
-                      onTap: () {
-                        Navigator.pop(context);
-                        _launchUrl(widget.receiptUrls[index]);
-                      },
-                      tileColor: BauhausDesign.surfaceWhite,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  );
-                },
+      builder: (context) {
+        final colorScheme = Theme.of(context).colorScheme;
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Attached Receipts',
+                style: BauhausDesign.getTextTheme(context).headlineSmall,
               ),
-            ),
-          ],
-        ),
-      ),
+              const SizedBox(height: 20),
+              Flexible(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: widget.receiptUrls.length,
+                  separatorBuilder: (context, index) => const Divider(),
+                  itemBuilder: (context, index) {
+                    return Semantics(
+                      button: true,
+                      label: 'Open Receipt ${index + 1}',
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        leading: Icon(
+                          Icons.description_outlined,
+                          size: 24,
+                          color: colorScheme.primary,
+                        ),
+                        title: Text(
+                          'Receipt ${index + 1}',
+                          style: BauhausDesign.getTextTheme(context).bodyLarge,
+                        ),
+                        trailing: const Icon(Icons.open_in_new, size: 20),
+                        onTap: () {
+                          Navigator.pop(context);
+                          _launchUrl(widget.receiptUrls[index]);
+                        },
+                        tileColor: colorScheme.surface,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -284,7 +287,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error sharing PDF: ${e.toString()}'),
-            backgroundColor: BauhausDesign.error,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -314,11 +317,11 @@ class _PdfViewPageState extends State<PdfViewPage> {
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text(
                 'PDF ready. Choose Save to Files to keep a local copy.',
               ),
-              backgroundColor: BauhausDesign.success,
+              backgroundColor: Theme.of(context).colorScheme.secondary,
             ),
           );
         }
@@ -329,9 +332,9 @@ class _PdfViewPageState extends State<PdfViewPage> {
       final zipPath = await downloadService.downloadFiles([widget.pdfPath]);
       if (zipPath.isNotEmpty && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('PDF saved successfully'),
-            backgroundColor: BauhausDesign.success,
+            backgroundColor: Theme.of(context).colorScheme.secondary,
           ),
         );
       }
@@ -340,7 +343,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error saving PDF: ${e.toString()}'),
-            backgroundColor: BauhausDesign.error,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -361,7 +364,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(result.message),
-            backgroundColor: BauhausDesign.error,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -370,7 +373,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error opening PDF: ${e.toString()}'),
-            backgroundColor: BauhausDesign.error,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -383,23 +386,24 @@ class _PdfViewPageState extends State<PdfViewPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: colorScheme.inverseSurface,
+        foregroundColor: colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: BauhausDesign.surfaceWhite),
+          icon: Icon(Icons.arrow_back_ios, color: colorScheme.onInverseSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Invoice PDF',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: colorScheme.onInverseSurface,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -407,7 +411,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: _isOpeningExternally
-                ? const SizedBox(
+                ? SizedBox(
                     width: 40,
                     height: 40,
                     child: Center(
@@ -416,7 +420,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: BauhausDesign.primary,
+                          color: colorScheme.primary,
                         ),
                       ),
                     ),
@@ -432,7 +436,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4.0),
               child: _isOpeningReceipt
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 40,
                       height: 40,
                       child: Center(
@@ -441,7 +445,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: BauhausDesign.primary,
+                            color: colorScheme.primary,
                           ),
                         ),
                       ),
@@ -462,7 +466,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: _isSharing
-                ? const SizedBox(
+                ? SizedBox(
                     width: 40,
                     height: 40,
                     child: Center(
@@ -471,7 +475,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: BauhausDesign.primary,
+                          color: colorScheme.primary,
                         ),
                       ),
                     ),
@@ -486,7 +490,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: _isDownloading
-                ? const SizedBox(
+                ? SizedBox(
                     width: 40,
                     height: 40,
                     child: Center(
@@ -495,7 +499,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: BauhausDesign.primary,
+                          color: colorScheme.primary,
                         ),
                       ),
                     ),
@@ -520,17 +524,17 @@ class _PdfViewPageState extends State<PdfViewPage> {
                 vertical: BauhausDesign.space1,
               ),
               decoration: BoxDecoration(
-                color: BauhausDesign.primary.withValues(alpha: 0.1),
+                color: colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 border: Border.all(
-                  color: BauhausDesign.primary.withValues(alpha: 0.3),
+                  color: colorScheme.primary.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
               child: Text(
                 '$page/${pagesCount ?? 0}',
-                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith( 
-                  color: BauhausDesign.primary,
+                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                  color: colorScheme.primary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -545,7 +549,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Error loading PDF: $error'),
-              backgroundColor: BauhausDesign.error,
+              backgroundColor: colorScheme.error,
               duration: const Duration(seconds: 5),
             ),
           );
@@ -557,8 +561,8 @@ class _PdfViewPageState extends State<PdfViewPage> {
         children: <Widget>[
           FloatingActionButton(
             heroTag: '-',
-            backgroundColor: BauhausDesign.surfaceWhite,
-            foregroundColor: BauhausDesign.primary,
+            backgroundColor: colorScheme.surface,
+            foregroundColor: colorScheme.primary,
             elevation: 2,
             child: const Icon(Icons.keyboard_arrow_left, size: 28),
             onPressed: () {
@@ -571,8 +575,8 @@ class _PdfViewPageState extends State<PdfViewPage> {
           SizedBox(width: BauhausDesign.space4),
           FloatingActionButton(
             heroTag: '+',
-            backgroundColor: BauhausDesign.surfaceWhite,
-            foregroundColor: BauhausDesign.primary,
+            backgroundColor: colorScheme.surface,
+            foregroundColor: colorScheme.primary,
             elevation: 2,
             child: const Icon(Icons.keyboard_arrow_right, size: 28),
             onPressed: () {

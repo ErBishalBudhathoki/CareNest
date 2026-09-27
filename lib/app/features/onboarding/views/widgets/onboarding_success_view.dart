@@ -15,11 +15,12 @@ class OnboardingSuccessView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final data = _statusData();
     final theme = BauhausDesign.getTextTheme(context);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.background,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
@@ -40,7 +41,7 @@ class OnboardingSuccessView extends StatelessWidget {
               Text(
                 data.title,
                 style: theme.displaySmall?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: colorScheme.onSurface,
                   fontWeight: FontWeight.w900,
                   height: 1.15,
                 ),
@@ -49,7 +50,7 @@ class OnboardingSuccessView extends StatelessWidget {
               Text(
                 data.message,
                 style: theme.bodyLarge?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   height: 1.5,
                 ),
               ),
@@ -72,7 +73,7 @@ class OnboardingSuccessView extends StatelessWidget {
                           child: Text(
                             s,
                             style: theme.bodyMedium?.copyWith(
-                              color: BauhausDesign.textDark.withValues(
+                              color: colorScheme.onSurface.withValues(
                                 alpha: 0.7,
                               ),
                               height: 1.45,

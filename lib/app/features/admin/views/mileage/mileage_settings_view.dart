@@ -29,25 +29,30 @@ class _MileageSettingsViewState extends ConsumerState<MileageSettingsView> {
     final textTheme = BauhausDesign.getTextTheme(context);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           'MILEAGE SETTINGS',
           style: textTheme.displaySmall?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
           ),
         ),
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),
-          child: Container(color: BauhausDesign.neutral, height: 2),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 2,
+          ),
         ),
-        iconTheme: const IconThemeData(color: BauhausDesign.neutral),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -57,12 +62,15 @@ class _MileageSettingsViewState extends ConsumerState<MileageSettingsView> {
             // Instructions
             Container(
               padding: const EdgeInsets.all(BauhausDesign.space4),
-              decoration: BauhausDesign.cardDecoration.copyWith(
-                color: BauhausDesign.accent,
-              ),
+              decoration: BauhausDesign.cardDecorationFor(
+                context,
+              ).copyWith(color: BauhausDesign.accent),
               child: Row(
                 children: [
-                  const Icon(Icons.info_outline, color: BauhausDesign.textDark),
+                  Icon(
+                    Icons.info_outline,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                   const SizedBox(width: BauhausDesign.space3),
                   Expanded(
                     child: Text(
@@ -79,7 +87,7 @@ class _MileageSettingsViewState extends ConsumerState<MileageSettingsView> {
             Text(
               'REIMBURSEMENT RATE (\$ / km)',
               style: textTheme.labelLarge?.copyWith(
-                color: BauhausDesign.neutral,
+                color: Theme.of(context).colorScheme.onSurface,
                 letterSpacing: 1.2,
                 fontWeight: FontWeight.bold,
               ),
@@ -95,29 +103,29 @@ class _MileageSettingsViewState extends ConsumerState<MileageSettingsView> {
                   decimal: true,
                 ),
                 style: textTheme.headlineMedium?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: BauhausDesign.surfaceLight,
+                  fillColor: Theme.of(context).colorScheme.surfaceContainer,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.zero,
-                    borderSide: const BorderSide(
-                      color: BauhausDesign.neutral,
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.outline,
                       width: 2,
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.zero,
-                    borderSide: const BorderSide(
-                      color: BauhausDesign.neutral,
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.outline,
                       width: 2,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.zero,
-                    borderSide: const BorderSide(
-                      color: BauhausDesign.textDark,
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.onSurface,
                       width: 2,
                     ),
                   ),
@@ -149,12 +157,14 @@ class _MileageSettingsViewState extends ConsumerState<MileageSettingsView> {
                 style:
                     ElevatedButton.styleFrom(
                       backgroundColor: BauhausDesign.primary,
-                      foregroundColor: BauhausDesign.textLight,
+                      foregroundColor: Theme.of(
+                        context,
+                      ).colorScheme.onInverseSurface,
                       elevation: 0,
-                      shape: const RoundedRectangleBorder(
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                         side: BorderSide(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.outline,
                           width: 2,
                         ),
                       ),
@@ -165,8 +175,8 @@ class _MileageSettingsViewState extends ConsumerState<MileageSettingsView> {
                       // but for simplicity we'll just use the bold style.
                     ),
                 child: viewModel.isLoading
-                    ? const CircularProgressIndicator(
-                        color: BauhausDesign.textLight,
+                    ? CircularProgressIndicator(
+                        color: Theme.of(context).colorScheme.onInverseSurface,
                       )
                     : Text(
                         'SAVE SETTINGS',

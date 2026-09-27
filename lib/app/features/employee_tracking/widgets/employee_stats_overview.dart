@@ -31,8 +31,11 @@ class EmployeeStatsOverview extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space4),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceOffWhite,
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              color: Theme.of(context).colorScheme.surfaceContainer,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
               boxShadow: const [BauhausDesign.shadowHardSm],
             ),
             child: Column(
@@ -47,7 +50,7 @@ class EmployeeStatsOverview extends StatelessWidget {
                             .headlineMedium
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                               letterSpacing: 0.6,
                             ),
                         overflow: TextOverflow.ellipsis,
@@ -61,7 +64,7 @@ class EmployeeStatsOverview extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: BauhausDesign.accent,
                         border: Border.all(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.outline,
                           width: 2,
                         ),
                         boxShadow: const [BauhausDesign.shadowHardXs],
@@ -70,7 +73,7 @@ class EmployeeStatsOverview extends StatelessWidget {
                         isLoading ? 'SYNCING' : 'LIVE',
                         style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onError,
                               fontWeight: FontWeight.bold,
                             ),
                       ),
@@ -191,8 +194,11 @@ class _NeoStatTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(BauhausDesign.space3),
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          color: Theme.of(context).colorScheme.surface,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
           boxShadow: const [BauhausDesign.shadowHardSm],
         ),
         child: Column(
@@ -203,7 +209,10 @@ class _NeoStatTile extends StatelessWidget {
               padding: const EdgeInsets.all(BauhausDesign.space1),
               decoration: BoxDecoration(
                 color: accentColor.withValues(alpha: 0.15),
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
               ),
               child: Icon(icon, size: 16, color: accentColor),
             ),
@@ -252,8 +261,11 @@ class _NeoStatusStrip extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.all(BauhausDesign.space3),
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceOffWhite,
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          color: Theme.of(context).colorScheme.surfaceContainer,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
           boxShadow: const [BauhausDesign.shadowHardSm],
         ),
         child: Row(
@@ -262,8 +274,11 @@ class _NeoStatusStrip extends StatelessWidget {
               width: 12,
               height: 12,
               decoration: BoxDecoration(
-                color: BauhausDesign.neutral,
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                color: Theme.of(context).colorScheme.outline,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
               ),
             ),
             const SizedBox(width: BauhausDesign.space2),
@@ -285,8 +300,11 @@ class _NeoStatusStrip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceOffWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Column(
@@ -365,8 +383,11 @@ class _LegendChip extends StatelessWidget {
         vertical: BauhausDesign.space1,
       ),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -376,15 +397,18 @@ class _LegendChip extends StatelessWidget {
             height: 8,
             decoration: BoxDecoration(
               color: color,
-              border: Border.all(color: BauhausDesign.neutral, width: 1),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1,
+              ),
             ),
           ),
           const SizedBox(width: BauhausDesign.space1),
           Text(
             '$label $value',
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).labelSmall?.copyWith(color: BauhausDesign.textDark),
+            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
         ],
       ),

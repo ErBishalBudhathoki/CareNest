@@ -43,10 +43,13 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
     super.dispose();
   }
 
-  Color _contentColorOn(Color background) {
-    return ThemeData.estimateBrightnessForColor(background) == Brightness.dark
-        ? BauhausDesign.surfaceWhite
-        : BauhausDesign.textDark;
+  Color _contentColorOn(BuildContext context, Color background) {
+    final colorScheme = Theme.of(context).colorScheme;
+    if (background == BauhausDesign.error) return colorScheme.onError;
+    if (background == BauhausDesign.secondary) {
+      return colorScheme.onSecondary;
+    }
+    return colorScheme.onPrimary;
   }
 
   void _dismissProcessingDialogIfVisible() {
@@ -92,12 +95,12 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
       builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-          side: const BorderSide(
-            color: BauhausDesign.neutral,
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
             width: BauhausDesign.borderThick,
           ),
         ),
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         content: Row(
           children: [
             const SizedBox(
@@ -134,12 +137,12 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-            side: const BorderSide(
-              color: BauhausDesign.neutral,
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
               width: BauhausDesign.borderThick,
             ),
           ),
-          backgroundColor: BauhausDesign.surfaceWhite,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
             l10n.success.toUpperCase(),
             style: BauhausDesign.getTextTheme(
@@ -214,23 +217,26 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
 
         final isSubmitting = status == AddBusinessStatus.processing;
         return Scaffold(
-          backgroundColor: BauhausDesign.backgroundLight,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           appBar: AppBar(
             elevation: 0,
             backgroundColor: BauhausDesign.secondary,
-            foregroundColor: BauhausDesign.surfaceWhite,
+            foregroundColor: Theme.of(context).colorScheme.onSecondary,
             title: Text(
               l10n.addBusinessTitle.toUpperCase(),
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
                 fontWeight: FontWeight.w900,
-                color: BauhausDesign.surfaceWhite,
+                color: Theme.of(context).colorScheme.onSecondary,
                 letterSpacing: 1.0,
               ),
             ),
             centerTitle: true,
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(1),
-              child: Container(height: 1, color: BauhausDesign.neutral),
+              child: Container(
+                height: 1,
+                color: Theme.of(context).colorScheme.outline,
+              ),
             ),
           ),
           body: GestureDetector(
@@ -296,14 +302,17 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
     required bool isCompact,
   }) {
     const heroColor = BauhausDesign.secondary;
-    final foreground = _contentColorOn(heroColor);
+    final foreground = _contentColorOn(context, heroColor);
 
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: heroColor,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Column(
@@ -321,7 +330,9 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
                   decoration: BoxDecoration(
                     color: foreground.withValues(alpha: 0.14),
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                    border: Border.all(color: BauhausDesign.neutral),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
                   ),
                   alignment: Alignment.center,
                   child: Icon(
@@ -374,10 +385,13 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
                   : BauhausDesign.space4,
               vertical: isCompact ? BauhausDesign.space2 : BauhausDesign.space3,
             ),
-            decoration: const BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
               border: Border(
-                top: BorderSide(color: BauhausDesign.neutral, width: 2),
+                top: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
               ),
             ),
             child: Text(
@@ -402,13 +416,16 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
     required List<Widget> children,
     required bool isCompact,
   }) {
-    final iconForeground = _contentColorOn(accentColor);
+    final iconForeground = _contentColorOn(context, accentColor);
 
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Column(
@@ -440,7 +457,9 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
                         borderRadius: BorderRadius.circular(
                           BauhausDesign.radiusSm,
                         ),
-                        border: Border.all(color: BauhausDesign.neutral),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
                       ),
                       alignment: Alignment.center,
                       child: Icon(
@@ -741,12 +760,12 @@ class _AddBusinessDetailsState extends ConsumerState<AddBusinessDetails> {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-            side: const BorderSide(
-              color: BauhausDesign.neutral,
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
               width: BauhausDesign.borderThick,
             ),
           ),
-          backgroundColor: BauhausDesign.surfaceWhite,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
             l10n.addBusinessTitle.toUpperCase(),
             style: BauhausDesign.getTextTheme(

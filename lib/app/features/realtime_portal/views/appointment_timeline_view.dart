@@ -121,43 +121,44 @@ class AppointmentTimelineView extends ConsumerWidget {
     final timelineState = ref.watch(
       timelineAppointmentsProvider(resolvedClientId),
     );
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.secondary,
+        backgroundColor: colorScheme.secondary,
         elevation: 0,
         title: Text(
           'CLIENT APPOINTMENT TIMELINE',
           style: GoogleFonts.oswald(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.surfaceWhite,
+            color: colorScheme.onSecondary,
             letterSpacing: 1.1,
           ),
         ),
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: BauhausDesign.surfaceWhite,
-          ),
+          icon: Icon(Icons.arrow_back_ios, color: colorScheme.onSecondary),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
             onPressed: () =>
                 ref.invalidate(timelineAppointmentsProvider(resolvedClientId)),
-            icon: const Icon(Icons.refresh, color: BauhausDesign.surfaceWhite),
+            icon: Icon(Icons.refresh, color: colorScheme.onSecondary),
             tooltip: 'Refresh Timeline',
           ),
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.5),
-          child: Container(color: BauhausDesign.neutral, height: 1.5),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 1.5,
+          ),
         ),
       ),
       body: Column(
@@ -198,7 +199,7 @@ class AppointmentTimelineView extends ConsumerWidget {
                   padding: const EdgeInsets.all(BauhausDesign.space5),
                   itemCount: appointments.length + 1,
                   separatorBuilder: (_, _) =>
-                      const SizedBox(height: BauhausDesign.space4),
+                      SizedBox(height: BauhausDesign.space4),
                   itemBuilder: (context, index) {
                     if (index == 0) {
                       return const BauhausSectionHeader(
@@ -233,11 +234,11 @@ class AppointmentTimelineView extends ConsumerWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
           bottom: BorderSide(
-            color: BauhausDesign.neutral,
+            color: Theme.of(context).colorScheme.outline,
             width: BauhausDesign.borderThick,
           ),
         ),
@@ -249,12 +250,12 @@ class AppointmentTimelineView extends ConsumerWidget {
             'ACTIVE CLIENT',
             style: BauhausDesign.neoMonoStyle(
               context,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: 10,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             resolvedClientName,
             style: GoogleFonts.oswald(
@@ -264,12 +265,12 @@ class AppointmentTimelineView extends ConsumerWidget {
               letterSpacing: 0.5,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             'Client ID: $resolvedClientId',
             style: GoogleFonts.shareTechMono(
               fontSize: 11,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -288,7 +289,7 @@ class AppointmentTimelineView extends ConsumerWidget {
         ? (apt.status == 'COMPLETED'
               ? BauhausDesign.success
               : BauhausDesign.primaryBlue)
-        : BauhausDesign.neutral;
+        : Theme.of(context).colorScheme.outline;
 
     return IntrinsicHeight(
       child: Row(
@@ -302,24 +303,33 @@ class AppointmentTimelineView extends ConsumerWidget {
                 height: 14,
                 decoration: BoxDecoration(
                   color: color,
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 2,
+                  ),
                 ),
               ),
               if (!isLast)
                 Expanded(
-                  child: Container(width: 2.5, color: BauhausDesign.neutral),
+                  child: Container(
+                    width: 2.5,
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                 ),
             ],
           ),
-          const SizedBox(width: BauhausDesign.space4),
+          SizedBox(width: BauhausDesign.space4),
 
           // Timeline node content card
           Expanded(
             child: Container(
               margin: const EdgeInsets.only(bottom: BauhausDesign.space4),
               decoration: BoxDecoration(
-                color: BauhausDesign.surfaceWhite,
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                color: Theme.of(context).colorScheme.surface,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
                 boxShadow: const [BauhausDesign.shadowHardSm],
               ),
               child: Padding(
@@ -335,7 +345,9 @@ class AppointmentTimelineView extends ConsumerWidget {
                           style: GoogleFonts.shareTechMono(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                         Container(
@@ -359,36 +371,36 @@ class AppointmentTimelineView extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: BauhausDesign.space2),
+                    SizedBox(height: BauhausDesign.space2),
                     Text(
                       apt.title.toUpperCase(),
                       style: GoogleFonts.oswald(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         letterSpacing: 0.5,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: 2),
                     Text(
                       apt.subtitle,
                       style: GoogleFonts.inter(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
-                    const SizedBox(height: BauhausDesign.space2),
+                    SizedBox(height: BauhausDesign.space2),
                     Text(
                       apt.details,
                       style: GoogleFonts.inter(
                         fontSize: 13,
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     if (apt.status == 'COMPLETED') ...[
-                      const SizedBox(height: BauhausDesign.space4),
+                      SizedBox(height: BauhausDesign.space4),
                       Row(
                         children: [
                           Expanded(
@@ -437,7 +449,7 @@ class AppointmentTimelineView extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: BauhausDesign.surfaceWhite,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(BauhausDesign.radiusLg),
@@ -454,7 +466,7 @@ class AppointmentTimelineView extends ConsumerWidget {
             );
 
             return detailState.when(
-              loading: () => const SizedBox(
+              loading: () => SizedBox(
                 height: 300,
                 child: Center(child: BauhausLoadingState()),
               ),
@@ -469,7 +481,7 @@ class AppointmentTimelineView extends ConsumerWidget {
                       style: GoogleFonts.inter(
                         fontSize: BauhausDesign.fontMd,
                         fontWeight: FontWeight.bold,
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),
@@ -485,7 +497,7 @@ class AppointmentTimelineView extends ConsumerWidget {
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontMd,
                           fontWeight: FontWeight.bold,
-                          color: BauhausDesign.textMuted,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ),
@@ -505,7 +517,7 @@ class AppointmentTimelineView extends ConsumerWidget {
                             vertical: BauhausDesign.space3,
                           ),
                           decoration: BoxDecoration(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.outline,
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -530,9 +542,9 @@ class AppointmentTimelineView extends ConsumerWidget {
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.close_rounded,
-                                color: BauhausDesign.neutral,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                               onPressed: () => Navigator.pop(context),
                             ),
@@ -540,7 +552,7 @@ class AppointmentTimelineView extends ConsumerWidget {
                         ),
                       ),
                       Divider(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.outline,
                         height: 1.5,
                         thickness: 1.5,
                       ),
@@ -556,19 +568,23 @@ class AppointmentTimelineView extends ConsumerWidget {
                                 text: TextSpan(
                                   style: GoogleFonts.inter(
                                     fontSize: 14,
-                                    color: BauhausDesign.textDark,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
                                   ),
                                   children: [
-                                    const TextSpan(
+                                    TextSpan(
                                       text: 'Worker: ',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: BauhausDesign.textMuted,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                       ),
                                     ),
                                     TextSpan(
                                       text: serviceHist.workerName,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -582,19 +598,23 @@ class AppointmentTimelineView extends ConsumerWidget {
                                 text: TextSpan(
                                   style: GoogleFonts.inter(
                                     fontSize: 14,
-                                    color: BauhausDesign.textDark,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
                                   ),
                                   children: [
-                                    const TextSpan(
+                                    TextSpan(
                                       text: 'Service: ',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: BauhausDesign.textMuted,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                       ),
                                     ),
                                     TextSpan(
                                       text: serviceHist.serviceName,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -608,20 +628,24 @@ class AppointmentTimelineView extends ConsumerWidget {
                                 text: TextSpan(
                                   style: GoogleFonts.inter(
                                     fontSize: 14,
-                                    color: BauhausDesign.textDark,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
                                   ),
                                   children: [
-                                    const TextSpan(
+                                    TextSpan(
                                       text: 'Date/Time: ',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: BauhausDesign.textMuted,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                       ),
                                     ),
                                     TextSpan(
                                       text:
                                           '${serviceHist.date} • ${serviceHist.startTime} - ${serviceHist.endTime}',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -629,7 +653,7 @@ class AppointmentTimelineView extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: BauhausDesign.space4),
+                            SizedBox(height: BauhausDesign.space4),
 
                             // Rating Section
                             Text(
@@ -640,12 +664,14 @@ class AppointmentTimelineView extends ConsumerWidget {
                                 fontSize: 11,
                               ),
                             ),
-                            const SizedBox(height: BauhausDesign.space2),
+                            SizedBox(height: BauhausDesign.space2),
                             Container(
                               padding: const EdgeInsets.all(
                                 BauhausDesign.space4,
                               ),
-                              decoration: BauhausDesign.cardDecoration,
+                              decoration: BauhausDesign.cardDecorationFor(
+                                context,
+                              ),
                               width: double.infinity,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -664,15 +690,15 @@ class AppointmentTimelineView extends ConsumerWidget {
                                   ),
                                   if (confirmation.feedback != null &&
                                       confirmation.feedback!.isNotEmpty) ...[
-                                    const SizedBox(
-                                      height: BauhausDesign.space3,
-                                    ),
+                                    SizedBox(height: BauhausDesign.space3),
                                     Text(
                                       '"${confirmation.feedback}"',
                                       style: GoogleFonts.inter(
                                         fontSize: BauhausDesign.fontMd,
                                         fontStyle: FontStyle.italic,
-                                        color: BauhausDesign.textDark,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
                                         height: 1.4,
                                       ),
                                     ),
@@ -680,7 +706,7 @@ class AppointmentTimelineView extends ConsumerWidget {
                                 ],
                               ),
                             ),
-                            const SizedBox(height: BauhausDesign.space5),
+                            SizedBox(height: BauhausDesign.space5),
 
                             // Checklist Section
                             Text(
@@ -691,21 +717,25 @@ class AppointmentTimelineView extends ConsumerWidget {
                                 fontSize: 11,
                               ),
                             ),
-                            const SizedBox(height: BauhausDesign.space2),
+                            SizedBox(height: BauhausDesign.space2),
                             if (confirmation.checklist == null ||
                                 confirmation.checklist!.isEmpty)
                               Text(
                                 'No tasks configured for this shift.',
                                 style: GoogleFonts.inter(
-                                  color: BauhausDesign.textMuted,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                 ),
                               )
                             else
                               Container(
                                 decoration: BoxDecoration(
-                                  color: BauhausDesign.surfaceWhite,
+                                  color: Theme.of(context).colorScheme.surface,
                                   border: Border.all(
-                                    color: BauhausDesign.neutral,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.outline,
                                     width: 2,
                                   ),
                                 ),
@@ -714,7 +744,9 @@ class AppointmentTimelineView extends ConsumerWidget {
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: confirmation.checklist!.length,
                                   separatorBuilder: (_, _) => Divider(
-                                    color: BauhausDesign.neutral,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.outline,
                                     height: 1,
                                   ),
                                   itemBuilder: (context, idx) {
@@ -727,7 +759,9 @@ class AppointmentTimelineView extends ConsumerWidget {
                                             : Icons.check_box_outline_blank,
                                         color: completed
                                             ? BauhausDesign.success
-                                            : BauhausDesign.textMuted,
+                                            : Theme.of(
+                                                context,
+                                              ).colorScheme.onSurfaceVariant,
                                       ),
                                       title: Text(
                                         item.item,
@@ -738,8 +772,12 @@ class AppointmentTimelineView extends ConsumerWidget {
                                               ? TextDecoration.lineThrough
                                               : null,
                                           color: completed
-                                              ? BauhausDesign.textMuted
-                                              : BauhausDesign.textDark,
+                                              ? Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurfaceVariant
+                                              : Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurface,
                                         ),
                                       ),
                                       trailing: item.required
@@ -775,7 +813,7 @@ class AppointmentTimelineView extends ConsumerWidget {
                                   },
                                 ),
                               ),
-                            const SizedBox(height: BauhausDesign.space5),
+                            SizedBox(height: BauhausDesign.space5),
 
                             // Signature Section
                             Text(
@@ -786,12 +824,14 @@ class AppointmentTimelineView extends ConsumerWidget {
                                 fontSize: 11,
                               ),
                             ),
-                            const SizedBox(height: BauhausDesign.space2),
+                            SizedBox(height: BauhausDesign.space2),
                             Container(
                               padding: const EdgeInsets.all(
                                 BauhausDesign.space4,
                               ),
-                              decoration: BauhausDesign.cardDecoration,
+                              decoration: BauhausDesign.cardDecorationFor(
+                                context,
+                              ),
                               width: double.infinity,
                               height: 120,
                               child: Column(
@@ -800,9 +840,11 @@ class AppointmentTimelineView extends ConsumerWidget {
                                   Icon(
                                     Icons.draw_rounded,
                                     size: 36,
-                                    color: BauhausDesign.neutral,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
                                   ),
-                                  const SizedBox(height: 8),
+                                  SizedBox(height: 8),
                                   Text(
                                     'ELECTRONIC SIGNATURE SECURED',
                                     style: GoogleFonts.shareTechMono(
@@ -811,18 +853,20 @@ class AppointmentTimelineView extends ConsumerWidget {
                                       color: BauhausDesign.success,
                                     ),
                                   ),
-                                  const SizedBox(height: 2),
+                                  SizedBox(height: 2),
                                   Text(
                                     'Signature ID: ${confirmation.signatureId} • Secured: ${DateFormat('yyyy-MM-dd HH:mm').format(confirmation.timestamp)}',
                                     style: GoogleFonts.shareTechMono(
                                       fontSize: 9,
-                                      color: BauhausDesign.textMuted,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            const SizedBox(height: BauhausDesign.space5),
+                            SizedBox(height: BauhausDesign.space5),
 
                             // Incidents Section (if any)
                             if (confirmation.incidents != null &&
@@ -836,7 +880,7 @@ class AppointmentTimelineView extends ConsumerWidget {
                                   color: BauhausDesign.warning,
                                 ),
                               ),
-                              const SizedBox(height: BauhausDesign.space2),
+                              SizedBox(height: BauhausDesign.space2),
                               ...confirmation.incidents!.map(
                                 (incident) => Container(
                                   margin: const EdgeInsets.only(bottom: 8),
@@ -862,7 +906,7 @@ class AppointmentTimelineView extends ConsumerWidget {
                                             Icons.warning_amber_rounded,
                                             color: BauhausDesign.warning,
                                           ),
-                                          const SizedBox(width: 8),
+                                          SizedBox(width: 8),
                                           Text(
                                             '${incident.category.toUpperCase()} (${incident.severity.toUpperCase()})',
                                             style: GoogleFonts.shareTechMono(
@@ -872,12 +916,14 @@ class AppointmentTimelineView extends ConsumerWidget {
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 4),
+                                      SizedBox(height: 4),
                                       Text(
                                         incident.description,
                                         style: GoogleFonts.inter(
                                           fontSize: 13,
-                                          color: BauhausDesign.textDark,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface,
                                         ),
                                       ),
                                     ],

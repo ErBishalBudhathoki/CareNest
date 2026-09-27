@@ -12,20 +12,21 @@ void popUpClientDetails(
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        final colorScheme = Theme.of(context).colorScheme;
         return AlertDialog(
-          backgroundColor: BauhausDesign.surfaceWhite,
+          backgroundColor: colorScheme.surface,
           title: Text(
             message,
             style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
               fontWeight: FontWeight.w800,
-              color: BauhausDesign.textDark,
+              color: colorScheme.onSurface,
             ),
           ),
           content: Text(
             detailMessage ?? '$title details added successfully',
             style: BauhausDesign.getTextTheme(
               context,
-            ).bodyLarge?.copyWith(color: BauhausDesign.textDark, height: 1.5),
+            ).bodyLarge?.copyWith(color: colorScheme.onSurface, height: 1.5),
           ),
           actions: [
             BauhausActionButton(
@@ -43,20 +44,21 @@ void popUpClientDetails(
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        final colorScheme = Theme.of(context).colorScheme;
         return AlertDialog(
-          backgroundColor: BauhausDesign.surfaceWhite,
+          backgroundColor: colorScheme.surface,
           title: Text(
             message,
             style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
               fontWeight: FontWeight.w800,
-              color: BauhausDesign.error,
+              color: colorScheme.error,
             ),
           ),
           content: Text(
             detailMessage ?? 'Failed or data already added for $title',
             style: BauhausDesign.getTextTheme(
               context,
-            ).bodyLarge?.copyWith(color: BauhausDesign.textDark, height: 1.5),
+            ).bodyLarge?.copyWith(color: colorScheme.onSurface, height: 1.5),
           ),
           actions: [
             BauhausActionButton(

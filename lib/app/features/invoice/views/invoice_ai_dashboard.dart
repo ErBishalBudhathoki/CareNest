@@ -17,10 +17,10 @@ class InvoiceAIDashboard extends ConsumerWidget {
     final textTheme = BauhausDesign.getTextTheme(context);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: BauhausDesign.primary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -29,10 +29,13 @@ class InvoiceAIDashboard extends ConsumerWidget {
           padding: const EdgeInsets.all(8.0),
           child: IconButton(
             onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+            icon: Icon(Icons.arrow_back_ios_new, size: 20),
             style: IconButton.styleFrom(
               backgroundColor: BauhausDesign.surfaceOffWhite,
-              side: const BorderSide(color: BauhausDesign.neutral, width: 1.5),
+              side: BorderSide(
+                color: Theme.of(context).colorScheme.onSurface,
+                width: 1.5,
+              ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               ),
@@ -42,13 +45,16 @@ class InvoiceAIDashboard extends ConsumerWidget {
         title: Text(
           'SMART INVOICING',
           style: textTheme.headlineMedium?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
             fontWeight: FontWeight.w700,
           ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),
-          child: Container(color: BauhausDesign.neutral, height: 2),
+          child: Container(
+            color: Theme.of(context).colorScheme.onSurface,
+            height: 2,
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -86,7 +92,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
                 Text(
                   'FEATURES',
                   style: textTheme.labelLarge?.copyWith(
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.2,
                   ),
@@ -149,10 +155,13 @@ class InvoiceAIDashboard extends ConsumerWidget {
   Widget _buildHeroCard(BuildContext context, TextTheme textTheme) {
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        boxShadow: const [BauhausDesign.shadowHardSm],
+        boxShadow: [BauhausDesign.shadowHardSm],
       ),
       child: Column(
         children: [
@@ -174,7 +183,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
             ),
           ),
           // Separator
-          Container(height: 2, color: BauhausDesign.neutral),
+          Container(height: 2, color: Theme.of(context).colorScheme.onSurface),
           // Text content
           Padding(
             padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -190,7 +199,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
                       width: 1.5,
                     ),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.auto_awesome,
                     color: BauhausDesign.primary,
                     size: 24,
@@ -204,7 +213,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
                       Text(
                         'AI-POWERED INVOICING',
                         style: textTheme.titleMedium?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 0.5,
                         ),
@@ -297,10 +306,13 @@ class InvoiceAIDashboard extends ConsumerWidget {
         vertical: BauhausDesign.space3,
       ),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        boxShadow: const [BauhausDesign.shadowHardXs],
+        boxShadow: [BauhausDesign.shadowHardXs],
       ),
       child: Row(
         children: [
@@ -329,7 +341,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
                 Text(
                   value,
                   style: textTheme.headlineSmall?.copyWith(
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -355,10 +367,13 @@ class InvoiceAIDashboard extends ConsumerWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceLight,
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          color: Theme.of(context).colorScheme.surface,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
           borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-          boxShadow: const [BauhausDesign.shadowHardXs],
+          boxShadow: [BauhausDesign.shadowHardXs],
         ),
         child: IntrinsicHeight(
           child: Row(
@@ -405,7 +420,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
                             Text(
                               title.toUpperCase(),
                               style: textTheme.labelLarge?.copyWith(
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                                 fontWeight: FontWeight.w700,
                                 letterSpacing: 0.5,
                               ),
@@ -423,7 +438,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
                       const SizedBox(width: BauhausDesign.space2),
                       Icon(
                         Icons.chevron_right,
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.onSurface,
                         size: 22,
                       ),
                     ],
@@ -449,9 +464,9 @@ class InvoiceAIDashboard extends ConsumerWidget {
         Navigator.pop(context); // close dialog
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('Generating invoices... Please wait.'),
-            backgroundColor: BauhausDesign.neutral,
+            backgroundColor: Theme.of(context).colorScheme.onSurface,
           ),
         );
 
@@ -543,7 +558,10 @@ class InvoiceAIDashboard extends ConsumerWidget {
       builder: (context) => Dialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-          side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
         ),
         child: Padding(
           padding: const EdgeInsets.all(BauhausDesign.space5),
@@ -554,7 +572,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
               Text(
                 title,
                 style: textTheme.titleMedium?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -584,13 +602,15 @@ class InvoiceAIDashboard extends ConsumerWidget {
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: BauhausDesign.primary,
-                        foregroundColor: BauhausDesign.surfaceWhite,
+                        foregroundColor: Theme.of(
+                          context,
+                        ).colorScheme.onPrimary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                             BauhausDesign.radiusSm,
                           ),
-                          side: const BorderSide(
-                            color: BauhausDesign.neutral,
+                          side: BorderSide(
+                            color: Theme.of(context).colorScheme.onSurface,
                             width: 1.5,
                           ),
                         ),
@@ -680,10 +700,13 @@ class _QuickGenerateWidgetState extends ConsumerState<_QuickGenerateWidget> {
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        boxShadow: const [BauhausDesign.shadowHardSm],
+        boxShadow: [BauhausDesign.shadowHardSm],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -695,7 +718,7 @@ class _QuickGenerateWidgetState extends ConsumerState<_QuickGenerateWidget> {
               Text(
                 'QUICK GENERATE',
                 style: textTheme.titleMedium?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.5,
                 ),
@@ -718,30 +741,27 @@ class _QuickGenerateWidgetState extends ConsumerState<_QuickGenerateWidget> {
               hintText:
                   'e.g., "Eva helped Harry with groceries and it took 2 hours, plus \$50 for the food"',
               hintStyle: textTheme.bodyMedium?.copyWith(
-                color: BauhausDesign.neutral,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
               filled: true,
-              fillColor: BauhausDesign.surfaceLight,
+              fillColor: Theme.of(context).colorScheme.surface,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                borderSide: const BorderSide(
-                  color: BauhausDesign.neutral,
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.onSurface,
                   width: 2,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                borderSide: const BorderSide(
-                  color: BauhausDesign.neutral,
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.onSurface,
                   width: 2,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                borderSide: const BorderSide(
-                  color: BauhausDesign.primary,
-                  width: 2,
-                ),
+                borderSide: BorderSide(color: BauhausDesign.primary, width: 2),
               ),
             ),
           ),
@@ -751,12 +771,12 @@ class _QuickGenerateWidgetState extends ConsumerState<_QuickGenerateWidget> {
             height: 48,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: BauhausDesign.textDark,
-                foregroundColor: BauhausDesign.surfaceWhite,
+                backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+                foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  side: const BorderSide(
-                    color: BauhausDesign.neutral,
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.onSurface,
                     width: 2,
                   ),
                 ),
@@ -764,20 +784,20 @@ class _QuickGenerateWidgetState extends ConsumerState<_QuickGenerateWidget> {
               ),
               onPressed: _isGenerating ? null : _handleGenerate,
               child: _isGenerating
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 24,
                       height: 24,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          BauhausDesign.surfaceWhite,
+                          Theme.of(context).colorScheme.surface,
                         ),
                       ),
                     )
                   : Text(
                       'GENERATE INVOICE',
                       style: textTheme.labelLarge?.copyWith(
-                        color: BauhausDesign.surfaceWhite,
+                        color: Theme.of(context).colorScheme.onPrimary,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.0,
                       ),

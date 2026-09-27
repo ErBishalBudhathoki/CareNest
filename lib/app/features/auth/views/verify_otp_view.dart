@@ -31,17 +31,19 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: BauhausDesign.backgroundLight,
+        systemNavigationBarColor: colorScheme.surface,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -77,6 +79,8 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       children: [
         Container(
@@ -107,16 +111,16 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
         Text(
           'Enter reset code',
           style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-            color: BauhausDesign.textDark,
+            color: colorScheme.onSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 12),
         Text(
           'We sent a 6-digit code to ${widget.email}.',
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).bodyLarge?.copyWith(color: BauhausDesign.textMuted),
+          style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
           textAlign: TextAlign.center,
         ),
       ],
@@ -124,23 +128,24 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
   }
 
   Widget _buildOTPSection(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final defaultPinTheme = PinTheme(
       width: 50,
       height: 60,
       textStyle: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
         fontWeight: FontWeight.bold,
-        color: BauhausDesign.textDark,
+        color: colorScheme.onSurface,
       ),
       decoration: BoxDecoration(
-        color: BauhausDesign.backgroundLight,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral, width: 1),
+        border: Border.all(color: colorScheme.outline, width: 1),
       ),
     );
 
     final focusedPinTheme = defaultPinTheme.copyWith(
       decoration: defaultPinTheme.decoration!.copyWith(
-        color: BauhausDesign.surfaceWhite,
+        color: colorScheme.surface,
         border: Border.all(color: BauhausDesign.primary, width: 2),
         boxShadow: [
           BoxShadow(
@@ -155,7 +160,7 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
     final submittedPinTheme = defaultPinTheme.copyWith(
       textStyle: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
         fontWeight: FontWeight.bold,
-        color: BauhausDesign.surfaceWhite,
+        color: colorScheme.onPrimary,
       ),
       decoration: defaultPinTheme.decoration!.copyWith(
         color: BauhausDesign.primary,
@@ -193,9 +198,9 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
       children: [
         Text(
           AppLocalizations.of(context)!.didntReceiveCode,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: 8),
         TextButton(

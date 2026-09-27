@@ -24,7 +24,7 @@ class TrackerCard extends StatelessWidget {
             'Active Tracker',
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: BauhausDesign.space4),
@@ -55,7 +55,7 @@ class TrackerCard extends StatelessWidget {
         value,
         style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
           fontWeight: FontWeight.bold,
-          color: BauhausDesign.textDark,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       );
     }

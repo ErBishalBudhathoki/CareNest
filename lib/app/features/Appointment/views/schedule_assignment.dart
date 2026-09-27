@@ -121,13 +121,16 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
   List<String> _validationErrors = [];
 
   BoxDecoration _panelDecoration({
-    Color color = BauhausDesign.surfaceLight,
-    Color borderColor = BauhausDesign.neutral,
+    Color? color,
+    Color? borderColor,
     double borderWidth = 2,
   }) {
     return BoxDecoration(
-      color: color,
-      border: Border.all(color: borderColor, width: borderWidth),
+      color: color ?? Theme.of(context).colorScheme.surface,
+      border: Border.all(
+        color: borderColor ?? Theme.of(context).colorScheme.outline,
+        width: borderWidth,
+      ),
       boxShadow: const [BauhausDesign.shadowHardXs],
     );
   }
@@ -158,11 +161,17 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
   }) {
     final Color bg =
         backgroundColor ??
-        (isOutlined ? BauhausDesign.surfaceLight : BauhausDesign.primary);
+        (isOutlined
+            ? Theme.of(context).colorScheme.surface
+            : BauhausDesign.primary);
     final Color fg =
         textColor ??
-        (isOutlined ? BauhausDesign.primary : BauhausDesign.surfaceLight);
-    final Color bd = borderColor ?? (isOutlined ? fg : BauhausDesign.neutral);
+        (isOutlined
+            ? BauhausDesign.primary
+            : Theme.of(context).colorScheme.surface);
+    final Color bd =
+        borderColor ??
+        (isOutlined ? fg : Theme.of(context).colorScheme.onSurface);
 
     return Container(
       width: isFullWidth ? double.infinity : null,
@@ -759,7 +768,10 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                 padding: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: BoxDecoration(
                   color: BauhausDesign.secondary.withValues(alpha: 0.1),
-                  border: Border.all(color: BauhausDesign.neutral, width: 1),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 1,
+                  ),
                 ),
                 child: Icon(
                   Icons.event_available_outlined,
@@ -773,9 +785,10 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                 children: [
                   Text(
                     AppLocalizations.of(context)!.scheduleDetails,
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).titleMedium?.copyWith(color: BauhausDesign.textDark),
+                    style: BauhausDesign.getTextTheme(context).titleMedium
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                   ),
                   Text(
                     AppLocalizations.of(context)!.addedOn(
@@ -784,9 +797,10 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                         AppLocalizations.of(context)!.localeName,
                       ).format(DateTime.now()),
                     ),
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                    style: BauhausDesign.getTextTheme(context).labelSmall
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                   ),
                 ],
               ),
@@ -976,14 +990,18 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
               children: [
                 Icon(
                   Icons.fitness_center_outlined,
-                  color: BauhausDesign.textDark, // Changed to textDark
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface, // Changed to textDark
                 ),
                 const SizedBox(width: BauhausDesign.space3),
                 Text(
                   AppLocalizations.of(context)!.highIntensityCare,
                   style: BauhausDesign.getTextTheme(context).bodyMedium
                       ?.copyWith(
-                        color: BauhausDesign.textDark, // Changed to textDark
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface, // Changed to textDark
                       ),
                 ),
                 const Spacer(),
@@ -1020,8 +1038,8 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
         horizontal: BauhausDesign.space4,
       ),
       decoration: _panelDecoration(
-        color: BauhausDesign.surfaceLight,
-        borderColor: BauhausDesign.neutral,
+        color: Theme.of(context).colorScheme.surface,
+        borderColor: Theme.of(context).colorScheme.outline,
       ),
       child: Row(
         children: [
@@ -1029,7 +1047,10 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
             padding: const EdgeInsets.all(BauhausDesign.space2),
             decoration: BoxDecoration(
               color: effectiveBackgroundColor,
-              border: Border.all(color: BauhausDesign.neutral, width: 1),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1,
+              ),
             ),
             child: Icon(icon, color: effectiveIconColor, size: 18),
           ),
@@ -1040,9 +1061,10 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
               children: [
                 Text(
                   label,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -1112,32 +1134,32 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
       },
       child: Scaffold(
         key: _scaffoldKey,
-        backgroundColor: BauhausDesign.backgroundLight,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
           backgroundColor: BauhausDesign.secondary,
-          foregroundColor: BauhausDesign.surfaceWhite,
+          foregroundColor: Theme.of(context).colorScheme.onSecondary,
           systemOverlayStyle: SystemUiOverlayStyle.light,
           scrolledUnderElevation: 0,
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           title: Text(
             AppLocalizations.of(context)!.scheduleAssignmentTitle,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).titleLarge?.copyWith(color: BauhausDesign.surfaceWhite),
+            style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+              color: Theme.of(context).colorScheme.onSecondary,
+            ),
           ),
           centerTitle: true,
           leading: IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.arrow_back_ios_rounded,
-              color: BauhausDesign.surfaceWhite,
+              color: Theme.of(context).colorScheme.onSecondary,
             ),
             tooltip: AppLocalizations.of(context)!.backButton,
             onPressed: _returnToAdminDashboard,
           ),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1),
-            child: Container(color: BauhausDesign.neutral),
+            child: Container(color: Theme.of(context).colorScheme.outline),
           ),
         ),
         body: SingleChildScrollView(
@@ -1174,7 +1196,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
             child: Text(
               AppLocalizations.of(context)!.addedSchedules,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -1186,12 +1208,15 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
             ),
             decoration: BoxDecoration(
               color: BauhausDesign.warning,
-              border: Border.all(color: BauhausDesign.neutral, width: 1),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1,
+              ),
             ),
             child: Text(
               '${dateList.length}',
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -1213,7 +1238,10 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
               padding: const EdgeInsets.all(BauhausDesign.space2),
               decoration: BoxDecoration(
                 color: BauhausDesign.primary.withValues(alpha: 0.1),
-                border: Border.all(color: BauhausDesign.neutral, width: 1),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 1,
+                ),
               ),
               child: Icon(
                 Icons.assignment_ind_rounded,
@@ -1249,7 +1277,10 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
             padding: const EdgeInsets.all(BauhausDesign.space2),
             decoration: BoxDecoration(
               color: BauhausDesign.primary.withValues(alpha: 0.1),
-              border: Border.all(color: BauhausDesign.neutral, width: 1),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1,
+              ),
             ),
             child: Icon(icon, color: BauhausDesign.primary, size: 18),
           ),
@@ -1260,16 +1291,17 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
               children: [
                 Text(
                   label,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
                 Text(
                   value,
                   style: BauhausDesign.getTextTheme(context).bodyMedium
                       ?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                 ),
               ],
@@ -1294,7 +1326,10 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
               padding: const EdgeInsets.all(BauhausDesign.space2),
               decoration: BoxDecoration(
                 color: BauhausDesign.secondary.withValues(alpha: 0.1),
-                border: Border.all(color: BauhausDesign.neutral, width: 1),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 1,
+                ),
               ),
               child: Icon(
                 Icons.schedule_rounded,
@@ -1397,7 +1432,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
               icon: Icons.search,
               isFullWidth: true,
               backgroundColor: BauhausDesign.primary,
-              textColor: BauhausDesign.surfaceLight,
+              textColor: Theme.of(context).colorScheme.surface,
             ),
           ),
           if (_selectedNdisItem != null) ...[
@@ -1424,7 +1459,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                       '${_selectedNdisItem!.itemName} ${_selectedNdisItem!.itemNumber}',
                       style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w700,
                           ),
                     ),
@@ -1436,10 +1471,10 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                         _searchController.clear();
                       });
                     },
-                    child: const Icon(
+                    child: Icon(
                       Icons.close,
                       size: 16,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ],
@@ -1469,14 +1504,14 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                         'MMM dd, yyyy',
                         AppLocalizations.of(context)!.localeName,
                       ).format(_focusedDay),
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
             ),
             Icon(
               Icons.keyboard_arrow_down_rounded,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ],
         ),
@@ -1495,9 +1530,9 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
       children: [
         Text(
           label,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+          style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: BauhausDesign.space2),
         GestureDetector(
@@ -1514,9 +1549,10 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                     isVisible
                         ? AppLocalizations.of(context)!.selectTime
                         : time.format(context),
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                    style: BauhausDesign.getTextTheme(context).bodyMedium
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                   ),
                 ),
               ],
@@ -1536,9 +1572,9 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
             children: [
               Text(
                 AppLocalizations.of(context)!.breakAllowed,
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: BauhausDesign.space2),
               Container(
@@ -1552,12 +1588,13 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                     isExpanded: true,
                     icon: Icon(
                       Icons.arrow_drop_down,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
-                    dropdownColor: BauhausDesign.surfaceWhite,
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                    dropdownColor: Theme.of(context).colorScheme.surface,
+                    style: BauhausDesign.getTextTheme(context).bodyMedium
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                     items: breakOptionItems.map((String item) {
                       // Values stay "Yes"/"No" (API contract) — only the
                       // displayed label is localized.
@@ -1566,9 +1603,10 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                         value: item,
                         child: Text(
                           item == 'Yes' ? l10n.yes : l10n.no,
-                          style: BauhausDesign.getTextTheme(
-                            context,
-                          ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                          style: BauhausDesign.getTextTheme(context).bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
                         ),
                       );
                     }).toList(),
@@ -1590,9 +1628,9 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
             children: [
               Text(
                 AppLocalizations.of(context)!.highIntensity,
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: BauhausDesign.space2),
               Container(
@@ -1605,7 +1643,7 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
                   children: [
                     Icon(
                       Icons.fitness_center_outlined,
-                      color: BauhausDesign.textMuted,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     const Spacer(),
                     BauhausSwitch(
@@ -1731,14 +1769,14 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
             isLoading: _isSubmitting,
             isFullWidth: true,
             backgroundColor: dateList.isEmpty
-                ? BauhausDesign.neutral.withValues(alpha: 0.2)
+                ? Theme.of(context).colorScheme.outline.withValues(alpha: 0.2)
                 : BauhausDesign.primary,
             textColor: dateList.isEmpty
-                ? BauhausDesign.textMuted
-                : BauhausDesign.surfaceWhite,
+                ? Theme.of(context).colorScheme.onSurfaceVariant
+                : Theme.of(context).colorScheme.surface,
             borderColor: dateList.isEmpty
-                ? BauhausDesign.neutral
-                : BauhausDesign.neutral,
+                ? Theme.of(context).colorScheme.outline
+                : Theme.of(context).colorScheme.outline,
           ),
         ),
       ],

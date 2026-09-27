@@ -8,9 +8,11 @@ Future<void> showAlertDialog(
 }) {
   return showDialog(
     barrierDismissible: false,
-    barrierColor: Colors.black54,
+    barrierColor: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.54),
     context: context,
     builder: (BuildContext context) {
+      final theme = Theme.of(context);
+      final colorScheme = theme.colorScheme;
       return Dialog(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -19,11 +21,11 @@ Future<void> showAlertDialog(
             width: 280,
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
-              border: Border.all(color: BauhausDesign.neutral, width: 3.0),
-              boxShadow: const [
+              color: colorScheme.surface,
+              border: Border.all(color: colorScheme.outline, width: 3.0),
+              boxShadow: [
                 BoxShadow(
-                  color: Colors.black,
+                  color: colorScheme.shadow,
                   offset: Offset(4, 4),
                   blurRadius: 0,
                 ),
@@ -37,16 +39,18 @@ Future<void> showAlertDialog(
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: BauhausDesign.primary,
+                      color: colorScheme.primary,
                       border: Border.all(
-                        color: BauhausDesign.neutral,
-                        width: 2.0,
+                        color: colorScheme.outline,
+                        width: 2.5,
                       ),
                     ),
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          colorScheme.onPrimary,
+                        ),
                         strokeWidth: 3,
                       ),
                     ),
@@ -58,7 +62,7 @@ Future<void> showAlertDialog(
                   textAlign: TextAlign.center,
                   style: BauhausDesign.getTextTheme(context).bodyLarge
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: colorScheme.onSurface,
                         fontWeight: FontWeight.w600,
                       ),
                 ),
@@ -68,7 +72,7 @@ Future<void> showAlertDialog(
                   textAlign: TextAlign.center,
                   style: BauhausDesign.getTextTheme(
                     context,
-                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                  ).bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
                 ),
               ],
             ),
@@ -90,9 +94,15 @@ Future<void> showBauhausConfirmDialog({
   Color? confirmColor,
 }) {
   return showDialog(
-    barrierColor: Colors.black54,
+    barrierColor: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.54),
     context: context,
     builder: (BuildContext context) {
+      final theme = Theme.of(context);
+      final colorScheme = theme.colorScheme;
+      final resolvedConfirmColor = confirmColor ?? colorScheme.primary;
+      final confirmTextColor = BauhausDesign.readableOnColor(
+        resolvedConfirmColor,
+      );
       return Dialog(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -100,11 +110,11 @@ Future<void> showBauhausConfirmDialog({
           width: 320,
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
-            border: Border.all(color: BauhausDesign.neutral, width: 3.0),
-            boxShadow: const [
+            color: colorScheme.surface,
+            border: Border.all(color: colorScheme.outline, width: 3.0),
+            boxShadow: [
               BoxShadow(
-                color: Colors.black,
+                color: colorScheme.shadow,
                 offset: Offset(4, 4),
                 blurRadius: 0,
               ),
@@ -117,12 +127,12 @@ Future<void> showBauhausConfirmDialog({
                 width: 56,
                 height: 56,
                 decoration: BoxDecoration(
-                  color: BauhausDesign.primary,
-                  border: Border.all(color: BauhausDesign.neutral, width: 2.0),
+                  color: colorScheme.primary,
+                  border: Border.all(color: colorScheme.outline, width: 2.5),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.help_outline,
-                  color: Colors.white,
+                  color: colorScheme.onPrimary,
                   size: 28,
                 ),
               ),
@@ -131,7 +141,7 @@ Future<void> showBauhausConfirmDialog({
                 title,
                 textAlign: TextAlign.center,
                 style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: colorScheme.onSurface,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -141,7 +151,7 @@ Future<void> showBauhausConfirmDialog({
                 textAlign: TextAlign.center,
                 style: BauhausDesign.getTextTheme(
                   context,
-                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                ).bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
               ),
               const SizedBox(height: 24),
               Row(
@@ -155,10 +165,10 @@ Future<void> showBauhausConfirmDialog({
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         decoration: BoxDecoration(
-                          color: BauhausDesign.surfaceWhite,
+                          color: colorScheme.surface,
                           border: Border.all(
-                            color: BauhausDesign.neutral,
-                            width: 2.0,
+                            color: colorScheme.outline,
+                            width: 2.5,
                           ),
                         ),
                         child: Text(
@@ -166,7 +176,7 @@ Future<void> showBauhausConfirmDialog({
                           textAlign: TextAlign.center,
                           style: BauhausDesign.getTextTheme(context).bodyMedium
                               ?.copyWith(
-                                color: BauhausDesign.textDark,
+                                color: colorScheme.onSurface,
                                 fontWeight: FontWeight.w600,
                               ),
                         ),
@@ -183,14 +193,14 @@ Future<void> showBauhausConfirmDialog({
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         decoration: BoxDecoration(
-                          color: confirmColor ?? BauhausDesign.primary,
+                          color: resolvedConfirmColor,
                           border: Border.all(
-                            color: BauhausDesign.neutral,
-                            width: 2.0,
+                            color: colorScheme.outline,
+                            width: 2.5,
                           ),
-                          boxShadow: const [
+                          boxShadow: [
                             BoxShadow(
-                              color: Colors.black,
+                              color: colorScheme.shadow,
                               offset: Offset(2, 2),
                               blurRadius: 0,
                             ),
@@ -201,7 +211,7 @@ Future<void> showBauhausConfirmDialog({
                           textAlign: TextAlign.center,
                           style: BauhausDesign.getTextTheme(context).bodyMedium
                               ?.copyWith(
-                                color: Colors.white,
+                                color: confirmTextColor,
                                 fontWeight: FontWeight.w600,
                               ),
                         ),

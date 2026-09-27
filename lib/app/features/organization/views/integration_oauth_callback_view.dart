@@ -125,15 +125,17 @@ class _IntegrationOAuthCallbackViewState
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceOffWhite,
+      backgroundColor: colorScheme.surfaceContainer,
       body: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 500),
           margin: const EdgeInsets.all(BauhausDesign.space6),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            color: colorScheme.surface,
+            border: Border.all(color: colorScheme.outline, width: 2),
             boxShadow: [BauhausDesign.shadowHard],
           ),
           child: Column(
@@ -149,7 +151,7 @@ class _IntegrationOAuthCallbackViewState
                       ? BauhausDesign.success
                       : BauhausDesign.primary,
                   border: Border(
-                    bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+                    bottom: BorderSide(color: colorScheme.outline, width: 2),
                   ),
                 ),
                 child: Row(
@@ -157,7 +159,7 @@ class _IntegrationOAuthCallbackViewState
                     Container(
                       width: 40,
                       height: 40,
-                      color: BauhausDesign.surfaceWhite,
+                      color: Theme.of(context).colorScheme.surface,
                       child: Icon(
                         _errorMessage != null
                             ? Icons.error_outline
@@ -179,7 +181,7 @@ class _IntegrationOAuthCallbackViewState
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontLg,
                           fontWeight: FontWeight.w700,
-                          color: BauhausDesign.textDark,
+                          color: colorScheme.onInverseSurface,
                           letterSpacing: 0.5,
                         ),
                       ),
@@ -206,7 +208,7 @@ class _IntegrationOAuthCallbackViewState
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontMd,
                           fontWeight: FontWeight.w500,
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -222,7 +224,7 @@ class _IntegrationOAuthCallbackViewState
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontLg,
                           fontWeight: FontWeight.w700,
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -232,7 +234,9 @@ class _IntegrationOAuthCallbackViewState
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontSm,
                           fontWeight: FontWeight.w400,
-                          color: BauhausDesign.textDark.withValues(alpha: 0.7),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -254,7 +258,7 @@ class _IntegrationOAuthCallbackViewState
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontLg,
                           fontWeight: FontWeight.w700,
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -264,7 +268,9 @@ class _IntegrationOAuthCallbackViewState
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontSm,
                           fontWeight: FontWeight.w400,
-                          color: BauhausDesign.textDark.withValues(alpha: 0.7),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -274,7 +280,9 @@ class _IntegrationOAuthCallbackViewState
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontXs,
                           fontWeight: FontWeight.w400,
-                          color: BauhausDesign.textDark.withValues(alpha: 0.5),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.5),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -303,6 +311,15 @@ class _BauhausButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final foreground = color == colorScheme.error
+        ? colorScheme.onError
+        : color == colorScheme.secondary
+        ? colorScheme.onSecondary
+        : color == colorScheme.primary
+        ? colorScheme.onPrimary
+        : colorScheme.onInverseSurface;
+
     return InkWell(
       onTap: onPressed,
       child: Container(
@@ -312,7 +329,10 @@ class _BauhausButton extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: color,
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
           boxShadow: [BauhausDesign.shadowHardSm],
         ),
         child: Text(
@@ -320,7 +340,7 @@ class _BauhausButton extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: BauhausDesign.fontSm,
             fontWeight: FontWeight.w700,
-            color: BauhausDesign.textDark,
+            color: foreground,
             letterSpacing: 0.5,
           ),
         ),

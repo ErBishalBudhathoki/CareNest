@@ -21,19 +21,21 @@ class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
     final state = ref.watch(shiftMatchingViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        backgroundColor: BauhausDesign.textDark,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
         title: Text(
           'SHIFT MATCHING',
           style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onInverseSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onInverseSurface,
+        ),
       ),
       body: state.isLoading
           ? const Center(child: BauhausLoadingState())
@@ -87,7 +89,9 @@ class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
                                       style: BauhausDesign.getTextTheme(context)
                                           .bodyMedium
                                           ?.copyWith(
-                                            color: BauhausDesign.neutral,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onSurfaceVariant,
                                           ),
                                     ),
                                   ],
@@ -188,7 +192,7 @@ class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
         matchColor = BauhausDesign.warning;
         break;
       default:
-        matchColor = BauhausDesign.neutral;
+        matchColor = Theme.of(context).colorScheme.onSurfaceVariant;
     }
 
     return BauhausCard(
@@ -212,9 +216,12 @@ class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
                       const SizedBox(height: 4),
                       Text(
                         match.workerEmail,
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodySmall?.copyWith(color: BauhausDesign.neutral),
+                        style: BauhausDesign.getTextTheme(context).bodySmall
+                            ?.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
                       ),
                     ],
                   ),
@@ -240,7 +247,7 @@ class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
               ],
             ),
             const SizedBox(height: 12),
-            const Divider(color: BauhausDesign.neutral, thickness: 1),
+            Divider(color: Theme.of(context).colorScheme.outline, thickness: 1),
             const SizedBox(height: 12),
             ...match.factors.map(
               (factor) => Padding(

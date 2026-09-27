@@ -8,6 +8,27 @@ import 'package:carenest/app/features/realtime_portal/viewmodels/service_confirm
 import 'package:carenest/app/features/realtime_portal/models/realtime_portal_models.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+InputDecoration _activeInputDecoration(BuildContext context, String hint) {
+  final colorScheme = Theme.of(context).colorScheme;
+  return InputDecoration(
+    filled: true,
+    fillColor: colorScheme.surfaceContainer,
+    hintText: hint,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.zero,
+      borderSide: BorderSide(color: colorScheme.outline, width: 2),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.zero,
+      borderSide: BorderSide(color: colorScheme.outline, width: 2),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.zero,
+      borderSide: BorderSide(color: colorScheme.primary, width: 2),
+    ),
+  );
+}
+
 /// Service Confirmation View
 /// Digital signature and service confirmation following Bauhaus Neo-Brutalist rules
 class ServiceConfirmationView extends ConsumerStatefulWidget {
@@ -61,12 +82,13 @@ class _ServiceConfirmationViewState
     final workerId = args?['workerId'] as String? ?? 'worker_default';
     final workerName = args?['workerName'] as String? ?? 'Worker';
     final serviceName = args?['serviceName'] as String? ?? 'Home Care';
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: colorScheme.secondary,
+        foregroundColor: colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -81,12 +103,15 @@ class _ServiceConfirmationViewState
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: BauhausDesign.primary),
+          icon: Icon(Icons.arrow_back_ios, color: BauhausDesign.primary),
           onPressed: () => Navigator.pop(context),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.5),
-          child: Container(color: BauhausDesign.neutral, height: 1.5),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 1.5,
+          ),
         ),
       ),
       body: state.isLoading
@@ -128,11 +153,11 @@ class _ServiceConfirmationViewState
         horizontal: BauhausDesign.space4,
         vertical: BauhausDesign.space5,
       ),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
           bottom: BorderSide(
-            color: BauhausDesign.neutral,
+            color: Theme.of(context).colorScheme.outline,
             width: BauhausDesign.borderThick,
           ),
         ),
@@ -152,6 +177,12 @@ class _ServiceConfirmationViewState
   Widget _buildStepIndicator(int step, String label, IconData icon) {
     final isActive = _currentStep == step;
     final isCompleted = _currentStep > step;
+    final colorScheme = Theme.of(context).colorScheme;
+    final foreground = isCompleted
+        ? colorScheme.onSecondary
+        : isActive
+        ? colorScheme.onPrimary
+        : colorScheme.onSurfaceVariant;
 
     return Expanded(
       child: Column(
@@ -161,31 +192,31 @@ class _ServiceConfirmationViewState
             height: 40,
             decoration: BoxDecoration(
               color: isCompleted
-                  ? BauhausDesign.success
+                  ? colorScheme.secondary
                   : isActive
-                  ? BauhausDesign.primary
-                  : Colors.white,
+                  ? colorScheme.primary
+                  : colorScheme.surface,
               border: Border.all(
-                color: BauhausDesign.neutral,
+                color: Theme.of(context).colorScheme.outline,
                 width: BauhausDesign.borderThick,
               ),
             ),
             child: Icon(
               isCompleted ? Icons.check : icon,
-              color: isCompleted || isActive
-                  ? Colors.white
-                  : BauhausDesign.textMuted,
+              color: foreground,
               size: 20,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             label,
             style: BauhausDesign.neoMonoStyle(
               context,
               fontSize: BauhausDesign.fontXs,
               fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-              color: isActive ? BauhausDesign.primary : BauhausDesign.textMuted,
+              color: isActive
+                  ? BauhausDesign.primary
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -197,7 +228,7 @@ class _ServiceConfirmationViewState
     return Container(
       height: 4,
       width: 25,
-      color: BauhausDesign.neutral,
+      color: Theme.of(context).colorScheme.outline,
       margin: const EdgeInsets.only(bottom: 24),
     );
   }
@@ -215,7 +246,7 @@ class _ServiceConfirmationViewState
       case 2:
         return _buildSignatureStep(state);
       default:
-        return const SizedBox();
+        return SizedBox();
     }
   }
 
@@ -227,13 +258,13 @@ class _ServiceConfirmationViewState
       return Center(
         child: Container(
           padding: const EdgeInsets.all(BauhausDesign.space5),
-          decoration: BauhausDesign.cardDecoration,
+          decoration: BauhausDesign.cardDecorationFor(context),
           child: Text(
             'No checklist items available.',
             style: GoogleFonts.inter(
               fontSize: BauhausDesign.fontMd,
               fontWeight: FontWeight.bold,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ),
@@ -246,20 +277,20 @@ class _ServiceConfirmationViewState
         Text(
           'Service Checklist',
           style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: BauhausDesign.space2),
+        SizedBox(height: BauhausDesign.space2),
         Text(
           'Confirm completed tasks for $serviceName',
           style: GoogleFonts.inter(
             fontSize: BauhausDesign.fontMd,
-            color: BauhausDesign.textMuted,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: BauhausDesign.space6),
+        SizedBox(height: BauhausDesign.space6),
         ...state.checklist.map((item) => _buildChecklistItem(item)),
       ],
     );
@@ -269,7 +300,7 @@ class _ServiceConfirmationViewState
     return Container(
       margin: const EdgeInsets.only(bottom: BauhausDesign.space4),
       padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: BauhausDesign.cardDecoration,
+      decoration: BauhausDesign.cardDecorationFor(context),
       child: Row(
         children: [
           Checkbox(
@@ -280,10 +311,13 @@ class _ServiceConfirmationViewState
                   .updateChecklistItem(item.id, value ?? false);
             },
             activeColor: BauhausDesign.success,
-            checkColor: Colors.white,
-            side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+            checkColor: Theme.of(context).colorScheme.onSecondary,
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
           ),
-          const SizedBox(width: BauhausDesign.space3),
+          SizedBox(width: BauhausDesign.space3),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -293,7 +327,7 @@ class _ServiceConfirmationViewState
                   style: GoogleFonts.inter(
                     fontSize: BauhausDesign.fontLg,
                     fontWeight: FontWeight.bold,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     decoration: item.completed == true
                         ? TextDecoration.lineThrough
                         : null,
@@ -327,20 +361,20 @@ class _ServiceConfirmationViewState
         Text(
           'Rate Your Experience',
           style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: BauhausDesign.space2),
+        SizedBox(height: BauhausDesign.space2),
         Text(
           'How satisfied are you with $workerName\'s service?',
           style: GoogleFonts.inter(
             fontSize: BauhausDesign.fontMd,
-            color: BauhausDesign.textMuted,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: BauhausDesign.space6),
+        SizedBox(height: BauhausDesign.space6),
         Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -358,52 +392,55 @@ class _ServiceConfirmationViewState
                   isHighlighted ? Icons.star : Icons.star_border,
                   color: isHighlighted
                       ? BauhausDesign.accent
-                      : BauhausDesign.neutral,
+                      : Theme.of(context).colorScheme.onSurface,
                 ),
               );
             }),
           ),
         ),
         if (_selectedRating > 0) ...[
-          const SizedBox(height: BauhausDesign.space3),
+          SizedBox(height: BauhausDesign.space3),
           Center(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: BauhausDesign.accent,
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
               ),
               child: Text(
                 _getRatingText(_selectedRating).toUpperCase(),
                 style: BauhausDesign.neoMonoStyle(
                   context,
                   fontSize: BauhausDesign.fontLg,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
           ),
         ],
-        const SizedBox(height: BauhausDesign.space6),
+        SizedBox(height: BauhausDesign.space6),
         Text(
           'Additional Feedback (Optional)',
           style: GoogleFonts.inter(
             fontSize: BauhausDesign.fontLg,
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        const SizedBox(height: BauhausDesign.space3),
+        SizedBox(height: BauhausDesign.space3),
         TextField(
           controller: _feedbackController,
           maxLines: 4,
           style: GoogleFonts.inter(
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             fontSize: BauhausDesign.fontMd,
             fontWeight: FontWeight.w500,
           ),
-          decoration: BauhausDesign.inputDecoration('Share your thoughts...'),
+          decoration: _activeInputDecoration(context, 'Share your thoughts...'),
         ),
       ],
     );
@@ -416,37 +453,42 @@ class _ServiceConfirmationViewState
         Text(
           'Digital Signature',
           style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: BauhausDesign.space2),
+        SizedBox(height: BauhausDesign.space2),
         Text(
           'Please sign below to confirm service completion',
           style: GoogleFonts.inter(
             fontSize: BauhausDesign.fontMd,
-            color: BauhausDesign.textMuted,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: BauhausDesign.space5),
+        SizedBox(height: BauhausDesign.space5),
         // Draw board wrapped in Bauhaus Card style with hard shadow
         Container(
           height: 200,
-          decoration: BauhausDesign.cardDecoration,
+          decoration: BauhausDesign.cardDecorationFor(context),
           child: Signature(
             controller: _signatureController,
-            backgroundColor: Colors.white,
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.surfaceContainerLowest,
           ),
         ),
-        const SizedBox(height: BauhausDesign.space3),
+        SizedBox(height: BauhausDesign.space3),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Container(
               decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                color: Theme.of(context).colorScheme.surface,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
                 boxShadow: const [BauhausDesign.shadowHardSm],
               ),
               child: TextButton.icon(
@@ -460,7 +502,7 @@ class _ServiceConfirmationViewState
                     vertical: 10,
                   ),
                 ),
-                icon: const Icon(Icons.clear, size: 16),
+                icon: Icon(Icons.clear, size: 16),
                 label: Text(
                   'CLEAR',
                   style: GoogleFonts.inter(fontWeight: FontWeight.bold),
@@ -469,25 +511,28 @@ class _ServiceConfirmationViewState
             ),
           ],
         ),
-        const SizedBox(height: BauhausDesign.space5),
+        SizedBox(height: BauhausDesign.space5),
         // Security Information box
         Container(
           padding: const EdgeInsets.all(BauhausDesign.space4),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            color: Theme.of(context).colorScheme.surface,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             boxShadow: const [BauhausDesign.shadowHardSm],
           ),
           child: Row(
             children: [
-              const Icon(Icons.lock, color: BauhausDesign.success, size: 24),
-              const SizedBox(width: BauhausDesign.space4),
+              Icon(Icons.lock, color: BauhausDesign.success, size: 24),
+              SizedBox(width: BauhausDesign.space4),
               Expanded(
                 child: Text(
                   'Your signature will be encrypted and timestamped for security',
                   style: GoogleFonts.inter(
                     fontSize: BauhausDesign.fontMd,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -507,11 +552,11 @@ class _ServiceConfirmationViewState
   ) {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space5),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
           top: BorderSide(
-            color: BauhausDesign.neutral,
+            color: Theme.of(context).colorScheme.outline,
             width: BauhausDesign.borderThick,
           ),
         ),
@@ -522,8 +567,11 @@ class _ServiceConfirmationViewState
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  color: Theme.of(context).colorScheme.surface,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 2,
+                  ),
                   boxShadow: const [BauhausDesign.shadowHardSm],
                 ),
                 child: TextButton(
@@ -540,21 +588,24 @@ class _ServiceConfirmationViewState
                     style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ),
               ),
             ),
-            const SizedBox(width: BauhausDesign.space4),
+            SizedBox(width: BauhausDesign.space4),
           ],
           Expanded(
             child: Container(
               decoration: BoxDecoration(
                 color: state.isSubmitting
-                    ? BauhausDesign.textMuted
+                    ? Theme.of(context).colorScheme.onSurfaceVariant
                     : BauhausDesign.primary,
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
                 boxShadow: state.isSubmitting
                     ? []
                     : const [BauhausDesign.shadowHardSm],
@@ -568,11 +619,11 @@ class _ServiceConfirmationViewState
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: state.isSubmitting
-                    ? const SizedBox(
+                    ? SizedBox(
                         height: 20,
                         width: 20,
                         child: CircularProgressIndicator(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onPrimary,
                           strokeWidth: 2,
                         ),
                       )
@@ -581,7 +632,7 @@ class _ServiceConfirmationViewState
                         style: GoogleFonts.inter(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onPrimary,
                         ),
                       ),
               ),
@@ -621,7 +672,7 @@ class _ServiceConfirmationViewState
             'Please provide your signature',
             style: GoogleFonts.inter(
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
           backgroundColor: BauhausDesign.primary,
@@ -699,7 +750,7 @@ class _ServiceConfirmationViewState
             'Service confirmation submitted successfully',
             style: GoogleFonts.inter(
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
           backgroundColor: BauhausDesign.success,
@@ -716,7 +767,7 @@ class _ServiceConfirmationViewState
             'Failed to submit confirmation: $e',
             style: GoogleFonts.inter(
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
           backgroundColor: BauhausDesign.primary,

@@ -104,7 +104,9 @@ class NavBarWidget extends ConsumerWidget {
                               ?.copyWith(
                                 fontSize: 12,
                                 fontStyle: FontStyle.italic,
-                                color: Colors.white70, // Keep specific visual
+                                color: theme.colorScheme.onPrimary.withValues(
+                                  alpha: 0.7,
+                                ),
                               ),
                         ),
                     ],
@@ -179,19 +181,20 @@ class NavBarWidget extends ConsumerWidget {
                       if (value['message'].toString() == "Upload successful") {
                         Flushbar(
                           flushbarPosition: FlushbarPosition.BOTTOM,
+                          backgroundColor: theme.colorScheme.secondary,
                           duration: const Duration(seconds: 3),
                           titleText: Text(
                             "Success",
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: theme.colorScheme.onSecondary,
                               fontFamily: "ShadowsIntoLightTwo",
                             ),
                           ),
                           messageText: Text(
                             "Holiday list updated in database",
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: Colors.white,
+                              color: theme.colorScheme.onSecondary,
                               fontFamily: "ShadowsIntoLightTwo",
                             ),
                           ),
@@ -384,19 +387,20 @@ class NavBarWidget extends ConsumerWidget {
       final context = _navBarScaffoldKey.currentContext!;
       Flushbar(
         flushbarPosition: FlushbarPosition.BOTTOM,
+        backgroundColor: theme.colorScheme.secondary,
         duration: const Duration(seconds: 4),
         titleText: Text(
           "Deletion Requested",
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: theme.colorScheme.onSecondary,
             fontFamily: "ShadowsIntoLightTwo",
           ),
         ),
         messageText: Text(
           "You have been signed out. After approval, the account is deactivated and required records are retained for up to 90 days before permanent deletion.",
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: Colors.white,
+            color: theme.colorScheme.onSecondary,
             fontFamily: "ShadowsIntoLightTwo",
           ),
         ),
@@ -414,19 +418,20 @@ class NavBarWidget extends ConsumerWidget {
       final context = _navBarScaffoldKey.currentContext!;
       Flushbar(
         flushbarPosition: FlushbarPosition.BOTTOM,
+        backgroundColor: theme.colorScheme.error,
         duration: const Duration(seconds: 3),
         titleText: Text(
           "Error",
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: theme.colorScheme.onError,
             fontFamily: "ShadowsIntoLightTwo",
           ),
         ),
         messageText: Text(
           error.toString(),
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: Colors.white,
+            color: theme.colorScheme.onError,
             fontFamily: "ShadowsIntoLightTwo",
           ),
         ),

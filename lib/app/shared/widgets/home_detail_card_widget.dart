@@ -88,6 +88,7 @@ class _HomeDetailCardState extends State<HomeDetailCard>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return AspectRatio(
       aspectRatio: 1.1,
       child: AnimatedBuilder(
@@ -122,12 +123,14 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: widget.gradientStartColor.withValues(alpha: 0.3),
+                            color: widget.gradientStartColor.withValues(
+                              alpha: 0.3,
+                            ),
                             blurRadius: _elevationAnimation.value,
                             offset: Offset(0, _elevationAnimation.value / 2),
                           ),
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
+                            color: colorScheme.shadow.withValues(alpha: 0.1),
                             blurRadius: _elevationAnimation.value / 2,
                             offset: const Offset(0, 2),
                           ),
@@ -145,8 +148,8 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                         gradient: LinearGradient(
                           colors: _isHovered
                               ? [
-                                  BauhausDesign.surfaceWhite.withValues(alpha: 0.1),
-                                  BauhausDesign.surfaceWhite.withValues(alpha: 0.05),
+                                  colorScheme.surface.withValues(alpha: 0.1),
+                                  colorScheme.surface.withValues(alpha: 0.05),
                                 ]
                               : [Colors.transparent, Colors.transparent],
                           begin: Alignment.topLeft,
@@ -169,12 +172,14 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                               style: BauhausDesign.getTextTheme(context)
                                   .headlineSmall
                                   ?.copyWith(
-                                    color: BauhausDesign.surfaceWhite,
+                                    color: colorScheme.surface,
                                     letterSpacing: -0.5,
                                     height: 1.1,
                                     shadows: [
-                                      const Shadow(
-                                        color: Colors.black26,
+                                      Shadow(
+                                        color: colorScheme.shadow.withValues(
+                                          alpha: 0.26,
+                                        ),
                                         blurRadius: 8,
                                         offset: Offset(0, 2),
                                       ),
@@ -191,15 +196,17 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.1),
+                                    color: colorScheme.shadow.withValues(
+                                      alpha: 0.1,
+                                    ),
                                     blurRadius: 8,
                                     offset: const Offset(0, 4),
                                   ),
                                 ],
                               ),
                               child: Material(
-                                color: BauhausDesign.surfaceWhite.withValues(alpha: 
-                                  0.95,
+                                color: colorScheme.surface.withValues(
+                                  alpha: 0.95,
                                 ),
                                 borderRadius: BorderRadius.circular(
                                   BauhausDesign.radiusMd,
@@ -270,7 +277,9 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.1),
+                                color: colorScheme.shadow.withValues(
+                                  alpha: 0.1,
+                                ),
                                 blurRadius: 20,
                                 offset: Offset(
                                   0,
@@ -301,8 +310,8 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                                     gradient: LinearGradient(
                                       colors: [
                                         Colors.transparent,
-                                        BauhausDesign.surfaceWhite.withValues(alpha: 
-                                          0.1,
+                                        colorScheme.surface.withValues(
+                                          alpha: 0.1,
                                         ),
                                         Colors.transparent,
                                       ],
@@ -317,8 +326,8 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                                 )
                                 .shimmer(
                                   duration: 2000.ms,
-                                  color: BauhausDesign.surfaceWhite.withValues(alpha: 
-                                    0.3,
+                                  color: colorScheme.surface.withValues(
+                                    alpha: 0.3,
                                   ),
                                 ),
                       ),

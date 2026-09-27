@@ -88,7 +88,7 @@ class _AutomaticInvoiceGenerationViewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _buildAppBar(),
       body: _buildBody(),
     );
@@ -96,7 +96,7 @@ class _AutomaticInvoiceGenerationViewState
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      foregroundColor: BauhausDesign.surfaceWhite,
+      foregroundColor: Theme.of(context).colorScheme.onPrimary,
       systemOverlayStyle: SystemUiOverlayStyle.light,
       scrolledUnderElevation: 0,
       elevation: 0,
@@ -109,14 +109,16 @@ class _AutomaticInvoiceGenerationViewState
             style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
               fontWeight: FontWeight.w900,
               letterSpacing: 0.8,
-              color: BauhausDesign.surfaceWhite,
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
           Text(
             widget.organizationName ??
                 AppLocalizations.of(context)!.organizationLabel,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: BauhausDesign.surfaceWhite.withValues(alpha: 0.7),
+              color: Theme.of(
+                context,
+              ).colorScheme.onPrimary.withValues(alpha: 0.7),
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -126,7 +128,10 @@ class _AutomaticInvoiceGenerationViewState
       surfaceTintColor: Colors.transparent,
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(3),
-        child: Container(height: 3, color: BauhausDesign.neutral),
+        child: Container(
+          height: 3,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
       ),
     );
   }
@@ -179,8 +184,11 @@ class _AutomaticInvoiceGenerationViewState
   Widget _buildHeaderCard() {
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Column(
@@ -200,7 +208,7 @@ class _AutomaticInvoiceGenerationViewState
                     style: BauhausDesign.getTextTheme(context).titleMedium
                         ?.copyWith(
                           fontWeight: FontWeight.w900,
-                          color: BauhausDesign.surfaceWhite,
+                          color: Theme.of(context).colorScheme.surface,
                           letterSpacing: 1.1,
                         ),
                   ),
@@ -211,19 +219,21 @@ class _AutomaticInvoiceGenerationViewState
                 height: 74,
                 color: BauhausDesign.accent,
                 alignment: Alignment.center,
-                child: const Icon(
+                child: Icon(
                   Icons.auto_awesome,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   size: 30,
                 ),
               ),
             ],
           ),
-          Container(height: 2, color: BauhausDesign.neutral),
+          Container(height: 2, color: Theme.of(context).colorScheme.onSurface),
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(BauhausDesign.space5),
-            decoration: BoxDecoration(color: BauhausDesign.surfaceWhite),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -233,14 +243,14 @@ class _AutomaticInvoiceGenerationViewState
                   decoration: BoxDecoration(
                     color: BauhausDesign.surfaceOffWhite,
                     border: Border.all(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.onSurface,
                       width: 1.5,
                     ),
                   ),
                   alignment: Alignment.center,
-                  child: const Icon(
+                  child: Icon(
                     Icons.info_outline,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     size: 18,
                   ),
                 ),
@@ -252,7 +262,7 @@ class _AutomaticInvoiceGenerationViewState
                     )!.automaticInvoiceGenerationDesc,
                     style: BauhausDesign.getTextTheme(context).bodyMedium
                         ?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w600,
                           height: 1.45,
                         ),
@@ -269,8 +279,11 @@ class _AutomaticInvoiceGenerationViewState
   Widget _buildConfigurationCard() {
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Column(
@@ -278,7 +291,7 @@ class _AutomaticInvoiceGenerationViewState
         children: [
           Container(
             width: double.infinity,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.inverseSurface,
             padding: const EdgeInsets.symmetric(
               horizontal: BauhausDesign.space5,
               vertical: BauhausDesign.space4,
@@ -288,7 +301,7 @@ class _AutomaticInvoiceGenerationViewState
                 context,
               )!.invoiceConfigurationTitle.toUpperCase(),
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                color: BauhausDesign.surfaceWhite,
+                color: Theme.of(context).colorScheme.onInverseSurface,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.1,
               ),
@@ -381,9 +394,9 @@ class _AutomaticInvoiceGenerationViewState
                     vertical: BauhausDesign.space3,
                   ),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.surfaceWhite,
+                    color: Theme.of(context).colorScheme.surface,
                     border: Border.all(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.onSurface,
                       width: 1.5,
                     ),
                   ),
@@ -393,7 +406,7 @@ class _AutomaticInvoiceGenerationViewState
                         : AppLocalizations.of(context)!.noPeriodSelectedText,
                     style: BauhausDesign.getTextTheme(context).bodyMedium
                         ?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w700,
                         ),
                   ),
@@ -413,19 +426,6 @@ class _AutomaticInvoiceGenerationViewState
                             end: _selectedEndDate!,
                           )
                         : null,
-                    builder: (context, child) {
-                      return Theme(
-                        data: Theme.of(context).copyWith(
-                          colorScheme: const ColorScheme.light(
-                            primary: BauhausDesign.primary,
-                            onPrimary: BauhausDesign.surfaceWhite,
-                            surface: BauhausDesign.surfaceWhite,
-                            onSurface: BauhausDesign.textDark,
-                          ),
-                        ),
-                        child: child!,
-                      );
-                    },
                   );
                   if (picked != null) {
                     setState(() {
@@ -451,7 +451,7 @@ class _AutomaticInvoiceGenerationViewState
                     _selectedEndDate = null;
                   });
                 },
-                icon: const Icon(Icons.close_rounded),
+                icon: Icon(Icons.close_rounded),
                 label: Text(AppLocalizations.of(context)!.clearButton),
                 style: TextButton.styleFrom(
                   foregroundColor: BauhausDesign.error,
@@ -498,7 +498,10 @@ class _AutomaticInvoiceGenerationViewState
               padding: const EdgeInsets.all(BauhausDesign.space3),
               decoration: BoxDecoration(
                 color: BauhausDesign.surfaceOffWhite,
-                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 1.5,
+                ),
               ),
               child: Row(
                 children: [
@@ -515,7 +518,7 @@ class _AutomaticInvoiceGenerationViewState
                             ),
                       style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w700,
                           ),
                     ),
@@ -544,8 +547,11 @@ class _AutomaticInvoiceGenerationViewState
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 1.5,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -555,7 +561,10 @@ class _AutomaticInvoiceGenerationViewState
             decoration: BoxDecoration(
               color: BauhausDesign.surfaceOffWhite,
               border: Border(
-                bottom: BorderSide(color: BauhausDesign.neutral, width: 1.5),
+                bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 1.5,
+                ),
               ),
             ),
             padding: const EdgeInsets.symmetric(
@@ -569,7 +578,11 @@ class _AutomaticInvoiceGenerationViewState
                   height: 30,
                   color: BauhausDesign.accent,
                   alignment: Alignment.center,
-                  child: Icon(icon, color: BauhausDesign.textDark, size: 18),
+                  child: Icon(
+                    icon,
+                    color: Theme.of(context).colorScheme.onSurface,
+                    size: 18,
+                  ),
                 ),
                 const SizedBox(width: BauhausDesign.space3),
                 Expanded(
@@ -580,7 +593,7 @@ class _AutomaticInvoiceGenerationViewState
                         title,
                         style: BauhausDesign.getTextTheme(context).labelLarge
                             ?.copyWith(
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.w900,
                             ),
                       ),
@@ -621,9 +634,11 @@ class _AutomaticInvoiceGenerationViewState
         decoration: BoxDecoration(
           color: selected
               ? BauhausDesign.primary.withValues(alpha: 0.08)
-              : BauhausDesign.surfaceWhite,
+              : Theme.of(context).colorScheme.surface,
           border: Border.all(
-            color: selected ? BauhausDesign.primary : BauhausDesign.neutral,
+            color: selected
+                ? BauhausDesign.primary
+                : Theme.of(context).colorScheme.onSurface,
             width: selected ? 2 : 1.5,
           ),
         ),
@@ -636,8 +651,11 @@ class _AutomaticInvoiceGenerationViewState
                 shape: BoxShape.circle,
                 color: selected
                     ? BauhausDesign.primary
-                    : BauhausDesign.surfaceWhite,
-                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                    : Theme.of(context).colorScheme.surface,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 1.5,
+                ),
               ),
             ),
             const SizedBox(width: BauhausDesign.space3),
@@ -649,7 +667,7 @@ class _AutomaticInvoiceGenerationViewState
                     title,
                     style: BauhausDesign.getTextTheme(context).bodyMedium
                         ?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w800,
                         ),
                   ),
@@ -685,9 +703,11 @@ class _AutomaticInvoiceGenerationViewState
         decoration: BoxDecoration(
           color: value
               ? BauhausDesign.surfaceOffWhite
-              : BauhausDesign.surfaceWhite,
+              : Theme.of(context).colorScheme.surface,
           border: Border.all(
-            color: value ? BauhausDesign.primary : BauhausDesign.neutral,
+            color: value
+                ? BauhausDesign.primary
+                : Theme.of(context).colorScheme.onSurface,
             width: value ? 2 : 1.5,
           ),
           boxShadow: const [BauhausDesign.shadowHardXs],
@@ -700,14 +720,17 @@ class _AutomaticInvoiceGenerationViewState
               decoration: BoxDecoration(
                 color: value
                     ? BauhausDesign.primary
-                    : BauhausDesign.surfaceWhite,
-                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                    : Theme.of(context).colorScheme.surface,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 1.5,
+                ),
               ),
               child: Icon(
                 icon,
                 color: value
-                    ? BauhausDesign.surfaceWhite
-                    : BauhausDesign.textDark,
+                    ? Theme.of(context).colorScheme.surface
+                    : Theme.of(context).colorScheme.onSurface,
                 size: 18,
               ),
             ),
@@ -721,7 +744,7 @@ class _AutomaticInvoiceGenerationViewState
                     style: BauhausDesign.getTextTheme(context).bodyMedium
                         ?.copyWith(
                           fontWeight: FontWeight.w800,
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                   ),
                   const SizedBox(height: BauhausDesign.space1),
@@ -751,8 +774,11 @@ class _AutomaticInvoiceGenerationViewState
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 1.5,
+        ),
         boxShadow: const [BauhausDesign.shadowHardXs],
       ),
       child: Column(
@@ -765,7 +791,7 @@ class _AutomaticInvoiceGenerationViewState
                 AppLocalizations.of(context)!.taxRateLabel,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
                   fontWeight: FontWeight.w800,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               Container(
@@ -775,13 +801,16 @@ class _AutomaticInvoiceGenerationViewState
                 ),
                 decoration: BoxDecoration(
                   color: BauhausDesign.accent,
-                  border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 1.5,
+                  ),
                 ),
                 child: Text(
                   '${(_taxRate * 100).toStringAsFixed(1)}%',
                   style: BauhausDesign.getTextTheme(context).bodyMedium
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w900,
                       ),
                 ),
@@ -834,7 +863,7 @@ class _AutomaticInvoiceGenerationViewState
                     AppLocalizations.of(context)!.generatingInvoicesTitle,
                     style: BauhausDesign.getTextTheme(context).titleMedium
                         ?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.bold,
                         ),
                   ),
@@ -909,7 +938,7 @@ class _AutomaticInvoiceGenerationViewState
                   border: Border.all(color: BauhausDesign.success, width: 2),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.check_circle,
                   color: BauhausDesign.success,
                   size: 28,
@@ -988,12 +1017,15 @@ class _AutomaticInvoiceGenerationViewState
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
         boxShadow: [
           BoxShadow(
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             offset: const Offset(2, 2),
             blurRadius: 0,
           ),
@@ -1008,7 +1040,7 @@ class _AutomaticInvoiceGenerationViewState
               label,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ),
@@ -1061,7 +1093,7 @@ class _AutomaticInvoiceGenerationViewState
           Text(
             state.errorMessage,
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -1189,7 +1221,7 @@ class _AutomaticInvoiceGenerationViewState
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: BauhausDesign.surfaceWhite,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(BauhausDesign.radiusXl),
@@ -1222,7 +1254,7 @@ class _AutomaticInvoiceGenerationViewState
                           ),
                           border: Border.all(color: BauhausDesign.primary),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.people_alt,
                           color: BauhausDesign.primary,
                           size: 20,
@@ -1237,9 +1269,9 @@ class _AutomaticInvoiceGenerationViewState
                       ),
                       const Spacer(),
                       IconButton(
-                        icon: const Icon(Icons.close),
+                        icon: Icon(Icons.close),
                         onPressed: () => Navigator.of(context).pop(),
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ],
                   ),
@@ -1283,7 +1315,7 @@ class _AutomaticInvoiceGenerationViewState
                           ),
                           value: isChecked,
                           activeColor: BauhausDesign.primary,
-                          checkColor: BauhausDesign.surfaceWhite,
+                          checkColor: Theme.of(context).colorScheme.surface,
                           onChanged: (val) {
                             ref
                                 .read(provider.notifier)
@@ -1357,7 +1389,10 @@ class _AutomaticInvoiceGenerationViewState
               padding: const EdgeInsets.all(BauhausDesign.space3),
               decoration: BoxDecoration(
                 color: BauhausDesign.surfaceOffWhite,
-                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 1.5,
+                ),
               ),
               child: Row(
                 children: [
@@ -1368,7 +1403,7 @@ class _AutomaticInvoiceGenerationViewState
                           : '${_selectedClientEmails.length} client(s) selected',
                       style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w700,
                           ),
                     ),
@@ -1401,7 +1436,7 @@ class _AutomaticInvoiceGenerationViewState
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: BauhausDesign.surfaceWhite,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(BauhausDesign.radiusXl),
@@ -1456,7 +1491,7 @@ class _AutomaticInvoiceGenerationViewState
                           ),
                           border: Border.all(color: BauhausDesign.primary),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.business_rounded,
                           color: BauhausDesign.primary,
                           size: 20,
@@ -1471,9 +1506,9 @@ class _AutomaticInvoiceGenerationViewState
                       ),
                       const Spacer(),
                       IconButton(
-                        icon: const Icon(Icons.close),
+                        icon: Icon(Icons.close),
                         onPressed: () => Navigator.of(context).pop(),
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ],
                   ),
@@ -1540,7 +1575,7 @@ class _AutomaticInvoiceGenerationViewState
                             ),
                             value: isChecked,
                             activeColor: BauhausDesign.primary,
-                            checkColor: BauhausDesign.surfaceWhite,
+                            checkColor: Theme.of(context).colorScheme.surface,
                             onChanged: (val) {
                               setModalState(() {
                                 if (val == true) {
@@ -1598,7 +1633,7 @@ class _AutomaticInvoiceGenerationViewState
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                   border: Border.all(color: BauhausDesign.primary),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.file_present_rounded,
                   color: BauhausDesign.primary,
                   size: 20,
@@ -1641,9 +1676,12 @@ class _AutomaticInvoiceGenerationViewState
                   ? const EdgeInsets.only(bottom: BauhausDesign.space2)
                   : EdgeInsets.zero,
               decoration: BoxDecoration(
-                color: BauhausDesign.surfaceWhite,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 1.5,
+                ),
                 boxShadow: const [BauhausDesign.shadowHardSm],
               ),
               child: Material(
@@ -1664,7 +1702,7 @@ class _AutomaticInvoiceGenerationViewState
                             ),
                             border: Border.all(color: BauhausDesign.success),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.picture_as_pdf_rounded,
                             color: BauhausDesign.success,
                             size: 20,

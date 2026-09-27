@@ -117,7 +117,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
 
   Widget _buildModernHeader() {
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).colorScheme.surface,
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -125,13 +125,13 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF1F5F9),
+                  color: Theme.of(context).colorScheme.surfaceContainer,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-                  color: const Color(0xFF475569),
+                  icon: Icon(Icons.arrow_back_ios_new, size: 20),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(width: 16),
@@ -141,16 +141,19 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                   children: [
                     Text(
                       AppLocalizations.of(context)!.pricingAnalyticsTitle,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF0F172A),
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       AppLocalizations.of(context)!.monitorPricingPerformance,
-                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
@@ -161,7 +164,9 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.secondary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -170,16 +175,16 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                     Container(
                       width: 8,
                       height: 8,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF10B981),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.secondary,
                         shape: BoxShape.circle,
                       ),
                     ),
                     const SizedBox(width: 6),
                     Text(
                       AppLocalizations.of(context)!.liveData,
-                      style: const TextStyle(
-                        color: Color(0xFF10B981),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -210,7 +215,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                 value: '0.125K',
                 subtitle: AppLocalizations.of(context)!.thisMonthStat('+12.5%'),
                 icon: Icons.attach_money,
-                color: const Color(0xFF6366F1),
+                color: Theme.of(context).colorScheme.tertiary,
               ),
             ),
             const SizedBox(width: 12),
@@ -221,7 +226,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                 value: '\$85.50',
                 subtitle: AppLocalizations.of(context)!.vsLastMonthStat('-2.3'),
                 icon: Icons.trending_down,
-                color: const Color(0xFFEF4444),
+                color: Theme.of(context).colorScheme.error,
               ),
             ),
             const SizedBox(width: 12),
@@ -232,7 +237,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                 value: '78.5%',
                 subtitle: AppLocalizations.of(context)!.improvementStat('+5.2'),
                 icon: Icons.trending_up,
-                color: const Color(0xFF10B981),
+                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
             const SizedBox(width: 12),
@@ -243,7 +248,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                 value: '23.8%',
                 subtitle: AppLocalizations.of(context)!.growthStat('+1.8'),
                 icon: Icons.pie_chart,
-                color: const Color(0xFF3B82F6),
+                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
           ],
@@ -262,7 +267,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -286,16 +291,20 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                 child: Icon(icon, color: color, size: 20),
               ),
               const Spacer(),
-              Icon(Icons.more_vert, color: Colors.grey[400], size: 16),
+              Icon(
+                Icons.more_vert,
+                color: Theme.of(context).colorScheme.outline,
+                size: 16,
+              ),
             ],
           ),
           const SizedBox(height: 12),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF0F172A),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -305,7 +314,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
             title,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey[600],
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w500,
             ),
             maxLines: 1,
@@ -314,7 +323,10 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
           const SizedBox(height: 2),
           Text(
             subtitle,
-            style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+            style: TextStyle(
+              fontSize: 12,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -327,11 +339,13 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
     return Container(
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Theme.of(
+              context,
+            ).colorScheme.outlineVariant.withValues(alpha: 0.3),
             spreadRadius: 1,
             blurRadius: 10,
             offset: const Offset(0, 2),
@@ -359,21 +373,21 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
           children: [
             Text(
               AppLocalizations.of(context)!.analyticsOverview,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             _buildChartPlaceholder(
               AppLocalizations.of(context)!.revenueTrendTitle,
               AppLocalizations.of(context)!.revenueTrendChartDesc,
               Icons.show_chart,
-              Colors.green,
+              Theme.of(context).colorScheme.secondary,
             ),
             const SizedBox(height: 16),
             _buildChartPlaceholder(
               AppLocalizations.of(context)!.serviceDistributionTitle,
               AppLocalizations.of(context)!.serviceDistributionChartDesc,
               Icons.pie_chart,
-              Colors.blue,
+              Theme.of(context).colorScheme.secondary,
             ),
             const SizedBox(height: 16),
             _buildQuickInsights(),
@@ -394,10 +408,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
               children: [
                 Text(
                   AppLocalizations.of(context)!.revenueAnalysis,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
                 DropdownButton<String>(
@@ -429,14 +440,14 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
               AppLocalizations.of(context)!.revenueByPeriodTitle,
               AppLocalizations.of(context)!.revenueByPeriodChartDesc,
               Icons.bar_chart,
-              Colors.green,
+              Theme.of(context).colorScheme.secondary,
             ),
             const SizedBox(height: 16),
             _buildChartPlaceholder(
               AppLocalizations.of(context)!.revenueByCategoryTitle,
               AppLocalizations.of(context)!.revenueCategoryChartDesc,
               Icons.horizontal_split,
-              Colors.blue,
+              Theme.of(context).colorScheme.secondary,
             ),
             const SizedBox(height: 16),
             _buildRevenueBreakdown(),
@@ -455,7 +466,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
           children: [
             Text(
               AppLocalizations.of(context)!.topPerformingServices,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             ListView.builder(
@@ -482,7 +493,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
           children: [
             Text(
               AppLocalizations.of(context)!.pricingTrendsByCategory,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             ListView.builder(
@@ -507,12 +518,14 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Theme.of(
+              context,
+            ).colorScheme.outlineVariant.withValues(alpha: 0.3),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -530,7 +543,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                   children: [
                     Text(
                       service['name'],
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
@@ -540,7 +553,10 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                       AppLocalizations.of(
                         context,
                       )!.codeLabelValue(service['code']),
-                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontSize: 12,
+                      ),
                     ),
                   ],
                 ),
@@ -548,9 +564,11 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: (isPositive ? Colors.green : Colors.red).withValues(
-                    alpha: 0.1,
-                  ),
+                  color:
+                      (isPositive
+                              ? Theme.of(context).colorScheme.secondary
+                              : Theme.of(context).colorScheme.error)
+                          .withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -559,7 +577,9 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                     Icon(
                       isPositive ? Icons.arrow_upward : Icons.arrow_downward,
                       size: 12,
-                      color: isPositive ? Colors.green : Colors.red,
+                      color: isPositive
+                          ? Theme.of(context).colorScheme.secondary
+                          : Theme.of(context).colorScheme.error,
                     ),
                     const SizedBox(width: 2),
                     Text(
@@ -567,7 +587,9 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: isPositive ? Colors.green : Colors.red,
+                        color: isPositive
+                            ? Theme.of(context).colorScheme.secondary
+                            : Theme.of(context).colorScheme.error,
                       ),
                     ),
                   ],
@@ -583,7 +605,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                   AppLocalizations.of(context)!.metricRevenue,
                   '\$${service['revenue'].toStringAsFixed(0)}',
                   Icons.attach_money,
-                  Colors.green,
+                  Theme.of(context).colorScheme.secondary,
                 ),
               ),
               Expanded(
@@ -591,7 +613,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                   AppLocalizations.of(context)!.metricHours,
                   '${service['hours']}',
                   Icons.schedule,
-                  Colors.blue,
+                  Theme.of(context).colorScheme.secondary,
                 ),
               ),
               Expanded(
@@ -599,7 +621,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                   AppLocalizations.of(context)!.metricRate,
                   '\$${service['rate'].toStringAsFixed(2)}',
                   Icons.trending_up,
-                  Colors.orange,
+                  Theme.of(context).colorScheme.primary,
                 ),
               ),
             ],
@@ -627,7 +649,13 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
             color: color,
           ),
         ),
-        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
       ],
     );
   }
@@ -635,21 +663,23 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
   Widget _buildTrendCard(Map<String, dynamic> trend, int index) {
     final trendColor =
         trend['trend'] == AppLocalizations.of(context)!.trendIncreasing
-        ? Colors.green
+        ? Theme.of(context).colorScheme.secondary
         : trend['trend'] == AppLocalizations.of(context)!.trendDecreasing
-        ? Colors.red
-        : Colors.orange;
+        ? Theme.of(context).colorScheme.error
+        : Theme.of(context).colorScheme.primary;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Theme.of(
+              context,
+            ).colorScheme.outlineVariant.withValues(alpha: 0.3),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -664,10 +694,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
               Expanded(
                 child: Text(
                   trend['category'],
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ),
               Container(
@@ -699,11 +726,14 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                   children: [
                     Text(
                       AppLocalizations.of(context)!.averageRate,
-                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontSize: 12,
+                      ),
                     ),
                     Text(
                       '\$${trend['averageRate'].toStringAsFixed(2)}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
@@ -717,14 +747,19 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                   children: [
                     Text(
                       AppLocalizations.of(context)!.changeLabel,
-                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontSize: 12,
+                      ),
                     ),
                     Text(
                       '${trend['change'] > 0 ? '+' : ''}${trend['change']}%',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
-                        color: trend['change'] > 0 ? Colors.green : Colors.red,
+                        color: trend['change'] > 0
+                            ? Theme.of(context).colorScheme.secondary
+                            : Theme.of(context).colorScheme.error,
                       ),
                     ),
                   ],
@@ -736,11 +771,14 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                   children: [
                     Text(
                       AppLocalizations.of(context)!.volume,
-                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontSize: 12,
+                      ),
                     ),
                     Text(
                       '${trend['volume']}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
@@ -765,9 +803,9 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
       height: 200,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -776,12 +814,15 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
           const SizedBox(height: 12),
           Text(
             title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           const SizedBox(height: 8),
           Text(
             description,
-            style: TextStyle(color: Colors.grey[600], fontSize: 14),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 14,
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -793,23 +834,26 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.blue[50],
+        color: Theme.of(context).colorScheme.secondaryContainer,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.blue[200]!),
+        border: Border.all(color: Theme.of(context).colorScheme.secondary),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.lightbulb, color: Colors.blue[600]),
+              Icon(
+                Icons.lightbulb,
+                color: Theme.of(context).colorScheme.onSecondaryContainer,
+              ),
               const SizedBox(width: 8),
               Text(
                 AppLocalizations.of(context)!.quickInsights,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
-                  color: Colors.blue[800],
+                  color: Theme.of(context).colorScheme.onSecondaryContainer,
                 ),
               ),
             ],
@@ -839,7 +883,10 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
       padding: const EdgeInsets.only(bottom: 8),
       child: Text(
         text,
-        style: TextStyle(color: Colors.blue[700], fontSize: 14),
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSecondaryContainer,
+          fontSize: 14,
+        ),
       ),
     );
   }
@@ -848,9 +895,9 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.green[50],
+        color: Theme.of(context).colorScheme.secondaryContainer,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.green[200]!),
+        border: Border.all(color: Theme.of(context).colorScheme.secondary),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -860,7 +907,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
-              color: Colors.green[800],
+              color: Theme.of(context).colorScheme.onSecondaryContainer,
             ),
           ),
           const SizedBox(height: 12),
@@ -902,14 +949,23 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
-            color: Colors.green[700],
+            color: Theme.of(context).colorScheme.onSecondaryContainer,
           ),
         ),
         const SizedBox(height: 4),
-        Text(label, style: TextStyle(fontSize: 12, color: Colors.green[600])),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: Theme.of(context).colorScheme.onSecondaryContainer,
+          ),
+        ),
         Text(
           percentage,
-          style: TextStyle(fontSize: 11, color: Colors.green[500]),
+          style: TextStyle(
+            fontSize: 11,
+            color: Theme.of(context).colorScheme.onSecondaryContainer,
+          ),
         ),
       ],
     );

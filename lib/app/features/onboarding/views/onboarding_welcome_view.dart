@@ -27,9 +27,10 @@ class _OnboardingWelcomeViewState extends ConsumerState<OnboardingWelcomeView> {
   @override
   Widget build(BuildContext context) {
     final theme = BauhausDesign.getTextTheme(context);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceWhite,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
@@ -46,7 +47,7 @@ class _OnboardingWelcomeViewState extends ConsumerState<OnboardingWelcomeView> {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEFF4FF),
+                        color: colorScheme.surfaceContainerLow,
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Text(
@@ -63,10 +64,13 @@ class _OnboardingWelcomeViewState extends ConsumerState<OnboardingWelcomeView> {
                       height: 260,
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
+                        gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [Color(0xFFF1F6FF), Color(0xFFF8FAFF)],
+                          colors: [
+                            colorScheme.surfaceContainerLow,
+                            colorScheme.surfaceContainer,
+                          ],
                         ),
                         borderRadius: BorderRadius.circular(28),
                       ),
@@ -79,7 +83,7 @@ class _OnboardingWelcomeViewState extends ConsumerState<OnboardingWelcomeView> {
                     Text(
                       'Complete your profile before your first shift',
                       style: theme.headlineMedium?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: colorScheme.onSurface,
                         fontWeight: FontWeight.w800,
                         height: 1.05,
                       ),
@@ -88,7 +92,7 @@ class _OnboardingWelcomeViewState extends ConsumerState<OnboardingWelcomeView> {
                     Text(
                       'Add your payroll, tax, superannuation, and compliance details so your account can be approved and ready for work.',
                       style: theme.bodyLarge?.copyWith(
-                        color: BauhausDesign.textMuted,
+                        color: colorScheme.onSurfaceVariant,
                         height: 1.45,
                       ),
                     ),
@@ -140,6 +144,7 @@ class _WelcomePoint extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = BauhausDesign.getTextTheme(context);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,14 +163,14 @@ class _WelcomePoint extends StatelessWidget {
           child: RichText(
             text: TextSpan(
               style: theme.bodyMedium?.copyWith(
-                color: BauhausDesign.textMuted,
+                color: colorScheme.onSurfaceVariant,
                 height: 1.45,
               ),
               children: [
                 TextSpan(
                   text: '$title. ',
                   style: theme.bodyMedium?.copyWith(
-                    color: BauhausDesign.textDark,
+                    color: colorScheme.onSurface,
                     fontWeight: FontWeight.w700,
                   ),
                 ),

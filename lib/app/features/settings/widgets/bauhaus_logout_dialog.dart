@@ -25,22 +25,26 @@ class BauhausLogoutDialog extends StatelessWidget {
     final headerForeground =
         ThemeData.estimateBrightnessForColor(BauhausDesign.error) ==
             Brightness.dark
-        ? BauhausDesign.textLight
-        : BauhausDesign.textDark;
+        ? Theme.of(context).colorScheme.onError
+        : Theme.of(context).colorScheme.onSurface;
 
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.symmetric(horizontal: 24),
       child: Container(
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceLight,
+          color: Theme.of(context).colorScheme.surface,
           border: Border.all(
-            color: BauhausDesign.textDark, // Use textDark for black branding
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface, // Use textDark for black branding
             width: 3,
           ),
           boxShadow: [
             BoxShadow(
-              color: BauhausDesign.textDark, // Hard black shadow
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface, // Hard black shadow
               offset: const Offset(4, 4),
               blurRadius: 0,
             ),
@@ -56,7 +60,10 @@ class BauhausLogoutDialog extends StatelessWidget {
               decoration: BoxDecoration(
                 color: BauhausDesign.error, // Red header for destructive action
                 border: Border(
-                  bottom: BorderSide(color: BauhausDesign.textDark, width: 3),
+                  bottom: BorderSide(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 3,
+                  ),
                 ),
               ),
               child: Row(
@@ -92,7 +99,7 @@ class BauhausLogoutDialog extends StatelessWidget {
                     content,
                     style: BauhausDesign.getTextTheme(context).bodyLarge
                         ?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 16,
                           height: 1.5,
                         ),
@@ -114,18 +121,20 @@ class BauhausLogoutDialog extends StatelessWidget {
                             shape:
                                 const RoundedRectangleBorder(), // Square corners
                             side: BorderSide(
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                               width: 2,
                             ),
                             backgroundColor: Colors.transparent,
-                            foregroundColor: BauhausDesign.textDark,
+                            foregroundColor: Theme.of(
+                              context,
+                            ).colorScheme.onSurface,
                           ),
                           child: Text(
                             cancelText.toUpperCase(),
                             style: GoogleFonts.oswald(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         ),
@@ -143,9 +152,12 @@ class BauhausLogoutDialog extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape:
                                 const RoundedRectangleBorder(), // Square corners
-                            backgroundColor:
-                                BauhausDesign.textDark, // Solid black button
-                            foregroundColor: BauhausDesign.surfaceLight,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.inverseSurface,
+                            foregroundColor: Theme.of(
+                              context,
+                            ).colorScheme.onInverseSurface,
                             elevation: 0,
                           ),
                           child: Text(
@@ -153,7 +165,9 @@ class BauhausLogoutDialog extends StatelessWidget {
                             style: GoogleFonts.oswald(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
-                              color: BauhausDesign.surfaceLight,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onInverseSurface,
                             ),
                           ),
                         ),

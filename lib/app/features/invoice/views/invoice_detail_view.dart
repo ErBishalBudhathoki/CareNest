@@ -103,23 +103,26 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
     final state = ref.watch(invoiceDetailViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceWhite,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           l10n.invoiceDetailsTitle,
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             fontWeight: FontWeight.w800,
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
           ),
         ),
         backgroundColor: BauhausDesign.primary,
         surfaceTintColor: Colors.transparent, // Disable surface tint
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         elevation: 0,
-        shape: const Border(
-          bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
         ),
         actions: [
           if (state.invoice != null) ...[
@@ -201,7 +204,7 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
                   state.warning!,
                   style: BauhausDesign.getTextTheme(context).bodyMedium
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w600,
                       ),
                 ),
@@ -238,7 +241,10 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
           color: BauhausDesign
               .primary, // Use solid color instead of gradient for Bauhaus style
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -251,7 +257,7 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
                     invoice.invoiceNumber,
                     style: BauhausDesign.getTextTheme(context).headlineMedium
                         ?.copyWith(
-                          color: BauhausDesign.surfaceWhite,
+                          color: Theme.of(context).colorScheme.onPrimary,
                           fontWeight: FontWeight.w800,
                         ),
                     overflow: TextOverflow.ellipsis,
@@ -265,7 +271,9 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
             Text(
               l10n.totalAmountLabel,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.surfaceWhite.withValues(alpha: 0.9),
+                color: Theme.of(
+                  context,
+                ).colorScheme.surface.withValues(alpha: 0.9),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -276,7 +284,7 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
               ),
               style: BauhausDesign.getTextTheme(context).displayMedium
                   ?.copyWith(
-                    color: BauhausDesign.surfaceWhite,
+                    color: Theme.of(context).colorScheme.surface,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -1,
                   ),
@@ -322,9 +330,12 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
 
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusPill),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 1.5,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: BauhausChip(label: label, variant: variant, icon: icon),
@@ -342,7 +353,7 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
             padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
           ),
           _buildInfoRow(l10n.nameLabel, invoice.clientName),
-          const Divider(color: BauhausDesign.neutral, thickness: 1),
+          Divider(color: Theme.of(context).colorScheme.onSurface, thickness: 1),
           _buildInfoRow(l10n.emailLabel, invoice.clientEmail),
         ],
       ),
@@ -360,26 +371,26 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
             padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
           ),
           _buildInfoRow(l10n.invoiceNumberLabel, invoice.invoiceNumber),
-          const Divider(color: BauhausDesign.neutral, thickness: 1),
+          Divider(color: Theme.of(context).colorScheme.onSurface, thickness: 1),
           _buildInfoRow(l10n.invoiceTypeLabel, invoice.invoiceType),
-          const Divider(color: BauhausDesign.neutral, thickness: 1),
+          Divider(color: Theme.of(context).colorScheme.onSurface, thickness: 1),
           _buildInfoRow(
             l10n.issueDateLabel,
             DateFormat.yMMMd(l10n.localeName).format(invoice.issueDate),
           ),
-          const Divider(color: BauhausDesign.neutral, thickness: 1),
+          Divider(color: Theme.of(context).colorScheme.onSurface, thickness: 1),
           _buildInfoRow(
             l10n.dueDateLabel,
             DateFormat.yMMMd(l10n.localeName).format(invoice.dueDate),
           ),
-          const Divider(color: BauhausDesign.neutral, thickness: 1),
+          Divider(color: Theme.of(context).colorScheme.onSurface, thickness: 1),
           _buildInfoRow(
             l10n.createdLabel,
             DateFormat.yMMMd(
               l10n.localeName,
             ).add_jm().format(invoice.createdAt),
           ),
-          const Divider(color: BauhausDesign.neutral, thickness: 1),
+          Divider(color: Theme.of(context).colorScheme.onSurface, thickness: 1),
           _buildInfoRow(
             l10n.lastUpdatedLabel,
             DateFormat.yMMMd(
@@ -403,7 +414,7 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
           ),
           _buildFinancialRow(l10n.subtotalLabel, invoice.subtotalAmount),
           _buildFinancialRow(l10n.taxAmountLabel, invoice.taxAmount),
-          const Divider(height: 24, thickness: 1),
+          Divider(height: 24, thickness: 1),
           _buildFinancialRow(
             l10n.totalAmountLabel,
             invoice.totalAmount,
@@ -425,16 +436,22 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
             padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
           ),
           _buildInfoRow(l10n.invoiceStatusLabel, invoice.status),
-          const Divider(color: BauhausDesign.neutral, thickness: 1),
+          Divider(color: Theme.of(context).colorScheme.onSurface, thickness: 1),
           _buildInfoRow(l10n.paymentStatusLabel, invoice.paymentStatus),
-          const Divider(color: BauhausDesign.neutral, thickness: 1),
+          Divider(color: Theme.of(context).colorScheme.onSurface, thickness: 1),
           _buildInfoRow(l10n.deliveryStatusLabel, invoice.deliveryStatus),
           if (invoice.shareableLink != null) ...[
-            const Divider(color: BauhausDesign.neutral, thickness: 1),
+            Divider(
+              color: Theme.of(context).colorScheme.onSurface,
+              thickness: 1,
+            ),
             _buildInfoRow(l10n.shareableLinkLabel, l10n.availableLabel),
           ],
           if (invoice.pdfPath != null) ...[
-            const Divider(color: BauhausDesign.neutral, thickness: 1),
+            Divider(
+              color: Theme.of(context).colorScheme.onSurface,
+              thickness: 1,
+            ),
             _buildInfoRow(l10n.pdfDocumentLabel, l10n.availableLabel),
           ],
         ],
@@ -559,7 +576,9 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
               fontWeight: isTotal ? FontWeight.bold : FontWeight.w400,
               fontSize: isTotal ? 16 : 14,
-              color: isTotal ? BauhausDesign.primary : BauhausDesign.textDark,
+              color: isTotal
+                  ? BauhausDesign.primary
+                  : Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ],
@@ -620,7 +639,7 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: BauhausDesign.surfaceWhite,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
             l10n.deleteInvoiceConfirmTitle,
             style: BauhausDesign.getTextTheme(context).titleLarge,

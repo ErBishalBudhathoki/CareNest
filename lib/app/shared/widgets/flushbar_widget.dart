@@ -1,5 +1,4 @@
 import 'package:another_flushbar/flushbar.dart';
-import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:flutter/material.dart';
 
 class FlushBarWidget {
@@ -14,12 +13,25 @@ class FlushBarWidget {
     String? actionLabel,
     VoidCallback? onAction,
   }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDarkBackground =
+        ThemeData.estimateBrightnessForColor(backgroundColor) ==
+        Brightness.dark;
+    final foreground = isDarkBackground
+        ? (theme.brightness == Brightness.dark
+              ? colorScheme.onSurface
+              : colorScheme.surface)
+        : (theme.brightness == Brightness.dark
+              ? colorScheme.onInverseSurface
+              : colorScheme.onSurface);
+
     return Flushbar(
       flushbarPosition: FlushbarPosition.BOTTOM,
-      icon: Icon(icon, color: BauhausDesign.surfaceWhite, size: 24),
+      icon: Icon(icon, color: foreground, size: 24),
       backgroundColor: backgroundColor,
       duration: duration,
-      borderColor: BauhausDesign.neutral,
+      borderColor: colorScheme.outline,
       borderWidth: 2,
       message: message,
       messageSize: 14,
@@ -28,8 +40,8 @@ class FlushBarWidget {
               onPressed: onAction,
               child: Text(
                 actionLabel,
-                style: const TextStyle(
-                  color: BauhausDesign.surfaceWhite,
+                style: TextStyle(
+                  color: foreground,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -39,10 +51,10 @@ class FlushBarWidget {
         title,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
-          color: Colors.white,
+          color: foreground,
         ),
       ),
     )..show(context);

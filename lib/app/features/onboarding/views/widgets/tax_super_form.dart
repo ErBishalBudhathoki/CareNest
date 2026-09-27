@@ -41,6 +41,8 @@ class _TaxSuperFormState extends ConsumerState<TaxSuperForm> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Form(
       key: _formKey,
       child: Column(
@@ -49,7 +51,7 @@ class _TaxSuperFormState extends ConsumerState<TaxSuperForm> {
           Text(
             'Tax Declaration',
             style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-              color: BauhausDesign.textDark,
+              color: colorScheme.onSurface,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -66,21 +68,18 @@ class _TaxSuperFormState extends ConsumerState<TaxSuperForm> {
             initialValue: _taxScale,
             decoration: InputDecoration(
               labelText: 'Tax Scale',
-              labelStyle: const TextStyle(color: BauhausDesign.textDark),
+              labelStyle: TextStyle(color: colorScheme.onSurface),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(BauhausDesign.space2),
-                borderSide: const BorderSide(color: BauhausDesign.textDark),
+                borderSide: BorderSide(color: colorScheme.onSurface),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(BauhausDesign.space2),
-                borderSide: const BorderSide(color: BauhausDesign.textDark),
+                borderSide: BorderSide(color: colorScheme.onSurface),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(BauhausDesign.space2),
-                borderSide: const BorderSide(
-                  color: BauhausDesign.primary,
-                  width: 2,
-                ),
+                borderSide: BorderSide(color: colorScheme.primary, width: 2),
               ),
             ),
             items: const [
@@ -99,7 +98,7 @@ class _TaxSuperFormState extends ConsumerState<TaxSuperForm> {
           Text(
             'Superannuation',
             style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-              color: BauhausDesign.textDark,
+              color: colorScheme.onSurface,
               fontWeight: FontWeight.bold,
             ),
           ),

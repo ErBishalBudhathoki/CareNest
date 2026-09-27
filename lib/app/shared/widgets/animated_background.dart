@@ -30,12 +30,17 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
   // Draw animated blob/gradient shapes
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
         final t = _controller.value;
         return CustomPaint(
-          painter: _GradientBlobPainter(t),
+          painter: _GradientBlobPainter(
+            t,
+            surfaceColor: colorScheme.surface,
+            surfaceContainerColor: colorScheme.surfaceContainer,
+          ),
           child: Container(),
         );
       },
@@ -45,7 +50,14 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
 
 class _GradientBlobPainter extends CustomPainter {
   final double t;
-  _GradientBlobPainter(this.t);
+  final Color surfaceColor;
+  final Color surfaceContainerColor;
+
+  _GradientBlobPainter(
+    this.t, {
+    required this.surfaceColor,
+    required this.surfaceContainerColor,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -80,7 +92,10 @@ class _GradientBlobPainter extends CustomPainter {
     );
     final blobPaint = Paint()
       ..shader = RadialGradient(
-        colors: [const Color(0xFF7B64FD).withValues(alpha: 0.1), Colors.transparent],
+        colors: [
+          const Color(0xFF7B64FD).withValues(alpha: 0.1),
+          Colors.transparent,
+        ],
         radius: 1,
       ).createShader(Rect.fromCircle(center: blobCenter, radius: blobRadius));
     canvas.drawCircle(blobCenter, blobRadius, blobPaint);
@@ -101,8 +116,8 @@ class _GradientBlobPainter extends CustomPainter {
     final bottomPaint = Paint()
       ..shader = LinearGradient(
         colors: [
-          Colors.white.withValues(alpha: 0.1),
-          Colors.grey[100]!.withValues(alpha: 0.1),
+          surfaceColor.withValues(alpha: 0.1),
+          surfaceContainerColor.withValues(alpha: 0.1),
         ],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,

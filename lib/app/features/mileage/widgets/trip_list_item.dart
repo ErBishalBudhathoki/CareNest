@@ -17,7 +17,7 @@ class TripListItem extends StatelessWidget {
         child: Row(
           children: [
             // Status Chip
-            _buildStatusChip(),
+            _buildStatusChip(context),
             const SizedBox(width: BauhausDesign.space4),
 
             // Details
@@ -30,7 +30,7 @@ class TripListItem extends StatelessWidget {
                     style: BauhausDesign.getTextTheme(context).titleMedium
                         ?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                   ),
                   const SizedBox(height: BauhausDesign.space1),
@@ -51,14 +51,19 @@ class TripListItem extends StatelessWidget {
                 vertical: BauhausDesign.space1,
               ),
               decoration: BoxDecoration(
-                color: BauhausDesign.neutral.withValues(alpha: 0.1),
-                border: Border.all(color: BauhausDesign.neutral, width: 1),
+                color: Theme.of(
+                  context,
+                ).colorScheme.outline.withValues(alpha: 0.1),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 1,
+                ),
               ),
               child: Text(
                 '${trip.distance.toStringAsFixed(1)} km',
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ),
@@ -78,7 +83,7 @@ class TripListItem extends StatelessWidget {
     }
   }
 
-  Widget _buildStatusChip() {
+  Widget _buildStatusChip(BuildContext context) {
     BauhausChipVariant variant = BauhausChipVariant.neutral;
     if (trip.status == 'APPROVED') variant = BauhausChipVariant.success;
     if (trip.status == 'REJECTED') variant = BauhausChipVariant.error;
@@ -88,7 +93,7 @@ class TripListItem extends StatelessWidget {
     // Or just a small dot?
     // Let's use a small dot/icon styled container for compact list item
 
-    Color color = BauhausDesign.neutral;
+    Color color = Theme.of(context).colorScheme.onSurfaceVariant;
     IconData icon = Icons.help_outline;
 
     switch (variant) {
@@ -105,7 +110,7 @@ class TripListItem extends StatelessWidget {
         icon = Icons.access_time;
         break;
       default:
-        color = BauhausDesign.neutral;
+        color = Theme.of(context).colorScheme.onSurfaceVariant;
         break;
     }
 
@@ -116,7 +121,11 @@ class TripListItem extends StatelessWidget {
         color: color.withValues(alpha: 0.2),
         border: Border.all(color: color, width: 1.5),
       ),
-      child: Icon(icon, size: 16, color: BauhausDesign.textDark),
+      child: Icon(
+        icon,
+        size: 16,
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
     );
   }
 }

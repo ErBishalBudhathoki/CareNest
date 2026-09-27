@@ -12,33 +12,29 @@ class ThemeSettingsView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentMode = ref.watch(themeModeProvider);
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceLight,
+      backgroundColor: colorScheme.background,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.themeAppBarTitle,
-          style: TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w900,
-            fontSize: 18,
-            letterSpacing: 0.5,
-            color: BauhausDesign.surfaceWhite,
-          ),
+          style: theme.textTheme.titleLarge,
         ),
         centerTitle: true,
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: colorScheme.inverseSurface,
+        foregroundColor: colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: BauhausDesign.surfaceWhite),
+          icon: Icon(Icons.close, color: colorScheme.onInverseSurface),
           onPressed: () => Navigator.pop(context),
         ),
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(2),
-          child: Divider(height: 2, color: BauhausDesign.neutral, thickness: 2),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(2),
+          child: Divider(height: 2, color: colorScheme.outline, thickness: 2),
         ),
       ),
       body: SingleChildScrollView(
@@ -50,11 +46,11 @@ class ThemeSettingsView extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: BauhausDesign.surfaceLight,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                color: colorScheme.surfaceContainerLow,
+                borderRadius: BorderRadius.zero,
+                border: Border.all(color: colorScheme.outline, width: 2.5),
                 boxShadow: const [
-                  BoxShadow(color: BauhausDesign.neutral, offset: Offset(4, 4)),
+                  BoxShadow(color: BauhausDesign.neoInk, offset: Offset(4, 4)),
                 ],
               ),
               child: Row(
@@ -62,24 +58,22 @@ class ThemeSettingsView extends ConsumerWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: BauhausDesign.accent.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: BauhausDesign.accent),
+                      color: colorScheme.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.zero,
+                      border: Border.all(color: colorScheme.primary),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.palette_outlined,
-                      color: BauhausDesign.accent,
+                      color: colorScheme.primary,
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
                       AppLocalizations.of(context)!.themeInfoMessage,
-                      style: BauhausDesign.getTextTheme(context).bodyMedium
-                          ?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: BauhausDesign.textDark,
-                          ),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurface,
+                      ),
                     ),
                   ),
                 ],
@@ -89,8 +83,8 @@ class ThemeSettingsView extends ConsumerWidget {
 
             Text(
               AppLocalizations.of(context)!.appearance,
-              style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.neutral,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: colorScheme.onSurface,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.0,
               ),
@@ -137,25 +131,27 @@ class ThemeSettingsView extends ConsumerWidget {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceLight,
-          borderRadius: BorderRadius.circular(16),
+          color: colorScheme.surfaceContainerLow,
+          borderRadius: BorderRadius.zero,
           border: Border.all(
             color: isSelected
-                ? BauhausDesign.primary
-                : BauhausDesign.neutral.withValues(alpha: 0.3),
-            width: isSelected ? 2 : 1.5,
+                ? colorScheme.primary
+                : colorScheme.outlineVariant,
+            width: isSelected ? 2.5 : 1.5,
           ),
           boxShadow: isSelected
               ? const [
-                  BoxShadow(color: BauhausDesign.neutral, offset: Offset(4, 4)),
+                  BoxShadow(color: BauhausDesign.neoInk, offset: Offset(4, 4)),
                 ]
-              : [],
+              : const [],
         ),
         child: Row(
           children: [
@@ -163,15 +159,15 @@ class ThemeSettingsView extends ConsumerWidget {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? BauhausDesign.primary.withValues(alpha: 0.1)
+                    ? colorScheme.primary.withValues(alpha: 0.1)
                     : Colors.transparent,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.zero,
               ),
               child: Icon(
                 icon,
                 color: isSelected
-                    ? BauhausDesign.primary
-                    : BauhausDesign.neutral,
+                    ? colorScheme.primary
+                    : colorScheme.onSurfaceVariant,
                 size: 24,
               ),
             ),
@@ -179,11 +175,9 @@ class ThemeSettingsView extends ConsumerWidget {
             Expanded(
               child: Text(
                 title,
-                style: BauhausDesign.getTextTheme(context).titleSmall?.copyWith(
+                style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: isSelected
-                      ? BauhausDesign.textDark
-                      : BauhausDesign.neutral,
+                  color: colorScheme.onSurface,
                   fontSize: 16,
                 ),
               ),
@@ -194,13 +188,13 @@ class ThemeSettingsView extends ConsumerWidget {
                 height: 24,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: BauhausDesign.primary,
-                  border: Border.all(color: BauhausDesign.primary),
+                  color: colorScheme.primary,
+                  border: Border.all(color: colorScheme.primary),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.check,
                   size: 16,
-                  color: BauhausDesign.textLight,
+                  color: colorScheme.onPrimary,
                 ),
               ),
           ],

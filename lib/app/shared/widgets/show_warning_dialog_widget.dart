@@ -12,6 +12,7 @@ class DialogUtils {
       showDialog(
         context: context,
         builder: (BuildContext context) {
+          final colorScheme = Theme.of(context).colorScheme;
           return AlertDialog(
             contentPadding: const EdgeInsets.symmetric(
               vertical: 8.0,
@@ -25,7 +26,7 @@ class DialogUtils {
                     : const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
-                      ).copyWith(color: Colors.red),
+                      ).copyWith(color: colorScheme.error),
               ),
             ),
             content: Column(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/features/analytics/theme/bauhaus_theme.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:carenest/app/core/services/sync/sync_manager.dart';
@@ -53,26 +52,38 @@ class _OfflineSyncDashboardViewState
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = BauhausDesign.getTextTheme(context);
+    final statusColor = _isOnline ? colorScheme.secondary : colorScheme.error;
+    final statusForeground = _isOnline
+        ? colorScheme.onSecondary
+        : colorScheme.onError;
+
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+        backgroundColor: colorScheme.surface,
+        body: Center(
+          child: CircularProgressIndicator(color: colorScheme.primary),
+        ),
+      );
     }
 
     return Scaffold(
-      backgroundColor: BauhausTheme.white,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.offlineSyncTitle,
-          style: BauhausTheme.headerStyle.copyWith(
-            color: BauhausDesign.surfaceWhite,
+          style: textTheme.titleLarge?.copyWith(
+            color: colorScheme.onInverseSurface,
           ),
         ),
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: colorScheme.inverseSurface,
+        foregroundColor: colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(color: colorScheme.onInverseSurface),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _loadData),
         ],
@@ -82,18 +93,18 @@ class _OfflineSyncDashboardViewState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Connection Status
             Container(
               padding: const EdgeInsets.all(24),
-              decoration: BauhausTheme.blockDecoration.copyWith(
-                color: _isOnline ? BauhausTheme.blue : BauhausTheme.red,
+              decoration: BoxDecoration(
+                color: statusColor,
+                border: Border.all(color: colorScheme.outline, width: 2),
               ),
               child: Row(
                 children: [
                   Icon(
                     _isOnline ? Icons.wifi : Icons.wifi_off,
                     size: 48,
-                    color: BauhausTheme.white,
+                    color: statusForeground,
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -104,8 +115,8 @@ class _OfflineSyncDashboardViewState
                           _isOnline
                               ? 'Online'
                               : AppLocalizations.of(context)!.offlineStatus,
-                          style: BauhausTheme.headerStyle.copyWith(
-                            color: BauhausTheme.white,
+                          style: textTheme.headlineSmall?.copyWith(
+                            color: statusForeground,
                             fontSize: 24,
                           ),
                         ),
@@ -113,8 +124,8 @@ class _OfflineSyncDashboardViewState
                           _queue.isEmpty
                               ? 'All data is synced'
                               : '${_queue.length} requests pending',
-                          style: BauhausTheme.bodyStyle.copyWith(
-                            color: BauhausTheme.white,
+                          style: textTheme.bodyMedium?.copyWith(
+                            color: statusForeground,
                           ),
                         ),
                       ],
@@ -124,13 +135,11 @@ class _OfflineSyncDashboardViewState
               ),
             ),
             const SizedBox(height: 32),
-
             Text(
               AppLocalizations.of(context)!.pendingUploads,
-              style: BauhausTheme.subHeaderStyle,
+              style: textTheme.titleMedium,
             ),
             const SizedBox(height: 16),
-
             Expanded(
               child: _queue.isEmpty
                   ? Center(
@@ -140,13 +149,13 @@ class _OfflineSyncDashboardViewState
                           Icon(
                             Icons.check_circle_outline,
                             size: 64,
-                            color: Colors.grey,
+                            color: colorScheme.onSurfaceVariant,
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           Text(
                             'No pending changes',
-                            style: BauhausTheme.bodyStyle.copyWith(
-                              color: Colors.grey,
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -155,15 +164,11 @@ class _OfflineSyncDashboardViewState
                   : ListView.builder(
                       itemCount: _queue.length,
                       itemBuilder: (context, index) {
-                        final item = _queue[index];
-                        return _buildQueueItem(item);
+                        return _buildQueueItem(context, _queue[index]);
                       },
                     ),
             ),
-
             const SizedBox(height: 16),
-
-            // Sync Button
             SizedBox(
               width: double.infinity,
               height: 56,
@@ -184,25 +189,26 @@ class _OfflineSyncDashboardViewState
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
-                              color: Colors.white,
+                              color: colorScheme.onInverseSurface,
                               strokeWidth: 2,
                             ),
                           )
-                        : const Icon(Icons.sync, color: BauhausTheme.white),
+                        : Icon(Icons.sync, color: colorScheme.onInverseSurface),
                     label: Text(
                       isSyncing
                           ? 'Syncing...'
                           : AppLocalizations.of(context)!.syncNow,
-                      style: BauhausTheme.subHeaderStyle.copyWith(
-                        color: BauhausTheme.white,
+                      style: textTheme.labelLarge?.copyWith(
+                        color: colorScheme.onInverseSurface,
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: BauhausTheme.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0),
+                      backgroundColor: colorScheme.inverseSurface,
+                      foregroundColor: colorScheme.onInverseSurface,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
                       ),
-                      disabledBackgroundColor: Colors.grey,
+                      disabledBackgroundColor: colorScheme.surfaceContainerHigh,
                     ),
                   );
                 },
@@ -214,12 +220,16 @@ class _OfflineSyncDashboardViewState
     );
   }
 
-  Widget _buildQueueItem(SyncQueueItem item) {
+  Widget _buildQueueItem(BuildContext context, SyncQueueItem item) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = BauhausDesign.getTextTheme(context);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
-      decoration: BauhausTheme.blockDecoration.copyWith(
-        border: Border.all(color: BauhausTheme.black, width: 2),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainer,
+        border: Border.all(color: colorScheme.outline, width: 2),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -230,9 +240,9 @@ class _OfflineSyncDashboardViewState
                 width: 12,
                 height: 12,
                 decoration: BoxDecoration(
-                  color: BauhausTheme.yellow,
+                  color: colorScheme.primary,
                   shape: BoxShape.circle,
-                  border: Border.all(color: BauhausTheme.black),
+                  border: Border.all(color: colorScheme.outline),
                 ),
               ),
               const SizedBox(width: 12),
@@ -241,13 +251,12 @@ class _OfflineSyncDashboardViewState
                 children: [
                   Text(
                     item.endpoint,
-                    style: BauhausTheme.subHeaderStyle.copyWith(fontSize: 14),
+                    style: textTheme.titleSmall?.copyWith(fontSize: 14),
                   ),
                   Text(
                     item.method,
-                    style: BauhausTheme.bodyStyle.copyWith(
-                      fontSize: 12,
-                      color: Colors.grey,
+                    style: textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -256,9 +265,9 @@ class _OfflineSyncDashboardViewState
           ),
           Text(
             'Pending',
-            style: BauhausTheme.bodyStyle.copyWith(
+            style: textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: BauhausTheme.black,
+              color: colorScheme.onSurface,
             ),
           ),
         ],

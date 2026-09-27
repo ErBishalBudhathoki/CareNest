@@ -23,7 +23,7 @@ class BauhausFilterDropdown extends StatelessWidget {
         Text(
           label.toUpperCase(),
           style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-            color: BauhausDesign.neutral,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             letterSpacing: 1.2,
           ),
         ),
@@ -31,22 +31,25 @@ class BauhausFilterDropdown extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceLight,
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            color: Theme.of(context).colorScheme.surfaceContainer,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             boxShadow: const [BauhausDesign.shadowHardSm],
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: value,
               isExpanded: true,
-              icon: const Icon(
+              icon: Icon(
                 Icons.arrow_drop_down_sharp,
-                color: BauhausDesign.neutral,
+                color: Theme.of(context).colorScheme.onSurface,
                 size: 32,
               ),
-              dropdownColor: BauhausDesign.surfaceLight,
+              dropdownColor: Theme.of(context).colorScheme.surfaceContainer,
               style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.bold,
               ),
               items: items.map((String item) {

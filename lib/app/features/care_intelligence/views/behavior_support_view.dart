@@ -39,14 +39,14 @@ class _BehaviorSupportViewState extends ConsumerState<BehaviorSupportView> {
     final state = ref.watch(behaviorSupportViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         title: Text(
           'BEHAVIOR SUPPORT',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onSecondary,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -135,9 +135,9 @@ class _BehaviorSupportViewState extends ConsumerState<BehaviorSupportView> {
               ],
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'Escalations typically occur on Tuesdays between 2 PM and 4 PM. Suggest proactive engagement during these times.',
-              style: TextStyle(color: BauhausDesign.textDark),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
             ),
           ],
         ),
@@ -159,9 +159,9 @@ class _BehaviorSupportViewState extends ConsumerState<BehaviorSupportView> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             subtitle: const Text('Identified 3 times this week.'),
-            trailing: const Icon(
+            trailing: Icon(
               Icons.chevron_right,
-              color: BauhausDesign.neutral,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ),

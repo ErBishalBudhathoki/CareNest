@@ -420,7 +420,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
         analyticsAsync.isLoading;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
@@ -442,7 +442,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
 
   Widget _buildBauhausHeader() {
     return Container(
-      color: BauhausDesign.backgroundLight,
+      color: Theme.of(context).colorScheme.surface,
       child: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -461,16 +461,16 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                           width: BauhausDesign.space10,
                           height: BauhausDesign.space10,
                           decoration: BoxDecoration(
-                            color: BauhausDesign.surfaceWhite,
+                            color: Theme.of(context).colorScheme.surface,
                             border: Border.all(
-                              color: BauhausDesign.neutral,
+                              color: Theme.of(context).colorScheme.onSurface,
                               width: BauhausDesign.borderThick,
                             ),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.arrow_back,
                             size: BauhausDesign.iconMd,
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       ),
@@ -491,7 +491,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                                     fontSize: isSmallScreen
                                         ? BauhausDesign.fontXxl + 2
                                         : BauhausDesign.fontXxl + 6,
-                                    color: BauhausDesign.textDark,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
                                   ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -522,14 +524,14 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                           decoration: BoxDecoration(
                             color: BauhausDesign.secondary,
                             border: Border.all(
-                              color: BauhausDesign.neutral,
+                              color: Theme.of(context).colorScheme.onSurface,
                               width: BauhausDesign.borderThick,
                             ),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.settings,
                             size: BauhausDesign.iconMd,
-                            color: BauhausDesign.surfaceWhite,
+                            color: Theme.of(context).colorScheme.onSecondary,
                           ),
                         ),
                       ),
@@ -558,7 +560,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                   Container(
                     width: double.infinity,
                     height: BauhausDesign.borderThin,
-                    color: BauhausDesign.neutral,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ],
               ),
@@ -578,14 +580,14 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
       decoration: BoxDecoration(
         color: BauhausDesign.primary,
         border: Border.all(
-          color: BauhausDesign.neutral,
+          color: Theme.of(context).colorScheme.onSurface,
           width: BauhausDesign.borderThick,
         ),
       ),
       child: Text(
         AppLocalizations.of(context)!.systemActive.toUpperCase(),
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-          color: BauhausDesign.surfaceWhite,
+          color: Theme.of(context).colorScheme.onPrimary,
           letterSpacing: 0.6,
           fontWeight: FontWeight.w800,
         ),
@@ -774,9 +776,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         border: Border.all(
-          color: BauhausDesign.neutral,
+          color: Theme.of(context).colorScheme.onSurface,
           width: BauhausDesign.borderThick,
         ),
       ),
@@ -786,7 +788,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
         children: [
           Container(
             width: double.infinity,
-            color: BauhausDesign.neutral,
+            color: Theme.of(context).colorScheme.inverseSurface,
             padding: const EdgeInsets.symmetric(
               horizontal: BauhausDesign.space2,
               vertical: BauhausDesign.space1,
@@ -794,7 +796,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
             child: Text(
               title.toUpperCase(),
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.surfaceWhite,
+                color: Theme.of(context).colorScheme.onInverseSurface,
                 letterSpacing: 0.5,
                 fontWeight: FontWeight.w800,
               ),
@@ -812,13 +814,13 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                 decoration: BoxDecoration(
                   color: color,
                   border: Border.all(
-                    color: BauhausDesign.neutral,
+                    color: Theme.of(context).colorScheme.onSurface,
                     width: BauhausDesign.borderThick,
                   ),
                 ),
                 child: Icon(
                   icon,
-                  color: BauhausDesign.surfaceWhite,
+                  color: Theme.of(context).colorScheme.surface,
                   size: BauhausDesign.iconMd,
                 ),
               ),
@@ -832,7 +834,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                       style: BauhausDesign.getTextTheme(context).headlineSmall
                           ?.copyWith(
                             fontWeight: FontWeight.w900,
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -866,11 +868,11 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
     final modules = _getPricingModules(context);
 
     return Container(
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
           top: BorderSide(
-            color: BauhausDesign.neutral,
+            color: Theme.of(context).colorScheme.onSurface,
             width: BauhausDesign.borderThin,
           ),
         ),
@@ -891,13 +893,13 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                       decoration: BoxDecoration(
                         color: BauhausDesign.primary,
                         border: Border.all(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.onSurface,
                           width: BauhausDesign.borderThick,
                         ),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.apps,
-                        color: BauhausDesign.surfaceWhite,
+                        color: Theme.of(context).colorScheme.onPrimary,
                         size: BauhausDesign.fontXl,
                       ),
                     ),
@@ -913,7 +915,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                                 ?.copyWith(
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 0.4,
-                                  color: BauhausDesign.textDark,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                 ),
                           ),
                           Text(
@@ -1012,9 +1016,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
         duration: Duration(milliseconds: 600 + (index * 100)),
         curve: Curves.easeOutCubic,
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
+          color: Theme.of(context).colorScheme.surface,
           border: Border.all(
-            color: BauhausDesign.neutral,
+            color: Theme.of(context).colorScheme.onSurface,
             width: BauhausDesign.borderThick,
           ),
         ),
@@ -1027,7 +1031,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                 children: [
                   Expanded(
                     child: Container(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.inverseSurface,
                       padding: const EdgeInsets.symmetric(
                         horizontal: BauhausDesign.space2,
                         vertical: BauhausDesign.space1,
@@ -1036,7 +1040,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                         insight.badge.toUpperCase(),
                         style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
-                              color: BauhausDesign.surfaceWhite,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onInverseSurface,
                               letterSpacing: 0.4,
                               fontWeight: FontWeight.w800,
                             ),
@@ -1054,7 +1060,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                     decoration: BoxDecoration(
                       color: insight.statusColor,
                       border: Border.all(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.onSurface,
                         width: BauhausDesign.borderThin,
                       ),
                     ),
@@ -1062,7 +1068,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                       insight.statusLabel.toUpperCase(),
                       style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
-                            color: BauhausDesign.surfaceWhite,
+                            color: Theme.of(context).colorScheme.surface,
                             fontWeight: FontWeight.w800,
                           ),
                     ),
@@ -1079,13 +1085,13 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                     decoration: BoxDecoration(
                       color: accentColor,
                       border: Border.all(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.onSurface,
                         width: BauhausDesign.borderThick,
                       ),
                     ),
                     child: Icon(
                       module['icon'] as IconData,
-                      color: BauhausDesign.surfaceWhite,
+                      color: Theme.of(context).colorScheme.surface,
                       size: BauhausDesign.iconMd,
                     ),
                   ),
@@ -1098,7 +1104,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                           module['title'].toString().toUpperCase(),
                           style: BauhausDesign.getTextTheme(context).labelLarge
                               ?.copyWith(
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                                 fontWeight: FontWeight.w800,
                                 height: 1.15,
                               ),
@@ -1153,7 +1159,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                 decoration: BoxDecoration(
                   color: BauhausDesign.surfaceOffWhite,
                   border: Border.all(
-                    color: BauhausDesign.neutral,
+                    color: Theme.of(context).colorScheme.onSurface,
                     width: BauhausDesign.borderThin,
                   ),
                 ),
@@ -1169,19 +1175,19 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                   width: double.infinity,
                   padding: const EdgeInsets.all(BauhausDesign.space2),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.backgroundLight,
+                    color: Theme.of(context).colorScheme.surface,
                     border: Border.all(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.onSurface,
                       width: BauhausDesign.borderThin,
                     ),
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.insights,
                         size: BauhausDesign.fontMd,
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                       const SizedBox(width: BauhausDesign.space2),
                       Expanded(
@@ -1189,7 +1195,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                           keyInsight,
                           style: BauhausDesign.getTextTheme(context).labelSmall
                               ?.copyWith(
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                                 height: 1.25,
                               ),
                           maxLines: 2,
@@ -1210,9 +1216,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                         vertical: BauhausDesign.space1,
                       ),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.inverseSurface,
                         border: Border.all(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.onSurface,
                           width: BauhausDesign.borderThin,
                         ),
                       ),
@@ -1220,7 +1226,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                         l10n.open.toUpperCase(),
                         style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
-                              color: BauhausDesign.surfaceWhite,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onInverseSurface,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 0.5,
                             ),
@@ -1235,14 +1243,14 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                     decoration: BoxDecoration(
                       color: BauhausDesign.primary,
                       border: Border.all(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.onSurface,
                         width: BauhausDesign.borderThick,
                       ),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.arrow_forward,
                       size: BauhausDesign.fontMd,
-                      color: BauhausDesign.surfaceWhite,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
                 ],
@@ -1261,9 +1269,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space2),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         border: Border.all(
-          color: BauhausDesign.neutral,
+          color: Theme.of(context).colorScheme.onSurface,
           width: BauhausDesign.borderThin,
         ),
       ),
@@ -1273,7 +1281,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
           Text(
             value,
             style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w900,
               height: 1.0,
             ),
@@ -1373,28 +1381,28 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: BauhausDesign.surfaceWhite,
-      shape: const RoundedRectangleBorder(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.zero,
         side: BorderSide(
-          color: BauhausDesign.neutral,
+          color: Theme.of(context).colorScheme.onSurface,
           width: BauhausDesign.borderThick,
         ),
       ),
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.6,
-        decoration: const BoxDecoration(color: BauhausDesign.surfaceWhite),
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
         child: Column(
           children: [
             Container(
               margin: const EdgeInsets.only(top: BauhausDesign.space3),
               width: BauhausDesign.space10,
               height: BauhausDesign.space1,
-              color: BauhausDesign.neutral,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             Container(
               width: double.infinity,
-              color: BauhausDesign.neutral,
+              color: Theme.of(context).colorScheme.inverseSurface,
               padding: const EdgeInsets.all(BauhausDesign.space3),
               margin: const EdgeInsets.fromLTRB(
                 BauhausDesign.space4,
@@ -1407,7 +1415,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                 style: BauhausDesign.getTextTheme(context).headlineSmall
                     ?.copyWith(
                       fontWeight: FontWeight.w800,
-                      color: BauhausDesign.surfaceWhite,
+                      color: Theme.of(context).colorScheme.onInverseSurface,
                       letterSpacing: 0.5,
                     ),
               ),
@@ -1469,9 +1477,9 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
         child: Container(
           padding: const EdgeInsets.all(BauhausDesign.space3),
           decoration: BoxDecoration(
-            color: BauhausDesign.backgroundLight,
+            color: Theme.of(context).colorScheme.surface,
             border: Border.all(
-              color: BauhausDesign.neutral,
+              color: Theme.of(context).colorScheme.onSurface,
               width: BauhausDesign.borderThick,
             ),
           ),
@@ -1483,13 +1491,13 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                 decoration: BoxDecoration(
                   color: color,
                   border: Border.all(
-                    color: BauhausDesign.neutral,
+                    color: Theme.of(context).colorScheme.onSurface,
                     width: BauhausDesign.borderThick,
                   ),
                 ),
                 child: Icon(
                   icon,
-                  color: BauhausDesign.surfaceWhite,
+                  color: Theme.of(context).colorScheme.surface,
                   size: BauhausDesign.iconMd,
                 ),
               ),
@@ -1502,7 +1510,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                       title.toUpperCase(),
                       style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w800,
                           ),
                     ),
@@ -1522,13 +1530,13 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                 decoration: BoxDecoration(
                   color: BauhausDesign.primary,
                   border: Border.all(
-                    color: BauhausDesign.neutral,
+                    color: Theme.of(context).colorScheme.onSurface,
                     width: BauhausDesign.borderThick,
                   ),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.arrow_forward,
-                  color: BauhausDesign.surfaceWhite,
+                  color: Theme.of(context).colorScheme.onPrimary,
                   size: BauhausDesign.fontMd,
                 ),
               ),
@@ -1544,10 +1552,12 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
       SnackBar(
         content: Text(
           message,
-          style: const TextStyle(color: BauhausDesign.surfaceWhite),
+          style: TextStyle(color: Theme.of(context).colorScheme.surface),
         ),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: isError ? BauhausDesign.error : BauhausDesign.textDark,
+        backgroundColor: isError
+            ? BauhausDesign.error
+            : Theme.of(context).colorScheme.onSurface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
         ),

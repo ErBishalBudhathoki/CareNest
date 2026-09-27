@@ -167,31 +167,37 @@ class _ShiftSelectionDialogContentState
           itemBuilder: (context, index) {
             final shift = allShifts[index];
             final bool isCompleted = shift['isCompleted'] as bool;
+            final colorScheme = Theme.of(context).colorScheme;
 
             return Card(
               elevation: isCompleted ? 0 : 1,
-              color: isCompleted ? Colors.grey.shade100 : Colors.white,
+              color: isCompleted
+                  ? colorScheme.surfaceContainer
+                  : colorScheme.surface,
               child: ListTile(
                 title: Text(
                   'Date: ${shift['date']}',
                   style: TextStyle(
-                    color: isCompleted ? Colors.grey : Colors.black,
+                    color: isCompleted
+                        ? colorScheme.onSurfaceVariant
+                        : colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 subtitle: Text(
                   'Time: ${shift['startTime']} - ${shift['endTime']}\n'
                   'Break: ${shift['break']}',
-                  style: TextStyle(
-                    color: isCompleted ? Colors.grey : Colors.black54,
-                  ),
+                  style: TextStyle(color: colorScheme.onSurfaceVariant),
                 ),
                 enabled: !isCompleted,
                 onTap: isCompleted
                     ? null
                     : () => Navigator.of(context).pop(shift['index']),
                 trailing: isCompleted
-                    ? const Icon(Icons.check_circle, color: Colors.grey)
+                    ? Icon(
+                        Icons.check_circle,
+                        color: colorScheme.onSurfaceVariant,
+                      )
                     : const Icon(Icons.arrow_forward_ios, size: 16),
               ),
             );

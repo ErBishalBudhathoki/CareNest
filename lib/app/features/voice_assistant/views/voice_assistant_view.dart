@@ -281,7 +281,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
     final viewModel = ref.watch(voiceViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           'Voice Assistant',
@@ -289,11 +289,11 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
             fontSize: 18,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.6,
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
         backgroundColor: BauhausDesign.info,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
@@ -340,9 +340,9 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-        border: Border.all(color: BauhausDesign.neutral),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -351,7 +351,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
             'App-scoped assistant',
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
               fontWeight: FontWeight.w800,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
@@ -368,13 +368,15 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
                   (capability) => Chip(
                     label: Text(
                       capability,
-                      style: const TextStyle(
-                        color: BauhausDesign.textDark,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    backgroundColor: BauhausDesign.surfaceLight,
-                    side: const BorderSide(color: BauhausDesign.neutral),
+                    backgroundColor: Theme.of(context).colorScheme.surface,
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
                   ),
                 )
                 .toList(),
@@ -426,9 +428,11 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
       top: false,
       child: Container(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-        decoration: const BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
-          border: Border(top: BorderSide(color: BauhausDesign.neutral)),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          border: Border(
+            top: BorderSide(color: Theme.of(context).colorScheme.outline),
+          ),
         ),
         child: Row(
           children: [
@@ -452,8 +456,12 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
                   ? BauhausDesign.error
                   : (_speechEnabled
                         ? BauhausDesign.primary
-                        : BauhausDesign.neutral),
-              foregroundColor: BauhausDesign.surfaceWhite,
+                        : Theme.of(context).colorScheme.outline),
+              foregroundColor: isListening
+                  ? Theme.of(context).colorScheme.onError
+                  : _speechEnabled
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : Theme.of(context).colorScheme.onSurface,
               child: Icon(isListening ? Icons.mic : Icons.mic_none),
             ),
             const SizedBox(width: 8),
@@ -461,7 +469,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
               heroTag: 'voice-assistant-send',
               onPressed: () => _processCommand(_controller.text),
               backgroundColor: BauhausDesign.secondary,
-              foregroundColor: BauhausDesign.surfaceWhite,
+              foregroundColor: Theme.of(context).colorScheme.onSecondary,
               child: const Icon(Icons.send_rounded),
             ),
           ],
@@ -479,10 +487,10 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 0,
-      color: BauhausDesign.surfaceWhite,
+      color: Theme.of(context).colorScheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-        side: const BorderSide(color: BauhausDesign.neutral),
+        side: BorderSide(color: Theme.of(context).colorScheme.outline),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -492,7 +500,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
             Text(
               '"${command.commandText}"',
               style: BauhausDesign.getTextTheme(context).titleSmall?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -520,17 +528,19 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
                 if (command.actionType.isNotEmpty)
                   _buildStatusChip(
                     label: command.actionType,
-                    backgroundColor: BauhausDesign.surfaceLight,
-                    foregroundColor: BauhausDesign.textDark,
+                    backgroundColor: Theme.of(context).colorScheme.surface,
+                    foregroundColor: Theme.of(context).colorScheme.onSurface,
                   ),
                 _buildStatusChip(
                   label: command.executionMode == 'agent'
                       ? 'Agent'
                       : 'Fallback',
                   backgroundColor: command.executionMode == 'agent'
-                      ? BauhausDesign.secondary.withValues(alpha: 0.12)
-                      : BauhausDesign.neutral.withValues(alpha: 0.3),
-                  foregroundColor: BauhausDesign.textDark,
+                      ? Theme.of(context).colorScheme.secondaryContainer
+                      : Theme.of(context).colorScheme.surfaceContainer,
+                  foregroundColor: command.executionMode == 'agent'
+                      ? Theme.of(context).colorScheme.onSecondaryContainer
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ],
             ),
@@ -573,13 +583,15 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
                       (suggestion) => ActionChip(
                         label: Text(
                           suggestion,
-                          style: const TextStyle(
-                            color: BauhausDesign.textDark,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        backgroundColor: BauhausDesign.surfaceLight,
-                        side: const BorderSide(color: BauhausDesign.neutral),
+                        backgroundColor: Theme.of(context).colorScheme.surface,
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
                         onPressed: () {
                           _controller.text = suggestion;
                           _controller.selection = TextSelection.collapsed(
@@ -600,8 +612,10 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
                   icon: const Icon(Icons.open_in_new),
                   label: const Text('Open in app'),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: BauhausDesign.textDark,
-                    side: const BorderSide(color: BauhausDesign.neutral),
+                    foregroundColor: Theme.of(context).colorScheme.onSurface,
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
                   ),
                 ),
               ),
@@ -733,7 +747,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
       width: 110,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
       ),
       child: Column(
@@ -742,7 +756,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
           Text(
             value,
             style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -904,7 +918,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
           Text(
             'Select the NDIS support item to continue',
             style: BauhausDesign.getTextTheme(context).titleSmall?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -934,9 +948,9 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
           width: double.infinity,
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceLight,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-            border: Border.all(color: BauhausDesign.neutral),
+            border: Border.all(color: Theme.of(context).colorScheme.outline),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -949,7 +963,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
                       itemName,
                       style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w800,
                           ),
                     ),
@@ -978,8 +992,10 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
               OutlinedButton(
                 onPressed: () => _processCommand('Use NDIS item $itemNumber'),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: BauhausDesign.textDark,
-                  side: const BorderSide(color: BauhausDesign.neutral),
+                  foregroundColor: Theme.of(context).colorScheme.onSurface,
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                 ),
                 child: const Text('Select'),
               ),
@@ -995,7 +1011,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
       ),
       child: Column(
@@ -1004,7 +1020,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
           Text(
             title,
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w800,
             ),
           ),

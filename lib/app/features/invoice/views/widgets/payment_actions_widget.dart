@@ -38,7 +38,7 @@ class PaymentActionsWidget extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('PAYMENT STATUS', style: BauhausTheme.labelStyle),
-              _buildStatusBadge(payment?.status ?? 'pending'),
+              _buildStatusBadge(payment?.status ?? 'pending', context),
             ],
           ),
           const SizedBox(height: 16),
@@ -49,7 +49,7 @@ class PaymentActionsWidget extends ConsumerWidget {
               Text(
                 '\$${balanceDue.toStringAsFixed(2)}',
                 style: BauhausTheme.headerStyle.copyWith(
-                  color: BauhausTheme.red,
+                  color: Theme.of(context).colorScheme.error,
                 ),
               ),
             ],
@@ -65,7 +65,7 @@ class PaymentActionsWidget extends ConsumerWidget {
                   Expanded(
                     child: _BauhausButton(
                       label: 'PAY NOW',
-                      color: BauhausTheme.blue,
+                      color: Theme.of(context).colorScheme.secondary,
                       onTap: () async {
                         final organization = ref
                             .read(organizationProvider)
@@ -108,8 +108,8 @@ class PaymentActionsWidget extends ConsumerWidget {
                 Expanded(
                   child: _BauhausButton(
                     label: 'RECORD',
-                    color: BauhausTheme.white,
-                    textColor: BauhausTheme.black,
+                    color: Theme.of(context).colorScheme.surface,
+                    textColor: Theme.of(context).colorScheme.onSurface,
                     onTap: () {
                       _showRecordPaymentDialog(context, ref);
                     },
@@ -123,7 +123,7 @@ class PaymentActionsWidget extends ConsumerWidget {
               width: double.infinity,
               child: _BauhausButton(
                 label: 'SET UP RECURRING PAYMENT',
-                color: BauhausTheme.blue,
+                color: Theme.of(context).colorScheme.secondary,
                 onTap: () {
                   final organization = ref
                       .read(organizationProvider)
@@ -216,32 +216,37 @@ class PaymentActionsWidget extends ConsumerWidget {
     return 0.0;
   }
 
-  Widget _buildStatusBadge(String status) {
-    Color color;
+  Widget _buildStatusBadge(String status, BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    late final Color color;
+    late final Color textColor;
     switch (status.toLowerCase()) {
       case 'paid':
-        color =
-            Colors.green; // Or Bauhaus green if defined, using generic for now
+        color = colorScheme.secondary;
+        textColor = colorScheme.onSecondary;
         break;
       case 'partial':
-        color = BauhausTheme.yellow;
+        color = colorScheme.primary;
+        textColor = colorScheme.onPrimary;
         break;
       case 'overdue':
-        color = BauhausTheme.red;
+        color = colorScheme.error;
+        textColor = colorScheme.onError;
         break;
       default:
-        color = Colors.grey;
+        color = colorScheme.surfaceContainerHighest;
+        textColor = colorScheme.onSurface;
     }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: color,
-        border: Border.all(color: BauhausTheme.black, width: 2),
+        border: Border.all(color: colorScheme.outline, width: 2),
       ),
       child: Text(
         status.toUpperCase(),
-        style: BauhausTheme.labelStyle.copyWith(color: Colors.white),
+        style: BauhausTheme.labelStyle.copyWith(color: textColor),
       ),
     );
   }
@@ -336,13 +341,13 @@ class PaymentActionsWidget extends ConsumerWidget {
 class _BauhausButton extends StatelessWidget {
   final String label;
   final Color color;
-  final Color textColor;
+  final Color? textColor;
   final VoidCallback onTap;
 
   const _BauhausButton({
     required this.label,
     required this.color,
-    this.textColor = Colors.white,
+    this.textColor,
     required this.onTap,
   });
 
@@ -355,12 +360,15 @@ class _BauhausButton extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: color,
-          border: Border.all(color: BauhausTheme.black, width: 2),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
         ),
         child: Text(
           label,
           style: BauhausTheme.bodyStyle.copyWith(
-            color: textColor,
+            color: textColor ?? Theme.of(context).colorScheme.onInverseSurface,
             fontWeight: FontWeight.w900,
           ),
         ),

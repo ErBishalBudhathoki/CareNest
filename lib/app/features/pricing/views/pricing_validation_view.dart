@@ -130,20 +130,22 @@ class _PricingValidationViewState extends State<PricingValidationView>
     return Scaffold(
       appBar: AppBar(
         backgroundColor: BauhausDesign.primary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         title: Text(
           AppLocalizations.of(context)!.pricingValidationTitle,
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
         ),
         bottom: TabBar(
           controller: _tabController,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
-          indicatorColor: Colors.white,
+          labelColor: Theme.of(context).colorScheme.onPrimary,
+          unselectedLabelColor: Theme.of(
+            context,
+          ).colorScheme.onPrimary.withValues(alpha: 0.7),
+          indicatorColor: Theme.of(context).colorScheme.onPrimary,
           tabs: [
             Tab(text: AppLocalizations.of(context)!.tabValidationResults),
             Tab(text: AppLocalizations.of(context)!.tabValidationRules),
@@ -177,18 +179,15 @@ class _PricingValidationViewState extends State<PricingValidationView>
 
     return SafeArea(
       child: Container(
-        color: Colors.blue[50], // Distinctive surface color for this tab
+        color: Theme.of(context).colorScheme.secondaryContainer,
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.all(8),
-              color: Colors.blue[100],
+              color: Theme.of(context).colorScheme.secondaryContainer,
               child: Text(
                 AppLocalizations.of(context)!.validationResultsTabTitle,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
             _buildValidationFilters(),
@@ -216,13 +215,13 @@ class _PricingValidationViewState extends State<PricingValidationView>
           TextField(
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context)!.searchValidationHint,
-              prefixIcon: const Icon(Icons.search),
+              prefixIcon: Icon(Icons.search),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
               ),
               filled: true,
-              fillColor: Colors.grey[100],
+              fillColor: Theme.of(context).colorScheme.surfaceContainerHigh,
             ),
             onChanged: (value) {
               setState(() {
@@ -346,21 +345,24 @@ class _PricingValidationViewState extends State<PricingValidationView>
   }
 
   Widget _buildValidationResultCard(Map<String, dynamic> result, int index) {
+    final colorScheme = Theme.of(context).colorScheme;
     final severityColor = result['severity'] == 'Error'
-        ? Colors.red
+        ? colorScheme.error
         : result['severity'] == 'Warning'
-        ? Colors.orange
-        : Colors.blue;
+        ? colorScheme.primary
+        : colorScheme.secondary;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Theme.of(
+              context,
+            ).colorScheme.outlineVariant.withValues(alpha: 0.3),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -386,7 +388,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
         ),
         title: Text(
           result['message'],
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -415,7 +417,10 @@ class _PricingValidationViewState extends State<PricingValidationView>
                 const SizedBox(width: 8),
                 Text(
                   result['type'],
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
                 ),
               ],
             ),
@@ -425,7 +430,10 @@ class _PricingValidationViewState extends State<PricingValidationView>
                 result['itemCode'].toString(),
                 result['timestamp'].toString(),
               ),
-              style: TextStyle(color: Colors.grey[500], fontSize: 11),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 11,
+              ),
             ),
           ],
         ),
@@ -439,13 +447,15 @@ class _PricingValidationViewState extends State<PricingValidationView>
                   '${AppLocalizations.of(context)!.detailsLabel}:',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: Colors.grey[700],
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   result['details'],
-                  style: TextStyle(color: Colors.grey[600]),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 LayoutBuilder(
@@ -464,20 +474,25 @@ class _PricingValidationViewState extends State<PricingValidationView>
                                 ),
                                 decoration: BoxDecoration(
                                   color: result['status'] == 'Resolved'
-                                      ? Colors.green.withValues(alpha: 0.1)
+                                      ? Theme.of(context).colorScheme.secondary
+                                            .withValues(alpha: 0.1)
                                       : result['status'] == 'Under Review'
-                                      ? Colors.orange.withValues(alpha: 0.1)
-                                      : Colors.red.withValues(alpha: 0.1),
+                                      ? Theme.of(context).colorScheme.primary
+                                            .withValues(alpha: 0.1)
+                                      : Theme.of(context).colorScheme.error
+                                            .withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Text(
                                   result['status'],
                                   style: TextStyle(
                                     color: result['status'] == 'Resolved'
-                                        ? Colors.green
+                                        ? Theme.of(
+                                            context,
+                                          ).colorScheme.secondary
                                         : result['status'] == 'Under Review'
-                                        ? Colors.orange
-                                        : Colors.red,
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Theme.of(context).colorScheme.error,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -530,20 +545,25 @@ class _PricingValidationViewState extends State<PricingValidationView>
                                 ),
                                 decoration: BoxDecoration(
                                   color: result['status'] == 'Resolved'
-                                      ? Colors.green.withValues(alpha: 0.1)
+                                      ? Theme.of(context).colorScheme.secondary
+                                            .withValues(alpha: 0.1)
                                       : result['status'] == 'Under Review'
-                                      ? Colors.orange.withValues(alpha: 0.1)
-                                      : Colors.red.withValues(alpha: 0.1),
+                                      ? Theme.of(context).colorScheme.primary
+                                            .withValues(alpha: 0.1)
+                                      : Theme.of(context).colorScheme.error
+                                            .withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Text(
                                   result['status'],
                                   style: TextStyle(
                                     color: result['status'] == 'Resolved'
-                                        ? Colors.green
+                                        ? Theme.of(
+                                            context,
+                                          ).colorScheme.secondary
                                         : result['status'] == 'Under Review'
-                                        ? Colors.orange
-                                        : Colors.red,
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Theme.of(context).colorScheme.error,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -563,7 +583,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
                                   ),
                                   child: Text(
                                     AppLocalizations.of(context)!.resolveAction,
-                                    style: const TextStyle(fontSize: 12),
+                                    style: TextStyle(fontSize: 12),
                                   ),
                                 ),
                               ),
@@ -582,7 +602,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
                                     AppLocalizations.of(
                                       context,
                                     )!.viewDetailsAction,
-                                    style: const TextStyle(fontSize: 12),
+                                    style: TextStyle(fontSize: 12),
                                   ),
                                 ),
                               ),
@@ -601,18 +621,17 @@ class _PricingValidationViewState extends State<PricingValidationView>
   Widget _buildValidationRulesTab() {
     return SafeArea(
       child: Container(
-        color: Colors.green[50], // Distinctive surface color for this tab
+        color: Theme.of(context)
+            .colorScheme
+            .secondaryContainer, // Distinctive surface color for this tab
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.all(8),
-              color: Colors.green[100],
+              color: Theme.of(context).colorScheme.secondaryContainer,
               child: Text(
                 AppLocalizations.of(context)!.validationRulesTabTitle,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
             Expanded(
@@ -640,14 +659,18 @@ class _PricingValidationViewState extends State<PricingValidationView>
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isActive ? Colors.green[200]! : Colors.grey[200]!,
+          color: isActive
+              ? Theme.of(context).colorScheme.secondaryContainer
+              : Theme.of(context).colorScheme.surfaceContainerHigh,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Theme.of(
+              context,
+            ).colorScheme.outlineVariant.withValues(alpha: 0.3),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -662,10 +685,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
               Expanded(
                 child: Text(
                   rule['name'],
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ),
               Container(
@@ -675,14 +695,20 @@ class _PricingValidationViewState extends State<PricingValidationView>
                 ),
                 decoration: BoxDecoration(
                   color: isActive
-                      ? Colors.green.withValues(alpha: 0.1)
-                      : Colors.grey.withValues(alpha: 0.1),
+                      ? Theme.of(
+                          context,
+                        ).colorScheme.secondary.withValues(alpha: 0.1)
+                      : Theme.of(
+                          context,
+                        ).colorScheme.outlineVariant.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
                   rule['status'],
                   style: TextStyle(
-                    color: isActive ? Colors.green : Colors.grey,
+                    color: isActive
+                        ? Theme.of(context).colorScheme.secondary
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
@@ -693,17 +719,24 @@ class _PricingValidationViewState extends State<PricingValidationView>
           const SizedBox(height: 8),
           Text(
             rule['description'],
-            style: TextStyle(color: Colors.grey[600], fontSize: 14),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 14,
+            ),
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Icon(Icons.error_outline, size: 16, color: Colors.red[400]),
+              Icon(
+                Icons.error_outline,
+                size: 16,
+                color: Theme.of(context).colorScheme.error,
+              ),
               const SizedBox(width: 4),
               Text(
                 '${rule['violations']} ${AppLocalizations.of(context)!.violationsLabel}',
                 style: TextStyle(
-                  color: Colors.red[400],
+                  color: Theme.of(context).colorScheme.error,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),
@@ -711,7 +744,10 @@ class _PricingValidationViewState extends State<PricingValidationView>
               const Spacer(),
               Text(
                 '${AppLocalizations.of(context)!.lastUpdatedLabel}: ${rule['lastUpdated']}',
-                style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
@@ -720,7 +756,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
             children: [
               TextButton.icon(
                 onPressed: () => _editValidationRule(rule),
-                icon: const Icon(Icons.edit, size: 16),
+                icon: Icon(Icons.edit, size: 16),
                 label: Text(AppLocalizations.of(context)!.editAction),
               ),
               TextButton.icon(
@@ -747,18 +783,17 @@ class _PricingValidationViewState extends State<PricingValidationView>
   Widget _buildReportsTab() {
     return SafeArea(
       child: Container(
-        color: Colors.purple[50], // Distinctive surface color for this tab
+        color: Theme.of(context)
+            .colorScheme
+            .tertiaryContainer, // Distinctive surface color for this tab
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.all(8),
-              color: Colors.purple[100],
+              color: Theme.of(context).colorScheme.tertiaryContainer,
               child: Text(
                 AppLocalizations.of(context)!.reportsTabTitle,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
             Expanded(
@@ -768,7 +803,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
                   children: [
                     Text(
                       AppLocalizations.of(context)!.validationReportsTitle,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -778,7 +813,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
                       AppLocalizations.of(context)!.dailyValidationSummary,
                       AppLocalizations.of(context)!.dailyValidationSummaryDesc,
                       Icons.today,
-                      Colors.blue,
+                      Theme.of(context).colorScheme.secondary,
                       () => _generateReport('daily'),
                     ),
                     const SizedBox(height: 12),
@@ -786,7 +821,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
                       AppLocalizations.of(context)!.weeklyTrendsAnalysis,
                       AppLocalizations.of(context)!.weeklyTrendsAnalysisDesc,
                       Icons.trending_up,
-                      Colors.green,
+                      Theme.of(context).colorScheme.secondary,
                       () => _generateReport('weekly'),
                     ),
                     const SizedBox(height: 12),
@@ -794,7 +829,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
                       AppLocalizations.of(context)!.rulePerformanceReport,
                       AppLocalizations.of(context)!.rulePerformanceReportDesc,
                       Icons.analytics,
-                      Colors.orange,
+                      Theme.of(context).colorScheme.primary,
                       () => _generateReport('performance'),
                     ),
                     const SizedBox(height: 12),
@@ -802,7 +837,7 @@ class _PricingValidationViewState extends State<PricingValidationView>
                       AppLocalizations.of(context)!.customReportBuilder,
                       AppLocalizations.of(context)!.customReportBuilderDesc,
                       Icons.build,
-                      Colors.purple,
+                      Theme.of(context).colorScheme.tertiary,
                       () => _openCustomReportBuilder(),
                     ),
                   ],
@@ -825,12 +860,14 @@ class _PricingValidationViewState extends State<PricingValidationView>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Theme.of(
+              context,
+            ).colorScheme.outlineVariant.withValues(alpha: 0.3),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -855,23 +892,23 @@ class _PricingValidationViewState extends State<PricingValidationView>
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 14,
+                  ),
                 ),
               ],
             ),
           ),
           IconButton(
             onPressed: onTap,
-            icon: const Icon(Icons.arrow_forward_ios),
-            color: Colors.grey[400],
+            icon: Icon(Icons.arrow_forward_ios),
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ],
       ),

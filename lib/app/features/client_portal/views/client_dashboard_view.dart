@@ -143,14 +143,17 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
         : 'Manage services, invoices, and appointments';
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Column(
         children: [
           Container(
-            decoration: const BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
               border: Border(
-                bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+                bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
               ),
             ),
             child: SafeArea(
@@ -198,14 +201,18 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
                             style: GoogleFonts.oswald(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                               letterSpacing: 1.2,
                             ),
                           ),
                           Text(
                             headerSubtitle,
                             style: BauhausDesign.getTextTheme(context).bodySmall
-                                ?.copyWith(color: BauhausDesign.textMuted),
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
                           ),
                         ],
                       ),
@@ -288,6 +295,7 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
 
     navItems.add(
       _buildNavItem(
+        context: context,
         icon: Icons.dashboard_outlined,
         activeIcon: Icons.dashboard,
         label: 'Dashboard',
@@ -300,6 +308,7 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
       navItems.add(const SizedBox(width: BauhausDesign.space4));
       navItems.add(
         _buildNavItem(
+          context: context,
           icon: Icons.receipt_long_outlined,
           activeIcon: Icons.receipt_long,
           label: 'Invoices',
@@ -313,6 +322,7 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
       navItems.add(const SizedBox(width: BauhausDesign.space4));
       navItems.add(
         _buildNavItem(
+          context: context,
           icon: Icons.calendar_today_outlined,
           activeIcon: Icons.calendar_today,
           label: 'Appointments',
@@ -323,9 +333,14 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
     }
 
     return Container(
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border(top: BorderSide(color: BauhausDesign.neutral, width: 2)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border(
+          top: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
+        ),
       ),
       child: SafeArea(
         top: false,
@@ -341,6 +356,7 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
   }
 
   Widget _buildNavItem({
+    required BuildContext context,
     required IconData icon,
     required IconData activeIcon,
     required String label,
@@ -369,8 +385,8 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
               Icon(
                 isSelected ? activeIcon : icon,
                 color: isSelected
-                    ? BauhausDesign.surfaceWhite
-                    : BauhausDesign.textMuted,
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
                 size: 22,
               ),
               const SizedBox(height: BauhausDesign.space1),
@@ -380,8 +396,8 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
                   fontSize: 11,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                   color: isSelected
-                      ? BauhausDesign.surfaceWhite
-                      : BauhausDesign.textMuted,
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -399,7 +415,7 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              backgroundColor: BauhausDesign.surfaceWhite,
+              backgroundColor: Theme.of(context).colorScheme.surface,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
                 side: const BorderSide(color: BauhausDesign.neoInk, width: 3),
@@ -422,7 +438,7 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
                     style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: BauhausDesign.space3),
@@ -452,7 +468,7 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
                             'After approval, your account is deactivated and records required for payroll, tax, audit, and care obligations are retained for up to 90 days before permanent deletion.',
                             style: GoogleFonts.spaceMono(
                               fontSize: 13,
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         ),
@@ -469,7 +485,7 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
                       'Cancel',
                       style: GoogleFonts.inter(
                         fontWeight: FontWeight.bold,
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),

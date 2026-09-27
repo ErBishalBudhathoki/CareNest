@@ -17,19 +17,19 @@ void showAppSnackBar(
   String? actionLabel,
   VoidCallback? onAction,
 }) {
+  final colorScheme = Theme.of(context).colorScheme;
   final Color background = switch (type) {
-    AppSnackType.success => BauhausDesign.success,
-    AppSnackType.error => BauhausDesign.error,
-    AppSnackType.info => BauhausDesign.secondary,
-    AppSnackType.warning => BauhausDesign.warning,
+    AppSnackType.success => colorScheme.secondary,
+    AppSnackType.error => colorScheme.error,
+    AppSnackType.info => colorScheme.secondary,
+    AppSnackType.warning => colorScheme.primary,
   };
   // Warning yellow needs dark foreground for readability; the saturated
   // red/green/blue backgrounds keep white foreground.
   final Color foreground = switch (type) {
-    AppSnackType.warning => BauhausDesign.textDark,
-    AppSnackType.success ||
-    AppSnackType.error ||
-    AppSnackType.info => BauhausDesign.surfaceWhite,
+    AppSnackType.warning => colorScheme.onPrimary,
+    AppSnackType.success || AppSnackType.info => colorScheme.onSecondary,
+    AppSnackType.error => colorScheme.onError,
   };
   final IconData icon = switch (type) {
     AppSnackType.success => Icons.check_circle_outline,
@@ -54,7 +54,7 @@ void showAppSnackBar(
           : null,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+        side: BorderSide(color: colorScheme.outline, width: 2),
       ),
       content: Semantics(
         liveRegion: true,
