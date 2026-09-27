@@ -125,16 +125,16 @@ class _EnhancedQuickActionCardState extends State<EnhancedQuickActionCard>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildIcon(),
+                    _buildIcon(context),
                     const SizedBox(height: 8.0),
-                    _buildTitle(),
+                    _buildTitle(context),
                     if (widget.data.subtitle != null) ...[
                       const SizedBox(height: 4.0),
-                      _buildSubtitle(),
+                      _buildSubtitle(context),
                     ],
                     if (widget.data.badge != null) ...[
                       const SizedBox(height: 4.0),
-                      _buildBadge(),
+                      _buildBadge(context),
                     ],
                   ],
                 ),
@@ -183,7 +183,7 @@ class _EnhancedQuickActionCardState extends State<EnhancedQuickActionCard>
     }
   }
 
-  Widget _buildIcon() {
+  Widget _buildIcon(BuildContext context) {
     return Container(
       width: 48,
       height: 48,
@@ -195,35 +195,38 @@ class _EnhancedQuickActionCardState extends State<EnhancedQuickActionCard>
     );
   }
 
-  Widget _buildTitle() {
+  Widget _buildTitle(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Text(
       widget.data.title,
       style: const TextStyle(
         fontSize: 16,
-      ).copyWith(fontWeight: FontWeight.w600, color: const Color(0xFF1F2937)),
+      ).copyWith(fontWeight: FontWeight.w600, color: colorScheme.onSurface),
       textAlign: TextAlign.center,
       overflow: TextOverflow.ellipsis,
       maxLines: 2,
     );
   }
 
-  Widget _buildSubtitle() {
+  Widget _buildSubtitle(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Text(
       widget.data.subtitle!,
       style: const TextStyle(
         fontSize: 12,
-      ).copyWith(color: const Color(0xFF6B7280)),
+      ).copyWith(color: colorScheme.onSurfaceVariant),
       textAlign: TextAlign.center,
       overflow: TextOverflow.ellipsis,
       maxLines: 1,
     );
   }
 
-  Widget _buildBadge() {
+  Widget _buildBadge(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 2),
       decoration: BoxDecoration(
-        color: widget.data.badgeColor ?? Colors.red,
+        color: widget.data.badgeColor ?? colorScheme.error,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
@@ -231,7 +234,7 @@ class _EnhancedQuickActionCardState extends State<EnhancedQuickActionCard>
         style: const TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w500,
-        ).copyWith(fontWeight: FontWeight.w600, color: Colors.white),
+        ).copyWith(fontWeight: FontWeight.w600, color: colorScheme.onError),
       ),
     );
   }

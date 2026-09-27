@@ -96,7 +96,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
           message,
           style: BauhausDesign.getTextTheme(
             context,
-          ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+          ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.surface),
         ),
         backgroundColor: BauhausDesign.error,
         behavior: SnackBarBehavior.floating,
@@ -258,8 +258,10 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
               child: ListView.separated(
                 shrinkWrap: true,
                 itemCount: employees.length,
-                separatorBuilder: (_, _) =>
-                    const Divider(height: 1, color: BauhausDesign.neutral),
+                separatorBuilder: (_, _) => Divider(
+                  height: 1,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 itemBuilder: (context, index) {
                   final employee = employees[index];
                   return ListTile(
@@ -326,9 +328,9 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
                   : ListView.separated(
                       shrinkWrap: true,
                       itemCount: assignments.length,
-                      separatorBuilder: (_, _) => const Divider(
+                      separatorBuilder: (_, _) => Divider(
                         height: 1,
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                       itemBuilder: (context, index) {
                         final assignment = assignments[index];
@@ -959,7 +961,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
-        backgroundColor: BauhausDesign.backgroundLight,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -979,7 +981,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
     // Success View
     if (_lineItems.isNotEmpty && _pdfPath.isNotEmpty) {
       return Scaffold(
-        backgroundColor: BauhausDesign.backgroundLight,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
           title: Text(
             'Invoice Generated',
@@ -988,7 +990,10 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: BauhausDesign.textDark),
+            icon: Icon(
+              Icons.arrow_back,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -1051,7 +1056,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
 
     // Confirmation View
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           'Generate Invoice',
@@ -1060,7 +1065,10 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: BauhausDesign.textDark),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -1076,7 +1084,7 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
                     'Review Details',
                     style: BauhausDesign.getTextTheme(context).headlineMedium,
                   ),
-                  const Divider(color: BauhausDesign.neutral),
+                  Divider(color: Theme.of(context).colorScheme.onSurface),
                   _buildDetailRow('Employee', _providerName),
                   _buildDetailRow('Client', _clientName),
                   _buildDetailRow('Period', '$_startDate to $_endDate'),
@@ -1150,7 +1158,9 @@ class _GenerateInvoiceState extends ConsumerState<GenerateInvoice> {
               ? BauhausDesign.primary.withValues(alpha: 0.1)
               : Colors.transparent,
           border: Border.all(
-            color: isSelected ? BauhausDesign.primary : BauhausDesign.neutral,
+            color: isSelected
+                ? BauhausDesign.primary
+                : Theme.of(context).colorScheme.onSurface,
           ),
           borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         ),

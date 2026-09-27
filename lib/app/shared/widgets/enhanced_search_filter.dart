@@ -55,25 +55,24 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _buildSearchBar(),
+        _buildSearchBar(context),
         if (widget.showFilterChips &&
             widget.activeFilters?.isNotEmpty == true) ...[
           const SizedBox(height: 8.0),
-          _buildActiveFilters(),
+          _buildActiveFilters(context),
         ],
       ],
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: colorScheme.surface,
         border: Border.all(
-          color: _isSearchFocused
-              ? BauhausDesign.primary
-              : BauhausDesign.neutral,
-          width: 2,
+          color: _isSearchFocused ? colorScheme.primary : colorScheme.outline,
+          width: 2.5,
         ),
         boxShadow: _isSearchFocused ? const [BauhausDesign.shadowHardSm] : null,
       ),
@@ -91,20 +90,20 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
                 hintText: widget.searchHint,
                 hintStyle: BauhausDesign.neoMonoStyle(
                   context,
-                  color: BauhausDesign.textMuted,
+                  color: colorScheme.onSurfaceVariant,
                   fontSize: 14,
                 ),
-                prefixIcon: const Icon(
+                prefixIcon: Icon(
                   Icons.search,
-                  color: BauhausDesign.textMuted,
+                  color: colorScheme.onSurfaceVariant,
                   semanticLabel: 'Search',
                 ),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
                         tooltip: 'Clear search',
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.clear,
-                          color: BauhausDesign.textMuted,
+                          color: colorScheme.onSurfaceVariant,
                         ),
                         onPressed: () {
                           HapticFeedback.lightImpact();
@@ -122,20 +121,21 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
             ),
           ),
           if (widget.filterOptions?.isNotEmpty == true) ...[
-            Container(width: 2, height: 24, color: BauhausDesign.neutral),
-            _buildFilterButton(),
+            Container(width: 2, height: 24, color: colorScheme.outline),
+            _buildFilterButton(context),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildFilterButton() {
+  Widget _buildFilterButton(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return PopupMenuButton<FilterOption>(
       tooltip: 'Filter options',
-      icon: const Icon(
+      icon: Icon(
         Icons.filter_list,
-        color: BauhausDesign.textDark,
+        color: colorScheme.onSurface,
         semanticLabel: 'Filter options',
       ),
       onSelected: (option) {
@@ -151,7 +151,7 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
                 Icon(
                   option.icon,
                   size: 18,
-                  color: option.color ?? BauhausDesign.textDark,
+                  color: option.color ?? colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(width: 8.0),
                 Expanded(
@@ -169,8 +169,8 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: BauhausDesign.surfaceOffWhite,
-                      border: Border.all(color: BauhausDesign.neutral),
+                      color: colorScheme.surfaceContainer,
+                      border: Border.all(color: colorScheme.outline),
                     ),
                     child: Text(
                       option.count.toString(),
@@ -189,7 +189,8 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
     );
   }
 
-  Widget _buildActiveFilters() {
+  Widget _buildActiveFilters(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
         Expanded(
@@ -205,9 +206,9 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                  ).copyWith(color: BauhausDesign.textDark),
+                  ).copyWith(color: colorScheme.onSurface),
                 ),
-                backgroundColor: BauhausDesign.surfaceOffWhite,
+                backgroundColor: colorScheme.surfaceContainer,
                 deleteIcon: const Icon(
                   Icons.close,
                   size: 16,
@@ -216,7 +217,7 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
                 onDeleted: () {
                   HapticFeedback.lightImpact();
                 },
-                side: const BorderSide(color: BauhausDesign.neutral, width: 1.5),
+                side: BorderSide(color: colorScheme.outline, width: 1.5),
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.zero,
                 ),
@@ -235,7 +236,7 @@ class _EnhancedSearchFilterBarState extends State<EnhancedSearchFilterBar> {
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-              ).copyWith(color: BauhausDesign.textDark),
+              ).copyWith(color: colorScheme.onSurface),
             ),
           ),
       ],

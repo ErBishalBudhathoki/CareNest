@@ -27,10 +27,7 @@ class BulkOperationsView extends ConsumerStatefulWidget {
 
 class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
     with SingleTickerProviderStateMixin {
-  static const Color _screenGray = Color(0xFFE3E3E3);
-  static const Color _inkBlack = Color(0xFF171717);
   static const Color _accentRed = Color(0xFFE21F26);
-  static const Color _panelWhite = Color(0xFFF8F8F8);
   static const Color _accentBlue = Color(0xFF0D62B3);
 
   late final TabController _tabController;
@@ -336,7 +333,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
     }).toList();
 
     return Scaffold(
-      backgroundColor: _screenGray,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: RefreshIndicator(
         onRefresh: _refreshAll,
         color: BauhausDesign.primary,
@@ -386,13 +383,13 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
 
   Widget _buildHeader(AppLocalizations l10n) {
     return Container(
-      color: _screenGray,
+      color: Theme.of(context).colorScheme.surface,
       child: SafeArea(
         bottom: false,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(8, 8, 8, 20),
           child: Container(
-            color: _screenGray,
+            color: Theme.of(context).colorScheme.surface,
             padding: const EdgeInsets.fromLTRB(0, 0, 0, 2),
             child: Column(
               children: [
@@ -404,13 +401,16 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                         width: 34,
                         height: 34,
                         decoration: BoxDecoration(
-                          color: _panelWhite,
-                          border: Border.all(color: _inkBlack, width: 2),
+                          color: Theme.of(context).colorScheme.surface,
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            width: 2,
+                          ),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.arrow_back,
                           size: 18,
-                          color: _inkBlack,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -422,7 +422,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                             .headlineMedium
                             ?.copyWith(
                               fontWeight: FontWeight.w800,
-                              color: _inkBlack,
+                              color: Theme.of(context).colorScheme.onSurface,
                               letterSpacing: 0.4,
                             ),
                       ),
@@ -434,12 +434,15 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                         height: 34,
                         decoration: BoxDecoration(
                           color: _accentBlue,
-                          border: Border.all(color: _inkBlack, width: 2),
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            width: 2,
+                          ),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.refresh,
                           size: 18,
-                          color: BauhausDesign.surfaceWhite,
+                          color: Theme.of(context).colorScheme.surface,
                         ),
                       ),
                     ),
@@ -453,7 +456,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                         l10n.bulkOperationsDesc,
                         style: BauhausDesign.getTextTheme(context).labelLarge
                             ?.copyWith(
-                              color: _inkBlack,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.w700,
                             ),
                       ),
@@ -465,13 +468,16 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                       ),
                       decoration: BoxDecoration(
                         color: _accentRed,
-                        border: Border.all(color: _inkBlack, width: 2),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          width: 2,
+                        ),
                       ),
                       child: Text(
                         l10n.systemActive.toUpperCase(),
                         style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
-                              color: BauhausDesign.surfaceWhite,
+                              color: Theme.of(context).colorScheme.surface,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 0.6,
                             ),
@@ -480,7 +486,11 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                   ],
                 ),
                 const SizedBox(height: 10),
-                const Divider(color: _inkBlack, height: 1, thickness: 1),
+                Divider(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  height: 1,
+                  thickness: 1,
+                ),
               ],
             ),
           ),
@@ -542,8 +552,11 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
         return Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: _panelWhite,
-            border: Border.all(color: _inkBlack, width: 2),
+            color: Theme.of(context).colorScheme.surface,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.onSurface,
+              width: 2,
+            ),
           ),
           child: Row(
             children: [
@@ -552,12 +565,15 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                 height: 24,
                 decoration: BoxDecoration(
                   color: stat['color'] as Color,
-                  border: Border.all(color: _inkBlack, width: 2),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 2,
+                  ),
                 ),
                 child: Icon(
                   stat['icon'] as IconData,
                   size: 12,
-                  color: BauhausDesign.surfaceWhite,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
               ),
               const SizedBox(width: 8),
@@ -572,7 +588,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                       overflow: TextOverflow.ellipsis,
                       style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
-                            color: _inkBlack,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w900,
                           ),
                     ),
@@ -597,18 +613,23 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
   Widget _buildTabs(AppLocalizations l10n) {
     return Container(
       decoration: BoxDecoration(
-        color: _panelWhite,
-        border: Border.all(color: _inkBlack, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
       ),
       child: TabBar(
         controller: _tabController,
-        indicator: const BoxDecoration(color: _inkBlack),
+        indicator: BoxDecoration(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
         indicatorSize: TabBarIndicatorSize.tab,
         indicatorPadding: EdgeInsets.zero,
         padding: const EdgeInsets.symmetric(horizontal: 8),
         labelPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        labelColor: BauhausDesign.surfaceWhite,
-        unselectedLabelColor: _inkBlack,
+        labelColor: Theme.of(context).colorScheme.surface,
+        unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
         labelStyle: BauhausDesign.getTextTheme(
           context,
         ).labelSmall?.copyWith(fontWeight: FontWeight.w900),
@@ -647,7 +668,10 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                 Text(
                   _lastImportSummary,
                   style: BauhausDesign.getTextTheme(context).bodySmall
-                      ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w700),
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
               ],
             ],
@@ -694,15 +718,19 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                 width: double.infinity,
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceWhite,
-                  border: Border.all(color: _inkBlack, width: 2),
+                  color: Theme.of(context).colorScheme.surface,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 2,
+                  ),
                 ),
                 child: SingleChildScrollView(
                   child: SelectableText(
                     _exportCsv.isEmpty ? l10n.moduleNoDataYet : _exportCsv,
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).labelSmall?.copyWith(color: _inkBlack),
+                    style: BauhausDesign.getTextTheme(context).labelSmall
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                   ),
                 ),
               ),
@@ -731,17 +759,26 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                 controller: _searchController,
                 decoration: InputDecoration(
                   hintText: l10n.searchHistoryHint,
-                  prefixIcon: const Icon(Icons.search, color: _inkBlack),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                   isDense: true,
                   filled: true,
-                  fillColor: BauhausDesign.surfaceWhite,
-                  enabledBorder: const OutlineInputBorder(
+                  fillColor: Theme.of(context).colorScheme.surface,
+                  enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.zero,
-                    borderSide: BorderSide(color: _inkBlack, width: 2),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      width: 2,
+                    ),
                   ),
-                  focusedBorder: const OutlineInputBorder(
+                  focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.zero,
-                    borderSide: BorderSide(color: _inkBlack, width: 2),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      width: 2,
+                    ),
                   ),
                 ),
               ),
@@ -764,14 +801,20 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                             : 'Percent',
                         isDense: true,
                         filled: true,
-                        fillColor: BauhausDesign.surfaceWhite,
-                        enabledBorder: const OutlineInputBorder(
+                        fillColor: Theme.of(context).colorScheme.surface,
+                        enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.zero,
-                          borderSide: BorderSide(color: _inkBlack, width: 2),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            width: 2,
+                          ),
                         ),
-                        focusedBorder: const OutlineInputBorder(
+                        focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.zero,
-                          borderSide: BorderSide(color: _inkBlack, width: 2),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            width: 2,
+                          ),
                         ),
                       ),
                     ),
@@ -789,14 +832,17 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.zero,
                     ),
-                    side: const BorderSide(color: _inkBlack, width: 2),
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      width: 2,
+                    ),
                   ),
                   Expanded(
                     child: Text(
                       l10n.pricingFilterCustom,
                       style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
-                            color: _inkBlack,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w700,
                           ),
                     ),
@@ -827,8 +873,11 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                 margin: const EdgeInsets.only(bottom: 8),
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: _panelWhite,
-                  border: Border.all(color: _inkBlack, width: 2),
+                  color: Theme.of(context).colorScheme.surface,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 2,
+                  ),
                 ),
                 child: Row(
                   children: [
@@ -850,7 +899,10 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                       ),
-                      side: const BorderSide(color: _inkBlack, width: 2),
+                      side: BorderSide(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        width: 2,
+                      ),
                     ),
                     Expanded(
                       child: Column(
@@ -863,7 +915,9 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                             style: BauhausDesign.getTextTheme(context)
                                 .labelSmall
                                 ?.copyWith(
-                                  color: _inkBlack,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   fontWeight: FontWeight.w900,
                                 ),
                           ),
@@ -967,8 +1021,11 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: _inkBlack, width: 1),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -976,7 +1033,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
           Text(
             title,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: _inkBlack,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -992,7 +1049,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
           Text(
             summary,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: _inkBlack,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -1016,8 +1073,11 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
       width: double.infinity,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: _panelWhite,
-        border: Border.all(color: _inkBlack, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1025,7 +1085,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
           Text(
             title.toUpperCase(),
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-              color: _inkBlack,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -1048,8 +1108,11 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: _inkBlack, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -1084,13 +1147,16 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
           color: onTap == null
               ? BauhausDesign.textMuted
               : BauhausDesign.primary,
-          border: Border.all(color: _inkBlack, width: 2),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
         ),
         child: Text(
           label.toUpperCase(),
           textAlign: TextAlign.center,
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
             fontWeight: FontWeight.w900,
             letterSpacing: 0.4,
           ),
@@ -1109,15 +1175,19 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
-          border: Border.all(color: _inkBlack, width: 2),
+          color: Theme.of(context).colorScheme.surface,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
         ),
         child: Text(
           label.toUpperCase(),
           textAlign: TextAlign.center,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).labelSmall?.copyWith(color: _inkBlack, fontWeight: FontWeight.w900),
+          style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontWeight: FontWeight.w900,
+          ),
         ),
       ),
     );

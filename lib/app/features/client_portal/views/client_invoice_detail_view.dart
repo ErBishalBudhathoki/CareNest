@@ -19,6 +19,27 @@ import '../repositories/client_portal_repository.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+InputDecoration _activeInputDecoration(BuildContext context, String hint) {
+  final colorScheme = Theme.of(context).colorScheme;
+  return InputDecoration(
+    filled: true,
+    fillColor: colorScheme.surfaceContainer,
+    hintText: hint,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.zero,
+      borderSide: BorderSide(color: colorScheme.outline, width: 2),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.zero,
+      borderSide: BorderSide(color: colorScheme.outline, width: 2),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.zero,
+      borderSide: BorderSide(color: colorScheme.primary, width: 2),
+    ),
+  );
+}
+
 class ClientInvoiceDetailView extends ConsumerStatefulWidget {
   final String invoiceId;
 
@@ -94,17 +115,19 @@ class _ClientInvoiceDetailViewState
       }
     });
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: colorScheme.secondary,
+        foregroundColor: colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: BauhausDesign.surfaceWhite),
+          icon: Icon(Icons.arrow_back, color: colorScheme.onSecondary),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
@@ -112,14 +135,12 @@ class _ClientInvoiceDetailViewState
           style: GoogleFonts.oswald(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.surfaceWhite,
+            color: colorScheme.onSecondary,
             letterSpacing: 1,
           ),
         ),
         centerTitle: true,
-        shape: const Border(
-          bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
-        ),
+        shape: Border(bottom: BorderSide(color: colorScheme.outline, width: 2)),
       ),
       body: invoiceState.when(
         data: (invoice) =>
@@ -195,13 +216,18 @@ class _ClientInvoiceDetailViewState
     ClientInvoice invoice,
     String status,
   ) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: _getStatusColor(status),
+        color: _getStatusColor(context, status),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Row(
@@ -209,12 +235,12 @@ class _ClientInvoiceDetailViewState
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space3),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite.withValues(alpha: 0.2),
+              color: colorScheme.onInverseSurface.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
             ),
             child: Icon(
               _getStatusIcon(status),
-              color: BauhausDesign.surfaceWhite,
+              color: colorScheme.onInverseSurface,
               size: 28,
             ),
           ),
@@ -228,7 +254,7 @@ class _ClientInvoiceDetailViewState
                   style: GoogleFonts.oswald(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: BauhausDesign.surfaceWhite,
+                    color: colorScheme.onInverseSurface,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -238,7 +264,7 @@ class _ClientInvoiceDetailViewState
                   style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: BauhausDesign.surfaceWhite.withValues(alpha: 0.9),
+                    color: colorScheme.onInverseSurface.withValues(alpha: 0.9),
                     letterSpacing: 1,
                   ),
                 ),
@@ -251,6 +277,7 @@ class _ClientInvoiceDetailViewState
   }
 
   Widget _buildAmountCard(BuildContext context, ClientInvoice invoice) {
+    final colorScheme = Theme.of(context).colorScheme;
     final total = _toDouble(invoice.financialSummary['totalAmount']);
     final subtotal = _toDouble(invoice.financialSummary['subtotal']);
     final tax = _toDouble(
@@ -264,7 +291,7 @@ class _ClientInvoiceDetailViewState
             width: double.infinity,
             padding: const EdgeInsets.all(BauhausDesign.space4),
             decoration: BoxDecoration(
-              color: BauhausDesign.neutral,
+              color: colorScheme.inverseSurface,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(BauhausDesign.radiusMd),
                 topRight: Radius.circular(BauhausDesign.radiusMd),
@@ -276,7 +303,7 @@ class _ClientInvoiceDetailViewState
                   'TOTAL AMOUNT',
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.surfaceWhite.withValues(
+                        color: colorScheme.onInverseSurface.withValues(
                           alpha: 0.7,
                         ),
                         letterSpacing: 1.5,
@@ -288,7 +315,7 @@ class _ClientInvoiceDetailViewState
                   style: GoogleFonts.oswald(
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
-                    color: BauhausDesign.surfaceWhite,
+                    color: colorScheme.onInverseSurface,
                   ),
                 ),
               ],
@@ -323,7 +350,9 @@ class _ClientInvoiceDetailViewState
         Text(
           label,
           style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-            color: isBold ? BauhausDesign.textDark : BauhausDesign.textMuted,
+            color: isBold
+                ? Theme.of(context).colorScheme.onSurface
+                : Theme.of(context).colorScheme.onSurfaceVariant,
             fontWeight: isBold ? FontWeight.w600 : FontWeight.w400,
           ),
         ),
@@ -349,7 +378,7 @@ class _ClientInvoiceDetailViewState
           Text(
             'INVOICE DETAILS',
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               letterSpacing: 1,
             ),
           ),
@@ -393,7 +422,7 @@ class _ClientInvoiceDetailViewState
           Text(
             'INVOICE PDF',
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               letterSpacing: 1,
             ),
           ),
@@ -442,7 +471,7 @@ class _ClientInvoiceDetailViewState
           Text(
             'RECEIPTS',
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               letterSpacing: 1,
             ),
           ),
@@ -452,9 +481,10 @@ class _ClientInvoiceDetailViewState
               if (urls.isEmpty) {
                 return Text(
                   'No receipts attached to this invoice.',
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 );
               }
 
@@ -471,12 +501,14 @@ class _ClientInvoiceDetailViewState
                     child: Container(
                       padding: const EdgeInsets.all(BauhausDesign.space3),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.surfaceWhite,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerLowest,
                         borderRadius: BorderRadius.circular(
                           BauhausDesign.radiusSm,
                         ),
                         border: Border.all(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.outline,
                           width: 1,
                         ),
                       ),
@@ -530,9 +562,10 @@ class _ClientInvoiceDetailViewState
                 const SizedBox(width: BauhausDesign.space2),
                 Text(
                   'Loading receipts...',
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
               ],
             ),
@@ -574,9 +607,9 @@ class _ClientInvoiceDetailViewState
             children: [
               Text(
                 label,
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               Text(
                 value,
@@ -652,9 +685,12 @@ class _ClientInvoiceDetailViewState
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.5,
+        ),
       ),
       child: Row(
         children: [
@@ -705,9 +741,10 @@ class _ClientInvoiceDetailViewState
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
                 if (effectiveHours > 0) ...[
                   const SizedBox(height: 2),
@@ -715,7 +752,7 @@ class _ClientInvoiceDetailViewState
                     'Hours Worked: ${effectiveHours.toStringAsFixed(effectiveHours % 1 == 0 ? 0 : 2)}',
                     style: BauhausDesign.getTextTheme(context).labelSmall
                         ?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w600,
                         ),
                   ),
@@ -728,7 +765,7 @@ class _ClientInvoiceDetailViewState
             style: GoogleFonts.oswald(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ],
@@ -744,12 +781,17 @@ class _ClientInvoiceDetailViewState
   ) {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border(top: BorderSide(color: BauhausDesign.neutral, width: 2)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border(
+          top: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Color(0x1A000000),
+            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: Offset(0, -4),
           ),
@@ -849,7 +891,9 @@ class _ClientInvoiceDetailViewState
                 decoration: BoxDecoration(
                   color: BauhausDesign.success.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                 ),
                 child: const Icon(
                   Icons.lock_outline,
@@ -880,9 +924,9 @@ class _ClientInvoiceDetailViewState
           const SizedBox(height: BauhausDesign.space1),
           Text(
             'Secure card payment. You will be redirected to Stripe to complete payment.',
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space4),
           SizedBox(
@@ -890,8 +934,8 @@ class _ClientInvoiceDetailViewState
             child: ElevatedButton.icon(
               onPressed: () => _startInvoicePayment(context, ref, invoice),
               style: ElevatedButton.styleFrom(
-                backgroundColor: BauhausDesign.success,
-                foregroundColor: BauhausDesign.surfaceWhite,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                foregroundColor: Theme.of(context).colorScheme.onSecondary,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
@@ -965,21 +1009,25 @@ class _ClientInvoiceDetailViewState
     WidgetRef ref,
     String invoiceId,
   ) {
+    final colorScheme = Theme.of(context).colorScheme;
     final controller = TextEditingController();
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
         ),
         title: Text(
           'Dispute Invoice',
           style: GoogleFonts.oswald(
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         content: Column(
@@ -993,7 +1041,7 @@ class _ClientInvoiceDetailViewState
             const SizedBox(height: BauhausDesign.space4),
             TextField(
               controller: controller,
-              decoration: BauhausDesign.inputDecoration('Reason for dispute'),
+              decoration: _activeInputDecoration(context, 'Reason for dispute'),
               maxLines: 3,
             ),
           ],
@@ -1003,13 +1051,13 @@ class _ClientInvoiceDetailViewState
             onPressed: () => Navigator.pop(context),
             child: Text(
               'CANCEL',
-              style: TextStyle(color: BauhausDesign.neutral),
+              style: TextStyle(color: Theme.of(context).colorScheme.outline),
             ),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: BauhausDesign.error,
-              foregroundColor: BauhausDesign.surfaceWhite,
+              backgroundColor: colorScheme.error,
+              foregroundColor: colorScheme.onError,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               ),
@@ -1232,7 +1280,7 @@ class _ClientInvoiceDetailViewState
     );
   }
 
-  Color _getStatusColor(String status) {
+  Color _getStatusColor(BuildContext context, String status) {
     switch (status.toLowerCase()) {
       case 'approved':
         return BauhausDesign.success;
@@ -1246,7 +1294,7 @@ class _ClientInvoiceDetailViewState
       case 'generated':
         return BauhausDesign.secondary;
       default:
-        return BauhausDesign.neutral;
+        return Theme.of(context).colorScheme.inverseSurface;
     }
   }
 
@@ -1375,17 +1423,19 @@ class _SecureReceiptViewerPageState
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: colorScheme.secondary,
+        foregroundColor: colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: BauhausDesign.surfaceWhite),
+          icon: Icon(Icons.arrow_back, color: colorScheme.onSecondary),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
@@ -1393,20 +1443,18 @@ class _SecureReceiptViewerPageState
           style: GoogleFonts.oswald(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.surfaceWhite,
+            color: colorScheme.onSecondary,
             letterSpacing: 1,
           ),
         ),
         centerTitle: true,
-        shape: const Border(
-          bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
-        ),
+        shape: Border(bottom: BorderSide(color: colorScheme.outline, width: 2)),
       ),
-      body: _buildBody(),
+      body: _buildBody(context),
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(BuildContext context) {
     if (_isLoading) {
       return const Center(child: BauhausLoadingState());
     }
@@ -1451,7 +1499,7 @@ class _SecureReceiptViewerPageState
       child: Container(
         width: double.infinity,
         height: double.infinity,
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         child: Image.memory(
           _fileBytes!,
           fit: BoxFit.contain,

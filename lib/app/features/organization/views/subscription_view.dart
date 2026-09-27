@@ -206,14 +206,19 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
     final theme = BauhausDesign.getTextTheme(context);
     final confirmed = await showDialog<bool>(
       context: context,
-      barrierColor: BauhausDesign.neutral.withValues(alpha: 0.55),
+      barrierColor: Theme.of(
+        context,
+      ).colorScheme.outline.withValues(alpha: 0.55),
       builder: (dialogContext) => Dialog(
         backgroundColor: Colors.transparent,
         insetPadding: const EdgeInsets.all(BauhausDesign.space4),
         child: Container(
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            color: Theme.of(context).colorScheme.surface,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
             boxShadow: const [BauhausDesign.shadowHard],
           ),
@@ -227,27 +232,27 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
                   Container(
                     padding: const EdgeInsets.all(BauhausDesign.space2),
                     decoration: BoxDecoration(
-                      color: BauhausDesign.surfaceWhite,
+                      color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(
                         BauhausDesign.radiusSm,
                       ),
                       border: Border.all(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.outline,
                         width: 2,
                       ),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.receipt_long_outlined,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       size: 20,
                     ),
                   ),
-                  const SizedBox(width: BauhausDesign.space3),
+                  SizedBox(width: BauhausDesign.space3),
                   Expanded(
                     child: Text(
                       'CONFIRM SUBSCRIPTION',
                       style: theme.labelLarge?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 0.6,
                       ),
@@ -255,33 +260,35 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
                   ),
                 ],
               ),
-              const SizedBox(height: BauhausDesign.space4),
+              SizedBox(height: BauhausDesign.space4),
               Text(
                 'This purchase is completed through Google Play.',
                 style: theme.bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: BauhausDesign.space2),
+              SizedBox(height: BauhausDesign.space2),
               Text(
                 'If your Google account is set up as a Play license tester you will '
                 'NOT be charged. Otherwise Google Play will charge your saved payment '
                 'method and the subscription renews until you cancel it.',
                 style: theme.bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
-              const SizedBox(height: BauhausDesign.space4),
+              SizedBox(height: BauhausDesign.space4),
               Row(
                 children: [
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => Navigator.pop(dialogContext, false),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: BauhausDesign.textDark,
-                        side: const BorderSide(
-                          color: BauhausDesign.neutral,
+                        foregroundColor: Theme.of(
+                          context,
+                        ).colorScheme.onSurface,
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.outline,
                           width: 2,
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -297,12 +304,16 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: BauhausDesign.space3),
+                  SizedBox(width: BauhausDesign.space3),
                   Expanded(
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: BauhausDesign.secondary,
-                        foregroundColor: BauhausDesign.surfaceWhite,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.secondary,
+                        foregroundColor: Theme.of(
+                          context,
+                        ).colorScheme.onSecondary,
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
@@ -451,24 +462,29 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
     final priceText = _product?.price ?? l10n.subscriptionPricePerMonth;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           l10n.subscriptionTitle,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).displaySmall?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+            color: Theme.of(context).colorScheme.surface,
+          ),
         ),
-        backgroundColor: BauhausDesign.primary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2.0),
-          child: Container(color: BauhausDesign.neutral, height: 2.0),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 2.0,
+          ),
         ),
       ),
       body: RefreshIndicator(
@@ -486,18 +502,18 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildStatusBanner(context, l10n, status),
-              const SizedBox(height: BauhausDesign.space4),
+              SizedBox(height: BauhausDesign.space4),
               Text(
                 l10n.subscriptionDescription,
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
-              const SizedBox(height: BauhausDesign.space4),
+              SizedBox(height: BauhausDesign.space4),
               _buildPriceCard(context, l10n, priceText),
-              const SizedBox(height: BauhausDesign.space4),
+              SizedBox(height: BauhausDesign.space4),
               _buildFeaturesList(context, l10n),
-              const SizedBox(height: BauhausDesign.space4),
+              SizedBox(height: BauhausDesign.space4),
               if (_errorMessage != null)
                 Container(
                   padding: const EdgeInsets.all(BauhausDesign.space3),
@@ -509,8 +525,7 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
                     ).bodySmall?.copyWith(color: BauhausDesign.error),
                   ),
                 ),
-              if (_errorMessage != null)
-                const SizedBox(height: BauhausDesign.space4),
+              if (_errorMessage != null) SizedBox(height: BauhausDesign.space4),
               _buildButtons(context, l10n, isActive: isActive),
             ],
           ),
@@ -549,7 +564,7 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
+        color: Theme.of(context).colorScheme.surface,
         border: Border.all(color: color, width: 2),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
@@ -559,12 +574,12 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
             statusText == 'active' ? Icons.check_circle : Icons.error_outline,
             color: color,
           ),
-          const SizedBox(width: BauhausDesign.space3),
+          SizedBox(width: BauhausDesign.space3),
           Expanded(
             child: Text(
               text,
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -582,8 +597,11 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Row(
@@ -595,16 +613,18 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
               children: [
                 Text(
                   l10n.subscriptionPricePerMonth,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   l10n.subscriptionDescription,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
               ],
             ),
@@ -630,8 +650,11 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Column(
@@ -642,18 +665,15 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
                 padding: const EdgeInsets.only(bottom: BauhausDesign.space2),
                 child: Row(
                   children: [
-                    const Icon(
-                      Icons.check,
-                      color: BauhausDesign.success,
-                      size: 20,
-                    ),
-                    const SizedBox(width: BauhausDesign.space3),
+                    Icon(Icons.check, color: BauhausDesign.success, size: 20),
+                    SizedBox(width: BauhausDesign.space3),
                     Expanded(
                       child: Text(
                         f,
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
+                            ?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
                       ),
                     ),
                   ],
@@ -679,23 +699,27 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
           onPressed: (_loading || isActive) ? null : _handleSubscribe,
           style: ElevatedButton.styleFrom(
             backgroundColor: isActive
-                ? BauhausDesign.surfaceOffWhite
+                ? Theme.of(context).colorScheme.surfaceContainer
                 : BauhausDesign.secondary,
             foregroundColor: isActive
-                ? BauhausDesign.textMuted
-                : BauhausDesign.surfaceLight,
-            disabledBackgroundColor: BauhausDesign.surfaceOffWhite,
-            disabledForegroundColor: BauhausDesign.textMuted,
+                ? Theme.of(context).colorScheme.onSurfaceVariant
+                : Theme.of(context).colorScheme.surface,
+            disabledBackgroundColor: Theme.of(
+              context,
+            ).colorScheme.surfaceContainer,
+            disabledForegroundColor: Theme.of(
+              context,
+            ).colorScheme.onSurfaceVariant,
             padding: const EdgeInsets.symmetric(vertical: 14),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
           ),
           child: _loading
-              ? const SizedBox(
+              ? SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onInverseSurface,
                   ),
                 )
               : Text(
@@ -703,33 +727,39 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
                   style: theme.labelLarge?.copyWith(
                     fontWeight: FontWeight.w900,
                     color: isActive
-                        ? BauhausDesign.textMuted
-                        : BauhausDesign.surfaceLight,
+                        ? Theme.of(context).colorScheme.onSurfaceVariant
+                        : Theme.of(context).colorScheme.surface,
                   ),
                 ),
         ),
-        const SizedBox(height: BauhausDesign.space3),
+        SizedBox(height: BauhausDesign.space3),
         OutlinedButton(
           onPressed: _loading ? null : _handleRestore,
           style: OutlinedButton.styleFrom(
-            foregroundColor: BauhausDesign.textDark,
-            side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+            foregroundColor: Theme.of(context).colorScheme.onSurface,
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             padding: const EdgeInsets.symmetric(vertical: 14),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
           ),
           child: Text(l10n.subscriptionRestoreButton),
         ),
-        const SizedBox(height: BauhausDesign.space3),
+        SizedBox(height: BauhausDesign.space3),
         TextButton(
           onPressed: _loading ? null : _handleManage,
           child: Text(l10n.subscriptionManageButton),
         ),
         if (BuildConfig.enableDevSubscriptionReset) ...[
-          const SizedBox(height: BauhausDesign.space4),
+          SizedBox(height: BauhausDesign.space4),
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space2),
             decoration: BoxDecoration(
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -737,20 +767,20 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
                 Text(
                   'DEV TOOLS',
                   style: theme.labelSmall?.copyWith(
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1,
                   ),
                 ),
-                const SizedBox(height: BauhausDesign.space2),
+                SizedBox(height: BauhausDesign.space2),
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
                     onPressed: _loading ? null : _handleDevReset,
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: BauhausDesign.textDark,
-                      side: const BorderSide(
-                        color: BauhausDesign.neutral,
+                      foregroundColor: Theme.of(context).colorScheme.onSurface,
+                      side: BorderSide(
+                        color: Theme.of(context).colorScheme.outline,
                         width: 2,
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 12),

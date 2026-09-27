@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/theme/bauhaus_colors.dart';
 import '../models/dashboard_models.dart';
 
 class TodaySummaryWidget extends StatelessWidget {
@@ -10,12 +9,14 @@ class TodaySummaryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     if (isLoading) {
       return _buildLoadingState();
     }
 
     if (summary == null) {
-      return _buildEmptyState();
+      return _buildEmptyState(context);
     }
 
     return Card(
@@ -31,22 +32,18 @@ class TodaySummaryWidget extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: BauhausColors.primaryRed.withValues(alpha: 0.1),
+                    color: colorScheme.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
-                    Icons.today,
-                    color: BauhausColors.primaryRed,
-                    size: 24,
-                  ),
+                  child: Icon(Icons.today, color: colorScheme.error, size: 24),
                 ),
                 const SizedBox(width: 12),
-                const Text(
+                Text(
                   "Today's Summary",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: BauhausColors.textDark,
+                    color: colorScheme.onSurface,
                   ),
                 ),
               ],
@@ -56,21 +53,23 @@ class TodaySummaryWidget extends StatelessWidget {
               children: [
                 Expanded(
                   child: _buildMetricCard(
+                    context,
                     icon: Icons.event,
                     label: 'Appointments',
                     value: summary!.appointmentsToday.toString(),
                     subtitle: '${summary!.completedAppointments} completed',
-                    color: BauhausColors.primaryBlue,
+                    color: colorScheme.secondary,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildMetricCard(
+                    context,
                     icon: Icons.people,
                     label: 'Workers',
                     value: summary!.workersOnShift.toString(),
                     subtitle: '${summary!.activeWorkers} active',
-                    color: BauhausColors.primaryYellow,
+                    color: colorScheme.primary,
                   ),
                 ),
               ],
@@ -80,21 +79,23 @@ class TodaySummaryWidget extends StatelessWidget {
               children: [
                 Expanded(
                   child: _buildMetricCard(
+                    context,
                     icon: Icons.attach_money,
                     label: 'Revenue',
                     value: '\$${summary!.revenueToday.toStringAsFixed(0)}',
                     subtitle: 'Today',
-                    color: BauhausColors.accentGreen,
+                    color: colorScheme.secondary,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildMetricCard(
+                    context,
                     icon: Icons.pending_actions,
                     label: 'Pending',
                     value: summary!.pendingApprovals.toString(),
                     subtitle: 'Approvals',
-                    color: BauhausColors.accentOrange,
+                    color: colorScheme.primary,
                   ),
                 ),
               ],
@@ -102,9 +103,9 @@ class TodaySummaryWidget extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               'Last updated: ${_formatTime(summary!.lastUpdated)}',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                color: BauhausColors.textMedium,
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
           ],
@@ -113,13 +114,16 @@ class TodaySummaryWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildMetricCard({
+  Widget _buildMetricCard(
+    BuildContext context, {
     required IconData icon,
     required String label,
     required String value,
     required String subtitle,
     required Color color,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -156,10 +160,7 @@ class TodaySummaryWidget extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             subtitle,
-            style: const TextStyle(
-              fontSize: 11,
-              color: BauhausColors.textMedium,
-            ),
+            style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant),
           ),
         ],
       ),
@@ -177,18 +178,27 @@ class TodaySummaryWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: const Padding(
-        padding: EdgeInsets.all(32),
+      child: Padding(
+        padding: const EdgeInsets.all(32),
         child: Center(
           child: Column(
             children: [
-              Icon(Icons.info_outline, size: 48, color: Colors.grey),
+              Icon(
+                Icons.info_outline,
+                size: 48,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               SizedBox(height: 16),
-              Text('No data available', style: TextStyle(color: Colors.grey)),
+              Text(
+                'No data available',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
             ],
           ),
         ),

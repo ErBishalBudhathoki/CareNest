@@ -226,8 +226,11 @@ class _AdminDashboardViewControllerState
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
             child: Container(
               decoration: BoxDecoration(
-                color: BauhausDesign.surfaceWhite,
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                color: Theme.of(context).colorScheme.surface,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
                 boxShadow: const [BauhausDesign.shadowHard],
               ),
               child: Padding(
@@ -247,7 +250,7 @@ class _AdminDashboardViewControllerState
                             decoration: BoxDecoration(
                               color: BauhausDesign.warning,
                               border: Border.all(
-                                color: BauhausDesign.neutral,
+                                color: Theme.of(context).colorScheme.outline,
                                 width: 2,
                               ),
                             ),
@@ -255,7 +258,9 @@ class _AdminDashboardViewControllerState
                               'SETUP REQUIRED',
                               style: Theme.of(context).textTheme.labelLarge
                                   ?.copyWith(
-                                    color: BauhausDesign.textDark,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: 1.1,
                                   ),
@@ -269,14 +274,14 @@ class _AdminDashboardViewControllerState
                           decoration: BoxDecoration(
                             color: BauhausDesign.primary,
                             border: Border.all(
-                              color: BauhausDesign.neutral,
+                              color: Theme.of(context).colorScheme.outline,
                               width: 2,
                             ),
                             boxShadow: const [BauhausDesign.shadowHardSm],
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.email_outlined,
-                            color: BauhausDesign.surfaceWhite,
+                            color: Theme.of(context).colorScheme.surface,
                             size: 26,
                           ),
                         ),
@@ -288,7 +293,7 @@ class _AdminDashboardViewControllerState
                       style: Theme.of(context).textTheme.headlineSmall
                           ?.copyWith(
                             fontWeight: FontWeight.w900,
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             height: 1.05,
                           ),
                     ),
@@ -297,9 +302,9 @@ class _AdminDashboardViewControllerState
                       width: double.infinity,
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.backgroundLight,
+                        color: Theme.of(context).colorScheme.surface,
                         border: Border.all(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.outline,
                           width: 2,
                         ),
                       ),
@@ -310,7 +315,9 @@ class _AdminDashboardViewControllerState
                             '$workflowName needs your organization invoicing mailbox before the workflow can send invoices and delivery updates.',
                             style: Theme.of(context).textTheme.bodyMedium
                                 ?.copyWith(
-                                  color: BauhausDesign.textDark,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   fontWeight: FontWeight.w700,
                                   height: 1.35,
                                 ),
@@ -326,7 +333,9 @@ class _AdminDashboardViewControllerState
                                 decoration: BoxDecoration(
                                   color: BauhausDesign.accent,
                                   border: Border.all(
-                                    color: BauhausDesign.neutral,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.outline,
                                     width: 1.5,
                                   ),
                                 ),
@@ -338,7 +347,9 @@ class _AdminDashboardViewControllerState
                                   style: Theme.of(context).textTheme.bodySmall
                                       ?.copyWith(
                                         fontWeight: FontWeight.w800,
-                                        color: BauhausDesign.textMuted,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                         height: 1.3,
                                       ),
                                 ),
@@ -362,17 +373,21 @@ class _AdminDashboardViewControllerState
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: BauhausDesign.primary,
-                                foregroundColor: BauhausDesign.surfaceWhite,
+                                foregroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.onInverseSurface,
                                 elevation: 0,
-                                shape: const RoundedRectangleBorder(
+                                shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.zero,
                                   side: BorderSide(
-                                    color: BauhausDesign.neutral,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.outline,
                                     width: 2,
                                   ),
                                 ),
                               ),
-                              icon: const Icon(Icons.settings_outlined),
+                              icon: Icon(Icons.settings_outlined),
                               label: const Text(
                                 'SET UP NOW',
                                 style: TextStyle(fontWeight: FontWeight.w900),
@@ -387,12 +402,14 @@ class _AdminDashboardViewControllerState
                             child: OutlinedButton(
                               onPressed: () => Navigator.of(sheetContext).pop(),
                               style: OutlinedButton.styleFrom(
-                                foregroundColor: BauhausDesign.textDark,
-                                side: const BorderSide(
-                                  color: BauhausDesign.neutral,
+                                foregroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface,
+                                side: BorderSide(
+                                  color: Theme.of(context).colorScheme.outline,
                                   width: 2,
                                 ),
-                                shape: const RoundedRectangleBorder(
+                                shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.zero,
                                 ),
                               ),
@@ -415,14 +432,14 @@ class _AdminDashboardViewControllerState
                       decoration: BoxDecoration(
                         color: BauhausDesign.success.withValues(alpha: 0.08),
                         border: Border.all(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.outline,
                           width: 1.5,
                         ),
                       ),
                       child: Text(
                         'Once configured, this workflow unlocks immediately when you return.',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w700,
                           height: 1.3,
                         ),
@@ -461,7 +478,7 @@ class _AdminDashboardViewControllerState
           message,
           style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
             fontWeight: FontWeight.w500,
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
           ),
         ),
         backgroundColor: isError ? BauhausDesign.error : BauhausDesign.success,
@@ -524,7 +541,7 @@ class _AdminDashboardViewControllerState
     final businessStats = businessStatsState.stats;
     if (_isLoading) {
       return Scaffold(
-        backgroundColor: BauhausDesign.backgroundLight,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         body: Center(
           child: BauhausLoadingState(
             message: AppLocalizations.of(context)!.loadingDashboard,
@@ -533,15 +550,15 @@ class _AdminDashboardViewControllerState
       );
     }
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       floatingActionButton: FloatingActionButton(
         onPressed: _openVoiceAssistant,
         backgroundColor: BauhausDesign.primary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: BauhausDesign.textDark,
         shape: const CircleBorder(),
         clipBehavior: Clip.antiAlias,
         tooltip: 'Voice Assistant',
-        child: const Icon(Icons.keyboard_voice_outlined),
+        child: Icon(Icons.keyboard_voice_outlined),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Stack(
@@ -591,10 +608,13 @@ class _AdminDashboardViewControllerState
       automaticallyImplyLeading: false,
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: BauhausDesign.primary,
             border: Border(
-              bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+              bottom: BorderSide(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
             ),
           ),
           child: SafeArea(
@@ -622,14 +642,14 @@ class _AdminDashboardViewControllerState
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: BauhausDesign.neutral,
+                                      color: BauhausDesign.textDark,
                                       width: 2,
                                     ),
                                     boxShadow: const [BauhausDesign.shadowHard],
                                   ),
                                   child: Container(
                                     padding: const EdgeInsets.all(0),
-                                    decoration: const BoxDecoration(
+                                    decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       color: BauhausDesign.surfaceWhite,
                                     ),
@@ -672,7 +692,7 @@ class _AdminDashboardViewControllerState
                                                           context,
                                                         ).bodyMedium?.copyWith(
                                                           color: BauhausDesign
-                                                              .surfaceWhite,
+                                                              .textDark,
                                                           fontWeight:
                                                               FontWeight.w600,
                                                         ),
@@ -707,7 +727,7 @@ class _AdminDashboardViewControllerState
                                                           ),
                                                       border: Border.all(
                                                         color: BauhausDesign
-                                                            .neutral,
+                                                            .textDark,
                                                         width: 2,
                                                       ),
                                                       boxShadow: const [
@@ -715,11 +735,11 @@ class _AdminDashboardViewControllerState
                                                             .shadowHardSm,
                                                       ],
                                                     ),
-                                                    child: const Icon(
+                                                    child: Icon(
                                                       Icons
                                                           .document_scanner_outlined,
-                                                      color:
-                                                          BauhausDesign.neutral,
+                                                      color: BauhausDesign
+                                                          .textDark,
                                                       size: 20,
                                                     ),
                                                   ),
@@ -761,7 +781,7 @@ class _AdminDashboardViewControllerState
                                                               ),
                                                           border: Border.all(
                                                             color: BauhausDesign
-                                                                .neutral,
+                                                                .textDark,
                                                             width: 2,
                                                           ),
                                                           boxShadow: const [
@@ -779,7 +799,7 @@ class _AdminDashboardViewControllerState
                                                                         .notifications_outlined,
                                                               color:
                                                                   BauhausDesign
-                                                                      .neutral,
+                                                                      .textDark,
                                                               size: 20,
                                                             ),
                                                             if (hasUnread)
@@ -796,7 +816,7 @@ class _AdminDashboardViewControllerState
                                                                         .rectangle,
                                                                     border: Border.all(
                                                                       color: BauhausDesign
-                                                                          .neutral,
+                                                                          .surfaceWhite,
                                                                       width: 1,
                                                                     ),
                                                                   ),
@@ -848,7 +868,7 @@ class _AdminDashboardViewControllerState
                                                           ),
                                                       border: Border.all(
                                                         color: BauhausDesign
-                                                            .neutral,
+                                                            .textDark,
                                                         width: 2,
                                                       ),
                                                       boxShadow: const [
@@ -856,10 +876,10 @@ class _AdminDashboardViewControllerState
                                                             .shadowHardSm,
                                                       ],
                                                     ),
-                                                    child: const Icon(
+                                                    child: Icon(
                                                       Icons.settings_outlined,
-                                                      color:
-                                                          BauhausDesign.neutral,
+                                                      color: BauhausDesign
+                                                          .textDark,
                                                       size: 20,
                                                     ),
                                                   ),
@@ -891,8 +911,8 @@ class _AdminDashboardViewControllerState
                                                   BauhausDesign.getTextTheme(
                                                     context,
                                                   ).headlineMedium?.copyWith(
-                                                    color: BauhausDesign
-                                                        .surfaceWhite,
+                                                    color:
+                                                        BauhausDesign.textDark,
                                                     fontWeight: FontWeight.w700,
                                                     letterSpacing: -0.5,
                                                     height: 1.1,
@@ -975,12 +995,14 @@ class _AdminDashboardViewControllerState
                                   vertical: 8,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: BauhausDesign.surfaceWhite,
+                                  color: Theme.of(context).colorScheme.surface,
                                   borderRadius: BorderRadius.circular(
                                     BauhausDesign.radiusLg,
                                   ),
                                   border: Border.all(
-                                    color: BauhausDesign.neutral,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.outline,
                                     width: 1.5,
                                   ),
                                   boxShadow: const [BauhausDesign.shadowHardSm],
@@ -995,7 +1017,9 @@ class _AdminDashboardViewControllerState
                                         color: BauhausDesign.success,
                                         shape: BoxShape.rectangle,
                                         border: Border.all(
-                                          color: BauhausDesign.neutral,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface,
                                           width: 1,
                                         ),
                                       ),
@@ -1006,7 +1030,9 @@ class _AdminDashboardViewControllerState
                                       style: BauhausDesign.getTextTheme(context)
                                           .labelSmall
                                           ?.copyWith(
-                                            color: BauhausDesign.neutral,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onSurface,
                                             fontWeight: FontWeight.bold,
                                           ),
                                     ),
@@ -1021,14 +1047,18 @@ class _AdminDashboardViewControllerState
                                     BauhausDesign.radiusMd,
                                   ),
                                   border: Border.all(
-                                    color: BauhausDesign.neutral,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
                                     width: 2,
                                   ),
                                   boxShadow: const [BauhausDesign.shadowHard],
                                 ),
-                                child: const Icon(
+                                child: Icon(
                                   Icons.add_rounded,
-                                  color: BauhausDesign.neutral,
+                                  color: BauhausDesign.readableOnColor(
+                                    BauhausDesign.accent,
+                                  ),
                                   size: 20,
                                 ),
                               ),
@@ -1070,7 +1100,7 @@ class _AdminDashboardViewControllerState
                           ?.copyWith(
                             fontSize: 26,
                             fontWeight: FontWeight.bold,
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             letterSpacing: -0.5,
                           ),
                     ),
@@ -1079,7 +1109,9 @@ class _AdminDashboardViewControllerState
                       AppLocalizations.of(context)!.getStartedDesc,
                       style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w500,
                           ),
                     ),
@@ -1169,7 +1201,7 @@ class _AdminDashboardViewControllerState
         onSetupBannerTap: needsEmailSetup ? _navigateToEmailSettings : null,
         actions: [
           CommandAction(
-            icon: const Icon(Icons.add_circle_outline_rounded),
+            icon: Icon(Icons.add_circle_outline_rounded),
             title: l10n.addClientButton,
             subtitle: needsEmailSetup
                 ? 'Setup required: configure invoicing email first'
@@ -1180,7 +1212,7 @@ class _AdminDashboardViewControllerState
             statusColor: needsEmailSetup ? BauhausDesign.warning : null,
           ),
           CommandAction(
-            icon: const Icon(Icons.person_outline_rounded),
+            icon: Icon(Icons.person_outline_rounded),
             title: 'Employee Invoice',
             subtitle: needsEmailSetup
                 ? 'Setup required: configure invoicing email first'
@@ -1191,7 +1223,7 @@ class _AdminDashboardViewControllerState
             statusColor: needsEmailSetup ? BauhausDesign.warning : null,
           ),
           CommandAction(
-            icon: const Icon(Icons.auto_awesome_rounded),
+            icon: Icon(Icons.auto_awesome_rounded),
             title: 'Auto Invoices',
             subtitle: needsEmailSetup
                 ? 'Setup required: configure invoicing email first'
@@ -1202,7 +1234,7 @@ class _AdminDashboardViewControllerState
             statusColor: needsEmailSetup ? BauhausDesign.warning : null,
           ),
           CommandAction(
-            icon: const Icon(Icons.dashboard_customize_rounded),
+            icon: Icon(Icons.dashboard_customize_rounded),
             title: 'Enhanced Invoice',
             subtitle: needsEmailSetup
                 ? 'Setup required: configure invoicing email first'
@@ -1213,7 +1245,7 @@ class _AdminDashboardViewControllerState
             statusColor: needsEmailSetup ? BauhausDesign.warning : null,
           ),
           CommandAction(
-            icon: const Icon(Icons.list_alt_rounded),
+            icon: Icon(Icons.list_alt_rounded),
             title: 'Invoice List',
             subtitle: 'View all generated invoices',
             color: BauhausDesign.info,
@@ -1229,7 +1261,7 @@ class _AdminDashboardViewControllerState
         accentColor: BauhausDesign.accent,
         actions: [
           CommandAction(
-            icon: const Icon(Icons.verified_user),
+            icon: Icon(Icons.verified_user),
             title: l10n.auditCertifications,
             subtitle: l10n.auditCertificationsDesc,
             color: BauhausDesign.warning,
@@ -1241,7 +1273,7 @@ class _AdminDashboardViewControllerState
             ),
           ),
           CommandAction(
-            icon: const Icon(Icons.rule_folder_rounded),
+            icon: Icon(Icons.rule_folder_rounded),
             title: 'Certification Requirements',
             subtitle: 'Manage required employee certifications',
             color: BauhausDesign.info,
@@ -1253,7 +1285,7 @@ class _AdminDashboardViewControllerState
             ),
           ),
           CommandAction(
-            icon: const Icon(Icons.model_training_rounded),
+            icon: Icon(Icons.model_training_rounded),
             title: l10n.manageTraining,
             subtitle: l10n.manageTrainingDesc,
             color: BauhausDesign.secondary,
@@ -1265,7 +1297,7 @@ class _AdminDashboardViewControllerState
             ),
           ),
           CommandAction(
-            icon: const Icon(Icons.checklist_rounded),
+            icon: Icon(Icons.checklist_rounded),
             title: l10n.complianceChecklists,
             subtitle: l10n.complianceChecklistsDesc,
             color: BauhausDesign.primary,
@@ -1286,14 +1318,14 @@ class _AdminDashboardViewControllerState
         accentColor: BauhausDesign.secondary,
         actions: [
           CommandAction(
-            icon: const Icon(Icons.calendar_month_rounded),
+            icon: Icon(Icons.calendar_month_rounded),
             title: l10n.scheduleTitle,
             subtitle: 'Manage shifts and assignments',
             color: BauhausDesign.secondary,
             onTap: _navigateToScheduleDashboard,
           ),
           CommandAction(
-            icon: const Icon(Icons.assignment_ind_rounded),
+            icon: Icon(Icons.assignment_ind_rounded),
             title: l10n.requestsDashboard,
             subtitle: l10n.requestsDashboardDesc,
             color: BauhausDesign.warning,
@@ -1303,35 +1335,35 @@ class _AdminDashboardViewControllerState
             ).pushNamed(Routes.adminRequests),
           ),
           CommandAction(
-            icon: const Icon(Icons.groups_rounded),
+            icon: Icon(Icons.groups_rounded),
             title: 'Client List',
             subtitle: 'Manage clients, activation status, and setup emails',
             color: BauhausDesign.primary,
             onTap: _navigateToClientList,
           ),
           CommandAction(
-            icon: const Icon(Icons.celebration_rounded),
+            icon: Icon(Icons.celebration_rounded),
             title: l10n.holidayList,
             subtitle: l10n.holidayListDesc,
             color: BauhausDesign.accent,
             onTap: () => _navigateToHolidayList(),
           ),
           CommandAction(
-            icon: const Icon(Icons.work_outline_rounded),
+            icon: Icon(Icons.work_outline_rounded),
             title: l10n.viewAssignments,
             subtitle: l10n.viewAssignmentsDesc,
             color: BauhausDesign.primary,
             onTap: () => _navigateToAssignments(),
           ),
           CommandAction(
-            icon: const Icon(Icons.location_on_outlined),
+            icon: Icon(Icons.location_on_outlined),
             title: l10n.employeeTracking,
             subtitle: l10n.employeeTrackingDesc,
             color: BauhausDesign.info,
             onTap: () => _navigateToEmployeeTracking(),
           ),
           CommandAction(
-            icon: const Icon(Icons.directions_car_filled_rounded),
+            icon: Icon(Icons.directions_car_filled_rounded),
             title: l10n.mileageAdmin,
             subtitle: l10n.mileageAdminDesc,
             color: BauhausDesign.secondary,
@@ -1341,7 +1373,7 @@ class _AdminDashboardViewControllerState
             ),
           ),
           CommandAction(
-            icon: const Icon(Icons.rate_review_outlined),
+            icon: Icon(Icons.rate_review_outlined),
             title: 'Client Feedback',
             subtitle: 'View service ratings and comments',
             color: BauhausDesign.accent,
@@ -1351,7 +1383,7 @@ class _AdminDashboardViewControllerState
             ),
           ),
           CommandAction(
-            icon: const Icon(Icons.person_add_alt_1_rounded),
+            icon: Icon(Icons.person_add_alt_1_rounded),
             title: 'Staff Onboarding',
             subtitle: 'Review pending employee onboardings',
             color: BauhausDesign.success,
@@ -1372,7 +1404,7 @@ class _AdminDashboardViewControllerState
         accentColor: BauhausDesign.success,
         actions: [
           CommandAction(
-            icon: const Icon(Icons.analytics_outlined),
+            icon: Icon(Icons.analytics_outlined),
             title: 'Predictive Analytics',
             subtitle: 'Churn, demand forecasts, compliance risk',
             color: BauhausDesign.primary,
@@ -1384,7 +1416,7 @@ class _AdminDashboardViewControllerState
             ),
           ),
           CommandAction(
-            icon: const Icon(Icons.playlist_add_check),
+            icon: Icon(Icons.playlist_add_check),
             title: 'Bulk Actions',
             subtitle: 'Mass approve, invoice, and assign',
             color: BauhausDesign.secondary,
@@ -1399,7 +1431,7 @@ class _AdminDashboardViewControllerState
             ),
           ),
           CommandAction(
-            icon: const Icon(Icons.calendar_today_outlined),
+            icon: Icon(Icons.calendar_today_outlined),
             title: 'Smart Scheduling',
             subtitle: 'AI shift matching & route optimization',
             color: BauhausDesign.accent,
@@ -1413,7 +1445,7 @@ class _AdminDashboardViewControllerState
             ),
           ),
           CommandAction(
-            icon: const Icon(Icons.receipt_long_outlined),
+            icon: Icon(Icons.receipt_long_outlined),
             title: 'Smart Invoicing',
             subtitle: 'AI error detection & payment predictions',
             color: BauhausDesign.primary,
@@ -1442,7 +1474,7 @@ class _AdminDashboardViewControllerState
             },
           ),
           CommandAction(
-            icon: const Icon(Icons.verified_user_outlined),
+            icon: Icon(Icons.verified_user_outlined),
             title: 'Compliance Automation',
             subtitle: 'Automated scanning and alerts',
             color: BauhausDesign.success,
@@ -1456,7 +1488,7 @@ class _AdminDashboardViewControllerState
             ),
           ),
           CommandAction(
-            icon: const Icon(Icons.receipt_outlined),
+            icon: Icon(Icons.receipt_outlined),
             title: 'Smart Expenses',
             subtitle: 'Receipt scanning with AI categorization',
             color: BauhausDesign.warning,
@@ -1470,14 +1502,14 @@ class _AdminDashboardViewControllerState
             ),
           ),
           CommandAction(
-            icon: const Icon(Icons.document_scanner_outlined),
+            icon: Icon(Icons.document_scanner_outlined),
             title: 'Scan Invoice',
             subtitle: 'Quick receipt capture',
             color: BauhausDesign.warning,
             onTap: _openScanInvoice,
           ),
           CommandAction(
-            icon: const Icon(Icons.payments_outlined),
+            icon: Icon(Icons.payments_outlined),
             title: 'Advanced Payroll',
             subtitle: 'Award rates & penalty calculations',
             color: BauhausDesign.success,
@@ -1492,7 +1524,7 @@ class _AdminDashboardViewControllerState
             ),
           ),
           CommandAction(
-            icon: const Icon(Icons.forum_outlined),
+            icon: Icon(Icons.forum_outlined),
             title: 'Communication Hub',
             subtitle: 'Multi-channel messaging & broadcasts',
             color: BauhausDesign.secondary,
@@ -1508,14 +1540,14 @@ class _AdminDashboardViewControllerState
             ),
           ),
           CommandAction(
-            icon: const Icon(Icons.keyboard_voice_outlined),
+            icon: Icon(Icons.keyboard_voice_outlined),
             title: 'Voice Assistant',
             subtitle: 'Hands-free commands for admin workflows',
             color: BauhausDesign.info,
             onTap: () => Navigator.pushNamed(context, Routes.voiceAssistant),
           ),
           CommandAction(
-            icon: const Icon(Icons.real_estate_agent_outlined),
+            icon: Icon(Icons.real_estate_agent_outlined),
             title: 'Real-Time Portal',
             subtitle: 'Live insights & service confirmations',
             color: BauhausDesign.accent,
@@ -1527,7 +1559,7 @@ class _AdminDashboardViewControllerState
             ),
           ),
           CommandAction(
-            icon: const Icon(Icons.insights_rounded),
+            icon: Icon(Icons.insights_rounded),
             title: 'Workforce Optimization',
             subtitle: 'AI planning & business intelligence',
             color: BauhausDesign.secondary,
@@ -1539,7 +1571,7 @@ class _AdminDashboardViewControllerState
             ),
           ),
           CommandAction(
-            icon: const Icon(Icons.psychology_outlined),
+            icon: Icon(Icons.psychology_outlined),
             title: 'Care Intelligence',
             subtitle: 'AI risk prediction & care planning',
             color: BauhausDesign.primary,
@@ -1551,7 +1583,7 @@ class _AdminDashboardViewControllerState
             ),
           ),
           CommandAction(
-            icon: const Icon(Icons.trending_up_rounded),
+            icon: Icon(Icons.trending_up_rounded),
             title: 'Financial Intelligence',
             subtitle: 'Revenue forecasting & pricing optimization',
             color: BauhausDesign.accent,
@@ -1569,10 +1601,10 @@ class _AdminDashboardViewControllerState
       CommandCategory(
         title: l10n.configFinance,
         headerIcon: Icons.settings_rounded,
-        accentColor: BauhausDesign.neutral,
+        accentColor: Theme.of(context).colorScheme.outline,
         actions: [
           CommandAction(
-            icon: const Icon(Icons.bar_chart_rounded),
+            icon: Icon(Icons.bar_chart_rounded),
             title: l10n.workforceAnalytics,
             subtitle: l10n.workforceAnalyticsDesc,
             color: BauhausDesign.accent,
@@ -1582,49 +1614,49 @@ class _AdminDashboardViewControllerState
             ),
           ),
           CommandAction(
-            icon: const Icon(Icons.email_outlined),
+            icon: Icon(Icons.email_outlined),
             title: l10n.emailSettings,
             subtitle: l10n.emailSettingsDesc,
             color: BauhausDesign.error,
             onTap: () => _navigateToEmailSettings(),
           ),
           CommandAction(
-            icon: const Icon(Icons.price_change_outlined),
+            icon: Icon(Icons.price_change_outlined),
             title: l10n.pricingManagement,
             subtitle: l10n.pricingManagementDesc,
             color: BauhausDesign.primary,
             onTap: () => _navigateToPricingManagement(),
           ),
           CommandAction(
-            icon: const Icon(Icons.attach_money_rounded),
+            icon: Icon(Icons.attach_money_rounded),
             title: l10n.employeePayRates,
             subtitle: l10n.employeePayRatesDesc,
             color: BauhausDesign.secondary,
             onTap: () => _navigateToEmployeePayRates(),
           ),
           CommandAction(
-            icon: const Icon(Icons.account_balance_wallet_outlined),
+            icon: Icon(Icons.account_balance_wallet_outlined),
             title: l10n.earningsDashboard,
             subtitle: l10n.earningsDashboardDesc,
             color: BauhausDesign.success,
             onTap: () => _navigateToEarningsDashboard(),
           ),
           CommandAction(
-            icon: const Icon(Icons.credit_card_rounded),
+            icon: Icon(Icons.credit_card_rounded),
             title: l10n.expenseManagement,
             subtitle: l10n.expenseManagementDesc,
             color: BauhausDesign.warning,
             onTap: () => _navigateToExpenseManagement(),
           ),
           CommandAction(
-            icon: const Icon(Icons.account_balance_rounded),
+            icon: Icon(Icons.account_balance_rounded),
             title: l10n.bankDetails,
             subtitle: l10n.bankDetailsDesc,
-            color: BauhausDesign.neutral,
+            color: Theme.of(context).colorScheme.onSurface,
             onTap: () => _navigateToBankDetails(),
           ),
           CommandAction(
-            icon: const Icon(Icons.rate_review_outlined),
+            icon: Icon(Icons.rate_review_outlined),
             title: l10n.clientPricingReview,
             subtitle: l10n.clientPricingReviewDesc,
             color: BauhausDesign.success,
@@ -1632,14 +1664,14 @@ class _AdminDashboardViewControllerState
           ),
           if (!kReleaseMode && !AppConfig.isProduction)
             CommandAction(
-              icon: const Icon(Icons.security_rounded),
+              icon: Icon(Icons.security_rounded),
               title: l10n.apiUsageDashboard,
               subtitle: l10n.apiUsageDashboardDesc,
               color: BauhausDesign.primary,
               onTap: _navigateToApiUsageDashboard,
             ),
           CommandAction(
-            icon: const Icon(Icons.download_rounded),
+            icon: Icon(Icons.download_rounded),
             title: 'Payroll Export',
             subtitle: 'Export timesheets for payroll',
             color: BauhausDesign.accent,
@@ -2015,13 +2047,13 @@ class _AdminDashboardViewControllerState
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.secondary.withValues(alpha: 0.1),
+                    color: Theme.of(context).colorScheme.inverseSurface,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
                     border: Border.all(
-                      color: BauhausDesign.surfaceWhite.withValues(alpha: 0.1),
-                      width: 1,
+                      color: Theme.of(context).colorScheme.onInverseSurface,
+                      width: 2,
                     ),
-                    boxShadow: const [...BauhausDesign.shadowSm],
+                    boxShadow: const [BauhausDesign.shadowHardSm],
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -2029,16 +2061,16 @@ class _AdminDashboardViewControllerState
                       Container(
                         padding: const EdgeInsets.all(3),
                         decoration: BoxDecoration(
-                          color: BauhausDesign.surfaceWhite.withValues(
-                            alpha: 0.1,
-                          ),
+                          color: Theme.of(context).colorScheme.secondary,
                           borderRadius: BorderRadius.circular(
                             BauhausDesign.radiusMd,
                           ),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.dashboard_rounded,
-                          color: BauhausDesign.surfaceWhite,
+                          color: BauhausDesign.readableOnColor(
+                            BauhausDesign.secondary,
+                          ),
                           size: 12,
                         ),
                       ),
@@ -2047,7 +2079,9 @@ class _AdminDashboardViewControllerState
                         'Admin Dashboard',
                         style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
-                              color: BauhausDesign.surfaceWhite,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onInverseSurface,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.1,
                             ),
@@ -2081,24 +2115,26 @@ Widget _buildQuickStat(
   String value,
   IconData icon,
 ) {
+  // This badge sits on the fixed yellow header plane, so its colours must stay
+  // theme-independent: tinted ink on yellow, never colorScheme.surface.
+  const ink = BauhausDesign.textDark;
+
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     decoration: BoxDecoration(
-      color: BauhausDesign.surfaceWhite.withValues(alpha: 0.1),
+      color: ink.withValues(alpha: 0.08),
       borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-      border: Border.all(
-        color: BauhausDesign.surfaceWhite.withValues(alpha: 0.1),
-      ),
+      border: Border.all(color: ink.withValues(alpha: 0.25)),
     ),
     child: Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: BauhausDesign.surfaceWhite, size: 14),
+        Icon(icon, color: ink, size: 14),
         const SizedBox(width: 6),
         Text(
           value,
           style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: ink,
             fontWeight: FontWeight.w700,
             fontSize: 14,
           ),
@@ -2107,7 +2143,7 @@ Widget _buildQuickStat(
         Text(
           label,
           style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-            color: BauhausDesign.surfaceWhite.withValues(alpha: 0.8),
+            color: ink.withValues(alpha: 0.85),
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),

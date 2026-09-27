@@ -70,8 +70,10 @@ class _OnboardingAppRouterState extends State<OnboardingAppRouter>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: BauhausDesign.background,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -101,16 +103,16 @@ class _OnboardingAppRouterState extends State<OnboardingAppRouter>
                               margin: EdgeInsets.only(left: i > 0 ? 6 : 0),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: BauhausDesign.neoInk,
+                                  color: colorScheme.outline,
                                   width: 1.5,
                                 ),
                                 color: fill > 0.0
                                     ? Color.lerp(
-                                        BauhausDesign.surfaceWhite,
-                                        BauhausDesign.neoInk,
+                                        colorScheme.surface,
+                                        colorScheme.inverseSurface,
                                         fill.clamp(0.0, 1.0),
                                       )
-                                    : BauhausDesign.surfaceWhite,
+                                    : colorScheme.surface,
                               ),
                             ),
                           );

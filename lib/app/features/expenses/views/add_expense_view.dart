@@ -167,18 +167,6 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
       initialDate: _selectedDate,
       firstDate: DateTime(2020),
       lastDate: DateTime(2030),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: BauhausDesign.primary,
-              onPrimary: BauhausDesign.surfaceWhite,
-              onSurface: BauhausDesign.textDark,
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
     if (picked != null && picked != _selectedDate) {
       setState(() {
@@ -212,7 +200,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          BauhausDesign.surfaceWhite,
+                          Theme.of(context).colorScheme.surface,
                         ),
                       ),
                     ),
@@ -277,7 +265,10 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
               SnackBar(
                 content: Row(
                   children: [
-                    Icon(Icons.check_circle, color: BauhausDesign.surfaceWhite),
+                    Icon(
+                      Icons.check_circle,
+                      color: Theme.of(context).colorScheme.surface,
+                    ),
                     SizedBox(width: 8),
                     Text(l10n.expenseUpdateSuccess),
                   ],
@@ -300,7 +291,10 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
               SnackBar(
                 content: Row(
                   children: [
-                    Icon(Icons.check_circle, color: BauhausDesign.surfaceWhite),
+                    Icon(
+                      Icons.check_circle,
+                      color: Theme.of(context).colorScheme.surface,
+                    ),
                     SizedBox(width: 8),
                     Text(l10n.expenseSubmitSuccess),
                   ],
@@ -333,7 +327,10 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
             SnackBar(
               content: Row(
                 children: [
-                  Icon(Icons.error, color: BauhausDesign.surfaceWhite),
+                  Icon(
+                    Icons.error,
+                    color: Theme.of(context).colorScheme.surface,
+                  ),
                   SizedBox(width: 8),
                   Expanded(child: Text(errorMessage)),
                 ],
@@ -346,7 +343,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
               duration: const Duration(seconds: 5),
               action: SnackBarAction(
                 label: l10n.expenseRetryButton,
-                textColor: BauhausDesign.surfaceWhite,
+                textColor: Theme.of(context).colorScheme.onError,
                 onPressed: () => _submitExpense(),
               ),
             ),
@@ -365,20 +362,22 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         title: Text(
           widget.expenseToEdit != null
               ? l10n.editExpenseTitle
               : l10n.addExpenseTitle,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).headlineMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
         ),
         backgroundColor: BauhausDesign.primary,
-        iconTheme: IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
         elevation: 0,
       ),
       body: SafeArea(
@@ -438,9 +437,10 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                   DropdownButtonFormField<String>(
                     initialValue: _selectedCategory,
                     style: BauhausDesign.getTextTheme(context).bodyMedium,
-                    dropdownColor: BauhausDesign.surfaceWhite,
+                    dropdownColor: Theme.of(context).colorScheme.surface,
                     decoration:
                         BauhausDesign.inputDecoration(
+                          context,
                           l10n.expenseCategoryLabel,
                         ).copyWith(
                           labelText: l10n.expenseCategoryLabel,
@@ -500,9 +500,10 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                       return DropdownButtonFormField<Patient>(
                         initialValue: _selectedClient,
                         style: BauhausDesign.getTextTheme(context).bodyMedium,
-                        dropdownColor: BauhausDesign.surfaceWhite,
+                        dropdownColor: Theme.of(context).colorScheme.surface,
                         decoration:
                             BauhausDesign.inputDecoration(
+                              context,
                               l10n.expenseClientLabel,
                             ).copyWith(
                               labelText: l10n.expenseClientLabel,
@@ -597,9 +598,10 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                     DropdownButtonFormField<String>(
                       initialValue: _recurringFrequency,
                       style: BauhausDesign.getTextTheme(context).bodyMedium,
-                      dropdownColor: BauhausDesign.surfaceWhite,
+                      dropdownColor: Theme.of(context).colorScheme.surface,
                       decoration:
                           BauhausDesign.inputDecoration(
+                            context,
                             l10n.expenseFrequencyLabel,
                           ).copyWith(
                             labelText: l10n.expenseFrequencyLabel,

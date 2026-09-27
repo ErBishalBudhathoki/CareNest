@@ -244,9 +244,12 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceOffWhite,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 1.25),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.25,
+        ),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -254,7 +257,7 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
           isExpanded: true,
           icon: const Icon(Icons.keyboard_arrow_down),
           style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w600,
           ),
           items: _stateFilters
@@ -282,10 +285,10 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
     final visibleHolidays = _filteredHolidays;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -312,11 +315,16 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
         ],
         title: Text(
           l10n.holidays,
-          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSecondary,
+          ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),
-          child: Container(color: BauhausDesign.neutral, height: 2),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 2,
+          ),
         ),
       ),
       body: Column(
@@ -359,7 +367,11 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
                               l10n.holidayListDesc,
                               style: BauhausDesign.getTextTheme(context)
                                   .bodyMedium
-                                  ?.copyWith(color: BauhausDesign.textMuted),
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                                  ),
                             ),
                           ],
                         ),
@@ -375,18 +387,20 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
                       vertical: BauhausDesign.space3,
                     ),
                     decoration: BoxDecoration(
-                      color: BauhausDesign.surfaceOffWhite,
+                      color: Theme.of(context).colorScheme.surfaceContainer,
                       borderRadius: BorderRadius.circular(
                         BauhausDesign.radiusMd,
                       ),
-                      border: Border.all(color: BauhausDesign.neutral),
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
                     ),
                     child: Row(
                       children: [
                         Icon(
                           Icons.event_available,
                           size: 20,
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                         const SizedBox(width: BauhausDesign.space3),
                         Text(
@@ -467,10 +481,10 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
             ? BauhausDesign.primary
             : (isUpcoming
                   ? BauhausDesign.secondary.withValues(alpha: 0.9)
-                  : BauhausDesign.surfaceOffWhite);
+                  : Theme.of(context).colorScheme.surfaceContainer);
         final Color dateTextColor = (isToday || isUpcoming)
-            ? BauhausDesign.surfaceWhite
-            : BauhausDesign.textDark;
+            ? Theme.of(context).colorScheme.surface
+            : Theme.of(context).colorScheme.onSurface;
 
         return Padding(
           padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
@@ -485,7 +499,9 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
                     color: dateCircleColor,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: BauhausDesign.textDark.withValues(alpha: 0.65),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.65),
                       width: 2,
                     ),
                   ),
@@ -517,16 +533,19 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
                         holiday.title,
                         style: BauhausDesign.getTextTheme(context).titleMedium
                             ?.copyWith(
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.w700,
                             ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         '${DateFormat('dd-MM-yyyy').format(holidayDate)} • ${DateFormat('EEEE').format(holidayDate)}',
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                        style: BauhausDesign.getTextTheme(context).bodySmall
+                            ?.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
                       ),
                       const SizedBox(height: 8),
                       Wrap(

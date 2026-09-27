@@ -100,6 +100,8 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     if (!widget.isVisible) {
       return const SizedBox.shrink();
     }
@@ -110,15 +112,15 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
         return Opacity(
           opacity: _fadeAnimation.value,
           child: Container(
-            color: BauhausDesign.textDark.withValues(alpha: 0.1),
+            color: colorScheme.onSurface.withValues(alpha: 0.1),
             child: Center(
               child: Container(
                 padding: const EdgeInsets.all(32),
                 margin: const EdgeInsets.symmetric(horizontal: 40),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceWhite,
+                  color: colorScheme.surface,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  border: Border.all(color: colorScheme.onSurface, width: 2),
                   boxShadow: const [BauhausDesign.shadowHard],
                 ),
                 child: Column(
@@ -141,7 +143,7 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
                                   decoration: BoxDecoration(
                                     color: BauhausDesign.primary,
                                     border: Border.all(
-                                      color: BauhausDesign.neutral,
+                                      color: colorScheme.onSurface,
                                       width: 2,
                                     ),
                                     boxShadow: const [
@@ -150,7 +152,7 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
                                   ),
                                   child: Icon(
                                     Icons.security_outlined,
-                                    color: BauhausDesign.surfaceWhite,
+                                    color: BauhausDesign.textDark,
                                     size: 30,
                                   ),
                                 ),
@@ -168,7 +170,7 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
                       style: BauhausDesign.getTextTheme(context).titleMedium
                           ?.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: BauhausDesign.textDark,
+                            color: BauhausDesign.primary,
                           ),
                       textAlign: TextAlign.center,
                     ),
@@ -177,9 +179,8 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
                     // Subtitle
                     Text(
                       'Please wait while we verify your credentials',
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
+                          ?.copyWith(color: colorScheme.onSurfaceVariant),
                       textAlign: TextAlign.center,
                     ),
 
@@ -189,7 +190,7 @@ class _AuthLoadingIndicatorState extends State<AuthLoadingIndicator>
                       TextButton(
                         onPressed: widget.onCancel,
                         style: TextButton.styleFrom(
-                          foregroundColor: BauhausDesign.textMuted,
+                          foregroundColor: colorScheme.onSurfaceVariant,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 24,
                             vertical: 12,

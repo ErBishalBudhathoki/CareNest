@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/theme/bauhaus_colors.dart';
 import '../models/dashboard_models.dart';
 
 class LiveWorkerMapWidget extends StatelessWidget {
@@ -16,12 +15,14 @@ class LiveWorkerMapWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     if (isLoading) {
       return _buildLoadingState();
     }
 
     if (workerLocations == null || workerLocations!.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(context);
     }
 
     return Card(
@@ -37,22 +38,18 @@ class LiveWorkerMapWidget extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: BauhausColors.primaryYellow.withValues(alpha: 0.1),
+                    color: colorScheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
-                    Icons.map,
-                    color: BauhausColors.primaryYellow,
-                    size: 24,
-                  ),
+                  child: Icon(Icons.map, color: colorScheme.primary, size: 24),
                 ),
                 const SizedBox(width: 12),
-                const Text(
+                Text(
                   'Live Worker Locations',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: BauhausColors.textDark,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 const Spacer(),
@@ -62,17 +59,21 @@ class LiveWorkerMapWidget extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: BauhausColors.accentGreen,
+                    color: colorScheme.secondary,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.circle, size: 8, color: Colors.white),
+                      Icon(
+                        Icons.circle,
+                        size: 8,
+                        color: colorScheme.onSecondary,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         '${workerLocations!.length} active',
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: colorScheme.onSecondary,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
@@ -87,7 +88,7 @@ class LiveWorkerMapWidget extends StatelessWidget {
             Container(
               height: 200,
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: colorScheme.surfaceContainerHigh,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Stack(
@@ -99,13 +100,13 @@ class LiveWorkerMapWidget extends StatelessWidget {
                         Icon(
                           Icons.map_outlined,
                           size: 48,
-                          color: Colors.grey[400],
+                          color: colorScheme.onSurfaceVariant,
                         ),
                         const SizedBox(height: 8),
                         Text(
                           'Map View',
                           style: TextStyle(
-                            color: Colors.grey[600],
+                            color: colorScheme.onSurface,
                             fontSize: 14,
                           ),
                         ),
@@ -113,7 +114,7 @@ class LiveWorkerMapWidget extends StatelessWidget {
                         Text(
                           'Integrate Google Maps here',
                           style: TextStyle(
-                            color: Colors.grey[500],
+                            color: colorScheme.onSurfaceVariant,
                             fontSize: 12,
                           ),
                         ),
@@ -127,11 +128,11 @@ class LiveWorkerMapWidget extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: colorScheme.surface,
                         borderRadius: BorderRadius.circular(6),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
+                            color: colorScheme.shadow.withValues(alpha: 0.1),
                             blurRadius: 4,
                           ),
                         ],
@@ -140,20 +141,24 @@ class LiveWorkerMapWidget extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildLegendItem(
+                            context,
                             'Available',
-                            BauhausColors.accentGreen,
+                            colorScheme.secondary,
                           ),
                           _buildLegendItem(
+                            context,
                             'En Route',
-                            BauhausColors.primaryBlue,
+                            colorScheme.secondary,
                           ),
                           _buildLegendItem(
+                            context,
                             'At Appointment',
-                            BauhausColors.primaryYellow,
+                            colorScheme.primary,
                           ),
                           _buildLegendItem(
+                            context,
                             'On Break',
-                            BauhausColors.accentOrange,
+                            colorScheme.primary,
                           ),
                         ],
                       ),
@@ -163,23 +168,26 @@ class LiveWorkerMapWidget extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'Worker Status',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: BauhausColors.textDark,
+                color: colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 8),
-            ...workerLocations!.map((worker) => _buildWorkerTile(worker)),
+            ...workerLocations!.map(
+              (worker) => _buildWorkerTile(context, worker),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildLegendItem(String label, Color color) {
+  Widget _buildLegendItem(BuildContext context, String label, Color color) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
@@ -192,15 +200,16 @@ class LiveWorkerMapWidget extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             label,
-            style: const TextStyle(fontSize: 10, color: BauhausColors.textDark),
+            style: TextStyle(fontSize: 10, color: colorScheme.onSurfaceVariant),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildWorkerTile(WorkerLocation worker) {
-    final statusColor = _getStatusColor(worker.status);
+  Widget _buildWorkerTile(BuildContext context, WorkerLocation worker) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final statusColor = _getStatusColor(worker.status, colorScheme);
     final statusLabel = _getStatusLabel(worker.status);
 
     return Padding(
@@ -234,10 +243,10 @@ class LiveWorkerMapWidget extends StatelessWidget {
                     children: [
                       Text(
                         worker.workerName,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: BauhausColors.textDark,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -249,9 +258,9 @@ class LiveWorkerMapWidget extends StatelessWidget {
                         const SizedBox(height: 2),
                         Text(
                           'Client: ${worker.currentClientName}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 10,
-                            color: BauhausColors.textMedium,
+                            color: colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -282,28 +291,35 @@ class LiveWorkerMapWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: const Padding(
-        padding: EdgeInsets.all(32),
+      child: Padding(
+        padding: const EdgeInsets.all(32),
         child: Center(
           child: Column(
             children: [
-              Icon(Icons.location_off, size: 48, color: Colors.grey),
+              Icon(
+                Icons.location_off,
+                size: 48,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               SizedBox(height: 16),
               Text(
                 'No active workers',
                 style: TextStyle(
-                  color: Colors.grey,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               SizedBox(height: 4),
               Text(
                 'Worker locations will appear here',
-                style: TextStyle(color: Colors.grey, fontSize: 12),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
@@ -312,18 +328,18 @@ class LiveWorkerMapWidget extends StatelessWidget {
     );
   }
 
-  Color _getStatusColor(WorkerStatus status) {
+  Color _getStatusColor(WorkerStatus status, ColorScheme colorScheme) {
     switch (status) {
       case WorkerStatus.available:
-        return BauhausColors.accentGreen;
+        return colorScheme.secondary;
       case WorkerStatus.enRoute:
-        return BauhausColors.primaryBlue;
+        return colorScheme.secondary;
       case WorkerStatus.atAppointment:
-        return BauhausColors.primaryYellow;
+        return colorScheme.primary;
       case WorkerStatus.onBreak:
-        return BauhausColors.accentOrange;
+        return colorScheme.primary;
       case WorkerStatus.offline:
-        return Colors.grey;
+        return colorScheme.onSurfaceVariant;
     }
   }
 

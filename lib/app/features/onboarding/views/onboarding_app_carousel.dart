@@ -60,8 +60,10 @@ class _OnboardingAppCarouselState extends State<OnboardingAppCarousel>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: BauhausDesign.background,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(
@@ -82,7 +84,7 @@ class _OnboardingAppCarouselState extends State<OnboardingAppCarousel>
                       'Skip',
                       style: BauhausDesign.neoMonoStyle(
                         context,
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.5,
@@ -111,16 +113,16 @@ class _OnboardingAppCarouselState extends State<OnboardingAppCarousel>
                             margin: EdgeInsets.only(left: i > 0 ? 6 : 0),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: BauhausDesign.neoInk,
+                                color: colorScheme.outline,
                                 width: 1.5,
                               ),
                               color: fill > 0.0
                                   ? Color.lerp(
-                                      BauhausDesign.surfaceWhite,
-                                      BauhausDesign.neoInk,
+                                      colorScheme.surface,
+                                      colorScheme.inverseSurface,
                                       fill.clamp(0.0, 1.0),
                                     )
-                                  : BauhausDesign.surfaceWhite,
+                                  : colorScheme.surface,
                             ),
                           ),
                         );
@@ -219,6 +221,7 @@ class _CarouselSlideState extends State<_CarouselSlide>
   @override
   Widget build(BuildContext context) {
     final theme = BauhausDesign.getTextTheme(context);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
@@ -232,11 +235,11 @@ class _CarouselSlideState extends State<_CarouselSlide>
               height: 80,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: BauhausDesign.surfaceWhite,
-                border: Border.all(color: BauhausDesign.neoInk, width: 2.5),
+                color: colorScheme.surface,
+                border: Border.all(color: colorScheme.outline, width: 2.5),
                 boxShadow: const [BauhausDesign.shadowHard],
               ),
-              child: Icon(widget.icon, size: 36, color: BauhausDesign.neoInk),
+              child: Icon(widget.icon, size: 36, color: colorScheme.onSurface),
             ),
           ),
           const SizedBox(height: BauhausDesign.space10),
@@ -250,7 +253,7 @@ class _CarouselSlideState extends State<_CarouselSlide>
                     widget.headline,
                     textAlign: TextAlign.center,
                     style: theme.displayMedium?.copyWith(
-                      color: BauhausDesign.textDark,
+                      color: colorScheme.onSurface,
                       fontWeight: FontWeight.w800,
                       height: 1.2,
                     ),
@@ -260,7 +263,7 @@ class _CarouselSlideState extends State<_CarouselSlide>
                     widget.subtext,
                     textAlign: TextAlign.center,
                     style: theme.bodyLarge?.copyWith(
-                      color: BauhausDesign.textMuted,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       height: 1.5,
                     ),
                   ),
@@ -330,6 +333,7 @@ class _BrutalistButtonState extends State<_BrutalistButton>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final shadowOffset = _pressed
         ? OnboardingButtonPress.shadowOffsetPressed
         : 4.0;
@@ -348,11 +352,11 @@ class _BrutalistButtonState extends State<_BrutalistButton>
             vertical: BauhausDesign.space4,
           ),
           decoration: BoxDecoration(
-            color: BauhausDesign.neoInk,
-            border: Border.all(color: BauhausDesign.neoInk, width: 2.5),
+            color: colorScheme.inverseSurface,
+            border: Border.all(color: colorScheme.outline, width: 2.5),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF000000),
+                color: colorScheme.shadow,
                 offset: Offset(shadowOffset, shadowOffset),
                 blurRadius: 0,
               ),
@@ -362,7 +366,7 @@ class _BrutalistButtonState extends State<_BrutalistButton>
           child: Text(
             widget.label,
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-              color: BauhausDesign.surfaceWhite,
+              color: colorScheme.onInverseSurface,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.5,
             ),

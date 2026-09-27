@@ -97,7 +97,8 @@ class BauhausSliderTrackShape extends SliderTrackShape {
     );
 
     // 1. Draw Outer Box (White background, Black border)
-    final Paint boxFill = Paint()..color = BauhausDesign.surfaceLight;
+    final Paint boxFill = Paint()
+      ..color = sliderTheme.inactiveTrackColor ?? BauhausDesign.surfaceOffWhite;
     final Paint boxBorder = Paint()
       ..color = BauhausDesign.neutral
       ..strokeWidth = 2.0

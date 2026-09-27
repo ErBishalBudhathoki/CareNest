@@ -341,11 +341,14 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                 width: math.min(size.width * 0.95, 960),
                 height: math.min(size.height * 0.95, 840),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceLight,
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
-                  boxShadow: const [
+                  color: Theme.of(context).colorScheme.surface,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 2,
+                  ),
+                  boxShadow: [
                     BoxShadow(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.onSurface,
                       offset: Offset(4, 4),
                     ),
                   ],
@@ -368,7 +371,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                               dialogContext,
                             )!.cancelAction.toUpperCase(),
                             style: GoogleFonts.oswald(
-                              color: BauhausDesign.neutral,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         ),
@@ -385,7 +388,9 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                             AppLocalizations.of(
                               dialogContext,
                             )!.saveRatesAction.toUpperCase(),
-                            style: GoogleFonts.oswald(color: Colors.white),
+                            style: GoogleFonts.oswald(
+                              color: Theme.of(context).colorScheme.onSecondary,
+                            ),
                           ),
                         ),
                       ],
@@ -411,14 +416,14 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
           child: Text(
             l10n.setPayRatesTitle(_selectedUser!.name.toUpperCase()),
             style: GoogleFonts.oswald(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: 22,
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
         IconButton(
-          icon: const Icon(Icons.close),
+          icon: Icon(Icons.close),
           onPressed: () => Navigator.of(dialogContext).pop(),
           tooltip: l10n.cancelAction,
         ),
@@ -445,7 +450,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                   borderRadius: BorderRadius.zero,
                 ),
                 filled: true,
-                fillColor: BauhausDesign.surfaceLight,
+                fillColor: Theme.of(context).colorScheme.surface,
               ),
               isExpanded: true,
               items: SchadsRateConstants.streams.map((s) {
@@ -453,7 +458,9 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                   value: s,
                   child: Text(
                     s,
-                    style: GoogleFonts.inter(color: BauhausDesign.textDark),
+                    style: GoogleFonts.inter(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                 );
               }).toList(),
@@ -474,14 +481,16 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                   borderRadius: BorderRadius.zero,
                 ),
                 filled: true,
-                fillColor: BauhausDesign.surfaceLight,
+                fillColor: Theme.of(context).colorScheme.surface,
               ),
               items: SchadsRateConstants.employmentTypes.map((t) {
                 return DropdownMenuItem(
                   value: t,
                   child: Text(
                     t,
-                    style: GoogleFonts.inter(color: BauhausDesign.textDark),
+                    style: GoogleFonts.inter(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                 );
               }).toList(),
@@ -507,7 +516,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                         borderRadius: BorderRadius.zero,
                       ),
                       filled: true,
-                      fillColor: BauhausDesign.surfaceLight,
+                      fillColor: Theme.of(context).colorScheme.surface,
                     ),
                     isExpanded: true,
                     items: _selectedStream == null
@@ -521,7 +530,9 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                                   child: Text(
                                     level,
                                     style: GoogleFonts.inter(
-                                      color: BauhausDesign.textDark,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -553,7 +564,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                         borderRadius: BorderRadius.zero,
                       ),
                       filled: true,
-                      fillColor: BauhausDesign.surfaceLight,
+                      fillColor: Theme.of(context).colorScheme.surface,
                     ),
                     isExpanded: true,
                     items: (_selectedStream == null || _selectedLevel == null)
@@ -567,7 +578,9 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                               child: Text(
                                 pp,
                                 style: GoogleFonts.inter(
-                                  color: BauhausDesign.textDark,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -592,16 +605,22 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                 padding: const EdgeInsets.only(bottom: 16),
                 child: Container(
                   padding: const EdgeInsets.all(8),
-                  color: Colors.red.withValues(alpha: 0.1),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.error.withValues(alpha: 0.1),
                   child: Row(
                     children: [
-                      const Icon(Icons.warning, color: Colors.red, size: 16),
+                      Icon(
+                        Icons.warning,
+                        color: Theme.of(context).colorScheme.error,
+                        size: 16,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           _rateWarning!,
                           style: GoogleFonts.inter(
-                            color: Colors.red,
+                            color: Theme.of(context).colorScheme.error,
                             fontSize: 12,
                           ),
                         ),
@@ -632,13 +651,13 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                         borderRadius: BorderRadius.zero,
                       ),
                       filled: true,
-                      fillColor: BauhausDesign.surfaceLight,
+                      fillColor: Theme.of(context).colorScheme.surface,
                     ),
                     style: GoogleFonts.inter(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w500,
                     ),
-                    dropdownColor: BauhausDesign.surfaceLight,
+                    dropdownColor: Theme.of(context).colorScheme.surface,
                     isExpanded: true,
                     items: [
                       DropdownMenuItem(
@@ -646,7 +665,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                         child: Text(
                           l10n.hourlyLabel,
                           style: GoogleFonts.inter(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -656,7 +675,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                         child: Text(
                           l10n.salaryLabel,
                           style: GoogleFonts.inter(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -748,14 +767,14 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                   title: Text(
                     allowance,
                     style: GoogleFonts.inter(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 14,
                     ),
                   ),
                   subtitle: Text(
                     '\$${rate?.toStringAsFixed(2)}',
                     style: GoogleFonts.inter(
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 12,
                     ),
                   ),
@@ -788,7 +807,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
         style: GoogleFonts.inter(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: BauhausDesign.neutral,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
     );
@@ -803,28 +822,30 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
       controller: controller,
       onChanged: onChanged,
       style: GoogleFonts.inter(
-        color: BauhausDesign.textDark,
+        color: Theme.of(context).colorScheme.onSurface,
         fontWeight: FontWeight.w500,
       ),
       decoration: InputDecoration(
         labelText: label,
         labelStyle: GoogleFonts.inter(
-          color: BauhausDesign.neutral,
+          color: Theme.of(context).colorScheme.onSurface,
           fontSize: 12, // Reduced size
         ),
         // Removed prefixText to save space, or keep it minimal
         // prefixText: '\$ ',
         border: const OutlineInputBorder(borderRadius: BorderRadius.zero),
-        enabledBorder: const OutlineInputBorder(
+        enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: BauhausDesign.neutral),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         focusedBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.zero,
           borderSide: BorderSide(color: BauhausDesign.primary, width: 2),
         ),
         filled: true,
-        fillColor: BauhausDesign.surfaceLight,
+        fillColor: Theme.of(context).colorScheme.surface,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 12,
           vertical: 12,
@@ -852,7 +873,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
     );
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -892,7 +913,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
 
   Widget _buildHeader() {
     return Container(
-      color: BauhausDesign.surfaceLight,
+      color: Theme.of(context).colorScheme.surface,
       child: Column(
         children: [
           Padding(
@@ -900,7 +921,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
             child: Row(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.arrow_back),
+                  icon: Icon(Icons.arrow_back),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
                 const SizedBox(width: BauhausDesign.space4),
@@ -911,13 +932,13 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                   style: GoogleFonts.oswald(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ],
             ),
           ),
-          Container(height: 4, color: BauhausDesign.neutral),
+          Container(height: 4, color: Theme.of(context).colorScheme.onSurface),
         ],
       ),
     );
@@ -937,10 +958,16 @@ class _EmployeeCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(BauhausDesign.space4),
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceLight,
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
-          boxShadow: const [
-            BoxShadow(color: BauhausDesign.neutral, offset: Offset(4, 4)),
+          color: Theme.of(context).colorScheme.surface,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).colorScheme.onSurface,
+              offset: Offset(4, 4),
+            ),
           ],
         ),
         child: Row(
@@ -952,7 +979,7 @@ class _EmployeeCard extends StatelessWidget {
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(0),
               borderWidth: 2,
-              borderColor: BauhausDesign.neutral,
+              borderColor: Theme.of(context).colorScheme.onSurface,
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -964,14 +991,14 @@ class _EmployeeCard extends StatelessWidget {
                     style: GoogleFonts.oswald(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   Text(
                     user.email,
                     style: GoogleFonts.inter(
                       fontSize: 12,
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ],
@@ -989,7 +1016,7 @@ class _EmployeeCard extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     color: user.payRate != 0.0
                         ? BauhausDesign.success
-                        : BauhausDesign.neutral,
+                        : Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 Text(
@@ -1003,13 +1030,13 @@ class _EmployeeCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ],
             ),
             const SizedBox(width: 16),
-            const Icon(Icons.edit, color: BauhausDesign.primary),
+            Icon(Icons.edit, color: BauhausDesign.primary),
           ],
         ),
       ),

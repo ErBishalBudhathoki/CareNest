@@ -87,7 +87,7 @@ class BauhausNotificationCard extends StatelessWidget {
                         style: BauhausDesign.getTextTheme(context).bodyLarge
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                       ),
                     ),
@@ -100,7 +100,7 @@ class BauhausNotificationCard extends StatelessWidget {
                           color: BauhausDesign.primary,
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.outline,
                             width: 1,
                           ),
                         ),
@@ -111,9 +111,10 @@ class BauhausNotificationCard extends StatelessWidget {
                 const SizedBox(height: BauhausDesign.space2),
                 Text(
                   notification.body,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
                 const SizedBox(height: BauhausDesign.space3),
                 Row(
@@ -121,14 +122,16 @@ class BauhausNotificationCard extends StatelessWidget {
                     Icon(
                       Icons.access_time_rounded,
                       size: 14,
-                      color: BauhausDesign.textMuted,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       notification.timeAgo,
                       style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.bold,
                           ),
                     ),
@@ -152,16 +155,19 @@ class BauhausNotificationCard extends StatelessWidget {
       width: 24,
       child: PopupMenuButton<String>(
         padding: EdgeInsets.zero,
-        icon: const Icon(
+        icon: Icon(
           Icons.more_horiz_rounded,
-          color: BauhausDesign.textMuted,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
           size: 20,
         ),
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         elevation: 4,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          side: const BorderSide(color: BauhausDesign.neutral, width: 1),
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 1,
+          ),
         ),
         onSelected: (value) {
           if (value == 'read' && onMarkRead != null) onMarkRead!();

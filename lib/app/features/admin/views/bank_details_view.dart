@@ -82,7 +82,7 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
     ]);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         titleSpacing: BauhausDesign.space4,
         title: Column(
@@ -92,7 +92,7 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
               'BANK DETAILS',
               style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
                 fontWeight: FontWeight.w900,
-                color: BauhausDesign.surfaceWhite,
+                color: Theme.of(context).colorScheme.surface,
                 letterSpacing: 1.2,
               ),
             ),
@@ -101,7 +101,7 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
                   ? 'Invoice payout destination'
                   : 'Your payroll destination',
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.surfaceWhite,
+                color: Theme.of(context).colorScheme.surface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -109,13 +109,16 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
         ),
         elevation: 0,
         backgroundColor: BauhausDesign.primary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(3),
-          child: Container(height: 3, color: BauhausDesign.neutral),
+          child: Container(
+            height: 3,
+            color: Theme.of(context).colorScheme.outline,
+          ),
         ),
       ),
       body: SafeArea(
@@ -183,8 +186,11 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
   Widget _buildHeroSection(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Column(
@@ -204,7 +210,7 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
                         : 'SET MY BANK ACCOUNT',
                     style: BauhausDesign.getTextTheme(context).titleMedium
                         ?.copyWith(
-                          color: BauhausDesign.surfaceWhite,
+                          color: Theme.of(context).colorScheme.surface,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1.1,
                         ),
@@ -216,25 +222,25 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
                 height: 76,
                 color: BauhausDesign.accent,
                 alignment: Alignment.center,
-                child: const Icon(
+                child: Icon(
                   Icons.account_balance,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   size: 32,
                 ),
               ),
             ],
           ),
-          Container(height: 2, color: BauhausDesign.neutral),
+          Container(height: 2, color: Theme.of(context).colorScheme.outline),
           Container(
             width: double.infinity,
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
             padding: const EdgeInsets.all(BauhausDesign.space5),
             child: Text(
               _isOrganizationScope
                   ? 'This organization account appears on invoices and is used for payout exports.'
                   : 'This personal account is used for your payroll and reimbursement payouts.',
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w600,
                 height: 1.45,
               ),
@@ -250,8 +256,11 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
 
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Column(
@@ -259,7 +268,7 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
         children: [
           Container(
             width: double.infinity,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             padding: const EdgeInsets.symmetric(
               horizontal: BauhausDesign.space5,
               vertical: BauhausDesign.space4,
@@ -267,7 +276,7 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
             child: Text(
               'ACCOUNT INPUTS',
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                color: BauhausDesign.surfaceWhite,
+                color: Theme.of(context).colorScheme.surface,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.0,
               ),
@@ -324,7 +333,7 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
                     FilteringTextInputFormatter.digitsOnly,
                     LengthLimitingTextInputFormatter(10),
                   ],
-                  labelColor: BauhausDesign.surfaceOffWhite,
+                  labelColor: Theme.of(context).colorScheme.surfaceContainer,
                 ),
                 const SizedBox(height: BauhausDesign.space5),
                 _buildFormatRules(context),
@@ -375,8 +384,11 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            color: Theme.of(context).colorScheme.surface,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             boxShadow: const [BauhausDesign.shadowHard],
           ),
           child: Column(
@@ -396,14 +408,14 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
                             : 'LIVE PERSONAL SUMMARY',
                         style: BauhausDesign.getTextTheme(context).labelLarge
                             ?.copyWith(
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.w900,
                             ),
                       ),
                     ),
                   ),
                   Container(
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     padding: const EdgeInsets.symmetric(
                       horizontal: BauhausDesign.space4,
                       vertical: BauhausDesign.space3,
@@ -412,14 +424,17 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
                       '$completed/4',
                       style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
-                            color: BauhausDesign.surfaceWhite,
+                            color: Theme.of(context).colorScheme.surface,
                             fontWeight: FontWeight.w900,
                           ),
                     ),
                   ),
                 ],
               ),
-              Container(height: 2, color: BauhausDesign.neutral),
+              Container(
+                height: 2,
+                color: Theme.of(context).colorScheme.outline,
+              ),
               Padding(
                 padding: const EdgeInsets.all(BauhausDesign.space4),
                 child: Column(
@@ -459,8 +474,11 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
         Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceOffWhite,
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            color: Theme.of(context).colorScheme.surfaceContainer,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             boxShadow: const [BauhausDesign.shadowHardSm],
           ),
           padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -472,10 +490,10 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
                 height: 36,
                 color: BauhausDesign.secondary,
                 alignment: Alignment.center,
-                child: const Icon(
+                child: Icon(
                   Icons.lock_outline,
                   size: 20,
-                  color: BauhausDesign.surfaceWhite,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
               ),
               const SizedBox(width: BauhausDesign.space3),
@@ -485,7 +503,7 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
                   'Only masked account details are shown in this UI.',
                   style: BauhausDesign.getTextTheme(context).bodySmall
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                         height: 1.45,
                       ),
@@ -515,7 +533,10 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
         Container(
           decoration: BoxDecoration(
             color: labelColor,
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             boxShadow: const [BauhausDesign.shadowHardXs],
           ),
           padding: const EdgeInsets.symmetric(
@@ -526,8 +547,8 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
             label.toUpperCase(),
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
               color: darkLabel
-                  ? BauhausDesign.surfaceWhite
-                  : BauhausDesign.textDark,
+                  ? Theme.of(context).colorScheme.surface
+                  : Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w900,
               letterSpacing: 0.7,
             ),
@@ -536,8 +557,11 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
         const SizedBox(height: BauhausDesign.space2),
         Container(
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            color: Theme.of(context).colorScheme.surface,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             boxShadow: const [BauhausDesign.shadowHardSm],
           ),
           child: TextFormField(
@@ -545,24 +569,32 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: BauhausDesign.getTextTheme(
-                context,
-              ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+              hintStyle: BauhausDesign.getTextTheme(context).bodyMedium
+                  ?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
               prefixIcon: Container(
                 margin: const EdgeInsets.all(BauhausDesign.space2),
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceOffWhite,
-                  border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                  color: Theme.of(context).colorScheme.surfaceContainer,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 1.5,
+                  ),
                 ),
-                child: Icon(icon, color: BauhausDesign.textDark, size: 20),
+                child: Icon(
+                  icon,
+                  color: Theme.of(context).colorScheme.onSurface,
+                  size: 20,
+                ),
               ),
               filled: true,
-              fillColor: BauhausDesign.backgroundLight,
+              fillColor: Theme.of(context).colorScheme.surface,
               border: InputBorder.none,
               focusedBorder: InputBorder.none,
               enabledBorder: InputBorder.none,
@@ -585,14 +617,17 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1.5,
+        ),
       ),
       child: Row(
         children: [
           Container(
             width: 120,
-            color: BauhausDesign.backgroundLight,
+            color: Theme.of(context).colorScheme.surface,
             padding: const EdgeInsets.symmetric(
               horizontal: BauhausDesign.space3,
               vertical: BauhausDesign.space3,
@@ -600,7 +635,7 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
             child: Text(
               label,
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w900,
               ),
             ),
@@ -614,7 +649,7 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
               child: Text(
                 value,
                 style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -629,16 +664,19 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceOffWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
       ),
       padding: const EdgeInsets.all(BauhausDesign.space4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
+          Icon(
             Icons.info_outline,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             size: 20,
           ),
           const SizedBox(width: BauhausDesign.space2),
@@ -650,7 +688,7 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
                   'REQUIREMENTS',
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 0.5,
                       ),
@@ -662,7 +700,7 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
                   '• Check details carefully—wrong info delays payouts.',
                   style: BauhausDesign.getTextTheme(context).bodySmall
                       ?.copyWith(
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w600,
                         height: 1.4,
                       ),
@@ -685,7 +723,7 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
       padding: const EdgeInsets.all(BauhausDesign.space3),
       child: Row(
         children: [
-          const Icon(Icons.error_outline, color: BauhausDesign.error),
+          Icon(Icons.error_outline, color: BauhausDesign.error),
           const SizedBox(width: BauhausDesign.space2),
           Expanded(
             child: Text(

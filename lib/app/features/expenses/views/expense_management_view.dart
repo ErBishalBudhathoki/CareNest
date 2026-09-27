@@ -17,9 +17,10 @@ import 'package:carenest/app/features/expenses/views/quick_expense_capture_view.
 
 /// Ink or paper for a glyph on a solid accent fill, so bright hues like the
 /// tangerine keep a readable icon.
-Color _onAccent(Color color) => color.computeLuminance() > 0.5
-    ? BauhausDesign.neutral
-    : BauhausDesign.surfaceWhite;
+Color _onAccent(BuildContext context, Color color) =>
+    color.computeLuminance() > 0.5
+    ? Theme.of(context).colorScheme.onPrimary
+    : Theme.of(context).colorScheme.onInverseSurface;
 
 class ExpenseManagementView extends ConsumerStatefulWidget {
   final String adminEmail;
@@ -171,7 +172,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: CustomScrollView(
         slivers: [
           _buildSliverAppBar(),
@@ -191,7 +192,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
       centerTitle: false,
       titleSpacing: 12,
       backgroundColor: BauhausDesign.secondary,
-      foregroundColor: BauhausDesign.surfaceWhite,
+      foregroundColor: Theme.of(context).colorScheme.onSecondary,
       elevation: 0,
       scrolledUnderElevation: 0,
       systemOverlayStyle: SystemUiOverlayStyle.light,
@@ -203,7 +204,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-          color: BauhausDesign.surfaceWhite,
+          color: Theme.of(context).colorScheme.onSecondary,
           fontWeight: FontWeight.w800,
           fontSize: 22,
         ),
@@ -363,27 +364,35 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
   Widget _buildTabSection() {
     return Container(
           margin: const EdgeInsets.symmetric(horizontal: 20),
-          decoration: const BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
             border: Border.fromBorderSide(
-              BorderSide(color: BauhausDesign.neutral, width: 2),
+              BorderSide(
+                color: Theme.of(context).colorScheme.onSurface,
+                width: 2,
+              ),
             ),
             boxShadow: [BauhausDesign.shadowHardSm],
           ),
           child: Column(
             children: [
               Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: BauhausDesign.secondary,
                   border: Border(
-                    bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+                    bottom: BorderSide(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      width: 2,
+                    ),
                   ),
                 ),
                 child: TabBar(
                   controller: _tabController,
                   isScrollable: true,
-                  labelColor: BauhausDesign.textDark,
-                  unselectedLabelColor: BauhausDesign.surfaceWhite,
+                  labelColor: Theme.of(context).colorScheme.onSecondary,
+                  unselectedLabelColor: Theme.of(
+                    context,
+                  ).colorScheme.onSecondary.withValues(alpha: 0.7),
                   labelStyle: BauhausDesign.getTextTheme(
                     context,
                   ).labelLarge?.copyWith(fontWeight: FontWeight.w900),
@@ -391,7 +400,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                     context,
                   ).labelLarge?.copyWith(fontWeight: FontWeight.w700),
                   indicatorSize: TabBarIndicatorSize.tab,
-                  indicator: const BoxDecoration(color: BauhausDesign.accent),
+                  indicator: BoxDecoration(color: BauhausDesign.accent),
                   indicatorPadding: EdgeInsets.zero,
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   labelPadding: const EdgeInsets.symmetric(
@@ -599,7 +608,10 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                 padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
-                  border: Border.all(color: BauhausDesign.neutral, width: 1),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 1,
+                  ),
                 ),
                 child: Icon(icon, color: color, size: 20),
               ),
@@ -700,7 +712,10 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
       width: double.infinity,
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
       ),
       child: Material(
         color: Colors.transparent,
@@ -716,7 +731,10 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   height: 48,
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.1),
-                    border: Border.all(color: BauhausDesign.neutral, width: 1),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      width: 1,
+                    ),
                   ),
                   child: Icon(icon, color: color, size: 24),
                 ),
@@ -1017,7 +1035,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: BauhausDesign.primary.withValues(alpha: 0.1),
-                    border: Border.all(color: BauhausDesign.neutral),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                   child: Icon(
                     Icons.add_circle_outline_rounded,
@@ -1188,7 +1208,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                 label: 'PENDING APPROVAL',
                 icon: Icons.schedule,
                 background: BauhausDesign.warning.withValues(alpha: 0.2),
-                textColor: BauhausDesign.textDark,
+                textColor: Theme.of(context).colorScheme.onSurface,
               ),
               Text(
                 currencyFormat.format(expense.amount),
@@ -1223,7 +1243,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               padding: const EdgeInsets.all(12.0),
               decoration: BoxDecoration(
                 color: BauhausDesign.surfaceOffWhite,
-                border: Border.all(color: BauhausDesign.neutral),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
               child: Text(
                 expense.description!,
@@ -1316,8 +1338,11 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               const SizedBox(width: 8.0),
               Container(
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceWhite,
-                  border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                  color: Theme.of(context).colorScheme.onSecondary,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 1.5,
+                  ),
                   boxShadow: const [BauhausDesign.shadowHardSm],
                 ),
                 child: IconButton(
@@ -1338,10 +1363,10 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                       }
                     });
                   },
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.visibility_rounded,
                     size: 18,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                   tooltip: AppLocalizations.of(context)!.viewAction,
                   padding: const EdgeInsets.all(8.0),
@@ -1464,7 +1489,9 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: BauhausDesign.surfaceOffWhite,
-              border: Border.all(color: BauhausDesign.neutral),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1567,7 +1594,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
       case 'pending':
       case 'pending approval':
         background = BauhausDesign.warning.withValues(alpha: 0.2);
-        textColor = BauhausDesign.textDark;
+        textColor = Theme.of(context).colorScheme.onSurface;
         break;
       case 'rejected':
         background = BauhausDesign.error.withValues(alpha: 0.2);
@@ -1575,7 +1602,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
         break;
       default:
         background = BauhausDesign.surfaceOffWhite;
-        textColor = BauhausDesign.textDark;
+        textColor = Theme.of(context).colorScheme.onSurface;
     }
 
     return _buildTag(
@@ -1800,7 +1827,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                         decoration: BoxDecoration(
                           color: BauhausDesign.surfaceOffWhite,
                           border: Border.all(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.onSurface,
                             width: 1,
                           ),
                         ),
@@ -1849,7 +1876,10 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                 padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 2,
+                  ),
                 ),
                 child: Icon(icon, color: color, size: 18),
               ),
@@ -1881,14 +1911,17 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
     EdgeInsets padding = const EdgeInsets.all(16),
     EdgeInsets? margin,
     VoidCallback? onTap,
-    Color backgroundColor = BauhausDesign.surfaceWhite,
+    Color? backgroundColor,
   }) {
     final card = Container(
       margin: margin,
       padding: padding,
       decoration: BoxDecoration(
-        color: backgroundColor,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: backgroundColor ?? Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: child,
@@ -1919,11 +1952,18 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            color: Theme.of(context).colorScheme.surface,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.onSurface,
+              width: 2,
+            ),
             boxShadow: const [BauhausDesign.shadowHardXs],
           ),
-          child: Icon(icon, size: 18, color: BauhausDesign.textDark),
+          child: Icon(
+            icon,
+            size: 18,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
       ),
     );
@@ -1938,12 +1978,21 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
           left: BorderSide(color: color, width: 6),
-          top: const BorderSide(color: BauhausDesign.neutral, width: 2),
-          right: const BorderSide(color: BauhausDesign.neutral, width: 2),
-          bottom: const BorderSide(color: BauhausDesign.neutral, width: 2),
+          top: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+          right: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
         ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
@@ -1957,9 +2006,12 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                 height: 28,
                 decoration: BoxDecoration(
                   color: color,
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 2,
+                  ),
                 ),
-                child: Icon(icon, size: 14, color: _onAccent(color)),
+                child: Icon(icon, size: 14, color: _onAccent(context, color)),
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -1983,7 +2035,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -1995,26 +2047,33 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
   Widget _buildTag({
     required String label,
     IconData? icon,
-    Color background = BauhausDesign.surfaceWhite,
-    Color textColor = BauhausDesign.textDark,
+    Color? background,
+    Color? textColor,
   }) {
+    final resolvedBackground =
+        background ?? Theme.of(context).colorScheme.surface;
+    final resolvedTextColor =
+        textColor ?? Theme.of(context).colorScheme.onSurface;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: background,
-        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+        color: resolvedBackground,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 1.5,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 12, color: textColor),
+            Icon(icon, size: 12, color: resolvedTextColor),
             const SizedBox(width: 6),
           ],
           Text(
             label,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: textColor,
+              color: resolvedTextColor,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -2035,13 +2094,16 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            color: Theme.of(context).colorScheme.surface,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.onSurface,
+              width: 2,
+            ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
+              Icon(
                 Icons.local_offer_outlined,
                 size: 14,
                 color: BauhausDesign.primary,
@@ -2050,7 +2112,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               Text(
                 label,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -2076,7 +2138,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
       case 'services':
         return BauhausDesign.secondary;
       default:
-        return BauhausDesign.neutral;
+        return Theme.of(context).colorScheme.onSurface;
     }
   }
 

@@ -200,8 +200,8 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
 
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(BauhausDesign.radiusLg),
         ),
@@ -215,7 +215,9 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: BauhausDesign.neutral.withValues(alpha: 0.3),
+                color: Theme.of(
+                  context,
+                ).colorScheme.outline.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -265,8 +267,10 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                 ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral),
-                  color: BauhausDesign.surfaceWhite,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                  color: Theme.of(context).colorScheme.surface,
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
@@ -316,18 +320,7 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                           const Duration(days: 30),
                         ),
                         lastDate: DateTime.now().add(const Duration(days: 365)),
-                        builder: (context, child) {
-                          return Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: const ColorScheme.light(
-                                primary: BauhausDesign.primary,
-                                onPrimary: BauhausDesign.surfaceWhite,
-                                onSurface: BauhausDesign.textDark,
-                              ),
-                            ),
-                            child: child!,
-                          );
-                        },
+                        builder: (context, child) => child!,
                       );
                       if (date != null) {
                         setState(() {
@@ -368,18 +361,7 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                       final time = await showTimePicker(
                         context: context,
                         initialTime: startTime,
-                        builder: (context, child) {
-                          return Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: const ColorScheme.light(
-                                primary: BauhausDesign.primary,
-                                onPrimary: BauhausDesign.surfaceWhite,
-                                onSurface: BauhausDesign.textDark,
-                              ),
-                            ),
-                            child: child!,
-                          );
-                        },
+                        builder: (context, child) => child!,
                       );
                       if (time != null) {
                         setState(() => startTime = time);
@@ -434,18 +416,7 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                         initialDate: endDate ?? selectedDate,
                         firstDate: selectedDate,
                         lastDate: DateTime.now().add(const Duration(days: 365)),
-                        builder: (context, child) {
-                          return Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: const ColorScheme.light(
-                                primary: BauhausDesign.primary,
-                                onPrimary: BauhausDesign.surfaceWhite,
-                                onSurface: BauhausDesign.textDark,
-                              ),
-                            ),
-                            child: child!,
-                          );
-                        },
+                        builder: (context, child) => child!,
                       );
                       if (date != null) {
                         setState(() => endDate = date);
@@ -483,18 +454,7 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                       final time = await showTimePicker(
                         context: context,
                         initialTime: endTime,
-                        builder: (context, child) {
-                          return Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: const ColorScheme.light(
-                                primary: BauhausDesign.primary,
-                                onPrimary: BauhausDesign.surfaceWhite,
-                                onSurface: BauhausDesign.textDark,
-                              ),
-                            ),
-                            child: child!,
-                          );
-                        },
+                        builder: (context, child) => child!,
                       );
                       if (time != null) {
                         setState(() => endTime = time);
@@ -534,7 +494,9 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space3),
             decoration: BoxDecoration(
-              color: BauhausDesign.neutral.withValues(alpha: 0.05),
+              color: Theme.of(
+                context,
+              ).colorScheme.outline.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
             ),
             child: Row(

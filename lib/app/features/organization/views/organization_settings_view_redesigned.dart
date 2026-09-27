@@ -9,6 +9,7 @@ import 'package:carenest/app/features/organization/viewmodels/organization_viewm
 import 'package:carenest/app/features/organization/views/bauhaus_integrations_section.dart';
 import 'package:carenest/app/features/organization/views/bauhaus_branding_section.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 
 class OrganizationSettingsRedesigned extends ConsumerStatefulWidget {
   const OrganizationSettingsRedesigned({super.key});
@@ -64,34 +65,38 @@ class _OrganizationSettingsRedesignedState
   Widget build(BuildContext context) {
     final orgId = ref.watch(organizationIdProvider);
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     // Handle the case where no organization is selected
     if (orgId == null) {
       return Scaffold(
-        backgroundColor: BauhausDesign.backgroundLight,
+        backgroundColor: colorScheme.surface,
         appBar: AppBar(
           title: Text(
             'Organization Settings',
             style: GoogleFonts.inter(
-              color: BauhausDesign.surfaceWhite,
+              color: colorScheme.onSecondary,
               fontWeight: FontWeight.w600,
               fontSize: BauhausDesign.fontLg,
             ),
           ),
-          backgroundColor: BauhausDesign.secondary,
-          foregroundColor: BauhausDesign.surfaceWhite,
+          backgroundColor: colorScheme.secondary,
+          foregroundColor: colorScheme.onSecondary,
           systemOverlayStyle: SystemUiOverlayStyle.light,
           scrolledUnderElevation: 0,
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.0),
-            child: Container(color: BauhausDesign.neutral, height: 1.0),
+            child: Container(
+              color: Theme.of(context).colorScheme.outline,
+              height: 1.0,
+            ),
           ),
           leading: IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.arrow_back,
-              color: BauhausDesign.surfaceWhite,
+              color: Theme.of(context).colorScheme.surface,
             ),
             onPressed: () => Navigator.of(context).pop(),
           ),
@@ -101,42 +106,45 @@ class _OrganizationSettingsRedesignedState
             padding: const EdgeInsets.all(BauhausDesign.space8),
             constraints: const BoxConstraints(maxWidth: 400),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              color: Theme.of(context).colorScheme.surface,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
               boxShadow: [BauhausDesign.shadowHard],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
+                Icon(
                   Icons.business_outlined,
                   size: 48,
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
-                const SizedBox(height: BauhausDesign.space4),
+                SizedBox(height: BauhausDesign.space4),
                 Text(
                   'No Organization Selected',
                   style: GoogleFonts.inter(
                     fontSize: BauhausDesign.fontLg,
                     fontWeight: FontWeight.w600,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
-                const SizedBox(height: BauhausDesign.space2),
+                SizedBox(height: BauhausDesign.space2),
                 Text(
                   'Please select an organization from the dashboard to configure settings.',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inter(
                     fontSize: BauhausDesign.fontSm,
-                    color: BauhausDesign.textMuted,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
-                const SizedBox(height: BauhausDesign.space6),
+                SizedBox(height: BauhausDesign.space6),
                 ElevatedButton(
                   onPressed: () => Navigator.of(context).pop(),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.primaryColor,
-                    foregroundColor: BauhausDesign.textDark,
+                    foregroundColor: Theme.of(context).colorScheme.onSurface,
                     padding: const EdgeInsets.symmetric(
                       horizontal: BauhausDesign.space6,
                       vertical: BauhausDesign.space3,
@@ -163,7 +171,7 @@ class _OrganizationSettingsRedesignedState
     final organizationAsync = ref.watch(organizationViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: organizationAsync.when(
         loading: () => const _BauhausLoadingScreen(),
         error: (error, stackTrace) => _BauhausErrorScreen(
@@ -227,7 +235,7 @@ class _OrganizationSettingsRedesignedState
 
   Widget _buildMobileLayout(Organization organization) {
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: CustomScrollView(
         slivers: [
           _buildEnhancedHeaderSliver(organization),
@@ -241,18 +249,21 @@ class _OrganizationSettingsRedesignedState
         ],
       ),
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           border: Border(
-            top: BorderSide(color: BauhausDesign.neutral, width: 2),
+            top: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
           ),
         ),
         child: BottomNavigationBar(
           currentIndex: _currentStep,
           onTap: _onStepTapped,
           type: BottomNavigationBarType.fixed,
-          backgroundColor: BauhausDesign.surfaceWhite,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           selectedItemColor: Theme.of(context).primaryColor,
-          unselectedItemColor: BauhausDesign.textMuted,
+          unselectedItemColor: Theme.of(context).colorScheme.onSurfaceVariant,
           selectedLabelStyle: GoogleFonts.inter(
             fontWeight: FontWeight.w600,
             fontSize: 12,
@@ -283,6 +294,7 @@ class _OrganizationSettingsRedesignedState
 
   Widget _buildEnhancedHeaderSliver(Organization organization) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return SliverAppBar(
       expandedHeight: 120.0,
       pinned: true,
@@ -295,16 +307,15 @@ class _OrganizationSettingsRedesignedState
           onTap: () => Navigator.of(context).pop(),
           child: Container(
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              color: Theme.of(context).colorScheme.surface,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
               boxShadow: const [BauhausDesign.shadowHardSm],
             ),
-            child: const Icon(
-              Icons.arrow_back,
-              color: BauhausDesign.textDark,
-              size: 20,
-            ),
+            child: Icon(Icons.arrow_back, color: colorScheme.onSecondary),
           ),
         ),
       ),
@@ -312,8 +323,11 @@ class _OrganizationSettingsRedesignedState
         background: Container(
           decoration: BoxDecoration(
             color: theme.primaryColor,
-            border: const Border(
-              bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+            border: Border(
+              bottom: BorderSide(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
             ),
           ),
           child: Stack(
@@ -335,16 +349,21 @@ class _OrganizationSettingsRedesignedState
                             style: GoogleFonts.oswald(
                               fontSize: 24,
                               fontWeight: FontWeight.w700,
-                              color: Colors.white,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onInverseSurface,
                               height: 1.1,
                             ),
                           ),
-                          const SizedBox(height: BauhausDesign.space1),
+                          SizedBox(height: BauhausDesign.space1),
                           Text(
                             'Configure branding, integrations, and system preferences',
                             style: GoogleFonts.inter(
                               fontSize: BauhausDesign.fontSm,
-                              color: Colors.white.withValues(alpha: 0.9),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onInverseSurface
+                                  .withValues(alpha: 0.9),
                             ),
                           ),
                         ],
@@ -408,8 +427,11 @@ class _OrganizationSettingsRedesignedState
   Widget _buildSystemSettings(Organization organization) {
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: [BauhausDesign.shadowHard],
       ),
       child: Column(
@@ -417,25 +439,28 @@ class _OrganizationSettingsRedesignedState
         children: [
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space4),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               border: Border(
-                bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+                bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
               ),
             ),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.settings_system_daydream_outlined,
                   size: 24,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
-                const SizedBox(width: BauhausDesign.space3),
+                SizedBox(width: BauhausDesign.space3),
                 Text(
                   'System Preferences',
                   style: GoogleFonts.oswald(
                     fontSize: BauhausDesign.fontLg,
                     fontWeight: FontWeight.w600,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ],
@@ -490,25 +515,23 @@ class _OrganizationSettingsRedesignedState
                 style: GoogleFonts.inter(
                   fontSize: BauhausDesign.fontMd,
                   fontWeight: FontWeight.w600,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
-              const SizedBox(height: 2),
+              SizedBox(height: 2),
               Text(
                 description,
                 style: GoogleFonts.inter(
                   fontSize: BauhausDesign.fontSm,
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
           ),
         ),
-        Switch(
-          value: value,
-          onChanged: onChanged,
-          activeThumbColor: Theme.of(context).primaryColor,
-        ),
+        // Bauhaus switch (zero radius, 2px border, hard shadow) rather than
+        // Material's rounded `Switch`.
+        BauhausSwitch(value: value, onChanged: onChanged),
       ],
     );
   }
@@ -528,15 +551,18 @@ class _BauhausSidebar extends StatelessWidget {
     final theme = Theme.of(context);
     return Container(
       width: 280,
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
-          right: BorderSide(color: BauhausDesign.neutral, width: 2),
+          right: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
         ),
       ),
       child: Column(
         children: [
-          const SizedBox(height: BauhausDesign.space6),
+          SizedBox(height: BauhausDesign.space6),
           _SidebarItem(
             index: 0,
             title: 'Branding',
@@ -613,10 +639,12 @@ class _SidebarItem extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: isSelected ? activeColor : BauhausDesign.textMuted,
+              color: isSelected
+                  ? activeColor
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
               size: 24,
             ),
-            const SizedBox(width: BauhausDesign.space3),
+            SizedBox(width: BauhausDesign.space3),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -629,15 +657,15 @@ class _SidebarItem extends StatelessWidget {
                           ? FontWeight.w600
                           : FontWeight.w500,
                       color: isSelected
-                          ? BauhausDesign.textDark
-                          : BauhausDesign.textMuted,
+                          ? Theme.of(context).colorScheme.onSurface
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   Text(
                     subtitle,
                     style: GoogleFonts.inter(
                       fontSize: BauhausDesign.fontXs,
-                      color: BauhausDesign.textMuted,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -662,10 +690,13 @@ class _BauhausHeader extends StatelessWidget {
         horizontal: BauhausDesign.space6,
         vertical: BauhausDesign.space4,
       ),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
-          bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
         ),
       ),
       child: Row(
@@ -673,13 +704,16 @@ class _BauhausHeader extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space2),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceLight,
-              border: Border.all(color: BauhausDesign.neutral),
+              color: Theme.of(context).colorScheme.surface,
+              border: Border.all(color: Theme.of(context).colorScheme.outline),
               borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
             ),
-            child: const Icon(Icons.tune, color: BauhausDesign.textDark),
+            child: Icon(
+              Icons.tune,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
-          const SizedBox(width: BauhausDesign.space4),
+          SizedBox(width: BauhausDesign.space4),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -688,7 +722,7 @@ class _BauhausHeader extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: BauhausDesign.fontSm,
                   fontWeight: FontWeight.w700,
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   letterSpacing: 1.0,
                 ),
               ),
@@ -697,7 +731,7 @@ class _BauhausHeader extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: BauhausDesign.fontXl,
                   fontWeight: FontWeight.w600,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ],
@@ -722,13 +756,13 @@ class _BauhausLoadingScreen extends StatelessWidget {
               Theme.of(context).primaryColor,
             ),
           ),
-          const SizedBox(height: BauhausDesign.space4),
+          SizedBox(height: BauhausDesign.space4),
           Text(
             'LOADING SETTINGS...',
             style: GoogleFonts.inter(
               fontSize: BauhausDesign.fontSm,
               fontWeight: FontWeight.w600,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               letterSpacing: 1.0,
             ),
           ),
@@ -751,52 +785,48 @@ class _BauhausErrorScreen extends StatelessWidget {
         padding: const EdgeInsets.all(BauhausDesign.space8),
         constraints: const BoxConstraints(maxWidth: 400),
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
+          color: Theme.of(context).colorScheme.surface,
           border: Border.all(color: BauhausDesign.error, width: 2),
           boxShadow: [BauhausDesign.shadowHard],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.error_outline,
-              size: 48,
-              color: BauhausDesign.error,
-            ),
-            const SizedBox(height: BauhausDesign.space4),
+            Icon(Icons.error_outline, size: 48, color: BauhausDesign.error),
+            SizedBox(height: BauhausDesign.space4),
             Text(
               'Configuration Error',
               style: GoogleFonts.inter(
                 fontSize: BauhausDesign.fontLg,
                 fontWeight: FontWeight.w700,
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
-            const SizedBox(height: BauhausDesign.space2),
+            SizedBox(height: BauhausDesign.space2),
             Text(
               'Unable to load organization settings.',
               style: GoogleFonts.inter(
                 fontSize: BauhausDesign.fontMd,
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
-            const SizedBox(height: BauhausDesign.space2),
+            SizedBox(height: BauhausDesign.space2),
             Text(
               'Please try again later or contact support if the issue persists.',
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
                 fontSize: BauhausDesign.fontSm,
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontStyle: FontStyle.italic,
               ),
             ),
             if (onRetry != null) ...[
-              const SizedBox(height: BauhausDesign.space6),
+              SizedBox(height: BauhausDesign.space6),
               ElevatedButton(
                 onPressed: onRetry,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: BauhausDesign.textDark,
-                  foregroundColor: BauhausDesign.surfaceWhite,
+                  backgroundColor: Theme.of(context).colorScheme.onSurface,
+                  foregroundColor: Theme.of(context).colorScheme.surface,
                   padding: const EdgeInsets.symmetric(
                     horizontal: BauhausDesign.space6,
                     vertical: BauhausDesign.space3,

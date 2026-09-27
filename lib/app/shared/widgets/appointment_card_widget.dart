@@ -44,6 +44,7 @@ class AppointmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final screenSize = MediaQuery.of(context).size;
     final isSmallScreen = screenSize.height < 700;
 
@@ -51,16 +52,16 @@ class AppointmentCard extends StatelessWidget {
       height: screenSize.height * 0.42,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFFFFFFFF), Color(0xFFF5F5F5)],
+          colors: [colorScheme.surface, colorScheme.surfaceContainer],
         ),
         borderRadius: BorderRadius.circular(20.0),
         border: Border.all(
-          color: const Color(0xFF667EEA).withValues(alpha: 0.1),
+          color: colorScheme.primary.withValues(alpha: 0.1),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black12,
+            color: colorScheme.shadow.withValues(alpha: 0.07),
             blurRadius: 16,
             offset: Offset(0, 8),
           ),
@@ -78,7 +79,7 @@ class AppointmentCard extends StatelessWidget {
                 vertical: 8.0,
               ),
               decoration: BoxDecoration(
-                color: const Color(0xFF667EEA).withValues(alpha: 0.1),
+                color: colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12.0),
               ),
               child: Row(
@@ -87,12 +88,12 @@ class AppointmentCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF667EEA),
+                      color: colorScheme.primary,
                       borderRadius: BorderRadius.circular(4.0),
                     ),
                     child: Icon(
                       Icons.calendar_today,
-                      color: Colors.white,
+                      color: colorScheme.onPrimary,
                       size: isSmallScreen ? 16 : 20,
                     ),
                   ),
@@ -110,7 +111,7 @@ class AppointmentCard extends StatelessWidget {
                                     fontWeight: FontWeight.w600,
                                   ))
                             .copyWith(
-                              color: const Color(0xFF667EEA),
+                              color: colorScheme.primary,
                               letterSpacing: 0.5,
                             ),
                   ),
@@ -118,13 +119,31 @@ class AppointmentCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12.0),
-            _buildModernCardItem(iconData, label, text, isSmallScreen),
+            _buildModernCardItem(context, iconData, label, text, isSmallScreen),
             const SizedBox(height: 8.0),
-            _buildModernCardItem(iconData1, label1, text1, isSmallScreen),
+            _buildModernCardItem(
+              context,
+              iconData1,
+              label1,
+              text1,
+              isSmallScreen,
+            ),
             const SizedBox(height: 8.0),
-            _buildModernCardItem(iconData2, label2, text2, isSmallScreen),
+            _buildModernCardItem(
+              context,
+              iconData2,
+              label2,
+              text2,
+              isSmallScreen,
+            ),
             const SizedBox(height: 8.0),
-            _buildModernCardItem(iconData3, label3, text3, isSmallScreen),
+            _buildModernCardItem(
+              context,
+              iconData3,
+              label3,
+              text3,
+              isSmallScreen,
+            ),
             const SizedBox(height: 12.0),
             Consumer(
               builder: (context, ref, _) {
@@ -133,12 +152,15 @@ class AppointmentCard extends StatelessWidget {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Color(0xFF667EEA), Color(0xFF5A69F1)],
+                      colors: [
+                        colorScheme.primary,
+                        colorScheme.primary.withValues(alpha: 0.7),
+                      ],
                     ),
                     borderRadius: BorderRadius.circular(12.0),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black12,
+                        color: colorScheme.shadow.withValues(alpha: 0.07),
                         blurRadius: 8,
                         offset: Offset(0, 4),
                       ),
@@ -166,7 +188,7 @@ class AppointmentCard extends StatelessWidget {
                           children: [
                             Icon(
                               Icons.visibility_outlined,
-                              color: Colors.white,
+                              color: colorScheme.onPrimary,
                               size: isSmallScreen ? 18 : 20,
                             ),
                             const SizedBox(width: 8.0),
@@ -183,7 +205,7 @@ class AppointmentCard extends StatelessWidget {
                                               fontWeight: FontWeight.w600,
                                             ))
                                       .copyWith(
-                                        color: Colors.white,
+                                        color: colorScheme.onPrimary,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: 0.5,
                                       ),
@@ -191,7 +213,7 @@ class AppointmentCard extends StatelessWidget {
                             const SizedBox(width: 8.0),
                             Icon(
                               Icons.arrow_forward_ios,
-                              color: Colors.white,
+                              color: colorScheme.onPrimary,
                               size: isSmallScreen ? 16 : 18,
                             ),
                           ],
@@ -210,18 +232,20 @@ class AppointmentCard extends StatelessWidget {
 
   // Modern card item with improved design
   Widget _buildModernCardItem(
+    BuildContext context,
     IconData icon,
     String label,
     String text,
     bool isSmallScreen,
   ) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
+        color: colorScheme.surface.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8.0),
         border: Border.all(
-          color: const Color(0xFF667EEA).withValues(alpha: 0.1),
+          color: colorScheme.primary.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -231,12 +255,12 @@ class AppointmentCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: const Color(0xFF667EEA).withValues(alpha: 0.1),
+              color: colorScheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4.0),
             ),
             child: Icon(
               icon,
-              color: const Color(0xFF667EEA),
+              color: colorScheme.primary,
               size: isSmallScreen ? 16 : 18,
             ),
           ),
@@ -258,7 +282,7 @@ class AppointmentCard extends StatelessWidget {
                                   fontWeight: FontWeight.w500,
                                 ))
                           .copyWith(
-                            color: const Color(0xFF667EEA),
+                            color: colorScheme.primary,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.3,
                           ),
@@ -271,7 +295,7 @@ class AppointmentCard extends StatelessWidget {
                               ? const TextStyle(fontSize: 14)
                               : const TextStyle(fontSize: 16))
                           .copyWith(
-                            color: const Color(0xFF1F2937),
+                            color: colorScheme.onSurface,
                             fontWeight: FontWeight.w500,
                             height: 1.3,
                           ),

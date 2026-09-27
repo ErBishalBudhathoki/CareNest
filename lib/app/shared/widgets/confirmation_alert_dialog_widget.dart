@@ -62,6 +62,7 @@ class _ConfirmationAlertDialogState extends State<ConfirmationAlertDialog>
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
+        final colorScheme = Theme.of(context).colorScheme;
         return FadeTransition(
           opacity: _fadeAnimation,
           child: ScaleTransition(
@@ -71,110 +72,120 @@ class _ConfirmationAlertDialogState extends State<ConfirmationAlertDialog>
               elevation: 0,
               insetPadding: const EdgeInsets.all(BauhausDesign.space4),
               child: SafeArea(
-              child: SingleChildScrollView(
-              child: Container(
-                constraints: const BoxConstraints(maxWidth: 400),
-                padding: const EdgeInsets.all(BauhausDesign.space6),
-                decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceWhite,
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
-                  boxShadow: const [BauhausDesign.shadowHard],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Icon — squared Bauhaus block, no circles
-                    Semantics(
-                      label: 'Confirmation',
-                      child: Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: (widget.confirmColor ?? BauhausDesign.primary)
-                              .withValues(alpha: 0.1),
-                          border: Border.all(
-                            color: widget.confirmColor ?? BauhausDesign.primary,
-                            width: 2,
-                          ),
-                          boxShadow: const [BauhausDesign.shadowHardSm],
-                        ),
-                        child: Icon(
-                          Icons.help_outline,
-                          size: 32,
-                          color: widget.confirmColor ?? BauhausDesign.primary,
-                          semanticLabel: 'Confirmation',
-                        ),
+                child: SingleChildScrollView(
+                  child: Container(
+                    constraints: const BoxConstraints(maxWidth: 400),
+                    padding: const EdgeInsets.all(BauhausDesign.space6),
+                    decoration: BoxDecoration(
+                      color: colorScheme.surface,
+                      borderRadius: BorderRadius.circular(
+                        BauhausDesign.radiusMd,
                       ),
+                      border: Border.all(color: colorScheme.outline, width: 2),
+                      boxShadow: const [BauhausDesign.shadowHard],
                     ),
-                    const SizedBox(height: BauhausDesign.space6),
-
-                    // Title
-                    Text(
-                      widget.title,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: BauhausDesign.getTextTheme(context).headlineSmall
-                          ?.copyWith(
-                            color: BauhausDesign.textDark,
-                            fontWeight: FontWeight.w700,
-                          ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: BauhausDesign.space3),
-
-                    // Content
-                    Text(
-                      widget.content,
-                      style: BauhausDesign.getTextTheme(context).bodyLarge
-                          ?.copyWith(
-                            color: BauhausDesign.textDark, // Requested textDark
-                            height: 1.5,
-                          ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: BauhausDesign.space6),
-
-                    // Buttons
-                    Row(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Cancel button
-                        Expanded(
-                          child: BauhausActionButton(
-                            text: widget.cancelText ?? 'Cancel',
-                            onPressed: () {
-                              HapticFeedback.lightImpact();
-                              Navigator.of(context).pop();
-                            },
-                            variant: BauhausActionVariant.secondary,
-                            isFullWidth: true,
+                        // Icon — squared Bauhaus block, no circles
+                        Semantics(
+                          label: 'Confirmation',
+                          child: Container(
+                            width: 64,
+                            height: 64,
+                            decoration: BoxDecoration(
+                              // Must stay fully opaque: `shadowHardSm` is an
+                              // opaque black shadow with no blur, so any
+                              // translucency here lets it show through and the
+                              // tile renders black in light mode.
+                              color:
+                                  widget.confirmColor ?? BauhausDesign.primary,
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.onSurface,
+                                width: 2,
+                              ),
+                              boxShadow: const [BauhausDesign.shadowHardSm],
+                            ),
+                            child: Icon(
+                              Icons.help_outline,
+                              size: 32,
+                              color: BauhausDesign.readableOnColor(
+                                widget.confirmColor ?? BauhausDesign.primary,
+                              ),
+                              semanticLabel: 'Confirmation',
+                            ),
                           ),
                         ),
-                        const SizedBox(width: BauhausDesign.space4),
-                        // Confirm button
-                        Expanded(
-                          child: BauhausActionButton(
-                            text: widget.confirmText ?? 'Confirm',
-                            onPressed: () {
-                              HapticFeedback.mediumImpact();
-                              widget.confirmAction();
-                            },
-                            backgroundColor: widget.confirmColor,
-                            // If confirmColor is provided, we use it as background,
-                            // otherwise variant defaults to primary in the widget logic
-                            // if we don't pass backgroundColor, but passing it explicitly overrides.
-                            // If widget.confirmColor is null, let's stick to primary variant logic inside BauhausActionButton
-                            // by not passing it if null, but here we can pass it.
-                            variant: BauhausActionVariant.primary,
-                            isFullWidth: true,
-                          ),
+                        const SizedBox(height: BauhausDesign.space6),
+
+                        // Title
+                        Text(
+                          widget.title,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: BauhausDesign.getTextTheme(context)
+                              .headlineSmall
+                              ?.copyWith(
+                                color: colorScheme.onSurface,
+                                fontWeight: FontWeight.w700,
+                              ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: BauhausDesign.space3),
+
+                        // Content
+                        Text(
+                          widget.content,
+                          style: BauhausDesign.getTextTheme(context).bodyLarge
+                              ?.copyWith(
+                                color:
+                                    colorScheme.onSurface, // Requested textDark
+                                height: 1.5,
+                              ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: BauhausDesign.space6),
+
+                        // Buttons
+                        Row(
+                          children: [
+                            // Cancel button
+                            Expanded(
+                              child: BauhausActionButton(
+                                text: widget.cancelText ?? 'Cancel',
+                                onPressed: () {
+                                  HapticFeedback.lightImpact();
+                                  Navigator.of(context).pop();
+                                },
+                                variant: BauhausActionVariant.secondary,
+                                isFullWidth: true,
+                              ),
+                            ),
+                            const SizedBox(width: BauhausDesign.space4),
+                            // Confirm button
+                            Expanded(
+                              child: BauhausActionButton(
+                                text: widget.confirmText ?? 'Confirm',
+                                onPressed: () {
+                                  HapticFeedback.mediumImpact();
+                                  widget.confirmAction();
+                                },
+                                backgroundColor: widget.confirmColor,
+                                // If confirmColor is provided, we use it as background,
+                                // otherwise variant defaults to primary in the widget logic
+                                // if we don't pass backgroundColor, but passing it explicitly overrides.
+                                // If widget.confirmColor is null, let's stick to primary variant logic inside BauhausActionButton
+                                // by not passing it if null, but here we can pass it.
+                                variant: BauhausActionVariant.primary,
+                                isFullWidth: true,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-              ),
               ),
             ),
           ),

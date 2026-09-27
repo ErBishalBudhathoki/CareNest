@@ -30,22 +30,29 @@ class _ComplianceChecklistViewState
     final state = ref.watch(complianceViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.complianceChecklistsTitle,
-          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onSecondary,
+          ),
         ),
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onSecondary,
+        ),
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: BauhausDesign.neutral, height: 2),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 2,
+          ),
         ),
       ),
       body: state.isLoading
@@ -109,7 +116,9 @@ class _ComplianceChecklistViewState
           const SizedBox(height: BauhausDesign.space3),
           LinearProgressIndicator(
             value: totalItems > 0 ? completedItems / totalItems : 0,
-            backgroundColor: BauhausDesign.neutral.withValues(alpha: 0.1),
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.outline.withValues(alpha: 0.1),
             valueColor: AlwaysStoppedAnimation<Color>(
               isCompleted ? BauhausDesign.success : BauhausDesign.accent,
             ),
@@ -170,22 +179,29 @@ class _ChecklistDetailViewState extends ConsumerState<ChecklistDetailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           widget.checklist.title,
-          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onSecondary,
+          ),
         ),
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onSecondary,
+        ),
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: BauhausDesign.neutral, height: 2),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 2,
+          ),
         ),
       ),
       body: Column(
@@ -206,9 +222,11 @@ class _ChecklistDetailViewState extends ConsumerState<ChecklistDetailView> {
                     vertical: BauhausDesign.space1,
                   ),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.surfaceLight,
+                    color: Theme.of(context).colorScheme.onSecondary,
                     border: Border.all(
-                      color: BauhausDesign.neutral.withValues(alpha: 0.15),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.outline.withValues(alpha: 0.15),
                     ),
                   ),
                   child: Row(

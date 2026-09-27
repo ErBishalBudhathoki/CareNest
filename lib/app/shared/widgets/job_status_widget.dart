@@ -84,6 +84,7 @@ class _JobStatusWidgetState extends ConsumerState<JobStatusWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     if (_error != null) {
       return Container(
         padding: const EdgeInsets.all(16),
@@ -155,8 +156,8 @@ class _JobStatusWidgetState extends ConsumerState<JobStatusWidget> {
           const SizedBox(height: 8),
           LinearProgressIndicator(
             value: _progress,
-            backgroundColor: Colors.grey[200],
-            valueColor: const AlwaysStoppedAnimation<Color>(BauhausTheme.blue),
+            backgroundColor: colorScheme.surfaceContainerHighest,
+            valueColor: AlwaysStoppedAnimation<Color>(colorScheme.secondary),
             minHeight: 8,
           ),
         ],

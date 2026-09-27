@@ -331,7 +331,7 @@ class _ClientPricingReviewViewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _buildAppBar(),
       body: _buildBody(),
     );
@@ -340,7 +340,7 @@ class _ClientPricingReviewViewState
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       backgroundColor: BauhausDesign.primary,
-      foregroundColor: BauhausDesign.surfaceWhite,
+      foregroundColor: Theme.of(context).colorScheme.onPrimary,
       systemOverlayStyle: SystemUiOverlayStyle.light,
       surfaceTintColor: Colors.transparent,
       scrolledUnderElevation: 0,
@@ -348,27 +348,30 @@ class _ClientPricingReviewViewState
       title: Text(
         AppLocalizations.of(context)!.clientPricingReviewTitle,
         style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-          color: BauhausDesign.surfaceWhite,
+          color: Theme.of(context).colorScheme.onPrimary,
           fontWeight: FontWeight.bold,
         ),
       ),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new_rounded),
+        icon: Icon(Icons.arrow_back_ios_new_rounded),
         onPressed: () => Navigator.of(context).pop(),
         tooltip: AppLocalizations.of(context)!.backAction,
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.onPrimary,
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.refresh_rounded),
+          icon: Icon(Icons.refresh_rounded),
           onPressed: _loadClientsWithAssignments,
           tooltip: AppLocalizations.of(context)!.refreshAction,
-          color: BauhausDesign.surfaceWhite,
+          color: Theme.of(context).colorScheme.onPrimary,
         ),
       ],
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(1),
-        child: Container(color: BauhausDesign.neutral, height: 1),
+        child: Container(
+          color: Theme.of(context).colorScheme.onSurface,
+          height: 1,
+        ),
       ),
     );
   }
@@ -428,7 +431,7 @@ class _ClientPricingReviewViewState
         // Left panel - Client list (fixed width)
         SizedBox(width: 320, child: _buildClientListTablet()),
         // Divider
-        Container(width: 1, color: BauhausDesign.neutral),
+        Container(width: 1, color: Theme.of(context).colorScheme.onSurface),
         // Right panel - Support items (expanded)
         Expanded(child: _buildSupportItemsPanel()),
       ],
@@ -469,7 +472,7 @@ class _ClientPricingReviewViewState
                       style: BauhausDesign.getTextTheme(context).titleMedium
                           ?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                     ),
                     const SizedBox(height: BauhausDesign.space1),
@@ -502,7 +505,10 @@ class _ClientPricingReviewViewState
                 ),
               ),
               // Chevron
-              Icon(Icons.chevron_right, color: BauhausDesign.neutral),
+              Icon(
+                Icons.chevron_right,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ],
           ),
         )
@@ -516,14 +522,18 @@ class _ClientPricingReviewViewState
   /// Tablet client list - sidebar style with selection indicator
   Widget _buildClientListTablet() {
     return Container(
-      color: BauhausDesign.surfaceWhite,
+      color: Theme.of(context).colorScheme.surface,
       child: Column(
         children: [
           // Header
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space4),
-            decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: BauhausDesign.neutral)),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
             ),
             child: Row(
               children: [
@@ -581,10 +591,12 @@ class _ClientPricingReviewViewState
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
-                color: BauhausDesign.neutral.withValues(alpha: 0.5),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.5),
               ),
               left: isSelected
-                  ? const BorderSide(color: BauhausDesign.primary, width: 3)
+                  ? BorderSide(color: BauhausDesign.primary, width: 3)
                   : BorderSide.none,
             ),
           ),
@@ -597,7 +609,7 @@ class _ClientPricingReviewViewState
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   color: isSelected
                       ? BauhausDesign.primary
-                      : BauhausDesign.textDark,
+                      : Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: BauhausDesign.space1),
@@ -664,7 +676,7 @@ class _ClientPricingReviewViewState
     }
 
     return Container(
-      color: BauhausDesign.backgroundLight,
+      color: Theme.of(context).colorScheme.surface,
       child: Column(
         children: [
           _buildItemsPanelHeader(),
@@ -697,9 +709,11 @@ class _ClientPricingReviewViewState
 
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border(bottom: BorderSide(color: BauhausDesign.neutral)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border(
+          bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+        ),
       ),
       child: Row(
         children: [
@@ -720,7 +734,7 @@ class _ClientPricingReviewViewState
                   children: [
                     BauhausChip(
                       text: clientState,
-                      color: const Color(0xFF764BA2),
+                      color: Theme.of(context).colorScheme.tertiary,
                       icon: Icons.location_on,
                       size: BauhausChipSize.small,
                     ),
@@ -860,7 +874,7 @@ class _ClientPricingReviewViewState
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.neutral.withValues(alpha: 0.2),
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
       ),
       child: Row(
@@ -873,7 +887,11 @@ class _ClientPricingReviewViewState
               _getPriceSourceColor(priceSource),
             ),
           ),
-          Container(width: 1, height: 40, color: BauhausDesign.neutral),
+          Container(
+            width: 1,
+            height: 40,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           Expanded(
             child: _buildPriceColumn(
               AppLocalizations.of(context)!.ndisCapLabel,
@@ -884,7 +902,11 @@ class _ClientPricingReviewViewState
               BauhausDesign.textMuted,
             ),
           ),
-          Container(width: 1, height: 40, color: BauhausDesign.neutral),
+          Container(
+            width: 1,
+            height: 40,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           Expanded(
             child: _buildPriceColumn(
               AppLocalizations.of(context)!.diffLabel,
@@ -913,7 +935,7 @@ class _ClientPricingReviewViewState
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.neutral.withValues(alpha: 0.2),
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
       ),
       child: Column(
@@ -1058,7 +1080,7 @@ class _ClientPricingReviewViewState
         return BauhausDesign.warning;
       case 'standard':
       case 'ndis-standard':
-        return const Color(0xFF764BA2);
+        return Theme.of(context).colorScheme.tertiary;
       case 'missing':
         return BauhausDesign.error;
       default:
@@ -1265,32 +1287,35 @@ class _ClientPricingDetailPageState
     final exceedsCapCount = _items.where((i) => i['exceedsCap'] == true).length;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: BauhausDesign.primary,
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
         title: Text(
           clientName,
           style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: Icon(Icons.refresh),
             onPressed: _loadItems,
             tooltip: 'Refresh',
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: BauhausDesign.neutral, height: 1),
+          child: Container(
+            color: Theme.of(context).colorScheme.onSurface,
+            height: 1,
+          ),
         ),
       ),
       body: _isLoading
@@ -1302,7 +1327,7 @@ class _ClientPricingDetailPageState
                 // Header with client info and edit button
                 Container(
                   padding: const EdgeInsets.all(BauhausDesign.space4),
-                  color: BauhausDesign.surfaceWhite,
+                  color: Theme.of(context).colorScheme.surface,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -1313,7 +1338,7 @@ class _ClientPricingDetailPageState
                         children: [
                           BauhausChip(
                             text: clientState,
-                            color: const Color(0xFF764BA2),
+                            color: Theme.of(context).colorScheme.tertiary,
                             size: BauhausChipSize.small,
                           ),
                           BauhausChip(
@@ -1409,7 +1434,7 @@ class _ClientPricingDetailPageState
                           style: BauhausDesign.getTextTheme(context).titleMedium
                               ?.copyWith(
                                 fontWeight: FontWeight.w500,
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                         ),
                       ],
@@ -1429,9 +1454,12 @@ class _ClientPricingDetailPageState
               Container(
                 clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFFDD0), // Cream color
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 2,
+                  ),
                   boxShadow: const [BauhausDesign.shadowHardSm],
                 ),
                 child: Column(
@@ -1470,10 +1498,10 @@ class _ClientPricingDetailPageState
                         ],
                       ),
                     ),
-                    const Divider(
+                    Divider(
                       height: 2,
                       thickness: 2,
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
 
                     // Middle section: NDIS Cap & Status
@@ -1510,17 +1538,19 @@ class _ClientPricingDetailPageState
                                         .titleMedium
                                         ?.copyWith(
                                           fontWeight: FontWeight.bold,
-                                          color: BauhausDesign.textDark,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface,
                                         ),
                                   ),
                                 ],
                               ),
                             ),
                           ),
-                          const VerticalDivider(
+                          VerticalDivider(
                             width: 2,
                             thickness: 2,
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                           Expanded(
                             child: Padding(
@@ -1583,15 +1613,15 @@ class _ClientPricingDetailPageState
                         ],
                       ),
                     ),
-                    const Divider(
+                    Divider(
                       height: 2,
                       thickness: 2,
-                      color: BauhausDesign.neutral,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
 
                     // Bottom section: Source
                     Container(
-                      color: BauhausDesign.surfaceWhite,
+                      color: Theme.of(context).colorScheme.surface,
                       padding: const EdgeInsets.symmetric(
                         horizontal: BauhausDesign.space3,
                         vertical: BauhausDesign.space3,

@@ -185,10 +185,10 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
@@ -206,7 +206,7 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
           'Shift Exchange',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onInverseSurface,
           ),
         ),
         centerTitle: true,
@@ -216,17 +216,19 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color: BauhausDesign.neutral.withValues(alpha: 0.2),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.outline.withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
             ),
             child: TabBar(
               controller: _tabController,
-              labelColor: BauhausDesign.surfaceWhite,
-              unselectedLabelColor: BauhausDesign.surfaceWhite.withValues(
-                alpha: 0.6,
-              ),
+              labelColor: Theme.of(context).colorScheme.onInverseSurface,
+              unselectedLabelColor: Theme.of(
+                context,
+              ).colorScheme.onInverseSurface.withValues(alpha: 0.6),
               indicatorColor: BauhausDesign.accent,
               indicatorWeight: 3,
               labelStyle: BauhausDesign.getTextTheme(
@@ -292,7 +294,9 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
                   color: BauhausDesign.secondary.withValues(alpha: 0.1),
                   border: Border(
                     bottom: BorderSide(
-                      color: BauhausDesign.neutral.withValues(alpha: 0.1),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.outline.withValues(alpha: 0.1),
                     ),
                   ),
                 ),
@@ -304,7 +308,7 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
                       style: BauhausDesign.getTextTheme(context).titleMedium
                           ?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                     ),
                     _buildUrgencyBadge(urgency),
@@ -681,7 +685,7 @@ class _ShiftDetailsDialogContentState
                           ),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(4),
@@ -689,10 +693,10 @@ class _ShiftDetailsDialogContentState
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.map,
                                 size: 14,
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                               const SizedBox(width: 4),
                               Text(
@@ -701,7 +705,9 @@ class _ShiftDetailsDialogContentState
                                     .labelSmall
                                     ?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                      color: BauhausDesign.textDark,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
                                     ),
                               ),
                             ],

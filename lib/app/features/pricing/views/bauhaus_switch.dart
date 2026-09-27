@@ -21,11 +21,16 @@ class BauhausSwitch extends StatelessWidget {
         width: 52,
         height: 32,
         decoration: BoxDecoration(
-          color: value ? BauhausDesign.primary : BauhausDesign.surfaceLight,
+          color: value
+              ? BauhausDesign.primary
+              : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(
             BauhausDesign.radiusSm,
           ), // Squarish rounded corners
-          border: Border.all(color: BauhausDesign.neutral, width: 2.0),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2.0,
+          ),
           boxShadow: const [
             BauhausDesign.shadowHardXs,
           ], // Subtle hard shadow for depth
@@ -42,12 +47,15 @@ class BauhausSwitch extends StatelessWidget {
                 height: 20,
                 decoration: BoxDecoration(
                   color: value
-                      ? BauhausDesign.surfaceLight
-                      : BauhausDesign.neutral,
+                      ? Theme.of(context).colorScheme.surface
+                      : Theme.of(context).colorScheme.onSurface,
                   borderRadius: BorderRadius.circular(
                     2.0,
                   ), // Sharp square thumb
-                  border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 1.5,
+                  ),
                 ),
               ),
             ),

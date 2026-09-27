@@ -49,21 +49,23 @@ class _ClientServiceHistoryViewState
     final history = _applySearch(_applyFilter(state.serviceHistory));
     final canLoadMore = state.serviceHistory.length >= _limit;
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.secondary,
+        backgroundColor: colorScheme.secondary,
         elevation: 0,
         title: Text(
           'Service History',
           style: GoogleFonts.oswald(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.surfaceWhite,
+            color: colorScheme.onSecondary,
             letterSpacing: 1.1,
           ),
         ),
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -101,7 +103,9 @@ class _ClientServiceHistoryViewState
                         )
                       : RefreshIndicator(
                           color: BauhausDesign.primary,
-                          backgroundColor: BauhausDesign.surfaceWhite,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.surface,
                           onRefresh: () async {
                             await ref
                                 .read(clientPortalViewModelProvider.notifier)
@@ -139,10 +143,13 @@ class _ClientServiceHistoryViewState
   Widget _buildFilterBar(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
-          bottom: BorderSide(color: BauhausDesign.neutral, width: 1),
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 1,
+          ),
         ),
       ),
       child: Column(
@@ -190,10 +197,12 @@ class _ClientServiceHistoryViewState
         decoration: BoxDecoration(
           color: isSelected
               ? BauhausDesign.primary
-              : BauhausDesign.surfaceWhite,
+              : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
           border: Border.all(
-            color: isSelected ? BauhausDesign.primary : BauhausDesign.neutral,
+            color: isSelected
+                ? BauhausDesign.primary
+                : Theme.of(context).colorScheme.outline,
             width: 1.5,
           ),
           boxShadow: isSelected ? const [BauhausDesign.shadowHardXs] : [],
@@ -204,8 +213,8 @@ class _ClientServiceHistoryViewState
             fontSize: 12,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
             color: isSelected
-                ? BauhausDesign.surfaceWhite
-                : BauhausDesign.textDark,
+                ? Theme.of(context).colorScheme.onPrimary
+                : Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ),
@@ -260,9 +269,9 @@ class _ClientServiceHistoryViewState
         children: [
           Text(
             'Loaded: $totalLoaded services',
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -334,16 +343,16 @@ class _ServiceHistoryCard extends ConsumerWidget {
           const SizedBox(height: BauhausDesign.space1),
           Text(
             '${service.date} • ${service.startTime} - ${service.endTime}',
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space1),
           Text(
             'Worker: ${service.workerName}',
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space2),
           if (rating > 0)

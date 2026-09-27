@@ -37,9 +37,9 @@ class BauhausClientHeader extends StatelessWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           border: Border.all(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             width: 2,
                           ),
                         ),
@@ -48,7 +48,7 @@ class BauhausClientHeader extends StatelessWidget {
                           style: GoogleFonts.jetBrainsMono(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: BauhausDesign.surfaceLight,
+                            color: Theme.of(context).colorScheme.surface,
                           ),
                         ),
                       ),
@@ -58,7 +58,7 @@ class BauhausClientHeader extends StatelessWidget {
                         style: GoogleFonts.oswald(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           height: 1.1,
                         ),
                       ),
@@ -74,22 +74,22 @@ class BauhausClientHeader extends StatelessWidget {
                         width: 56,
                         height: 56,
                         decoration: BoxDecoration(
-                          color: BauhausDesign.surfaceLight,
+                          color: Theme.of(context).colorScheme.surface,
                           border: Border.all(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             width: 3,
                           ),
-                          boxShadow: const [
+                          boxShadow: [
                             BoxShadow(
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                               offset: Offset(4, 4),
                               blurRadius: 0,
                             ),
                           ],
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.map_outlined,
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           size: 28,
                         ),
                       ),
@@ -102,7 +102,7 @@ class BauhausClientHeader extends StatelessWidget {
           Container(
             height: 4,
             width: double.infinity,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ],
       ),

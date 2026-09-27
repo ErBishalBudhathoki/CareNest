@@ -18,15 +18,16 @@ class ButtonWithVariableWH extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Material(
       child: Ink(
         height: height,
         width: width,
         decoration: BoxDecoration(
-          color: hasBorder ? Colors.white : const Color(0xFF667EEA),
+          color: hasBorder ? colorScheme.surface : colorScheme.primary,
           borderRadius: BorderRadius.circular(10),
           border: hasBorder
-              ? Border.all(color: const Color(0xFF667EEA), width: 1.0)
+              ? Border.all(color: colorScheme.primary, width: 1.0)
               : const Border.fromBorderSide(BorderSide.none),
         ),
         child: InkWell(
@@ -42,7 +43,9 @@ class ButtonWithVariableWH extends StatelessWidget {
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ).copyWith(
-                      color: hasBorder ? const Color(0xFF667EEA) : Colors.white,
+                      color: hasBorder
+                          ? colorScheme.primary
+                          : colorScheme.onPrimary,
                     ),
               ),
             ),

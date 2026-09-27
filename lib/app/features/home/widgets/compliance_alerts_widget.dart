@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:carenest/app/shared/theme/bauhaus_colors.dart';
 import '../models/dashboard_models.dart';
 
 class ComplianceAlertsWidget extends StatelessWidget {
@@ -16,12 +15,14 @@ class ComplianceAlertsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     if (isLoading) {
       return _buildLoadingState();
     }
 
     if (alerts == null || alerts!.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(context);
     }
 
     // Sort by severity (critical first)
@@ -45,22 +46,22 @@ class ComplianceAlertsWidget extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: BauhausColors.primaryRed.withValues(alpha: 0.1),
+                    color: colorScheme.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.warning_amber_rounded,
-                    color: BauhausColors.primaryRed,
+                    color: colorScheme.error,
                     size: 24,
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Text(
+                Text(
                   'Compliance Alerts',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: BauhausColors.textDark,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 const Spacer(),
@@ -70,13 +71,13 @@ class ComplianceAlertsWidget extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: BauhausColors.primaryRed,
+                    color: colorScheme.error,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     sortedAlerts.length.toString(),
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: colorScheme.onError,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
@@ -93,7 +94,13 @@ class ComplianceAlertsWidget extends StatelessWidget {
   }
 
   Widget _buildAlertTile(BuildContext context, ComplianceAlert alert) {
-    final color = _getSeverityColor(alert.severity);
+    final colorScheme = Theme.of(context).colorScheme;
+    final color = _getSeverityColor(alert.severity, colorScheme);
+    final foregroundColor = color == colorScheme.error
+        ? colorScheme.onError
+        : color == colorScheme.primary
+        ? colorScheme.onPrimary
+        : colorScheme.onSecondary;
     final icon = _getAlertIcon(alert.type);
 
     return Padding(
@@ -136,10 +143,10 @@ class ComplianceAlertsWidget extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   alert.title,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: BauhausColors.textDark,
+                                    color: colorScheme.onSurface,
                                   ),
                                 ),
                               ),
@@ -154,8 +161,8 @@ class ComplianceAlertsWidget extends StatelessWidget {
                                 ),
                                 child: Text(
                                   alert.count.toString(),
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style: TextStyle(
+                                    color: foregroundColor,
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -166,9 +173,9 @@ class ComplianceAlertsWidget extends StatelessWidget {
                           const SizedBox(height: 4),
                           Text(
                             alert.description,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
-                              color: BauhausColors.textMedium,
+                              color: colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -229,7 +236,7 @@ class ComplianceAlertsWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -241,21 +248,24 @@ class ComplianceAlertsWidget extends StatelessWidget {
               Icon(
                 Icons.check_circle,
                 size: 48,
-                color: BauhausColors.accentGreen,
+                color: Theme.of(context).colorScheme.secondary,
               ),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 'All compliant!',
                 style: TextStyle(
-                  color: BauhausColors.accentGreen,
+                  color: Theme.of(context).colorScheme.secondary,
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
+              Text(
                 'No compliance issues',
-                style: TextStyle(color: Colors.grey, fontSize: 12),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
@@ -264,16 +274,19 @@ class ComplianceAlertsWidget extends StatelessWidget {
     );
   }
 
-  Color _getSeverityColor(ComplianceSeverity severity) {
+  Color _getSeverityColor(
+    ComplianceSeverity severity,
+    ColorScheme colorScheme,
+  ) {
     switch (severity) {
       case ComplianceSeverity.critical:
-        return BauhausColors.primaryRed;
+        return colorScheme.error;
       case ComplianceSeverity.high:
-        return BauhausColors.accentOrange;
+        return colorScheme.primary;
       case ComplianceSeverity.medium:
-        return BauhausColors.primaryYellow;
+        return colorScheme.primary;
       case ComplianceSeverity.low:
-        return BauhausColors.primaryBlue;
+        return colorScheme.secondary;
     }
   }
 

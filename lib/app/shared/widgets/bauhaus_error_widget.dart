@@ -91,14 +91,15 @@ class BauhausErrorWidget extends StatelessWidget {
   }
 
   Widget _buildFull(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Center(
       child: Container(
         margin: const EdgeInsets.all(BauhausDesign.space4),
         padding: const EdgeInsets.all(BauhausDesign.space6),
         constraints: const BoxConstraints(maxWidth: 400),
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceLight,
-          border: Border.all(color: BauhausDesign.error, width: 2),
+          color: colorScheme.surfaceContainerLow,
+          border: Border.all(color: colorScheme.error, width: 2),
           boxShadow: const [BauhausDesign.shadowHard],
         ),
         child: Column(
@@ -108,10 +109,10 @@ class BauhausErrorWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(BauhausDesign.space4),
               decoration: BoxDecoration(
-                color: BauhausDesign.error.withValues(alpha: 0.1),
-                border: Border.all(color: BauhausDesign.error, width: 2),
+                color: colorScheme.error.withValues(alpha: 0.1),
+                border: Border.all(color: colorScheme.error, width: 2),
               ),
-              child: Icon(icon, size: 48, color: BauhausDesign.error),
+              child: Icon(icon, size: 48, color: colorScheme.error),
             ),
             const SizedBox(height: BauhausDesign.space6),
 
@@ -121,7 +122,7 @@ class BauhausErrorWidget extends StatelessWidget {
               style: GoogleFonts.oswald(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: BauhausDesign.error,
+                color: colorScheme.error,
                 letterSpacing: 1,
               ),
               textAlign: TextAlign.center,
@@ -129,7 +130,7 @@ class BauhausErrorWidget extends StatelessWidget {
             const SizedBox(height: BauhausDesign.space3),
 
             // Divider
-            Container(height: 3, width: 60, color: BauhausDesign.error),
+            Container(height: 3, width: 60, color: colorScheme.error),
             const SizedBox(height: BauhausDesign.space4),
 
             // Message
@@ -138,7 +139,7 @@ class BauhausErrorWidget extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: BauhausDesign.textDark,
+                color: colorScheme.onSurface,
                 height: 1.5,
               ),
               textAlign: TextAlign.center,
@@ -166,16 +167,19 @@ class BauhausErrorWidget extends StatelessWidget {
   }
 
   Widget _buildCompact(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.error.withValues(alpha: 0.1),
-        border: Border.all(color: BauhausDesign.error, width: 2),
+        // Opaque: a translucent fill lets the opaque zero-blur black
+        // `shadowHardSm` show through and turns the surface black.
+        color: colorScheme.surface,
+        border: Border.all(color: colorScheme.error, width: 2),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Row(
         children: [
-          Icon(icon, color: BauhausDesign.error, size: 24),
+          Icon(icon, color: colorScheme.error, size: 24),
           const SizedBox(width: BauhausDesign.space3),
           Expanded(
             child: Column(
@@ -187,14 +191,14 @@ class BauhausErrorWidget extends StatelessWidget {
                   style: GoogleFonts.oswald(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: BauhausDesign.error,
+                    color: colorScheme.error,
                   ),
                 ),
                 Text(
                   message,
                   style: GoogleFonts.inter(
                     fontSize: 12,
-                    color: BauhausDesign.textDark,
+                    color: colorScheme.onSurface,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -219,12 +223,12 @@ class BauhausErrorWidget extends StatelessWidget {
                   ),
                   padding: const EdgeInsets.all(BauhausDesign.space2),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.error,
-                    border: Border.all(color: BauhausDesign.neutral, width: 2),
+                    color: colorScheme.error,
+                    border: Border.all(color: colorScheme.outline, width: 2),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.refresh,
-                    color: BauhausDesign.textLight,
+                    color: colorScheme.onError,
                     size: 20,
                     semanticLabel: 'Retry',
                   ),
@@ -245,6 +249,7 @@ class _BauhausRetryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return InkWell(
       onTap: onPressed,
       child: Container(
@@ -253,21 +258,21 @@ class _BauhausRetryButton extends StatelessWidget {
           vertical: BauhausDesign.space3,
         ),
         decoration: BoxDecoration(
-          color: BauhausDesign.error,
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          color: colorScheme.error,
+          border: Border.all(color: colorScheme.outline, width: 2),
           boxShadow: const [BauhausDesign.shadowHard],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.refresh, color: BauhausDesign.textLight, size: 20),
+            Icon(Icons.refresh, color: colorScheme.onError, size: 20),
             const SizedBox(width: BauhausDesign.space2),
             Text(
               'TRY AGAIN',
               style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: BauhausDesign.textLight,
+                color: colorScheme.onError,
                 letterSpacing: 1,
               ),
             ),
@@ -285,6 +290,7 @@ class _DiagnosticsButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return TextButton(
       onPressed: () {
         showDialog(
@@ -294,7 +300,7 @@ class _DiagnosticsButton extends StatelessWidget {
               'DIAGNOSTICS',
               style: GoogleFonts.oswald(
                 fontWeight: FontWeight.bold,
-                color: BauhausDesign.textDark,
+                color: colorScheme.onSurface,
               ),
             ),
             content: SingleChildScrollView(
@@ -302,7 +308,7 @@ class _DiagnosticsButton extends StatelessWidget {
                 info,
                 style: GoogleFonts.firaCode(
                   fontSize: 12,
-                  color: BauhausDesign.textDark,
+                  color: colorScheme.onSurface,
                 ),
               ),
             ),
@@ -328,7 +334,7 @@ class _DiagnosticsButton extends StatelessWidget {
         style: GoogleFonts.inter(
           fontSize: 12,
           fontWeight: FontWeight.w600,
-          color: BauhausDesign.neutral,
+          color: colorScheme.onSurface,
           decoration: TextDecoration.underline,
         ),
       ),

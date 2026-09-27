@@ -117,7 +117,7 @@ class _EnhancedFileAttachmentWidgetState
   void _showFileSourceDialog() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: BauhausDesign.surfaceWhite,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(BauhausDesign.radiusLg),
@@ -273,7 +273,7 @@ class _EnhancedFileAttachmentWidgetState
           AndroidUiSettings(
             toolbarTitle: 'Crop Receipt',
             toolbarColor: BauhausDesign.primary,
-            toolbarWidgetColor: BauhausDesign.surfaceWhite,
+            toolbarWidgetColor: Theme.of(context).colorScheme.surface,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false,
           ),
@@ -347,7 +347,7 @@ class _EnhancedFileAttachmentWidgetState
         ),
         content: Text(
           message,
-          style: TextStyle(color: BauhausDesign.surfaceWhite),
+          style: TextStyle(color: Theme.of(context).colorScheme.onError),
         ),
       ),
     );
@@ -421,7 +421,9 @@ class _EnhancedFileAttachmentWidgetState
             decoration: BoxDecoration(
               color: BauhausDesign.surfaceOffWhite,
               borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-              border: Border.all(color: BauhausDesign.neutral),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
             child: Column(
               children: [
@@ -441,11 +443,13 @@ class _EnhancedFileAttachmentWidgetState
 
                     return Container(
                       decoration: BoxDecoration(
-                        color: BauhausDesign.surfaceWhite,
+                        color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(
                           BauhausDesign.radiusMd,
                         ),
-                        border: Border.all(color: BauhausDesign.neutral),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
                       child: Stack(
                         children: [
@@ -482,7 +486,7 @@ class _EnhancedFileAttachmentWidgetState
                                 ),
                                 child: Icon(
                                   Icons.close,
-                                  color: BauhausDesign.surfaceWhite,
+                                  color: Theme.of(context).colorScheme.onError,
                                   size: 16,
                                 ),
                               ),
@@ -497,9 +501,9 @@ class _EnhancedFileAttachmentWidgetState
                             child: Container(
                               padding: const EdgeInsets.all(4.0),
                               decoration: BoxDecoration(
-                                color: BauhausDesign.textDark.withValues(
-                                  alpha: 0.6,
-                                ),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.6),
                                 borderRadius: const BorderRadius.only(
                                   bottomLeft: Radius.circular(
                                     BauhausDesign.radiusMd,
@@ -514,9 +518,11 @@ class _EnhancedFileAttachmentWidgetState
                                 children: [
                                   Text(
                                     path.basename(file.path),
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 12,
-                                      color: BauhausDesign.surfaceWhite,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.surface,
                                       fontWeight: FontWeight.bold,
                                     ),
                                     maxLines: 1,
@@ -524,9 +530,10 @@ class _EnhancedFileAttachmentWidgetState
                                   ),
                                   Text(
                                     _getFileSize(file),
-                                    style: const TextStyle(
-                                      color: BauhausDesign
-                                          .surfaceWhite, // Opacity removed for better visibility
+                                    style: TextStyle(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.surface,
                                       fontSize: 9,
                                     ),
                                   ),

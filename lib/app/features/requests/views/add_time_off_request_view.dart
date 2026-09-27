@@ -146,8 +146,8 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
 
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(BauhausDesign.radiusLg),
         ),
@@ -161,7 +161,9 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: BauhausDesign.neutral.withValues(alpha: 0.3),
+                color: Theme.of(
+                  context,
+                ).colorScheme.outline.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -210,8 +212,10 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
                 ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(color: BauhausDesign.neutral),
-                  color: BauhausDesign.surfaceWhite,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                  color: Theme.of(context).colorScheme.surface,
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
@@ -264,18 +268,7 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
                           lastDate: DateTime.now().add(
                             const Duration(days: 365),
                           ),
-                          builder: (context, child) {
-                            return Theme(
-                              data: Theme.of(context).copyWith(
-                                colorScheme: const ColorScheme.light(
-                                  primary: BauhausDesign.primary,
-                                  onPrimary: BauhausDesign.surfaceWhite,
-                                  onSurface: BauhausDesign.textDark,
-                                ),
-                              ),
-                              child: child!,
-                            );
-                          },
+                          builder: (context, child) => child!,
                         );
                         if (date != null) {
                           setState(() {
@@ -334,18 +327,7 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
                           lastDate: DateTime.now().add(
                             const Duration(days: 365),
                           ),
-                          builder: (context, child) {
-                            return Theme(
-                              data: Theme.of(context).copyWith(
-                                colorScheme: const ColorScheme.light(
-                                  primary: BauhausDesign.primary,
-                                  onPrimary: BauhausDesign.surfaceWhite,
-                                  onSurface: BauhausDesign.textDark,
-                                ),
-                              ),
-                              child: child!,
-                            );
-                          },
+                          builder: (context, child) => child!,
                         );
                         if (date != null) {
                           setState(() => endDate = date);

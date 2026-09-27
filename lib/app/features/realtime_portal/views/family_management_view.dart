@@ -31,7 +31,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
       child: Text(
         label,
         style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-          color: BauhausDesign.textDark,
+          color: Theme.of(context).colorScheme.onSurface,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -211,15 +211,18 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
   Widget _buildNoticeBanner(String message, {bool isError = false}) {
     final accent = isError ? BauhausDesign.error : BauhausDesign.success;
     final background = isError
-        ? const Color(0xFFFFE1E1)
-        : const Color(0xFFE4F7E8);
+        ? Theme.of(context).colorScheme.errorContainer
+        : Theme.of(context).colorScheme.secondaryContainer;
     final label = isError ? 'ERROR' : 'SUCCESS';
 
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         color: background,
-        border: Border.all(color: BauhausDesign.textDark, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -233,7 +236,10 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
             decoration: BoxDecoration(
               color: accent,
               border: Border(
-                bottom: BorderSide(color: BauhausDesign.textDark, width: 2),
+                bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 2,
+                ),
               ),
             ),
             child: Row(
@@ -242,7 +248,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                   isError
                       ? Icons.error_outline_rounded
                       : Icons.check_circle_outline,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   size: 18,
                 ),
                 const SizedBox(width: BauhausDesign.space2),
@@ -250,7 +256,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                   label,
                   style: BauhausDesign.getTextTheme(context).labelLarge
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 0.8,
                       ),
@@ -263,7 +269,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
             child: Text(
               message,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -282,8 +288,10 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
     switch (normalized) {
       case 'active':
         if (onDarkBackground) {
-          background = BauhausDesign.surfaceWhite.withValues(alpha: 0.18);
-          foreground = BauhausDesign.surfaceWhite;
+          background = Theme.of(
+            context,
+          ).colorScheme.surface.withValues(alpha: 0.18);
+          foreground = Theme.of(context).colorScheme.surface;
         } else {
           background = BauhausDesign.success.withValues(alpha: 0.14);
           foreground = BauhausDesign.success;
@@ -292,8 +300,10 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
         break;
       case 'inactive':
         if (onDarkBackground) {
-          background = BauhausDesign.surfaceWhite.withValues(alpha: 0.18);
-          foreground = BauhausDesign.surfaceWhite;
+          background = Theme.of(
+            context,
+          ).colorScheme.surface.withValues(alpha: 0.18);
+          foreground = Theme.of(context).colorScheme.surface;
         } else {
           background = BauhausDesign.error.withValues(alpha: 0.14);
           foreground = BauhausDesign.error;
@@ -302,8 +312,10 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
         break;
       default:
         if (onDarkBackground) {
-          background = BauhausDesign.textDark.withValues(alpha: 0.30);
-          foreground = BauhausDesign.surfaceWhite;
+          background = Theme.of(
+            context,
+          ).colorScheme.onSurface.withValues(alpha: 0.30);
+          foreground = Theme.of(context).colorScheme.surface;
         } else {
           background = BauhausDesign.warning.withValues(alpha: 0.14);
           foreground = BauhausDesign.warning;
@@ -333,7 +345,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
   }
 
   Widget _buildPermissionChip(String label, bool enabled) {
-    final color = enabled ? BauhausDesign.primary : BauhausDesign.textMuted;
+    final color = enabled
+        ? BauhausDesign.primary
+        : Theme.of(context).colorScheme.onSurfaceVariant;
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: BauhausDesign.space3,
@@ -342,12 +356,12 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
       decoration: BoxDecoration(
         color: enabled
             ? BauhausDesign.primary.withValues(alpha: 0.12)
-            : BauhausDesign.surfaceWhite,
+            : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusFull),
         border: Border.all(
           color: enabled
               ? BauhausDesign.primary.withValues(alpha: 0.35)
-              : BauhausDesign.neutral,
+              : Theme.of(context).colorScheme.outline,
         ),
       ),
       child: Text(
@@ -401,9 +415,12 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
             child: Container(
               constraints: const BoxConstraints(maxWidth: 640),
               decoration: BoxDecoration(
-                color: BauhausDesign.surfaceWhite,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
                 boxShadow: const [BauhausDesign.shadowHard],
               ),
               padding: const EdgeInsets.all(BauhausDesign.space5),
@@ -423,9 +440,13 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                       const SizedBox(height: BauhausDesign.space2),
                       Text(
                         'Send a real account setup email so they can activate access with their own password.',
-                        style: BauhausDesign.getTextTheme(
-                          dialogContext,
-                        ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                        style: BauhausDesign.getTextTheme(dialogContext)
+                            .bodyMedium
+                            ?.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
                       ),
                       const SizedBox(height: BauhausDesign.space5),
                       BauhausTextField(
@@ -495,7 +516,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                         style: BauhausDesign.getTextTheme(dialogContext)
                             .titleMedium
                             ?.copyWith(
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.w800,
                             ),
                       ),
@@ -524,8 +545,12 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                             width: buttonWidth,
                             child: BauhausActionButton(
                               text: 'Cancel',
-                              backgroundColor: BauhausDesign.surfaceOffWhite,
-                              textColor: BauhausDesign.textDark,
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainer,
+                              textColor: Theme.of(
+                                context,
+                              ).colorScheme.onSurface,
                               isFullWidth: true,
                               isSmall: true,
                               onPressed: isSubmitting
@@ -638,7 +663,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
         Text(
           label,
           style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -647,7 +672,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
           initialValue: value,
           items: items,
           onChanged: onChanged,
-          decoration: BauhausDesign.inputDecoration(''),
+          decoration: BauhausDesign.inputDecoration(context, ''),
         ),
       ],
     );
@@ -665,8 +690,11 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
           vertical: BauhausDesign.space2,
         ),
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceWhite,
-          border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+          color: Theme.of(context).colorScheme.surface,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 1.5,
+          ),
         ),
         child: Row(
           children: [
@@ -674,7 +702,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
               child: Text(
                 label,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -771,9 +799,12 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
             child: Container(
               constraints: const BoxConstraints(maxWidth: 640),
               decoration: BoxDecoration(
-                color: BauhausDesign.surfaceWhite,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
                 boxShadow: const [BauhausDesign.shadowHard],
               ),
               padding: const EdgeInsets.all(BauhausDesign.space5),
@@ -790,9 +821,10 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                   const SizedBox(height: BauhausDesign.space2),
                   Text(
                     '${member.name} can only do what is explicitly enabled here.',
-                    style: BauhausDesign.getTextTheme(
-                      dialogContext,
-                    ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                    style: BauhausDesign.getTextTheme(dialogContext).bodyMedium
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                   ),
                   const SizedBox(height: BauhausDesign.space5),
                   Flexible(
@@ -922,9 +954,12 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
           child: Container(
             constraints: const BoxConstraints(maxWidth: 560),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
               boxShadow: const [BauhausDesign.shadowHard],
             ),
             padding: const EdgeInsets.all(BauhausDesign.space5),
@@ -943,9 +978,10 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                   isDeactivate
                       ? 'This will immediately stop ${member.name} from using their family access account.'
                       : 'This will re-enable ${member.name}\'s family access account.',
-                  style: BauhausDesign.getTextTheme(
-                    dialogContext,
-                  ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(dialogContext).bodyMedium
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
                 if (dialogError != null) ...[
                   const SizedBox(height: BauhausDesign.space4),
@@ -1124,9 +1160,12 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                     const SizedBox(height: BauhausDesign.space1),
                     Text(
                       'Every invite, permission change, activation, deactivation, and reactivation is stored in MongoDB and protected by authenticated access rules.',
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                   ],
                 ),
@@ -1180,7 +1219,10 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
             ),
             decoration: BoxDecoration(
               color: statusTone,
-              border: Border.all(color: BauhausDesign.textDark, width: 2),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.onSurface,
+                width: 2,
+              ),
               boxShadow: const [BauhausDesign.shadowHard],
             ),
             child: Row(
@@ -1191,7 +1233,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                       : (isInactive ? 'ACCESS PAUSED' : 'ACCESS ACTIVE'),
                   style: BauhausDesign.getTextTheme(context).labelLarge
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 0.8,
                       ),
@@ -1209,8 +1251,11 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                  color: BauhausDesign.surfaceOffWhite,
-                  border: Border.all(color: BauhausDesign.textDark, width: 2),
+                  color: Theme.of(context).colorScheme.surfaceContainer,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 2,
+                  ),
                 ),
                 alignment: Alignment.center,
                 child: Text(
@@ -1231,7 +1276,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                       member.name,
                       style: BauhausDesign.getTextTheme(context).titleLarge
                           ?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w900,
                           ),
                     ),
@@ -1240,7 +1285,9 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                       '${_relationshipLabel(member.relationship)} • ${_roleLabel(member.role)}',
                       style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w700,
                           ),
                     ),
@@ -1254,8 +1301,11 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
             width: double.infinity,
             padding: const EdgeInsets.all(BauhausDesign.space3),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceOffWhite,
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              color: Theme.of(context).colorScheme.surfaceContainer,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1276,7 +1326,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
           Text(
             'PERMISSION MATRIX',
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w900,
               letterSpacing: 0.8,
             ),
@@ -1286,8 +1336,11 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
             width: double.infinity,
             padding: const EdgeInsets.all(BauhausDesign.space3),
             decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              color: Theme.of(context).colorScheme.surfaceContainer,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
             ),
             child: Wrap(
               spacing: BauhausDesign.space2,
@@ -1307,8 +1360,10 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                     child: BauhausActionButton(
                       text: 'Manage Permissions',
                       icon: Icons.tune_rounded,
-                      backgroundColor: BauhausDesign.surfaceOffWhite,
-                      textColor: BauhausDesign.textDark,
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.surfaceContainer,
+                      textColor: Theme.of(context).colorScheme.onSurface,
                       isSmall: true,
                       onPressed: () => _showPermissionsDialog(member),
                     ),
@@ -1324,7 +1379,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                             ? null
                             : Icons.mark_email_read_rounded,
                         variant: BauhausActionVariant.warning,
-                        textColor: BauhausDesign.textDark,
+                        textColor: Theme.of(context).colorScheme.onSurface,
                         isSmall: true,
                         isLoading: isResending,
                         onPressed: isResending
@@ -1348,7 +1403,7 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
                       variant: isInactive
                           ? BauhausActionVariant.success
                           : BauhausActionVariant.error,
-                      textColor: BauhausDesign.textDark,
+                      textColor: Theme.of(context).colorScheme.onSurface,
                       isSmall: true,
                       onPressed: () => _confirmStatusChange(
                         member,
@@ -1374,7 +1429,11 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
   Widget _buildInfoRow({required IconData icon, required String text}) {
     return Row(
       children: [
-        Icon(icon, size: 16, color: BauhausDesign.textMuted),
+        Icon(
+          icon,
+          size: 16,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
         const SizedBox(width: BauhausDesign.space2),
         Expanded(
           child: Text(
@@ -1392,12 +1451,13 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
     final currentUser = ref.watch(currentUserProvider).value;
     final canManageMembers = _canManageMembers(currentUser, state);
     final clientId = _resolvedClientId;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: colorScheme.secondary,
+        foregroundColor: colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -1409,14 +1469,14 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
               'Family Access',
               style: BauhausDesign.getTextTheme(
                 context,
-              ).titleLarge?.copyWith(color: BauhausDesign.surfaceWhite),
+              ).titleLarge?.copyWith(color: colorScheme.onSecondary),
             ),
             if ((widget.clientName ?? '').trim().isNotEmpty)
               Text(
                 widget.clientName!.trim(),
-                style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                  color: BauhausDesign.surfaceWhite,
-                ),
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodySmall?.copyWith(color: colorScheme.onSecondary),
               ),
           ],
         ),

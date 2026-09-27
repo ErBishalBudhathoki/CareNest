@@ -18,12 +18,12 @@ class OrganizationCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return GestureDetector(
       onTap: onTap,
       child: BauhausContainer(
-        color: isSelected
-            ? BauhausDesign.primaryRed.withValues(alpha: 0.1)
-            : BauhausDesign.surfaceWhite,
+        color: isSelected ? colorScheme.tertiaryContainer : colorScheme.surface,
         padding: const EdgeInsets.all(BauhausDesign.space3),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,8 +41,8 @@ class OrganizationCard extends ConsumerWidget {
                     child: Text(
                       organization['name']?.substring(0, 1).toUpperCase() ??
                           'O',
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: colorScheme.onInverseSurface,
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
                       ),
@@ -63,8 +63,8 @@ class OrganizationCard extends ConsumerWidget {
                       ),
                       Text(
                         organization['code'] ?? '',
-                        style: const TextStyle(
-                          color: BauhausDesign.textMedium,
+                        style: TextStyle(
+                          color: colorScheme.onSurfaceVariant,
                           fontSize: 12,
                         ),
                       ),
@@ -82,12 +82,12 @@ class OrganizationCard extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildRoleTag(organization['role'] ?? 'Member'),
+                _buildRoleTag(context, organization['role'] ?? 'Member'),
                 Text(
                   'Last accessed: ${_formatDate(organization['lastAccessedAt'])}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 10,
-                    color: BauhausDesign.textMuted, // Changed from textLight
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -98,8 +98,8 @@ class OrganizationCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildRoleTag(String role) {
-    Color color = BauhausDesign.neutral;
+  Widget _buildRoleTag(BuildContext context, String role) {
+    Color color = Theme.of(context).colorScheme.outline;
     if (role == 'owner') color = BauhausDesign.primaryRed;
     if (role == 'admin') color = BauhausDesign.primaryBlue;
 

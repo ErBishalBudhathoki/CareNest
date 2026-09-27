@@ -46,6 +46,8 @@ class _TaxDetailsFormState extends ConsumerState<TaxDetailsForm> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Form(
       key: _formKey,
       child: Column(
@@ -66,34 +68,45 @@ class _TaxDetailsFormState extends ConsumerState<TaxDetailsForm> {
           Text(
             'Tax Scale',
             style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
-              color: BauhausDesign.textDark,
+              color: colorScheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 6),
           DropdownButtonFormField<String>(
             initialValue: _taxScale,
-            dropdownColor: BauhausDesign.surfaceWhite,
+            dropdownColor: colorScheme.surface,
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-              color: BauhausDesign.textDark,
+              color: colorScheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
-            decoration: BauhausDesign.inputDecoration(
-              'Select tax scale',
-            ).copyWith(filled: true, fillColor: BauhausDesign.surfaceWhite),
-            items: const [
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: colorScheme.surface,
+              labelText: 'Select tax scale',
+              border: OutlineInputBorder(
+                borderSide: BorderSide(color: colorScheme.outline),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: colorScheme.outline),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: colorScheme.primary, width: 2),
+              ),
+            ),
+            items: [
               DropdownMenuItem(
                 value: 'tax-free-threshold',
                 child: Text(
                   'Claim Tax-Free Threshold',
-                  style: TextStyle(color: BauhausDesign.textDark),
+                  style: TextStyle(color: colorScheme.onSurface),
                 ),
               ),
               DropdownMenuItem(
                 value: 'no-tax-free-threshold',
                 child: Text(
                   'No Tax-Free Threshold',
-                  style: TextStyle(color: BauhausDesign.textDark),
+                  style: TextStyle(color: colorScheme.onSurface),
                 ),
               ),
             ],

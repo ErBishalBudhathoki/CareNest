@@ -121,13 +121,11 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
 
   Color _getHolidayColor(ThemeData theme) {
     if (widget.isToday) {
-      return const Color(0xFF3B82F6); // Modern SAAS primary blue for today
+      return theme.colorScheme.primary;
     } else if (widget.isUpcoming) {
-      return const Color(
-        0xFF10B981,
-      ); // Modern SAAS secondary green for upcoming
+      return theme.colorScheme.secondary;
     } else {
-      return const Color(0xFF64748B); // Modern SAAS neutral for past holidays
+      return theme.colorScheme.onSurfaceVariant;
     }
   }
 
@@ -166,17 +164,17 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
                 padding: const EdgeInsets.only(right: 20),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
-                  gradient: const LinearGradient(
+                  gradient: LinearGradient(
                     colors: [
-                      Color(0x80EF4444), // Modern SAAS error with opacity
-                      Color(0xFFEF4444), // Modern SAAS error
+                      theme.colorScheme.error.withValues(alpha: 0.5),
+                      theme.colorScheme.error,
                     ],
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFFEF4444).withValues(alpha: 0.3),
+                      color: theme.colorScheme.error.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -185,12 +183,16 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.delete_rounded, color: Colors.white, size: 32),
+                    Icon(
+                      Icons.delete_rounded,
+                      color: theme.colorScheme.onError,
+                      size: 32,
+                    ),
                     const SizedBox(height: 4),
                     Text(
                       'Delete',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: Colors.white,
+                        color: theme.colorScheme.onError,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -209,26 +211,20 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
                       borderRadius: BorderRadius.circular(16),
                       gradient: LinearGradient(
                         colors: [
-                          widget.isToday
-                              ? const Color(0xFF3B82F6).withValues(alpha: 0.15)
-                              : widget.isUpcoming
-                              ? const Color(0xFF10B981).withValues(alpha: 0.12)
-                              : const Color(0xFF64748B).withValues(alpha: 0.12),
-                          widget.isToday
-                              ? const Color(0xFF3B82F6).withValues(alpha: 0.08)
-                              : widget.isUpcoming
-                              ? const Color(0xFF10B981).withValues(alpha: 0.06)
-                              : const Color(0xFF64748B).withValues(alpha: 0.06),
+                          holidayColor.withValues(
+                            alpha: widget.isToday ? 0.15 : 0.12,
+                          ),
+                          holidayColor.withValues(
+                            alpha: widget.isToday ? 0.08 : 0.06,
+                          ),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       border: Border.all(
-                        color: widget.isToday
-                            ? const Color(0xFF3B82F6).withValues(alpha: 0.4)
-                            : widget.isUpcoming
-                            ? const Color(0xFF10B981).withValues(alpha: 0.3)
-                            : const Color(0xFF64748B).withValues(alpha: 0.3),
+                        color: holidayColor.withValues(
+                          alpha: widget.isToday ? 0.4 : 0.3,
+                        ),
                         width: widget.isToday ? 2 : 1.5,
                       ),
                     ),
@@ -304,13 +300,19 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
   }
 
   Widget _build3DDateCircle(ThemeData theme, Color holidayColor) {
+    final holidayTextColor = theme.brightness == Brightness.dark
+        ? theme.colorScheme.onSurface
+        : theme.colorScheme.surface;
     return Container(
       width: 80,
       height: 80,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: LinearGradient(
-          colors: [holidayColor, Color.lerp(holidayColor, Colors.black, 0.2)!],
+          colors: [
+            holidayColor,
+            Color.lerp(holidayColor, theme.colorScheme.shadow, 0.2)!,
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -321,7 +323,7 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
             offset: const Offset(0, 6),
           ),
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: theme.colorScheme.shadow.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -345,11 +347,11 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: widget.isToday || widget.isUpcoming
-                    ? Colors.white
+                    ? holidayTextColor
                     : theme.colorScheme.onSurface,
                 shadows: [
                   Shadow(
-                    color: Colors.black.withValues(alpha: 0.3),
+                    color: theme.colorScheme.shadow.withValues(alpha: 0.3),
                     offset: const Offset(1, 1),
                     blurRadius: 2,
                   ),
@@ -361,14 +363,14 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
               style: theme.textTheme.bodySmall?.copyWith(
                 color:
                     (widget.isToday || widget.isUpcoming
-                            ? Colors.white
+                            ? holidayTextColor
                             : theme.colorScheme.onSurface)
                         .withValues(alpha: 0.9),
                 fontWeight: FontWeight.w600,
                 fontSize: 11,
                 shadows: [
                   Shadow(
-                    color: Colors.black.withValues(alpha: 0.3),
+                    color: theme.colorScheme.shadow.withValues(alpha: 0.3),
                     offset: const Offset(1, 1),
                     blurRadius: 2,
                   ),
@@ -408,7 +410,10 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
                 ),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [const Color(0xFF2196F3), const Color(0xFF42A5F5)],
+                    colors: [
+                      theme.colorScheme.primary,
+                      theme.colorScheme.primary.withValues(alpha: 0.7),
+                    ],
                   ),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
@@ -422,7 +427,7 @@ class _Enhanced3DHolidayCardState extends State<Enhanced3DHolidayCard>
                 child: Text(
                   'TODAY',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.white,
+                    color: theme.colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
                     fontSize: 11,
                   ),

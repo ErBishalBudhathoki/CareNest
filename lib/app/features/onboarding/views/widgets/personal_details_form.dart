@@ -37,6 +37,8 @@ class _PersonalDetailsFormState extends ConsumerState<PersonalDetailsForm> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Form(
       key: _formKey,
       child: Column(
@@ -52,7 +54,7 @@ class _PersonalDetailsFormState extends ConsumerState<PersonalDetailsForm> {
           Text(
             'Emergency Contact (Optional)',
             style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
-              color: BauhausDesign.textDark,
+              color: colorScheme.onSurface,
               fontWeight: FontWeight.bold,
             ),
           ),

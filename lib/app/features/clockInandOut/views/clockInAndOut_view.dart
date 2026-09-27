@@ -48,7 +48,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -129,12 +129,16 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                 'HOURS WORKED',
                 style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
                   fontWeight: FontWeight.w900,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 20,
                 ),
               ),
               const SizedBox(height: BauhausDesign.space2),
-              Container(width: 40, height: 3, color: BauhausDesign.neutral),
+              Container(
+                width: 40,
+                height: 3,
+                color: Theme.of(context).colorScheme.outline,
+              ),
             ],
           );
         },
@@ -162,7 +166,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
             DateFormat('EEE dd MMM').format(_selectedDate).toUpperCase(),
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
               fontWeight: FontWeight.w900,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(width: BauhausDesign.space4),
@@ -263,7 +267,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
         case 'completed':
           return BauhausDesign.success;
         case 'cancelled':
-          return BauhausDesign.neutral;
+          return Theme.of(context).colorScheme.onSurfaceVariant;
         default:
           return BauhausDesign.warning;
       }
@@ -271,12 +275,21 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
 
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
           left: BorderSide(color: borderColor, width: 4),
-          top: const BorderSide(color: BauhausDesign.neutral, width: 2),
-          right: const BorderSide(color: BauhausDesign.neutral, width: 2),
-          bottom: const BorderSide(color: BauhausDesign.neutral, width: 2),
+          top: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
+          right: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
         ),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
@@ -288,7 +301,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
             '$startTime — $endTime',
             style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
               fontWeight: FontWeight.w900,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: BauhausDesign.space1),
@@ -337,7 +350,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
               decoration: BoxDecoration(
                 color: BauhausDesign.accent,
                 border: Border.all(
-                  color: BauhausDesign.neutral,
+                  color: Theme.of(context).colorScheme.outline,
                   width: BauhausDesign.borderThick,
                 ),
                 boxShadow: const [BauhausDesign.shadowHard],
@@ -345,9 +358,9 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.check_circle_outline,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     size: 28,
                   ),
                   const SizedBox(height: BauhausDesign.space2),
@@ -356,7 +369,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                     style: BauhausDesign.getTextTheme(context).labelLarge
                         ?.copyWith(
                           fontWeight: FontWeight.w900,
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                   ),
                 ],
@@ -379,7 +392,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
               decoration: BoxDecoration(
                 color: BauhausDesign.secondary,
                 border: Border.all(
-                  color: BauhausDesign.neutral,
+                  color: Theme.of(context).colorScheme.outline,
                   width: BauhausDesign.borderThick,
                 ),
                 boxShadow: const [BauhausDesign.shadowHard],
@@ -387,9 +400,9 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.calendar_today,
-                    color: BauhausDesign.textLight,
+                    color: Theme.of(context).colorScheme.onSecondary,
                     size: 28,
                   ),
                   const SizedBox(height: BauhausDesign.space2),
@@ -398,7 +411,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
                     style: BauhausDesign.getTextTheme(context).labelLarge
                         ?.copyWith(
                           fontWeight: FontWeight.w900,
-                          color: BauhausDesign.textLight,
+                          color: Theme.of(context).colorScheme.onSecondary,
                         ),
                   ),
                 ],

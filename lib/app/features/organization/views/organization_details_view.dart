@@ -250,9 +250,9 @@ class _OrganizationDetailsViewState
                 : AppLocalizations.of(
                     context,
                   )!.organizationVerificationSentFailure,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.surface,
+            ),
           ),
           backgroundColor: success
               ? BauhausDesign.success
@@ -269,9 +269,9 @@ class _OrganizationDetailsViewState
         SnackBar(
           content: Text(
             AppLocalizations.of(context)!.organizationVerificationSentFailure,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.surface,
+            ),
           ),
           backgroundColor: BauhausDesign.warning,
         ),
@@ -291,9 +291,12 @@ class _OrganizationDetailsViewState
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardXs],
       ),
       child: Container(
@@ -313,16 +316,16 @@ class _OrganizationDetailsViewState
                   isVerified
                       ? Icons.verified_user_rounded
                       : Icons.mark_email_unread_outlined,
-                  color: BauhausDesign.neutral,
+                  color: Theme.of(context).colorScheme.onSurface,
                   size: 18,
                 ),
-                const SizedBox(width: BauhausDesign.space2),
+                SizedBox(width: BauhausDesign.space2),
                 Expanded(
                   child: Text(
                     _organizationVerificationTitle(l10n),
                     style: BauhausDesign.getTextTheme(context).labelLarge
                         ?.copyWith(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 0.8,
                         ),
@@ -336,9 +339,11 @@ class _OrganizationDetailsViewState
                   decoration: BoxDecoration(
                     color: isVerified
                         ? BauhausDesign.success
-                        : BauhausDesign.surfaceWhite,
+                        : Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                    border: Border.all(color: BauhausDesign.neutral),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                   child: Text(
                     isVerified
@@ -346,29 +351,33 @@ class _OrganizationDetailsViewState
                         : l10n.unverified.toUpperCase(),
                     style: BauhausDesign.getTextTheme(context).labelSmall
                         ?.copyWith(
-                          color: BauhausDesign.neutral,
+                          color: isVerified
+                              ? BauhausDesign.readableOnColor(
+                                  BauhausDesign.success,
+                                )
+                              : Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w900,
                         ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: BauhausDesign.space2),
+            SizedBox(height: BauhausDesign.space2),
             Text(
               _organizationVerificationMessage(l10n),
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.neutral,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
-            const SizedBox(height: BauhausDesign.space3),
+            SizedBox(height: BauhausDesign.space3),
             Wrap(
               spacing: BauhausDesign.space2,
               runSpacing: BauhausDesign.space2,
               children: [
                 OutlinedButton.icon(
                   onPressed: _navigateToEdit,
-                  icon: const Icon(Icons.edit_outlined, size: 16),
+                  icon: Icon(Icons.edit_outlined, size: 16),
                   label: Text(
                     (_organizationContactEmail == null
                             ? l10n.setOrganizationEmail
@@ -376,10 +385,10 @@ class _OrganizationDetailsViewState
                         .toUpperCase(),
                   ),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: BauhausDesign.neutral,
-                    backgroundColor: BauhausDesign.surfaceWhite,
-                    side: const BorderSide(
-                      color: BauhausDesign.neutral,
+                    foregroundColor: Theme.of(context).colorScheme.onSurface,
+                    backgroundColor: Theme.of(context).colorScheme.surface,
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.onSurface,
                       width: 2,
                     ),
                     padding: const EdgeInsets.symmetric(
@@ -411,7 +420,9 @@ class _OrganizationDetailsViewState
                           .toUpperCase(),
                     ),
                     style: FilledButton.styleFrom(
-                      foregroundColor: BauhausDesign.neutral,
+                      foregroundColor: BauhausDesign.readableOnColor(
+                        BauhausDesign.accent,
+                      ),
                       backgroundColor: BauhausDesign.accent,
                       padding: const EdgeInsets.symmetric(
                         horizontal: BauhausDesign.space3,
@@ -456,9 +467,9 @@ class _OrganizationDetailsViewState
           SnackBar(
             content: Text(
               'Session expired. Please sign in again.',
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.surface,
+              ),
             ),
             backgroundColor: BauhausDesign.warning,
           ),
@@ -519,9 +530,9 @@ class _OrganizationDetailsViewState
         SnackBar(
           content: Text(
             AppLocalizations.of(context)!.organizationSaved,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.surface,
+            ),
           ),
           backgroundColor: BauhausDesign.success,
         ),
@@ -590,9 +601,9 @@ $appLink
         SnackBar(
           content: Text(
             'Share failed. Invite text copied to clipboard.',
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.surface,
+            ),
           ),
           backgroundColor: BauhausDesign.warning,
         ),
@@ -625,7 +636,7 @@ $appLink
           successMessage,
           style: BauhausDesign.getTextTheme(
             context,
-          ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+          ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.surface),
         ),
         backgroundColor: BauhausDesign.success,
       ),
@@ -731,9 +742,9 @@ $appLink
         SnackBar(
           content: Text(
             AppLocalizations.of(context)!.locationUnavailable,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.surface,
+            ),
           ),
           backgroundColor: BauhausDesign.error,
         ),
@@ -757,7 +768,7 @@ $appLink
 
       showModalBottomSheet(
         context: context,
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(BauhausDesign.radiusLg),
@@ -775,16 +786,16 @@ $appLink
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.outline,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
-                    const SizedBox(height: BauhausDesign.space4),
+                    SizedBox(height: BauhausDesign.space4),
                     Text(
                       AppLocalizations.of(context)!.openWith,
                       style: BauhausDesign.getTextTheme(context).titleLarge,
                     ),
-                    const SizedBox(height: BauhausDesign.space4),
+                    SizedBox(height: BauhausDesign.space4),
                     ...availableMaps.map(
                       (map) => ListTile(
                         onTap: () {
@@ -835,33 +846,37 @@ $appLink
                 AppLocalizations.of(context)!.joinOrganization,
                 style: BauhausDesign.getTextTheme(context).headlineSmall,
               ),
-              const SizedBox(height: BauhausDesign.space2),
+              SizedBox(height: BauhausDesign.space2),
               Text(
                 AppLocalizations.of(context)!.scanToJoin(
                   widget.organizationName ??
                       AppLocalizations.of(context)!.organization,
                 ),
                 textAlign: TextAlign.center,
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
-              const SizedBox(height: BauhausDesign.space6),
+              SizedBox(height: BauhausDesign.space6),
               Container(
                 padding: const EdgeInsets.all(BauhausDesign.space4),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                  border: Border.all(color: BauhausDesign.neutral),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                 ),
                 child: QrImageView(
                   data: link,
                   version: QrVersions.auto,
                   size: 200,
-                  backgroundColor: Colors.white,
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerLowest,
                 ),
               ),
-              const SizedBox(height: BauhausDesign.space6),
+              SizedBox(height: BauhausDesign.space6),
               BauhausActionButton(
                 onPressed: () => Navigator.pop(context),
                 text: AppLocalizations.of(context)!.closeButton,
@@ -907,6 +922,7 @@ $appLink
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
     final userRole = ref.watch(app_providers.userRoleProvider);
     final isEmployee = userRole == UserRole.employee;
 
@@ -929,22 +945,22 @@ $appLink
     final fullAddress = _composeFullAddress(address);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceLight,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        backgroundColor: BauhausDesign.secondary,
+        backgroundColor: colorScheme.secondary,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back_ios_new),
-          color: BauhausDesign.surfaceWhite,
+          icon: Icon(Icons.arrow_back_ios_new),
+          color: colorScheme.onSecondary,
         ),
         title: Text(
           l10n.organizationDetails.toUpperCase(),
           style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
             letterSpacing: 1.0,
-            color: BauhausDesign.surfaceWhite,
+            color: colorScheme.onSecondary,
             fontWeight: FontWeight.w900,
           ),
         ),
@@ -952,14 +968,17 @@ $appLink
         actions: [
           IconButton(
             onPressed: _navigateToEdit,
-            icon: const Icon(Icons.edit_outlined),
-            color: BauhausDesign.surfaceWhite,
+            icon: Icon(Icons.edit_outlined),
+            color: colorScheme.onSecondary,
             tooltip: l10n.editOrganization,
           ),
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: BauhausDesign.neutral, height: 1),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 1,
+          ),
         ),
       ),
       body: _loading
@@ -994,20 +1013,20 @@ $appLink
                             'General',
                             _selectedTab == 'General',
                           ),
-                          const SizedBox(width: BauhausDesign.space3),
+                          SizedBox(width: BauhausDesign.space3),
                           _buildTab(
                             AppLocalizations.of(context)!.contactTab,
                             'Contact',
                             _selectedTab == 'Contact',
                           ),
                           if (!isEmployee) ...[
-                            const SizedBox(width: BauhausDesign.space3),
+                            SizedBox(width: BauhausDesign.space3),
                             _buildTab(
                               AppLocalizations.of(context)!.banking,
                               'Banking',
                               _selectedTab == 'Banking',
                             ),
-                            const SizedBox(width: BauhausDesign.space3),
+                            SizedBox(width: BauhausDesign.space3),
                             _buildTab(
                               AppLocalizations.of(context)!.ndisTab,
                               'NDIS',
@@ -1024,7 +1043,7 @@ $appLink
                 SliverToBoxAdapter(
                   child: Column(
                     children: [
-                      const SizedBox(height: BauhausDesign.space4),
+                      SizedBox(height: BauhausDesign.space4),
 
                       // General Information
                       _buildSectionCard(
@@ -1053,11 +1072,11 @@ $appLink
                             abn,
                           ),
                           // Map Section
-                          const SizedBox(height: BauhausDesign.space4),
+                          SizedBox(height: BauhausDesign.space4),
                           _buildMetaLabel(
                             AppLocalizations.of(context)!.location,
                           ),
-                          const SizedBox(height: BauhausDesign.space2),
+                          SizedBox(height: BauhausDesign.space2),
                           _buildLocationPanel(
                             fullAddress: fullAddress.isEmpty
                                 ? l10n.notSet
@@ -1066,7 +1085,7 @@ $appLink
                         ],
                       ),
 
-                      const SizedBox(height: BauhausDesign.space4),
+                      SizedBox(height: BauhausDesign.space4),
 
                       // Contact Details
                       _buildSectionCard(
@@ -1114,12 +1133,12 @@ $appLink
                       ),
 
                       if (!isEmployee) ...[
-                        const SizedBox(height: BauhausDesign.space4),
+                        SizedBox(height: BauhausDesign.space4),
 
                         // Stripe existing-account link
                         _buildStripeConnectSection(context, l10n),
 
-                        const SizedBox(height: BauhausDesign.space4),
+                        SizedBox(height: BauhausDesign.space4),
 
                         // Banking Details
                         _buildSectionCard(
@@ -1164,12 +1183,12 @@ $appLink
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     if (isVerified) ...[
-                                      const Icon(
+                                      Icon(
                                         Icons.check_circle,
                                         size: 12,
                                         color: BauhausDesign.success,
                                       ),
-                                      const SizedBox(width: 4),
+                                      SizedBox(width: 4),
                                     ],
                                     Text(
                                       isVerified
@@ -1207,7 +1226,7 @@ $appLink
                                     bank['bsb'] ?? l10n.notSet,
                                   ),
                                 ),
-                                const SizedBox(width: BauhausDesign.space3),
+                                SizedBox(width: BauhausDesign.space3),
                                 Expanded(
                                   child: _buildDetailRow(
                                     context,
@@ -1222,7 +1241,7 @@ $appLink
                           ],
                         ),
 
-                        const SizedBox(height: BauhausDesign.space4),
+                        SizedBox(height: BauhausDesign.space4),
 
                         // NDIS Registration
                         _buildSectionCard(
@@ -1244,12 +1263,16 @@ $appLink
                                       horizontal: BauhausDesign.space4,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: BauhausDesign.surfaceWhite,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.surface,
                                       borderRadius: BorderRadius.circular(
                                         BauhausDesign.radiusMd,
                                       ),
                                       border: Border.all(
-                                        color: BauhausDesign.neutral,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.outline,
                                       ),
                                     ),
                                     child: IntrinsicHeight(
@@ -1268,11 +1291,17 @@ $appLink
                                                       BauhausDesign.getTextTheme(
                                                         context,
                                                       ).labelSmall?.copyWith(
-                                                        color: BauhausDesign
-                                                            .textMuted,
+                                                        // `textMuted` is a fixed
+                                                        // dark ink and vanished
+                                                        // on the dark surface.
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .onSurfaceVariant,
+                                                        fontWeight:
+                                                            FontWeight.w700,
                                                       ),
                                                 ),
-                                                const SizedBox(height: 4),
+                                                SizedBox(height: 4),
                                                 Row(
                                                   children: [
                                                     Container(
@@ -1285,16 +1314,28 @@ $appLink
                                                         shape: BoxShape.circle,
                                                       ),
                                                     ),
-                                                    const SizedBox(width: 6),
+                                                    SizedBox(width: 6),
                                                     Text(
                                                       status['text'] as String,
                                                       style:
                                                           BauhausDesign.getTextTheme(
                                                             context,
                                                           ).bodyMedium?.copyWith(
+                                                            // The status dot
+                                                            // above already
+                                                            // carries the
+                                                            // semantic hue;
+                                                            // tinting the label
+                                                            // with raw
+                                                            // success/error hex
+                                                            // left it at ~1.5:1
+                                                            // on the dark surface.
                                                             color:
-                                                                status['color']
-                                                                    as Color,
+                                                                Theme.of(
+                                                                      context,
+                                                                    )
+                                                                    .colorScheme
+                                                                    .onSurface,
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                           ),
@@ -1305,7 +1346,9 @@ $appLink
                                             ),
                                           ),
                                           VerticalDivider(
-                                            color: BauhausDesign.neutral,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.outline,
                                             thickness: 1,
                                             width: 24,
                                           ),
@@ -1322,11 +1365,16 @@ $appLink
                                                       BauhausDesign.getTextTheme(
                                                         context,
                                                       ).labelSmall?.copyWith(
-                                                        color: BauhausDesign
-                                                            .textMuted,
+                                                        // Fixed dark ink; unreadable
+                                                        // on the dark surface.
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .onSurfaceVariant,
+                                                        fontWeight:
+                                                            FontWeight.w700,
                                                       ),
                                                 ),
-                                                const SizedBox(height: 4),
+                                                SizedBox(height: 4),
                                                 Text(
                                                   _formatDate(
                                                     ndis['renewalDate'] ??
@@ -1349,7 +1397,7 @@ $appLink
                                   );
                                 },
                               ),
-                              const SizedBox(height: BauhausDesign.space4),
+                              SizedBox(height: BauhausDesign.space4),
                               _buildDetailRow(
                                 context,
                                 AppLocalizations.of(
@@ -1366,12 +1414,16 @@ $appLink
                                   vertical: BauhausDesign.space3,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: BauhausDesign.surfaceOffWhite,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.surfaceContainer,
                                   borderRadius: BorderRadius.circular(
                                     BauhausDesign.radiusMd,
                                   ),
                                   border: Border.all(
-                                    color: BauhausDesign.neutral,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.outline,
                                   ),
                                 ),
                                 child: Row(
@@ -1379,12 +1431,14 @@ $appLink
                                     Container(
                                       width: 10,
                                       height: 10,
-                                      decoration: const BoxDecoration(
-                                        color: BauhausDesign.neutral,
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.outline,
                                         shape: BoxShape.circle,
                                       ),
                                     ),
-                                    const SizedBox(width: BauhausDesign.space2),
+                                    SizedBox(width: BauhausDesign.space2),
                                     Text(
                                       AppLocalizations.of(
                                         context,
@@ -1402,7 +1456,7 @@ $appLink
                           ],
                         ),
                       ],
-                      const SizedBox(height: BauhausDesign.space6),
+                      SizedBox(height: BauhausDesign.space6),
                     ],
                   ),
                 ),
@@ -1430,7 +1484,10 @@ $appLink
       decoration: BoxDecoration(
         color: BauhausDesign.secondary,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHard],
       ),
       child: Column(
@@ -1449,17 +1506,19 @@ $appLink
                       height: 64,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: BauhausDesign.surfaceWhite,
+                        color: Theme.of(context).colorScheme.surface,
                         image: (logoUrl != null && logoUrl.isNotEmpty)
                             ? DecorationImage(
                                 image: NetworkImage(logoUrl),
                                 fit: BoxFit.cover,
                               )
                             : null,
-                        border: Border.all(color: BauhausDesign.neutral),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
                       ),
                       child: (logoUrl == null || logoUrl.isEmpty)
-                          ? const Icon(
+                          ? Icon(
                               Icons.business_rounded,
                               color: BauhausDesign.primary,
                               size: 30,
@@ -1469,19 +1528,19 @@ $appLink
                     if (isVerified)
                       Container(
                         padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           color: BauhausDesign.success,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.check,
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onInverseSurface,
                           size: 12,
                         ),
                       ),
                   ],
                 ),
-                const SizedBox(width: BauhausDesign.space3),
+                SizedBox(width: BauhausDesign.space3),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1491,22 +1550,22 @@ $appLink
                         style: BauhausDesign.getTextTheme(context)
                             .headlineMedium
                             ?.copyWith(
-                              color: BauhausDesign.surfaceWhite,
+                              color: Theme.of(context).colorScheme.surface,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 0.2,
                             ),
                       ),
-                      const SizedBox(height: BauhausDesign.space1),
+                      SizedBox(height: BauhausDesign.space1),
                       Text(
                         subtitle,
                         style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
-                              color: BauhausDesign.surfaceWhite.withValues(
-                                alpha: 0.85,
-                              ),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.surface.withValues(alpha: 0.85),
                             ),
                       ),
-                      const SizedBox(height: BauhausDesign.space2),
+                      SizedBox(height: BauhausDesign.space2),
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: BauhausDesign.space2,
@@ -1519,7 +1578,9 @@ $appLink
                           borderRadius: BorderRadius.circular(
                             BauhausDesign.radiusSm,
                           ),
-                          border: Border.all(color: BauhausDesign.neutral),
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
                         ),
                         child: Text(
                           isVerified
@@ -1527,7 +1588,11 @@ $appLink
                               : l10n.unverified.toUpperCase(),
                           style: BauhausDesign.getTextTheme(context).labelSmall
                               ?.copyWith(
-                                color: BauhausDesign.neutral,
+                                color: BauhausDesign.readableOnColor(
+                                  isVerified
+                                      ? BauhausDesign.success
+                                      : BauhausDesign.accent,
+                                ),
                                 fontWeight: FontWeight.w900,
                               ),
                         ),
@@ -1541,11 +1606,17 @@ $appLink
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(BauhausDesign.space4),
-            decoration: const BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
               border: Border(
-                top: BorderSide(color: BauhausDesign.neutral, width: 2),
-                bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+                top: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
+                bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
               ),
             ),
             child: Row(
@@ -1563,7 +1634,7 @@ $appLink
                               fontWeight: FontWeight.w900,
                             ),
                       ),
-                      const SizedBox(height: BauhausDesign.space2),
+                      SizedBox(height: BauhausDesign.space2),
                       Text(
                         code,
                         style: BauhausDesign.getTextTheme(context).headlineLarge
@@ -1572,17 +1643,20 @@ $appLink
                               letterSpacing: 2,
                             ),
                       ),
-                      const SizedBox(height: BauhausDesign.space1),
+                      SizedBox(height: BauhausDesign.space1),
                       Text(
                         l10n.shareCodeInvite,
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                        style: BauhausDesign.getTextTheme(context).bodySmall
+                            ?.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(width: BauhausDesign.space3),
+                SizedBox(width: BauhausDesign.space3),
                 _buildActionIcon(
                   icon: Icons.copy_rounded,
                   label: 'COPY',
@@ -1603,7 +1677,7 @@ $appLink
                     onTap: _showQRCodeDialog,
                   ),
                 ),
-                const SizedBox(width: BauhausDesign.space3),
+                SizedBox(width: BauhausDesign.space3),
                 Expanded(
                   child: _buildInviteActionTile(
                     icon: Icons.ios_share_outlined,
@@ -1636,18 +1710,21 @@ $appLink
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
           boxShadow: const [BauhausDesign.shadowHardSm],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: BauhausDesign.neutral, size: 18),
-            const SizedBox(width: BauhausDesign.space2),
+            Icon(icon, color: BauhausDesign.readableOnColor(color), size: 18),
+            SizedBox(width: BauhausDesign.space2),
             Text(
               title,
               style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                color: BauhausDesign.neutral,
+                color: BauhausDesign.readableOnColor(color),
                 fontWeight: FontWeight.w900,
               ),
             ),
@@ -1679,22 +1756,25 @@ $appLink
         decoration: BoxDecoration(
           color: BauhausDesign.accent,
           borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-          border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 1.5,
+          ),
           boxShadow: const [BauhausDesign.shadowHardXs],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.open_in_new_rounded,
               size: 14,
-              color: BauhausDesign.neutral,
+              color: BauhausDesign.readableOnColor(BauhausDesign.accent),
             ),
-            const SizedBox(width: BauhausDesign.space1),
+            SizedBox(width: BauhausDesign.space1),
             Text(
               AppLocalizations.of(context)!.openMap.toUpperCase(),
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.neutral,
+                color: BauhausDesign.readableOnColor(BauhausDesign.accent),
                 fontWeight: FontWeight.w900,
               ),
             ),
@@ -1710,8 +1790,11 @@ $appLink
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
-        color: BauhausDesign.surfaceOffWhite,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
+        color: Theme.of(context).colorScheme.surfaceContainer,
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       clipBehavior: Clip.antiAlias,
@@ -1731,11 +1814,13 @@ $appLink
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: BauhausDesign.surfaceWhite,
+                      color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(
                         BauhausDesign.radiusSm,
                       ),
-                      border: Border.all(color: BauhausDesign.neutral),
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
                     ),
                     child: Text(
                       hasLocation
@@ -1743,7 +1828,7 @@ $appLink
                           : l10n.locationNotSet.toUpperCase(),
                       style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w900,
                           ),
                     ),
@@ -1763,21 +1848,24 @@ $appLink
               horizontal: BauhausDesign.space3,
               vertical: BauhausDesign.space3,
             ),
-            decoration: const BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
               border: Border(
-                top: BorderSide(color: BauhausDesign.neutral, width: 2),
+                top: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
               ),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(
+                Icon(
                   Icons.place_outlined,
                   size: 16,
                   color: BauhausDesign.secondary,
                 ),
-                const SizedBox(width: BauhausDesign.space2),
+                SizedBox(width: BauhausDesign.space2),
                 Expanded(
                   child: Text(
                     fullAddress,
@@ -1799,13 +1887,17 @@ $appLink
       return Stack(
         fit: StackFit.expand,
         children: [
-          CustomPaint(painter: _MapGridPainter()),
+          CustomPaint(
+            painter: _MapGridPainter(
+              Theme.of(context).colorScheme.outline.withValues(alpha: 0.05),
+            ),
+          ),
           Center(
             child: Text(
               AppLocalizations.of(context)!.locationNotSet,
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
         ],
@@ -1886,12 +1978,12 @@ $appLink
   }
 
   Color _tabTextColorFor(String key, {required bool isSelected}) {
-    if (!isSelected) return BauhausDesign.textMuted;
+    if (!isSelected) return Theme.of(context).colorScheme.onSurfaceVariant;
     final color = _tabColorFor(key);
     if (color == BauhausDesign.accent || color.computeLuminance() > 0.6) {
-      return BauhausDesign.neutral;
+      return Theme.of(context).colorScheme.outline;
     }
-    return BauhausDesign.surfaceWhite;
+    return Theme.of(context).colorScheme.surface;
   }
 
   Widget _buildTab(String label, String key, bool isSelected) {
@@ -1905,9 +1997,12 @@ $appLink
           vertical: BauhausDesign.space2,
         ),
         decoration: BoxDecoration(
-          color: isSelected ? tabColor : BauhausDesign.surfaceWhite,
+          color: isSelected ? tabColor : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(BauhausDesign.radiusPill),
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
           boxShadow: isSelected
               ? const [BauhausDesign.shadowHardSm]
               : const [BauhausDesign.shadowHardXs],
@@ -1924,7 +2019,7 @@ $appLink
                   shape: BoxShape.circle,
                 ),
               ),
-              const SizedBox(width: BauhausDesign.space2),
+              SizedBox(width: BauhausDesign.space2),
             ],
             Text(
               label.toUpperCase(),
@@ -1981,25 +2076,25 @@ $appLink
       children: [
         Text(
           description,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+          style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
-        const SizedBox(height: BauhausDesign.space4),
+        SizedBox(height: BauhausDesign.space4),
         if (isFullyConnected) ...[
           _buildStripeAccountIdRow(context, l10n, stripeAccountId!),
-          const SizedBox(height: BauhausDesign.space3),
+          SizedBox(height: BauhausDesign.space3),
           _buildStripeDisconnectButton(context, organizationId!),
         ] else if (isActionNeeded) ...[
           _buildStripeAccountIdRow(context, l10n, stripeAccountId),
-          const SizedBox(height: BauhausDesign.space3),
+          SizedBox(height: BauhausDesign.space3),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () => _completeStripeSetup(context, organizationId!),
               style: ElevatedButton.styleFrom(
                 backgroundColor: BauhausDesign.warning,
-                foregroundColor: BauhausDesign.textDark,
+                foregroundColor: Theme.of(context).colorScheme.onSurface,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
@@ -2008,7 +2103,7 @@ $appLink
               child: const Text('COMPLETE STRIPE SETUP'),
             ),
           ),
-          const SizedBox(height: BauhausDesign.space2),
+          SizedBox(height: BauhausDesign.space2),
           _buildStripeDisconnectButton(context, organizationId!),
         ] else
           SizedBox(
@@ -2017,7 +2112,7 @@ $appLink
               onPressed: () => _startStripeOAuth(context, l10n),
               style: ElevatedButton.styleFrom(
                 backgroundColor: BauhausDesign.secondary,
-                foregroundColor: BauhausDesign.surfaceLight,
+                foregroundColor: Theme.of(context).colorScheme.surface,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
@@ -2040,8 +2135,8 @@ $appLink
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.error_outline, size: 12, color: BauhausDesign.error),
-          const SizedBox(width: 4),
+          Icon(Icons.error_outline, size: 12, color: BauhausDesign.error),
+          SizedBox(width: 4),
           Text(
             'ACTION NEEDED',
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
@@ -2083,11 +2178,11 @@ $appLink
       width: double.infinity,
       child: OutlinedButton.icon(
         onPressed: () => _confirmDisconnectStripe(context, organizationId),
-        icon: const Icon(Icons.link_off, size: 18),
+        icon: Icon(Icons.link_off, size: 18),
         label: const Text('DISCONNECT STRIPE'),
         style: OutlinedButton.styleFrom(
           foregroundColor: BauhausDesign.error,
-          side: const BorderSide(color: BauhausDesign.error, width: 2),
+          side: BorderSide(color: BauhausDesign.error, width: 2),
           padding: const EdgeInsets.symmetric(vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
@@ -2104,10 +2199,13 @@ $appLink
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        backgroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
         ),
         title: const Text('Disconnect Stripe?'),
         content: const Text(
@@ -2122,7 +2220,7 @@ $appLink
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: BauhausDesign.error,
-              foregroundColor: BauhausDesign.surfaceWhite,
+              foregroundColor: Theme.of(context).colorScheme.surface,
             ),
             onPressed: () => Navigator.pop(dialogContext, true),
             child: const Text('DISCONNECT'),
@@ -2160,12 +2258,8 @@ $appLink
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            Icons.check_circle,
-            size: 12,
-            color: BauhausDesign.success,
-          ),
-          const SizedBox(width: 4),
+          Icon(Icons.check_circle, size: 12, color: BauhausDesign.success),
+          SizedBox(width: 4),
           Text(
             l10n.paymentSettingsConnected,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
@@ -2241,9 +2335,12 @@ $appLink
       key: key,
       margin: const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusLg),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Column(
@@ -2275,11 +2372,13 @@ $appLink
                         borderRadius: BorderRadius.circular(
                           BauhausDesign.radiusSm,
                         ),
-                        border: Border.all(color: BauhausDesign.neutral),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
                       ),
                       child: Icon(icon, color: accentColor, size: 20),
                     ),
-                    const SizedBox(width: BauhausDesign.space3),
+                    SizedBox(width: BauhausDesign.space3),
                     Expanded(
                       child: Text(
                         title.toUpperCase(),
@@ -2293,7 +2392,7 @@ $appLink
                     ?trailing,
                   ],
                 ),
-                const SizedBox(height: BauhausDesign.space4),
+                SizedBox(height: BauhausDesign.space4),
                 ...children,
               ],
             ),
@@ -2328,9 +2427,9 @@ $appLink
       child: Container(
         padding: const EdgeInsets.all(BauhausDesign.space3),
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceOffWhite,
+          color: Theme.of(context).colorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          border: Border.all(color: BauhausDesign.neutral),
+          border: Border.all(color: Theme.of(context).colorScheme.outline),
         ),
         child: Row(
           children: [
@@ -2341,15 +2440,19 @@ $appLink
               decoration: BoxDecoration(
                 color: hasInstitution
                     ? BauhausDesign.warning
-                    : BauhausDesign.surfaceWhite,
+                    : Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                border: Border.all(color: BauhausDesign.neutral),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
               ),
               alignment: Alignment.center,
               child: Text(
                 initials,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.neutral,
+                  color: hasInstitution
+                      ? BauhausDesign.readableOnColor(BauhausDesign.warning)
+                      : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w900,
                 ),
               ),
@@ -2367,15 +2470,15 @@ $appLink
                           letterSpacing: 0.8,
                         ),
                   ),
-                  const SizedBox(height: BauhausDesign.space1),
+                  SizedBox(height: BauhausDesign.space1),
                   Text(
                     normalizedName,
                     style: BauhausDesign.getTextTheme(context).bodyLarge
                         ?.copyWith(
                           fontWeight: FontWeight.w700,
                           color: hasInstitution
-                              ? BauhausDesign.textDark
-                              : BauhausDesign.textMuted,
+                              ? Theme.of(context).colorScheme.onSurface
+                              : Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                   ),
                 ],
@@ -2463,9 +2566,9 @@ $appLink
       child: Container(
         padding: const EdgeInsets.all(BauhausDesign.space3),
         decoration: BoxDecoration(
-          color: BauhausDesign.surfaceOffWhite,
+          color: Theme.of(context).colorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          border: Border.all(color: BauhausDesign.neutral),
+          border: Border.all(color: Theme.of(context).colorScheme.outline),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -2483,7 +2586,7 @@ $appLink
                           letterSpacing: 0.8,
                         ),
                   ),
-                  const SizedBox(height: BauhausDesign.space1),
+                  SizedBox(height: BauhausDesign.space1),
                   isWebsite
                       ? Tooltip(
                           message: normalizedValue,
@@ -2498,8 +2601,10 @@ $appLink
                                   fontSize: 13,
                                   fontWeight: FontWeight.w700,
                                   color: hasValue
-                                      ? BauhausDesign.textDark
-                                      : BauhausDesign.textMuted,
+                                      ? Theme.of(context).colorScheme.onSurface
+                                      : Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                 ),
                           ),
                         )
@@ -2509,15 +2614,17 @@ $appLink
                               ?.copyWith(
                                 fontWeight: FontWeight.w700,
                                 color: hasValue
-                                    ? BauhausDesign.textDark
-                                    : BauhausDesign.textMuted,
+                                    ? Theme.of(context).colorScheme.onSurface
+                                    : Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
                               ),
                         ),
                 ],
               ),
             ),
             if (showActions && hasValue) ...[
-              const SizedBox(width: BauhausDesign.space2),
+              SizedBox(width: BauhausDesign.space2),
               Wrap(
                 spacing: BauhausDesign.space1,
                 runSpacing: BauhausDesign.space1,
@@ -2577,16 +2684,14 @@ $appLink
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-          border: Border.all(color: BauhausDesign.neutral),
+          border: Border.all(color: Theme.of(context).colorScheme.outline),
           boxShadow: const [BauhausDesign.shadowHardXs],
         ),
         alignment: Alignment.center,
         child: Icon(
           icon,
           size: 15,
-          color: color.computeLuminance() > 0.6
-              ? BauhausDesign.neutral
-              : BauhausDesign.surfaceWhite,
+          color: BauhausDesign.readableOnColor(color),
         ),
       ),
     );
@@ -2612,16 +2717,16 @@ $appLink
           Container(
             padding: const EdgeInsets.all(BauhausDesign.space2),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceLight,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-              border: Border.all(color: BauhausDesign.neutral),
+              border: Border.all(color: Theme.of(context).colorScheme.outline),
             ),
-            child: Icon(icon, color: BauhausDesign.textDark),
+            child: Icon(icon, color: Theme.of(context).colorScheme.onSurface),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             label,
-            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -2644,10 +2749,16 @@ class _SectionHeaderDelegate extends SliverPersistentHeaderDelegate {
     return Container(
       height: height,
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceOffWhite,
-        border: const Border(
-          top: BorderSide(color: BauhausDesign.neutral, width: 2),
-          bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        border: Border(
+          top: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
         ),
         boxShadow: overlapsContent ? const [BauhausDesign.shadowHardXs] : null,
       ),
@@ -2669,10 +2780,14 @@ class _SectionHeaderDelegate extends SliverPersistentHeaderDelegate {
 }
 
 class _MapGridPainter extends CustomPainter {
+  final Color color;
+
+  const _MapGridPainter(this.color);
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.05)
+      ..color = color
       ..strokeWidth = 1;
 
     const gridSize = 20.0;

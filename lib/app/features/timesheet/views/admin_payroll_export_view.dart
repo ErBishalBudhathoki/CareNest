@@ -51,26 +51,31 @@ class _AdminPayrollExportViewState
     });
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           'PAYROLL EXPORT',
           style: GoogleFonts.oswald(
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.surface,
             letterSpacing: 1.0,
           ),
         ),
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onInverseSurface,
+        ),
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),
-          child: Container(color: BauhausDesign.neutral, height: 2),
+          child: Container(
+            color: Theme.of(context).colorScheme.onInverseSurface,
+            height: 2,
+          ),
         ),
       ),
       body: Padding(
@@ -93,8 +98,11 @@ class _AdminPayrollExportViewState
             Container(
               padding: const EdgeInsets.all(BauhausDesign.space6),
               decoration: BoxDecoration(
-                color: BauhausDesign.surfaceWhite,
-                border: Border.all(color: BauhausDesign.neutral, width: 2),
+                color: Theme.of(context).colorScheme.surface,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 boxShadow: const [BauhausDesign.shadowHard],
               ),
@@ -107,9 +115,9 @@ class _AdminPayrollExportViewState
                     onTap: () => _selectDate(context, true),
                   ),
                   const SizedBox(height: BauhausDesign.space4),
-                  const Icon(
+                  Icon(
                     Icons.arrow_downward,
-                    color: BauhausDesign.neutral,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                   const SizedBox(height: BauhausDesign.space4),
                   _buildDateSelector(
@@ -131,12 +139,11 @@ class _AdminPayrollExportViewState
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: BauhausDesign.primary,
-                  foregroundColor: BauhausDesign
-                      .textDark, // Ensure textDark on light/primary
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                    side: const BorderSide(
-                      color: BauhausDesign.neutral,
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.outline,
                       width: 2,
                     ),
                   ),
@@ -154,8 +161,8 @@ class _AdminPayrollExportViewState
                             );
                       },
                 child: state.isLoading
-                    ? const CircularProgressIndicator(
-                        color: BauhausDesign.textDark,
+                    ? CircularProgressIndicator(
+                        color: Theme.of(context).colorScheme.onSurface,
                       )
                     : Text(
                         'EXPORT CSV',
@@ -185,8 +192,11 @@ class _AdminPayrollExportViewState
       child: Container(
         padding: const EdgeInsets.all(BauhausDesign.space4),
         decoration: BoxDecoration(
-          color: BauhausDesign.backgroundLight,
-          border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+          color: Theme.of(context).colorScheme.surface,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 1.5,
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -199,7 +209,7 @@ class _AdminPayrollExportViewState
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                 ),
                 const SizedBox(height: 4),
@@ -211,12 +221,15 @@ class _AdminPayrollExportViewState
                   style: GoogleFonts.oswald(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ],
             ),
-            const Icon(Icons.calendar_today, color: BauhausDesign.textDark),
+            Icon(
+              Icons.calendar_today,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ],
         ),
       ),
@@ -230,17 +243,7 @@ class _AdminPayrollExportViewState
       firstDate: DateTime(2020),
       lastDate: DateTime.now().add(const Duration(days: 365)),
       builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: BauhausDesign.primary,
-              onPrimary: BauhausDesign.textDark,
-              surface: BauhausDesign.surfaceWhite,
-              onSurface: BauhausDesign.textDark,
-            ),
-          ),
-          child: child!,
-        );
+        return Theme(data: Theme.of(context), child: child!);
       },
     );
 

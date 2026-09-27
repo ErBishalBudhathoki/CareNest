@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
-import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/resource_allocation_viewmodel.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
 import 'package:carenest/app/features/workforce_optimization/utils/workforce_export_helper.dart';
@@ -42,30 +41,32 @@ class _ResourceAllocationViewState
   Widget build(BuildContext context) {
     final state = ref.watch(resourceAllocationViewModelProvider);
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: AppColors.colorBackground,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: colorScheme.secondary,
+        foregroundColor: colorScheme.onSecondary,
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Resource Allocation',
           style: TextStyle(
-            color: AppColors.colorWhite,
+            color: colorScheme.onSecondary,
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.colorWhite),
+          icon: Icon(Icons.arrow_back, color: colorScheme.onSecondary),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: AppColors.colorWhite),
+            icon: Icon(Icons.refresh, color: colorScheme.onSecondary),
             onPressed: _loadData,
           ),
         ],
@@ -101,7 +102,7 @@ class _ResourceAllocationViewState
           const SizedBox(height: 16),
           Text(
             'Error loading data',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: AppColors.colorFontPrimary,
@@ -111,7 +112,10 @@ class _ResourceAllocationViewState
           Text(
             error,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 14, color: Color(0xFF666666)),
+            style: TextStyle(
+              fontSize: 14,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -145,12 +149,14 @@ class _ResourceAllocationViewState
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: AppColors.colorWhite.withValues(alpha: 0.2),
+              color: Theme.of(
+                context,
+              ).colorScheme.surface.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.assignment_outlined,
-              color: AppColors.colorWhite,
+              color: Theme.of(context).colorScheme.surface,
               size: 32,
             ),
           ),
@@ -158,19 +164,22 @@ class _ResourceAllocationViewState
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   'Intelligent Allocation',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.colorWhite,
+                    color: Theme.of(context).colorScheme.surface,
                   ),
                 ),
                 SizedBox(height: 4),
                 Text(
                   'Optimize worker assignments',
-                  style: TextStyle(fontSize: 14, color: AppColors.colorWhite),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.surface,
+                  ),
                 ),
               ],
             ),
@@ -199,7 +208,7 @@ class _ResourceAllocationViewState
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: AppColors.colorWhite,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
@@ -252,10 +261,7 @@ class _ResourceAllocationViewState
         Expanded(
           child: Text(
             label,
-            style: const TextStyle(
-              fontSize: 16,
-              color: AppColors.colorFontPrimary,
-            ),
+            style: TextStyle(fontSize: 16, color: AppColors.colorFontPrimary),
           ),
         ),
         Text(
@@ -288,7 +294,7 @@ class _ResourceAllocationViewState
         else
           Container(
             decoration: BoxDecoration(
-              color: AppColors.colorWhite,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
@@ -311,8 +317,13 @@ class _ResourceAllocationViewState
   Widget _buildRecommendationItem(dynamic recommendation) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Color(0xFF1A1A1A), width: 1)),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 1,
+          ),
+        ),
       ),
       child: Row(
         children: [
@@ -323,7 +334,7 @@ class _ResourceAllocationViewState
               color: AppColors.colorPurple.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.lightbulb_outline,
               color: AppColors.colorPurple,
               size: 24,
@@ -336,7 +347,7 @@ class _ResourceAllocationViewState
               children: [
                 Text(
                   recommendation.workerName ?? 'Unknown',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: AppColors.colorFontPrimary,
@@ -345,9 +356,9 @@ class _ResourceAllocationViewState
                 const SizedBox(height: 4),
                 Text(
                   'Match: ${((recommendation.score ?? 0) * 100).toStringAsFixed(0)}%',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
-                    color: Color(0xFF666666),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -367,22 +378,25 @@ class _ResourceAllocationViewState
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: AppColors.colorWhite,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Color(0xFF1A1A1A)),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Center(
         child: Column(
           children: [
-            const Icon(
+            Icon(
               Icons.inbox_outlined,
               size: 48,
-              color: Color(0xFF666666),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             const SizedBox(height: 12),
             Text(
               message,
-              style: const TextStyle(fontSize: 14, color: Color(0xFF666666)),
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),
@@ -400,7 +414,7 @@ class _ResourceAllocationViewState
             label: const Text('Optimize'),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.colorPrimary,
-              foregroundColor: AppColors.colorWhite,
+              foregroundColor: Theme.of(context).colorScheme.surface,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),

@@ -88,12 +88,12 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
     final theme = BauhausDesign.getTextTheme(context);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
             Container(
-              color: BauhausDesign.surfaceWhite,
+              color: Theme.of(context).colorScheme.surface,
               padding: const EdgeInsets.fromLTRB(
                 BauhausDesign.space4,
                 BauhausDesign.space3,
@@ -107,7 +107,7 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
                     child: Text(
                       _isOnline ? 'SYNC STATUS' : 'OFFLINE MODE',
                       style: theme.headlineLarge?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -126,8 +126,8 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
                       _isOnline ? 'ONLINE' : 'OFFLINE',
                       style: theme.labelSmall?.copyWith(
                         color: _isOnline
-                            ? BauhausDesign.surfaceWhite
-                            : BauhausDesign.textDark,
+                            ? Theme.of(context).colorScheme.surface
+                            : Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -207,7 +207,7 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
                     item.endpoint,
                     style: BauhausDesign.getTextTheme(context).labelLarge
                         ?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w700,
                         ),
                     overflow: TextOverflow.ellipsis,
@@ -216,9 +216,10 @@ class _OfflineSyncDashboardState extends State<OfflineSyncDashboard> {
                   Text(
                     '${item.method.toUpperCase()} · '
                     '${_timeAgo(item.timestamp)}',
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                    style: BauhausDesign.getTextTheme(context).bodySmall
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                   ),
                 ],
               ),
@@ -294,7 +295,7 @@ class _StatusBar extends StatelessWidget {
                   isOnline ? 'Connected' : 'No Connection',
                   style: BauhausDesign.getTextTheme(context).labelLarge
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -303,9 +304,10 @@ class _StatusBar extends StatelessWidget {
                       ? 'All changes synced · Last sync $lastSync'
                       : '$queueCount pending change${queueCount == 1 ? '' : 's'} · '
                             'Last sync $lastSync',
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
               ],
             ),
@@ -330,14 +332,14 @@ class _EmptyState extends StatelessWidget {
             Icon(
               isOnline ? Icons.check_circle_outline : Icons.cloud_off,
               size: 48,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             const SizedBox(height: BauhausDesign.space3),
             Text(
               isOnline ? 'Nothing pending' : 'No offline data yet',
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).bodyLarge?.copyWith(color: BauhausDesign.textMuted),
+              style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: BauhausDesign.space1),
             Text(
@@ -346,9 +348,9 @@ class _EmptyState extends StatelessWidget {
                   : 'Work done offline will appear here '
                         'to sync when back online.',
               textAlign: TextAlign.center,
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),

@@ -20,11 +20,14 @@ class BauhausInfoBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        border: Border.all(color: BauhausDesign.textDark, width: 3),
-        boxShadow: const [
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 3,
+        ),
+        boxShadow: [
           BoxShadow(
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             offset: Offset(4, 4),
             blurRadius: 0,
           ),
@@ -38,9 +41,12 @@ class BauhausInfoBlock extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: BauhausDesign.backgroundLight,
-              border: const Border(
-                bottom: BorderSide(color: BauhausDesign.textDark, width: 2),
+              color: Theme.of(context).colorScheme.surface,
+              border: Border(
+                bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 2,
+                ),
               ),
             ),
             child: Row(
@@ -49,12 +55,15 @@ class BauhausInfoBlock extends StatelessWidget {
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     color: iconColor,
-                    border: Border.all(color: BauhausDesign.textDark, width: 2),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      width: 2,
+                    ),
                   ),
                   child: Icon(
                     icon,
                     size: 16,
-                    color: BauhausDesign.surfaceLight,
+                    color: Theme.of(context).colorScheme.surface,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -64,7 +73,7 @@ class BauhausInfoBlock extends StatelessWidget {
                     style: GoogleFonts.oswald(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ),
@@ -79,7 +88,7 @@ class BauhausInfoBlock extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 height: 1.4,
               ),
             ),

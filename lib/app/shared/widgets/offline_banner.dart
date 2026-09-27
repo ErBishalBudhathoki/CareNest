@@ -16,27 +16,28 @@ class BauhausOfflineBanner extends ConsumerWidget {
     if (online) return const SizedBox.shrink();
 
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(
         horizontal: BauhausDesign.space4,
         vertical: BauhausDesign.space2,
       ),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.warning,
+      decoration: BoxDecoration(
+        color: colorScheme.primary,
         border: Border(
-          bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+          bottom: BorderSide(color: colorScheme.outline, width: 2),
         ),
       ),
       child: Row(
         children: [
-          const Icon(Icons.wifi_off, size: 16, color: BauhausDesign.textDark),
+          Icon(Icons.wifi_off, size: 16, color: colorScheme.onPrimary),
           const SizedBox(width: BauhausDesign.space2),
           Expanded(
             child: Text(
               l10n.offlineBannerMessage,
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.textDark,
+                color: colorScheme.onPrimary,
                 fontWeight: FontWeight.w700,
               ),
             ),

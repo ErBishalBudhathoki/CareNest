@@ -45,14 +45,8 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: BauhausDesign.primary,
-              onPrimary: BauhausDesign.surfaceWhite,
-              surface: BauhausDesign.surfaceWhite,
-              onSurface: BauhausDesign.textDark,
-            ),
-            dialogTheme: DialogThemeData(
-              backgroundColor: BauhausDesign.surfaceWhite,
+            dialogTheme: Theme.of(context).dialogTheme.copyWith(
+              backgroundColor: Theme.of(context).colorScheme.surface,
             ),
           ),
           child: child!,
@@ -71,7 +65,7 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -128,7 +122,11 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen> {
                             'Create a new holiday entry',
                             style: BauhausDesign.getTextTheme(context)
                                 .bodyMedium
-                                ?.copyWith(color: BauhausDesign.textMuted),
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
                           ),
                         ],
                       ),
@@ -169,7 +167,7 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen> {
                     prefixIcon: Icon(
                       Icons.calendar_today,
                       size: 18,
-                      color: BauhausDesign.textMuted,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -245,9 +243,9 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen> {
             SnackBar(
               content: Text(
                 'Holiday created successfully',
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).labelLarge?.copyWith(color: BauhausDesign.surfaceWhite),
+                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.surface,
+                ),
               ),
               backgroundColor: BauhausDesign.success,
               behavior: SnackBarBehavior.floating,
@@ -268,9 +266,9 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen> {
           SnackBar(
             content: Text(
               'Failed to add holiday',
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).labelLarge?.copyWith(color: BauhausDesign.surfaceWhite),
+              style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                color: Theme.of(context).colorScheme.surface,
+              ),
             ),
             backgroundColor: BauhausDesign.error,
             behavior: SnackBarBehavior.floating,

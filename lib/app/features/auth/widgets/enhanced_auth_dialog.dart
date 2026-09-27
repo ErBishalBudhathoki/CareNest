@@ -71,7 +71,9 @@ class EnhancedAuthDialog {
     return showDialog<void>(
       context: context,
       barrierDismissible: barrierDismissible,
-      barrierColor: BauhausDesign.neutral.withValues(alpha: 0.6),
+      barrierColor: Theme.of(
+        context,
+      ).colorScheme.outline.withValues(alpha: 0.6),
       builder: (BuildContext context) {
         return _ModernDialog(
           type: type,
@@ -1005,6 +1007,8 @@ class _ModernDialog extends StatefulWidget {
 
 class _ModernDialogState extends State<_ModernDialog>
     with TickerProviderStateMixin {
+  ColorScheme get _colorScheme => Theme.of(context).colorScheme;
+
   late AnimationController _scaleController;
   late AnimationController _fadeController;
   late AnimationController _iconController;
@@ -1066,23 +1070,35 @@ class _ModernDialogState extends State<_ModernDialog>
   Color _getSemanticColor() {
     switch (widget.type) {
       case _DialogType.error:
-        return BauhausDesign.error;
+        return _colorScheme.error;
       case _DialogType.warning:
-        return BauhausDesign.warning;
+        return _colorScheme.primary;
       case _DialogType.info:
-        return BauhausDesign.secondary;
+        return _colorScheme.secondary;
       case _DialogType.success:
-        return BauhausDesign.success;
+        return _colorScheme.secondary;
       case _DialogType.question:
-        return BauhausDesign.primary;
+        return _colorScheme.primary;
+    }
+  }
+
+  Color _getSemanticForegroundColor() {
+    switch (widget.type) {
+      case _DialogType.error:
+        return _colorScheme.onError;
+      case _DialogType.warning:
+      case _DialogType.question:
+        return _colorScheme.onPrimary;
+      case _DialogType.info:
+      case _DialogType.success:
+        return _colorScheme.onSecondary;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final semanticColor = _getSemanticColor();
-    // Bauhaus dialog surfaces are always light — fixed contrast pair.
-    const effectiveOnSurface = BauhausDesign.neutral;
+    final effectiveOnSurface = _colorScheme.onSurface;
 
     return AnimatedBuilder(
       animation: Listenable.merge([_scaleAnimation, _fadeAnimation]),
@@ -1099,8 +1115,9 @@ class _ModernDialogState extends State<_ModernDialog>
                   maxWidth: MediaQuery.of(context).size.width * 0.95,
                   minWidth: 340,
                 ),
-                decoration: BauhausDesign.cardDecoration.copyWith(
-                  border: Border.all(color: BauhausDesign.neutral, width: 2),
+                decoration: BauhausDesign.cardDecorationFor(context).copyWith(
+                  color: _colorScheme.surface,
+                  border: Border.all(color: _colorScheme.outline, width: 2),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -1134,15 +1151,12 @@ class _ModernDialogState extends State<_ModernDialog>
                     height: 80,
                     decoration: BoxDecoration(
                       color: semanticColor,
-                      border: Border.all(
-                        color: BauhausDesign.neutral,
-                        width: 2,
-                      ),
+                      border: Border.all(color: _colorScheme.outline, width: 2),
                     ),
                     child: Icon(
                       widget.icon,
                       size: 40,
-                      color: BauhausDesign.backgroundLight,
+                      color: _getSemanticForegroundColor(),
                     ),
                   ),
                 ),
@@ -1172,7 +1186,7 @@ class _ModernDialogState extends State<_ModernDialog>
             widget.message,
             textAlign: TextAlign.center,
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-              color: BauhausDesign.neutral.withValues(alpha: 0.8),
+              color: _colorScheme.onSurface.withValues(alpha: 0.8),
               height: 1.5,
             ),
           ),
@@ -1210,13 +1224,13 @@ class _ModernDialogState extends State<_ModernDialog>
         backgroundColor: action.style == _ActionStyle.primary
             ? semanticColor
             : (action.style == _ActionStyle.destructive
-                  ? BauhausDesign.error
-                  : BauhausDesign.backgroundLight),
-        textColor:
-            action.style == _ActionStyle.primary ||
-                action.style == _ActionStyle.destructive
-            ? BauhausDesign.surfaceWhite
-            : BauhausDesign.neutral,
+                  ? _colorScheme.error
+                  : _colorScheme.surface),
+        textColor: action.style == _ActionStyle.primary
+            ? _getSemanticForegroundColor()
+            : action.style == _ActionStyle.destructive
+            ? _colorScheme.onError
+            : _colorScheme.onSurface,
         icon: action.icon,
       ),
     );

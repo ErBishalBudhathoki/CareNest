@@ -58,16 +58,15 @@ class _BusinessNameDropdownState extends ConsumerState<BusinessNameDropdown> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Container(
       width: double.infinity,
       constraints: const BoxConstraints(minHeight: 56),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(
-          color: BauhausDesign.neutral,
-          width: BauhausDesign.borderThin,
-        ),
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.zero,
+        border: Border.all(color: colorScheme.outline, width: 2.5),
         boxShadow: BauhausDesign.shadowSm,
       ),
       padding: EdgeInsets.symmetric(
@@ -77,7 +76,7 @@ class _BusinessNameDropdownState extends ConsumerState<BusinessNameDropdown> {
       child: Center(
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
-            dropdownColor: BauhausDesign.surfaceWhite,
+            dropdownColor: colorScheme.surfaceContainerLow,
             value:
                 _businessNameList.any(
                   (e) => e['businessName'] == _selectedBusinessName,
@@ -88,12 +87,12 @@ class _BusinessNameDropdownState extends ConsumerState<BusinessNameDropdown> {
                 : null,
             isExpanded: true,
             itemHeight: 56,
-            icon: Icon(Icons.arrow_drop_down, color: BauhausDesign.textDark),
+            icon: Icon(Icons.arrow_drop_down, color: colorScheme.onSurface),
             iconSize: 24,
             elevation: 4,
             style: BauhausDesign.getTextTheme(
               context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+            ).bodyMedium?.copyWith(color: colorScheme.onSurface),
             onChanged: (String? selectedValue) {
               if (selectedValue != null) {
                 setState(() {
@@ -110,7 +109,7 @@ class _BusinessNameDropdownState extends ConsumerState<BusinessNameDropdown> {
                       businessName['businessName'],
                       style: BauhausDesign.getTextTheme(
                         context,
-                      ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                      ).bodyMedium?.copyWith(color: colorScheme.onSurface),
                     ),
                   ),
                 )

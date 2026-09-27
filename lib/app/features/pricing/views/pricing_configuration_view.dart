@@ -30,10 +30,7 @@ class PricingConfigurationView extends ConsumerStatefulWidget {
 class _PricingConfigurationViewState
     extends ConsumerState<PricingConfigurationView>
     with TickerProviderStateMixin {
-  static const Color _screenGray = BauhausDesign.backgroundLight;
-  static const Color _inkBlack = BauhausDesign.neutral;
   static const Color _accentRed = BauhausDesign.primary;
-  static const Color _panelWhite = BauhausDesign.surfaceWhite;
   static const Color _accentBlue = BauhausDesign.secondary;
   static const String _currencyAud = 'AUD';
 
@@ -156,7 +153,7 @@ class _PricingConfigurationViewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _screenGray,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: CustomScrollView(
         slivers: [
           _buildSliverAppBar(),
@@ -173,8 +170,8 @@ class _PricingConfigurationViewState
       floating: false,
       pinned: true,
       centerTitle: false,
-      backgroundColor: _screenGray,
-      surfaceTintColor: _screenGray,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      surfaceTintColor: Theme.of(context).colorScheme.surface,
       leadingWidth: 44,
       leading: Padding(
         padding: const EdgeInsets.only(
@@ -186,16 +183,16 @@ class _PricingConfigurationViewState
           onTap: () => Navigator.of(context).pop(),
           child: Container(
             decoration: BoxDecoration(
-              color: _panelWhite,
+              color: Theme.of(context).colorScheme.surface,
               border: Border.all(
-                color: _inkBlack,
+                color: Theme.of(context).colorScheme.onSurface,
                 width: BauhausDesign.borderThick,
               ),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.arrow_back,
               size: BauhausDesign.iconMd,
-              color: _inkBlack,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ),
@@ -203,7 +200,7 @@ class _PricingConfigurationViewState
       title: Text(
         l10n.pricingConfigurationTitle.toUpperCase(),
         style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-          color: _inkBlack,
+          color: Theme.of(context).colorScheme.onSurface,
           fontWeight: FontWeight.w900,
           letterSpacing: 0.4,
         ),
@@ -247,7 +244,7 @@ class _PricingConfigurationViewState
                     l10n.pricingConfigurationTitle.toUpperCase(),
                     style: BauhausDesign.getTextTheme(context).labelLarge
                         ?.copyWith(
-                          color: _inkBlack,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 0.6,
                         ),
@@ -261,7 +258,7 @@ class _PricingConfigurationViewState
                     decoration: BoxDecoration(
                       color: _accentRed,
                       border: Border.all(
-                        color: _inkBlack,
+                        color: Theme.of(context).colorScheme.onSurface,
                         width: BauhausDesign.borderThick,
                       ),
                     ),
@@ -269,7 +266,7 @@ class _PricingConfigurationViewState
                       l10n.systemActive.toUpperCase(),
                       style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
-                            color: BauhausDesign.surfaceWhite,
+                            color: Theme.of(context).colorScheme.surface,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 0.6,
                           ),
@@ -279,14 +276,14 @@ class _PricingConfigurationViewState
               ),
             ),
             Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: _inkBlack,
+                    color: Theme.of(context).colorScheme.onSurface,
                     width: BauhausDesign.borderThin,
                   ),
                   bottom: BorderSide(
-                    color: _inkBlack,
+                    color: Theme.of(context).colorScheme.onSurface,
                     width: BauhausDesign.borderThin,
                   ),
                 ),
@@ -295,7 +292,7 @@ class _PricingConfigurationViewState
                 controller: _tabController,
                 indicatorColor: _accentRed,
                 indicatorWeight: 3,
-                labelColor: _inkBlack,
+                labelColor: Theme.of(context).colorScheme.onSurface,
                 unselectedLabelColor: BauhausDesign.textMuted,
                 labelStyle: BauhausDesign.getTextTheme(context).labelLarge
                     ?.copyWith(fontWeight: FontWeight.w800, letterSpacing: 0.4),
@@ -323,8 +320,11 @@ class _PricingConfigurationViewState
         BauhausDesign.space3,
       ),
       decoration: BoxDecoration(
-        color: _panelWhite,
-        border: Border.all(color: _inkBlack, width: BauhausDesign.borderThick),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: BauhausDesign.borderThick,
+        ),
       ),
       padding: EdgeInsets.zero,
       child: TabBarView(
@@ -361,14 +361,14 @@ class _PricingConfigurationViewState
             decoration: BoxDecoration(
               color: onTap == null ? BauhausDesign.surfaceOffWhite : color,
               border: Border.all(
-                color: _inkBlack,
+                color: Theme.of(context).colorScheme.onSurface,
                 width: BauhausDesign.borderThick,
               ),
             ),
             child: Icon(
               icon,
               size: BauhausDesign.fontXl,
-              color: BauhausDesign.surfaceWhite,
+              color: Theme.of(context).colorScheme.surface,
             ),
           ),
         ),
@@ -382,7 +382,7 @@ class _PricingConfigurationViewState
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
       style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-        color: _inkBlack,
+        color: Theme.of(context).colorScheme.onSurface,
         fontWeight: FontWeight.w900,
         letterSpacing: 0.6,
       ),
@@ -396,10 +396,12 @@ class _PricingConfigurationViewState
   }) {
     final bg = onTap == null
         ? BauhausDesign.surfaceOffWhite
-        : (isPrimary ? _accentRed : _panelWhite);
+        : (isPrimary ? _accentRed : Theme.of(context).colorScheme.surface);
     final textColor = onTap == null
         ? BauhausDesign.textMuted
-        : (isPrimary ? BauhausDesign.surfaceWhite : _inkBlack);
+        : (isPrimary
+              ? Theme.of(context).colorScheme.surface
+              : Theme.of(context).colorScheme.onSurface);
 
     return InkWell(
       onTap: onTap,
@@ -411,7 +413,7 @@ class _PricingConfigurationViewState
         decoration: BoxDecoration(
           color: bg,
           border: Border.all(
-            color: _inkBlack,
+            color: Theme.of(context).colorScheme.onSurface,
             width: BauhausDesign.borderThick,
           ),
         ),
@@ -533,7 +535,7 @@ class _PricingConfigurationViewState
                     ),
                     style: BauhausDesign.getTextTheme(context).bodyMedium
                         ?.copyWith(
-                          color: _inkBlack,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w700,
                         ),
                     decoration: InputDecoration(
@@ -541,25 +543,25 @@ class _PricingConfigurationViewState
                           ? _fallbackBaseRate!.toStringAsFixed(2)
                           : AppLocalizations.of(context)!.fallbackRateHint,
                       filled: true,
-                      fillColor: _panelWhite,
-                      border: const OutlineInputBorder(
+                      fillColor: Theme.of(context).colorScheme.surface,
+                      border: OutlineInputBorder(
                         borderRadius: BorderRadius.zero,
                         borderSide: BorderSide(
-                          color: _inkBlack,
+                          color: Theme.of(context).colorScheme.onSurface,
                           width: BauhausDesign.borderThick,
                         ),
                       ),
-                      enabledBorder: const OutlineInputBorder(
+                      enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.zero,
                         borderSide: BorderSide(
-                          color: _inkBlack,
+                          color: Theme.of(context).colorScheme.onSurface,
                           width: BauhausDesign.borderThick,
                         ),
                       ),
-                      focusedBorder: const OutlineInputBorder(
+                      focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.zero,
                         borderSide: BorderSide(
-                          color: _inkBlack,
+                          color: Theme.of(context).colorScheme.onSurface,
                           width: BauhausDesign.borderThick,
                         ),
                       ),
@@ -684,15 +686,18 @@ class _PricingConfigurationViewState
     return Container(
       margin: const EdgeInsets.only(bottom: BauhausDesign.space2),
       decoration: BoxDecoration(
-        color: _panelWhite,
-        border: Border.all(color: _inkBlack, width: BauhausDesign.borderThick),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: BauhausDesign.borderThick,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: double.infinity,
-            color: _inkBlack,
+            color: Theme.of(context).colorScheme.inverseSurface,
             padding: const EdgeInsets.symmetric(
               horizontal: BauhausDesign.space3,
               vertical: BauhausDesign.space2,
@@ -700,7 +705,7 @@ class _PricingConfigurationViewState
             child: Text(
               rule['id'],
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.surfaceWhite,
+                color: Theme.of(context).colorScheme.onInverseSurface,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 0.6,
               ),
@@ -719,7 +724,7 @@ class _PricingConfigurationViewState
                         style: BauhausDesign.getTextTheme(context).bodyLarge
                             ?.copyWith(
                               fontWeight: FontWeight.w800,
-                              color: _inkBlack,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                       ),
                     ),
@@ -731,7 +736,7 @@ class _PricingConfigurationViewState
                       decoration: BoxDecoration(
                         color: priorityColor,
                         border: Border.all(
-                          color: _inkBlack,
+                          color: Theme.of(context).colorScheme.onSurface,
                           width: BauhausDesign.borderThick,
                         ),
                       ),
@@ -739,7 +744,7 @@ class _PricingConfigurationViewState
                         rule['priority'].toString().toUpperCase(),
                         style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
-                              color: BauhausDesign.surfaceWhite,
+                              color: Theme.of(context).colorScheme.surface,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 0.4,
                             ),
@@ -758,9 +763,10 @@ class _PricingConfigurationViewState
                 const SizedBox(height: BauhausDesign.space2),
                 Text(
                   rule['description'],
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 ),
                 const SizedBox(height: BauhausDesign.space2),
                 Text(
@@ -834,15 +840,18 @@ class _PricingConfigurationViewState
     return Container(
       margin: const EdgeInsets.only(bottom: BauhausDesign.space2),
       decoration: BoxDecoration(
-        color: _panelWhite,
-        border: Border.all(color: _inkBlack, width: BauhausDesign.borderThick),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: BauhausDesign.borderThick,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: double.infinity,
-            color: _inkBlack,
+            color: Theme.of(context).colorScheme.inverseSurface,
             padding: const EdgeInsets.symmetric(
               horizontal: BauhausDesign.space3,
               vertical: BauhausDesign.space2,
@@ -850,7 +859,7 @@ class _PricingConfigurationViewState
             child: Text(
               AppLocalizations.of(context)!.systemIntegrations.toUpperCase(),
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.surfaceWhite,
+                color: Theme.of(context).colorScheme.onInverseSurface,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 0.6,
               ),
@@ -869,7 +878,7 @@ class _PricingConfigurationViewState
                         style: BauhausDesign.getTextTheme(context).bodyLarge
                             ?.copyWith(
                               fontWeight: FontWeight.w800,
-                              color: _inkBlack,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                       ),
                     ),
@@ -881,7 +890,7 @@ class _PricingConfigurationViewState
                       decoration: BoxDecoration(
                         color: statusColor,
                         border: Border.all(
-                          color: _inkBlack,
+                          color: Theme.of(context).colorScheme.onSurface,
                           width: BauhausDesign.borderThick,
                         ),
                       ),
@@ -889,7 +898,7 @@ class _PricingConfigurationViewState
                         integration['status'].toString().toUpperCase(),
                         style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
-                              color: BauhausDesign.surfaceWhite,
+                              color: Theme.of(context).colorScheme.surface,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 0.4,
                             ),
@@ -908,9 +917,10 @@ class _PricingConfigurationViewState
                 const SizedBox(height: BauhausDesign.space2),
                 Text(
                   integration['description'],
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 ),
                 const SizedBox(height: BauhausDesign.space2),
                 Text(
@@ -1049,17 +1059,17 @@ class _PricingConfigurationViewState
           width: double.infinity,
           decoration: BoxDecoration(
             border: Border.all(
-              color: _inkBlack,
+              color: Theme.of(context).colorScheme.onSurface,
               width: BauhausDesign.borderThick,
             ),
-            color: _panelWhite,
+            color: Theme.of(context).colorScheme.surface,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 width: double.infinity,
-                color: _inkBlack,
+                color: Theme.of(context).colorScheme.inverseSurface,
                 padding: const EdgeInsets.symmetric(
                   horizontal: BauhausDesign.space3,
                   vertical: BauhausDesign.space2,
@@ -1068,7 +1078,7 @@ class _PricingConfigurationViewState
                   title.toUpperCase(),
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.surfaceWhite,
+                        color: Theme.of(context).colorScheme.onInverseSurface,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 0.6,
                       ),
@@ -1102,7 +1112,7 @@ class _PricingConfigurationViewState
             child: Text(
               label,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: _inkBlack,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -1114,27 +1124,27 @@ class _PricingConfigurationViewState
               initialValue: value,
               isDense: true,
               isExpanded: true,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 filled: true,
-                fillColor: _panelWhite,
+                fillColor: Theme.of(context).colorScheme.surface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.zero,
                   borderSide: BorderSide(
-                    color: _inkBlack,
+                    color: Theme.of(context).colorScheme.onSurface,
                     width: BauhausDesign.borderThick,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.zero,
                   borderSide: BorderSide(
-                    color: _inkBlack,
+                    color: Theme.of(context).colorScheme.onSurface,
                     width: BauhausDesign.borderThick,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.zero,
                   borderSide: BorderSide(
-                    color: _inkBlack,
+                    color: Theme.of(context).colorScheme.onSurface,
                     width: BauhausDesign.borderThick,
                   ),
                 ),
@@ -1151,7 +1161,7 @@ class _PricingConfigurationViewState
                         option,
                         style: BauhausDesign.getTextTheme(context).bodyMedium
                             ?.copyWith(
-                              color: _inkBlack,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.w600,
                             ),
                       ),
@@ -1159,8 +1169,11 @@ class _PricingConfigurationViewState
                   )
                   .toList(),
               onChanged: onChanged,
-              icon: const Icon(Icons.keyboard_arrow_down, color: _inkBlack),
-              dropdownColor: _panelWhite,
+              icon: Icon(
+                Icons.keyboard_arrow_down,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              dropdownColor: Theme.of(context).colorScheme.surface,
             ),
           ),
         ],
@@ -1185,7 +1198,7 @@ class _PricingConfigurationViewState
               Text(
                 label,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: _inkBlack,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -1230,7 +1243,10 @@ class _PricingConfigurationViewState
                 Text(
                   title,
                   style: BauhausDesign.getTextTheme(context).bodyMedium
-                      ?.copyWith(color: _inkBlack, fontWeight: FontWeight.w700),
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
                 const SizedBox(height: BauhausDesign.space1),
                 Text(
@@ -1268,7 +1284,7 @@ class _PricingConfigurationViewState
             child: Text(
               label,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: _inkBlack,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -1307,9 +1323,9 @@ class _PricingConfigurationViewState
       padding: const EdgeInsets.only(bottom: BauhausDesign.space2),
       child: Container(
         decoration: BoxDecoration(
-          color: _panelWhite,
+          color: Theme.of(context).colorScheme.surface,
           border: Border.all(
-            color: _inkBlack,
+            color: Theme.of(context).colorScheme.onSurface,
             width: BauhausDesign.borderThick,
           ),
         ),
@@ -1323,13 +1339,13 @@ class _PricingConfigurationViewState
                 decoration: BoxDecoration(
                   color: color,
                   border: Border.all(
-                    color: _inkBlack,
+                    color: Theme.of(context).colorScheme.onSurface,
                     width: BauhausDesign.borderThick,
                   ),
                 ),
                 child: Icon(
                   icon,
-                  color: BauhausDesign.surfaceWhite,
+                  color: Theme.of(context).colorScheme.surface,
                   size: BauhausDesign.iconMd,
                 ),
               ),
@@ -1342,7 +1358,7 @@ class _PricingConfigurationViewState
                       title,
                       style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
-                            color: _inkBlack,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w800,
                           ),
                     ),
@@ -1632,7 +1648,7 @@ class _PricingConfigurationViewState
         ? BauhausDesign.error
         : isSuccess
         ? BauhausDesign.success
-        : BauhausDesign.textDark;
+        : Theme.of(context).colorScheme.onSurface;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -1640,7 +1656,7 @@ class _PricingConfigurationViewState
           message,
           style: BauhausDesign.getTextTheme(
             context,
-          ).bodyMedium?.copyWith(color: BauhausDesign.surfaceWhite),
+          ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.surface),
         ),
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,

@@ -73,7 +73,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
   void _showGeofenceAlert(String event) {
     String message = '';
     IconData icon = Icons.info;
-    Color color = AppColors.colorPrimary;
+    Color color = Theme.of(context).colorScheme.primary;
 
     switch (event) {
       case 'approaching':
@@ -97,8 +97,8 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
       SnackBar(
         content: Row(
           children: [
-            Icon(icon, color: Colors.white),
-            const SizedBox(width: 12),
+            Icon(icon, color: Theme.of(context).colorScheme.onInverseSurface),
+            SizedBox(width: 12),
             Expanded(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -129,22 +129,27 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     if (kReleaseMode) {
       return Scaffold(
-        backgroundColor: AppColors.colorBackground,
+        backgroundColor: colorScheme.surface,
         appBar: AppBar(
-          backgroundColor: AppColors.colorPrimary,
+          backgroundColor: colorScheme.primary,
           elevation: 0,
-          title: const Text(
+          title: Text(
             'Live Insights',
             style: TextStyle(
-              color: Colors.white,
+              color: colorScheme.onPrimary,
               fontSize: 20,
               fontWeight: FontWeight.w600,
             ),
           ),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            icon: Icon(
+              Icons.arrow_back,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -154,22 +159,24 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
             child: Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.inverseSurface.withValues(alpha: 0.08),
                     blurRadius: 18,
                     offset: const Offset(0, 8),
                   ),
                 ],
               ),
-              child: const Column(
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
                     Icons.location_off_rounded,
-                    color: AppColors.colorPrimary,
+                    color: Theme.of(context).colorScheme.primary,
                     size: 48,
                   ),
                   SizedBox(height: 16),
@@ -179,7 +186,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.colorFontPrimary,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   SizedBox(height: 12),
@@ -189,7 +196,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
                     style: TextStyle(
                       fontSize: 14,
                       height: 1.5,
-                      color: AppColors.colorFontSecondary,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -203,20 +210,20 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
     final state = ref.watch(realtimeTrackingViewModelProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.colorBackground,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: AppColors.colorPrimary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Live Insights',
           style: TextStyle(
-            color: Colors.white,
+            color: colorScheme.onPrimary,
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: colorScheme.onPrimary),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
@@ -225,17 +232,17 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
               margin: const EdgeInsets.only(right: 16),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: AppColors.colorSuccess,
+                color: colorScheme.secondary,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
-                children: const [
-                  Icon(Icons.circle, color: Colors.white, size: 8),
+                children: [
+                  Icon(Icons.circle, color: colorScheme.onSecondary, size: 8),
                   SizedBox(width: 6),
                   Text(
                     'LIVE',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: colorScheme.onSecondary,
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
@@ -276,14 +283,16 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
                   child: Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surface,
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(24),
                         topRight: Radius.circular(24),
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.inverseSurface.withValues(alpha: 0.1),
                           blurRadius: 10,
                           offset: const Offset(0, -2),
                         ),
@@ -311,17 +320,19 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.colorPrimary.withValues(alpha: 0.1),
+                color: Theme.of(
+                  context,
+                ).colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
                   Icon(
                     Icons.access_time,
-                    color: AppColors.colorPrimary,
+                    color: Theme.of(context).colorScheme.primary,
                     size: 32,
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -329,16 +340,18 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
                         'Estimated Arrival',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Color(0xFF666666), // BauhausDesign.textMuted
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurfaceVariant, // BauhausDesign.textMuted
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4),
                       Text(
                         '${location.eta} minutes',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.colorPrimary,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ],
@@ -346,7 +359,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
                 ],
               ),
             ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
 
           // Distance
           if (location.distance != null)
@@ -355,7 +368,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
               label: 'Distance',
               value: '${(location.distance! / 1000).toStringAsFixed(1)} km',
             ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
 
           // Status
           _buildInfoRow(
@@ -363,7 +376,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
             label: 'Status',
             value: location.status ?? 'En Route',
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
 
           // Accuracy
           _buildInfoRow(
@@ -371,7 +384,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
             label: 'Accuracy',
             value: '${location.accuracy.toStringAsFixed(0)}m',
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
 
           // Last Updated
           _buildInfoRow(
@@ -392,23 +405,27 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
           Icon(
             Icons.location_off,
             size: 64,
-            color: Color(0xFF666666), // BauhausDesign.textMuted
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurfaceVariant, // BauhausDesign.textMuted
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             'No Active Insights',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: AppColors.colorFontPrimary,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             'Insights will start when worker begins journey',
             style: TextStyle(
               fontSize: 14,
-              color: Color(0xFF666666), // BauhausDesign.textMuted
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurfaceVariant, // BauhausDesign.textMuted
             ),
             textAlign: TextAlign.center,
           ),
@@ -426,15 +443,17 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
       children: [
         Icon(
           icon,
-          color: Color(0xFF666666),
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
           size: 20,
         ), // BauhausDesign.textMuted
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         Text(
           label,
           style: TextStyle(
             fontSize: 14,
-            color: Color(0xFF666666), // BauhausDesign.textMuted
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurfaceVariant, // BauhausDesign.textMuted
           ),
         ),
         const Spacer(),
@@ -443,7 +462,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: AppColors.colorFontPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ],

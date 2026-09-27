@@ -122,16 +122,16 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: BauhausDesign.surfaceLight,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-          side: const BorderSide(color: BauhausDesign.error, width: 2),
+          side: BorderSide(color: BauhausDesign.error, width: 2),
         ),
         content: Text(
           message,
           style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -152,10 +152,13 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: Container(
-        decoration: const BoxDecoration(
-          color: BauhausDesign.neutral,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.outline,
           border: Border(
-            bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+            bottom: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
           ),
         ),
         child: SafeArea(
@@ -167,9 +170,9 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
               children: [
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.arrow_back,
-                    color: BauhausDesign.surfaceWhite,
+                    color: Theme.of(context).colorScheme.surface,
                   ),
                 ),
                 const SizedBox(width: BauhausDesign.space2),
@@ -178,17 +181,18 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
                     AppLocalizations.of(context)!.roleManagementTitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).displaySmall?.copyWith(color: BauhausDesign.surfaceWhite),
+                    style: BauhausDesign.getTextTheme(context).displaySmall
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.surface,
+                        ),
                   ),
                 ),
                 IconButton(
                   tooltip: AppLocalizations.of(context)!.reloadAllTooltip,
                   onPressed: _fetchRoles,
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.refresh,
-                    color: BauhausDesign.surfaceWhite,
+                    color: Theme.of(context).colorScheme.surface,
                   ),
                 ),
               ],
@@ -204,16 +208,19 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
       height: 58,
       margin: const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
       ),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: _roles.length,
-        separatorBuilder: (_, _) => const VerticalDivider(
+        separatorBuilder: (_, _) => VerticalDivider(
           width: 1,
           thickness: 1,
-          color: BauhausDesign.neutral,
+          color: Theme.of(context).colorScheme.outline,
         ),
         itemBuilder: (context, index) {
           final role = _roles[index];
@@ -223,8 +230,8 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
 
           return Material(
             color: isSelected
-                ? BauhausDesign.neutral
-                : BauhausDesign.surfaceLight,
+                ? Theme.of(context).colorScheme.outline
+                : Theme.of(context).colorScheme.surfaceContainer,
             child: InkWell(
               onTap: () => setState(() => _selectedRoleId = roleId),
               child: Container(
@@ -238,8 +245,8 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
                   style: BauhausDesign.getTextTheme(context).labelLarge
                       ?.copyWith(
                         color: isSelected
-                            ? BauhausDesign.surfaceLight
-                            : BauhausDesign.textDark,
+                            ? Theme.of(context).colorScheme.surfaceContainer
+                            : Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -257,23 +264,23 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
       margin: const EdgeInsets.symmetric(horizontal: BauhausDesign.space4),
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Row(
         children: [
-          const Icon(
-            Icons.admin_panel_settings,
-            color: BauhausDesign.secondary,
-          ),
+          Icon(Icons.admin_panel_settings, color: BauhausDesign.secondary),
           const SizedBox(width: BauhausDesign.space3),
           Expanded(
             child: Text(
               'Role: ${_selectedRoleName()}',
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -287,12 +294,15 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
               color: isAdminRole
                   ? BauhausDesign.warning
                   : BauhausDesign.success,
-              border: Border.all(color: BauhausDesign.neutral, width: 1),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1,
+              ),
             ),
             child: Text(
               isAdminRole ? 'LOCKED' : 'EDITABLE',
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -308,9 +318,9 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
       return Center(
         child: Text(
           AppLocalizations.of(context)!.noData,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
       );
     }
@@ -326,12 +336,12 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
           margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
           padding: const EdgeInsets.all(BauhausDesign.space3),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceLight,
+            color: Theme.of(context).colorScheme.surfaceContainer,
             borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
             border: Border.all(
               color: isEnabled
                   ? BauhausDesign.secondary
-                  : BauhausDesign.neutral,
+                  : Theme.of(context).colorScheme.outline,
               width: 2,
             ),
             boxShadow: const [BauhausDesign.shadowHardXs],
@@ -346,7 +356,7 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
                       permission,
                       style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w700,
                           ),
                     ),
@@ -355,9 +365,12 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
                       isEnabled
                           ? AppLocalizations.of(context)!.accessGranted
                           : AppLocalizations.of(context)!.accessDenied,
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                      style: BauhausDesign.getTextTheme(context).bodySmall
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                   ],
                 ),
@@ -380,7 +393,7 @@ class _RBACManagementViewState extends ConsumerState<RBACManagementView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _buildAppBar(),
       body: _isLoading
           ? const Center(

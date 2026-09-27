@@ -15,7 +15,7 @@ class PredictiveInsightsView extends ConsumerWidget {
     final state = ref.watch(predictiveInsightsViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBarWidget(
         title: 'Predictive Insights',
         showBackButton: true,
@@ -106,7 +106,11 @@ class PredictiveInsightsView extends ConsumerWidget {
                     child: Text(
                       '${(growthRate * 100).abs().toStringAsFixed(1)}%',
                       style: BauhausDesign.getTextTheme(context).labelMedium
-                          ?.copyWith(color: BauhausDesign.surfaceWhite),
+                          ?.copyWith(
+                            color: isUp
+                                ? Theme.of(context).colorScheme.onSecondary
+                                : Theme.of(context).colorScheme.onPrimary,
+                          ),
                     ),
                   ),
               ],

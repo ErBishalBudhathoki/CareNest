@@ -25,7 +25,7 @@ class ManualEntryForm extends StatelessWidget {
             'Manual Entry',
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: BauhausDesign.space6),
@@ -99,10 +99,12 @@ class ManualEntryForm extends StatelessWidget {
         else
           DropdownButtonFormField<String>(
             initialValue: state.selectedClientId,
-            decoration: BauhausDesign.inputDecoration(
-              'Select Client',
-            ).copyWith(filled: true, fillColor: BauhausDesign.surfaceLight),
-            dropdownColor: BauhausDesign.surfaceWhite,
+            decoration: BauhausDesign.inputDecoration(context, 'Select Client')
+                .copyWith(
+                  filled: true,
+                  fillColor: Theme.of(context).colorScheme.surface,
+                ),
+            dropdownColor: Theme.of(context).colorScheme.surface,
             items: clients.map((client) {
               return DropdownMenuItem<String>(
                 value: client['id'],

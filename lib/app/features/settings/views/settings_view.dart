@@ -159,10 +159,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       builder: (dialogContext) => PopScope(
         canPop: false,
         child: AlertDialog(
-          backgroundColor: BauhausDesign.surfaceLight,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.zero,
-            side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
           ),
           content: Row(
             children: [
@@ -178,9 +181,10 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               Expanded(
                 child: Text(
                   AppLocalizations.of(context)!.loadingDashboard,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 ),
               ),
             ],
@@ -351,7 +355,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     final showSecurityDashboard = !kReleaseMode && !isProductionFlavor;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
@@ -826,10 +830,12 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     required Color color,
     required VoidCallback onTap,
   }) {
-    final foregroundColor =
-        ThemeData.estimateBrightnessForColor(color) == Brightness.dark
-        ? BauhausDesign.textLight
-        : BauhausDesign.textDark;
+    final colorScheme = Theme.of(context).colorScheme;
+    final foregroundColor = color == BauhausDesign.error
+        ? colorScheme.onError
+        : color == BauhausDesign.secondary
+        ? colorScheme.onSecondary
+        : colorScheme.onPrimary;
 
     return GestureDetector(
       onTap: onTap,
@@ -841,7 +847,10 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-          border: Border.all(color: BauhausDesign.neutral, width: 2),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
           boxShadow: const [BauhausDesign.shadowHardSm],
         ),
         child: Column(

@@ -28,16 +28,17 @@ class _OrganizationDashboardViewState
   @override
   Widget build(BuildContext context) {
     final orgState = ref.watch(organizationProvider);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: BauhausDesign.background,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         title: const Text('Organizations'),
-        backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: colorScheme.secondary,
+        foregroundColor: colorScheme.onSecondary,
         elevation: 0,
         actions: [
           IconButton(
@@ -60,12 +61,12 @@ class _OrganizationDashboardViewState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Your Organizations',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: BauhausDesign.textDark,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: BauhausDesign.space4),
@@ -111,12 +112,12 @@ class _OrganizationDashboardViewState
 
                     const SizedBox(height: BauhausDesign.space5),
 
-                    const Text(
+                    Text(
                       'Cross-Organization Reports',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: BauhausDesign.textDark,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: BauhausDesign.space3),
@@ -128,9 +129,9 @@ class _OrganizationDashboardViewState
                           width: 40,
                           height: 40,
                           color: BauhausDesign.primaryYellow,
-                          child: const Icon(
+                          child: Icon(
                             Icons.bar_chart,
-                            color: Colors.black,
+                            color: colorScheme.onPrimary,
                           ),
                         ),
                         title: const Text('Consolidated Revenue'),

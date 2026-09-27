@@ -31,13 +31,16 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
   String _searchQuery = '';
 
   BoxDecoration _panelDecoration({
-    Color color = BauhausDesign.surfaceLight,
-    Color borderColor = BauhausDesign.neutral,
+    Color? color,
+    Color? borderColor,
     double borderWidth = 2,
   }) {
     return BoxDecoration(
-      color: color,
-      border: Border.all(color: borderColor, width: borderWidth),
+      color: color ?? Theme.of(context).colorScheme.surface,
+      border: Border.all(
+        color: borderColor ?? Theme.of(context).colorScheme.outline,
+        width: borderWidth,
+      ),
       boxShadow: const [BauhausDesign.shadowHardXs],
     );
   }
@@ -105,10 +108,10 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
     final filteredAssignments = _getFilteredAssignments(state.assignments);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.surfaceLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.neutral,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -119,8 +122,11 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
             onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(Icons.arrow_back_ios_new, size: 20),
             style: IconButton.styleFrom(
-              backgroundColor: BauhausDesign.surfaceOffWhite,
-              side: const BorderSide(color: BauhausDesign.neutral, width: 1.5),
+              backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+              side: BorderSide(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1.5,
+              ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
               ),
@@ -130,7 +136,7 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
         title: Text(
           AppLocalizations.of(context)!.assignmentList.toUpperCase(),
           style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onInverseSurface,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -142,9 +148,9 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
                   viewModel.refreshAssignments(widget.organizationId),
               icon: const Icon(Icons.refresh, size: 20),
               style: IconButton.styleFrom(
-                backgroundColor: BauhausDesign.surfaceOffWhite,
-                side: const BorderSide(
-                  color: BauhausDesign.neutral,
+                backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
                   width: 1.5,
                 ),
                 shape: RoundedRectangleBorder(
@@ -156,7 +162,10 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),
-          child: Container(color: BauhausDesign.neutral, height: 2),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 2,
+          ),
         ),
       ),
       body: Column(
@@ -181,7 +190,7 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
         BauhausDesign.space4,
         BauhausDesign.space3,
       ),
-      color: BauhausDesign.surfaceLight,
+      color: Theme.of(context).colorScheme.surface,
       child: Column(
         children: [
           Container(
@@ -200,7 +209,9 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
                 Container(
                   width: 2,
                   height: 42,
-                  color: BauhausDesign.neutral.withValues(alpha: 0.2),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.outline.withValues(alpha: 0.2),
                 ),
                 Expanded(
                   child: _buildHeaderStat(
@@ -214,7 +225,9 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
                   Container(
                     width: 2,
                     height: 42,
-                    color: BauhausDesign.neutral.withValues(alpha: 0.2),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.outline.withValues(alpha: 0.2),
                   ),
                   Expanded(
                     child: _buildHeaderStat(
@@ -236,24 +249,28 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
             ),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.search,
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   size: 18,
                 ),
                 const SizedBox(width: BauhausDesign.space2),
                 Expanded(
                   child: TextField(
                     controller: _searchController,
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                    style: BauhausDesign.getTextTheme(context).bodyMedium
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Search by employee, client, date, or ID',
-                      hintStyle: BauhausDesign.getTextTheme(
-                        context,
-                      ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                      hintStyle: BauhausDesign.getTextTheme(context).bodyMedium
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                   ),
                 ),
@@ -262,11 +279,11 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
                     onTap: () {
                       _searchController.clear();
                     },
-                    child: const Padding(
+                    child: Padding(
                       padding: EdgeInsets.all(BauhausDesign.space1),
                       child: Icon(
                         Icons.close,
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         size: 18,
                       ),
                     ),
@@ -299,9 +316,10 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
               ),
             ],
@@ -310,7 +328,7 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
           Text(
             value,
             style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -414,9 +432,9 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
             const SizedBox(height: BauhausDesign.space1),
             Text(
               e.toString(),
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+              style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),
@@ -461,13 +479,16 @@ class _EnhancedAssignmentCardState
   bool showFullDetails = false;
 
   BoxDecoration _panelDecoration({
-    Color color = BauhausDesign.surfaceLight,
-    Color borderColor = BauhausDesign.neutral,
+    Color? color,
+    Color? borderColor,
     double borderWidth = 2,
   }) {
     return BoxDecoration(
-      color: color,
-      border: Border.all(color: borderColor, width: borderWidth),
+      color: color ?? Theme.of(context).colorScheme.surface,
+      border: Border.all(
+        color: borderColor ?? Theme.of(context).colorScheme.outline,
+        width: borderWidth,
+      ),
       boxShadow: const [BauhausDesign.shadowHardXs],
     );
   }
@@ -554,8 +575,11 @@ class _EnhancedAssignmentCardState
 
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceLight,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
@@ -644,7 +668,7 @@ class _EnhancedAssignmentCardState
                 vertical: BauhausDesign.space1,
               ),
               decoration: _panelDecoration(
-                color: BauhausDesign.surfaceLight,
+                color: Theme.of(context).colorScheme.surface,
                 borderColor: BauhausDesign.primary,
                 borderWidth: 2,
               ),
@@ -701,7 +725,11 @@ class _EnhancedAssignmentCardState
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 16, color: BauhausDesign.textMuted),
+        Icon(
+          icon,
+          size: 16,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
         const SizedBox(width: BauhausDesign.space1),
         Expanded(
           child: Column(
@@ -709,16 +737,16 @@ class _EnhancedAssignmentCardState
             children: [
               Text(
                 label.toUpperCase(),
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: 2),
               Text(
                 value,
                 style: BauhausDesign.getTextTheme(context).titleMedium
                     ?.copyWith(
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w700,
                     ),
                 maxLines: 1,
@@ -768,7 +796,7 @@ class _EnhancedAssignmentCardState
                     overflow: TextOverflow.ellipsis,
                     style: BauhausDesign.getTextTheme(context).labelSmall
                         ?.copyWith(
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w600,
                         ),
                   ),
@@ -813,9 +841,9 @@ class _EnhancedAssignmentCardState
     if (dateList.isEmpty) {
       return Text(
         AppLocalizations.of(context)!.noAssignmentData,
-        style: BauhausDesign.getTextTheme(
-          context,
-        ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+        style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
       );
     }
 
@@ -835,7 +863,7 @@ class _EnhancedAssignmentCardState
             Text(
               AppLocalizations.of(context)!.shiftDetails,
               style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -869,9 +897,9 @@ class _EnhancedAssignmentCardState
           const SizedBox(height: BauhausDesign.space2),
           Text(
             'and ${shiftCount - 3} more shift${shiftCount - 3 == 1 ? '' : 's'}',
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ],
@@ -883,10 +911,10 @@ class _EnhancedAssignmentCardState
       decoration: _panelDecoration(
         color: showFullDetails
             ? BauhausDesign.primary
-            : BauhausDesign.surfaceLight,
+            : Theme.of(context).colorScheme.surface,
         borderColor: showFullDetails
-            ? BauhausDesign.neutral
-            : BauhausDesign.neutral,
+            ? Theme.of(context).colorScheme.outline
+            : Theme.of(context).colorScheme.outline,
       ),
       child: InkWell(
         onTap: () {
@@ -906,16 +934,16 @@ class _EnhancedAssignmentCardState
                 showFullDetails ? Icons.expand_less : Icons.expand_more,
                 size: 18,
                 color: showFullDetails
-                    ? BauhausDesign.surfaceLight
-                    : BauhausDesign.textDark,
+                    ? Theme.of(context).colorScheme.surface
+                    : Theme.of(context).colorScheme.onSurface,
               ),
               const SizedBox(width: BauhausDesign.space1),
               Text(
                 showFullDetails ? 'Hide Details' : 'Show Details',
                 style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
                   color: showFullDetails
-                      ? BauhausDesign.surfaceLight
-                      : BauhausDesign.textDark,
+                      ? Theme.of(context).colorScheme.surface
+                      : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -978,8 +1006,10 @@ class _EnhancedAssignmentCardState
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: _panelDecoration(
-        color: BauhausDesign.backgroundLight,
-        borderColor: BauhausDesign.neutral.withValues(alpha: 0.3),
+        color: Theme.of(context).colorScheme.surface,
+        borderColor: Theme.of(
+          context,
+        ).colorScheme.outline.withValues(alpha: 0.3),
         borderWidth: 1.5,
       ),
       child: Column(
@@ -988,7 +1018,7 @@ class _EnhancedAssignmentCardState
           Text(
             title,
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -1012,7 +1042,7 @@ class _EnhancedAssignmentCardState
             child: Text(
               '$label:',
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -1022,8 +1052,8 @@ class _EnhancedAssignmentCardState
               hasValue ? value : 'Not provided',
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
                 color: hasValue
-                    ? BauhausDesign.textDark
-                    : BauhausDesign.textMuted,
+                    ? Theme.of(context).colorScheme.onSurface
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
                 fontStyle: hasValue ? FontStyle.normal : FontStyle.italic,
               ),
             ),
@@ -1050,10 +1080,10 @@ class _EnhancedAssignmentCardState
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space2),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceOffWhite,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
         border: Border.all(
-          color: BauhausDesign.neutral.withValues(alpha: 0.4),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.4),
           width: 1.5,
         ),
       ),
@@ -1072,7 +1102,7 @@ class _EnhancedAssignmentCardState
               Text(
                 '${AppLocalizations.of(context)!.dateLabel}: ',
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -1082,7 +1112,7 @@ class _EnhancedAssignmentCardState
                   style: BauhausDesign.getTextTheme(context).labelLarge
                       ?.copyWith(
                         fontSize: BauhausDesign.fontMd,
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -1102,7 +1132,7 @@ class _EnhancedAssignmentCardState
               Text(
                 '${AppLocalizations.of(context)!.startLabel} - ${AppLocalizations.of(context)!.endLabel}: ',
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -1112,7 +1142,7 @@ class _EnhancedAssignmentCardState
                   style: BauhausDesign.getTextTheme(context).labelLarge
                       ?.copyWith(
                         fontSize: BauhausDesign.fontMd,
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -1132,7 +1162,7 @@ class _EnhancedAssignmentCardState
               Text(
                 '${AppLocalizations.of(context)!.breakLabel}: ',
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -1142,7 +1172,7 @@ class _EnhancedAssignmentCardState
                   style: BauhausDesign.getTextTheme(context).labelLarge
                       ?.copyWith(
                         fontSize: BauhausDesign.fontMd,
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                 ),

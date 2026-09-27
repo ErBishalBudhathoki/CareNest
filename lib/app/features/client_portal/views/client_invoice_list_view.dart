@@ -106,10 +106,13 @@ class _ClientInvoiceListViewState extends ConsumerState<ClientInvoiceListView> {
 
   Widget _buildFilterBar(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
-          bottom: BorderSide(color: BauhausDesign.neutral, width: 1),
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 1,
+          ),
         ),
       ),
       padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -152,14 +155,14 @@ class _ClientInvoiceListViewState extends ConsumerState<ClientInvoiceListView> {
                     decoration: BoxDecoration(
                       color: isSelected
                           ? BauhausDesign.primary
-                          : BauhausDesign.surfaceWhite,
+                          : Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(
                         BauhausDesign.radiusSm,
                       ),
                       border: Border.all(
                         color: isSelected
                             ? BauhausDesign.primary
-                            : BauhausDesign.neutral,
+                            : Theme.of(context).colorScheme.outline,
                         width: 1.5,
                       ),
                       boxShadow: isSelected
@@ -173,8 +176,8 @@ class _ClientInvoiceListViewState extends ConsumerState<ClientInvoiceListView> {
                           filter['icon'] as IconData,
                           size: 16,
                           color: isSelected
-                              ? BauhausDesign.surfaceWhite
-                              : BauhausDesign.textMuted,
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                         const SizedBox(width: BauhausDesign.space1),
                         Text(
@@ -185,8 +188,8 @@ class _ClientInvoiceListViewState extends ConsumerState<ClientInvoiceListView> {
                                 ? FontWeight.bold
                                 : FontWeight.w500,
                             color: isSelected
-                                ? BauhausDesign.surfaceWhite
-                                : BauhausDesign.textDark,
+                                ? Theme.of(context).colorScheme.onPrimary
+                                : Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       ],
@@ -214,7 +217,7 @@ class _ClientInvoiceListViewState extends ConsumerState<ClientInvoiceListView> {
   Widget _buildInvoiceList(BuildContext context, List<ClientInvoice> invoices) {
     return RefreshIndicator(
       color: BauhausDesign.primary,
-      backgroundColor: BauhausDesign.surfaceWhite,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       onRefresh: () async => ref.invalidate(clientInvoicesProvider),
       child: ListView.separated(
         padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -235,7 +238,7 @@ class _InvoiceCard extends StatelessWidget {
 
   const _InvoiceCard({required this.invoice});
 
-  List<Color> _getStatusColors(String status) {
+  List<Color> _getStatusColors(BuildContext context, String status) {
     switch (status.toLowerCase()) {
       case 'approved':
         return [BauhausDesign.success, BauhausDesign.success];
@@ -250,7 +253,10 @@ class _InvoiceCard extends StatelessWidget {
       case 'pending':
         return [BauhausDesign.secondary, BauhausDesign.secondary];
       default:
-        return [BauhausDesign.neutral, BauhausDesign.neutral];
+        return [
+          Theme.of(context).colorScheme.outline,
+          Theme.of(context).colorScheme.outline,
+        ];
     }
   }
 
@@ -279,7 +285,7 @@ class _InvoiceCard extends StatelessWidget {
     final status = invoice.displayStatus;
     final total = invoice.financialSummary['totalAmount'] ?? 0.0;
     final dueDate = invoice.financialSummary['dueDate'];
-    final statusColors = _getStatusColors(status);
+    final statusColors = _getStatusColors(context, status);
     final bgColor = statusColors[0];
 
     return BauhausCard(
@@ -298,7 +304,7 @@ class _InvoiceCard extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(BauhausDesign.space4),
             decoration: BoxDecoration(
-              color: BauhausDesign.neutral,
+              color: Theme.of(context).colorScheme.inverseSurface,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(BauhausDesign.radiusMd),
                 topRight: Radius.circular(BauhausDesign.radiusMd),
@@ -312,7 +318,7 @@ class _InvoiceCard extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.receipt,
-                        color: BauhausDesign.surfaceWhite,
+                        color: Theme.of(context).colorScheme.onInverseSurface,
                         size: 18,
                       ),
                       const SizedBox(width: BauhausDesign.space2),
@@ -322,7 +328,9 @@ class _InvoiceCard extends StatelessWidget {
                           style: GoogleFonts.oswald(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: BauhausDesign.surfaceWhite,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onInverseSurface,
                             letterSpacing: 0.5,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -345,14 +353,14 @@ class _InvoiceCard extends StatelessWidget {
                     children: [
                       Icon(
                         _getStatusIcon(status),
-                        color: BauhausDesign.surfaceWhite,
+                        color: Theme.of(context).colorScheme.onInverseSurface,
                         size: 12,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         status.toUpperCase(),
                         style: GoogleFonts.inter(
-                          color: BauhausDesign.surfaceWhite,
+                          color: Theme.of(context).colorScheme.onInverseSurface,
                           fontWeight: FontWeight.bold,
                           fontSize: 10,
                           letterSpacing: 0.5,
@@ -379,7 +387,11 @@ class _InvoiceCard extends StatelessWidget {
                         Text(
                           'AMOUNT DUE',
                           style: BauhausDesign.getTextTheme(context).labelSmall
-                              ?.copyWith(color: BauhausDesign.textMuted),
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                         ),
                         const SizedBox(height: 2),
                         Text(
@@ -400,7 +412,11 @@ class _InvoiceCard extends StatelessWidget {
                             'DUE DATE',
                             style: BauhausDesign.getTextTheme(context)
                                 .labelSmall
-                                ?.copyWith(color: BauhausDesign.textMuted),
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
                           ),
                           const SizedBox(height: 2),
                           Text(
@@ -420,10 +436,12 @@ class _InvoiceCard extends StatelessWidget {
                     vertical: BauhausDesign.space2,
                   ),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.backgroundLight,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                     border: Border.all(
-                      color: BauhausDesign.neutral.withValues(alpha: 0.3),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.outline.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
@@ -431,15 +449,18 @@ class _InvoiceCard extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.arrow_forward,
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         size: 14,
                       ),
                       const SizedBox(width: BauhausDesign.space2),
                       Text(
                         'Tap to view details',
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                        style: BauhausDesign.getTextTheme(context).bodySmall
+                            ?.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
                       ),
                     ],
                   ),

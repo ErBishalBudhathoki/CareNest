@@ -26,16 +26,18 @@ class _ComplianceDashboardViewState
         title: Text(
           AppLocalizations.of(context)!.complianceAuditTitle,
           style: BauhausTheme.headerStyle.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onSecondary,
           ),
         ),
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onSecondary,
+        ),
       ),
       body: state.isLoading
           ? const Center(

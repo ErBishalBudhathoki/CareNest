@@ -5,20 +5,20 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 /// Darkens bright accents (e.g. the tangerine) so an icon tinted with the
-/// category colour still clears a 3:1 non-text contrast ratio on the light
-/// tile behind it. Dark accents pass through untouched.
-Color _readableAccent(Color color) {
-  if (color.computeLuminance() > 0.42) {
-    return Color.lerp(color, BauhausDesign.neutral, 0.5)!;
+/// category colour still clears a 3:1 non-text contrast ratio against the
+/// surface tile behind it. Dark accents pass through untouched.
+Color _readableAccent(BuildContext context, Color color) {
+  final tile = Theme.of(context).colorScheme.surface;
+  if (color.computeLuminance() > 0.42 && tile.computeLuminance() > 0.5) {
+    return Color.lerp(color, BauhausDesign.textDark, 0.5)!;
   }
   return color;
 }
 
 /// Picks ink or paper for a glyph sitting on a solid accent block, so the
-/// colour plane keeps a readable icon at any category hue.
-Color _onAccent(Color color) => color.computeLuminance() > 0.5
-    ? BauhausDesign.neutral
-    : BauhausDesign.surfaceWhite;
+/// colour plane keeps a readable icon at any category hue in either theme.
+Color _onAccent(BuildContext context, Color color) =>
+    BauhausDesign.readableOnColor(color);
 
 /// Data model for a single action item inside a category.
 class CommandAction {
@@ -266,8 +266,11 @@ class _BauhausCommandCenterState extends State<BauhausCommandCenter> {
   Widget _buildSearchField(int totalActions) {
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       child: Row(
@@ -276,13 +279,16 @@ class _BauhausCommandCenterState extends State<BauhausCommandCenter> {
             margin: const EdgeInsets.all(BauhausDesign.space2),
             padding: const EdgeInsets.all(BauhausDesign.space2),
             decoration: BoxDecoration(
-              color: BauhausDesign.neutral,
-              border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+              color: Theme.of(context).colorScheme.onSurface,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.onSurface,
+                width: 1.5,
+              ),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.search_rounded,
               size: 18,
-              color: BauhausDesign.surfaceWhite,
+              color: Theme.of(context).colorScheme.surface,
             ),
           ),
           Expanded(
@@ -292,14 +298,14 @@ class _BauhausCommandCenterState extends State<BauhausCommandCenter> {
               style: GoogleFonts.inter(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: BauhausDesign.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
               decoration: InputDecoration(
                 hintText: 'Search $totalActions actions…',
                 hintStyle: GoogleFonts.inter(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(
@@ -311,8 +317,8 @@ class _BauhausCommandCenterState extends State<BauhausCommandCenter> {
           if (_query.isNotEmpty)
             IconButton(
               onPressed: _searchController.clear,
-              icon: const Icon(Icons.close_rounded, size: 18),
-              color: BauhausDesign.textMuted,
+              icon: Icon(Icons.close_rounded, size: 18),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               tooltip: 'Clear search',
             )
           else
@@ -326,8 +332,11 @@ class _BauhausCommandCenterState extends State<BauhausCommandCenter> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: const [BauhausDesign.shadowHardSm],
       ),
       padding: const EdgeInsets.all(BauhausDesign.space5),
@@ -337,12 +346,15 @@ class _BauhausCommandCenterState extends State<BauhausCommandCenter> {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: BauhausDesign.backgroundLight,
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              color: Theme.of(context).colorScheme.onSurface,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.onSurface,
+                width: 2,
+              ),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.search_off_rounded,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.surface,
               size: 22,
             ),
           ),
@@ -352,7 +364,7 @@ class _BauhausCommandCenterState extends State<BauhausCommandCenter> {
             style: GoogleFonts.inter(
               fontSize: 13,
               fontWeight: FontWeight.w800,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             textAlign: TextAlign.center,
           ),
@@ -483,8 +495,11 @@ class _BauhausSectionCardState extends State<_BauhausSectionCard>
           child: Container(
             margin: const EdgeInsets.only(bottom: BauhausDesign.space3),
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceWhite,
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              color: Theme.of(context).colorScheme.surface,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
               boxShadow: [
                 BoxShadow.lerp(
                   BauhausDesign.shadowHardSm,
@@ -502,7 +517,7 @@ class _BauhausSectionCardState extends State<_BauhausSectionCard>
 
   Widget _buildHeader(BuildContext context) {
     final accent = widget.category.accentColor;
-    final onAccent = _onAccent(accent);
+    final onAccent = _onAccent(context, accent);
     final meta = widget.searchActive
         ? '${widget.visibleActions.length} MATCHING'
         : '${widget.category.actions.length} ACTIONS';
@@ -622,7 +637,7 @@ class _BauhausSectionCardState extends State<_BauhausSectionCard>
 
   Widget _buildBody(BuildContext context) {
     return Container(
-      color: BauhausDesign.backgroundLight,
+      color: Theme.of(context).colorScheme.surface,
       child: Column(
         children: [
           if (widget.category.setupBannerTitle != null &&
@@ -656,7 +671,7 @@ class _BauhausSectionCardState extends State<_BauhausSectionCard>
             decoration: BoxDecoration(
               color: BauhausDesign.warning.withValues(alpha: 0.14),
               border: Border.all(
-                color: _readableAccent(BauhausDesign.warning),
+                color: _readableAccent(context, BauhausDesign.warning),
                 width: 1.5,
               ),
             ),
@@ -664,7 +679,7 @@ class _BauhausSectionCardState extends State<_BauhausSectionCard>
             child: Icon(
               Icons.settings_suggest_outlined,
               size: 18,
-              color: _readableAccent(BauhausDesign.warning),
+              color: _readableAccent(context, BauhausDesign.warning),
             ),
           ),
           const SizedBox(width: BauhausDesign.space3),
@@ -677,7 +692,7 @@ class _BauhausSectionCardState extends State<_BauhausSectionCard>
                   style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w800,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     height: 1.2,
                   ),
                 ),
@@ -687,7 +702,7 @@ class _BauhausSectionCardState extends State<_BauhausSectionCard>
                   style: GoogleFonts.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: BauhausDesign.textMuted,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     height: 1.35,
                   ),
                 ),
@@ -699,7 +714,10 @@ class _BauhausSectionCardState extends State<_BauhausSectionCard>
             TextButton(
               onPressed: widget.category.onSetupBannerTap,
               style: TextButton.styleFrom(
-                foregroundColor: _readableAccent(BauhausDesign.warning),
+                foregroundColor: _readableAccent(
+                  context,
+                  BauhausDesign.warning,
+                ),
                 padding: const EdgeInsets.symmetric(
                   horizontal: BauhausDesign.space2,
                   vertical: BauhausDesign.space1,
@@ -825,8 +843,11 @@ class _BauhausGridActionCardState extends State<_BauhausGridActionCard> {
             0,
           ),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            color: Theme.of(context).colorScheme.surface,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             boxShadow: pressed ? const [] : const [BauhausDesign.shadowHardSm],
           ),
           child: Padding(
@@ -848,7 +869,7 @@ class _BauhausGridActionCardState extends State<_BauhausGridActionCard> {
                   style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w800,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     height: 1.2,
                   ),
                   maxLines: 2,
@@ -861,7 +882,7 @@ class _BauhausGridActionCardState extends State<_BauhausGridActionCard> {
                     style: GoogleFonts.inter(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: BauhausDesign.textMuted,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       height: 1.3,
                     ),
                     maxLines: 2,
@@ -884,11 +905,14 @@ class _BauhausGridActionCardState extends State<_BauhausGridActionCard> {
       height: 42,
       decoration: BoxDecoration(
         color: accent,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
       ),
       alignment: Alignment.center,
       child: IconTheme(
-        data: IconThemeData(color: _onAccent(accent), size: 22),
+        data: IconThemeData(color: _onAccent(context, accent), size: 22),
         child: _constrainIcon(widget.action.icon),
       ),
     );
@@ -898,6 +922,7 @@ class _BauhausGridActionCardState extends State<_BauhausGridActionCard> {
     final statusLabel = widget.action.statusLabel;
     if (statusLabel != null) {
       final statusColor = _readableAccent(
+        context,
         widget.action.statusColor ?? BauhausDesign.warning,
       );
       return Container(
@@ -925,13 +950,16 @@ class _BauhausGridActionCardState extends State<_BauhausGridActionCard> {
       height: 26,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: BauhausDesign.backgroundLight,
-        border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+        color: Theme.of(context).colorScheme.onSurface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 1.5,
+        ),
       ),
-      child: const Icon(
+      child: Icon(
         Icons.arrow_outward_rounded,
         size: 15,
-        color: BauhausDesign.textDark,
+        color: Theme.of(context).colorScheme.surface,
       ),
     );
   }

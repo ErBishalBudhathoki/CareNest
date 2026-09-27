@@ -128,7 +128,7 @@ class _BauhausBrandingSectionState
                 icon: Icons.palette_outlined,
               ),
 
-              const SizedBox(height: BauhausDesign.space8),
+              SizedBox(height: BauhausDesign.space8),
 
               // Color Theory Visualization
               if (isMobile) ...[
@@ -146,7 +146,7 @@ class _BauhausBrandingSectionState
                       description:
                           'Primary brand color - used for main actions and highlights',
                     ),
-                    const SizedBox(height: BauhausDesign.space6),
+                    SizedBox(height: BauhausDesign.space6),
                     _BauhausColorField(
                       title: 'Secondary Color',
                       color: _secondaryColor,
@@ -158,7 +158,7 @@ class _BauhausBrandingSectionState
                       description:
                           'Secondary brand color - used for supporting elements',
                     ),
-                    const SizedBox(height: BauhausDesign.space6),
+                    SizedBox(height: BauhausDesign.space6),
                     _BauhausColorHarmonyCard(
                       primaryColor: _primaryColor,
                       secondaryColor: _secondaryColor,
@@ -186,7 +186,7 @@ class _BauhausBrandingSectionState
                       ),
                     ),
 
-                    const SizedBox(width: BauhausDesign.space6),
+                    SizedBox(width: BauhausDesign.space6),
 
                     // Secondary Color Section
                     Expanded(
@@ -204,7 +204,7 @@ class _BauhausBrandingSectionState
                       ),
                     ),
 
-                    const SizedBox(width: BauhausDesign.space6),
+                    SizedBox(width: BauhausDesign.space6),
 
                     // Color Harmony Visualization
                     Expanded(
@@ -218,7 +218,7 @@ class _BauhausBrandingSectionState
                 ),
               ],
 
-              const SizedBox(height: BauhausDesign.space8),
+              SizedBox(height: BauhausDesign.space8),
 
               // Logo Section with Geometric Design
               _BauhausLogoSection(
@@ -231,7 +231,7 @@ class _BauhausBrandingSectionState
                 isMobile: isMobile,
               ),
 
-              const SizedBox(height: BauhausDesign.space8),
+              SizedBox(height: BauhausDesign.space8),
 
               // Brand Preview Card
               _BauhausBrandPreviewCard(
@@ -241,7 +241,7 @@ class _BauhausBrandingSectionState
                 logoUrl: _logoUrl,
               ),
 
-              const SizedBox(height: BauhausDesign.space8),
+              SizedBox(height: BauhausDesign.space8),
 
               // Action Buttons
               isMobile
@@ -257,7 +257,7 @@ class _BauhausBrandingSectionState
                             });
                           },
                         ),
-                        const SizedBox(height: BauhausDesign.space4),
+                        SizedBox(height: BauhausDesign.space4),
                         _BauhausPrimaryButton(
                           text: 'Save Brand Settings',
                           onPressed: () {
@@ -278,7 +278,7 @@ class _BauhausBrandingSectionState
                             });
                           },
                         ),
-                        const SizedBox(width: BauhausDesign.space4),
+                        SizedBox(width: BauhausDesign.space4),
                         _BauhausPrimaryButton(
                           text: 'Save Brand Settings',
                           onPressed: () {
@@ -314,21 +314,20 @@ class _BauhausColorField extends StatefulWidget {
 
 class _BauhausColorFieldState extends State<_BauhausColorField> {
   void _showColorPickerDialog() {
-    // Neo-brutalist Bauhaus palette only — no rainbow colors, no funny tints.
-    // Squared swatches, hard borders. Brand stays red/indigo/yellow + neutrals.
+    final colorScheme = Theme.of(context).colorScheme;
     final List<Color> bauhausColors = [
-      BauhausDesign.primary,
-      BauhausDesign.secondary,
-      BauhausDesign.accent,
+      colorScheme.primary,
+      colorScheme.secondary,
+      colorScheme.tertiary,
       BauhausDesign.success,
-      BauhausDesign.warning,
-      BauhausDesign.error,
-      BauhausDesign.info,
-      BauhausDesign.neutral,
-      BauhausDesign.textDark,
-      BauhausDesign.textMuted,
-      BauhausDesign.surfaceWhite,
-      BauhausDesign.surfaceOffWhite,
+      colorScheme.primary,
+      colorScheme.error,
+      colorScheme.tertiary,
+      colorScheme.outline,
+      colorScheme.onSurface,
+      colorScheme.onSurfaceVariant,
+      colorScheme.surface,
+      colorScheme.surfaceContainer,
     ];
 
     showDialog(
@@ -340,7 +339,7 @@ class _BauhausColorFieldState extends State<_BauhausColorField> {
             style: GoogleFonts.oswald(
               fontSize: BauhausDesign.fontLg,
               fontWeight: FontWeight.w600,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           content: SizedBox(
@@ -365,13 +364,19 @@ class _BauhausColorFieldState extends State<_BauhausColorField> {
                       color: color,
                       border: Border.all(
                         color: widget.color == color
-                            ? BauhausDesign.textDark
+                            ? Theme.of(context).colorScheme.onSurface
                             : Colors.transparent,
                         width: 3,
                       ),
                     ),
                     child: widget.color == color
-                        ? const Icon(Icons.check, color: Colors.white, size: 24)
+                        ? Icon(
+                            Icons.check,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onInverseSurface,
+                            size: 24,
+                          )
                         : null,
                   ),
                 );
@@ -382,7 +387,9 @@ class _BauhausColorFieldState extends State<_BauhausColorField> {
             TextButton(
               child: Text(
                 'Cancel',
-                style: GoogleFonts.inter(color: BauhausDesign.textMuted),
+                style: GoogleFonts.inter(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -398,8 +405,11 @@ class _BauhausColorFieldState extends State<_BauhausColorField> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: [BauhausDesign.shadowHard],
       ),
       child: Column(
@@ -410,7 +420,10 @@ class _BauhausColorFieldState extends State<_BauhausColorField> {
             height: 120,
             decoration: BoxDecoration(
               color: widget.color,
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
             ),
             child: Stack(
               children: [
@@ -420,7 +433,9 @@ class _BauhausColorFieldState extends State<_BauhausColorField> {
                   child: Container(
                     width: 20,
                     height: 20,
-                    color: Colors.white.withValues(alpha: 0.3),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onInverseSurface.withValues(alpha: 0.3),
                   ),
                 ),
                 Positioned(
@@ -429,7 +444,9 @@ class _BauhausColorFieldState extends State<_BauhausColorField> {
                   child: Container(
                     width: 15,
                     height: 15,
-                    color: Colors.black.withValues(alpha: 0.2),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.inverseSurface.withValues(alpha: 0.2),
                   ),
                 ),
               ],
@@ -449,7 +466,7 @@ class _BauhausColorFieldState extends State<_BauhausColorField> {
                         style: GoogleFonts.oswald(
                           fontSize: BauhausDesign.fontLg,
                           fontWeight: FontWeight.w600,
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -459,9 +476,9 @@ class _BauhausColorFieldState extends State<_BauhausColorField> {
                         vertical: BauhausDesign.space1,
                       ),
                       decoration: BoxDecoration(
-                        color: BauhausDesign.surfaceOffWhite,
+                        color: Theme.of(context).colorScheme.surfaceContainer,
                         border: Border.all(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.outline,
                           width: 1,
                         ),
                       ),
@@ -470,25 +487,25 @@ class _BauhausColorFieldState extends State<_BauhausColorField> {
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontXs,
                           fontWeight: FontWeight.w500,
-                          color: BauhausDesign.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ),
                   ],
                 ),
 
-                const SizedBox(height: BauhausDesign.space2),
+                SizedBox(height: BauhausDesign.space2),
 
                 Text(
                   widget.description,
                   style: GoogleFonts.inter(
                     fontSize: BauhausDesign.fontSm,
-                    color: BauhausDesign.textMuted,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     height: 1.4,
                   ),
                 ),
 
-                const SizedBox(height: BauhausDesign.space3),
+                SizedBox(height: BauhausDesign.space3),
 
                 // Color Picker Button
                 SizedBox(
@@ -522,8 +539,11 @@ class _BauhausColorHarmonyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: [BauhausDesign.shadowHard],
       ),
       child: Column(
@@ -533,7 +553,10 @@ class _BauhausColorHarmonyCard extends StatelessWidget {
             padding: const EdgeInsets.all(BauhausDesign.space4),
             decoration: BoxDecoration(
               border: Border(
-                bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+                bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
               ),
             ),
             child: Row(
@@ -542,19 +565,19 @@ class _BauhausColorHarmonyCard extends StatelessWidget {
                   width: 32,
                   height: 32,
                   color: primaryColor,
-                  child: const Icon(
+                  child: Icon(
                     Icons.color_lens_outlined,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onInverseSurface,
                     size: 20,
                   ),
                 ),
-                const SizedBox(width: BauhausDesign.space3),
+                SizedBox(width: BauhausDesign.space3),
                 Text(
                   'Color Harmony',
                   style: GoogleFonts.oswald(
                     fontSize: BauhausDesign.fontLg,
                     fontWeight: FontWeight.w600,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ],
@@ -571,7 +594,7 @@ class _BauhausColorHarmonyCard extends StatelessWidget {
                   title: 'Primary Variations',
                 ),
 
-                const SizedBox(height: BauhausDesign.space3),
+                SizedBox(height: BauhausDesign.space3),
 
                 // Secondary Color Variations
                 _BauhausColorVariationRow(
@@ -579,7 +602,7 @@ class _BauhausColorHarmonyCard extends StatelessWidget {
                   title: 'Secondary Variations',
                 ),
 
-                const SizedBox(height: BauhausDesign.space4),
+                SizedBox(height: BauhausDesign.space4),
 
                 // Contrast Ratio Display
                 _BauhausContrastRatioDisplay(
@@ -614,11 +637,11 @@ class _BauhausColorVariationRow extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: BauhausDesign.fontSm,
             fontWeight: FontWeight.w600,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
 
-        const SizedBox(height: BauhausDesign.space2),
+        SizedBox(height: BauhausDesign.space2),
 
         Row(
           children: [
@@ -626,17 +649,17 @@ class _BauhausColorVariationRow extends StatelessWidget {
               color: baseColor.withValues(alpha: 0.8),
               label: '80%',
             ),
-            const SizedBox(width: BauhausDesign.space2),
+            SizedBox(width: BauhausDesign.space2),
             _BauhausColorSwatch(
               color: baseColor.withValues(alpha: 0.6),
               label: '60%',
             ),
-            const SizedBox(width: BauhausDesign.space2),
+            SizedBox(width: BauhausDesign.space2),
             _BauhausColorSwatch(
               color: baseColor.withValues(alpha: 0.4),
               label: '40%',
             ),
-            const SizedBox(width: BauhausDesign.space2),
+            SizedBox(width: BauhausDesign.space2),
             _BauhausColorSwatch(
               color: baseColor.withValues(alpha: 0.2),
               label: '20%',
@@ -663,15 +686,18 @@ class _BauhausColorSwatch extends StatelessWidget {
           height: 40,
           decoration: BoxDecoration(
             color: color,
-            border: Border.all(color: BauhausDesign.neutral, width: 1),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 1,
+            ),
           ),
         ),
-        const SizedBox(height: 2),
+        SizedBox(height: 2),
         Text(
           label,
           style: GoogleFonts.inter(
             fontSize: BauhausDesign.fontXs,
-            color: BauhausDesign.textMuted,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
       ],
@@ -704,8 +730,11 @@ class _BauhausContrastRatioDisplay extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceOffWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 1),
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
@@ -717,11 +746,11 @@ class _BauhausContrastRatioDisplay extends StatelessWidget {
               isAccessible
                   ? Icons.check_circle_outline
                   : Icons.warning_amber_outlined,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.onInverseSurface,
               size: 16,
             ),
           ),
-          const SizedBox(width: BauhausDesign.space3),
+          SizedBox(width: BauhausDesign.space3),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -731,7 +760,7 @@ class _BauhausContrastRatioDisplay extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: BauhausDesign.fontSm,
                     fontWeight: FontWeight.w600,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 Text(
@@ -811,8 +840,11 @@ class _BauhausLogoSectionState extends State<_BauhausLogoSection> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: [BauhausDesign.shadowHard],
       ),
       child: Column(
@@ -822,7 +854,10 @@ class _BauhausLogoSectionState extends State<_BauhausLogoSection> {
             padding: const EdgeInsets.all(BauhausDesign.space4),
             decoration: BoxDecoration(
               border: Border(
-                bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+                bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
               ),
             ),
             child: Row(
@@ -831,19 +866,19 @@ class _BauhausLogoSectionState extends State<_BauhausLogoSection> {
                   width: 32,
                   height: 32,
                   color: Theme.of(context).colorScheme.secondary,
-                  child: const Icon(
+                  child: Icon(
                     Icons.image_outlined,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onInverseSurface,
                     size: 20,
                   ),
                 ),
-                const SizedBox(width: BauhausDesign.space3),
+                SizedBox(width: BauhausDesign.space3),
                 Text(
                   'Logo & Visual Identity',
                   style: GoogleFonts.oswald(
                     fontSize: BauhausDesign.fontLg,
                     fontWeight: FontWeight.w600,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ],
@@ -857,7 +892,7 @@ class _BauhausLogoSectionState extends State<_BauhausLogoSection> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildLogoPreview(),
-                      const SizedBox(height: BauhausDesign.space6),
+                      SizedBox(height: BauhausDesign.space6),
                       _buildUploadSection(),
                     ],
                   )
@@ -865,7 +900,7 @@ class _BauhausLogoSectionState extends State<_BauhausLogoSection> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(flex: 2, child: _buildLogoPreview()),
-                      const SizedBox(width: BauhausDesign.space6),
+                      SizedBox(width: BauhausDesign.space6),
                       Expanded(flex: 3, child: _buildUploadSection()),
                     ],
                   ),
@@ -886,18 +921,21 @@ class _BauhausLogoSectionState extends State<_BauhausLogoSection> {
             style: GoogleFonts.inter(
               fontSize: BauhausDesign.fontMd,
               fontWeight: FontWeight.w600,
-              color: BauhausDesign.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
 
-          const SizedBox(height: BauhausDesign.space3),
+          SizedBox(height: BauhausDesign.space3),
 
           Container(
             width: 120,
             height: 120,
             decoration: BoxDecoration(
-              color: BauhausDesign.surfaceOffWhite,
-              border: Border.all(color: BauhausDesign.neutral, width: 2),
+              color: Theme.of(context).colorScheme.surfaceContainer,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2,
+              ),
             ),
             child: _localImageFile != null
                 ? Image.file(_localImageFile!, fit: BoxFit.contain)
@@ -911,12 +949,16 @@ class _BauhausLogoSectionState extends State<_BauhausLogoSection> {
                         children: [
                           Icon(
                             Icons.broken_image,
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                           Text(
                             'Error loading',
                             style: TextStyle(
-                              color: BauhausDesign.textMuted,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                               fontSize: 10,
                             ),
                           ),
@@ -930,14 +972,14 @@ class _BauhausLogoSectionState extends State<_BauhausLogoSection> {
                       Icon(
                         Icons.business,
                         size: 40,
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
-                      const SizedBox(height: BauhausDesign.space2),
+                      SizedBox(height: BauhausDesign.space2),
                       Text(
                         'No Logo',
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontSm,
-                          color: BauhausDesign.textMuted,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -957,18 +999,20 @@ class _BauhausLogoSectionState extends State<_BauhausLogoSection> {
           style: GoogleFonts.inter(
             fontSize: BauhausDesign.fontMd,
             fontWeight: FontWeight.w600,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
 
-        const SizedBox(height: BauhausDesign.space3),
+        SizedBox(height: BauhausDesign.space3),
 
         Container(
           padding: const EdgeInsets.all(BauhausDesign.space6),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceOffWhite,
+            color: Theme.of(context).colorScheme.surfaceContainer,
             border: Border.all(
-              color: BauhausDesign.textMuted.withValues(alpha: 0.3),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
               width: 2,
               style: BorderStyle.solid,
             ),
@@ -978,26 +1022,26 @@ class _BauhausLogoSectionState extends State<_BauhausLogoSection> {
               Icon(
                 Icons.cloud_upload_outlined,
                 size: 48,
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
-              const SizedBox(height: BauhausDesign.space3),
+              SizedBox(height: BauhausDesign.space3),
               Text(
                 'Drag & drop or click to upload',
                 style: GoogleFonts.inter(
                   fontSize: BauhausDesign.fontMd,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(height: BauhausDesign.space1),
+              SizedBox(height: BauhausDesign.space1),
               Text(
                 'PNG, JPG, SVG up to 5MB',
                 style: GoogleFonts.inter(
                   fontSize: BauhausDesign.fontSm,
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
-              const SizedBox(height: BauhausDesign.space4),
+              SizedBox(height: BauhausDesign.space4),
               SizedBox(
                 width: double.infinity,
                 child: _BauhausSecondaryButton(
@@ -1011,14 +1055,17 @@ class _BauhausLogoSectionState extends State<_BauhausLogoSection> {
           ),
         ),
 
-        const SizedBox(height: BauhausDesign.space4),
+        SizedBox(height: BauhausDesign.space4),
 
         // Logo Guidelines
         Container(
           padding: const EdgeInsets.all(BauhausDesign.space3),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceWhite,
-            border: Border.all(color: BauhausDesign.neutral, width: 1),
+            color: Theme.of(context).colorScheme.surface,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 1,
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1026,19 +1073,19 @@ class _BauhausLogoSectionState extends State<_BauhausLogoSection> {
               Row(
                 children: [
                   Icon(Icons.info_outline, size: 16, color: BauhausDesign.info),
-                  const SizedBox(width: BauhausDesign.space2),
+                  SizedBox(width: BauhausDesign.space2),
                   Text(
                     'Logo Guidelines',
                     style: GoogleFonts.inter(
                       fontSize: BauhausDesign.fontSm,
                       fontWeight: FontWeight.w600,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       height: 1.4,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: BauhausDesign.space2),
+              SizedBox(height: BauhausDesign.space2),
               Text(
                 '• Recommended size: 200x200px minimum\n'
                 '• Transparent background preferred\n'
@@ -1046,7 +1093,7 @@ class _BauhausLogoSectionState extends State<_BauhausLogoSection> {
                 '• Simple, recognizable design',
                 style: GoogleFonts.inter(
                   fontSize: BauhausDesign.fontXs,
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   height: 1.4,
                 ),
               ),
@@ -1075,8 +1122,11 @@ class _BauhausBrandPreviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: [BauhausDesign.shadowHard],
       ),
       child: Column(
@@ -1087,7 +1137,10 @@ class _BauhausBrandPreviewCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: primaryColor,
               border: Border(
-                bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+                bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
               ),
             ),
             child: Row(
@@ -1095,23 +1148,27 @@ class _BauhausBrandPreviewCard extends StatelessWidget {
                 Container(
                   width: 24,
                   height: 24,
-                  color: Colors.white.withValues(alpha: 0.3),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onInverseSurface.withValues(alpha: 0.3),
                   child: logoUrl != null
                       ? Image.network(logoUrl!, fit: BoxFit.contain)
                       : Icon(
                           Icons.business,
                           size: 16,
-                          color: Colors.white.withValues(alpha: 0.8),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onInverseSurface.withValues(alpha: 0.8),
                         ),
                 ),
-                const SizedBox(width: BauhausDesign.space3),
+                SizedBox(width: BauhausDesign.space3),
                 Expanded(
                   child: Text(
                     organization.name,
                     style: GoogleFonts.inter(
                       fontSize: BauhausDesign.fontMd,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onInverseSurface,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -1134,7 +1191,7 @@ class _BauhausBrandPreviewCard extends StatelessWidget {
                         isPrimary: true,
                       ),
                     ),
-                    const SizedBox(width: BauhausDesign.space3),
+                    SizedBox(width: BauhausDesign.space3),
                     Expanded(
                       child: _BauhausPreviewButton(
                         text: 'Secondary',
@@ -1145,24 +1202,27 @@ class _BauhausBrandPreviewCard extends StatelessWidget {
                   ],
                 ),
 
-                const SizedBox(height: BauhausDesign.space4),
+                SizedBox(height: BauhausDesign.space4),
 
                 Container(
                   padding: const EdgeInsets.all(BauhausDesign.space3),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.surfaceOffWhite,
-                    border: Border.all(color: BauhausDesign.neutral, width: 1),
+                    color: Theme.of(context).colorScheme.surfaceContainer,
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 1,
+                    ),
                   ),
                   child: Row(
                     children: [
                       Container(width: 16, height: 16, color: primaryColor),
-                      const SizedBox(width: BauhausDesign.space2),
+                      SizedBox(width: BauhausDesign.space2),
                       Expanded(
                         child: Text(
                           'Primary Color Applied',
                           style: GoogleFonts.inter(
                             fontSize: BauhausDesign.fontSm,
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       ),
@@ -1200,7 +1260,7 @@ class _BauhausPreviewButton extends StatelessWidget {
       decoration: BoxDecoration(
         color: isPrimary ? color : Colors.transparent,
         border: Border.all(
-          color: isPrimary ? BauhausDesign.neutral : color,
+          color: isPrimary ? Theme.of(context).colorScheme.outline : color,
           width: 2,
         ),
         boxShadow: isPrimary ? [BauhausDesign.shadowHardSm] : [],
@@ -1211,7 +1271,9 @@ class _BauhausPreviewButton extends StatelessWidget {
         style: GoogleFonts.inter(
           fontSize: BauhausDesign.fontSm,
           fontWeight: FontWeight.w600,
-          color: isPrimary ? Colors.white : color,
+          color: isPrimary
+              ? Theme.of(context).colorScheme.onInverseSurface
+              : color,
         ),
       ),
     );
@@ -1234,11 +1296,11 @@ class _BauhausPrimaryButton extends StatelessWidget {
       decoration: BoxDecoration(
         color: isEnabled
             ? theme.primaryColor
-            : BauhausDesign.neutral.withValues(alpha: 0.1),
+            : Theme.of(context).colorScheme.outline.withValues(alpha: 0.1),
         border: Border.all(
           color: isEnabled
-              ? BauhausDesign.neutral
-              : BauhausDesign.neutral.withValues(alpha: 0.3),
+              ? Theme.of(context).colorScheme.outline
+              : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
           width: 2,
         ),
         boxShadow: isEnabled ? [BauhausDesign.shadowHard] : [],
@@ -1258,8 +1320,10 @@ class _BauhausPrimaryButton extends StatelessWidget {
                 fontSize: BauhausDesign.fontMd,
                 fontWeight: FontWeight.w600,
                 color: isEnabled
-                    ? Colors.white
-                    : BauhausDesign.textDark.withValues(alpha: 0.3),
+                    ? Theme.of(context).colorScheme.onInverseSurface
+                    : Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.3),
               ),
               textAlign: TextAlign.center,
             ),
@@ -1283,11 +1347,11 @@ class _BauhausSecondaryButton extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
+        color: Theme.of(context).colorScheme.surface,
         border: Border.all(
           color: isEnabled
-              ? BauhausDesign.neutral
-              : BauhausDesign.neutral.withValues(alpha: 0.3),
+              ? Theme.of(context).colorScheme.outline
+              : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
           width: 2,
         ),
         boxShadow: isEnabled
@@ -1316,8 +1380,10 @@ class _BauhausSecondaryButton extends StatelessWidget {
                 fontSize: BauhausDesign.fontMd,
                 fontWeight: FontWeight.w600,
                 color: isEnabled
-                    ? BauhausDesign.textDark
-                    : BauhausDesign.textDark.withValues(alpha: 0.3),
+                    ? Theme.of(context).colorScheme.onSurface
+                    : Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.3),
               ),
               textAlign: TextAlign.center,
             ),
@@ -1350,9 +1416,13 @@ class _BauhausSectionHeader extends StatelessWidget {
             width: 48,
             height: 48,
             color: Theme.of(context).primaryColor,
-            child: Icon(icon, color: Colors.white, size: 24),
+            child: Icon(
+              icon,
+              color: Theme.of(context).colorScheme.onInverseSurface,
+              size: 24,
+            ),
           ),
-          const SizedBox(width: BauhausDesign.space4),
+          SizedBox(width: BauhausDesign.space4),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1362,7 +1432,7 @@ class _BauhausSectionHeader extends StatelessWidget {
                   style: GoogleFonts.oswald(
                     fontSize: 32,
                     fontWeight: FontWeight.w700,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                     height: 1.2,
                   ),
                 ),
@@ -1370,7 +1440,7 @@ class _BauhausSectionHeader extends StatelessWidget {
                   subtitle,
                   style: GoogleFonts.inter(
                     fontSize: BauhausDesign.fontMd,
-                    color: BauhausDesign.textMuted,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     height: 1.4,
                   ),
                 ),

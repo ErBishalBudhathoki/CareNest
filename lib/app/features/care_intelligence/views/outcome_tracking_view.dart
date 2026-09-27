@@ -38,14 +38,14 @@ class _OutcomeTrackingViewState extends ConsumerState<OutcomeTrackingView> {
     final state = ref.watch(intelligenceViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         title: Text(
           'OUTCOME INSIGHTS',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: BauhausDesign.surfaceWhite,
+            color: Theme.of(context).colorScheme.onSecondary,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -124,9 +124,9 @@ class _OutcomeTrackingViewState extends ConsumerState<OutcomeTrackingView> {
               ],
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'User is showing consistent improvement in physical mobility but may require more social intervention to meet quarterly goals.',
-              style: TextStyle(color: BauhausDesign.textDark),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
             ),
           ],
         ),
@@ -168,7 +168,9 @@ class _OutcomeTrackingViewState extends ConsumerState<OutcomeTrackingView> {
               borderRadius: BorderRadius.circular(2),
               child: LinearProgressIndicator(
                 value: progress,
-                backgroundColor: BauhausDesign.neutral.withValues(alpha: 0.1),
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.outline.withValues(alpha: 0.1),
                 color: color,
                 minHeight: 8,
               ),
@@ -178,7 +180,9 @@ class _OutcomeTrackingViewState extends ConsumerState<OutcomeTrackingView> {
               '${(progress * 100).toInt()}% completed',
               style: TextStyle(
                 fontSize: 10,
-                color: BauhausDesign.textDark.withValues(alpha: 0.6),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ],

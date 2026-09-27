@@ -43,13 +43,17 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
   bool _showShifts = false;
 
   BoxDecoration _panelDecoration({
-    Color color = BauhausDesign.surfaceLight,
-    Color borderColor = BauhausDesign.neutral,
+    Color? color,
+    Color? borderColor,
     double borderWidth = 2,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
     return BoxDecoration(
-      color: color,
-      border: Border.all(color: borderColor, width: borderWidth),
+      color: color ?? colorScheme.surface,
+      border: Border.all(
+        color: borderColor ?? colorScheme.outline,
+        width: borderWidth,
+      ),
       boxShadow: const [BauhausDesign.shadowHardXs],
     );
   }
@@ -58,13 +62,18 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
     required String text,
     required IconData icon,
     required VoidCallback? onPressed,
-    Color backgroundColor = BauhausDesign.primary,
-    Color textColor = BauhausDesign.surfaceLight,
+    Color? backgroundColor,
+    Color? textColor,
     bool outlined = false,
   }) {
-    final bg = outlined ? BauhausDesign.surfaceLight : backgroundColor;
-    final fg = outlined ? BauhausDesign.textDark : textColor;
-    final border = outlined ? BauhausDesign.neutral : BauhausDesign.neutral;
+    final colorScheme = Theme.of(context).colorScheme;
+    final bg = outlined
+        ? colorScheme.surface
+        : backgroundColor ?? colorScheme.primary;
+    final fg = outlined
+        ? colorScheme.onSurface
+        : textColor ?? colorScheme.onPrimary;
+    final border = colorScheme.onSurface;
 
     return Container(
       width: double.infinity,
@@ -165,7 +174,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: AnimatedBuilder(
         animation: _surfaceController,
         builder: (context, child) {
@@ -188,10 +197,13 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
         right: BauhausDesign.space4,
         bottom: BauhausDesign.space2,
       ),
-      decoration: const BoxDecoration(
-        color: BauhausDesign.surfaceLight,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
-          bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
         ),
       ),
       child: Row(
@@ -205,9 +217,9 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
           Expanded(
             child: Text(
               AppLocalizations.of(context)!.assignmentComplete,
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).displaySmall?.copyWith(color: BauhausDesign.textDark),
+              style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
               textAlign: TextAlign.center,
             ),
           ),
@@ -353,7 +365,9 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
             Container(
               width: 2,
               height: 34.0,
-              color: BauhausDesign.neutral.withValues(alpha: 0.3),
+              color: Theme.of(
+                context,
+              ).colorScheme.outline.withValues(alpha: 0.3),
             ),
             Expanded(
               child: _buildStatItem(
@@ -384,7 +398,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
           value,
           style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: BauhausDesign.space1),
@@ -426,7 +440,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
                 style: BauhausDesign.getTextTheme(context).titleMedium
                     ?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
               ),
             ],
@@ -520,14 +534,14 @@ ${AppLocalizations.of(context)!.assignmentId}: ${assignment.assignmentId}
               const SizedBox(width: BauhausDesign.space3),
               Text(
                 AppLocalizations.of(context)!.assignmentDetailsCopied,
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).bodyMedium?.copyWith(color: BauhausDesign.textDark),
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
             ],
           ),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: BauhausDesign.surfaceLight,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.zero,
             side: const BorderSide(color: BauhausDesign.success, width: 2),
@@ -545,10 +559,13 @@ ${AppLocalizations.of(context)!.assignmentId}: ${assignment.assignmentId}
       isScrollControlled: true,
       builder: (context) => Container(
         padding: const EdgeInsets.all(BauhausDesign.space4),
-        decoration: const BoxDecoration(
-          color: BauhausDesign.surfaceLight,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
           border: Border(
-            top: BorderSide(color: BauhausDesign.neutral, width: 2),
+            top: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
           ),
         ),
         child: Column(
@@ -562,7 +579,7 @@ ${AppLocalizations.of(context)!.assignmentId}: ${assignment.assignmentId}
                   style: BauhausDesign.getTextTheme(context).titleMedium
                       ?.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                 ),
                 const Spacer(),
@@ -593,7 +610,7 @@ ${AppLocalizations.of(context)!.assignmentId}: ${assignment.assignmentId}
                       style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
                             fontWeight: FontWeight.w500,
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                     ),
                   ],

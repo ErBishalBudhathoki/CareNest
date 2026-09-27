@@ -32,22 +32,29 @@ class _AdminCertificationRequirementsViewState
     final state = ref.watch(certificationRequirementsViewModelProvider);
 
     return Scaffold(
-      backgroundColor: BauhausDesign.backgroundLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           'Certification Requirements',
-          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(color: BauhausDesign.surfaceWhite),
+          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onSecondary,
+          ),
         ),
         backgroundColor: BauhausDesign.secondary,
-        foregroundColor: BauhausDesign.surfaceWhite,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
-        iconTheme: const IconThemeData(color: BauhausDesign.surfaceWhite),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onSecondary,
+        ),
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: BauhausDesign.neutral, height: 2),
+          child: Container(
+            color: Theme.of(context).colorScheme.outline,
+            height: 2,
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -55,11 +62,11 @@ class _AdminCertificationRequirementsViewState
         backgroundColor: BauhausDesign.primary,
         label: Text(
           AppLocalizations.of(context)!.addButton,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).labelLarge?.copyWith(color: Colors.white),
+          style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
         ),
-        icon: const Icon(Icons.add, color: Colors.white),
+        icon: Icon(Icons.add, color: Theme.of(context).colorScheme.onPrimary),
       ),
       body: state.isLoading
           ? const Center(
@@ -91,7 +98,7 @@ class _AdminCertificationRequirementsViewState
   ) {
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space4),
-      decoration: BauhausDesign.cardDecoration,
+      decoration: BauhausDesign.cardDecorationFor(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -112,14 +119,18 @@ class _AdminCertificationRequirementsViewState
                 decoration: BoxDecoration(
                   color: requirement.isActive
                       ? BauhausDesign.success
-                      : BauhausDesign.neutral,
+                      : Theme.of(context).colorScheme.outline,
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
                 ),
                 child: Text(
                   requirement.isActive ? 'ACTIVE' : 'INACTIVE',
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).labelLarge?.copyWith(color: Colors.white, fontSize: 10),
+                  style: BauhausDesign.getTextTheme(context).labelLarge
+                      ?.copyWith(
+                        color: requirement.isActive
+                            ? Theme.of(context).colorScheme.onSecondary
+                            : Theme.of(context).colorScheme.onInverseSurface,
+                        fontSize: 10,
+                      ),
                 ),
               ),
             ],
@@ -134,9 +145,9 @@ class _AdminCertificationRequirementsViewState
           const SizedBox(height: BauhausDesign.space2),
           Text(
             requirement.isRequired ? 'Required' : 'Optional',
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).labelLarge?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space3),
           Row(
@@ -236,10 +247,13 @@ class _RequirementDialogState extends ConsumerState<_RequirementDialog> {
   Widget build(BuildContext context) {
     final isEdit = widget.requirement != null;
     return AlertDialog(
-      backgroundColor: BauhausDesign.surfaceLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        side: const BorderSide(color: BauhausDesign.neutral, width: 2),
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
       ),
       title: Text(
         isEdit ? 'Edit Requirement' : 'Add Requirement',
@@ -254,6 +268,7 @@ class _RequirementDialogState extends ConsumerState<_RequirementDialog> {
               TextFormField(
                 controller: _nameController,
                 decoration: BauhausDesign.inputDecoration(
+                  context,
                   '',
                 ).copyWith(labelText: AppLocalizations.of(context)!.titleLabel),
                 validator: (v) => v?.isEmpty == true
@@ -263,7 +278,7 @@ class _RequirementDialogState extends ConsumerState<_RequirementDialog> {
               const SizedBox(height: BauhausDesign.space3),
               TextFormField(
                 controller: _descController,
-                decoration: BauhausDesign.inputDecoration('').copyWith(
+                decoration: BauhausDesign.inputDecoration(context, '').copyWith(
                   labelText: AppLocalizations.of(context)!.descriptionLabel,
                 ),
                 maxLines: 2,
@@ -291,9 +306,9 @@ class _RequirementDialogState extends ConsumerState<_RequirementDialog> {
           onPressed: () => Navigator.pop(context),
           child: Text(
             AppLocalizations.of(context)!.cancelButton,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).labelLarge?.copyWith(color: BauhausDesign.textDark),
+            style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
         ),
         BauhausButton(
@@ -343,9 +358,9 @@ class _BauhausSwitchRow extends StatelessWidget {
         Expanded(
           child: Text(
             label,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).labelLarge?.copyWith(color: BauhausDesign.textDark),
+            style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
         ),
         BauhausSwitch(value: value, onChanged: onChanged, variant: variant),

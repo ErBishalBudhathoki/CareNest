@@ -149,8 +149,11 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
         return Container(
           padding: const EdgeInsets.all(BauhausDesign.space3),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceLight,
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            color: Theme.of(context).colorScheme.surface,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             boxShadow: const [BauhausDesign.shadowHardXs],
           ),
           child: Column(
@@ -181,7 +184,10 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
             height: 80.0,
             decoration: BoxDecoration(
               color: BauhausDesign.success.withValues(alpha: 0.1),
-              border: Border.all(color: BauhausDesign.neutral, width: 1.5),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1.5,
+              ),
             ),
           ),
         ),
@@ -195,12 +201,15 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
               height: 56.0,
               decoration: BoxDecoration(
                 color: BauhausDesign.success,
-                border: Border.all(color: BauhausDesign.neutral, width: 3),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 3,
+                ),
                 boxShadow: const [BauhausDesign.shadowHard],
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.check_rounded,
-                color: BauhausDesign.surfaceWhite,
+                color: Theme.of(context).colorScheme.onSecondary,
                 size: 34.0,
               ),
             ),
@@ -241,7 +250,10 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
                 height: 8.0,
                 decoration: BoxDecoration(
                   color: colors[i % colors.length],
-                  border: Border.all(color: BauhausDesign.neutral, width: 1),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 1,
+                  ),
                 ),
               ),
             ),
@@ -339,7 +351,7 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
                   value,
                   style: BauhausDesign.getTextTheme(context).bodyLarge
                       ?.copyWith(
-                        color: BauhausDesign.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w600,
                       ),
                 ),

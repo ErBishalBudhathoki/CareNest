@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:carenest/app/features/organization/models/organization_model.dart'
     as models;
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 
 class BauhausNDISection extends ConsumerStatefulWidget {
   final models.Organization organization;
@@ -127,8 +128,11 @@ class _BauhausNDISectionState extends ConsumerState<BauhausNDISection> {
               ? EdgeInsets.zero
               : const EdgeInsets.all(BauhausDesign.space6),
           decoration: BoxDecoration(
-            color: BauhausDesign.surfaceOffWhite,
-            border: Border.all(color: BauhausDesign.neutral, width: 2),
+            color: Theme.of(context).colorScheme.surfaceContainer,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2,
+            ),
             boxShadow: [BauhausDesign.shadowHard],
           ),
           child: Form(
@@ -141,21 +145,24 @@ class _BauhausNDISectionState extends ConsumerState<BauhausNDISection> {
                   padding: const EdgeInsets.all(BauhausDesign.space4),
                   decoration: BoxDecoration(
                     color: BauhausDesign.primary,
-                    border: Border.all(color: BauhausDesign.neutral, width: 2),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 2,
+                    ),
                   ),
                   child: Row(
                     children: [
                       Container(
                         width: 40,
                         height: 40,
-                        color: BauhausDesign.surfaceWhite,
+                        color: Theme.of(context).colorScheme.surface,
                         child: Icon(
                           Icons.verified,
                           color: BauhausDesign.primary,
                           size: 24,
                         ),
                       ),
-                      const SizedBox(width: BauhausDesign.space3),
+                      SizedBox(width: BauhausDesign.space3),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,19 +172,19 @@ class _BauhausNDISectionState extends ConsumerState<BauhausNDISection> {
                               style: GoogleFonts.inter(
                                 fontSize: BauhausDesign.fontLg,
                                 fontWeight: FontWeight.w700,
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                                 letterSpacing: 0.5,
                               ),
                             ),
-                            const SizedBox(height: 2),
+                            SizedBox(height: 2),
                             Text(
                               'Manage your NDIS registration status and details',
                               style: GoogleFonts.inter(
                                 fontSize: BauhausDesign.fontSm,
                                 fontWeight: FontWeight.w400,
-                                color: BauhausDesign.textDark.withValues(
-                                  alpha: 0.7,
-                                ),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.7),
                               ),
                             ),
                           ],
@@ -187,14 +194,17 @@ class _BauhausNDISectionState extends ConsumerState<BauhausNDISection> {
                   ),
                 ),
 
-                const SizedBox(height: BauhausDesign.space6),
+                SizedBox(height: BauhausDesign.space6),
 
                 // NDIS Registration Toggle
                 Container(
                   padding: const EdgeInsets.all(BauhausDesign.space4),
                   decoration: BoxDecoration(
-                    color: BauhausDesign.surfaceWhite,
-                    border: Border.all(color: BauhausDesign.neutral, width: 2),
+                    color: Theme.of(context).colorScheme.surface,
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 2,
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -203,16 +213,20 @@ class _BauhausNDISectionState extends ConsumerState<BauhausNDISection> {
                         height: 32,
                         color: _isRegistered
                             ? BauhausDesign.success
-                            : BauhausDesign.neutral,
+                            : Theme.of(context).colorScheme.onSurface,
                         child: Icon(
                           _isRegistered
                               ? Icons.check_circle
                               : Icons.radio_button_unchecked,
-                          color: BauhausDesign.textDark,
+                          color: _isRegistered
+                              ? BauhausDesign.readableOnColor(
+                                  BauhausDesign.success,
+                                )
+                              : Theme.of(context).colorScheme.surface,
                           size: 20,
                         ),
                       ),
-                      const SizedBox(width: BauhausDesign.space3),
+                      SizedBox(width: BauhausDesign.space3),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,11 +238,11 @@ class _BauhausNDISectionState extends ConsumerState<BauhausNDISection> {
                               style: GoogleFonts.inter(
                                 fontSize: BauhausDesign.fontMd,
                                 fontWeight: FontWeight.w600,
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                                 letterSpacing: 0.5,
                               ),
                             ),
-                            const SizedBox(height: 2),
+                            SizedBox(height: 2),
                             Text(
                               _isRegistered
                                   ? 'Your organization is registered with NDIS'
@@ -236,16 +250,20 @@ class _BauhausNDISectionState extends ConsumerState<BauhausNDISection> {
                               style: GoogleFonts.inter(
                                 fontSize: BauhausDesign.fontSm,
                                 fontWeight: FontWeight.w400,
-                                color: BauhausDesign.textDark.withValues(
-                                  alpha: 0.7,
-                                ),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.7),
                               ),
                             ),
                           ],
                         ),
                       ),
-                      Switch(
+                      // Bauhaus switch: zero radius, 2px borders, hard shadow,
+                      // themed track/thumb — unlike Material's rounded
+                      // `Switch`, which does not match DESIGN.md.
+                      BauhausSwitch(
                         value: _isRegistered,
+                        variant: BauhausSwitchVariant.secondary,
                         onChanged: (value) {
                           setState(() {
                             _isRegistered = value;
@@ -254,26 +272,21 @@ class _BauhausNDISectionState extends ConsumerState<BauhausNDISection> {
                             }
                           });
                         },
-                        activeThumbColor: BauhausDesign.success,
-                        activeTrackColor: BauhausDesign.success.withValues(
-                          alpha: 0.5,
-                        ),
-                        inactiveTrackColor: BauhausDesign.neutral,
                       ),
                     ],
                   ),
                 ),
 
-                const SizedBox(height: BauhausDesign.space4),
+                SizedBox(height: BauhausDesign.space4),
 
                 // Registration Number Field (only show if registered)
                 if (_isRegistered) ...[
                   Container(
                     padding: const EdgeInsets.all(BauhausDesign.space4),
                     decoration: BoxDecoration(
-                      color: BauhausDesign.surfaceWhite,
+                      color: Theme.of(context).colorScheme.surface,
                       border: Border.all(
-                        color: BauhausDesign.neutral,
+                        color: Theme.of(context).colorScheme.outline,
                         width: 2,
                       ),
                     ),
@@ -285,11 +298,11 @@ class _BauhausNDISectionState extends ConsumerState<BauhausNDISection> {
                           style: GoogleFonts.inter(
                             fontSize: BauhausDesign.fontXs,
                             fontWeight: FontWeight.w600,
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                             letterSpacing: 0.5,
                           ),
                         ),
-                        const SizedBox(height: BauhausDesign.space1),
+                        SizedBox(height: BauhausDesign.space1),
                         TextFormField(
                           controller: _registrationNumberController,
                           validator: _validateRegistrationNumber,
@@ -297,31 +310,33 @@ class _BauhausNDISectionState extends ConsumerState<BauhausNDISection> {
                           style: GoogleFonts.inter(
                             fontSize: BauhausDesign.fontMd,
                             fontWeight: FontWeight.w500,
-                            color: BauhausDesign.textDark,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                           decoration: InputDecoration(
                             hintText: 'Enter NDIS registration number',
                             hintStyle: GoogleFonts.inter(
                               fontSize: BauhausDesign.fontMd,
                               fontWeight: FontWeight.w400,
-                              color: BauhausDesign.textDark.withValues(
-                                alpha: 0.5,
-                              ),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.5),
                             ),
                             filled: true,
                             fillColor: _isRegistered
-                                ? Colors.white
-                                : BauhausDesign.neutral.withValues(alpha: 0.1),
+                                ? Theme.of(context).colorScheme.onInverseSurface
+                                : Theme.of(
+                                    context,
+                                  ).colorScheme.outline.withValues(alpha: 0.1),
                             border: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: BauhausDesign.neutral,
+                                color: Theme.of(context).colorScheme.outline,
                                 width: 2,
                               ),
                               borderRadius: BorderRadius.zero,
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: BauhausDesign.neutral,
+                                color: Theme.of(context).colorScheme.outline,
                                 width: 2,
                               ),
                               borderRadius: BorderRadius.zero,
@@ -351,12 +366,12 @@ class _BauhausNDISectionState extends ConsumerState<BauhausNDISection> {
                   ),
                 ],
 
-                const SizedBox(height: BauhausDesign.space6),
+                SizedBox(height: BauhausDesign.space6),
 
                 // NDIS Status Card
                 _BauhausNDISatusCard(organization: widget.organization),
 
-                const SizedBox(height: BauhausDesign.space6),
+                SizedBox(height: BauhausDesign.space6),
 
                 // Action Buttons
                 if (isMobile) ...[
@@ -369,7 +384,7 @@ class _BauhausNDISectionState extends ConsumerState<BauhausNDISection> {
                         onPressed: _isSaving ? null : _saveNDISDetails,
                         isLoading: _isSaving,
                       ),
-                      const SizedBox(height: BauhausDesign.space3),
+                      SizedBox(height: BauhausDesign.space3),
                       _BauhausSecondaryButton(
                         text: 'RESET',
                         onPressed: _isSaving
@@ -404,7 +419,7 @@ class _BauhausNDISectionState extends ConsumerState<BauhausNDISection> {
                         onPressed: _isSaving ? null : _saveNDISDetails,
                         isLoading: _isSaving,
                       ),
-                      const SizedBox(width: BauhausDesign.space3),
+                      SizedBox(width: BauhausDesign.space3),
                       _BauhausSecondaryButton(
                         text: 'RESET',
                         onPressed: _isSaving
@@ -433,7 +448,7 @@ class _BauhausNDISectionState extends ConsumerState<BauhausNDISection> {
                 ],
 
                 if (_errorMessage != null) ...[
-                  const SizedBox(height: BauhausDesign.space3),
+                  SizedBox(height: BauhausDesign.space3),
                   Container(
                     padding: const EdgeInsets.all(BauhausDesign.space3),
                     decoration: BoxDecoration(
@@ -479,11 +494,11 @@ class _BauhausPrimaryButton extends StatelessWidget {
       decoration: BoxDecoration(
         color: isEnabled
             ? BauhausDesign.primary
-            : BauhausDesign.neutral.withValues(alpha: 0.1),
+            : Theme.of(context).colorScheme.outline.withValues(alpha: 0.1),
         border: Border.all(
           color: isEnabled
-              ? BauhausDesign.neutral
-              : BauhausDesign.neutral.withValues(alpha: 0.3),
+              ? Theme.of(context).colorScheme.outline
+              : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
           width: 2,
         ),
         boxShadow: isEnabled ? [BauhausDesign.shadowHard] : [],
@@ -498,11 +513,13 @@ class _BauhausPrimaryButton extends StatelessWidget {
               vertical: BauhausDesign.space3,
             ),
             child: isLoading
-                ? const SizedBox(
+                ? SizedBox(
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).colorScheme.onInverseSurface,
+                      ),
                       strokeWidth: 2,
                     ),
                   )
@@ -512,8 +529,10 @@ class _BauhausPrimaryButton extends StatelessWidget {
                       fontSize: BauhausDesign.fontMd,
                       fontWeight: FontWeight.w600,
                       color: isEnabled
-                          ? Colors.white
-                          : BauhausDesign.textDark.withValues(alpha: 0.3),
+                          ? Theme.of(context).colorScheme.onInverseSurface
+                          : Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.3),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -539,8 +558,8 @@ class _BauhausSecondaryButton extends StatelessWidget {
         color: Colors.transparent,
         border: Border.all(
           color: isEnabled
-              ? BauhausDesign.neutral
-              : BauhausDesign.neutral.withValues(alpha: 0.3),
+              ? Theme.of(context).colorScheme.outline
+              : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
           width: 2,
         ),
         boxShadow: isEnabled ? [BauhausDesign.shadowHardSm] : [],
@@ -560,8 +579,10 @@ class _BauhausSecondaryButton extends StatelessWidget {
                 fontSize: BauhausDesign.fontMd,
                 fontWeight: FontWeight.w600,
                 color: isEnabled
-                    ? BauhausDesign.textDark
-                    : BauhausDesign.textDark.withValues(alpha: 0.3),
+                    ? Theme.of(context).colorScheme.onSurface
+                    : Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.3),
               ),
               textAlign: TextAlign.center,
             ),
@@ -586,8 +607,11 @@ class _BauhausNDISatusCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: BauhausDesign.surfaceWhite,
-        border: Border.all(color: BauhausDesign.neutral, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
         boxShadow: [BauhausDesign.shadowHardSm],
       ),
       child: Column(
@@ -598,26 +622,29 @@ class _BauhausNDISatusCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: isRegistered
                   ? BauhausDesign.success
-                  : BauhausDesign.neutral,
+                  : Theme.of(context).colorScheme.outline,
               border: Border(
-                bottom: BorderSide(color: BauhausDesign.neutral, width: 2),
+                bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
               ),
             ),
             child: Row(
               children: [
                 Icon(
                   isRegistered ? Icons.verified : Icons.pending,
-                  color: BauhausDesign.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                   size: 20,
                 ),
-                const SizedBox(width: BauhausDesign.space2),
+                SizedBox(width: BauhausDesign.space2),
                 Expanded(
                   child: Text(
                     isRegistered ? 'NDIS REGISTERED' : 'NOT NDIS REGISTERED',
                     style: GoogleFonts.inter(
                       fontSize: BauhausDesign.fontSm,
                       fontWeight: FontWeight.w600,
-                      color: BauhausDesign.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -635,10 +662,10 @@ class _BauhausNDISatusCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: BauhausDesign.fontMd,
                     fontWeight: FontWeight.w600,
-                    color: BauhausDesign.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
-                const SizedBox(height: BauhausDesign.space3),
+                SizedBox(height: BauhausDesign.space3),
                 Row(
                   children: [
                     Container(
@@ -647,9 +674,9 @@ class _BauhausNDISatusCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: isRegistered
                             ? BauhausDesign.success
-                            : BauhausDesign.neutral,
+                            : Theme.of(context).colorScheme.outline,
                         border: Border.all(
-                          color: BauhausDesign.neutral,
+                          color: Theme.of(context).colorScheme.outline,
                           width: 1,
                         ),
                       ),
@@ -657,11 +684,11 @@ class _BauhausNDISatusCard extends StatelessWidget {
                           ? Icon(
                               Icons.check,
                               size: 12,
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                             )
                           : null,
                     ),
-                    const SizedBox(width: BauhausDesign.space2),
+                    SizedBox(width: BauhausDesign.space2),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -671,9 +698,9 @@ class _BauhausNDISatusCard extends StatelessWidget {
                             style: GoogleFonts.inter(
                               fontSize: BauhausDesign.fontXs,
                               fontWeight: FontWeight.w600,
-                              color: BauhausDesign.textDark.withValues(
-                                alpha: 0.7,
-                              ),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.7),
                               letterSpacing: 0.5,
                             ),
                           ),
@@ -682,7 +709,7 @@ class _BauhausNDISatusCard extends StatelessWidget {
                             style: GoogleFonts.inter(
                               fontSize: BauhausDesign.fontSm,
                               fontWeight: FontWeight.w500,
-                              color: BauhausDesign.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         ],
@@ -691,7 +718,7 @@ class _BauhausNDISatusCard extends StatelessWidget {
                   ],
                 ),
                 if (isRegistered && hasRegistrationNumber) ...[
-                  const SizedBox(height: BauhausDesign.space3),
+                  SizedBox(height: BauhausDesign.space3),
                   Row(
                     children: [
                       Container(
@@ -700,9 +727,9 @@ class _BauhausNDISatusCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: hasRegistrationNumber
                               ? BauhausDesign.success
-                              : BauhausDesign.neutral,
+                              : Theme.of(context).colorScheme.outline,
                           border: Border.all(
-                            color: BauhausDesign.neutral,
+                            color: Theme.of(context).colorScheme.outline,
                             width: 1,
                           ),
                         ),
@@ -710,11 +737,11 @@ class _BauhausNDISatusCard extends StatelessWidget {
                             ? Icon(
                                 Icons.check,
                                 size: 12,
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                               )
                             : null,
                       ),
-                      const SizedBox(width: BauhausDesign.space2),
+                      SizedBox(width: BauhausDesign.space2),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -724,9 +751,9 @@ class _BauhausNDISatusCard extends StatelessWidget {
                               style: GoogleFonts.inter(
                                 fontSize: BauhausDesign.fontXs,
                                 fontWeight: FontWeight.w600,
-                                color: BauhausDesign.textDark.withValues(
-                                  alpha: 0.7,
-                                ),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.7),
                                 letterSpacing: 0.5,
                               ),
                             ),
@@ -735,7 +762,7 @@ class _BauhausNDISatusCard extends StatelessWidget {
                               style: GoogleFonts.inter(
                                 fontSize: BauhausDesign.fontSm,
                                 fontWeight: FontWeight.w500,
-                                color: BauhausDesign.textDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                           ],
