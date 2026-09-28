@@ -130,7 +130,6 @@ class BauhausAppointmentCard extends ConsumerWidget {
                           color: colorScheme.outline,
                           width: 2,
                         ),
-                        shape: BoxShape.circle,
                       ),
                       child: Icon(
                         Icons.arrow_forward,
