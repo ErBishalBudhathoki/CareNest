@@ -146,9 +146,7 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
                       child: Container(
                         width: 200,
                         height: 200,
-                        decoration: BoxDecoration(
-                          color: colorYellow,
-                        ),
+                        decoration: BoxDecoration(color: colorYellow),
                       ),
                     ),
                     Positioned(
