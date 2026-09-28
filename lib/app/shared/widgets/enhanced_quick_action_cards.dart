@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 /// Enhanced Quick Action Cards with improved UX
@@ -106,15 +107,7 @@ class _EnhancedQuickActionCardState extends State<EnhancedQuickActionCard>
                         widget.data.color.withValues(alpha: 0.1),
                       ],
                     ),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: widget.data.color.withValues(alpha: 0.1),
-                    spreadRadius: 1,
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+                boxShadow: const [BauhausDesign.shadowHardSm],
                 border: Border.all(
                   color: widget.data.color.withValues(alpha: 0.1),
                   width: 1,
@@ -189,7 +182,6 @@ class _EnhancedQuickActionCardState extends State<EnhancedQuickActionCard>
       height: 48,
       decoration: BoxDecoration(
         color: widget.data.color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(widget.data.icon, color: widget.data.color, size: 24),
     );
@@ -227,7 +219,6 @@ class _EnhancedQuickActionCardState extends State<EnhancedQuickActionCard>
       padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 2),
       decoration: BoxDecoration(
         color: widget.data.badgeColor ?? colorScheme.error,
-        borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
         widget.data.badge!,

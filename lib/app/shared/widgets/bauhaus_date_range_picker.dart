@@ -224,7 +224,6 @@ class _BauhausDateRangePickerState extends State<BauhausDateRangePicker> {
                           color: colorScheme.outline,
                           width: 2.5,
                         ),
-                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Icon(
                         Icons.calendar_today_outlined,
