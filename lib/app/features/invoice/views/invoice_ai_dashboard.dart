@@ -83,10 +83,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
                 Container(
                   width: 4,
                   height: 20,
-                  decoration: BoxDecoration(
-                    color: BauhausDesign.secondary,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
+                  decoration: BoxDecoration(color: BauhausDesign.secondary),
                 ),
                 const SizedBox(width: BauhausDesign.space2),
                 Text(
