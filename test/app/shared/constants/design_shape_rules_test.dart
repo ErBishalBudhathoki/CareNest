@@ -115,9 +115,6 @@ const _knownCircularGeometryDebt = <String>{
   'lib/app/features/admin/views/admin_dashboard_view.dart',
   'lib/app/features/admin/views/employee_invoice_generation_view.dart',
   'lib/app/features/analytics/views/enhanced_predictive_insights_view.dart',
-  'lib/app/features/auth/views/forgot_password_view.dart',
-  'lib/app/features/auth/views/login_view_bauhaus.dart',
-  'lib/app/features/auth/views/verify_otp_view.dart',
   'lib/app/features/care_intelligence/views/care_intelligence_dashboard.dart',
   'lib/app/features/care_intelligence/views/risk_assessment_view.dart',
   'lib/app/features/client_portal/views/client_appointment_detail_view.dart',
@@ -162,6 +159,46 @@ const _knownCircularGeometryDebt = <String>{
   'lib/app/shared/widgets/photo_display_widget.dart',
 };
 
+/// Known debt: soft, blurred shadows. DESIGN.md, "Elevation & Depth":
+/// > Depth is created strictly through physical neo-brutalist hard offsets
+/// > rather than soft ambient blur shadows.
+/// Every entry is a migration target. Each screen batch removes its own
+/// entries; the list must only shrink. Do not add to silence a violation.
+const _knownSoftShadowDebt = <String>{
+  'lib/app/features/auth/views/forgot_password_view.dart',
+  'lib/app/features/auth/views/verify_otp_view.dart',
+  'lib/app/features/client_portal/views/client_appointment_detail_view.dart',
+  'lib/app/features/client_portal/views/client_invoice_detail_view.dart',
+  'lib/app/features/earnings/views/earnings_dashboard_view.dart',
+  'lib/app/features/expenses/presentation/widgets/enhanced_file_viewer_widget.dart',
+  'lib/app/features/home/widgets/live_worker_map_widget.dart',
+  'lib/app/features/invoice/views/enhanced_invoice_generation_view.dart',
+  'lib/app/features/invoice/widgets/bauhaus_date_range_picker.dart',
+  'lib/app/features/pricing/views/enhanced_pricing_dashboard_view.dart',
+  'lib/app/features/pricing/views/pricing_analytics_view.dart',
+  'lib/app/features/pricing/views/pricing_validation_view.dart',
+  'lib/app/features/realtime_portal/views/live_tracking_view.dart',
+  'lib/app/features/workforce_optimization/views/business_intelligence_view.dart',
+  'lib/app/features/workforce_optimization/views/performance_analytics_view.dart',
+  'lib/app/features/workforce_optimization/views/quality_assurance_view.dart',
+  'lib/app/features/workforce_optimization/views/report_builder_view.dart',
+  'lib/app/features/workforce_optimization/views/resource_allocation_view.dart',
+  'lib/app/features/workforce_optimization/views/workforce_planning_view.dart',
+  'lib/app/shared/widgets/appointment_card_widget.dart',
+  'lib/app/shared/widgets/bauhaus_time_picker.dart',
+  'lib/app/shared/widgets/dynamic_appointment_card_widget.dart',
+  'lib/app/shared/widgets/enhanced_3d_assignment_card.dart',
+  'lib/app/shared/widgets/enhanced_3d_holiday_card.dart',
+  'lib/app/shared/widgets/enhanced_quick_action_cards.dart',
+  'lib/app/shared/widgets/enhanced_stat_cards.dart',
+  'lib/app/shared/widgets/home_detail_card_widget.dart',
+  'lib/app/shared/widgets/photo_display_widget.dart',
+};
+
+/// A non-zero blurRadius. DESIGN.md requires zero-blur hard offset shadows;
+/// see BauhausDesign.shadowHard* for the compliant tokens.
+final _softBlur = RegExp(r'blurRadius:\s*(?!0(\.0*)?\s*,)\d');
+
 /// Strips whole-line `//` comments so a comment mentioning a widget does not
 /// trip the guard.
 String _codeOf(String source) =>
@@ -186,6 +223,9 @@ String _rel(File f) => f.path.replaceFirst('${Directory.current.path}/', '');
 
 /// Screens already reviewed and migrated. These must stay perfectly sharp.
 const _scopedFiles = <String>[
+  'lib/app/features/auth/views/login_view_bauhaus.dart',
+  'lib/app/features/auth/views/forgot_password_view.dart',
+  'lib/app/features/auth/views/verify_otp_view.dart',
   'lib/app/features/invoice/views/price_override_view.dart',
   'lib/app/features/pricing/views/pricing_configuration_view.dart',
   'lib/app/features/pricing/views/ndis_pricing_management_view.dart',
@@ -318,6 +358,31 @@ void main() {
     expect(
       offenders.length,
       lessThanOrEqualTo(_knownRadiusDebt.length),
+      reason: 'the known-debt list must shrink, never grow',
+    );
+  });
+
+  test('soft blurred shadows are ratcheting down', () {
+    final offenders = <String>[];
+    for (final f in _libFiles()) {
+      final rel = _rel(f);
+      if (_softBlur.hasMatch(_codeOf(f.readAsStringSync()))) {
+        offenders.add(rel);
+      }
+    }
+    final known = _knownSoftShadowDebt.toSet();
+    final newOnes = offenders.where((f) => !known.contains(f)).toList();
+    expect(
+      newOnes,
+      isEmpty,
+      reason:
+          'DESIGN.md requires hard offset shadows with zero blur. These files '
+          'use a non-zero blurRadius but are not in the known-debt ratchet:\n'
+          '${newOnes.join('\n')}',
+    );
+    expect(
+      offenders.length,
+      lessThanOrEqualTo(_knownSoftShadowDebt.length),
       reason: 'the known-debt list must shrink, never grow',
     );
   });
