@@ -1396,7 +1396,6 @@ class _EmployeeInvoiceGenerationViewState
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.secondary,
-                        shape: BoxShape.circle,
                         border: Border.all(
                           color: Theme.of(context).colorScheme.onSurface,
                           width: 1.5,

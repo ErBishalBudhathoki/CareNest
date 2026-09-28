@@ -252,9 +252,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
                           _launchUrl(widget.receiptUrls[index]);
                         },
                         tileColor: colorScheme.surface,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                        shape: RoundedRectangleBorder(),
                       ),
                     );
                   },

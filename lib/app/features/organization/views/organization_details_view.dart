@@ -787,7 +787,6 @@ $appLink
                       height: 4,
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.outline,
-                        borderRadius: BorderRadius.circular(2),
                       ),
                     ),
                     SizedBox(height: BauhausDesign.space4),
@@ -1311,7 +1310,6 @@ $appLink
                                                         color:
                                                             status['color']
                                                                 as Color,
-                                                        shape: BoxShape.circle,
                                                       ),
                                                     ),
                                                     SizedBox(width: 6),
@@ -1505,7 +1503,6 @@ $appLink
                       width: 64,
                       height: 64,
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle,
                         color: Theme.of(context).colorScheme.surface,
                         image: (logoUrl != null && logoUrl.isNotEmpty)
                             ? DecorationImage(
@@ -1528,10 +1525,7 @@ $appLink
                     if (isVerified)
                       Container(
                         padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: BauhausDesign.success,
-                          shape: BoxShape.circle,
-                        ),
+                        decoration: BoxDecoration(color: BauhausDesign.success),
                         child: Icon(
                           Icons.check,
                           color: Theme.of(context).colorScheme.onInverseSurface,

@@ -54,7 +54,6 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                 padding: const EdgeInsets.all(BauhausDesign.space3),
                 decoration: BoxDecoration(
                   color: BauhausDesign.success.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.check_circle,
@@ -218,7 +217,6 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                 color: Theme.of(
                   context,
                 ).colorScheme.outline.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(2),
               ),
             ),
           ),

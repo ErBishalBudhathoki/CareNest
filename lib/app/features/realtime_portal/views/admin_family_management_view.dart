@@ -231,7 +231,6 @@ class _AdminFamilyManagementViewState
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: color.withValues(alpha: 0.5), width: 1),
       ),
       child: Text(

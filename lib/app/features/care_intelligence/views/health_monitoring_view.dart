@@ -199,10 +199,7 @@ class _HealthMonitoringViewState extends ConsumerState<HealthMonitoringView> {
                     horizontal: 8,
                     vertical: 4,
                   ),
-                  decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
+                  decoration: BoxDecoration(color: color),
                   child: Text(
                     status.toUpperCase(),
                     style: TextStyle(

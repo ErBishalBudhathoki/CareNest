@@ -55,88 +55,13 @@ final _literalRadius = RegExp(
 /// roundedness 0 outside avatars, so every entry here is a migration target.
 /// Each screen batch removes its own entry; the list must only shrink.
 /// Do not add to this list to silence a new violation.
-const _knownRadiusDebt = <String>{
-  'lib/app/core/services/file_conversion_service.dart',
-  'lib/app/features/analytics/widgets/overtime_heatmap.dart',
-  'lib/app/features/analytics/widgets/utilization_gauge.dart',
-  'lib/app/features/appointment/views/select_client_for_assignmnet.dart',
-  'lib/app/features/bulk_actions/views/bulk_actions_view.dart',
-  'lib/app/features/care_intelligence/views/health_monitoring_view.dart',
-  'lib/app/features/care_intelligence/views/medication_management_view.dart',
-  'lib/app/features/care_intelligence/views/outcome_tracking_view.dart',
-  'lib/app/features/client/views/client_list_view.dart',
-  'lib/app/features/earnings/views/earnings_dashboard_view.dart',
-  'lib/app/features/employee_tracking/views/employee_tracking_view.dart',
-  'lib/app/features/expenses/presentation/widgets/enhanced_file_viewer_widget.dart',
-  'lib/app/features/invoice/services/invoice_pdf_generator_service.dart',
-  'lib/app/features/onboarding/views/onboarding_stepper_view.dart',
-  'lib/app/features/onboarding/views/onboarding_welcome_view.dart',
-  'lib/app/features/organization/views/organization_details_view.dart',
-  'lib/app/features/pricing/views/pricing_analytics_view.dart',
-  'lib/app/features/realtime_portal/views/admin_family_management_view.dart',
-  'lib/app/features/realtime_portal/views/admin_service_confirmations_view.dart',
-  'lib/app/features/realtime_portal/views/appointment_timeline_view.dart',
-  'lib/app/features/realtime_portal/views/live_tracking_view.dart',
-  'lib/app/features/realtime_portal/views/realtime_portal_dashboard.dart',
-  'lib/app/features/requests/views/add_shift_request_view.dart',
-  'lib/app/features/requests/views/add_time_off_request_view.dart',
-  'lib/app/features/requests/views/requests_view.dart',
-  'lib/app/features/requests/views/shift_exchange_view.dart',
-  'lib/app/features/schedule/views/schedule_dashboard_screen.dart',
-  'lib/app/features/schedule/widgets/smart_assign_dialog.dart',
-  'lib/app/shared/utils/pdf/pdf_viewer_io.dart',
-  'lib/app/shared/widgets/appointment_card_widget.dart',
-  'lib/app/shared/widgets/button_with_variable_width_height_widget.dart',
-  'lib/app/shared/widgets/card_label_text_widget.dart',
-  'lib/app/shared/widgets/enhanced_3d_assignment_card.dart',
-  'lib/app/shared/widgets/enhanced_3d_holiday_card.dart',
-  'lib/app/shared/widgets/enhanced_stat_cards.dart',
-  'lib/app/shared/widgets/glass_card.dart',
-};
+const _knownRadiusDebt = <String>{};
 
 /// Known debt, tracked so the guard can ratchet. Every entry is a file with
 /// decorative circular geometry that DESIGN.md does not sanction. Each screen
 /// batch removes its own entry; the list must only ever shrink. Do not add to
 /// this list to silence a new violation.
-const _knownCircularGeometryDebt = <String>{
-  'lib/app/features/admin/views/admin_dashboard_view.dart',
-  'lib/app/features/admin/views/employee_invoice_generation_view.dart',
-  'lib/app/features/analytics/views/enhanced_predictive_insights_view.dart',
-  'lib/app/features/care_intelligence/views/care_intelligence_dashboard.dart',
-  'lib/app/features/care_intelligence/views/risk_assessment_view.dart',
-  'lib/app/features/client_portal/views/client_appointment_detail_view.dart',
-  'lib/app/features/client_portal/views/client_portal_dashboard.dart',
-  'lib/app/features/employee_tracking/widgets/employee_status_card.dart',
-  'lib/app/features/expenses/presentation/widgets/enhanced_file_attachment_widget.dart',
-  'lib/app/features/expenses/widgets/expense_photo_attachment_widget.dart',
-  'lib/app/features/feedback/views/feedback_form_view.dart',
-  'lib/app/features/holiday/views/holiday_list_view.dart',
-  'lib/app/features/home/widgets/live_worker_map_widget.dart',
-  'lib/app/features/home/widgets/live_worker_map_widget_full.dart',
-  'lib/app/features/notifications/widgets/bauhaus_notification_card.dart',
-  'lib/app/features/ocr/views/ocr_view.dart',
-  'lib/app/features/offline/views/offline_sync_dashboard_view.dart',
-  'lib/app/features/onboarding/views/onboarding_welcome_view.dart',
-  'lib/app/features/organization/views/organization_details_view.dart',
-  'lib/app/features/organization/views/organization_edit_view.dart',
-  'lib/app/features/photo/views/photo_upload_view.dart',
-  'lib/app/features/pricing/views/enhanced_pricing_dashboard_view.dart',
-  'lib/app/features/pricing/views/pricing_analytics_view.dart',
-  'lib/app/features/realtime_portal/views/realtime_portal_dashboard.dart',
-  'lib/app/features/requests/views/add_shift_request_view.dart',
-  'lib/app/features/requests/views/add_time_off_request_view.dart',
-  'lib/app/features/requests/views/requests_view.dart',
-  'lib/app/features/settings/views/date_format_settings_view.dart',
-  'lib/app/features/settings/views/theme_settings_view.dart',
-  'lib/app/features/settings/widgets/bauhaus_settings_widgets.dart',
-  'lib/app/features/teams/views/team_dashboard_view.dart',
-  'lib/app/features/worker/views/widgets/worker_status_card.dart',
-  'lib/app/shared/utils/image_utils.dart',
-  'lib/app/shared/widgets/dynamic_appointment_card_widget.dart',
-  'lib/app/shared/widgets/enhanced_3d_assignment_card.dart',
-  'lib/app/shared/widgets/enhanced_3d_holiday_card.dart',
-  'lib/app/shared/widgets/photo_display_widget.dart',
-};
+const _knownCircularGeometryDebt = <String>{};
 
 /// Known debt: soft, blurred shadows. DESIGN.md, "Elevation & Depth":
 /// > Depth is created strictly through physical neo-brutalist hard offsets
@@ -146,17 +71,7 @@ const _knownCircularGeometryDebt = <String>{
 ///
 /// Every entry is a migration target. Each screen batch removes its own
 /// entries; the list must only shrink. Do not add to silence a violation.
-const _knownSoftShadowDebt = <String>{
-  'lib/app/features/client_portal/views/client_appointment_detail_view.dart',
-  'lib/app/features/client_portal/views/client_invoice_detail_view.dart',
-  'lib/app/features/earnings/views/earnings_dashboard_view.dart',
-  'lib/app/features/expenses/presentation/widgets/enhanced_file_viewer_widget.dart',
-  'lib/app/features/home/widgets/live_worker_map_widget.dart',
-  'lib/app/features/pricing/views/enhanced_pricing_dashboard_view.dart',
-  'lib/app/features/pricing/views/pricing_analytics_view.dart',
-  'lib/app/features/pricing/views/pricing_validation_view.dart',
-  'lib/app/features/realtime_portal/views/live_tracking_view.dart',
-};
+const _knownSoftShadowDebt = <String>{};
 
 /// Captures the numeric blurRadius so the value can be compared as a number.
 /// A textual negative lookahead is wrong here: `blurRadius: 0` and
@@ -187,34 +102,43 @@ bool _hasSoftBlur(String code) {
   return false;
 }
 
-/// A Container with an explicit width and height, both at or below
-/// [_minuteIndicatorMax], that also sets BoxShape.circle.
-final _sizedContainer = RegExp(
-  r'Container\((?:(?!\)\s*).)*?\bwidth:\s*([0-9.]+),(?:(?!\)\s*).)*?'
-  r'\bheight:\s*([0-9.]+),(?:(?!\)\s*).)*?BoxShape\.circle',
-  dotAll: true,
-);
+final _extent = RegExp(r'\b(width|height):\s*([0-9]+(?:\.[0-9]+)?)');
+
+/// How far back from a circle to look for the extents that size it.
+///
+/// Two earlier approaches were wrong. A regex spanning a whole `Container(...)`
+/// body attributed a nested child's size to its parent, and a paren-depth scan
+/// mis-nested spans in deeply indented code, so both reported a 4px "today" dot
+/// as a violation. Reading the nearest preceding extents within a fixed window
+/// is coarse but predictable, and the window is wide enough for the indentation
+/// actually present in this codebase.
+const _extentLookback = 600;
 
 /// DESIGN.md permits circular geometry for "minute functional terminal
 /// indicators (e.g., live-feed pulse LEDs and active segment indicators)". A
-/// small status dot is one; a large decorative shape is not. The threshold is
-/// generous enough for the functional indicators actually in use (a 4px
-/// "today" dot in the date range picker, an 8px success LED, an 18px radio
-/// dot) while excluding the 100-200px background shapes that were migrated
-/// in the earlier batches.
+/// small status dot is one; a large decorative shape is not. The threshold
+/// covers the functional indicators actually in use (a 4px "today" dot, an 8px
+/// success LED, a 10px bullet marker, an 18px radio dot) while excluding the
+/// 100-200px background shapes migrated in the earlier batches.
 const _minuteIndicatorMax = 24.0;
 
 bool _hasOversizedCircle(String code) {
-  for (final m in _sizedContainer.allMatches(code)) {
-    final w = double.parse(m.group(1)!);
-    final h = double.parse(m.group(2)!);
+  for (final circle in 'BoxShape.circle'.allMatches(code)) {
+    final from = circle.start - _extentLookback < 0
+        ? 0
+        : circle.start - _extentLookback;
+    final extents = <String, double>{};
+    for (final e in _extent.allMatches(code.substring(from, circle.start))) {
+      extents[e.group(1)!] = double.parse(e.group(2)!);
+    }
+    final w = extents['width'];
+    final h = extents['height'];
+    // Unmeasurable is treated as a violation, so a new decorative circle has to
+    // be given an explicit, reviewed decision.
+    if (w == null || h == null) return true;
     if (w > _minuteIndicatorMax || h > _minuteIndicatorMax) return true;
   }
-  // A BoxShape.circle with no measurable size next to it is suspicious; treat
-  // it as a violation so it gets an explicit, reviewed decision.
-  final total = _sizedContainer.allMatches(code).length;
-  final circles = 'BoxShape.circle'.allMatches(code).length;
-  return circles > total;
+  return false;
 }
 
 /// Strips whole-line `//` comments so a comment mentioning a widget does not
@@ -283,6 +207,17 @@ void main() {
               'DESIGN.md requires roundedness 0. Non-zero literal radii at '
               'offsets ${matches.map((m) => m.start).toList()}. Use '
               'BauhausDesign.radius* (all 0.0) or BorderRadius.zero.',
+        );
+      });
+
+      test('$path has no oversized decorative circle', () {
+        expect(
+          _hasOversizedCircle(_codeOf(_read(path))),
+          isFalse,
+          reason:
+              'Only avatars and minute functional indicators may be circular. '
+              'A decorative Container circle must be at most '
+              '${_minuteIndicatorMax}px, or be removed.',
         );
       });
 
@@ -375,7 +310,7 @@ void main() {
     final offenders = <String>[];
     for (final f in _libFiles()) {
       final rel = _rel(f);
-      if (_avatarFiles.contains(rel)) continue;
+      if (_avatarFiles.contains(rel) || _scopedFiles.contains(rel)) continue;
       if (_literalRadius.hasMatch(_codeOf(f.readAsStringSync()))) {
         offenders.add(rel);
       }
@@ -426,7 +361,7 @@ void main() {
     final offenders = <String>[];
     for (final f in _libFiles()) {
       final rel = _rel(f);
-      if (_avatarFiles.contains(rel)) continue;
+      if (_avatarFiles.contains(rel) || _scopedFiles.contains(rel)) continue;
       if (_hasOversizedCircle(_codeOf(f.readAsStringSync()))) {
         offenders.add(rel);
       }

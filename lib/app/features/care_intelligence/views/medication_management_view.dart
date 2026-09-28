@@ -226,7 +226,6 @@ class _MedicationManagementViewState
             ),
             const SizedBox(height: 12),
             ClipRRect(
-              borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
                 value: state.compliance!.overallCompliance,
                 backgroundColor: Theme.of(
