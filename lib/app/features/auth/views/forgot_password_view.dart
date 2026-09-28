@@ -121,7 +121,6 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
                   height: 100,
                   decoration: BoxDecoration(
                     color: BauhausDesign.secondary.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
                     border: Border.all(
                       color: BauhausDesign.secondary.withValues(alpha: 0.3),
                       width: 2,
