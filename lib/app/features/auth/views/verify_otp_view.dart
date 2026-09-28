@@ -95,8 +95,7 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
             boxShadow: [
               BoxShadow(
                 color: BauhausDesign.accent.withValues(alpha: 0.15),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
+                offset: const Offset(3, 3),
               ),
             ],
           ),
@@ -149,8 +148,7 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
         boxShadow: [
           BoxShadow(
             color: BauhausDesign.primary.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: const Offset(2, 2),
           ),
         ],
       ),

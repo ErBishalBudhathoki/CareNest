@@ -1500,10 +1500,7 @@ class _NdisPricingManagementViewState
                   Container(
                     width: 18,
                     height: 18,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: _accentRed,
-                    ),
+                    decoration: BoxDecoration(color: _accentRed),
                     child: Icon(
                       Icons.info,
                       color: Theme.of(context).colorScheme.surface,
