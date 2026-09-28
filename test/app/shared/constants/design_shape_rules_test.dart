@@ -69,9 +69,7 @@ const _knownRadiusDebt = <String>{
   'lib/app/features/onboarding/views/onboarding_stepper_view.dart',
   'lib/app/features/onboarding/views/onboarding_welcome_view.dart',
   'lib/app/features/organization/views/organization_details_view.dart',
-  'lib/app/features/pricing/views/enhanced_pricing_dashboard_view.dart',
   'lib/app/features/pricing/views/pricing_analytics_view.dart',
-  'lib/app/features/pricing/views/pricing_validation_view.dart',
   'lib/app/features/realtime_portal/views/admin_family_management_view.dart',
   'lib/app/features/realtime_portal/views/admin_service_confirmations_view.dart',
   'lib/app/features/realtime_portal/views/appointment_timeline_view.dart',
@@ -91,12 +89,10 @@ const _knownRadiusDebt = <String>{
   'lib/app/features/workforce_optimization/views/workforce_planning_view.dart',
   'lib/app/shared/utils/pdf/pdf_viewer_io.dart',
   'lib/app/shared/widgets/appointment_card_widget.dart',
-  'lib/app/shared/widgets/bauhaus_date_range_picker.dart',
   'lib/app/shared/widgets/button_with_variable_width_height_widget.dart',
   'lib/app/shared/widgets/card_label_text_widget.dart',
   'lib/app/shared/widgets/enhanced_3d_assignment_card.dart',
   'lib/app/shared/widgets/enhanced_3d_holiday_card.dart',
-  'lib/app/shared/widgets/enhanced_quick_action_cards.dart',
   'lib/app/shared/widgets/enhanced_stat_cards.dart',
   'lib/app/shared/widgets/glass_card.dart',
 };
@@ -118,7 +114,6 @@ const _knownCircularGeometryDebt = <String>{
   'lib/app/features/expenses/widgets/expense_photo_attachment_widget.dart',
   'lib/app/features/feedback/views/feedback_form_view.dart',
   'lib/app/features/holiday/views/holiday_list_view.dart',
-  'lib/app/features/home/widgets/bauhaus_appointment_card.dart',
   'lib/app/features/home/widgets/live_worker_map_widget.dart',
   'lib/app/features/home/widgets/live_worker_map_widget_full.dart',
   'lib/app/features/invoice/views/automatic_invoice_generation_view.dart',
@@ -134,7 +129,6 @@ const _knownCircularGeometryDebt = <String>{
   'lib/app/features/organization/views/organization_edit_view.dart',
   'lib/app/features/photo/views/photo_upload_view.dart',
   'lib/app/features/pricing/views/enhanced_pricing_dashboard_view.dart',
-  'lib/app/features/pricing/views/ndis_pricing_management_view.dart',
   'lib/app/features/pricing/views/pricing_analytics_view.dart',
   'lib/app/features/realtime_portal/views/realtime_portal_dashboard.dart',
   'lib/app/features/requests/views/add_shift_request_view.dart',
@@ -162,8 +156,6 @@ const _knownCircularGeometryDebt = <String>{
 /// Every entry is a migration target. Each screen batch removes its own
 /// entries; the list must only shrink. Do not add to silence a violation.
 const _knownSoftShadowDebt = <String>{
-  'lib/app/features/auth/views/forgot_password_view.dart',
-  'lib/app/features/auth/views/verify_otp_view.dart',
   'lib/app/features/client_portal/views/client_appointment_detail_view.dart',
   'lib/app/features/client_portal/views/client_invoice_detail_view.dart',
   'lib/app/features/earnings/views/earnings_dashboard_view.dart',
@@ -209,6 +201,34 @@ bool _hasSoftBlur(String code) {
     if (double.parse(m.group(1)!) != 0) return true;
   }
   return false;
+}
+
+/// A Container with an explicit width and height, both at or below
+/// [_minuteIndicatorMax], that also sets BoxShape.circle.
+final _sizedContainer = RegExp(
+  r'Container\((?:(?!\)\s*).)*?\bwidth:\s*([0-9.]+),(?:(?!\)\s*).)*?'
+  r'\bheight:\s*([0-9.]+),(?:(?!\)\s*).)*?BoxShape\.circle',
+  dotAll: true,
+);
+
+/// DESIGN.md permits circular geometry for "minute functional terminal
+/// indicators (e.g., live-feed pulse LEDs and active segment indicators)". A
+/// small status dot is one; a large decorative shape is not. The threshold is
+/// generous enough for a badge-sized LED while excluding the 100-200px
+/// background shapes that were being migrated.
+const _minuteIndicatorMax = 16.0;
+
+bool _hasOversizedCircle(String code) {
+  for (final m in _sizedContainer.allMatches(code)) {
+    final w = double.parse(m.group(1)!);
+    final h = double.parse(m.group(2)!);
+    if (w > _minuteIndicatorMax || h > _minuteIndicatorMax) return true;
+  }
+  // A BoxShape.circle with no measurable size next to it is suspicious; treat
+  // it as a violation so it gets an explicit, reviewed decision.
+  final total = _sizedContainer.allMatches(code).length;
+  final circles = 'BoxShape.circle'.allMatches(code).length;
+  return circles > total;
 }
 
 /// Strips whole-line `//` comments so a comment mentioning a widget does not
@@ -409,7 +429,7 @@ void main() {
     for (final f in _libFiles()) {
       final rel = _rel(f);
       if (_avatarFiles.contains(rel)) continue;
-      if (_codeOf(f.readAsStringSync()).contains('BoxShape.circle')) {
+      if (_hasOversizedCircle(_codeOf(f.readAsStringSync()))) {
         offenders.add(rel);
       }
     }

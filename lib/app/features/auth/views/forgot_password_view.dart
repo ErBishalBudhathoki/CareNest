@@ -128,8 +128,7 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
                     boxShadow: [
                       BoxShadow(
                         color: BauhausDesign.secondary.withValues(alpha: 0.15),
-                        blurRadius: 20,
-                        spreadRadius: 2,
+                        offset: const Offset(3, 3),
                       ),
                     ],
                   ),

@@ -126,7 +126,6 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
               Container(
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surfaceContainer,
-                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: IconButton(
                   onPressed: () => Navigator.of(context).pop(),
@@ -167,7 +166,6 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                   color: Theme.of(
                     context,
                   ).colorScheme.secondary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -268,12 +266,10 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -284,10 +280,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
             children: [
               Container(
                 padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                decoration: BoxDecoration(color: color.withValues(alpha: 0.1)),
                 child: Icon(icon, color: color, size: 20),
               ),
               const Spacer(),
@@ -340,15 +333,13 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             color: Theme.of(
               context,
             ).colorScheme.outlineVariant.withValues(alpha: 0.3),
             spreadRadius: 1,
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -519,7 +510,6 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
         boxShadow: [
           BoxShadow(
@@ -527,7 +517,6 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
               context,
             ).colorScheme.outlineVariant.withValues(alpha: 0.3),
             spreadRadius: 1,
-            blurRadius: 5,
             offset: const Offset(0, 2),
           ),
         ],
@@ -569,7 +558,6 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                               ? Theme.of(context).colorScheme.secondary
                               : Theme.of(context).colorScheme.error)
                           .withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -673,7 +661,6 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
         boxShadow: [
           BoxShadow(
@@ -681,7 +668,6 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
               context,
             ).colorScheme.outlineVariant.withValues(alpha: 0.3),
             spreadRadius: 1,
-            blurRadius: 5,
             offset: const Offset(0, 2),
           ),
         ],
@@ -704,7 +690,6 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                 ),
                 decoration: BoxDecoration(
                   color: trendColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
                   trend['trend'],
@@ -804,7 +789,6 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
       ),
       child: Column(
@@ -835,7 +819,6 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Theme.of(context).colorScheme.secondary),
       ),
       child: Column(
@@ -896,7 +879,6 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Theme.of(context).colorScheme.secondary),
       ),
       child: Column(
