@@ -177,7 +177,14 @@ Key conventions:
 Geometry is strictly sharp (`roundedness: 0`). 
 
 - Corners are unrounded (`0px`) across all cards, badges, buttons, progress tracks, and layout segments to reinforce the technical blueprint aesthetic.
-- The only permissible circular geometry (`rounded-full`) is reserved for minute functional terminal indicators (e.g., live-feed pulse LEDs and active segment indicators).
+- **Exception — avatars and profile images are circular.** Human identity is the one element that reads as an illustration of a person rather than a machined surface, so profile photos, user avatars and their circular clipping (`BoxShape.circle`, `ClipOval`) are intentional. This is the only rounded element in the component set.
+  - Scope: `ProfileImageWidget` (defaults to `BoxShape.circle`), `CircleAvatar`, and the circular clipping helper in `circular_profile_image_widget.dart`.
+  - A circular avatar may still carry the standard `2px` black structural border and hard offset shadow, so it stays consistent with the surrounding hard-edged set.
+  - This exception does **not** extend to containers, tiles, or surfaces that merely hold an avatar: the card, tile or list row around an avatar stays square.
+- The only other permissible circular geometry (`rounded-full`) is reserved for minute functional terminal indicators (e.g., live-feed pulse LEDs and active segment indicators).
+- Pill and stadium shapes are **never** acceptable, including on interactive controls such as switches and toggles. Use `BauhausSwitch`, which has a square track and square thumb.
+- `BauhausDesign.radiusXs`, `radiusSm`, `radiusMd`, `radiusLg`, `radiusXl`, `radiusFull` and `radiusPill` are all `0.0`. Writing `BorderRadius.circular(BauhausDesign.radiusMd)` therefore renders sharp despite looking rounded at the call site; only a non-zero **literal** radius is a violation.
+- `cardTheme`, `chipTheme` and `dialogTheme` already force `BorderRadius.zero`, so bare `Card(` and `Chip(` are sharp by inheritance. Material widgets that are *not* themed that way — notably `Switch` and `Switch.adaptive` — must be replaced with their Bauhaus equivalent.
 
 ## Components
 
