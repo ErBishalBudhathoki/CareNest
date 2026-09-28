@@ -162,6 +162,9 @@ const _knownCircularGeometryDebt = <String>{
 /// Known debt: soft, blurred shadows. DESIGN.md, "Elevation & Depth":
 /// > Depth is created strictly through physical neo-brutalist hard offsets
 /// > rather than soft ambient blur shadows.
+/// Scoped to BoxShadow, not text Shadow: DESIGN.md's rule is about depth, and a
+/// blurred text shadow is a legibility technique rather than a cast shadow.
+///
 /// Every entry is a migration target. Each screen batch removes its own
 /// entries; the list must only shrink. Do not add to silence a violation.
 const _knownSoftShadowDebt = <String>{
@@ -173,7 +176,6 @@ const _knownSoftShadowDebt = <String>{
   'lib/app/features/expenses/presentation/widgets/enhanced_file_viewer_widget.dart',
   'lib/app/features/home/widgets/live_worker_map_widget.dart',
   'lib/app/features/invoice/views/enhanced_invoice_generation_view.dart',
-  'lib/app/features/invoice/widgets/bauhaus_date_range_picker.dart',
   'lib/app/features/pricing/views/enhanced_pricing_dashboard_view.dart',
   'lib/app/features/pricing/views/pricing_analytics_view.dart',
   'lib/app/features/pricing/views/pricing_validation_view.dart',
@@ -184,20 +186,36 @@ const _knownSoftShadowDebt = <String>{
   'lib/app/features/workforce_optimization/views/report_builder_view.dart',
   'lib/app/features/workforce_optimization/views/resource_allocation_view.dart',
   'lib/app/features/workforce_optimization/views/workforce_planning_view.dart',
-  'lib/app/shared/widgets/appointment_card_widget.dart',
-  'lib/app/shared/widgets/bauhaus_time_picker.dart',
-  'lib/app/shared/widgets/dynamic_appointment_card_widget.dart',
-  'lib/app/shared/widgets/enhanced_3d_assignment_card.dart',
-  'lib/app/shared/widgets/enhanced_3d_holiday_card.dart',
-  'lib/app/shared/widgets/enhanced_quick_action_cards.dart',
-  'lib/app/shared/widgets/enhanced_stat_cards.dart',
-  'lib/app/shared/widgets/home_detail_card_widget.dart',
-  'lib/app/shared/widgets/photo_display_widget.dart',
 };
 
-/// A non-zero blurRadius. DESIGN.md requires zero-blur hard offset shadows;
-/// see BauhausDesign.shadowHard* for the compliant tokens.
-final _softBlur = RegExp(r'blurRadius:\s*(?!0(\.0*)?\s*,)\d');
+/// Captures the numeric blurRadius so the value can be compared as a number.
+/// A textual negative lookahead is wrong here: `blurRadius: 0` and
+/// `blurRadius: 0.0` are both compliant, and the character after the value
+/// varies (`0,` vs `0)`), so a lookahead that assumes a trailing comma
+/// reports compliant zero-blur shadows as violations.
+final _blurRadiusValue = RegExp(r'blurRadius:\s*([0-9]+(?:\.[0-9]+)?)');
+
+/// A text `Shadow(` that is not the tail of a `BoxShadow(`.
+final _textShadowToken = RegExp(r'(?<!Box)Shadow\(');
+
+bool _hasSoftBlur(String code) {
+  for (final m in _blurRadiusValue.allMatches(code)) {
+    // DESIGN.md's depth rule is about elevation, so only BoxShadow counts. A
+    // text `Shadow` with a blur is a legibility technique, not a cast shadow,
+    // and is not a violation.
+    final before = code.substring(0, m.start);
+    // 'BoxShadow(' ends with 'Shadow(', so a plain substring search for
+    // 'Shadow(' also matches inside 'BoxShadow(' and misclassifies every
+    // cast shadow as a text shadow. Exclude it with a lookbehind.
+    final lastTextShadow = _textShadowToken
+        .allMatches(before)
+        .fold<int>(-1, (a, b) => b.end > a ? b.end : a);
+    final lastBoxShadow = before.lastIndexOf('BoxShadow(');
+    if (lastBoxShadow < lastTextShadow) continue;
+    if (double.parse(m.group(1)!) != 0) return true;
+  }
+  return false;
+}
 
 /// Strips whole-line `//` comments so a comment mentioning a widget does not
 /// trip the guard.
@@ -230,6 +248,10 @@ const _scopedFiles = <String>[
   'lib/app/features/pricing/views/pricing_configuration_view.dart',
   'lib/app/features/pricing/views/ndis_pricing_management_view.dart',
   'lib/app/shared/widgets/bauhaus_switch.dart',
+  'lib/app/shared/widgets/bauhaus_date_range_picker.dart',
+  'lib/app/shared/widgets/bauhaus_time_picker.dart',
+  'lib/app/shared/widgets/enhanced_quick_action_cards.dart',
+  'lib/app/shared/widgets/home_detail_card_widget.dart',
   'lib/app/shared/widgets/bauhaus_widgets.dart',
   'lib/app/shared/constants/bauhaus_design.dart',
 ];
@@ -366,7 +388,7 @@ void main() {
     final offenders = <String>[];
     for (final f in _libFiles()) {
       final rel = _rel(f);
-      if (_softBlur.hasMatch(_codeOf(f.readAsStringSync()))) {
+      if (_hasSoftBlur(_codeOf(f.readAsStringSync()))) {
         offenders.add(rel);
       }
     }

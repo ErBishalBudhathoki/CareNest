@@ -126,13 +126,11 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                             color: widget.gradientStartColor.withValues(
                               alpha: 0.3,
                             ),
-                            blurRadius: _elevationAnimation.value,
-                            offset: Offset(0, _elevationAnimation.value / 2),
+                            offset: Offset(0, _elevationAnimation.value * 2),
                           ),
                           BoxShadow(
                             color: colorScheme.shadow.withValues(alpha: 0.1),
-                            blurRadius: _elevationAnimation.value / 2,
-                            offset: const Offset(0, 2),
+                            offset: Offset(0, _elevationAnimation.value),
                           ),
                         ],
                       ),
@@ -195,12 +193,9 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                                   BauhausDesign.radiusMd,
                                 ),
                                 boxShadow: [
-                                  BoxShadow(
-                                    color: colorScheme.shadow.withValues(
-                                      alpha: 0.1,
-                                    ),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 4),
+                                  const BoxShadow(
+                                    color: Color(0x1A000000),
+                                    offset: Offset(0, 3),
                                   ),
                                 ],
                               ),
@@ -280,7 +275,6 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                                 color: colorScheme.shadow.withValues(
                                   alpha: 0.1,
                                 ),
-                                blurRadius: 20,
                                 offset: Offset(
                                   0,
                                   10 + _floatingAnimation.value.abs(),
