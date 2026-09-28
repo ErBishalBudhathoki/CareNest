@@ -369,10 +369,7 @@ class _ExpensePhotoAttachmentWidgetState
                       onTap: () => _removePhoto(index),
                       child: Container(
                         padding: EdgeInsets.all(4.0),
-                        decoration: BoxDecoration(
-                          color: BauhausDesign.error,
-                          shape: BoxShape.circle,
-                        ),
+                        decoration: BoxDecoration(color: BauhausDesign.error),
                         child: Icon(
                           Icons.close,
                           color: Theme.of(context).colorScheme.onError,

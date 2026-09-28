@@ -609,10 +609,7 @@ class _ScheduleDashboardScreenState
               ),
               width: 2,
               height: 40,
-              decoration: BoxDecoration(
-                color: statusColor,
-                borderRadius: BorderRadius.circular(1),
-              ),
+              decoration: BoxDecoration(color: statusColor),
             ),
 
             // Details column

@@ -422,7 +422,6 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
                           color: BauhausDesign.accent.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(4),
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -495,7 +494,6 @@ class _SmartAssignDialogState extends ConsumerState<SmartAssignDialog> {
           width: 50,
           height: 4,
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(2),
             child: LinearProgressIndicator(
               value: score / 100,
               backgroundColor: Theme.of(

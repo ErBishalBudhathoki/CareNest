@@ -369,7 +369,6 @@ class _OnboardingStageFrame extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: colorScheme.surfaceContainerLow,
-                      borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
                       config.label,
@@ -391,7 +390,6 @@ class _OnboardingStageFrame extends StatelessWidget {
               ),
               const SizedBox(height: 14),
               ClipRRect(
-                borderRadius: BorderRadius.circular(999),
                 child: LinearProgressIndicator(
                   value: (stepIndex + 1) / totalSteps,
                   minHeight: 7,
@@ -405,10 +403,7 @@ class _OnboardingStageFrame extends StatelessWidget {
               Container(
                 height: heroHeight,
                 padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: config.accentColor,
-                  borderRadius: BorderRadius.circular(24),
-                ),
+                decoration: BoxDecoration(color: config.accentColor),
                 child: SvgPicture.asset(config.assetPath, fit: BoxFit.contain),
               ),
               const SizedBox(height: 18),

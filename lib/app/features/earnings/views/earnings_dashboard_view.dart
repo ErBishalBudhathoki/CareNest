@@ -269,7 +269,6 @@ class EarningsDashboardView extends ConsumerWidget {
                   color: Theme.of(context).colorScheme.onSurface,
                   width: 2,
                 ),
-                borderRadius: BorderRadius.circular(4),
                 boxShadow: [
                   BoxShadow(
                     color: Theme.of(context).colorScheme.outline,
@@ -722,7 +721,6 @@ class EarningsDashboardView extends ConsumerWidget {
 
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -734,7 +732,6 @@ class EarningsDashboardView extends ConsumerWidget {
         boxShadow: [
           BoxShadow(
             color: colorScheme.inverseSurface.withValues(alpha: 0.4),
-            blurRadius: 24,
             offset: Offset(0, 12),
           ),
         ],

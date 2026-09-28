@@ -1283,7 +1283,6 @@ class _BulkMessagingTabState extends ConsumerState<_BulkMessagingTab> {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Theme.of(context).colorScheme.outline),
-        borderRadius: BorderRadius.circular(4),
       ),
       child: Column(
         children: _users.map((user) {

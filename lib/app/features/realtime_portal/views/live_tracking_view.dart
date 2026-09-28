@@ -160,13 +160,11 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
-                borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
                     color: Theme.of(
                       context,
                     ).colorScheme.inverseSurface.withValues(alpha: 0.08),
-                    blurRadius: 18,
                     offset: const Offset(0, 8),
                   ),
                 ],
@@ -231,10 +229,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
             Container(
               margin: const EdgeInsets.only(right: 16),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: colorScheme.secondary,
-                borderRadius: BorderRadius.circular(20),
-              ),
+              decoration: BoxDecoration(color: colorScheme.secondary),
               child: Row(
                 children: [
                   Icon(Icons.circle, color: colorScheme.onSecondary, size: 8),
@@ -293,7 +288,6 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
                           color: Theme.of(
                             context,
                           ).colorScheme.inverseSurface.withValues(alpha: 0.1),
-                          blurRadius: 10,
                           offset: const Offset(0, -2),
                         ),
                       ],
@@ -323,7 +317,6 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
                 color: Theme.of(
                   context,
                 ).colorScheme.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [

@@ -980,7 +980,6 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(999),
         border: Border.all(color: foregroundColor.withValues(alpha: 0.45)),
       ),
       child: Row(

@@ -386,7 +386,6 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
                           height: 50,
                           decoration: BoxDecoration(
                             color: BauhausDesign.primary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(25),
                             border: Border.all(
                               color: BauhausDesign.primary,
                               width: 1,

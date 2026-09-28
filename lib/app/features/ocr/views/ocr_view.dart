@@ -127,7 +127,6 @@ class OcrView extends ConsumerWidget {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
                   color: foregroundColor.withValues(alpha: 0.2),
                 ),
               ),

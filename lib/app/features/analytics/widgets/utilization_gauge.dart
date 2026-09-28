@@ -47,10 +47,7 @@ class UtilizationGauge extends StatelessWidget {
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: statusColor,
-                  borderRadius: BorderRadius.circular(4),
-                ),
+                decoration: BoxDecoration(color: statusColor),
                 child: Text(
                   statusText,
                   style: const TextStyle(
@@ -96,7 +93,6 @@ class UtilizationGauge extends StatelessWidget {
             backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
             color: statusColor,
             minHeight: 12,
-            borderRadius: BorderRadius.circular(6),
           ),
 
           const SizedBox(height: 24),
@@ -136,7 +132,6 @@ class UtilizationGauge extends StatelessWidget {
                                 color: Theme.of(
                                   context,
                                 ).colorScheme.surfaceContainer,
-                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                             FractionallySizedBox(
@@ -152,7 +147,6 @@ class UtilizationGauge extends StatelessWidget {
                                       : (m.utilizationRate < 50
                                             ? BauhausDesign.secondary
                                             : BauhausDesign.success),
-                                  borderRadius: BorderRadius.circular(4),
                                 ),
                               ),
                             ),
