@@ -1,4 +1,5 @@
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
@@ -1153,7 +1154,10 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                         ],
                       ),
                     ),
-                    Switch.adaptive(
+                    // Was Switch.adaptive, which renders a pill track with a
+                    // circular thumb. DESIGN.md requires unrounded geometry
+                    // across every interactive control.
+                    BauhausSwitch(
                       value: _isClientSpecific[id] ?? false,
                       onChanged: (value) {
                         setState(() {
@@ -1161,7 +1165,7 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                           _updateOverrideStatus(id);
                         });
                       },
-                      activeThumbColor: BauhausDesign.success,
+                      variant: BauhausSwitchVariant.secondary,
                     ),
                   ],
                 ),
