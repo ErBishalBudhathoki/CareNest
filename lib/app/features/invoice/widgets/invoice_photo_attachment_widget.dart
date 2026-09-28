@@ -223,7 +223,6 @@ class _InvoicePhotoAttachmentWidgetState
                 height: 4,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.onSurface,
-                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
               const SizedBox(height: 20),
@@ -271,7 +270,6 @@ class _InvoicePhotoAttachmentWidgetState
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: BauhausDesign.primary.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(icon, color: BauhausDesign.primary, size: 24),
       ),
@@ -332,14 +330,12 @@ class _InvoicePhotoAttachmentWidgetState
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: Theme.of(context).colorScheme.onSurface,
                           width: 1,
                         ),
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
                         child: Image.file(
                           _selectedPhotos[index],
                           fit: BoxFit.cover,
@@ -355,10 +351,7 @@ class _InvoicePhotoAttachmentWidgetState
                         onTap: () => _removePhoto(index),
                         child: Container(
                           padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: BauhausDesign.error,
-                            shape: BoxShape.circle,
-                          ),
+                          decoration: BoxDecoration(color: BauhausDesign.error),
                           child: Icon(
                             Icons.close,
                             color: Theme.of(context).colorScheme.onError,
@@ -391,7 +384,6 @@ class _InvoicePhotoAttachmentWidgetState
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: BauhausDesign.primary.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: _isLoading
                       ? const Center(

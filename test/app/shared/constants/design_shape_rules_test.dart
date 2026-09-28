@@ -41,9 +41,15 @@ const _avatarFiles = <String>{
 /// and would otherwise match a plain `Switch(` substring search.
 final _unthemedPillWidget = RegExp(r'(?<!Bauhaus)\bSwitch(\.adaptive)?\(');
 
-/// A non-zero literal radius. Catches `BorderRadius.circular(8)` but not
-/// `BorderRadius.circular(BauhausDesign.radiusMd)`, which is 0.0.
-final _literalRadius = RegExp(r'BorderRadius\.circular\(\s*[1-9][0-9]*');
+/// A non-zero literal Flutter corner radius. Catches `BorderRadius.circular(8)`
+/// but not `BorderRadius.circular(BauhausDesign.radiusMd)`, which is 0.0.
+///
+/// The `pw.` alternative excludes the `pdf` package: a generated invoice PDF is
+/// a print artefact, not an on-screen widget, so DESIGN.md's shape rules do not
+/// govern it.
+final _literalRadius = RegExp(
+  r'(?<!pw\.)\bBorderRadius\.circular\(\s*[1-9][0-9]*',
+);
 
 /// Files still containing non-zero literal corner radii. DESIGN.md requires
 /// roundedness 0 outside avatars, so every entry here is a migration target.
@@ -63,9 +69,6 @@ const _knownRadiusDebt = <String>{
   'lib/app/features/employee_tracking/views/employee_tracking_view.dart',
   'lib/app/features/expenses/presentation/widgets/enhanced_file_viewer_widget.dart',
   'lib/app/features/invoice/services/invoice_pdf_generator_service.dart',
-  'lib/app/features/invoice/views/enhanced_invoice_generation_view.dart',
-  'lib/app/features/invoice/views/invoice_ai_dashboard.dart',
-  'lib/app/features/invoice/widgets/invoice_photo_attachment_widget.dart',
   'lib/app/features/onboarding/views/onboarding_stepper_view.dart',
   'lib/app/features/onboarding/views/onboarding_welcome_view.dart',
   'lib/app/features/organization/views/organization_details_view.dart',
@@ -116,11 +119,6 @@ const _knownCircularGeometryDebt = <String>{
   'lib/app/features/holiday/views/holiday_list_view.dart',
   'lib/app/features/home/widgets/live_worker_map_widget.dart',
   'lib/app/features/home/widgets/live_worker_map_widget_full.dart',
-  'lib/app/features/invoice/views/automatic_invoice_generation_view.dart',
-  'lib/app/features/invoice/views/employee_selection_view.dart',
-  'lib/app/features/invoice/views/enhanced_invoice_generation_view.dart',
-  'lib/app/features/invoice/widgets/bauhaus_date_range_picker.dart',
-  'lib/app/features/invoice/widgets/invoice_photo_attachment_widget.dart',
   'lib/app/features/notifications/widgets/bauhaus_notification_card.dart',
   'lib/app/features/ocr/views/ocr_view.dart',
   'lib/app/features/offline/views/offline_sync_dashboard_view.dart',
@@ -161,7 +159,6 @@ const _knownSoftShadowDebt = <String>{
   'lib/app/features/earnings/views/earnings_dashboard_view.dart',
   'lib/app/features/expenses/presentation/widgets/enhanced_file_viewer_widget.dart',
   'lib/app/features/home/widgets/live_worker_map_widget.dart',
-  'lib/app/features/invoice/views/enhanced_invoice_generation_view.dart',
   'lib/app/features/pricing/views/enhanced_pricing_dashboard_view.dart',
   'lib/app/features/pricing/views/pricing_analytics_view.dart',
   'lib/app/features/pricing/views/pricing_validation_view.dart',
@@ -214,9 +211,11 @@ final _sizedContainer = RegExp(
 /// DESIGN.md permits circular geometry for "minute functional terminal
 /// indicators (e.g., live-feed pulse LEDs and active segment indicators)". A
 /// small status dot is one; a large decorative shape is not. The threshold is
-/// generous enough for a badge-sized LED while excluding the 100-200px
-/// background shapes that were being migrated.
-const _minuteIndicatorMax = 16.0;
+/// generous enough for the functional indicators actually in use (a 4px
+/// "today" dot in the date range picker, an 8px success LED, an 18px radio
+/// dot) while excluding the 100-200px background shapes that were migrated
+/// in the earlier batches.
+const _minuteIndicatorMax = 24.0;
 
 bool _hasOversizedCircle(String code) {
   for (final m in _sizedContainer.allMatches(code)) {
@@ -259,6 +258,12 @@ const _scopedFiles = <String>[
   'lib/app/features/auth/views/forgot_password_view.dart',
   'lib/app/features/auth/views/verify_otp_view.dart',
   'lib/app/features/home/widgets/bauhaus_appointment_card.dart',
+  'lib/app/features/invoice/views/enhanced_invoice_generation_view.dart',
+  'lib/app/features/invoice/views/invoice_ai_dashboard.dart',
+  'lib/app/features/invoice/widgets/invoice_photo_attachment_widget.dart',
+  'lib/app/features/invoice/views/automatic_invoice_generation_view.dart',
+  'lib/app/features/invoice/views/employee_selection_view.dart',
+  'lib/app/features/invoice/widgets/bauhaus_date_range_picker.dart',
   'lib/app/features/invoice/views/price_override_view.dart',
   'lib/app/features/pricing/views/pricing_configuration_view.dart',
   'lib/app/features/pricing/views/ndis_pricing_management_view.dart',
