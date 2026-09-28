@@ -137,11 +137,9 @@ class _BusinessIntelligenceViewState
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: AppColors.colorPink.withValues(alpha: 0.3),
-            blurRadius: 12,
             offset: const Offset(0, 4),
           ),
         ],
@@ -155,7 +153,6 @@ class _BusinessIntelligenceViewState
               color: Theme.of(
                 context,
               ).colorScheme.surface.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               Icons.business_center_outlined,
@@ -279,14 +276,9 @@ class _BusinessIntelligenceViewState
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color.withValues(alpha: 0.2), width: 2),
         boxShadow: [
-          BoxShadow(
-            color: AppColors.colorShadow,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
+          BoxShadow(color: AppColors.colorShadow, offset: const Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -323,7 +315,6 @@ class _BusinessIntelligenceViewState
                   color: isPositive
                       ? AppColors.colorGreen.withValues(alpha: 0.1)
                       : AppColors.colorRed.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
                   change,
@@ -362,11 +353,9 @@ class _BusinessIntelligenceViewState
           Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
                   color: AppColors.colorShadow,
-                  blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -399,7 +388,6 @@ class _BusinessIntelligenceViewState
             height: 48,
             decoration: BoxDecoration(
               color: AppColors.colorGreen.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               Icons.show_chart,
@@ -463,11 +451,9 @@ class _BusinessIntelligenceViewState
           Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
                   color: AppColors.colorShadow,
-                  blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -505,10 +491,7 @@ class _BusinessIntelligenceViewState
           Container(
             width: 48,
             height: 48,
-            decoration: BoxDecoration(
-              color: riskColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
+            decoration: BoxDecoration(color: riskColor.withValues(alpha: 0.1)),
             child: Icon(Icons.person_outline, color: riskColor, size: 24),
           ),
           const SizedBox(width: 16),
@@ -534,10 +517,7 @@ class _BusinessIntelligenceViewState
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: riskColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(20),
-            ),
+            decoration: BoxDecoration(color: riskColor.withValues(alpha: 0.1)),
             child: Text(
               risk > 0.7
                   ? 'High'
@@ -561,7 +541,6 @@ class _BusinessIntelligenceViewState
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Center(
@@ -598,9 +577,7 @@ class _BusinessIntelligenceViewState
               backgroundColor: AppColors.colorPrimary,
               foregroundColor: Theme.of(context).colorScheme.surface,
               padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              shape: RoundedRectangleBorder(),
             ),
           ),
         ),
@@ -614,9 +591,7 @@ class _BusinessIntelligenceViewState
               foregroundColor: AppColors.colorPrimary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               side: const BorderSide(color: AppColors.colorPrimary),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              shape: RoundedRectangleBorder(),
             ),
           ),
         ),
