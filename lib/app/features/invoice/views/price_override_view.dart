@@ -799,10 +799,10 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.assignment_outlined,
                         size: 64,
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(height: BauhausDesign.space3),
                       Text(
@@ -816,9 +816,12 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                       Text(
                         l10n.noClientAssignmentsForOverride,
                         textAlign: TextAlign.center,
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
+                            ?.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
                       ),
                     ],
                   ),
@@ -873,9 +876,9 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
           const SizedBox(height: BauhausDesign.space2),
           Text(
             l10n.ndisItemsCount(_lineItems.length),
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -949,37 +952,47 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                             ),
                           ),
                           const SizedBox(width: BauhausDesign.space2),
-                          SourceBadge(
-                            source: (item['source'] as String?) ?? 'fallback',
-                            isSmall: true,
+                          // Flexible so a long badge label ("Client-specific
+                          // custom") can ellipsize instead of overflowing. The
+                          // chip ellipsizes internally but was being given an
+                          // unbounded width by this Row.
+                          Flexible(
+                            child: SourceBadge(
+                              source: (item['source'] as String?) ?? 'fallback',
+                              isSmall: true,
+                            ),
                           ),
                           if (isOverridden) ...[
                             const SizedBox(width: BauhausDesign.space2),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: BauhausDesign.space2,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: BauhausDesign.warning.withValues(
-                                  alpha: 0.1,
+                            Flexible(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: BauhausDesign.space2,
+                                  vertical: 2,
                                 ),
-                                borderRadius: BorderRadius.circular(
-                                  BauhausDesign.radiusSm,
+                                decoration: BoxDecoration(
+                                  color: BauhausDesign.warning.withValues(
+                                    alpha: 0.1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                    BauhausDesign.radiusSm,
+                                  ),
+                                  border: Border.all(
+                                    color: BauhausDesign.warning,
+                                  ),
                                 ),
-                                border: Border.all(
-                                  color: BauhausDesign.warning,
+                                child: Text(
+                                  l10n.modifiedLabel,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: BauhausDesign.getTextTheme(context)
+                                      .labelSmall
+                                      ?.copyWith(
+                                        color: BauhausDesign.warning,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 9,
+                                      ),
                                 ),
-                              ),
-                              child: Text(
-                                l10n.modifiedLabel,
-                                style: BauhausDesign.getTextTheme(context)
-                                    .labelSmall
-                                    ?.copyWith(
-                                      color: BauhausDesign.warning,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 9,
-                                    ),
                               ),
                             ),
                           ],
@@ -999,9 +1012,9 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                 ),
                 if (isOverridden)
                   IconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.refresh_rounded,
-                      color: BauhausDesign.textMuted,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     onPressed: () => _resetPrice(id),
                     tooltip: l10n.resetPriceTooltip,
@@ -1012,7 +1025,11 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
             Container(
               padding: const EdgeInsets.all(BauhausDesign.space3),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onPrimary,
+                // Was colorScheme.onPrimary, which is a foreground role. It
+                // resolved to near-black in light mode and mid-grey in dark
+                // mode, so the block read as a black slab with invisible
+                // labels. A surface role is correct for a filled plane.
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 border: Border.all(
                   color: Theme.of(context).colorScheme.onSurface,
@@ -1074,7 +1091,7 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                         (item['maxPrice'] != null &&
                             (item['maxPrice'] as num).toDouble() > 0)
                         ? BauhausDesign.success
-                        : BauhausDesign.textMuted,
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
                     subtitle: item['clientState'] as String? ?? '',
                     isWarning:
                         item['maxPrice'] != null &&
@@ -1108,7 +1125,7 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                       size: 20,
                       color: (_isClientSpecific[id] == true)
                           ? BauhausDesign.success
-                          : BauhausDesign.textMuted,
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: BauhausDesign.space3),
                     Expanded(
@@ -1119,7 +1136,11 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                             l10n.pricingScopeLabel,
                             style: BauhausDesign.getTextTheme(context)
                                 .labelSmall
-                                ?.copyWith(color: BauhausDesign.textMuted),
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
                           ),
                           Text(
                             (_isClientSpecific[id] == true)
@@ -1186,9 +1207,12 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                   children: [
                     Text(
                       l10n.lineTotalLabel,
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                      style: BauhausDesign.getTextTheme(context).labelSmall
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -1219,7 +1243,9 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                             ),
                             style: BauhausDesign.getTextTheme(context).bodySmall
                                 ?.copyWith(
-                                  color: BauhausDesign.textMuted,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                   decoration: TextDecoration.lineThrough,
                                 ),
                           ),
@@ -1292,13 +1318,17 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Row(
       children: [
-        Icon(icon, size: 16, color: BauhausDesign.textMuted),
+        Icon(
+          icon,
+          size: 16,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
         const SizedBox(width: BauhausDesign.space2),
         Text(
           '$label: ',
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+          style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
         Expanded(
           child: Text(
@@ -1322,27 +1352,33 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
     bool isWarning = false,
   }) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
     final displayColor = isWarning ? BauhausDesign.error : color;
     return Container(
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: displayColor.withValues(alpha: 0.1),
+        // Was displayColor at 10% alpha: a 10% yellow tint over the light
+        // surface and a 10% tint over the dark surface are both too weak to
+        // read as a tile, and the accent text on top of them had no contrast
+        // either way. The surface role carries the fill and the accent moves
+        // to the border, so the tile keeps its identity in both themes.
+        color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-        border: Border.all(color: displayColor.withValues(alpha: 0.1)),
+        border: Border.all(color: displayColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(icon, size: 16, color: displayColor),
+              Icon(icon, size: 16, color: colorScheme.onSurfaceVariant),
               const SizedBox(width: BauhausDesign.space2),
               Expanded(
                 child: Text(
                   label,
                   style: BauhausDesign.getTextTheme(
                     context,
-                  ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                  ).labelSmall?.copyWith(color: colorScheme.onSurfaceVariant),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -1353,14 +1389,15 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.1),
+                    color: colorScheme.surface,
                     borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                    border: Border.all(color: colorScheme.outline),
                   ),
                   child: Text(
                     subtitle,
                     style: BauhausDesign.getTextTheme(context).labelSmall
                         ?.copyWith(
-                          color: color,
+                          color: colorScheme.onSurfaceVariant,
                           fontWeight: FontWeight.bold,
                           fontSize: 9,
                         ),
