@@ -148,7 +148,6 @@ class _BauhausLoginViewState extends ConsumerState<BauhausLoginView> {
                         height: 200,
                         decoration: BoxDecoration(
                           color: colorYellow,
-                          shape: BoxShape.circle,
                         ),
                       ),
                     ),

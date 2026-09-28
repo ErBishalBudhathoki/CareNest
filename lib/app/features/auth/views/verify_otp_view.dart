@@ -88,7 +88,6 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
           height: 120,
           decoration: BoxDecoration(
             color: BauhausDesign.accent.withValues(alpha: 0.1),
-            shape: BoxShape.circle,
             border: Border.all(
               color: BauhausDesign.accent.withValues(alpha: 0.3),
               width: 2,
