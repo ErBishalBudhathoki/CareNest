@@ -134,11 +134,9 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: AppColors.colorOrange.withValues(alpha: 0.3),
-            blurRadius: 12,
             offset: const Offset(0, 4),
           ),
         ],
@@ -152,7 +150,6 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
               color: Theme.of(
                 context,
               ).colorScheme.surface.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               Icons.verified_outlined,
@@ -214,11 +211,9 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
                 color: AppColors.colorShadow,
-                blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
             ],
@@ -229,7 +224,6 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
                   border: Border.all(color: scoreColor, width: 8),
                   color: scoreColor.withValues(alpha: 0.1),
                 ),
@@ -283,11 +277,9 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
           Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
                   color: AppColors.colorShadow,
-                  blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -321,10 +313,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
           Container(
             width: 48,
             height: 48,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.1)),
             child: Icon(
               isCompliant ? Icons.check_circle : Icons.cancel,
               color: color,
@@ -382,11 +371,9 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
                   color: AppColors.colorShadow,
-                  blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -443,7 +430,6 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: Theme.of(context).colorScheme.outline,
           width: 2,
@@ -499,9 +485,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
               backgroundColor: AppColors.colorPrimary,
               foregroundColor: Theme.of(context).colorScheme.surface,
               padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              shape: RoundedRectangleBorder(),
             ),
           ),
         ),
@@ -515,9 +499,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
               foregroundColor: AppColors.colorPrimary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               side: const BorderSide(color: AppColors.colorPrimary),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              shape: RoundedRectangleBorder(),
             ),
           ),
         ),

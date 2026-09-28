@@ -142,11 +142,9 @@ class _PerformanceAnalyticsViewState
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: AppColors.colorGreen.withValues(alpha: 0.3),
-            blurRadius: 12,
             offset: const Offset(0, 4),
           ),
         ],
@@ -160,7 +158,6 @@ class _PerformanceAnalyticsViewState
               color: Theme.of(
                 context,
               ).colorScheme.surface.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               Icons.trending_up,
@@ -277,14 +274,9 @@ class _PerformanceAnalyticsViewState
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color.withValues(alpha: 0.2), width: 2),
         boxShadow: [
-          BoxShadow(
-            color: AppColors.colorShadow,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
+          BoxShadow(color: AppColors.colorShadow, offset: const Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -321,7 +313,6 @@ class _PerformanceAnalyticsViewState
                   color: isPositive
                       ? AppColors.colorGreen.withValues(alpha: 0.1)
                       : AppColors.colorRed.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
                   change,
@@ -360,11 +351,9 @@ class _PerformanceAnalyticsViewState
           Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
                   color: AppColors.colorShadow,
-                  blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -403,10 +392,7 @@ class _PerformanceAnalyticsViewState
           Container(
             width: 48,
             height: 48,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.1)),
             child: Icon(
               isPositive ? Icons.trending_up : Icons.trending_down,
               color: color,
@@ -449,7 +435,6 @@ class _PerformanceAnalyticsViewState
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Center(
@@ -486,9 +471,7 @@ class _PerformanceAnalyticsViewState
               backgroundColor: AppColors.colorPrimary,
               foregroundColor: Theme.of(context).colorScheme.surface,
               padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              shape: RoundedRectangleBorder(),
             ),
           ),
         ),
@@ -502,9 +485,7 @@ class _PerformanceAnalyticsViewState
               foregroundColor: AppColors.colorPrimary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               side: const BorderSide(color: AppColors.colorPrimary),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              shape: RoundedRectangleBorder(),
             ),
           ),
         ),

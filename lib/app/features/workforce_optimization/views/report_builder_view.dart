@@ -95,11 +95,9 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: AppColors.colorSecondary.withValues(alpha: 0.3),
-            blurRadius: 12,
             offset: const Offset(0, 4),
           ),
         ],
@@ -113,7 +111,6 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
               color: Theme.of(
                 context,
               ).colorScheme.surface.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               Icons.description_outlined,
@@ -175,11 +172,9 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
         Container(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
                 color: AppColors.colorShadow,
-                blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
             ],
@@ -242,11 +237,9 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
         Container(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
                 color: AppColors.colorShadow,
-                blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
             ],
@@ -303,11 +296,9 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
         Container(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
                 color: AppColors.colorShadow,
-                blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
             ],
@@ -434,7 +425,6 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: selected
                 ? AppColors.colorPrimary
@@ -442,11 +432,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
             width: selected ? 3 : 2,
           ),
           boxShadow: [
-            BoxShadow(
-              color: AppColors.colorShadow,
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
+            BoxShadow(color: AppColors.colorShadow, offset: const Offset(0, 2)),
           ],
         ),
         child: Column(
@@ -455,10 +441,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
             Container(
               width: 48,
               height: 48,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
+              decoration: BoxDecoration(color: color.withValues(alpha: 0.1)),
               child: Icon(icon, color: color, size: 24),
             ),
             const SizedBox(height: 12),
@@ -503,9 +486,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
               backgroundColor: AppColors.colorPrimary,
               foregroundColor: Theme.of(context).colorScheme.surface,
               padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              shape: RoundedRectangleBorder(),
             ),
           ),
         ),

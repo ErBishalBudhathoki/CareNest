@@ -134,11 +134,9 @@ class _ResourceAllocationViewState
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: AppColors.colorPurple.withValues(alpha: 0.3),
-            blurRadius: 12,
             offset: const Offset(0, 4),
           ),
         ],
@@ -152,7 +150,6 @@ class _ResourceAllocationViewState
               color: Theme.of(
                 context,
               ).colorScheme.surface.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               Icons.assignment_outlined,
@@ -209,11 +206,9 @@ class _ResourceAllocationViewState
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
                   color: AppColors.colorShadow,
-                  blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -251,10 +246,7 @@ class _ResourceAllocationViewState
         Container(
           width: 48,
           height: 48,
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
+          decoration: BoxDecoration(color: color.withValues(alpha: 0.1)),
           child: Icon(icon, color: color, size: 24),
         ),
         const SizedBox(width: 16),
@@ -295,11 +287,9 @@ class _ResourceAllocationViewState
           Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
                   color: AppColors.colorShadow,
-                  blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -332,7 +322,6 @@ class _ResourceAllocationViewState
             height: 48,
             decoration: BoxDecoration(
               color: AppColors.colorPurple.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               Icons.lightbulb_outline,
@@ -379,7 +368,6 @@ class _ResourceAllocationViewState
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Center(
@@ -416,9 +404,7 @@ class _ResourceAllocationViewState
               backgroundColor: AppColors.colorPrimary,
               foregroundColor: Theme.of(context).colorScheme.surface,
               padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              shape: RoundedRectangleBorder(),
             ),
           ),
         ),
@@ -432,9 +418,7 @@ class _ResourceAllocationViewState
               foregroundColor: AppColors.colorPrimary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               side: const BorderSide(color: AppColors.colorPrimary),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              shape: RoundedRectangleBorder(),
             ),
           ),
         ),
