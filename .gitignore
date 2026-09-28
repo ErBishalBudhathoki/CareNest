@@ -328,6 +328,7 @@ test/app/shared/constants/*
 !test/app/shared/constants/bauhaus_dark_mode_guard_test.dart
 !test/app/shared/constants/slider_theme_test.dart
 !test/app/shared/constants/slider_pixel_test.dart
+!test/app/shared/constants/design_shape_rules_test.dart
 !test/app/shared/widgets/
 test/app/shared/widgets/*
 !test/app/shared/widgets/bauhaus_action_button_test.dart
