@@ -431,7 +431,6 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                           ),
                           decoration: BoxDecoration(
                             color: Theme.of(context).colorScheme.outline,
-                            borderRadius: BorderRadius.circular(2),
                           ),
                         ),
                       ),

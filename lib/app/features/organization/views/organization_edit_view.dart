@@ -882,7 +882,6 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                         width: 76,
                         height: 76,
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
                           color: Theme.of(context).colorScheme.surface,
                           border: Border.all(
                             color: Theme.of(context).colorScheme.outline,
@@ -914,7 +913,6 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
                       height: 28,
                       decoration: BoxDecoration(
                         color: BauhausDesign.accent,
-                        shape: BoxShape.circle,
                         border: Border.all(
                           color: Theme.of(context).colorScheme.outline,
                         ),

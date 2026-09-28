@@ -74,7 +74,6 @@ class EmployeeStatusCard extends StatelessWidget {
       width: 50,
       height: 50,
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
         color: Theme.of(
           context,
         ).colorScheme.surfaceContainer.withValues(alpha: 0.1),
@@ -107,7 +106,6 @@ class EmployeeStatusCard extends StatelessWidget {
       width: 50.0,
       height: 50.0,
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
         color: Theme.of(
           context,
         ).colorScheme.surfaceContainer.withValues(alpha: 0.1),

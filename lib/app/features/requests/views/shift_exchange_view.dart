@@ -688,7 +688,6 @@ class _ShiftDetailsDialogContentState
                               color: Theme.of(context).colorScheme.onSurface,
                               width: 1,
                             ),
-                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,

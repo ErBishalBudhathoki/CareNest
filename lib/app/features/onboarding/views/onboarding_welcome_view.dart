@@ -48,7 +48,6 @@ class _OnboardingWelcomeViewState extends ConsumerState<OnboardingWelcomeView> {
                       ),
                       decoration: BoxDecoration(
                         color: colorScheme.surfaceContainerLow,
-                        borderRadius: BorderRadius.circular(999),
                       ),
                       child: Text(
                         'Employee onboarding',
@@ -72,7 +71,6 @@ class _OnboardingWelcomeViewState extends ConsumerState<OnboardingWelcomeView> {
                             colorScheme.surfaceContainer,
                           ],
                         ),
-                        borderRadius: BorderRadius.circular(28),
                       ),
                       child: SvgPicture.asset(
                         'assets/ui_assets_svg/onboarding_welcome.svg',

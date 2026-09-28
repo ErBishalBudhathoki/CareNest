@@ -482,7 +482,6 @@ class _EnhancedFileAttachmentWidgetState
                                 padding: const EdgeInsets.all(4.0),
                                 decoration: BoxDecoration(
                                   color: BauhausDesign.error,
-                                  shape: BoxShape.circle,
                                 ),
                                 child: Icon(
                                   Icons.close,

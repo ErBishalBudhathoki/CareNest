@@ -60,7 +60,6 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                   color: Theme.of(
                     context,
                   ).colorScheme.outline.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
@@ -680,7 +679,6 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                     padding: const EdgeInsets.all(BauhausDesign.space2),
                     decoration: BoxDecoration(
                       color: BauhausDesign.primary.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
                     ),
                     child: Icon(
                       typeIcon,

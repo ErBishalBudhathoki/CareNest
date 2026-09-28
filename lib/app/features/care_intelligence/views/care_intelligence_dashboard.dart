@@ -514,7 +514,6 @@ class _CareIntelligenceDashboardState
                         height: 54,
                         decoration: BoxDecoration(
                           color: BauhausDesign.accent.withValues(alpha: 0.24),
-                          shape: BoxShape.circle,
                           border: Border.all(
                             color: Theme.of(context).colorScheme.outline,
                             width: 1,

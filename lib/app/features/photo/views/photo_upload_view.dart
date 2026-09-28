@@ -301,7 +301,6 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
       width: 220,
       decoration: BoxDecoration(
         color: BauhausDesign.primary.withValues(alpha: 0.05),
-        shape: BoxShape.circle,
         border: Border.all(
           color: BauhausDesign.primary.withValues(alpha: 0.5),
           width: 2,
@@ -339,7 +338,6 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
       height: 220,
       width: 220,
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
         boxShadow: const [BauhausDesign.shadowHard],
         border: Border.all(
           color: Theme.of(context).colorScheme.outline,

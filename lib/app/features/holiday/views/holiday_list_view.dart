@@ -497,7 +497,6 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
                   height: 60,
                   decoration: BoxDecoration(
                     color: dateCircleColor,
-                    shape: BoxShape.circle,
                     border: Border.all(
                       color: Theme.of(
                         context,

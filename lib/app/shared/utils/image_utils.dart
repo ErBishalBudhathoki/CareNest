@@ -197,10 +197,7 @@ class ImageErrorHandler {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: surfaceColor ?? Colors.grey[300],
-      ),
+      decoration: BoxDecoration(color: surfaceColor ?? Colors.grey[300]),
       child: Icon(icon, size: size * 0.6, color: iconColor ?? Colors.grey[600]),
     );
   }
@@ -212,10 +209,7 @@ class ImageErrorHandler {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: surfaceColor ?? Colors.grey[100],
-      ),
+      decoration: BoxDecoration(color: surfaceColor ?? Colors.grey[100]),
       child: Center(
         child: SizedBox(
           width: size * 0.5,

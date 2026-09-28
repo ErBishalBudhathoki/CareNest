@@ -165,7 +165,6 @@ class _OutcomeTrackingViewState extends ConsumerState<OutcomeTrackingView> {
             ),
             const SizedBox(height: 12),
             ClipRRect(
-              borderRadius: BorderRadius.circular(2),
               child: LinearProgressIndicator(
                 value: progress,
                 backgroundColor: Theme.of(

@@ -640,7 +640,6 @@ class _AdminDashboardViewControllerState
                                 tag: 'profile_photo',
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
                                     border: Border.all(
                                       color: BauhausDesign.textDark,
                                       width: 2,
@@ -650,7 +649,6 @@ class _AdminDashboardViewControllerState
                                   child: Container(
                                     padding: const EdgeInsets.all(0),
                                     decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
                                       color: BauhausDesign.surfaceWhite,
                                     ),
                                     child: AdminProfileImage(

@@ -792,7 +792,6 @@ class _ClientInvoiceDetailViewState
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.1),
-            blurRadius: 8,
             offset: Offset(0, -4),
           ),
         ],

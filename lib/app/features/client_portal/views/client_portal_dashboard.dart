@@ -520,7 +520,6 @@ class _ClientPortalDashboardBodyState
                       color: Theme.of(
                         context,
                       ).colorScheme.outline.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
                     ),
                     child: Icon(
                       Icons.event_busy_outlined,
@@ -671,7 +670,6 @@ class _ClientPortalDashboardBodyState
                 padding: const EdgeInsets.all(BauhausDesign.space4),
                 decoration: BoxDecoration(
                   color: BauhausDesign.secondary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
                   border: Border.all(
                     color: BauhausDesign.secondary.withValues(alpha: 0.3),
                   ),
@@ -840,7 +838,6 @@ class _ClientPortalDashboardBodyState
                 padding: const EdgeInsets.all(BauhausDesign.space4),
                 decoration: BoxDecoration(
                   color: BauhausDesign.warning.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
                   border: Border.all(
                     color: BauhausDesign.warning.withValues(alpha: 0.3),
                   ),
@@ -917,7 +914,6 @@ class _ClientPortalDashboardBodyState
                 padding: const EdgeInsets.all(BauhausDesign.space4),
                 decoration: BoxDecoration(
                   color: BauhausDesign.accent.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
                   border: Border.all(
                     color: BauhausDesign.accent.withValues(alpha: 0.3),
                   ),

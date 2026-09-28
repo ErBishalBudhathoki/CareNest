@@ -50,7 +50,6 @@ class WorkerStatusCard extends StatelessWidget {
             width: 40,
             decoration: BoxDecoration(
               color: isClockedIn ? BauhausTheme.red : BauhausTheme.black,
-              shape: BoxShape.circle,
             ),
             child: Icon(
               isClockedIn ? Icons.stop : Icons.play_arrow,

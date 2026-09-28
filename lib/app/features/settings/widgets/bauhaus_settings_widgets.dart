@@ -235,7 +235,6 @@ class BauhausProfileCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
                   border: Border.all(
                     color: Theme.of(context).colorScheme.outline,
                     width: 2.0,
@@ -257,7 +256,6 @@ class BauhausProfileCard extends StatelessWidget {
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
-                    shape: BoxShape.circle,
                     border: Border.all(
                       color: Theme.of(context).colorScheme.outline,
                       width: 2.0,

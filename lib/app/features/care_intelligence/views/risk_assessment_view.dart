@@ -123,7 +123,6 @@ class _RiskAssessmentViewState extends ConsumerState<RiskAssessmentView> {
               decoration: BoxDecoration(
                 color: riskColor.withValues(alpha: 0.1),
                 border: Border.all(color: riskColor, width: 3),
-                shape: BoxShape.circle,
               ),
               child: Center(
                 child: Text(

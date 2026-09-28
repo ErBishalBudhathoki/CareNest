@@ -1341,10 +1341,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
             width: 40,
             height: 4,
             margin: const EdgeInsets.symmetric(vertical: BauhausDesign.space2),
-            decoration: BoxDecoration(
-              color: BauhausDesign.textMuted,
-              borderRadius: BorderRadius.circular(2),
-            ),
+            decoration: BoxDecoration(color: BauhausDesign.textMuted),
           ),
           Expanded(
             child: SingleChildScrollView(

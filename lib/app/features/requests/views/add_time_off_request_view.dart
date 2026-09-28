@@ -46,7 +46,6 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
                 padding: const EdgeInsets.all(BauhausDesign.space3),
                 decoration: BoxDecoration(
                   color: BauhausDesign.success.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.check_circle,
@@ -164,7 +163,6 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
                 color: Theme.of(
                   context,
                 ).colorScheme.outline.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(2),
               ),
             ),
           ),

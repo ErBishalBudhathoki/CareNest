@@ -436,7 +436,6 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surfaceContainerHigh,
-                borderRadius: BorderRadius.circular(4),
                 border: Border.all(
                   color: Theme.of(context).colorScheme.outlineVariant,
                 ),
@@ -461,7 +460,6 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
                 color: Theme.of(
                   context,
                 ).colorScheme.error.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(4.0),
                 border: Border.all(
                   color: Theme.of(
                     context,
@@ -542,7 +540,6 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
                 color: Theme.of(
                   context,
                 ).colorScheme.secondary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 '${filePaths.length} file${filePaths.length == 1 ? '' : 's'}',
@@ -562,7 +559,6 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainerLow,
-            borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: Theme.of(context).colorScheme.outlineVariant,
             ),
@@ -589,7 +585,6 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: fileExists
                           ? _getFileColor(
@@ -603,7 +598,6 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
                     ],
@@ -774,7 +768,6 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.secondaryContainer,
-              borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: Theme.of(context).colorScheme.secondaryContainer,
               ),
@@ -890,7 +883,6 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(4.0),
               border: Border.all(
                 color: Theme.of(
                   context,
@@ -1033,10 +1025,7 @@ class _FullScreenImageViewer extends StatelessWidget {
                   const SizedBox(height: 16),
                   Container(
                     padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.black26,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                    decoration: BoxDecoration(color: Colors.black26),
                     child: Text(
                       'URL: $url',
                       style: TextStyle(

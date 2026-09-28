@@ -554,7 +554,6 @@ class _RealtimePortalDashboardState
                   ),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.outline,
-                    borderRadius: BorderRadius.circular(2),
                   ),
                 ),
                 Padding(
@@ -1163,7 +1162,6 @@ class _RealtimePortalDashboardState
                         height: 30,
                         decoration: BoxDecoration(
                           color: entries[i].accent.withValues(alpha: 0.16),
-                          shape: BoxShape.circle,
                           border: Border.all(
                             color: Theme.of(context).colorScheme.outline,
                             width: 1,

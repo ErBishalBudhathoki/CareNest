@@ -172,7 +172,6 @@ class ClientAppointmentDetailView extends ConsumerWidget {
             padding: const EdgeInsets.all(BauhausDesign.space4),
             decoration: BoxDecoration(
               color: colorScheme.onSecondary.withValues(alpha: 0.2),
-              shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.calendar_today,
@@ -290,7 +289,6 @@ class ClientAppointmentDetailView extends ConsumerWidget {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
                   color: Theme.of(context).colorScheme.surface,
                   border: Border.all(
                     color: Theme.of(context).colorScheme.outline,
@@ -614,7 +612,6 @@ class ClientAppointmentDetailView extends ConsumerWidget {
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.1),
-            blurRadius: 8,
             offset: Offset(0, -4),
           ),
         ],

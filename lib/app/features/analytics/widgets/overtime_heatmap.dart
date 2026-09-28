@@ -103,7 +103,6 @@ class OvertimeHeatmap extends StatelessWidget {
                           height: 32,
                           decoration: BoxDecoration(
                             color: _getColor(context, metric.totalHours),
-                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: Center(
                             child: Text(
@@ -146,7 +145,6 @@ class OvertimeHeatmap extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: BauhausDesign.error.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(4),
                               border: Border.all(color: BauhausDesign.error),
                             ),
                             child: Text(
@@ -225,7 +223,6 @@ class _DayBar extends StatelessWidget {
           height: 60 * heightFactor,
           decoration: BoxDecoration(
             color: isWeekend ? BauhausDesign.secondary : BauhausDesign.primary,
-            borderRadius: BorderRadius.circular(2),
           ),
         ),
         const SizedBox(height: 4),
