@@ -266,21 +266,15 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                         offset: Offset(0, _floatingAnimation.value),
                         child: Container(
                           height: 180,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                              BauhausDesign.radiusMd,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: colorScheme.shadow.withValues(
-                                  alpha: 0.1,
-                                ),
-                                offset: Offset(
-                                  0,
-                                  10 + _floatingAnimation.value.abs(),
-                                ),
-                              ),
-                            ],
+                          // No boxShadow here. This container has no fill, so a
+                          // shadow on it does not read as depth, it paints an
+                          // opaque plate behind the floating asset. The original
+                          // 20px blur hid this; with the blur removed for
+                          // DESIGN.md's zero-blur rule, the offset became a
+                          // visible hard rectangle behind the image. The card
+                          // behind it already carries its own hard shadow.
+                          decoration: const BoxDecoration(
+                            color: Colors.transparent,
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(
