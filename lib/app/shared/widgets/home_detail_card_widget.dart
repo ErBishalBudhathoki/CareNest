@@ -29,7 +29,6 @@ class _HomeDetailCardState extends State<HomeDetailCard>
   late AnimationController _hoverController;
   late AnimationController _floatingController;
   late Animation<double> _scaleAnimation;
-  late Animation<double> _elevationAnimation;
   late Animation<double> _floatingAnimation;
 
   bool _isHovered = false;
@@ -52,10 +51,6 @@ class _HomeDetailCardState extends State<HomeDetailCard>
 
     // Setup animations
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.02).animate(
-      CurvedAnimation(parent: _hoverController, curve: Curves.easeInOut),
-    );
-
-    _elevationAnimation = Tween<double>(begin: 8.0, end: 16.0).animate(
       CurvedAnimation(parent: _hoverController, curve: Curves.easeInOut),
     );
 
@@ -121,18 +116,11 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: widget.gradientStartColor.withValues(
-                              alpha: 0.3,
-                            ),
-                            offset: Offset(0, _elevationAnimation.value * 2),
-                          ),
-                          BoxShadow(
-                            color: colorScheme.shadow.withValues(alpha: 0.1),
-                            offset: Offset(0, _elevationAnimation.value),
-                          ),
-                        ],
+                        // No card shadow. Both shadows here were offset on the
+                        // vertical axis only, with alpha fills, so instead of
+                        // reading as depth they painted a coloured band under
+                        // the card. The gradient already separates the card
+                        // from the page.
                       ),
                     ),
 

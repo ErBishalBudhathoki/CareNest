@@ -1697,7 +1697,7 @@ class _AdminDashboardViewControllerState
             child: Opacity(
               opacity: _contentAnimationController.value,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 32, 24, 0),
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
