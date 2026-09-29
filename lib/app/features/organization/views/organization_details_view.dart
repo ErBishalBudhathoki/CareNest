@@ -1503,6 +1503,7 @@ $appLink
                       width: 64,
                       height: 64,
                       decoration: BoxDecoration(
+                        shape: BoxShape.circle,
                         color: Theme.of(context).colorScheme.surface,
                         image: (logoUrl != null && logoUrl.isNotEmpty)
                             ? DecorationImage(
