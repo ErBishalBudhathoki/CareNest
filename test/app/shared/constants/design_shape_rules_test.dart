@@ -38,6 +38,43 @@ const _avatarFiles = <String>{
   'lib/app/shared/widgets/circular_profile_image_widget.dart',
 };
 
+/// Widgets that display a person, a photo or a logo, wherever they live. These
+/// are circular by design and the sweep must not square them.
+///
+/// This list exists because an earlier sweep did exactly that: it squared
+/// ImageErrorHandler's loading and error placeholders, the admin profile Hero,
+/// the employee status card avatars, the organization logo and logo picker, the
+/// photo upload preview, and the settings profile photo. All of them render
+/// imagery, and the grey square that appeared behind a loaded profile photo was
+/// the squared placeholder showing through.
+const _imageDisplayWidgets = <String>{
+  'lib/app/shared/utils/image_utils.dart',
+  'lib/app/features/admin/views/admin_dashboard_view.dart',
+  'lib/app/features/employee_tracking/widgets/employee_status_card.dart',
+  'lib/app/features/organization/views/organization_edit_view.dart',
+  'lib/app/features/organization/views/organization_details_view.dart',
+  'lib/app/features/photo/views/photo_upload_view.dart',
+  'lib/app/features/settings/widgets/bauhaus_settings_widgets.dart',
+  'lib/app/features/client_portal/views/client_appointment_detail_view.dart',
+};
+
+/// Expected number of circular image containers in each of those files.
+///
+/// A count, rather than a source pattern, is the honest guard: the sweep's
+/// mistake was removing `shape: BoxShape.circle` lines, so a drop in the count
+/// is exactly the regression to catch. Icon badges and remove buttons in these
+/// same files are deliberately square and are not counted.
+const _expectedImageCircles = <String, int>{
+  'lib/app/shared/utils/image_utils.dart': 2,
+  'lib/app/features/admin/views/admin_dashboard_view.dart': 2,
+  'lib/app/features/employee_tracking/widgets/employee_status_card.dart': 2,
+  'lib/app/features/organization/views/organization_edit_view.dart': 1,
+  'lib/app/features/organization/views/organization_details_view.dart': 3,
+  'lib/app/features/photo/views/photo_upload_view.dart': 2,
+  'lib/app/features/settings/widgets/bauhaus_settings_widgets.dart': 1,
+  'lib/app/features/client_portal/views/client_appointment_detail_view.dart': 0,
+};
+
 /// Material widgets that render a pill or stadium shape unless the theme
 /// overrides them. `Card(` and `Chip(` are deliberately absent because the
 /// theme already forces a zero radius on them.
@@ -238,6 +275,25 @@ void main() {
     }
   });
 
+  test('image and avatar containers are still circular', () {
+    for (final entry in _expectedImageCircles.entries) {
+      final f = File('${Directory.current.path}/${entry.key}');
+      expect(f.existsSync(), isTrue, reason: '${entry.key} must exist');
+      final count = 'shape: BoxShape.circle'
+          .allMatches(_codeOf(f.readAsStringSync()))
+          .length;
+      expect(
+        count,
+        entry.value,
+        reason:
+            '${entry.key} displays imagery and its circular containers must be '
+            'preserved. Squaring them makes a grey or square panel appear behind '
+            'the image. If a circle was removed on purpose, update this count '
+            'and say why.',
+      );
+    }
+  });
+
   test('lib/ contains no editor backup or patch files', () {
     // A .dart.bak is not compiled, so it silently accumulates stale Material
     // widgets that neither the analyzer nor the app ever exercises, while
@@ -366,7 +422,14 @@ void main() {
     final offenders = <String>[];
     for (final f in _libFiles()) {
       final rel = _rel(f);
-      if (_avatarFiles.contains(rel) || _scopedFiles.contains(rel)) continue;
+      // Image and avatar containers are legitimately large (a 220px photo
+      // preview, a 76px logo picker). Their circles are governed by the
+      // _expectedImageCircles count guard, not by the size threshold.
+      if (_avatarFiles.contains(rel) ||
+          _scopedFiles.contains(rel) ||
+          _expectedImageCircles.containsKey(rel)) {
+        continue;
+      }
       if (_hasOversizedCircle(_codeOf(f.readAsStringSync()))) {
         offenders.add(rel);
       }
