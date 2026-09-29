@@ -28,7 +28,7 @@ class ProfileImageWidget extends StatelessWidget {
   final double borderWidth;
 
   /// Border color for the circular border
-  final Color? borderColor;
+  final Color borderColor;
 
   /// Background color for the container
   final Color? surfaceColor;
@@ -37,7 +37,7 @@ class ProfileImageWidget extends StatelessWidget {
   final double elevation;
 
   /// Shadow color for the container
-  final Color? shadowColor;
+  final Color shadowColor;
 
   /// Callback when the image is tapped
   final VoidCallback? onTap;
@@ -62,10 +62,10 @@ class ProfileImageWidget extends StatelessWidget {
     this.size = 50.0,
     this.fallbackAsset = 'assets/icons/profile_placeholder.png',
     this.borderWidth = 2.0,
-    this.borderColor,
+    this.borderColor = Colors.white,
     this.surfaceColor,
     this.elevation = 4.0,
-    this.shadowColor,
+    this.shadowColor = Colors.black26,
     this.onTap,
     this.showLoading = true,
     this.errorBuilder,
@@ -75,10 +75,6 @@ class ProfileImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final resolvedBorderColor = borderColor ?? colorScheme.surface;
-    final resolvedShadowColor =
-        shadowColor ?? colorScheme.shadow.withValues(alpha: 0.15);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -87,12 +83,12 @@ class ProfileImageWidget extends StatelessWidget {
         decoration: BoxDecoration(
           shape: shape,
           borderRadius: shape == BoxShape.rectangle ? borderRadius : null,
-          color: surfaceColor ?? colorScheme.surfaceContainer,
-          border: Border.all(color: resolvedBorderColor, width: borderWidth),
+          color: surfaceColor ?? Colors.grey[100],
+          border: Border.all(color: borderColor, width: borderWidth),
           boxShadow: elevation > 0
               ? [
                   BoxShadow(
-                    color: resolvedShadowColor,
+                    color: shadowColor,
                     blurRadius: elevation * 2,
                     offset: Offset(0, elevation),
                   ),
@@ -239,11 +235,15 @@ class EmployeeProfileImage extends ProfileImageWidget {
     this.filename,
     super.size,
     super.onTap,
-  }) : super(imageData: profileImage, borderWidth: 2.0, elevation: 4.0);
+  }) : super(
+         imageData: profileImage,
+         borderColor: Colors.white,
+         borderWidth: 2.0,
+         elevation: 4.0,
+       );
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return Stack(
       children: [
         super.build(context),
@@ -259,7 +259,7 @@ class EmployeeProfileImage extends ProfileImageWidget {
               decoration: BoxDecoration(
                 color: statusColor,
                 shape: BoxShape.circle,
-                border: Border.all(color: colorScheme.surface, width: 1.5),
+                border: Border.all(color: Colors.white, width: 1.5),
               ),
             ),
           ),
@@ -279,5 +279,10 @@ class AdminProfileImage extends ProfileImageWidget {
     super.imageUrl,
     super.size = 60.0,
     super.onTap,
-  }) : super(borderWidth: 3.0, elevation: 6.0);
+  }) : super(
+         borderColor: Colors.white,
+         borderWidth: 3.0,
+         elevation: 6.0,
+         shadowColor: Colors.black38,
+       );
 }
