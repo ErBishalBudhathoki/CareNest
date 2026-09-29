@@ -28,6 +28,11 @@ import 'package:flutter_test/flutter_test.dart';
 ///    without editing this test.
 
 /// The sanctioned exception. Circular identity imagery.
+///
+/// DO NOT MODIFY THESE FILES. They are exempt from the shape rules by design
+/// and they are owned by the user, not by the design sweep. An earlier pass
+/// restyled profile_image_widget.dart to be theme-aware without being asked;
+/// that was reverted. Any future change here needs the user's explicit say-so.
 const _avatarFiles = <String>{
   'lib/app/shared/widgets/profile_image_widget.dart',
   'lib/app/shared/widgets/circular_profile_image_widget.dart',
