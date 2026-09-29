@@ -164,25 +164,34 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Text(
-                              widget.cardLabel,
-                              textAlign: TextAlign.center,
-                              style: BauhausDesign.getTextTheme(context)
-                                  .headlineSmall
-                                  ?.copyWith(
-                                    color: colorScheme.surface,
-                                    letterSpacing: -0.5,
-                                    height: 1.1,
-                                    shadows: [
-                                      Shadow(
-                                        color: colorScheme.shadow.withValues(
-                                          alpha: 0.26,
+                            Padding(
+                              // Measured against the asset's alpha channel: at
+                              // the heading's vertical band the figure spans
+                              // card-local x 0..55, so the heading has to start
+                              // past that or its first characters sit behind it.
+                              padding: const EdgeInsets.only(left: 44),
+                              child: Text(
+                                widget.cardLabel,
+                                textAlign: TextAlign.center,
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                                style: BauhausDesign.getTextTheme(context)
+                                    .titleMedium
+                                    ?.copyWith(
+                                      color: colorScheme.surface,
+                                      letterSpacing: -0.5,
+                                      height: 1.1,
+                                      shadows: [
+                                        Shadow(
+                                          color: colorScheme.shadow.withValues(
+                                            alpha: 0.26,
+                                          ),
+                                          blurRadius: 8,
+                                          offset: Offset(0, 2),
                                         ),
-                                        blurRadius: 8,
-                                        offset: Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
+                                      ],
+                                    ),
+                              ),
                             ),
                             const SizedBox(height: BauhausDesign.space3),
 
@@ -192,12 +201,13 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                                 borderRadius: BorderRadius.circular(
                                   BauhausDesign.radiusMd,
                                 ),
-                                boxShadow: [
-                                  const BoxShadow(
-                                    color: Color(0x1A000000),
-                                    offset: Offset(0, 3),
-                                  ),
-                                ],
+                                // BauhausDesign.shadowHardSm, not a
+                                // bottom-only translucent offset. A shadow
+                                // cast on one axis with an alpha fill reads as
+                                // soft ambient depth, which DESIGN.md forbids;
+                                // the design language wants a solid black
+                                // offset on both axes.
+                                boxShadow: const [BauhausDesign.shadowHardSm],
                               ),
                               child: Material(
                                 color: colorScheme.surface.withValues(

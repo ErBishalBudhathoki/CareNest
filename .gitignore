@@ -332,6 +332,7 @@ test/app/shared/constants/*
 !test/app/shared/widgets/
 test/app/shared/widgets/*
 !test/app/shared/widgets/bauhaus_action_button_test.dart
+!test/app/shared/widgets/home_detail_card_overlap_test.dart
 check_test_user.js
 update_test_user.js
 
