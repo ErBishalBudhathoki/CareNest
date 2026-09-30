@@ -229,7 +229,6 @@ const _scopedFiles = <String>[
   'lib/app/shared/widgets/bauhaus_switch.dart',
   'lib/app/shared/widgets/bauhaus_date_range_picker.dart',
   'lib/app/shared/widgets/bauhaus_time_picker.dart',
-  'lib/app/shared/widgets/enhanced_quick_action_cards.dart',
   'lib/app/shared/widgets/home_detail_card_widget.dart',
   'lib/app/shared/widgets/bauhaus_widgets.dart',
   'lib/app/shared/constants/bauhaus_design.dart',
