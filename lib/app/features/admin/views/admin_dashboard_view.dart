@@ -1090,7 +1090,10 @@ class _AdminDashboardViewControllerState
             child: Opacity(
               opacity: _contentAnimationController.value,
               child: Container(
-                padding: const EdgeInsets.fromLTRB(32, 0, 32, 0),
+                // 24, not 32: the Command Desk section below uses 24 and the
+                // rest of this file favours 24, so 32 left the two sections'
+                // content on different vertical edges.
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
