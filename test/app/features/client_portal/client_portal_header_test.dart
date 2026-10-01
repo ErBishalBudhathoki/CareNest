@@ -3,10 +3,14 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// The portal header used to be a single Row holding the avatar, the title, the
-/// subtitle and both controls. The title had about 137 logical px to work with,
-/// so "CLIENT DASHBOARD" wrapped onto two lines and the subtitle took three,
-/// while Family and Logout sat shoulder to shoulder with the copy.
+/// The portal header used to be one Row holding a profile-picture placeholder,
+/// the title, the subtitle, a Family button and Logout. That left the title
+/// about 137 logical px, so "CLIENT DASHBOARD" wrapped onto two lines and the
+/// subtitle took three.
+///
+/// The placeholder and the Family button are both gone: the placeholder stood in
+/// for nothing the portal knows, and Family duplicated the FAMILY ACCESS section
+/// the body already renders at the top of its scroll view.
 ///
 /// This pumps [ClientPortalHeader] directly. Going through ClientDashboardView
 /// would drag in its initState, which asks for Firebase messaging.
@@ -14,7 +18,8 @@ void main() {
   Future<void> pumpHeader(
     WidgetTester tester, {
     double width = 390,
-    bool familyViewer = false,
+    String title = 'CLIENT DASHBOARD',
+    String subtitle = 'Manage services, invoices, and appointments',
   }) async {
     await tester.binding.setSurfaceSize(Size(width, 844));
     addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -23,12 +28,8 @@ void main() {
         theme: BauhausDesign.lightTheme,
         home: Scaffold(
           body: ClientPortalHeader(
-            isFamilyViewer: familyViewer,
-            title: familyViewer ? 'FAMILY DASHBOARD' : 'CLIENT DASHBOARD',
-            subtitle: familyViewer
-                ? 'View your loved one\'s care updates'
-                : 'Manage services, invoices, and appointments',
-            onFamilyPressed: familyViewer ? null : () {},
+            title: title,
+            subtitle: subtitle,
             onLogout: () async {},
           ),
         ),
@@ -103,10 +104,10 @@ void main() {
     await disposeHeader(tester);
   });
 
-  testWidgets('title shares the first row with the logout control', (
-    tester,
-  ) async {
+  testWidgets('logout is present and the title shares its row', (tester) async {
     await pumpHeader(tester);
+    expect(find.byTooltip('Logout'), findsOneWidget);
+
     final title = tester.getRect(find.text('CLIENT DASHBOARD'));
     final logout = tester.getRect(find.byTooltip('Logout'));
     expect(
@@ -114,34 +115,41 @@ void main() {
       inInclusiveRange(logout.top - 24, logout.bottom),
       reason: 'the title and the logout control should sit on the same row',
     );
-    await disposeHeader(tester);
-  });
-
-  testWidgets('title is vertically centred against the avatar', (tester) async {
-    await pumpHeader(tester);
-    final title = tester.getRect(find.text('CLIENT DASHBOARD'));
-    final avatar = tester.getRect(find.byIcon(Icons.person_outline));
     expect(
-      avatar.top + avatar.height / 2,
-      inInclusiveRange(title.top, title.bottom),
-      reason: 'the avatar and the title should read as one aligned row',
+      logout.left,
+      greaterThan(title.right),
+      reason: 'logout must sit after the copy, not overlap it',
     );
     await disposeHeader(tester);
   });
 
-  testWidgets('Family control is shown for the client portal', (tester) async {
+  testWidgets('no profile-picture placeholder is rendered', (tester) async {
     await pumpHeader(tester);
-    expect(find.text('Family'), findsOneWidget);
+    expect(find.byIcon(Icons.person_outline), findsNothing);
+    expect(find.byIcon(Icons.family_restroom_outlined), findsNothing);
     await disposeHeader(tester);
   });
 
-  testWidgets('family viewer drops the Family control', (tester) async {
-    await pumpHeader(tester, familyViewer: true);
-    expect(find.text('Family'), findsNothing);
-    // The family viewer's avatar is itself a family_restroom icon, so exactly
-    // one is expected: the avatar. A second would be the dropped button.
-    expect(find.byIcon(Icons.family_restroom_outlined), findsOneWidget);
+  testWidgets('no Family control in the header', (tester) async {
+    await pumpHeader(tester);
+    expect(
+      find.text('Family'),
+      findsNothing,
+      reason:
+          'family access is reached from the FAMILY ACCESS section at the '
+          'top of the body, so the appbar button was a duplicate',
+    );
+    await disposeHeader(tester);
+  });
+
+  testWidgets('family viewer sees the same reduced header', (tester) async {
+    await pumpHeader(
+      tester,
+      title: 'FAMILY DASHBOARD',
+      subtitle: 'View your loved one\'s care updates',
+    );
     expect(find.text('FAMILY DASHBOARD'), findsOneWidget);
+    expect(find.text('Family'), findsNothing);
     await disposeHeader(tester);
   });
 }
