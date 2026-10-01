@@ -121,6 +121,13 @@ jobs:
       - name: Generate .env from example
         run: cp .env.example .env
 
+      # sync_manager_test.dart and enhanced_invoice_service_test.dart import
+      # *.mocks.dart, which mockito generates and .gitignore excludes. Without
+      # this step a fresh checkout cannot compile those two files and the whole
+      # run fails, not just the affected tests.
+      - name: Generate mockito mocks
+        run: dart run build_runner build --delete-conflicting-outputs
+
       - name: Run unit tests
         run: flutter test --coverage --reporter expanded
 
