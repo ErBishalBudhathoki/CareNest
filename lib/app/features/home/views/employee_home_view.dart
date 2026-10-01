@@ -789,18 +789,18 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                           },
                         ),
 
-                        const SizedBox(height: 48),
+                        const SizedBox(height: BauhausDesign.space12),
 
                         // --- BANKING DETAILS ---
                         BauhausSectionHeader(
                           title: AppLocalizations.of(context)!.bankingPayouts,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: BauhausDesign.space4),
 
                         // Employee Bank Details Card (View/Edit)
                         _buildBauhausEmployeeBankCard(),
 
-                        const SizedBox(height: 48),
+                        const SizedBox(height: BauhausDesign.space12),
                       ],
                     ),
                   ),
@@ -826,19 +826,24 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
       bankName = (_bankDetails?['bankName'] ?? 'Bank').toString();
     }
 
+    // padding: EdgeInsets.zero so the header strip can bleed to the card edges.
+    // BauhausCard pads by space4 by default, which inset this strip by 16 and made
+    // a full-bleed header impossible. The body below then carries the single
+    // space4 inset, so header copy and body copy land on the same left edge.
     return BauhausCard(
+      padding: EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            padding: const EdgeInsets.symmetric(
+              vertical: BauhausDesign.space3,
+              horizontal: BauhausDesign.space4,
+            ),
             decoration: BoxDecoration(
               color: _colorScheme.inverseSurface, // Black Header
-              border: Border(
-                bottom: BorderSide(color: _colorScheme.outline, width: 0),
-              ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -854,14 +859,14 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                 Icon(
                   Icons.account_balance,
                   color: _colorScheme.onInverseSurface,
-                  size: 18,
+                  size: BauhausDesign.iconMd,
                 ),
               ],
             ),
           ),
 
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(BauhausDesign.space4),
             child: _bankDetailsLoading
                 ? const Center(child: BauhausLoadingState(showMessage: false))
                 : !_hasBankDetails
@@ -900,18 +905,24 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                           context,
                         ).headlineSmall,
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: BauhausDesign.space2),
                       Text(
                         maskedAccount,
                         style: BauhausDesign.getTextTheme(context).labelMedium
                             ?.copyWith(color: _colorScheme.onSurfaceVariant),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: BauhausDesign.space6),
                       SizedBox(
                         width: double.infinity,
+                        // secondary + isOutlined, not ghost. The ghost variant
+                        // returns a bare TextButton before isOutlined is
+                        // considered, so this rendered as a full-width centred
+                        // label with no border, no fill and Material's default
+                        // padding: nothing that reads as a control.
                         child: BauhausActionButton(
-                          variant: BauhausActionVariant.ghost,
+                          variant: BauhausActionVariant.secondary,
                           isOutlined: true,
+                          isFullWidth: true,
                           onPressed: () async {
                             await Navigator.push(
                               context,
