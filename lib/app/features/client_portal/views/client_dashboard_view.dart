@@ -146,107 +146,22 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Column(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              border: Border(
-                bottom: BorderSide(
-                  color: Theme.of(context).colorScheme.outline,
-                  width: 2,
-                ),
-              ),
-            ),
-            child: SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: BauhausDesign.space4,
-                  vertical: BauhausDesign.space3,
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(BauhausDesign.space2),
-                      decoration: BoxDecoration(
-                        color: widget.isFamilyViewer
-                            ? BauhausDesign.warning.withValues(alpha: 0.1)
-                            : BauhausDesign.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(
-                          BauhausDesign.radiusSm,
-                        ),
-                        border: Border.all(
-                          color: widget.isFamilyViewer
-                              ? BauhausDesign.warning
-                              : BauhausDesign.primary,
-                          width: 2,
-                        ),
-                      ),
-                      child: Icon(
-                        widget.isFamilyViewer
-                            ? Icons.family_restroom_outlined
-                            : Icons.person_outline,
-                        color: widget.isFamilyViewer
-                            ? BauhausDesign.warning
-                            : BauhausDesign.primary,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: BauhausDesign.space3),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            headerTitle,
-                            style: GoogleFonts.oswald(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.onSurface,
-                              letterSpacing: 1.2,
-                            ),
-                          ),
-                          Text(
-                            headerSubtitle,
-                            style: BauhausDesign.getTextTheme(context).bodySmall
-                                ?.copyWith(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurfaceVariant,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (!widget.isFamilyViewer)
-                      BauhausActionButton(
-                        onPressed: () => _openFamilyAccess(context),
-                        text: 'Family',
-                        icon: Icons.family_restroom_outlined,
-                        variant: BauhausActionVariant.secondary,
-                        isOutlined: true,
-                        isSmall: true,
-                      ),
-                    if (!widget.isFamilyViewer)
-                      const SizedBox(width: BauhausDesign.space2),
-                    BauhausIconButton(
-                      onPressed: () async {
-                        await SessionTimeoutService().logoutAndClearSession(
-                          reason: 'manual_logout_from_client_portal',
-                        );
-                        if (!context.mounted) return;
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                          Routes.login,
-                          (route) => false,
-                        );
-                      },
-                      icon: Icons.logout,
-                      variant: BauhausActionVariant.neutral,
-                      tooltip: 'Logout',
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          ClientPortalHeader(
+            isFamilyViewer: widget.isFamilyViewer,
+            title: headerTitle,
+            subtitle: headerSubtitle,
+            onFamilyPressed: widget.isFamilyViewer
+                ? null
+                : () => _openFamilyAccess(context),
+            onLogout: () async {
+              await SessionTimeoutService().logoutAndClearSession(
+                reason: 'manual_logout_from_client_portal',
+              );
+              if (!context.mounted) return;
+              Navigator.of(
+                context,
+              ).pushNamedAndRemoveUntil(Routes.login, (route) => false);
+            },
           ),
           Expanded(
             child: _currentIndex < pages.length
@@ -562,6 +477,146 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
           },
         );
       },
+    );
+  }
+}
+
+/// Portal page header: avatar, title, supporting line, Family and Logout.
+///
+/// Laid out over two rows rather than one. With the avatar, the title, the
+/// subtitle and both controls sharing a single Row, the title was left with
+/// roughly 137 logical px and wrapped "CLIENT DASHBOARD" onto two lines while
+/// the subtitle took three. The controls move to their own line so the title
+/// gets the full width minus the avatar and the logout button, which keeps it
+/// to a single line from 320 up.
+///
+/// Kept as its own widget rather than inlined in the dashboard so it can be
+/// pumped in isolation: the dashboard's initState reaches for Firebase
+/// messaging, which a widget test cannot satisfy without turning a transitive
+/// platform package into a direct dev dependency.
+class ClientPortalHeader extends StatelessWidget {
+  final bool isFamilyViewer;
+  final String title;
+  final String subtitle;
+  final VoidCallback? onFamilyPressed;
+  final Future<void> Function() onLogout;
+
+  const ClientPortalHeader({
+    super.key,
+    required this.isFamilyViewer,
+    required this.title,
+    required this.subtitle,
+    required this.onFamilyPressed,
+    required this.onLogout,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2,
+          ),
+        ),
+      ),
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: BauhausDesign.space4,
+            vertical: BauhausDesign.space3,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    // 24px icon + 2*space2_5 padding + 2*2px border lands on
+                    // exactly 48, the same box as the logout control beside it,
+                    // so the two read as a single row.
+                    padding: const EdgeInsets.all(BauhausDesign.space2_5),
+                    decoration: BoxDecoration(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurfaceVariant.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(
+                        BauhausDesign.radiusSm,
+                      ),
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        width: 2,
+                      ),
+                    ),
+                    child: Icon(
+                      isFamilyViewer
+                          ? Icons.family_restroom_outlined
+                          : Icons.person_outline,
+                      color: Theme.of(context).colorScheme.onSurface,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: BauhausDesign.space3),
+                  Expanded(
+                    child: Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: BauhausDesign.getTextTheme(context).titleLarge,
+                    ),
+                  ),
+                  const SizedBox(width: BauhausDesign.space2),
+                  BauhausIconButton(
+                    onPressed: onLogout,
+                    icon: Icons.logout,
+                    variant: BauhausActionVariant.neutral,
+                    tooltip: 'Logout',
+                  ),
+                ],
+              ),
+              const SizedBox(height: BauhausDesign.space2),
+              // Inset so the supporting copy lines up under the title rather
+              // than with the outer edge of the avatar.
+              Padding(
+                padding: const EdgeInsets.only(left: BauhausDesign.space3),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        subtitle,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: BauhausDesign.getTextTheme(context).bodySmall
+                            ?.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
+                      ),
+                    ),
+                    if (onFamilyPressed != null) ...[
+                      const SizedBox(width: BauhausDesign.space3),
+                      BauhausActionButton(
+                        onPressed: onFamilyPressed,
+                        text: 'Family',
+                        icon: Icons.family_restroom_outlined,
+                        variant: BauhausActionVariant.secondary,
+                        isOutlined: true,
+                        isSmall: true,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
