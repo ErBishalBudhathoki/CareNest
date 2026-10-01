@@ -304,36 +304,14 @@ uploads/*
 test*.js
 *_test.js
 *.spec.js
-test/
-tests/
+# Overrides the `test/` entry under "User-specified ignores" above, and the
+# global `*_test.dart` rule, both of which ignored the whole Dart test suite.
+# Git cannot descend into an excluded directory and the last matching rule
+# wins, so order matters: re-include every .dart under test/, then exclude the
+# generated mockito artefacts again.
 !test/
-test/*
-!test/app/
-test/app/*
-!test/app/features/
-test/app/features/*
-!test/app/features/invoice/
-test/app/features/invoice/*
-!test/app/features/invoice/payment_repository_test.dart
-!test/app/features/invoice/price_override_layout_test.dart
-!test/app/features/pricing/
-test/app/features/pricing/*
-!test/app/features/pricing/cap_tile_alignment_test.dart
-!test/app/features/pricing/tab_header_spacing_test.dart
-!test/app/shared/
-test/app/shared/*
-!test/app/shared/constants/
-test/app/shared/constants/*
-!test/app/shared/constants/bauhaus_design_test.dart
-!test/app/shared/constants/bauhaus_dark_mode_guard_test.dart
-!test/app/shared/constants/slider_theme_test.dart
-!test/app/shared/constants/slider_pixel_test.dart
-!test/app/shared/constants/design_shape_rules_test.dart
-!test/app/shared/constants/no_dead_code_test.dart
-!test/app/shared/widgets/
-test/app/shared/widgets/*
-!test/app/shared/widgets/bauhaus_action_button_test.dart
-!test/app/shared/widgets/home_detail_card_overlap_test.dart
+!test/**/*.dart
+test/**/*.mocks.dart
 check_test_user.js
 update_test_user.js
 
@@ -408,6 +386,11 @@ flutter_*.png
 
 # Test mocks and fixtures
 test_mocks/
+# test/test_mocks/ holds hand-written test doubles that the suite imports, not
+# generated output. Only *.mocks.dart inside it is generated and stays ignored
+# via the rule in the test-suite block above.
+!test/test_mocks/
+!test/test_mocks/*.dart
 
 # Universal links hosting (dev only)
 universal_links_hosting/

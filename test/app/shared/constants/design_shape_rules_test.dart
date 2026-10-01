@@ -207,7 +207,6 @@ String _rel(File f) => f.path.replaceFirst('${Directory.current.path}/', '');
 
 /// Screens already reviewed and migrated. These must stay perfectly sharp.
 const _scopedFiles = <String>[
-  'lib/app/features/auth/views/login_view_bauhaus.dart',
   'lib/app/features/auth/views/forgot_password_view.dart',
   'lib/app/features/auth/views/verify_otp_view.dart',
   'lib/app/features/home/widgets/bauhaus_appointment_card.dart',
@@ -291,6 +290,21 @@ void main() {
             'and say why.',
       );
     }
+  });
+
+  test('every scoped file still exists', () {
+    // Deleting a file that is still listed here makes the per-file group fail
+    // with a confusing "must exist" error rather than naming the stale entry.
+    final missing = _scopedFiles
+        .where((f) => !File('${Directory.current.path}/$f').existsSync())
+        .toList();
+    expect(
+      missing,
+      isEmpty,
+      reason:
+          'these files are in _scopedFiles but no longer exist, so remove them '
+          'from the list:\n${missing.join('\n')}',
+    );
   });
 
   test('lib/ contains no editor backup or patch files', () {
