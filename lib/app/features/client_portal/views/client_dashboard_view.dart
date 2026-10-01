@@ -147,12 +147,8 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
       body: Column(
         children: [
           ClientPortalHeader(
-            isFamilyViewer: widget.isFamilyViewer,
             title: headerTitle,
             subtitle: headerSubtitle,
-            onFamilyPressed: widget.isFamilyViewer
-                ? null
-                : () => _openFamilyAccess(context),
             onLogout: () async {
               await SessionTimeoutService().logoutAndClearSession(
                 reason: 'manual_logout_from_client_portal',
@@ -178,12 +174,12 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
     );
   }
 
-  void _openFamilyAccess(BuildContext context) {
-    Navigator.of(context).pushNamed(
-      Routes.familyManagement,
-      arguments: {'clientId': widget.clientId},
-    );
-  }
+  // No appbar entry point for family access. ClientPortalDashboardBody renders
+  // a FAMILY ACCESS section at the top of the scroll view for anyone holding
+  // manageFamily, which for a non-family-viewer client is always true because
+  // _perm() returns true when the viewer is not a family member. That section
+  // pushes the same Routes.familyManagement, so the button this replaced was a
+  // duplicate of the first thing in the body.
 
   Widget _buildDeleteAccountFooter(BuildContext context) {
     return Padding(
@@ -481,32 +477,31 @@ class _ClientDashboardViewState extends ConsumerState<ClientDashboardView> {
   }
 }
 
-/// Portal page header: avatar, title, supporting line, Family and Logout.
+/// Portal page header: title, supporting line and Logout.
 ///
-/// Laid out over two rows rather than one. With the avatar, the title, the
-/// subtitle and both controls sharing a single Row, the title was left with
-/// roughly 137 logical px and wrapped "CLIENT DASHBOARD" onto two lines while
-/// the subtitle took three. The controls move to their own line so the title
-/// gets the full width minus the avatar and the logout button, which keeps it
-/// to a single line from 320 up.
+/// It used to carry a profile-picture placeholder and a Family button as well.
+/// Both are gone. The placeholder was a generic person glyph that stood in for
+/// nothing the portal knows, and Family duplicated the FAMILY ACCESS section the
+/// body already renders at the top of its scroll view.
+///
+/// With those gone the title and the subtitle share the full width minus the
+/// logout button, which is around 300 logical px on a 390 screen. That is enough
+/// for the title on one line and the subtitle on two, where before the title had
+/// about 137px and wrapped.
 ///
 /// Kept as its own widget rather than inlined in the dashboard so it can be
 /// pumped in isolation: the dashboard's initState reaches for Firebase
 /// messaging, which a widget test cannot satisfy without turning a transitive
 /// platform package into a direct dev dependency.
 class ClientPortalHeader extends StatelessWidget {
-  final bool isFamilyViewer;
   final String title;
   final String subtitle;
-  final VoidCallback? onFamilyPressed;
   final Future<void> Function() onLogout;
 
   const ClientPortalHeader({
     super.key,
-    required this.isFamilyViewer,
     required this.title,
     required this.subtitle,
-    required this.onFamilyPressed,
     required this.onLogout,
   });
 
@@ -529,89 +524,40 @@ class ClientPortalHeader extends StatelessWidget {
             horizontal: BauhausDesign.space4,
             vertical: BauhausDesign.space3,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
+          child: Row(
             children: [
-              Row(
-                children: [
-                  Container(
-                    // 24px icon + 2*space2_5 padding + 2*2px border lands on
-                    // exactly 48, the same box as the logout control beside it,
-                    // so the two read as a single row.
-                    padding: const EdgeInsets.all(BauhausDesign.space2_5),
-                    decoration: BoxDecoration(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurfaceVariant.withValues(alpha: 0.08),
-                      borderRadius: BorderRadius.circular(
-                        BauhausDesign.radiusSm,
-                      ),
-                      border: Border.all(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        width: 2,
-                      ),
-                    ),
-                    child: Icon(
-                      isFamilyViewer
-                          ? Icons.family_restroom_outlined
-                          : Icons.person_outline,
-                      color: Theme.of(context).colorScheme.onSurface,
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: BauhausDesign.space3),
-                  Expanded(
-                    child: Text(
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
                       title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: BauhausDesign.getTextTheme(context).titleLarge,
                     ),
-                  ),
-                  const SizedBox(width: BauhausDesign.space2),
-                  BauhausIconButton(
-                    onPressed: onLogout,
-                    icon: Icons.logout,
-                    variant: BauhausActionVariant.neutral,
-                    tooltip: 'Logout',
-                  ),
-                ],
-              ),
-              const SizedBox(height: BauhausDesign.space2),
-              // Inset so the supporting copy lines up under the title rather
-              // than with the outer edge of the avatar.
-              Padding(
-                padding: const EdgeInsets.only(left: BauhausDesign.space3),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        subtitle,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: BauhausDesign.getTextTheme(context).bodySmall
-                            ?.copyWith(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurfaceVariant,
-                            ),
-                      ),
+                    const SizedBox(height: BauhausDesign.space1),
+                    Text(
+                      subtitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: BauhausDesign.getTextTheme(context).bodySmall
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                     ),
-                    if (onFamilyPressed != null) ...[
-                      const SizedBox(width: BauhausDesign.space3),
-                      BauhausActionButton(
-                        onPressed: onFamilyPressed,
-                        text: 'Family',
-                        icon: Icons.family_restroom_outlined,
-                        variant: BauhausActionVariant.secondary,
-                        isOutlined: true,
-                        isSmall: true,
-                      ),
-                    ],
                   ],
                 ),
+              ),
+              const SizedBox(width: BauhausDesign.space3),
+              BauhausIconButton(
+                onPressed: onLogout,
+                icon: Icons.logout,
+                variant: BauhausActionVariant.neutral,
+                tooltip: 'Logout',
               ),
             ],
           ),
