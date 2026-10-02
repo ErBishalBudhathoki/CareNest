@@ -209,7 +209,16 @@ void main() {
     expect(border, theme.colorScheme.onSurface);
   });
 
-  testWidgets('the accent variants are untouched', (tester) async {
+  testWidgets('the accent variants are readable on the surface', (
+    tester,
+  ) async {
+    // Previously asserted that primary and secondary keep a yellow label and
+    // border "on purpose". Yellow on the near-white surface is 1.57:1, so that
+    // was the same defect this file was written to prevent, on the variants it
+    // had been told to leave alone. Both now label and border with onSurface;
+    // only a destructive red border carries an accent, because red is the one
+    // accent that clears 3:1 against both surfaces. The exhaustive rule is in
+    // bauhaus_action_contrast_test.dart.
     final theme = BauhausDesign.lightTheme;
     for (final variant in <BauhausActionVariant>[
       BauhausActionVariant.primary,
@@ -221,8 +230,8 @@ void main() {
         isOutlined: true,
         theme: theme,
       );
-      expect(label, theme.colorScheme.primary, reason: '$variant label');
-      expect(border, theme.colorScheme.primary, reason: '$variant border');
+      expect(label, theme.colorScheme.onSurface, reason: '$variant label');
+      expect(border, theme.colorScheme.onSurface, reason: '$variant border');
     }
   });
 
