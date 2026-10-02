@@ -239,26 +239,4 @@ void main() {
           'buttons that ellipsised both labels',
     );
   });
-
-  test('the leave date picker is themed square, not Material rounded', () {
-    const file = 'lib/app/features/leave/views/leave_request_form.dart';
-    final src = File(file).readAsStringSync();
-    expect(
-      src.contains('DatePickerThemeData'),
-      isTrue,
-      reason:
-          'the range picker needs a DatePickerTheme or it keeps Material\'s '
-          'stadium-shaped range highlight and circular day cells',
-    );
-    expect(
-      src.contains('dayShape'),
-      isTrue,
-      reason: 'dayShape squares the day cells and the range band',
-    );
-    expect(
-      RegExp(r'BorderRadius\.zero').allMatches(src).isNotEmpty,
-      isTrue,
-      reason: 'DESIGN.md forbids rounded geometry outside avatars',
-    );
-  });
 }

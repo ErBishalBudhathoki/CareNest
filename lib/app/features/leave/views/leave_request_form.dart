@@ -1,3 +1,4 @@
+import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
 import 'package:carenest/app/features/leave/viewmodels/leave_viewmodel.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
@@ -163,34 +164,18 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
               const SizedBox(height: BauhausDesign.space1),
               InkWell(
                 onTap: () async {
-                  final picked = await showDateRangePicker(
+                  // The Bauhaus range picker, the same one schedule assignment
+                  // uses. Material's showDateRangePicker draws a stadium-shaped
+                  // range highlight and circular day cells, which is against
+                  // DESIGN.md's zero-radius rule; theming it with
+                  // DatePickerTheme could square the cells but not the range
+                  // band, so the picker is replaced outright instead.
+                  final picked = await showBauhausDateRangePicker(
                     context: context,
+                    initialStart: _selectedDateRange?.start,
+                    initialEnd: _selectedDateRange?.end,
                     firstDate: DateTime.now(),
                     lastDate: DateTime.now().add(const Duration(days: 365)),
-                    builder: (context, child) {
-                      // Material's range highlight is a stadium-shaped pill and
-                      // the day cells are circles, both of which break DESIGN.md's
-                      // zero-radius rule. dayShape and yearShape square the cells
-                      // and the range band; shape squares the dialog itself.
-                      // dayShape and yearShape are WidgetStateProperty in this
-                      // Flutter version, so the border has to be wrapped.
-                      const square = RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero,
-                      );
-                      const squareAll = WidgetStatePropertyAll<OutlinedBorder?>(
-                        square,
-                      );
-                      return Theme(
-                        data: Theme.of(context).copyWith(
-                          datePickerTheme: const DatePickerThemeData(
-                            dayShape: squareAll,
-                            yearShape: squareAll,
-                            shape: square,
-                          ),
-                        ),
-                        child: child!,
-                      );
-                    },
                   );
                   if (picked != null) {
                     setState(() {
