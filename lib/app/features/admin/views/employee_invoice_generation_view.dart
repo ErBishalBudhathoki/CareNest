@@ -6,7 +6,7 @@ import 'package:carenest/app/features/admin/utils/employee_invoice_validation.da
 import 'package:carenest/app/features/admin/viewmodels/bank_details_viewmodel.dart';
 import 'package:carenest/app/features/admin/views/bank_details_view.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
-import 'package:carenest/app/shared/widgets/bauhaus_date_range_picker.dart';
+import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
 import 'package:carenest/app/shared/utils/pdf/pdf_viewer_io.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/config/environment.dart';
@@ -395,14 +395,12 @@ class _EmployeeInvoiceGenerationViewState
           end: DateTime.now(),
         );
 
-    final picked = await showDialog<DateTimeRange>(
+    final picked = await showBauhausDateRangePicker(
       context: context,
-      builder: (context) => BauhausDateRangePicker(
-        initialStartDate: initial.start,
-        initialEndDate: initial.end,
-        firstDate: DateTime(2020),
-        lastDate: DateTime(DateTime.now().year + 1),
-      ),
+      initialStart: initial.start,
+      initialEnd: initial.end,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(DateTime.now().year + 1),
     );
 
     if (picked != null) {

@@ -690,6 +690,101 @@ class BauhausTextField extends StatelessWidget {
 
 // ==================== BUTTONS ====================
 
+/// The colours [BauhausActionButton] paints: fill, label and, for outlined
+/// buttons, the border.
+///
+/// Extracted from `build` so the rule can be tested directly. It used to live
+/// inline, which is how `secondary` shipped hazard-yellow text on a near-white
+/// fill at 1.57:1 across 33 call sites: the logic had no unit test, so every
+/// fix landed on an individual screen instead of on the variant.
+typedef ResolvedActionColors = ({Color background, Color label, Color? border});
+
+ResolvedActionColors resolveActionButtonColors({
+  required ColorScheme colorScheme,
+  required BauhausActionVariant variant,
+  bool isOutlined = false,
+  Color? backgroundColor,
+  Color? textColor,
+}) {
+  if (backgroundColor != null) {
+    return (
+      background: backgroundColor,
+      label: textColor ?? colorScheme.onPrimary,
+      border: null,
+    );
+  }
+
+  Color bg;
+  Color label;
+  switch (variant) {
+    case BauhausActionVariant.primary:
+      bg = colorScheme.primary;
+      label = colorScheme.onPrimary;
+      break;
+    case BauhausActionVariant.secondary:
+      // Secondary was surface-on-primary: hazard yellow text on a near-white
+      // fill, 1.57:1. Most of its 33 call sites are dialog Cancel buttons, so
+      // the label was effectively invisible. It now renders as neutral. Kept as
+      // a name so those call sites stay valid; new code should say neutral.
+      bg = colorScheme.surface;
+      label = colorScheme.onSurface;
+      break;
+    case BauhausActionVariant.success:
+      bg = colorScheme.secondary;
+      label = colorScheme.onSecondary;
+      break;
+    case BauhausActionVariant.warning:
+      bg = colorScheme.primary;
+      label = colorScheme.onPrimary;
+      break;
+    case BauhausActionVariant.error:
+    case BauhausActionVariant.danger:
+      bg = colorScheme.tertiary;
+      label = colorScheme.onTertiary;
+      break;
+    case BauhausActionVariant.info:
+      bg = colorScheme.secondary;
+      label = colorScheme.onSecondary;
+      break;
+    case BauhausActionVariant.ghost:
+      bg = Colors.transparent;
+      label = colorScheme.onSurface;
+      break;
+    case BauhausActionVariant.neutral:
+      bg = colorScheme.surface;
+      label = colorScheme.onSurface;
+      break;
+  }
+
+  if (!isOutlined) return (background: bg, label: label, border: null);
+
+  // Outlined means a surface background with a border that can differ from the
+  // label. The label has to be readable on that surface, which is near-white in
+  // light mode and #313030 in dark.
+  //
+  // Carrying a variant's filled label across is wrong in both directions.
+  // onSecondary and onTertiary are inks for a coloured fill, so on the surface
+  // they read as near-white on near-white at 1.02:1. onPrimary is the hazard
+  // yellow's dark ink, so in dark mode it is #1a1a1a on #313030 at 1.32:1. An
+  // earlier version routed the remaining variants to primary instead, which put
+  // yellow on near-white at 1.57:1. Every one of those was unreadable, so
+  // outlined labels with onSurface unconditionally.
+  //
+  // The border is a shape, judged against 3:1 rather than 4.5:1, and it is the
+  // only place an accent can survive. Primary yellow and secondary teal both
+  // fail 3:1 on the light surface, so they cannot carry it. Destructive red
+  // clears 3:1 against both surfaces, so danger and error keep theirs.
+  final isDestructive =
+      variant == BauhausActionVariant.danger ||
+      variant == BauhausActionVariant.error;
+
+  return (
+    background: colorScheme.surface,
+    label: textColor ?? colorScheme.onSurface,
+    border: isDestructive ? colorScheme.tertiary : colorScheme.onSurface,
+  );
+}
+
 class BauhausActionButton extends StatelessWidget {
   final String? text;
   final String? semanticsLabel;
@@ -723,74 +818,16 @@ class BauhausActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    Color effectiveBg = backgroundColor ?? colorScheme.primary;
-    Color effectiveText = textColor ?? colorScheme.onPrimary;
-
-    if (backgroundColor == null) {
-      switch (variant) {
-        case BauhausActionVariant.primary:
-          effectiveBg = colorScheme.primary;
-          effectiveText = colorScheme.onPrimary;
-          break;
-        case BauhausActionVariant.secondary:
-          effectiveBg = colorScheme.surface;
-          effectiveText = colorScheme.primary;
-          break;
-        case BauhausActionVariant.success:
-          effectiveBg = colorScheme.secondary;
-          effectiveText = colorScheme.onSecondary;
-          break;
-        case BauhausActionVariant.warning:
-          effectiveBg = colorScheme.primary;
-          effectiveText = colorScheme.onPrimary;
-          break;
-        case BauhausActionVariant.error:
-        case BauhausActionVariant.danger:
-          effectiveBg = colorScheme.tertiary;
-          effectiveText = colorScheme.onTertiary;
-          break;
-        case BauhausActionVariant.info:
-          effectiveBg = colorScheme.secondary;
-          effectiveText = colorScheme.onSecondary;
-          break;
-        case BauhausActionVariant.ghost:
-          effectiveBg = Colors.transparent;
-          effectiveText = colorScheme.onSurface;
-          break;
-        case BauhausActionVariant.neutral:
-          effectiveBg = colorScheme.surface;
-          effectiveText = colorScheme.onSurface;
-          break;
-      }
-    }
-
-    // Set for outlined buttons only: the border colour can differ from the label
-    // colour. A destructive action carries red on the border, because red as a
-    // label is only 4.07:1 on the light surface and 3.16:1 on the dark one.
-    Color? outlinedBorder;
-
-    if (isOutlined) {
-      effectiveBg = colorScheme.surface;
-      // Outlined means a surface background with an accent-coloured border.
-      // Forcing primary here discarded the variant's own accent, so a neutral
-      // outlined button painted hazard yellow on near-white at 1.57:1.
-      if (variant == BauhausActionVariant.neutral) {
-        // Neutral means no accent: it keeps onSurface for label and border.
-        outlinedBorder = effectiveText;
-      } else if (variant == BauhausActionVariant.danger ||
-          variant == BauhausActionVariant.error) {
-        // Red on the border so the action reads as destructive. The label stays
-        // onSurface: red text is 4.07:1 light and 3.16:1 dark, both under AA,
-        // and red on a red fill would be 1.0:1. The border is a 2.5px shape, so
-        // the 3:1 non-text threshold is the one that applies, and red clears it
-        // against both surfaces.
-        outlinedBorder = colorScheme.tertiary;
-        effectiveText = textColor ?? colorScheme.onSurface;
-      } else {
-        effectiveText = textColor ?? colorScheme.primary;
-        outlinedBorder = effectiveText;
-      }
-    }
+    final resolved = resolveActionButtonColors(
+      colorScheme: colorScheme,
+      variant: variant,
+      isOutlined: isOutlined,
+      backgroundColor: backgroundColor,
+      textColor: textColor,
+    );
+    final effectiveBg = resolved.background;
+    final effectiveText = resolved.label;
+    final outlinedBorder = resolved.border;
 
     // Ghost variant special handling
     if (variant == BauhausActionVariant.ghost) {
