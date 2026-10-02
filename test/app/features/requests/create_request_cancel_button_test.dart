@@ -121,13 +121,15 @@ void main() {
     expect(contrast(ink, theme.colorScheme.surface), greaterThanOrEqualTo(4.5));
   });
 
-  testWidgets('other outlined variants keep the yellow accent', (tester) async {
-    // Guards against this fix going further than it should. Only neutral was
-    // broken; primary, secondary and danger all render yellow on purpose.
+  testWidgets('primary and secondary keep the yellow accent', (tester) async {
+    // Guards against the cancel fix going further than it should. Primary and
+    // secondary outlined buttons render yellow on purpose.
+    //
+    // Danger is deliberately absent: it now carries red on the border, which is
+    // covered by bauhaus_danger_button_test.dart.
     for (final variant in <BauhausActionVariant>[
       BauhausActionVariant.primary,
       BauhausActionVariant.secondary,
-      BauhausActionVariant.danger,
     ]) {
       final theme = BauhausDesign.lightTheme;
       final (ink, _) = await render(
@@ -142,6 +144,25 @@ void main() {
         reason: '$variant outlined should still use the primary accent',
       );
     }
+  });
+
+  testWidgets('danger outlined is red-bordered, not yellow', (tester) async {
+    // Recorded here too, because this is the file that first pinned danger as
+    // yellow. If danger ever goes back to yellow that is a regression.
+    final theme = BauhausDesign.lightTheme;
+    final (ink, border) = await render(
+      tester,
+      BauhausActionVariant.danger,
+      isOutlined: true,
+      theme: theme,
+      label: 'DECLINE',
+    );
+    expect(border, theme.colorScheme.tertiary, reason: 'border must be red');
+    expect(
+      ink,
+      theme.colorScheme.onSurface,
+      reason: 'the label stays readable rather than red',
+    );
   });
 
   testWidgets('a filled neutral button is unchanged', (tester) async {
