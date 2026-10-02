@@ -764,17 +764,31 @@ class BauhausActionButton extends StatelessWidget {
       }
     }
 
+    // Set for outlined buttons only: the border colour can differ from the label
+    // colour. A destructive action carries red on the border, because red as a
+    // label is only 4.07:1 on the light surface and 3.16:1 on the dark one.
+    Color? outlinedBorder;
+
     if (isOutlined) {
       effectiveBg = colorScheme.surface;
-      // Outlined means a surface background with an accent-coloured border and
-      // label. Forcing primary here threw away the variant's own accent, so a
-      // neutral outlined button painted hazard yellow on a near-white surface at
-      // 1.57:1. Neutral is exempt: it exists to mean "no accent", and that is
-      // exactly what the cancel buttons rely on.
-      //
-      // The other variants keep the yellow, so nothing else changes appearance.
-      if (variant != BauhausActionVariant.neutral) {
+      // Outlined means a surface background with an accent-coloured border.
+      // Forcing primary here discarded the variant's own accent, so a neutral
+      // outlined button painted hazard yellow on near-white at 1.57:1.
+      if (variant == BauhausActionVariant.neutral) {
+        // Neutral means no accent: it keeps onSurface for label and border.
+        outlinedBorder = effectiveText;
+      } else if (variant == BauhausActionVariant.danger ||
+          variant == BauhausActionVariant.error) {
+        // Red on the border so the action reads as destructive. The label stays
+        // onSurface: red text is 4.07:1 light and 3.16:1 dark, both under AA,
+        // and red on a red fill would be 1.0:1. The border is a 2.5px shape, so
+        // the 3:1 non-text threshold is the one that applies, and red clears it
+        // against both surfaces.
+        outlinedBorder = colorScheme.tertiary;
+        effectiveText = textColor ?? colorScheme.onSurface;
+      } else {
         effectiveText = textColor ?? colorScheme.primary;
+        outlinedBorder = effectiveText;
       }
     }
 
@@ -816,7 +830,9 @@ class BauhausActionButton extends StatelessWidget {
         color: effectiveBg,
         borderRadius: BorderRadius.zero,
         border: Border.all(
-          color: isOutlined ? effectiveText : colorScheme.outline,
+          color: isOutlined
+              ? (outlinedBorder ?? effectiveText)
+              : colorScheme.outline,
           width: 2.5,
         ),
         boxShadow: isOutlined ? const [] : const [BauhausDesign.shadowHard],
