@@ -12,6 +12,7 @@ import '../widgets/utilization_gauge.dart';
 import '../widgets/reliability_table.dart';
 import '../widgets/bauhaus_loader.dart';
 import '../widgets/bauhaus_empty_state.dart';
+import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
 
 class AnalyticsDashboardView extends ConsumerWidget {
   const AnalyticsDashboardView({super.key});
@@ -254,15 +255,12 @@ class AnalyticsDashboardView extends ConsumerWidget {
               label: 'Custom Range',
               onTap: () async {
                 Navigator.pop(context);
-                final picked = await showDateRangePicker(
+                final picked = await showBauhausDateRangePicker(
                   context: context,
                   firstDate: DateTime(2020),
                   lastDate: DateTime.now().add(const Duration(days: 365)),
-                  initialDateRange: DateTimeRange(
-                    start: currentFilter.startDate,
-                    end: currentFilter.endDate,
-                  ),
-                  builder: (context, child) => child!,
+                  initialStart: currentFilter.startDate,
+                  initialEnd: currentFilter.endDate,
                 );
                 if (picked != null) {
                   ref

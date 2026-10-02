@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
 
 class LeaveTrackerView extends ConsumerStatefulWidget {
   final String userEmail;
@@ -414,7 +415,7 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
                 variant: BauhausActionVariant.neutral,
                 isOutlined: true,
                 onPressed: () async {
-                  final picked = await showDatePicker(
+                  final picked = await showBauhausDatePicker(
                     context: context,
                     initialDate: _forecastTargetDate,
                     firstDate: DateTime.now(),

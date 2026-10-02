@@ -15,6 +15,7 @@ import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import 'package:intl/intl.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
+import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
 
 /// Schedule Dashboard Screen with Bauhaus styling
 class ScheduleDashboardScreen extends ConsumerStatefulWidget {
@@ -1054,14 +1055,11 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
               const SizedBox(height: BauhausDesign.space2),
               GestureDetector(
                 onTap: () async {
-                  final date = await showDatePicker(
+                  final date = await showBauhausDatePicker(
                     context: context,
                     initialDate: _selectedDate,
                     firstDate: DateTime.now(),
                     lastDate: DateTime.now().add(const Duration(days: 365)),
-                    builder: (context, child) {
-                      return Theme(data: Theme.of(context), child: child!);
-                    },
                   );
                   if (date != null) {
                     setState(() => _selectedDate = date);

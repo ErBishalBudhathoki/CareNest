@@ -6,6 +6,7 @@ import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../viewmodels/payroll_export_viewmodel.dart';
+import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
 
 class AdminPayrollExportView extends ConsumerStatefulWidget {
   final String organizationId;
@@ -237,14 +238,11 @@ class _AdminPayrollExportViewState
   }
 
   Future<void> _selectDate(BuildContext context, bool isStart) async {
-    final picked = await showDatePicker(
+    final picked = await showBauhausDatePicker(
       context: context,
       initialDate: isStart ? _startDate : _endDate,
       firstDate: DateTime(2020),
       lastDate: DateTime.now().add(const Duration(days: 365)),
-      builder: (context, child) {
-        return Theme(data: Theme.of(context), child: child!);
-      },
     );
 
     if (picked != null) {

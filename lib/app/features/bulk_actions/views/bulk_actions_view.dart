@@ -10,6 +10,7 @@ import 'package:carenest/app/features/timesheet/models/timesheet_model.dart';
 import 'package:carenest/app/features/timesheet/repositories/timesheet_repository.dart';
 import 'package:carenest/app/features/schedule/models/shift_model.dart';
 import 'package:carenest/app/features/auth/models/user_model.dart';
+import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
 
 /// Bulk Actions View - Tabbed interface for all bulk operations.
 /// Every tab loads live data and calls the real bulk endpoints; there are
@@ -1349,7 +1350,7 @@ class _BulkMessagingTabState extends ConsumerState<_BulkMessagingTab> {
   }
 
   Future<void> _scheduleMessages() async {
-    final date = await showDatePicker(
+    final date = await showBauhausDatePicker(
       context: context,
       initialDate: DateTime.now().add(const Duration(days: 1)),
       firstDate: DateTime.now(),

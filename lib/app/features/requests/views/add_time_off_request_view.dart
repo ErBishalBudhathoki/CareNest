@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:carenest/app/features/requests/viewmodels/requests_viewmodel.dart';
 import 'package:carenest/app/features/requests/viewmodels/config_viewmodel.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
+import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
 
 class AddTimeOffRequestView extends ConsumerStatefulWidget {
   final String email;
@@ -259,14 +260,13 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
                     const SizedBox(height: BauhausDesign.space2),
                     GestureDetector(
                       onTap: () async {
-                        final date = await showDatePicker(
+                        final date = await showBauhausDatePicker(
                           context: context,
                           initialDate: startDate,
                           firstDate: DateTime.now(),
                           lastDate: DateTime.now().add(
                             const Duration(days: 365),
                           ),
-                          builder: (context, child) => child!,
                         );
                         if (date != null) {
                           setState(() {
@@ -318,14 +318,13 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
                     const SizedBox(height: BauhausDesign.space2),
                     GestureDetector(
                       onTap: () async {
-                        final date = await showDatePicker(
+                        final date = await showBauhausDatePicker(
                           context: context,
                           initialDate: endDate,
                           firstDate: startDate,
                           lastDate: DateTime.now().add(
                             const Duration(days: 365),
                           ),
-                          builder: (context, child) => child!,
                         );
                         if (date != null) {
                           setState(() => endDate = date);
