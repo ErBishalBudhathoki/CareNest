@@ -115,16 +115,6 @@ class BauhausActionCard extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-
-              // Arrow indicator
-              Align(
-                alignment: Alignment.centerRight,
-                child: Icon(
-                  Icons.arrow_forward,
-                  size: 16,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
             ],
           ),
         )

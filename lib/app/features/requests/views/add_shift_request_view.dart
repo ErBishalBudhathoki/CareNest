@@ -347,7 +347,7 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                         DateFormat('MMMM dd yyyy').format(selectedDate),
                         style: BauhausDesign.getTextTheme(context).bodyMedium
                             ?.copyWith(
-                              color: BauhausDesign.primary,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.bold,
                             ),
                       ),
@@ -383,7 +383,7 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                         startTime.format(context),
                         style: BauhausDesign.getTextTheme(context).bodyMedium
                             ?.copyWith(
-                              color: BauhausDesign.primary,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.bold,
                             ),
                       ),
@@ -440,7 +440,7 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                         ).format(endDate ?? selectedDate),
                         style: BauhausDesign.getTextTheme(context).bodyMedium
                             ?.copyWith(
-                              color: BauhausDesign.primary,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.bold,
                             ),
                       ),
@@ -476,7 +476,7 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                         endTime.format(context),
                         style: BauhausDesign.getTextTheme(context).bodyMedium
                             ?.copyWith(
-                              color: BauhausDesign.primary,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.bold,
                             ),
                       ),
@@ -511,7 +511,7 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                   style: BauhausDesign.getTextTheme(context).titleMedium
                       ?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: BauhausDesign.primary,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                 ),
               ],
@@ -529,15 +529,16 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                     _showNoteField = true;
                   });
                 },
-                icon: const Icon(
+                icon: Icon(
                   Icons.edit_outlined,
-                  color: BauhausDesign.primary,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 label: Text(
                   AppLocalizations.of(context)!.addNote,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).labelLarge?.copyWith(color: BauhausDesign.primary),
+                  style: BauhausDesign.getTextTheme(context).labelLarge
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 ),
               ),
             ),
