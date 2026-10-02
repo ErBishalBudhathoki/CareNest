@@ -338,7 +338,9 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
                         style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
                               fontStyle: FontStyle.italic,
-                              color: BauhausDesign.textMuted,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
                       ),
                     ],
@@ -601,7 +603,7 @@ class _ShiftDetailsDialogContentState
                 label,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
               Text(
@@ -666,7 +668,9 @@ class _ShiftDetailsDialogContentState
                         style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: BauhausDesign.textMuted,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
                       ),
                       Text(
@@ -733,7 +737,7 @@ class _ShiftDetailsDialogContentState
             'Do you want to claim this shift?',
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
               fontStyle: FontStyle.italic,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ],

@@ -72,9 +72,9 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
               Text(
                 AppLocalizations.of(context)!.requestSentMessage,
                 textAlign: TextAlign.center,
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: BauhausDesign.space4),
               SizedBox(
@@ -557,7 +557,7 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
           Text(
             AppLocalizations.of(context)!.requestApprovalInfo,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontStyle: FontStyle.italic,
             ),
           ),

@@ -64,9 +64,9 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
               Text(
                 AppLocalizations.of(context)!.requestSentMessage,
                 textAlign: TextAlign.center,
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: BauhausDesign.space4),
               SizedBox(
@@ -400,7 +400,7 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
           Text(
             "All requests will be sent for a manager's approval",
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontStyle: FontStyle.italic,
             ),
           ),

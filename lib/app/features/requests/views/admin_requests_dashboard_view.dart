@@ -265,7 +265,9 @@ class _AdminRequestsDashboardViewState
                             : '',
                         style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
-                              color: BauhausDesign.textMuted,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                               fontWeight: FontWeight.bold,
                             ),
                       ),
@@ -283,7 +285,9 @@ class _AdminRequestsDashboardViewState
                           Icon(
                             Icons.person,
                             size: 16,
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                           const SizedBox(width: BauhausDesign.space2),
                           Text(
@@ -319,10 +323,12 @@ class _AdminRequestsDashboardViewState
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.note_outlined,
                                   size: 14,
-                                  color: BauhausDesign.textMuted,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                 ),
                                 const SizedBox(width: 6),
                                 Expanded(
@@ -331,7 +337,9 @@ class _AdminRequestsDashboardViewState
                                     style: BauhausDesign.getTextTheme(context)
                                         .bodySmall
                                         ?.copyWith(
-                                          color: BauhausDesign.textMuted,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
                                           fontStyle: FontStyle.italic,
                                         ),
                                   ),
@@ -537,7 +545,9 @@ class _AdminRequestsDashboardViewState
                         "CLAIMED BY",
                         style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
-                              color: BauhausDesign.textMuted,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                               fontWeight: FontWeight.bold,
                             ),
                       ),
@@ -572,7 +582,7 @@ class _AdminRequestsDashboardViewState
           child: Text(
             label,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.bold,
             ),
           ),

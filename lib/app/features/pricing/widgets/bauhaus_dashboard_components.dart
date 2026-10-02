@@ -109,9 +109,9 @@ class BauhausActionCard extends StatelessWidget {
               // needed the expansion.
               Text(
                 subtitle,
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -122,7 +122,7 @@ class BauhausActionCard extends StatelessWidget {
                 child: Icon(
                   Icons.arrow_forward,
                   size: 16,
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -308,9 +308,9 @@ class BauhausActivityItem extends StatelessWidget {
               const SizedBox(height: BauhausDesign.space1),
               Text(
                 timestamp,
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               if (!isLast) const SizedBox(height: BauhausDesign.space4),
             ],
