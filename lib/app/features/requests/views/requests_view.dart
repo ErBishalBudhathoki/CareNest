@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:carenest/app/features/requests/models/request_model.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
+import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
 
 class RequestsView extends ConsumerStatefulWidget {
   final String? email;
@@ -379,12 +380,12 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
   }
 
   Future<void> _selectDateRange() async {
-    final picked = await showDateRangePicker(
+    final picked = await showBauhausDateRangePicker(
       context: context,
       firstDate: DateTime(2020),
       lastDate: DateTime(2030),
-      initialDateRange: _selectedDateRange,
-      builder: (context, child) => child!,
+      initialStart: _selectedDateRange?.start,
+      initialEnd: _selectedDateRange?.end,
     );
     if (picked != null) {
       setState(() => _selectedDateRange = picked);

@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
+import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
 
 class AddExpenseView extends ConsumerStatefulWidget {
   final String adminEmail;
@@ -162,7 +163,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    final DateTime? picked = await showBauhausDatePicker(
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime(2020),
