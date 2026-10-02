@@ -651,9 +651,12 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                       ),
                       Text(
                         DateFormat('MMM d, yyyy').format(startDate),
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                        style: BauhausDesign.getTextTheme(context).bodySmall
+                            ?.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
                       ),
                     ],
                   ),
@@ -689,14 +692,22 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
           const SizedBox(height: BauhausDesign.space4),
           Row(
             children: [
-              Icon(Icons.access_time, size: 16, color: BauhausDesign.textMuted),
+              Icon(
+                Icons.access_time,
+                size: 16,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               const SizedBox(width: BauhausDesign.space2),
               Text(
                 '${DateFormat('h:mm a').format(startDate)} - ${DateFormat('h:mm a').format(endDate)}',
                 style: BauhausDesign.getTextTheme(context).bodyMedium,
               ),
               const Spacer(),
-              Icon(Icons.timer, size: 16, color: BauhausDesign.textMuted),
+              Icon(
+                Icons.timer,
+                size: 16,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               const SizedBox(width: BauhausDesign.space2),
               Text(
                 '${endDate.difference(startDate).inHours}h ${endDate.difference(startDate).inMinutes.remainder(60)}m',
@@ -717,7 +728,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                 request.note!,
                 style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
                   fontStyle: FontStyle.italic,
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ),
