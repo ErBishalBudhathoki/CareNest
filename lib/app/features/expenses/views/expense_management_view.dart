@@ -521,10 +521,20 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  l10n.dashboardRecentExpenses,
-                  style: BauhausDesign.getTextTheme(context).headlineMedium,
+                // Flexible so the heading yields to the button instead of
+                // overflowing. It was 28px with no constraint, which pushed the
+                // Row 27px past a 335px-wide phone. That got worse in any
+                // translation longer than the English string, so the ellipsis
+                // is the durable part, not the heading size.
+                Flexible(
+                  child: Text(
+                    l10n.dashboardRecentExpenses,
+                    style: BauhausDesign.getTextTheme(context).headlineSmall,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
                 ),
+                const SizedBox(width: BauhausDesign.space2),
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: BauhausActionButton(

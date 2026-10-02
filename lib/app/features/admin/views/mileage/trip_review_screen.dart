@@ -68,7 +68,7 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
       appBar: AppBar(
         title: Text(
           'REVIEW TRIP',
-          style: textTheme.displaySmall?.copyWith(
+          style: textTheme.titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.surface,
           ),
         ),

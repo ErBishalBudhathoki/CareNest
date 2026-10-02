@@ -466,9 +466,9 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
       appBar: AppBar(
         title: Text(
           l10n.subscriptionTitle,
-          style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-            color: Theme.of(context).colorScheme.surface,
-          ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).titleLarge?.copyWith(color: Theme.of(context).colorScheme.surface),
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,

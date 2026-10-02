@@ -33,7 +33,7 @@ class _AdminTrainingManagementViewState
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.manageTrainingTitle,
-          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onSecondary,
           ),
         ),
@@ -101,7 +101,7 @@ class _AdminTrainingManagementViewState
               Expanded(
                 child: Text(
                   module.title,
-                  style: BauhausDesign.getTextTheme(context).headlineLarge,
+                  style: BauhausDesign.getTextTheme(context).headlineSmall,
                 ),
               ),
               Container(
@@ -229,7 +229,7 @@ class _AdminTrainingManagementViewState
         builder: (context) => AlertDialog(
           title: Text(
             'Training Progress',
-            style: BauhausDesign.getTextTheme(context).headlineLarge,
+            style: BauhausDesign.getTextTheme(context).titleLarge,
           ),
           content: SizedBox(
             width: 360,
@@ -365,7 +365,7 @@ class _EditTrainingModuleDialogState
       ),
       title: Text(
         AppLocalizations.of(context)!.editButton,
-        style: BauhausDesign.getTextTheme(context).headlineLarge,
+        style: BauhausDesign.getTextTheme(context).titleLarge,
       ),
       content: SizedBox(
         width: dialogWidth,
@@ -538,7 +538,7 @@ class _AddTrainingModuleDialogState
       ),
       title: Text(
         AppLocalizations.of(context)!.addModuleTitle,
-        style: BauhausDesign.getTextTheme(context).headlineLarge,
+        style: BauhausDesign.getTextTheme(context).titleLarge,
       ),
       content: SizedBox(
         width: dialogWidth,

@@ -109,7 +109,7 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.newRequestTitle,
-          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onSecondary,
           ),
         ),

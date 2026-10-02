@@ -62,7 +62,7 @@ class InvoiceAIConsentView extends ConsumerWidget {
         ),
         title: Text(
           'AI CONSENT',
-          style: textTheme.headlineMedium?.copyWith(
+          style: textTheme.titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.surface,
             fontWeight: FontWeight.w700,
           ),
