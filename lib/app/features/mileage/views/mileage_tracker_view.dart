@@ -50,10 +50,10 @@ class MileageTrackerView extends ConsumerWidget {
         centerTitle: true,
         title: Text(
           'MILEAGE TRACKER',
-          style: textTheme.headlineMedium?.copyWith(
+          style: textTheme.titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onInverseSurface,
             fontWeight: FontWeight.w900,
-            letterSpacing: 1.5,
+            letterSpacing: 0.5,
           ),
         ),
         bottom: PreferredSize(

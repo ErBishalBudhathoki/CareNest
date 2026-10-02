@@ -33,7 +33,7 @@ class _MileageSettingsViewState extends ConsumerState<MileageSettingsView> {
       appBar: AppBar(
         title: Text(
           'MILEAGE SETTINGS',
-          style: textTheme.displaySmall?.copyWith(
+          style: textTheme.titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.surface,
           ),
         ),

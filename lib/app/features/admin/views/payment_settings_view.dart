@@ -91,9 +91,9 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
       appBar: AppBar(
         title: Text(
           'PAYMENT SETTINGS',
-          style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-            color: Theme.of(context).colorScheme.surface,
-          ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).titleLarge?.copyWith(color: Theme.of(context).colorScheme.surface),
         ),
         backgroundColor: Theme.of(context).colorScheme.inverseSurface,
         foregroundColor: Theme.of(context).colorScheme.onInverseSurface,

@@ -96,7 +96,7 @@ class _ServiceConfirmationViewState
         centerTitle: true,
         title: Text(
           'Service Confirmation',
-          style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: BauhausDesign.primary,
             fontWeight: FontWeight.bold,
             fontSize: 20,

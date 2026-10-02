@@ -112,7 +112,7 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
       appBar: AppBar(
         title: Text(
           'Add Notes',
-          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onInverseSurface,
           ),
         ),

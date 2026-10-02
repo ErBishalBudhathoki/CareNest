@@ -34,7 +34,7 @@ class _TrainingModulesViewState extends ConsumerState<TrainingModulesView> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.trainingModulesTitle,
-          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onSecondary,
           ),
         ),
@@ -94,7 +94,7 @@ class _TrainingModulesViewState extends ConsumerState<TrainingModulesView> {
               Expanded(
                 child: Text(
                   module.title,
-                  style: BauhausDesign.getTextTheme(context).headlineLarge,
+                  style: BauhausDesign.getTextTheme(context).titleMedium,
                 ),
               ),
               if (isCompleted)
@@ -178,7 +178,7 @@ class TrainingDetailView extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           module.title,
-          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onSecondary,
           ),
         ),
@@ -235,7 +235,7 @@ class TrainingDetailView extends ConsumerWidget {
             const SizedBox(height: BauhausDesign.space4),
             Text(
               AppLocalizations.of(context)!.contentLabel(module.contentType),
-              style: BauhausDesign.getTextTheme(context).headlineLarge,
+              style: BauhausDesign.getTextTheme(context).titleMedium,
             ),
             if (module.contentText != null) ...[
               const SizedBox(height: BauhausDesign.space2),

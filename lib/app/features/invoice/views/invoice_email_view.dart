@@ -88,7 +88,7 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
         ),
         title: Text(
           'INVOICING EMAIL',
-          style: BauhausDesign.getTextTheme(context).headlineLarge!.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge!.copyWith(
             color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w700,
           ),

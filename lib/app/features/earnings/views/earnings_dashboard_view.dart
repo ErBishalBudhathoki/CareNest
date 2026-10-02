@@ -14,6 +14,25 @@ import 'package:carenest/app/features/earnings/services/employee_invoice_service
 import 'package:carenest/app/features/auth/providers/user_provider.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
+/// Colours for the period toggle's track and one of its halves.
+///
+/// The track was `onPrimary`, which is #1a1a1a in light mode, while the
+/// unselected half is transparent and labels with `onSurface`, also #1a1a1a.
+/// The inactive Weekly/Monthly option was near-black text on a near-black track
+/// and was not visible at all. Public so a test can assert the pairing rather
+/// than the pixels, the same reasoning as resolveActionButtonColors.
+({Color track, Color fill, Color label}) resolveEarningsToggleColors(
+  ColorScheme colorScheme,
+  bool isSelected,
+) => (
+  // Surface, so the transparent unselected half has something readable behind
+  // it in both brightness modes.
+  track: colorScheme.surface,
+  // Selected inverts: an onSurface fill carrying a surface label.
+  fill: isSelected ? colorScheme.onSurface : Colors.transparent,
+  label: isSelected ? colorScheme.surface : colorScheme.onSurface,
+);
+
 class EarningsChartHighlightNotifier extends Notifier<double?> {
   @override
   double? build() => null;
@@ -65,10 +84,10 @@ class EarningsDashboardView extends ConsumerWidget {
         ),
         title: Text(
           l10n?.earningsDashboardTitle ?? 'Earnings Dashboard',
-          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onPrimary,
             fontWeight: FontWeight.bold,
-            letterSpacing: 1.0,
+            letterSpacing: 0.5,
           ),
         ),
         actions: [
@@ -183,7 +202,7 @@ class EarningsDashboardView extends ConsumerWidget {
                               : (l10n?.earningsHistoryThisMonth ??
                                     'This month'),
                           style: BauhausDesign.getTextTheme(context)
-                              .headlineMedium
+                              .headlineSmall
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -275,7 +294,10 @@ class EarningsDashboardView extends ConsumerWidget {
                     offset: Offset(2, 2),
                   ),
                 ],
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: resolveEarningsToggleColors(
+                  Theme.of(context).colorScheme,
+                  true,
+                ).track,
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -330,22 +352,20 @@ class EarningsDashboardView extends ConsumerWidget {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
+    final colors = resolveEarningsToggleColors(
+      Theme.of(context).colorScheme,
+      isSelected,
+    );
     return InkWell(
       onTap: onTap,
       child: Container(
-        color: isSelected
-            ? Theme.of(context).colorScheme.onSurface
-            : Colors.transparent,
+        color: colors.fill,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Text(
           label,
-          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: isSelected
-                ? Theme.of(context).colorScheme.surface
-                : Theme.of(context).colorScheme.onSurface,
-          ),
+          style: BauhausDesign.getTextTheme(
+            context,
+          ).titleMedium?.copyWith(color: colors.label),
         ),
       ),
     );
@@ -880,7 +900,7 @@ class EarningsDashboardView extends ConsumerWidget {
                 const SizedBox(height: 4),
                 Text(
                   'AUD ${displayValue.toStringAsFixed(0)}',
-                  style: BauhausDesign.getTextTheme(context).headlineMedium
+                  style: BauhausDesign.getTextTheme(context).headlineSmall
                       ?.copyWith(
                         color: colorScheme.onInverseSurface,
                         fontWeight: FontWeight.bold,

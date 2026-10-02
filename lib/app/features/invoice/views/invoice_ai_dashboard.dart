@@ -44,7 +44,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
         ),
         title: Text(
           'SMART INVOICING',
-          style: textTheme.headlineMedium?.copyWith(
+          style: textTheme.titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.surface,
             fontWeight: FontWeight.w700,
           ),
