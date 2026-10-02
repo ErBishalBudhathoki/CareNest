@@ -100,16 +100,20 @@ class BauhausActionCard extends StatelessWidget {
 
               const SizedBox(height: BauhausDesign.space1),
 
-              // Subtitle
-              Expanded(
-                child: Text(
-                  subtitle,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
+              // Subtitle. Deliberately not wrapped in Expanded: this card is
+              // dropped into Rows and bottom sheets whose height is unbounded,
+              // and a flex child cannot take an infinite main-axis extent. That
+              // threw "RenderFlex children have non-zero flex but incoming
+              // height constraints are unbounded" the moment the New Request
+              // sheet opened. mainAxisSize is already min, so nothing below
+              // needed the expansion.
+              Text(
+                subtitle,
+                style: BauhausDesign.getTextTheme(
+                  context,
+                ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
 
               // Arrow indicator
