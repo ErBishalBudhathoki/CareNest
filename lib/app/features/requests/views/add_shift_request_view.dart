@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:carenest/app/features/requests/viewmodels/requests_viewmodel.dart';
 import 'package:carenest/app/features/requests/viewmodels/config_viewmodel.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
+import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
 
 class AddShiftRequestView extends ConsumerStatefulWidget {
   final String email;
@@ -311,14 +312,13 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                 children: [
                   GestureDetector(
                     onTap: () async {
-                      final date = await showDatePicker(
+                      final date = await showBauhausDatePicker(
                         context: context,
                         initialDate: selectedDate,
                         firstDate: DateTime.now().subtract(
                           const Duration(days: 30),
                         ),
                         lastDate: DateTime.now().add(const Duration(days: 365)),
-                        builder: (context, child) => child!,
                       );
                       if (date != null) {
                         setState(() {
@@ -409,12 +409,11 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                 children: [
                   GestureDetector(
                     onTap: () async {
-                      final date = await showDatePicker(
+                      final date = await showBauhausDatePicker(
                         context: context,
                         initialDate: endDate ?? selectedDate,
                         firstDate: selectedDate,
                         lastDate: DateTime.now().add(const Duration(days: 365)),
-                        builder: (context, child) => child!,
                       );
                       if (date != null) {
                         setState(() => endDate = date);

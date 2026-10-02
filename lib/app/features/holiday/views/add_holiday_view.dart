@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
 
 class AddHolidayScreen extends ConsumerStatefulWidget {
   final Function(Map<String, String>) addHoliday;
@@ -37,21 +38,11 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    final DateTime? picked = await showBauhausDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            dialogTheme: Theme.of(context).dialogTheme.copyWith(
-              backgroundColor: Theme.of(context).colorScheme.surface,
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
 
     if (picked != null) {

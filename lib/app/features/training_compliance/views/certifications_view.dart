@@ -11,6 +11,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
+import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
 
 class CertificationsView extends ConsumerStatefulWidget {
   const CertificationsView({super.key});
@@ -527,7 +528,7 @@ class _EditCertificationDialogState
               const SizedBox(height: BauhausDesign.space3),
               GestureDetector(
                 onTap: () async {
-                  final date = await showDatePicker(
+                  final date = await showBauhausDatePicker(
                     context: context,
                     initialDate:
                         _expiryDate ??
@@ -746,7 +747,7 @@ class _UploadCertificationDialogState
                 const SizedBox(height: BauhausDesign.space3),
                 GestureDetector(
                   onTap: () async {
-                    final date = await showDatePicker(
+                    final date = await showBauhausDatePicker(
                       context: context,
                       initialDate: DateTime.now().add(
                         const Duration(days: 365),
