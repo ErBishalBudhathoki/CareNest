@@ -34,7 +34,7 @@ class _ComplianceChecklistViewState
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.complianceChecklistsTitle,
-          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onSecondary,
           ),
         ),
@@ -97,7 +97,7 @@ class _ComplianceChecklistViewState
               Expanded(
                 child: Text(
                   checklist.title,
-                  style: BauhausDesign.getTextTheme(context).headlineLarge,
+                  style: BauhausDesign.getTextTheme(context).titleMedium,
                 ),
               ),
               if (isCompleted)
@@ -183,7 +183,7 @@ class _ChecklistDetailViewState extends ConsumerState<ChecklistDetailView> {
       appBar: AppBar(
         title: Text(
           widget.checklist.title,
-          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onSecondary,
           ),
         ),

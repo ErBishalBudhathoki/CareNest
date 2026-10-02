@@ -77,7 +77,7 @@ class _AddUpdateInvoicingEmailViewState
         surfaceTintColor: Colors.transparent,
         title: Text(
           'Add Invoicing Email Details',
-          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onPrimary,
             fontWeight: FontWeight.bold,
           ),

@@ -37,7 +37,7 @@ class ExpenseDetailView extends ConsumerWidget {
         systemOverlayStyle: SystemUiOverlayStyle.light,
         title: Text(
           l10n.expensesDetailsTitle,
-          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),

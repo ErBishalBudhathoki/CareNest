@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/features/expenses/models/expense_model.dart';
-import 'package:flutter/material.dart';
 import '../../../core/services/file_upload_service.dart';
 
 class ExpenseRepository {
@@ -18,86 +16,34 @@ class ExpenseRepository {
     String organizationId,
   ) async {
     try {
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: Fetching expenses for organizationId: $organizationId ===',
-      );
       final response = await _apiMethod.get(
         'expenses/organization/$organizationId',
       );
-
-      debugPrint('=== EXPENSE REPO DEBUG: API Response: $response ===');
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: Response statusCode: ${response['statusCode']} ===',
-      );
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: Response data: ${response['data']} ===',
-      );
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: Response data type: ${response['data'].runtimeType} ===',
-      );
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: Response data length: ${response['data']?.length} ===',
-      );
-
       // Backend returns statusCode: 200 and data field containing expenses
       if (response['statusCode'] == 200 && response['data'] != null) {
         final List<dynamic> expensesJson = response['data'];
-        debugPrint(
-          '=== EXPENSE REPO DEBUG: Processing ${expensesJson.length} expenses ===',
-        );
-
         // Debug each expense record
-        for (int i = 0; i < expensesJson.length; i++) {
-          debugPrint(
-            '=== EXPENSE REPO DEBUG: Expense $i: ${expensesJson[i]} ===',
-          );
-        }
+        for (int i = 0; i < expensesJson.length; i++) {}
 
         final expenses = expensesJson.map((json) {
           try {
             final expense = ExpenseModel.fromJson(json);
-            debugPrint(
-              '=== EXPENSE REPO DEBUG: Successfully parsed expense: ${expense.id} - ${expense.title} ===',
-            );
             return expense;
           } catch (e) {
-            debugPrint(
-              '=== EXPENSE REPO DEBUG: Error parsing expense: $json ===',
-            );
-            debugPrint('=== EXPENSE REPO DEBUG: Parse error: $e ===');
             rethrow;
           }
         }).toList();
-
-        debugPrint(
-          '=== EXPENSE REPO DEBUG: Returning ${expenses.length} expenses ===',
-        );
         return expenses;
       } else {
-        debugPrint(
-          '=== EXPENSE REPO DEBUG: API call failed - statusCode: ${response['statusCode']}, message: ${response['message']} ===',
-        );
         throw Exception(response['message'] ?? 'Failed to fetch expenses');
       }
     } catch (e) {
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: Exception in getOrganizationExpenses: $e ===',
-      );
       throw Exception('Error fetching expenses: $e');
     }
   }
 
   /// Creates a new expense
   Future<ExpenseModel> createExpense(ExpenseModel expense) async {
-    debugPrint('=== EXPENSE REPO DEBUG: createExpense method started ===');
-    debugPrint('=== EXPENSE REPO DEBUG: Input expense ID: ${expense.id} ===');
-    debugPrint(
-      '=== EXPENSE REPO DEBUG: Input expense title: ${expense.title} ===',
-    );
-    debugPrint(
-      '=== EXPENSE REPO DEBUG: Input expense amount: ${expense.amount} ===',
-    );
-
     try {
       List<String>? uploadedReceiptFiles;
       List<String>? uploadedReceiptPhotos;
@@ -124,10 +70,7 @@ class ExpenseRepository {
                 if (_isImageFile(filePath)) {
                   photoUrls.add(serverUrl);
                 }
-
-                debugPrint('Successfully uploaded receipt file: $serverUrl');
               } catch (e) {
-                debugPrint('Failed to upload receipt file $filePath: $e');
                 throw Exception(
                   'Failed to upload file: ${filePath.split('/').last}. Please try again.',
                 );
@@ -164,11 +107,7 @@ class ExpenseRepository {
               if (_isImageFile(expense.receiptUrl!)) {
                 uploadedReceiptPhotos = [uploadedReceiptUrl];
               }
-              debugPrint(
-                'Successfully uploaded receipt file: $uploadedReceiptUrl',
-              );
             } catch (e) {
-              debugPrint('Failed to upload receipt file: $e');
               throw Exception(
                 'Failed to upload receipt file. Please try again.',
               );
@@ -209,67 +148,10 @@ class ExpenseRepository {
       if (expense.clientId != null && expense.clientId!.isNotEmpty) {
         requestBody['clientId'] = expense.clientId;
       }
-
-      debugPrint('=== EXPENSE REPO DEBUG: Starting createExpense method ===');
-      debugPrint('=== EXPENSE REPO DEBUG: Base URL: ${_apiMethod.baseUrl} ===');
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: Full URL will be: ${_apiMethod.baseUrl}api/expenses/create ===',
-      );
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: Request body (string): ${requestBody.toString()} ===',
-      );
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: Request body (JSON encoded): ${json.encode(requestBody)} ===',
-      );
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: Request body keys: ${requestBody.keys.toList()} ===',
-      );
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: Request body values: ${requestBody.values.toList()} ===',
-      );
-
-      debugPrint('=== EXPENSE REPO DEBUG: About to make API call ===');
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: API base URL: ${_apiMethod.baseUrl} ===',
-      );
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: API endpoint: api/expenses/create ===',
-      );
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: Full URL will be: ${_apiMethod.baseUrl}api/expenses/create ===',
-      );
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: Request body: ${json.encode(requestBody)} ===',
-      );
-
-      debugPrint('=== EXPENSE REPO DEBUG: Making POST request now... ===');
       final response = await _apiMethod.post(
         'expenses/create',
         body: requestBody,
       );
-      debugPrint('=== EXPENSE REPO DEBUG: API call completed ===');
-
-      debugPrint('=== EXPENSE REPO DEBUG: Raw backend response: $response ===');
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: Response type: ${response.runtimeType} ===',
-      );
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: Response keys: ${response.keys.toList()} ===',
-      );
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: Response success field: ${response['success']} ===',
-      );
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: Response expense field: ${response['expense']} ===',
-      );
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: Response message field: ${response['message']} ===',
-      );
-      debugPrint('=== EXPENSE REPO DEBUG: Backend response: $response ===');
-      debugPrint(
-        '=== EXPENSE REPO DEBUG: Response success status: ${response['success']} ===',
-      );
-
       final expenseId = response['expenseId'] ?? response['data']?['expenseId'];
       if (response['statusCode'] == 201 && expenseId != null) {
         // Return the expense with the generated ID and uploaded file URLs
@@ -279,14 +161,8 @@ class ExpenseRepository {
           receiptFiles: uploadedReceiptFiles,
           receiptPhotos: uploadedReceiptPhotos,
         );
-        debugPrint(
-          '=== EXPENSE REPO DEBUG: Returning updated expense with ID: ${updatedExpense.id} ===',
-        );
         return updatedExpense;
       } else {
-        debugPrint(
-          '=== EXPENSE REPO DEBUG: Backend error response: ${response.toString()} ===',
-        );
         throw Exception(response['message'] ?? 'Failed to create expense');
       }
     } catch (e) {
@@ -328,14 +204,7 @@ class ExpenseRepository {
                 if (_isImageFile(filePath)) {
                   photoUrls.add(serverUrl);
                 }
-
-                debugPrint(
-                  'Successfully uploaded receipt file during update: $serverUrl',
-                );
               } catch (e) {
-                debugPrint(
-                  'Failed to upload receipt file $filePath during update: $e',
-                );
                 throw Exception(
                   'Failed to upload file: ${filePath.split('/').last}. Please try again.',
                 );
@@ -372,11 +241,7 @@ class ExpenseRepository {
               if (_isImageFile(expense.receiptUrl!)) {
                 uploadedReceiptPhotos = [uploadedReceiptUrl];
               }
-              debugPrint(
-                'Successfully uploaded receipt file during update: $uploadedReceiptUrl',
-              );
             } catch (e) {
-              debugPrint('Failed to upload receipt file during update: $e');
               throw Exception(
                 'Failed to upload receipt file. Please try again.',
               );

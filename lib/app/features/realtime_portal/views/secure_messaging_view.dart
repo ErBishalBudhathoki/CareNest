@@ -491,7 +491,7 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
           centerTitle: true,
           title: Text(
             'Secure Messaging',
-            style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+            style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
               color: BauhausDesign.primary,
               fontWeight: FontWeight.bold,
             ),
@@ -525,7 +525,7 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
           centerTitle: true,
           title: Text(
             'Secure Messaging',
-            style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+            style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
               color: BauhausDesign.primary,
               fontWeight: FontWeight.bold,
             ),

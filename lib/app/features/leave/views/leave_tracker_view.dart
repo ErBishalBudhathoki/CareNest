@@ -51,7 +51,7 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
       appBar: AppBar(
         title: Text(
           l10n.leaveTracker,
-          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onSecondary,
           ),
         ),

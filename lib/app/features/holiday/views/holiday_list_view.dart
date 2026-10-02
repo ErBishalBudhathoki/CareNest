@@ -315,7 +315,7 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
         ],
         title: Text(
           l10n.holidays,
-          style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onSecondary,
           ),
         ),

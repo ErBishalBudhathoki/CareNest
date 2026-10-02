@@ -47,7 +47,7 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.certificationsTitle,
-          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onSecondary,
             fontWeight: FontWeight.w700,
           ),
@@ -123,7 +123,7 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
                                   child: Text(
                                     cert.name,
                                     style: BauhausDesign.getTextTheme(context)
-                                        .headlineLarge
+                                        .titleLarge
                                         ?.copyWith(
                                           color: Theme.of(
                                             context,
@@ -300,7 +300,7 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
           'Required Certifications',
           style: BauhausDesign.getTextTheme(
             context,
-          ).headlineLarge?.copyWith(fontWeight: FontWeight.w700),
+          ).titleLarge?.copyWith(fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: BauhausDesign.space3),
         ...requirements.map((requirement) {
@@ -320,8 +320,7 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
                       Expanded(
                         child: Text(
                           requirement.name,
-                          style: BauhausDesign.getTextTheme(context)
-                              .headlineLarge
+                          style: BauhausDesign.getTextTheme(context).titleMedium
                               ?.copyWith(
                                 color: Theme.of(context).colorScheme.onSurface,
                                 fontWeight: FontWeight.w700,
@@ -494,7 +493,7 @@ class _EditCertificationDialogState
                 'Update Certification',
                 style: BauhausDesign.getTextTheme(
                   context,
-                ).headlineLarge?.copyWith(fontWeight: FontWeight.w700),
+                ).titleLarge?.copyWith(fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: BauhausDesign.space4),
               TextFormField(
@@ -678,7 +677,7 @@ class _UploadCertificationDialogState
                   AppLocalizations.of(context)!.uploadCertificationTitle,
                   style: BauhausDesign.getTextTheme(
                     context,
-                  ).headlineLarge?.copyWith(fontWeight: FontWeight.w700),
+                  ).titleLarge?.copyWith(fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: BauhausDesign.space4),
                 if (requirements.isNotEmpty) ...[

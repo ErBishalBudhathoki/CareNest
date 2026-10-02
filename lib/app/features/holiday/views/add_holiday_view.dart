@@ -69,7 +69,7 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen> {
         ),
         title: Text(
           'Add Holiday',
-          style: BauhausDesign.getTextTheme(context).headlineMedium,
+          style: BauhausDesign.getTextTheme(context).titleLarge,
         ),
       ),
       body: SingleChildScrollView(

@@ -39,7 +39,7 @@ class _AdminCertificationAuditViewState
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.certificationAuditTitle,
-          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onSecondary,
             fontWeight: FontWeight.w700,
           ),
@@ -98,7 +98,7 @@ class _AdminCertificationAuditViewState
               Expanded(
                 child: Text(
                   cert.name,
-                  style: BauhausDesign.getTextTheme(context).headlineLarge,
+                  style: BauhausDesign.getTextTheme(context).headlineSmall,
                 ),
               ),
               Container(
@@ -228,7 +228,7 @@ class _AdminCertificationAuditViewState
           ),
           title: Text(
             '$actionLabel Certification',
-            style: BauhausDesign.getTextTheme(context).headlineLarge,
+            style: BauhausDesign.getTextTheme(context).titleLarge,
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,

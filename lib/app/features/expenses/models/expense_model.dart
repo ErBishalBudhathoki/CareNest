@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 /// Extension methods for expense calculations and transformations
 extension ExpenseListExtension on List<ExpenseModel> {
   /// Calculates the total amount of all expenses in the list
@@ -86,94 +84,45 @@ class ExpenseModel {
   });
 
   factory ExpenseModel.fromJson(Map<String, dynamic> json) {
-    debugPrint('=== EXPENSE MODEL DEBUG: Parsing JSON: $json ===');
-
     // Debug ID parsing
     final rawId = json['_id'] ?? json['id'] ?? json['expenseId'];
     final id = rawId is Map && rawId['\$oid'] != null
         ? rawId['\$oid'].toString()
         : (rawId?.toString() ?? '');
-    debugPrint('=== EXPENSE MODEL DEBUG: Parsed ID: $id ===');
-
     // Debug title parsing
     final title = json['supportItemName'] ?? json['description'] ?? 'Expense';
-    debugPrint('=== EXPENSE MODEL DEBUG: Parsed title: $title ===');
-
     // Debug amount parsing
     final amountRaw = json['amount'];
     final amount = amountRaw is num
         ? amountRaw.toDouble()
         : double.tryParse(amountRaw?.toString() ?? '0') ?? 0.0;
-    debugPrint('=== EXPENSE MODEL DEBUG: Parsed amount: $amount ===');
-
     // Debug category parsing
     final category = json['category']?.toString() ?? 'Other';
-    debugPrint('=== EXPENSE MODEL DEBUG: Parsed category: $category ===');
-
     // Debug date parsing
     DateTime date;
-    debugPrint(
-      '=== EXPENSE MODEL DEBUG: expenseDate raw: ${json['expenseDate']} ===',
-    );
-    debugPrint(
-      '=== EXPENSE MODEL DEBUG: expenseDate type: ${json['expenseDate'].runtimeType} ===',
-    );
     date = _parseFlexibleDate(json['expenseDate']) ?? DateTime.now();
-    debugPrint('=== EXPENSE MODEL DEBUG: Parsed date: $date ===');
-
     // Debug status parsing
     final status = (json['approvalStatus'] ?? json['status'] ?? 'pending')
         .toString();
-    debugPrint('=== EXPENSE MODEL DEBUG: Parsed status: $status ===');
-
     // Debug submittedBy parsing
     final submittedBy =
         (json['submittedBy'] ?? json['userEmail'] ?? json['createdBy'] ?? '')
             .toString();
-    debugPrint('=== EXPENSE MODEL DEBUG: Parsed submittedBy: $submittedBy ===');
-
     // Debug createdAt parsing
     DateTime createdAt;
-    debugPrint(
-      '=== EXPENSE MODEL DEBUG: createdAt raw: ${json['createdAt']} ===',
-    );
     createdAt = _parseFlexibleDate(json['createdAt']) ?? date;
-    debugPrint('=== EXPENSE MODEL DEBUG: Parsed createdAt: $createdAt ===');
-
     // Parse receiptUrl, receiptPhotos, and receiptFiles
     final receiptUrl = json['receiptUrl']?.toString();
-    debugPrint('=== EXPENSE MODEL DEBUG: Parsed receiptUrl: $receiptUrl ===');
-
     final receiptPhotos = json['receiptPhotos'] != null
         ? List<String>.from(json['receiptPhotos'])
         : null;
-    debugPrint(
-      '=== EXPENSE MODEL DEBUG: Parsed receiptPhotos: $receiptPhotos ===',
-    );
-
     final receiptFiles = json['receiptFiles'] != null
         ? List<String>.from(json['receiptFiles'])
         : null;
-    debugPrint(
-      '=== EXPENSE MODEL DEBUG: Parsed receiptFiles: $receiptFiles ===',
-    );
-
     final photoDescription = json['photoDescription']?.toString();
-    debugPrint(
-      '=== EXPENSE MODEL DEBUG: Parsed photoDescription: $photoDescription ===',
-    );
-
     final fileDescription = json['fileDescription']?.toString();
-    debugPrint(
-      '=== EXPENSE MODEL DEBUG: Parsed fileDescription: $fileDescription ===',
-    );
-
     // Debug organizationId parsing
     final organizationId = json['organizationId']?.toString() ?? '';
-    debugPrint(
-      '=== EXPENSE MODEL DEBUG: Parsed organizationId: $organizationId ===',
-    );
-
     final expense = ExpenseModel(
       id: id,
       title: title,
@@ -195,10 +144,6 @@ class ExpenseModel {
       recurringFrequency: json['recurringFrequency'] as String?,
       organizationId: organizationId,
       clientId: json['clientId']?.toString(),
-    );
-
-    debugPrint(
-      '=== EXPENSE MODEL DEBUG: Successfully created ExpenseModel: ${expense.id} - ${expense.title} ===',
     );
     return expense;
   }

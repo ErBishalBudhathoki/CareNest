@@ -33,7 +33,7 @@ class _AdminComplianceManagementViewState
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.manageChecklistsTitle,
-          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onSecondary,
           ),
         ),
@@ -98,7 +98,7 @@ class _AdminComplianceManagementViewState
         children: [
           Text(
             list.title,
-            style: BauhausDesign.getTextTheme(context).headlineLarge,
+            style: BauhausDesign.getTextTheme(context).headlineSmall,
           ),
           const SizedBox(height: BauhausDesign.space2),
           Text(
@@ -224,7 +224,7 @@ class _AddChecklistDialogState extends ConsumerState<AddChecklistDialog> {
       ),
       title: Text(
         AppLocalizations.of(context)!.addChecklistTitle,
-        style: BauhausDesign.getTextTheme(context).headlineLarge,
+        style: BauhausDesign.getTextTheme(context).titleLarge,
       ),
       content: SingleChildScrollView(
         child: Form(
@@ -387,7 +387,7 @@ class _EditChecklistDialogState extends ConsumerState<EditChecklistDialog> {
       ),
       title: Text(
         AppLocalizations.of(context)!.editButton,
-        style: BauhausDesign.getTextTheme(context).headlineLarge,
+        style: BauhausDesign.getTextTheme(context).titleLarge,
       ),
       content: SingleChildScrollView(
         child: Form(

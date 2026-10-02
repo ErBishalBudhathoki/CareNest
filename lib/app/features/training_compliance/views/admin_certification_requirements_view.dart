@@ -36,7 +36,7 @@ class _AdminCertificationRequirementsViewState
       appBar: AppBar(
         title: Text(
           'Certification Requirements',
-          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onSecondary,
           ),
         ),
@@ -108,7 +108,7 @@ class _AdminCertificationRequirementsViewState
               Expanded(
                 child: Text(
                   requirement.name,
-                  style: BauhausDesign.getTextTheme(context).headlineLarge,
+                  style: BauhausDesign.getTextTheme(context).headlineSmall,
                 ),
               ),
               Container(
@@ -257,7 +257,7 @@ class _RequirementDialogState extends ConsumerState<_RequirementDialog> {
       ),
       title: Text(
         isEdit ? 'Edit Requirement' : 'Add Requirement',
-        style: BauhausDesign.getTextTheme(context).headlineLarge,
+        style: BauhausDesign.getTextTheme(context).titleLarge,
       ),
       content: SingleChildScrollView(
         child: Form(

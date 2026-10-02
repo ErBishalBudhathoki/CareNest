@@ -57,7 +57,7 @@ class _AdminFamilyManagementViewState
         backgroundColor: BauhausDesign.warning,
         title: Text(
           'FAMILY ADMINISTRATION',
-          style: textTheme.headlineMedium?.copyWith(
+          style: textTheme.titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.8,

@@ -27,7 +27,7 @@ class AnalyticsDashboardView extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           'WORKFORCE ANALYTICS',
-          style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             fontWeight: FontWeight.w700,
             color: Theme.of(context).colorScheme.onSecondary,
           ),

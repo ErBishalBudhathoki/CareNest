@@ -26,7 +26,7 @@ class TrainingComplianceHubView extends ConsumerWidget {
         ),
         title: Text(
           AppLocalizations.of(context)!.trainingComplianceTitle,
-          style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onSecondary,
             fontWeight: FontWeight.w700,
           ),

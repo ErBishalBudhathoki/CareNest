@@ -23,7 +23,7 @@ class AdminMileageDashboard extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           'MILEAGE ADMIN',
-          style: textTheme.displaySmall?.copyWith(
+          style: textTheme.titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.surface,
           ),
         ),
