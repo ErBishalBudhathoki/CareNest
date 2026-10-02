@@ -167,58 +167,11 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
               child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 slivers: [
-                  SliverAppBar(
-                    expandedHeight: 120,
-                    floating: true,
-                    pinned: true,
-                    backgroundColor: Theme.of(
-                      context,
-                    ).colorScheme.inverseSurface,
-                    foregroundColor: Theme.of(
-                      context,
-                    ).colorScheme.onInverseSurface,
-                    surfaceTintColor: Colors.transparent,
-                    scrolledUnderElevation: 0,
-                    elevation: 0,
-                    systemOverlayStyle: SystemUiOverlayStyle.light,
-                    flexibleSpace: FlexibleSpaceBar(
-                      titlePadding: const EdgeInsets.only(
-                        left: BauhausDesign.space4,
-                        bottom: 16,
-                      ),
-                      title: Text(
-                        AppLocalizations.of(context)!.requestsTitle,
-                        style: BauhausDesign.getTextTheme(context).headlineSmall
-                            ?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.surface,
-                            ),
-                      ),
-                      background: Container(
-                        color: Theme.of(context).colorScheme.inverseSurface,
-                      ),
-                    ),
-                    actions: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16.0),
-                        child: BauhausActionButton(
-                          onPressed: () =>
-                              _showRequestOptions(context, userEmail),
-                          text: AppLocalizations.of(context)!.newRequest,
-                          icon: Icons.add,
-                          isSmall: true,
-                        ),
-                      ),
-                    ],
-                    bottom: PreferredSize(
-                      preferredSize: const Size.fromHeight(1),
-                      child: Container(
-                        height: 1,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.outline.withValues(alpha: 0.2),
-                      ),
-                    ),
+                  RequestsAppBar(
+                    title: AppLocalizations.of(context)!.requestsTitle,
+                    actionLabel: AppLocalizations.of(context)!.newRequest,
+                    onActionPressed: () =>
+                        _showRequestOptions(context, userEmail),
                   ),
                   SliverToBoxAdapter(
                     child: Padding(
@@ -770,6 +723,88 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+/// Appbar for the Requests dashboard.
+///
+/// Two things it deliberately does not do.
+///
+/// It is a single line. The original was `expandedHeight: 120` behind a
+/// FlexibleSpaceBar, which reserved about 64px of empty black above the title
+/// for a one-word heading. The title now sits in a normal toolbar of
+/// `appBarCompactHeight`.
+///
+/// It does not colour the title with `colorScheme.surface`. That is the page
+/// background token. It reads as near-white against the near-black bar in light
+/// mode, but in dark mode surface and inverseSurface are both dark and the
+/// title came out at 1.31:1 against its own background. `onInverseSurface` is
+/// the paired content colour and measures 12.8:1 light, 15.2:1 dark.
+///
+/// Extracted as a named widget so the layout and contrast can be asserted
+/// directly. A test that rebuilt this configuration by hand proved nothing.
+class RequestsAppBar extends StatelessWidget {
+  final String title;
+  final String actionLabel;
+  final VoidCallback onActionPressed;
+
+  const RequestsAppBar({
+    super.key,
+    required this.title,
+    required this.actionLabel,
+    required this.onActionPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return SliverAppBar(
+      pinned: true,
+      toolbarHeight: BauhausDesign.appBarCompactHeight,
+      backgroundColor: colorScheme.inverseSurface,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      elevation: 0,
+      // inverseSurface is near-black in both schemes, so the status bar icons
+      // stay light either way and the bar colour never needs to flip.
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      titleSpacing: BauhausDesign.space4,
+      title: Text(
+        title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+          fontWeight: FontWeight.bold,
+          color: colorScheme.onInverseSurface,
+        ),
+      ),
+      actions: [
+        // Kept as a labelled button rather than a bare + icon: the label is what
+        // makes the action obvious. It is capped at 36px so it still fits a
+        // single-line toolbar.
+        Padding(
+          padding: const EdgeInsets.only(right: BauhausDesign.space3),
+          child: Center(
+            child: SizedBox(
+              height: 36,
+              child: BauhausActionButton(
+                onPressed: onActionPressed,
+                text: actionLabel,
+                icon: Icons.add,
+                isSmall: true,
+              ),
+            ),
+          ),
+        ),
+      ],
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(1),
+        child: Container(
+          height: 1,
+          color: colorScheme.outline.withValues(alpha: 0.2),
+        ),
       ),
     );
   }
