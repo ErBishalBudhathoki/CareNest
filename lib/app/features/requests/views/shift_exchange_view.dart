@@ -408,7 +408,7 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
   Widget _buildInfoRow(BuildContext context, IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, size: 18, color: BauhausDesign.primary),
+        Icon(icon, size: 18, color: Theme.of(context).colorScheme.onSurface),
         const SizedBox(width: BauhausDesign.space3),
         Text(
           text,
@@ -593,7 +593,7 @@ class _ShiftDetailsDialogContentState
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 20, color: BauhausDesign.primary),
+        Icon(icon, size: 20, color: Theme.of(context).colorScheme.onSurface),
         const SizedBox(width: BauhausDesign.space3),
         Expanded(
           child: Column(
@@ -657,7 +657,11 @@ class _ShiftDetailsDialogContentState
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.location_on, size: 20, color: BauhausDesign.primary),
+                Icon(
+                  Icons.location_on,
+                  size: 20,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 const SizedBox(width: BauhausDesign.space3),
                 Expanded(
                   child: Column(

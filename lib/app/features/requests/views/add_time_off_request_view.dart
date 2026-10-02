@@ -295,7 +295,7 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
                           DateFormat('MMMM dd yyyy').format(startDate),
                           style: BauhausDesign.getTextTheme(context).bodyMedium
                               ?.copyWith(
-                                color: BauhausDesign.primary,
+                                color: Theme.of(context).colorScheme.onSurface,
                                 fontWeight: FontWeight.bold,
                               ),
                         ),
@@ -349,7 +349,7 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
                           DateFormat('MMMM dd yyyy').format(endDate),
                           style: BauhausDesign.getTextTheme(context).bodyMedium
                               ?.copyWith(
-                                color: BauhausDesign.primary,
+                                color: Theme.of(context).colorScheme.onSurface,
                                 fontWeight: FontWeight.bold,
                               ),
                         ),
@@ -372,15 +372,16 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
                     _showNoteField = true;
                   });
                 },
-                icon: const Icon(
+                icon: Icon(
                   Icons.edit_outlined,
-                  color: BauhausDesign.primary,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 label: Text(
                   'Add a note',
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).labelLarge?.copyWith(color: BauhausDesign.primary),
+                  style: BauhausDesign.getTextTheme(context).labelLarge
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 ),
               ),
             ),
