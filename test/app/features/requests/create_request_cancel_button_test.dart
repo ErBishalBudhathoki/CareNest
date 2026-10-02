@@ -121,27 +121,33 @@ void main() {
     expect(contrast(ink, theme.colorScheme.surface), greaterThanOrEqualTo(4.5));
   });
 
-  testWidgets('primary and secondary keep the yellow accent', (tester) async {
-    // Guards against the cancel fix going further than it should. Primary and
-    // secondary outlined buttons render yellow on purpose.
-    //
-    // Danger is deliberately absent: it now carries red on the border, which is
-    // covered by bauhaus_danger_button_test.dart.
+  testWidgets('primary and secondary outlined are readable, not yellow', (
+    tester,
+  ) async {
+    // This used to assert a yellow accent "on purpose". That was wrong: hazard
+    // yellow on the near-white surface is 1.57:1. An earlier batch fixed neutral
+    // and danger but left primary and secondary, then pinned the mistake here so
+    // it would survive review. The label now uses onSurface, and the exhaustive
+    // rule lives in bauhaus_action_contrast_test.dart rather than here.
     for (final variant in <BauhausActionVariant>[
       BauhausActionVariant.primary,
       BauhausActionVariant.secondary,
     ]) {
       final theme = BauhausDesign.lightTheme;
-      final (ink, _) = await render(
+      final (ink, border) = await render(
         tester,
         variant,
         isOutlined: true,
         theme: theme,
       );
+      expect(ink, theme.colorScheme.onSurface, reason: '$variant label');
+      expect(border, theme.colorScheme.onSurface, reason: '$variant border');
+      // An outlined button is filled with the surface, so the surface is the
+      // backdrop the label has to clear AA against.
       expect(
-        ink,
-        theme.colorScheme.primary,
-        reason: '$variant outlined should still use the primary accent',
+        contrast(ink, theme.colorScheme.surface),
+        greaterThanOrEqualTo(4.5),
+        reason: '$variant outlined label must clear AA on the surface',
       );
     }
   });
