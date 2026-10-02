@@ -515,13 +515,19 @@ class _BauhausDateRangePickerDialogState
                 : _ink.withValues(alpha: 0.5),
           ),
           const SizedBox(width: 6),
-          Text(
-            msg,
-            style: GoogleFonts.robotoMono(
-              color: _ink.withValues(alpha: 0.65),
-              fontSize: 9,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.8,
+          // Flexible so the hint ellipsises instead of overflowing. Measured at
+          // 390 wide, this Row overflowed by 7px.
+          Flexible(
+            child: Text(
+              msg,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.robotoMono(
+                color: _ink.withValues(alpha: 0.65),
+                fontSize: 9,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.8,
+              ),
             ),
           ),
         ],
@@ -617,15 +623,20 @@ class _BauhausDateRangePickerDialogState
                       size: 16,
                     ),
                     const SizedBox(width: 6),
-                    Text(
-                      'CONFIRM PERIOD',
-                      style: GoogleFonts.oswald(
-                        color: canConfirm
-                            ? _paper
-                            : _paper.withValues(alpha: 0.45),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1.5,
+                    // Same reason: measured 17px of overflow at 390 wide.
+                    Flexible(
+                      child: Text(
+                        'CONFIRM PERIOD',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.oswald(
+                          color: canConfirm
+                              ? _paper
+                              : _paper.withValues(alpha: 0.45),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.5,
+                        ),
                       ),
                     ),
                   ],
