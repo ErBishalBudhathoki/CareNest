@@ -765,8 +765,17 @@ class BauhausActionButton extends StatelessWidget {
     }
 
     if (isOutlined) {
-      effectiveText = textColor ?? colorScheme.primary;
       effectiveBg = colorScheme.surface;
+      // Outlined means a surface background with an accent-coloured border and
+      // label. Forcing primary here threw away the variant's own accent, so a
+      // neutral outlined button painted hazard yellow on a near-white surface at
+      // 1.57:1. Neutral is exempt: it exists to mean "no accent", and that is
+      // exactly what the cancel buttons rely on.
+      //
+      // The other variants keep the yellow, so nothing else changes appearance.
+      if (variant != BauhausActionVariant.neutral) {
+        effectiveText = textColor ?? colorScheme.primary;
+      }
     }
 
     // Ghost variant special handling
