@@ -131,9 +131,15 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
               // ── ACTIONS ──
               _buildSectionHeader('Actions'),
               const SizedBox(height: BauhausDesign.space4),
-              Row(
+              // Stacked rather than side by side. Two Expanded buttons at 390
+              // wide leave each about 155, and after 24px of padding either
+              // side plus the icon and gap only 81px of text room. Both labels
+              // were ellipsising. Full width gives 252px, which fits either
+              // label on one line with room to spare.
+              Column(
                 children: [
-                  Expanded(
+                  SizedBox(
+                    width: double.infinity,
                     child: BauhausActionButton(
                       text: l10n.newRequestTitle,
                       icon: Icons.add_circle_outline,
@@ -155,12 +161,18 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
                       isFullWidth: true,
                     ),
                   ),
-                  const SizedBox(width: BauhausDesign.space4),
-                  Expanded(
+                  const SizedBox(height: BauhausDesign.space3),
+                  SizedBox(
+                    width: double.infinity,
                     child: BauhausActionButton(
                       text: l10n.publicHoliday,
                       icon: Icons.calendar_month_outlined,
-                      variant: BauhausActionVariant.secondary,
+                      // neutral, not secondary. secondary resolves to a
+                      // surface background with a hazard yellow label, which
+                      // is 1.57:1 on the light surface. neutral keeps the dark
+                      // label and still reads as secondary next to the filled
+                      // primary button above it.
+                      variant: BauhausActionVariant.neutral,
                       onPressed: () {
                         Navigator.push(
                           context,

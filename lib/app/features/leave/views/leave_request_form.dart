@@ -168,7 +168,28 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
                     firstDate: DateTime.now(),
                     lastDate: DateTime.now().add(const Duration(days: 365)),
                     builder: (context, child) {
-                      return Theme(data: Theme.of(context), child: child!);
+                      // Material's range highlight is a stadium-shaped pill and
+                      // the day cells are circles, both of which break DESIGN.md's
+                      // zero-radius rule. dayShape and yearShape square the cells
+                      // and the range band; shape squares the dialog itself.
+                      // dayShape and yearShape are WidgetStateProperty in this
+                      // Flutter version, so the border has to be wrapped.
+                      const square = RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      );
+                      const squareAll = WidgetStatePropertyAll<OutlinedBorder?>(
+                        square,
+                      );
+                      return Theme(
+                        data: Theme.of(context).copyWith(
+                          datePickerTheme: const DatePickerThemeData(
+                            dayShape: squareAll,
+                            yearShape: squareAll,
+                            shape: square,
+                          ),
+                        ),
+                        child: child!,
+                      );
                     },
                   );
                   if (picked != null) {
