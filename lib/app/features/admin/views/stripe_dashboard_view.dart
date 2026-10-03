@@ -109,9 +109,9 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
       appBar: AppBar(
         title: Text(
           l10n.stripeDashboardTitle,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).titleLarge?.copyWith(color: Theme.of(context).colorScheme.surface),
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onInverseSurface,
+          ),
         ),
         backgroundColor: Theme.of(context).colorScheme.inverseSurface,
         foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
@@ -119,7 +119,9 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.surface),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onInverseSurface,
+        ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2.0),
           child: Container(

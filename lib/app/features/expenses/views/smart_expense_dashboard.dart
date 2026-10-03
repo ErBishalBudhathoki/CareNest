@@ -32,11 +32,13 @@ class _SmartExpenseDashboardState extends State<SmartExpenseDashboard> {
         title: Text(
           'SMART EXPENSE MANAGEMENT',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.onInverseSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
-        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.surface),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onInverseSurface,
+        ),
       ),
       body: _isLoading
           ? const Center(child: BauhausLoadingState())

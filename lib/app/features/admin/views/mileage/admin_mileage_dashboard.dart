@@ -24,7 +24,7 @@ class AdminMileageDashboard extends ConsumerWidget {
         title: Text(
           'MILEAGE ADMIN',
           style: textTheme.titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.onInverseSurface,
           ),
         ),
         backgroundColor: Theme.of(context).colorScheme.inverseSurface,
@@ -41,7 +41,7 @@ class AdminMileageDashboard extends ConsumerWidget {
           ),
         ),
         iconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.onSurface,
+          color: Theme.of(context).colorScheme.onInverseSurface,
         ),
         actions: [
           IconButton(
