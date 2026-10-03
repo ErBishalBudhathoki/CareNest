@@ -69,7 +69,7 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
         title: Text(
           'REVIEW TRIP',
           style: textTheme.titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.onInverseSurface,
           ),
         ),
         backgroundColor: Theme.of(context).colorScheme.inverseSurface,
@@ -86,7 +86,7 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
           ),
         ),
         iconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.onSurface,
+          color: Theme.of(context).colorScheme.onInverseSurface,
         ),
         actions: [
           IconButton(

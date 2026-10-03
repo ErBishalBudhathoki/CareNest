@@ -44,7 +44,7 @@ class NotificationSettingsView extends ConsumerWidget {
           'Notification Settings',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             fontWeight: FontWeight.w700,
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.onInverseSurface,
           ),
         ),
         bottom: PreferredSize(

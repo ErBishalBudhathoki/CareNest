@@ -44,7 +44,7 @@ class AdminFeedbackFeedView extends ConsumerWidget {
           style: GoogleFonts.oswald(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.onInverseSurface,
             letterSpacing: 1.1,
           ),
         ),

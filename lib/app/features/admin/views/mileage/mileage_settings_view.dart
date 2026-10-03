@@ -34,7 +34,7 @@ class _MileageSettingsViewState extends ConsumerState<MileageSettingsView> {
         title: Text(
           'MILEAGE SETTINGS',
           style: textTheme.titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.onInverseSurface,
           ),
         ),
         backgroundColor: Theme.of(context).colorScheme.inverseSurface,
@@ -51,7 +51,7 @@ class _MileageSettingsViewState extends ConsumerState<MileageSettingsView> {
           ),
         ),
         iconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.onSurface,
+          color: Theme.of(context).colorScheme.onInverseSurface,
         ),
       ),
       body: Padding(
