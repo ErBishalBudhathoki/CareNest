@@ -76,7 +76,19 @@ platform :android do
       UI.user_error!("#{release_notes_file} is empty. Add the changes for this build.")
     end
 
-    UI.message "Using release notes: #{release_notes_file}"
+    # Google Play rejects en-US release notes over 500 characters, and it only
+    # discovers that after a slow API round trip. Fail here instead.
+    max_length = 500
+    if release_notes.length > max_length
+      UI.user_error!(<<~MSG)
+        #{release_notes_file} is #{release_notes.length} characters.
+        Google Play rejects en-US release notes over #{max_length}.
+
+        Shorten it, or move the detail into the commit message / PR.
+      MSG
+    end
+
+    UI.message "Using release notes: #{release_notes_file} (#{release_notes.length} chars)"
 
     metadata_dir = File.join(__dir__, "metadata", "android", "en-US")
     changelog_dir = File.join(metadata_dir, "changelogs")
