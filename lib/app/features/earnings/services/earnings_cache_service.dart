@@ -6,7 +6,14 @@ class EarningsCacheService {
   static const String _summaryKeyPrefix = 'earnings_summary_';
   static const String _historyKeyPrefix = 'earnings_history_';
   static const String _taxConfigKey = 'tax_config';
-  static const Duration _defaultCacheDuration = Duration(minutes: 30);
+
+  /// Kept in step with the `earnings/` TTL in `ApiResponseCache` (5 minutes).
+  ///
+  /// These two layers sit in series — the persisted copy is read first, the
+  /// transport cache second — so a longer TTL here silently outranks the
+  /// transport cache and you get summary fields that are stale by 30 minutes
+  /// while projection and history update every 5.
+  static const Duration _defaultCacheDuration = Duration(minutes: 5);
 
   String _summaryCacheKey(
     String userEmail, {

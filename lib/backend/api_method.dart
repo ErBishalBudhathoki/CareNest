@@ -16,6 +16,7 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:carenest/backend/pinned_http_client.dart';
+import 'package:carenest/backend/api_response_cache.dart';
 import 'package:carenest/app/core/services/timer_service.dart';
 
 import 'package:carenest/app/features/auth/models/user_model.dart' as app;
@@ -29,6 +30,19 @@ class ApiMethod extends ChangeNotifier {
   static bool _hasLoggedUnsupportedAppCheck = false;
   static bool _hasLoggedFirebaseTokenUsage = false;
   static bool _hasLoggedCustomTokenUsage = false;
+
+  /// Shared across every ApiMethod instance because provider lifetimes vary: two
+  /// different repositories holding separate instances must still share one cache
+  /// and one in-flight map, otherwise coalescing silently does nothing.
+  static final ApiResponseCache _getResponseCache = ApiResponseCache();
+
+  /// Read-through cache statistics, for diagnosing unexpected request volume.
+  static Map<String, int> get responseCacheStats => _getResponseCache.stats;
+
+  /// Drop cached reads for the given endpoint prefixes. Call after a mutation so
+  /// the next read reflects the write.
+  static void invalidateResponseCache(Iterable<String> prefixes) =>
+      _getResponseCache.invalidatePrefixes(prefixes);
   static const Duration _fallbackBaseRateCacheTtl = Duration(minutes: 10);
   static final Map<String, double?> _fallbackBaseRateCache =
       <String, double?>{};
@@ -148,7 +162,24 @@ class ApiMethod extends ChangeNotifier {
   Future<Map<String, dynamic>> get(
     String endpoint, {
     Map<String, String>? headers,
-  }) async {
+    bool forceRefresh = false,
+  }) {
+    // Dashboard screens refetch on every switch and every period tap, which
+    // turns navigation into a burst of identical requests. The cache collapses
+    // concurrent duplicates and serves recent successful reads for a short
+    // window. Live state, auth and any endpoint without a visible tenant
+    // discriminator always goes straight to the network.
+    return _getResponseCache.fetch(
+      endpoint,
+      forceRefresh: forceRefresh,
+      loader: () => _getUncached(endpoint, headers),
+    );
+  }
+
+  Future<Map<String, dynamic>> _getUncached(
+    String endpoint,
+    Map<String, String>? headers,
+  ) async {
     try {
       final uri = _buildUri(endpoint);
       final fullUrl = uri.toString();
@@ -455,12 +486,46 @@ class ApiMethod extends ChangeNotifier {
         '=== API METHOD DEBUG: Response body: ${effectiveResponse.body} ===',
       );
 
-      return _handleResponse(effectiveResponse);
+      return _invalidateCachesForMutation(
+        endpoint,
+        () => _handleResponse(effectiveResponse),
+      );
     } catch (e) {
       debugPrint('=== API METHOD DEBUG: Exception occurred: $e ===');
       debugPrint('=== API METHOD DEBUG: Exception type: ${e.runtimeType} ===');
       return {'success': false, 'message': 'Error: $e'};
     }
+  }
+
+  /// Map a mutation to the read endpoints it invalidates, then run [build].
+  ///
+  /// Over-invalidating is cheap (one extra request); under-invalidating shows the
+  /// user their own stale data, so the prefixes are deliberately generous.
+  Map<String, dynamic> _invalidateCachesForMutation(
+    String endpoint,
+    Map<String, dynamic> Function() build,
+  ) {
+    final result = build();
+    if (result['success'] == true) {
+      final prefixes = <String>[];
+      final normalized = ApiResponseCache.normalize(endpoint);
+      for (final candidate in const [
+        'earnings/',
+        'billing/dashboard/',
+        'analytics/',
+        'financial-intelligence/',
+        'workforce/bi/',
+        'workforce/performance/',
+      ]) {
+        if (normalized.startsWith(candidate)) {
+          prefixes.add(candidate);
+        }
+      }
+      if (prefixes.isNotEmpty) {
+        _getResponseCache.invalidatePrefixes(prefixes);
+      }
+    }
+    return result;
   }
 
   Future<Map<String, dynamic>> postMultipart(
@@ -631,7 +696,10 @@ class ApiMethod extends ChangeNotifier {
         );
       });
 
-      return _handleResponse(effectiveResponse);
+      return _invalidateCachesForMutation(
+        endpoint,
+        () => _handleResponse(effectiveResponse),
+      );
     } catch (e) {
       return {'success': false, 'message': 'Error: $e'};
     }
@@ -655,7 +723,10 @@ class ApiMethod extends ChangeNotifier {
         return _delete(uri, headers: freshHeaders);
       });
 
-      return _handleResponse(effectiveResponse);
+      return _invalidateCachesForMutation(
+        endpoint,
+        () => _handleResponse(effectiveResponse),
+      );
     } catch (e) {
       return {'success': false, 'message': 'Error: $e'};
     }
@@ -6323,7 +6394,10 @@ class ApiMethod extends ChangeNotifier {
         '=== API METHOD DEBUG: PATCH response: ${effectiveResponse.body} ===',
       );
 
-      return _handleResponse(effectiveResponse);
+      return _invalidateCachesForMutation(
+        endpoint,
+        () => _handleResponse(effectiveResponse),
+      );
     } catch (e) {
       return {'success': false, 'message': 'Error: $e'};
     }

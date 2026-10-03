@@ -61,6 +61,16 @@ class EarningsViewModel extends Notifier<EarningsState> {
   late String _userEmail;
   Map<String, dynamic>? _taxConfig;
 
+  /// In-flight guard.
+  ///
+  /// The transport already coalesces identical concurrent GETs, but this
+  /// ViewModel issues three calls per load and the period toggle can fire
+  /// several times in a row. Without this, a burst of taps produces several
+  /// overlapping loadDashboardData runs whose responses can land out of order
+  /// and render a stale period.
+  Future<void>? _inFlightLoad;
+  int _loadGeneration = 0;
+
   @override
   EarningsState build() {
     _repository = ref.watch(earningsRepositoryProvider);
@@ -72,7 +82,25 @@ class EarningsViewModel extends Notifier<EarningsState> {
     return EarningsState();
   }
 
-  Future<void> loadDashboardData() async {
+  Future<void> loadDashboardData() {
+    // Reuse the running load rather than starting a second one. Callers still
+    // get a Future that completes when the in-flight work settles.
+    final existing = _inFlightLoad;
+    if (existing != null) {
+      return existing;
+    }
+
+    final future = _load();
+    _inFlightLoad = future;
+    return future.whenComplete(() {
+      if (identical(_inFlightLoad, future)) {
+        _inFlightLoad = null;
+      }
+    });
+  }
+
+  Future<void> _load() async {
+    final generation = ++_loadGeneration;
     state = state.copyWith(isLoading: true, error: null);
     try {
       // Fetch tax config if not loaded
@@ -106,6 +134,15 @@ class EarningsViewModel extends Notifier<EarningsState> {
         bucket: state.period == EarningsPeriod.weekly ? 'week' : 'month',
       );
 
+      // A newer load started while these were in flight (user tapped through
+      // periods). Its result is the one that should be rendered.
+      if (generation != _loadGeneration) {
+        debugPrint(
+          'Discarding stale earnings load (generation $generation, current $_loadGeneration)',
+        );
+        return;
+      }
+
       state = state.copyWith(
         isLoading: false,
         summary: summary,
@@ -113,6 +150,7 @@ class EarningsViewModel extends Notifier<EarningsState> {
         periodHistory: periodHistory,
       );
     } catch (e) {
+      if (generation != _loadGeneration) return;
       state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
@@ -154,6 +192,13 @@ class EarningsViewModel extends Notifier<EarningsState> {
 
   void setTaxFrequency(TaxFrequency frequency) {
     state = state.copyWith(taxFrequency: frequency);
+  }
+
+  /// Force a fresh read, bypassing any cached response. Used by pull-to-refresh.
+  Future<void> refresh() async {
+    await _repository.clearCache();
+    _inFlightLoad = null;
+    await loadDashboardData();
   }
 
   _Range _calculateRange(EarningsPeriod period, DateTime anchor) {

@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import 'package:carenest/app/core/providers/organization_provider.dart';
+import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/features/client_portal/views/client_invoice_detail_view.dart';
 import 'package:carenest/app/features/invoice/viewmodels/payment_viewmodel.dart';
 import 'package:carenest/app/features/invoice/viewmodels/stripe_dashboard_viewmodel.dart';
@@ -70,6 +71,12 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
   }
 
   void _invalidateAll(String organizationId) {
+    // Drop the transport cache first. Riverpod invalidation alone only re-runs
+    // the provider, and the provider's GET is served from the shared read cache
+    // — so without this an explicit refresh would silently return the same
+    // figures it just displayed.
+    ApiMethod.invalidateResponseCache(const ['billing/dashboard/']);
+
     ref.invalidate(stripeDashboardOverviewProvider(organizationId));
     ref.invalidate(stripeDashboardBalanceProvider(organizationId));
     ref.invalidate(stripeDashboardPayoutsProvider(organizationId));

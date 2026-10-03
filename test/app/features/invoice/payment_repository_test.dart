@@ -11,6 +11,7 @@ class MockApiMethod extends Mock implements ApiMethod {
   Future<Map<String, dynamic>> get(
     String endpoint, {
     Map<String, String>? headers,
+    bool forceRefresh = false,
   }) async {
     lastEndpoint = endpoint;
     return {'success': true};
