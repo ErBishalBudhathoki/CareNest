@@ -119,6 +119,16 @@ dev_dependencies:
   # Screenshot comparison
   screenshot: ^3.0.0
   patrol: ^4.5.0
+  # Firebase test seams. Declared explicitly rather than reached for as
+  # transitive deps: these are the officially supported injection points for
+  # testing code that touches Firebase, and relying on them being pulled in
+  # indirectly breaks silently on any upgrade. Constraints match the versions
+  # firebase_core / firebase_messaging already resolve to, so adding them
+  # changes nothing about the resolved graph. Test-only, never shipped.
+  #   firebase_core_platform_interface      -> setupFirebaseCoreMocks()
+  #   firebase_messaging_platform_interface -> fake FirebaseMessagingPlatform
+  firebase_core_platform_interface: ^8.1.0
+  firebase_messaging_platform_interface: ^4.9.3
 
 dependency_overrides:
   google_mlkit_commons:
