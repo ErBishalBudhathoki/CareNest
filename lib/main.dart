@@ -390,7 +390,17 @@ void _processPendingInitialDeepLink() {
 
 void _handleIncomingDeepLink(Uri uri) {
   if (_isDuplicateDeepLink(uri)) return;
-  _handleDeepLink(uri);
+
+  if (!_handleDeepLink(uri)) {
+    // The link was ignored, or we could not route it yet (typically the
+    // navigator is not attached this early on a cold start). Do not claim
+    // navigation: SplashScreen stands down as soon as DeepLinkState.handled is
+    // true, and it never retries, so a false positive here leaves the user
+    // stuck on the splash screen with no way forward.
+    debugPrint('Deep link was not routed, leaving it to the app: $uri');
+    return;
+  }
+
   _deepLinkHandled = true;
   DeepLinkState.handled = true;
 }
@@ -420,11 +430,13 @@ Future<void> _initializeTimerService() async {
   }
 }
 
-void _handleDeepLink(Uri uri) {
+/// Routes a deep link. Returns true when navigation actually happened.
+bool _handleDeepLink(Uri uri) {
   try {
-    DeepLinkHandler.handleDeepLink(uri.toString());
+    return DeepLinkHandler.handleDeepLink(uri.toString());
   } catch (e) {
     debugPrint('Error handling deep link: $e');
+    return false;
   }
 }
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:carenest/app/core/utils/navigation.dart';
 import 'package:carenest/app/features/auth/views/change_password_view.dart';
 import 'package:carenest/app/routes/app_pages.dart';
@@ -45,33 +47,40 @@ class DeepLinkHandler {
     return _configuredUniversalHost ?? _fallbackUniversalHost;
   }
 
-  /// Handles incoming deep links
-  static void handleDeepLink(String link) {
+  /// Handles an incoming deep link.
+  ///
+  /// Returns true only when this actually navigated somewhere, or was
+  /// guaranteed to navigate once its async work completes.
+  ///
+  /// Callers use the result to decide whether the deep link has taken over
+  /// navigation. The splash screen stands down when it sees
+  /// `DeepLinkState.handled`, so returning true for a link we ignored or could
+  /// not route would strand the user on the splash screen for good.
+  static bool handleDeepLink(String link) {
     final rawLink = link.trim();
-    if (rawLink.isEmpty) return;
+    if (rawLink.isEmpty) return false;
 
     Uri uri;
     try {
       uri = Uri.parse(rawLink);
     } catch (e) {
       debugPrint('DeepLinkHandler: invalid deep link "$rawLink": $e');
-      return;
+      return false;
     }
 
     // Handle custom scheme links (com.bishal.invoice://signup?orgCode=...)
     if (uri.scheme == _customScheme) {
-      _handleCustomSchemeLink(uri);
-      return;
+      return _handleCustomSchemeLink(uri);
     }
 
     final firebaseAction = _extractFirebaseAction(uri);
     if (firebaseAction != null) {
       if (firebaseAction.key == _firebaseResetPasswordMode) {
-        _navigateToFirebaseResetPassword(firebaseAction.value);
+        return _navigateToFirebaseResetPassword(firebaseAction.value);
       } else if (firebaseAction.key == _firebaseVerifyEmailMode) {
-        _handleFirebaseEmailVerification(firebaseAction.value);
+        return _handleFirebaseEmailVerification(firebaseAction.value);
       }
-      return;
+      return false;
     }
 
     // Handle universal/app links (https://bishalbudhathoki.com/signup?orgCode=...)
@@ -82,24 +91,28 @@ class DeepLinkHandler {
 
       if (orgCode != null && orgCode.isNotEmpty) {
         // Navigate to signup page with pre-filled organization code
-        _navigateToSignupWithOrgCode(orgCode);
-      } else {
-        // Navigate to regular signup page
-        _navigateToSignup();
+        return _navigateToSignupWithOrgCode(orgCode);
       }
+      // Navigate to regular signup page
+      return _navigateToSignup();
     }
+
+    debugPrint('DeepLinkHandler: ignoring unrecognised link "$rawLink"');
+    return false;
   }
 
   /// Handles custom scheme deep links (com.bishal.invoice://)
-  static void _handleCustomSchemeLink(Uri uri) {
+  ///
+  /// Returns true only if navigation happened or is guaranteed to.
+  static bool _handleCustomSchemeLink(Uri uri) {
     final firebaseAction = _extractFirebaseAction(uri);
     if (firebaseAction != null) {
       if (firebaseAction.key == _firebaseResetPasswordMode) {
-        _navigateToFirebaseResetPassword(firebaseAction.value);
+        return _navigateToFirebaseResetPassword(firebaseAction.value);
       } else if (firebaseAction.key == _firebaseVerifyEmailMode) {
-        _handleFirebaseEmailVerification(firebaseAction.value);
+        return _handleFirebaseEmailVerification(firebaseAction.value);
       }
-      return;
+      return false;
     }
 
     // Check if it's a signup link
@@ -108,12 +121,14 @@ class DeepLinkHandler {
 
       if (orgCode != null && orgCode.isNotEmpty) {
         // Navigate to signup page with pre-filled organization code
-        _navigateToSignupWithOrgCode(orgCode);
-      } else {
-        // Navigate to regular signup page
-        _navigateToSignup();
+        return _navigateToSignupWithOrgCode(orgCode);
       }
+      // Navigate to regular signup page
+      return _navigateToSignup();
     }
+
+    debugPrint('DeepLinkHandler: no custom-scheme action for "$uri"');
+    return false;
   }
 
   static bool _isSignupPath(Uri uri) {
@@ -156,53 +171,69 @@ class DeepLinkHandler {
   }
 
   /// Navigate to signup page with organization code
-  static void _navigateToSignupWithOrgCode(String orgCode) {
+  static bool _navigateToSignupWithOrgCode(String orgCode) {
     final navState = navigatorKey.currentState;
     if (navState == null) {
       debugPrint(
         'DeepLinkHandler: navigator not ready, cannot route to signup yet',
       );
-      return;
+      return false;
     }
     navState.pushNamed(Routes.signup, arguments: {'prefilledOrgCode': orgCode});
+    return true;
   }
 
   /// Navigate to regular signup page
-  static void _navigateToSignup() {
+  static bool _navigateToSignup() {
     final navState = navigatorKey.currentState;
     if (navState == null) {
       debugPrint(
         'DeepLinkHandler: navigator not ready, cannot route to signup yet',
       );
-      return;
+      return false;
     }
     navState.pushNamed(Routes.signup);
+    return true;
   }
 
   /// Navigate to reset-password page for Firebase email action links.
-  static void _navigateToFirebaseResetPassword(String oobCode) {
+  static bool _navigateToFirebaseResetPassword(String oobCode) {
     final navState = navigatorKey.currentState;
     if (navState == null) {
       debugPrint(
         'DeepLinkHandler: navigator not ready, cannot route to reset password yet',
       );
-      return;
+      return false;
     }
     navState.push(
       MaterialPageRoute(
         builder: (_) => ChangePasswordView(firebaseOobCode: oobCode),
       ),
     );
+    return true;
   }
 
-  static Future<void> _handleFirebaseEmailVerification(String oobCode) async {
+  /// Handles a Firebase email-verification action link.
+  ///
+  /// Synchronous by design: it reports whether navigation is guaranteed, then
+  /// does the async Firebase work in the background. Every branch below routes
+  /// to the login screen, so once the navigator exists the outcome is decided.
+  static bool _handleFirebaseEmailVerification(String oobCode) {
     final navState = navigatorKey.currentState;
     if (navState == null) {
       debugPrint(
         'DeepLinkHandler: navigator not ready, cannot route to email verification yet',
       );
-      return;
+      return false;
     }
+
+    unawaited(_applyEmailVerification(oobCode));
+    return true;
+  }
+
+  static Future<void> _applyEmailVerification(String oobCode) async {
+    final navState = navigatorKey.currentState;
+    if (navState == null) return;
 
     try {
       await FirebaseAuth.instance.applyActionCode(oobCode);

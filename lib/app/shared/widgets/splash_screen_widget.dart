@@ -25,96 +25,108 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   Future<void> _initializeApp() async {
+    // Clear any deep-link state left over from earlier in this process before
+    // deciding whether to stand down. The flag is process-global and sticky, so
+    // a single handled link would otherwise suppress routing here forever.
+    DeepLinkState.reset();
+
     await Future.delayed(const Duration(seconds: 2));
 
     await Future.delayed(const Duration(milliseconds: 500));
 
-    if (!DeepLinkState.handled && mounted) {
-      final sharedPrefs = SharedPreferencesUtils();
-      await sharedPrefs.init();
+    if (!mounted) return;
 
-      final userEmail = await sharedPrefs.getUserEmailFromSharedPreferences();
-      final role = sharedPrefs.getRole();
+    if (DeepLinkState.handled) {
+      debugPrint(
+        'SplashScreen: a deep link took over navigation, standing down',
+      );
+      return;
+    }
 
-      if (userEmail != null && userEmail.isNotEmpty && role != null) {
-        final isValidSession = await _validateAuthSession();
+    final sharedPrefs = SharedPreferencesUtils();
+    await sharedPrefs.init();
 
-        if (!isValidSession) {
-          debugPrint('⚠️ Auth session invalid/expired, redirecting to login');
-          if (mounted) {
-            Navigator.of(context).pushReplacementNamed('/login');
-          }
+    final userEmail = await sharedPrefs.getUserEmailFromSharedPreferences();
+    final role = sharedPrefs.getRole();
+
+    if (userEmail != null && userEmail.isNotEmpty && role != null) {
+      final isValidSession = await _validateAuthSession();
+
+      if (!isValidSession) {
+        debugPrint('⚠️ Auth session invalid/expired, redirecting to login');
+        if (mounted) {
+          Navigator.of(context).pushReplacementNamed('/login');
+        }
+        return;
+      }
+
+      if (!mounted) return;
+
+      if (role == UserRole.admin) {
+        Navigator.of(context).pushReplacementNamed(
+          Routes.bottomNavBar,
+          arguments: {
+            'email': userEmail,
+            'role': UserRole.admin,
+            'organizationId': sharedPrefs.getOrganizationId(),
+            'organizationName': sharedPrefs.getString('organizationName'),
+            'organizationCode': sharedPrefs.getOrganizationCode(),
+          },
+        );
+      } else if (role == UserRole.family || role == UserRole.client) {
+        final clientId = sharedPrefs.getString('clientId') ?? '';
+        if (clientId.isEmpty) {
+          debugPrint('⚠️ Missing clientId for session, forcing re-login');
+          await _sessionTimeoutService.logoutAndClearSession(
+            reason: 'missing_client_id_on_splash',
+          );
+          if (!mounted) return;
+          Navigator.of(context).pushReplacementNamed(Routes.login);
           return;
         }
 
-        if (!mounted) return;
-
-        if (role == UserRole.admin) {
+        if (role == UserRole.family) {
           Navigator.of(context).pushReplacementNamed(
-            Routes.bottomNavBar,
-            arguments: {
-              'email': userEmail,
-              'role': UserRole.admin,
-              'organizationId': sharedPrefs.getOrganizationId(),
-              'organizationName': sharedPrefs.getString('organizationName'),
-              'organizationCode': sharedPrefs.getOrganizationCode(),
-            },
+            Routes.clientDashboard,
+            arguments: {'clientId': clientId, 'isFamilyViewer': true},
           );
-        } else if (role == UserRole.family || role == UserRole.client) {
-          final clientId = sharedPrefs.getString('clientId') ?? '';
-          if (clientId.isEmpty) {
-            debugPrint('⚠️ Missing clientId for session, forcing re-login');
-            await _sessionTimeoutService.logoutAndClearSession(
-              reason: 'missing_client_id_on_splash',
-            );
-            if (!mounted) return;
-            Navigator.of(context).pushReplacementNamed(Routes.login);
-            return;
-          }
-
-          if (role == UserRole.family) {
-            Navigator.of(context).pushReplacementNamed(
-              Routes.clientDashboard,
-              arguments: {'clientId': clientId, 'isFamilyViewer': true},
-            );
-          } else {
-            Navigator.of(context).pushReplacementNamed(
-              Routes.clientDashboard,
-              arguments: {'email': userEmail, 'clientId': clientId},
-            );
-          }
         } else {
-          final onboardingTarget = await _onboardingGateService.resolveTarget(
-            role: role,
-            userId: sharedPrefs.getUserId(),
-            email: userEmail,
-          );
-
-          if (!mounted) return;
-
-          if (onboardingTarget == OnboardingGateTarget.welcome) {
-            Navigator.of(context).pushReplacementNamed(Routes.onboarding);
-            return;
-          }
-
           Navigator.of(context).pushReplacementNamed(
-            Routes.bottomNavBar,
-            arguments: {
-              'email': userEmail,
-              'role': UserRole.employee,
-              'organizationId': sharedPrefs.getOrganizationId(),
-              'organizationName': sharedPrefs.getString('organizationName'),
-              'organizationCode': sharedPrefs.getOrganizationCode(),
-            },
+            Routes.clientDashboard,
+            arguments: {'email': userEmail, 'clientId': clientId},
           );
         }
       } else {
-        await _sessionTimeoutService.logoutAndClearSession(
-          reason: 'missing_local_session_state_on_splash',
+        final onboardingTarget = await _onboardingGateService.resolveTarget(
+          role: role,
+          userId: sharedPrefs.getUserId(),
+          email: userEmail,
         );
+
         if (!mounted) return;
-        Navigator.of(context).pushReplacementNamed('/login');
+
+        if (onboardingTarget == OnboardingGateTarget.welcome) {
+          Navigator.of(context).pushReplacementNamed(Routes.onboarding);
+          return;
+        }
+
+        Navigator.of(context).pushReplacementNamed(
+          Routes.bottomNavBar,
+          arguments: {
+            'email': userEmail,
+            'role': UserRole.employee,
+            'organizationId': sharedPrefs.getOrganizationId(),
+            'organizationName': sharedPrefs.getString('organizationName'),
+            'organizationCode': sharedPrefs.getOrganizationCode(),
+          },
+        );
       }
+    } else {
+      await _sessionTimeoutService.logoutAndClearSession(
+        reason: 'missing_local_session_state_on_splash',
+      );
+      if (!mounted) return;
+      Navigator.of(context).pushReplacementNamed('/login');
     }
   }
 

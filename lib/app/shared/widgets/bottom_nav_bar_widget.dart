@@ -61,16 +61,10 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
       // Ensure the role provider is fresh from the backend
       ref.read(userRoleProvider.notifier).refreshRole();
       if (mounted) {
-        // Guarded: this runs in a post-frame callback with no caller, so a
-        // Firebase failure here would surface as an unhandled async error. It
-        // also re-runs on every shell rebuild, and for a user who previously
-        // denied notifications the manager raises a dialog that leads out to
-        // Android settings — which is its own app -> settings -> app loop.
-        try {
-          await PermissionManager.requestNotificationPermission(context);
-        } catch (error) {
-          debugPrint('Notification permission request failed: $error');
-        }
+        // Safe to call un-awaited: PermissionManager guards itself, so a
+        // Firebase or prefs failure here cannot become an unhandled async error.
+        // (This runs once per shell instance, from initState.)
+        await PermissionManager.requestNotificationPermission(context);
       }
     });
   }

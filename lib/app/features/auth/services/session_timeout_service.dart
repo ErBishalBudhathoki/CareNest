@@ -8,14 +8,22 @@ class SessionTimeoutService {
     SharedPreferencesUtils? sharedPrefs,
     FirebaseAuth? firebaseAuth,
   }) : _sharedPrefs = sharedPrefs ?? SharedPreferencesUtils(),
-       _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
+       _firebaseAuth = firebaseAuth;
 
   // Security requirement: users must re-authenticate after this duration.
   static const Duration maxSessionAge = Duration(hours: 10);
   static const String _kSessionStartedAtMsKey = 'sessionStartedAtMs';
 
   final SharedPreferencesUtils _sharedPrefs;
-  final FirebaseAuth _firebaseAuth;
+  final FirebaseAuth? _firebaseAuth;
+
+  /// Resolved on demand rather than in the constructor.
+  ///
+  /// Building this service must not require Firebase to be initialised: the
+  /// splash screen constructs it from a field initializer, so eagerly touching
+  /// `FirebaseAuth.instance` here made the splash screen itself unconstructible
+  /// whenever Firebase was not ready (and untestable in isolation).
+  FirebaseAuth get _auth => _firebaseAuth ?? FirebaseAuth.instance;
 
   Future<void> markSessionStarted({DateTime? startedAt}) async {
     await _sharedPrefs.init();
@@ -36,7 +44,7 @@ class SessionTimeoutService {
       return DateTime.fromMillisecondsSinceEpoch(storedMs);
     }
 
-    final firebaseUser = _firebaseAuth.currentUser;
+    final firebaseUser = _auth.currentUser;
     if (firebaseUser == null) return null;
 
     try {
@@ -69,7 +77,7 @@ class SessionTimeoutService {
   }
 
   Future<bool> isSessionValid({Duration? timeout}) async {
-    final firebaseUser = _firebaseAuth.currentUser;
+    final firebaseUser = _auth.currentUser;
     if (firebaseUser == null) {
       debugPrint('SessionTimeoutService: no Firebase user, session invalid');
       return false;
@@ -102,7 +110,7 @@ class SessionTimeoutService {
     await _sharedPrefs.clearAllUserData();
 
     try {
-      await _firebaseAuth.signOut();
+      await _auth.signOut();
     } catch (e) {
       debugPrint('SessionTimeoutService: Firebase sign out failed: $e');
     }

@@ -13,52 +13,63 @@ class PermissionManager {
   static Future<void> requestNotificationPermission(
     BuildContext context,
   ) async {
-    final prefs = await SharedPreferences.getInstance();
-    final bool hasDeniedBefore = prefs.getBool(_keyNotificationDenied) ?? false;
+    // Callers invoke this from initState and post-frame callbacks, where an
+    // unhandled async error takes the process down (and fails widget tests). A
+    // missed permission prompt is far less harmful than that, so the guard
+    // lives here rather than at each call site.
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final bool hasDeniedBefore =
+          prefs.getBool(_keyNotificationDenied) ?? false;
 
-    // If previously denied, we might want to skip or show a different UI,
-    // but typically we try again or show settings dialog if permanently denied.
+      // If previously denied, we might want to skip or show a different UI,
+      // but typically we try again or show settings dialog if permanently denied.
 
-    // Check current status first
-    // For Firebase, we use requestPermission which handles status check internally mostly,
-    // but let's use it directly.
+      // Check current status first
+      // For Firebase, we use requestPermission which handles status check internally mostly,
+      // but let's use it directly.
 
-    NotificationSettings settings = await FirebaseMessaging.instance
-        .requestPermission(
-          alert: true,
-          badge: true,
-          sound: true,
-          provisional: false,
-        );
-
-    if (settings.authorizationStatus == AuthorizationStatus.authorized ||
-        settings.authorizationStatus == AuthorizationStatus.provisional) {
-      debugPrint('User granted permission');
-      // Reset denied flag if granted
-      await prefs.setBool(_keyNotificationDenied, false);
-    } else {
-      debugPrint('User declined or has not accepted permission');
-      await prefs.setBool(_keyNotificationDenied, true);
-
-      // If the user explicitly denied, and we want to guide them:
-      if (context.mounted) {
-        // We can check if it's permanently denied on Android using permission_handler
-        // equivalent, but Firebase doesn't expose "permanently denied" easily.
-        // We can rely on the fact that if we asked and it's still denied, we might want to help.
-        // However, standard flow is: request -> OS dialog. If denied, next time it might not show.
-
-        // Let's offer to open settings if we think they denied it.
-        // But we don't want to spam. Only if they just clicked deny?
-        // Or if we know they denied it before?
-
-        if (hasDeniedBefore) {
-          _showSettingsDialog(
-            context,
-            'Enable Notifications',
-            'Notifications are required to receive important updates. Please enable them in settings.',
+      NotificationSettings settings = await FirebaseMessaging.instance
+          .requestPermission(
+            alert: true,
+            badge: true,
+            sound: true,
+            provisional: false,
           );
+
+      if (settings.authorizationStatus == AuthorizationStatus.authorized ||
+          settings.authorizationStatus == AuthorizationStatus.provisional) {
+        debugPrint('User granted permission');
+        // Reset denied flag if granted
+        await prefs.setBool(_keyNotificationDenied, false);
+      } else {
+        debugPrint('User declined or has not accepted permission');
+        await prefs.setBool(_keyNotificationDenied, true);
+
+        // If the user explicitly denied, and we want to guide them:
+        if (context.mounted) {
+          // We can check if it's permanently denied on Android using permission_handler
+          // equivalent, but Firebase doesn't expose "permanently denied" easily.
+          // We can rely on the fact that if we asked and it's still denied, we might want to help.
+          // However, standard flow is: request -> OS dialog. If denied, next time it might not show.
+
+          // Let's offer to open settings if we think they denied it.
+          // But we don't want to spam. Only if they just clicked deny?
+          // Or if we know they denied it before?
+
+          if (hasDeniedBefore) {
+            _showSettingsDialog(
+              context,
+              'Enable Notifications',
+              'Notifications are required to receive important updates. Please enable them in settings.',
+            );
+          }
         }
       }
+    } catch (error) {
+      debugPrint(
+        'PermissionManager: notification permission request failed: $error',
+      );
     }
   }
 
