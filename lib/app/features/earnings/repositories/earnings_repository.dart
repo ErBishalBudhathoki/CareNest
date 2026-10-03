@@ -107,6 +107,14 @@ class EarningsRepository {
     throw Exception('Failed to fetch tax settings');
   }
 
+  /// Drop every cached earnings read for this user. Used by pull-to-refresh so a
+  /// deliberate swipe bypasses both the in-memory transport cache and the
+  /// persisted summary cache.
+  Future<void> clearCache() async {
+    await _cache.clearCache();
+    ApiMethod.invalidateResponseCache(const ['earnings/']);
+  }
+
   Future<void> setPayRate(
     String userEmail,
     double rate,

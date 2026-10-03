@@ -136,6 +136,7 @@ class EarningsDashboardView extends ConsumerWidget {
                         onPeriodChanged: viewModel.setPeriod,
                         onPrevious: viewModel.goToPreviousPeriod,
                         onNext: viewModel.goToNextPeriod,
+                        onRefresh: viewModel.refresh,
                       ),
                       const SizedBox(height: 16),
                       if (isWide)
@@ -272,75 +273,84 @@ class EarningsDashboardView extends ConsumerWidget {
     required void Function(EarningsPeriod period) onPeriodChanged,
     required VoidCallback onPrevious,
     required VoidCallback onNext,
+    required Future<void> Function() onRefresh,
   }) {
     // Custom Bauhaus inspired toggle
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  width: 2,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Theme.of(context).colorScheme.outline,
-                    offset: Offset(2, 2),
-                  ),
-                ],
-                color: resolveEarningsToggleColors(
-                  Theme.of(context).colorScheme,
-                  true,
-                ).track,
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildToggleItem(
-                    context: context,
-                    label: AppLocalizations.of(context)!.weeklyToggle,
-                    isSelected: period == EarningsPeriod.weekly,
-                    onTap: () => onPeriodChanged(EarningsPeriod.weekly),
-                  ),
-                  Container(
-                    width: 2,
-                    height: 40,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  _buildToggleItem(
-                    context: context,
-                    label: AppLocalizations.of(context)!.monthlyToggle,
-                    isSelected: period == EarningsPeriod.monthly,
-                    onTap: () => onPeriodChanged(EarningsPeriod.monthly),
-                  ),
-                ],
-              ),
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
+        RefreshIndicator(
+          // The only explicit escape hatch to fresh data; everything else is
+          // served from cache.
+          onRefresh: onRefresh,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                _buildNavButton(context, Icons.arrow_back, onPrevious),
-                const SizedBox(width: 8),
-                Text(
-                  rangeLabel.toUpperCase(),
-                  style: BauhausDesign.getTextTheme(context).headlineMedium
-                      ?.copyWith(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      width: 2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(context).colorScheme.outline,
+                        offset: Offset(2, 2),
+                      ),
+                    ],
+                    color: resolveEarningsToggleColors(
+                      Theme.of(context).colorScheme,
+                      true,
+                    ).track,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildToggleItem(
+                        context: context,
+                        label: AppLocalizations.of(context)!.weeklyToggle,
+                        isSelected: period == EarningsPeriod.weekly,
+                        onTap: () => onPeriodChanged(EarningsPeriod.weekly),
+                      ),
+                      Container(
+                        width: 2,
+                        height: 40,
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
+                      _buildToggleItem(
+                        context: context,
+                        label: AppLocalizations.of(context)!.monthlyToggle,
+                        isSelected: period == EarningsPeriod.monthly,
+                        onTap: () => onPeriodChanged(EarningsPeriod.monthly),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(width: 8),
-                _buildNavButton(context, Icons.arrow_forward, onNext),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildNavButton(context, Icons.arrow_back, onPrevious),
+                    const SizedBox(width: 8),
+                    Text(
+                      rangeLabel.toUpperCase(),
+                      style: BauhausDesign.getTextTheme(context).headlineMedium
+                          ?.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                    ),
+                    const SizedBox(width: 8),
+                    _buildNavButton(context, Icons.arrow_forward, onNext),
+                  ],
+                ),
               ],
             ),
-          ],
+          ),
         ),
       ],
     );
