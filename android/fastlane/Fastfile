@@ -50,17 +50,33 @@ platform :android do
     properties
   end
 
-  def ensure_changelog(version_name, version_code, default_message)
+  # Writes the release notes for this version into the fastlane changelogs dir.
+  #
+  # Notes are mandatory, including for internal testing: those builds reach real
+  # testers, and a missing notes file used to fall back to an empty template, so
+  # testers got a changelog full of blank bullets and no idea what to retest.
+  def ensure_changelog(version_name, version_code)
     release_notes_file = File.join(project_root, "android",
       "release_notes_#{version_name}.txt")
 
-    if File.exist?(release_notes_file)
-      UI.message "Found release notes file: #{release_notes_file}"
-      release_notes = File.read(release_notes_file)
-    else
-      UI.message "Release notes file not found at #{release_notes_file}, using default."
-      release_notes = default_message
+    unless File.exist?(release_notes_file)
+      UI.user_error!(<<~MSG)
+        No release notes found for #{version_name} (#{version_code}).
+
+        Expected: #{release_notes_file}
+
+        Write that file describing what actually changed in this build, then
+        re-run. Every deployment ships to testers, so this fails rather than
+        publishing an empty changelog.
+      MSG
     end
+
+    release_notes = File.read(release_notes_file).strip
+    if release_notes.empty?
+      UI.user_error!("#{release_notes_file} is empty. Add the changes for this build.")
+    end
+
+    UI.message "Using release notes: #{release_notes_file}"
 
     metadata_dir = File.join(__dir__, "metadata", "android", "en-US")
     changelog_dir = File.join(metadata_dir, "changelogs")
@@ -149,11 +165,7 @@ platform :android do
     version_name = properties['flutter.versionName'] || '1.0'
     version_code = properties['flutter.versionCode'] || '1'
 
-    ensure_changelog(
-      version_name,
-      version_code,
-      "Production release #{version_name} (#{version_code})\n\nStable release for production."
-    )
+    ensure_changelog(version_name, version_code)
     
     upload_to_play_store(
       track: 'production',
@@ -170,6 +182,12 @@ platform :android do
     # Build the production AAB (internal uses production flavor)
     sh "cd .. && flutter build appbundle --flavor production -t lib/main_production.dart --release"
 
+    properties = load_flutter_properties
+    version_name = properties['flutter.versionName'] || '1.0'
+    version_code = properties['flutter.versionCode'] || '1'
+
+    ensure_changelog(version_name, version_code)
+
     Dir.chdir(project_root) do
       upload_to_play_store(
         track: 'internal',
@@ -185,6 +203,12 @@ platform :android do
   desc "Upload existing production AAB to internal testing"
   lane :upload_internal_aab do
     UI.user_error!("AAB not found at #{production_aab_relative_path}. Build it first.") unless File.exist?(production_aab_absolute_path)
+
+    properties = load_flutter_properties
+    version_name = properties['flutter.versionName'] || '1.0'
+    version_code = properties['flutter.versionCode'] || '1'
+
+    ensure_changelog(version_name, version_code)
 
     upload_to_play_store(
       track: 'internal',
@@ -204,11 +228,7 @@ platform :android do
     version_name = properties['flutter.versionName'] || '1.0'
     version_code = properties['flutter.versionCode'] || '1'
 
-    ensure_changelog(
-      version_name,
-      version_code,
-      "Production release #{version_name} (#{version_code})\n\nStable release for production."
-    )
+    ensure_changelog(version_name, version_code)
 
     upload_to_play_store(
       track: 'production',

@@ -6,6 +6,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 class PermissionManager {
   static const String _keyNotificationDenied = 'notification_permission_denied';
+  static const String _keyNotificationNudgeShown =
+      'notification_permission_nudge_shown';
   static const String _keyStorageDenied = 'storage_permission_denied';
 
   /// Requests notification permission.
@@ -19,53 +21,73 @@ class PermissionManager {
     // lives here rather than at each call site.
     try {
       final prefs = await SharedPreferences.getInstance();
-      final bool hasDeniedBefore =
-          prefs.getBool(_keyNotificationDenied) ?? false;
 
-      // If previously denied, we might want to skip or show a different UI,
-      // but typically we try again or show settings dialog if permanently denied.
+      // Read the current status before doing anything that could prompt. The OS
+      // only ever shows its dialog once, so asking again is a no-op — but it is
+      // checking first that lets us tell "never asked" apart from "said no".
+      final settings = await FirebaseMessaging.instance
+          .getNotificationSettings();
+      final status = settings.authorizationStatus;
 
-      // Check current status first
-      // For Firebase, we use requestPermission which handles status check internally mostly,
-      // but let's use it directly.
-
-      NotificationSettings settings = await FirebaseMessaging.instance
-          .requestPermission(
-            alert: true,
-            badge: true,
-            sound: true,
-            provisional: false,
-          );
-
-      if (settings.authorizationStatus == AuthorizationStatus.authorized ||
-          settings.authorizationStatus == AuthorizationStatus.provisional) {
-        debugPrint('User granted permission');
-        // Reset denied flag if granted
+      if (status == AuthorizationStatus.authorized ||
+          status == AuthorizationStatus.provisional) {
+        debugPrint('PermissionManager: notifications already allowed');
         await prefs.setBool(_keyNotificationDenied, false);
-      } else {
-        debugPrint('User declined or has not accepted permission');
-        await prefs.setBool(_keyNotificationDenied, true);
-
-        // If the user explicitly denied, and we want to guide them:
-        if (context.mounted) {
-          // We can check if it's permanently denied on Android using permission_handler
-          // equivalent, but Firebase doesn't expose "permanently denied" easily.
-          // We can rely on the fact that if we asked and it's still denied, we might want to help.
-          // However, standard flow is: request -> OS dialog. If denied, next time it might not show.
-
-          // Let's offer to open settings if we think they denied it.
-          // But we don't want to spam. Only if they just clicked deny?
-          // Or if we know they denied it before?
-
-          if (hasDeniedBefore) {
-            _showSettingsDialog(
-              context,
-              'Enable Notifications',
-              'Notifications are required to receive important updates. Please enable them in settings.',
-            );
-          }
-        }
+        // They fixed it in Settings, so they deserve the nudge again if they
+        // ever deny again later.
+        await prefs.remove(_keyNotificationNudgeShown);
+        return;
       }
+
+      if (status == AuthorizationStatus.notDetermined) {
+        // First and only OS prompt.
+        final result = await FirebaseMessaging.instance.requestPermission(
+          alert: true,
+          badge: true,
+          sound: true,
+          provisional: false,
+        );
+
+        if (result.authorizationStatus == AuthorizationStatus.authorized ||
+            result.authorizationStatus == AuthorizationStatus.provisional) {
+          debugPrint('PermissionManager: notification permission granted');
+          await prefs.setBool(_keyNotificationDenied, false);
+          return;
+        }
+
+        debugPrint('PermissionManager: notification permission declined');
+        await prefs.setBool(_keyNotificationDenied, true);
+        // Deliberately no settings nudge here. They have only just answered,
+        // and being pushed towards Settings before they have even seen the
+        // prompt is hostile. The nudge below comes on a later visit instead.
+        return;
+      }
+
+      // Already denied or permanently denied. The OS will not prompt again, so
+      // the only thing left to offer is a pointer to Settings — and it is worth
+      // showing exactly once per install. Showing it on every launch was the
+      // nag loop: dismiss it, relaunch, get it again, forever.
+      await prefs.setBool(_keyNotificationDenied, true);
+
+      final nudgeShown = prefs.getBool(_keyNotificationNudgeShown) ?? false;
+      if (nudgeShown) {
+        debugPrint(
+          'PermissionManager: notifications denied, settings nudge already shown',
+        );
+        return;
+      }
+
+      if (!context.mounted) return;
+
+      // Recorded before showing so a concurrent call cannot double up. There is
+      // no await between the read above and this write.
+      await prefs.setBool(_keyNotificationNudgeShown, true);
+      _showSettingsDialog(
+        context,
+        'Enable Notifications',
+        'Notifications are used for important updates about shifts and '
+            'schedules. You can turn them back on in Settings.',
+      );
     } catch (error) {
       debugPrint(
         'PermissionManager: notification permission request failed: $error',
