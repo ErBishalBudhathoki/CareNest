@@ -49,7 +49,9 @@ class EmployeeStatusCard extends StatelessWidget {
                         employee.email,
                         style: BauhausDesign.getTextTheme(context).bodyMedium
                             ?.copyWith(
-                              color: BauhausDesign.textMuted,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                               fontSize: 12,
                             ),
                       ),
@@ -112,7 +114,11 @@ class EmployeeStatusCard extends StatelessWidget {
           context,
         ).colorScheme.surfaceContainer.withValues(alpha: 0.1),
       ),
-      child: Icon(Icons.person, size: 30.0, color: BauhausDesign.textMuted),
+      child: Icon(
+        Icons.person,
+        size: 30.0,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
     );
   }
 
@@ -206,13 +212,17 @@ class EmployeeStatusCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: BauhausDesign.space1),
       child: Row(
         children: [
-          Icon(icon, size: 16, color: BauhausDesign.textMuted),
+          Icon(
+            icon,
+            size: 16,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
           const SizedBox(width: BauhausDesign.space2),
           Text(
             '$label:',
             style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
               fontWeight: FontWeight.w600,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(width: BauhausDesign.space2),

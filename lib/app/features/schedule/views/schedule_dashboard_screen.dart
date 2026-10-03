@@ -255,7 +255,7 @@ class _ScheduleDashboardScreenState
       ),
       title: Text(
         AppLocalizations.of(context)!.scheduleTitle,
-        style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
+        style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
           color: Theme.of(context).colorScheme.onSecondary,
         ),
       ),

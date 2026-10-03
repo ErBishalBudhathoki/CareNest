@@ -1,7 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
-
 import '../models/employee_tracking_model.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
@@ -15,44 +13,20 @@ class EmployeeTrackingRepository {
 
   /// Fetches employee tracking data from the backend
   Future<EmployeeTrackingData> getEmployeeTrackingData() async {
-    debugPrint(
-      '🔍 DEBUG: EmployeeTrackingRepository.getEmployeeTrackingData() called',
-    );
-
     try {
       // Initialize SharedPreferences
       final sharedPrefs = SharedPreferencesUtils();
       await sharedPrefs.init();
-      debugPrint('🔍 DEBUG: SharedPreferences initialized');
-
       // Get organization ID from SharedPreferences
       final organizationId = sharedPrefs.getString('organizationId');
-      debugPrint(
-        '🔍 DEBUG: Retrieved organizationId from SharedPreferences: $organizationId',
-      );
-
       if (organizationId == null || organizationId.isEmpty) {
-        debugPrint('🔍 DEBUG: ERROR - Organization ID is null or empty!');
         throw Exception('Organization ID not found in SharedPreferences');
       }
 
-      debugPrint(
-        '🔍 DEBUG: Making API call to getEmployeeTrackingData with organizationId: $organizationId',
-      );
-
       // Make API call to get employee tracking data
       final response = await _apiMethod.getEmployeeTrackingData(organizationId);
-      debugPrint('🔍 DEBUG: API response received');
-      debugPrint('🔍 DEBUG: Response type: ${response.runtimeType}');
-      debugPrint('🔍 DEBUG: Full response: $response');
-
       if (response['success'] == true) {
-        debugPrint(
-          '🔍 DEBUG: Parsing response data to EmployeeTrackingData model',
-        );
         final responseData = response['data'];
-        debugPrint('🔍 DEBUG: Response data: $responseData');
-
         final liveZoneEntries =
             responseData['liveZone'] as List<dynamic>? ?? [];
         final Map<String, Map<String, dynamic>> liveZoneByEmail = {};
@@ -93,9 +67,6 @@ class EmployeeTrackingRepository {
             responseData['activeTimers'] as List<dynamic>? ?? [];
         final currentlyWorkingCount = responseData['currentlyWorking'] ?? 0;
 
-        debugPrint('🔍 DEBUG: Active timers from backend: $activeTimers');
-        debugPrint('🔍 DEBUG: Currently working count: $currentlyWorkingCount');
-
         // Create a set of active user emails from activeTimers
         final activeUserEmails = activeTimers
             .map((timer) => timer['userEmail'] as String?)
@@ -111,8 +82,6 @@ class EmployeeTrackingRepository {
             }
           }
         }
-        debugPrint('🔍 DEBUG: Active user emails: $activeUserEmails');
-
         // Create a map to track userName usage and ensure unique display names
         final Map<String, int> userNameCounts = {};
         final Map<String, String> uniqueDisplayNames = {};
@@ -126,11 +95,6 @@ class EmployeeTrackingRepository {
           final userEmail = entry['userEmail'] ?? '';
           final userName =
               entry['userName'] ?? entry['userDetails']?['name'] ?? 'Unknown';
-
-          debugPrint(
-            '🔍 DEBUG: Processing assignment for $userEmail with userName: $userName',
-          );
-          debugPrint('🔍 DEBUG: Full assignment data: $entry');
 
           userNameCounts[userName] = (userNameCounts[userName] ?? 0) + 1;
         }
@@ -255,41 +219,23 @@ class EmployeeTrackingRepository {
               if (activeUserEmails.contains(userEmail)) {
                 // User has an active timer - they are currently working
                 status = 'active';
-                debugPrint(
-                  '🔍 DEBUG: User $userEmail is ACTIVE (has active timer)',
-                );
               } else {
                 // User doesn't have an active timer - they are offline
                 status = 'offline';
-                debugPrint(
-                  '🔍 DEBUG: User $userEmail is OFFLINE (no active timer)',
-                );
               }
 
               final displayName = uniqueDisplayNames[userEmail] ?? 'Unknown';
-              debugPrint(
-                '🔍 DEBUG: User $userEmail display name: $displayName',
-              );
-
               // Process profile image
               String? profileImageUrl;
               Uint8List? decodedPhotoData;
 
               // Print the entire assignment structure to debug
-              debugPrint(
-                '🔍 DEBUG: Full assignment structure: ${assignment.keys.toList()}',
-              );
-
               // Extract photoData and filename from the assignment or nested userDetails object
               final userDetails =
                   assignment['userDetails'] as Map<String, dynamic>?;
 
               // Print userDetails structure if available
-              if (userDetails != null) {
-                debugPrint(
-                  '🔍 DEBUG: userDetails structure: ${userDetails.keys.toList()}',
-                );
-              }
+              if (userDetails != null) {}
 
               // Look for profileImage in the assignment first, then photoData as fallback
               final photoData =
@@ -299,13 +245,6 @@ class EmployeeTrackingRepository {
               final filename =
                   assignment['filename'] ?? userDetails?['filename'];
 
-              debugPrint('🔍 DEBUG: PhotoData for $userEmail: $photoData');
-              debugPrint('🔍 DEBUG: Filename for $userEmail: $filename');
-              debugPrint('🔍 DEBUG: PhotoData type: ${photoData.runtimeType}');
-              debugPrint(
-                '🔍 DEBUG: PhotoData length: ${photoData?.toString().length}',
-              );
-
               if (photoData != null &&
                   photoData.toString().isNotEmpty &&
                   photoData.toString() != 'null') {
@@ -314,26 +253,16 @@ class EmployeeTrackingRepository {
                   decodedPhotoData = ImageUtils.decodeBase64Image(
                     photoData.toString(),
                   );
-                  debugPrint(
-                    '🔍 DEBUG: Successfully decoded photoData for $userEmail (${decodedPhotoData?.length ?? 0} bytes)',
-                  );
                 } catch (e) {
-                  debugPrint('🔍 DEBUG: Error decoding photoData: $e');
                   decodedPhotoData = null;
                 }
 
                 // Check if it's already a data URL
                 if (photoData.toString().startsWith('data:image')) {
                   profileImageUrl = photoData.toString();
-                  debugPrint(
-                    '🔍 DEBUG: Using existing data URL for $userEmail',
-                  );
                 } else {
                   // Convert base64 to data URL for profileImage
                   profileImageUrl = 'data:image/jpeg;base64,$photoData';
-                  debugPrint(
-                    '🔍 DEBUG: Created profile image URL for $userEmail: ${profileImageUrl.substring(0, 50)}...',
-                  );
                 }
               } else {
                 // Fallback to profileImage if photoData is not available
@@ -342,14 +271,7 @@ class EmployeeTrackingRepository {
                     profileImage.toString().isNotEmpty &&
                     profileImage.toString() != 'null') {
                   profileImageUrl = profileImage.toString();
-                  debugPrint(
-                    '🔍 DEBUG: Using profileImage as fallback for $userEmail',
-                  );
-                } else {
-                  debugPrint(
-                    '🔍 DEBUG: No photoData or profileImage available for $userEmail',
-                  );
-                }
+                } else {}
               }
 
               final Map<String, dynamic> employeeData = {
@@ -398,9 +320,6 @@ class EmployeeTrackingRepository {
               // This will be manually assigned to the photoData field after JSON deserialization
               // since photoData is excluded from JSON serialization/deserialization
               if (decodedPhotoData != null) {
-                debugPrint(
-                  '🔍 DEBUG: Storing decoded photoData for $userEmail (${decodedPhotoData.length} bytes)',
-                );
                 // We'll use this to manually assign photoData after deserialization
                 employeeData['_decodedPhotoData'] = decodedPhotoData;
               }
@@ -490,23 +409,14 @@ class EmployeeTrackingRepository {
           'offlineEmployees': offlineEmployees,
         };
 
-        debugPrint('🔍 DEBUG: Final transformed employees data:');
         for (int i = 0; i < transformedEmployees.length; i++) {
           final emp = transformedEmployees[i];
-          debugPrint(
-            '🔍 DEBUG: Employee $i: ${emp['email']} -> ${emp['name']}',
-          );
         }
 
         // First, deserialize the data using the fromJson factory
         final employeeTrackingData = EmployeeTrackingData.fromJson(
           transformedData,
         );
-        debugPrint('🔍 DEBUG: Successfully parsed EmployeeTrackingData');
-        debugPrint(
-          '🔍 DEBUG: Employees in response: ${employeeTrackingData.employees.length}',
-        );
-
         // Now we need to manually assign the decoded photoData to each employee
         // since photoData is excluded from JSON serialization/deserialization
         final List<EmployeeStatus> updatedEmployees = [];
@@ -518,10 +428,6 @@ class EmployeeTrackingRepository {
           // Check if we have decoded photoData for this employee
           if (originalData.containsKey('_decodedPhotoData')) {
             final Uint8List photoData = originalData['_decodedPhotoData'];
-            debugPrint(
-              '🔍 DEBUG: Assigning decoded photoData to ${emp.email} (${photoData.length} bytes)',
-            );
-
             // Create a new EmployeeStatus with the photoData field populated
             // Since we're using freezed, copyWith is automatically generated
             final updatedEmp = emp.copyWith(photoData: photoData);
@@ -529,10 +435,6 @@ class EmployeeTrackingRepository {
           } else {
             updatedEmployees.add(emp);
           }
-
-          debugPrint(
-            '🔍 DEBUG: Final Employee $i: ${emp.email} -> ${emp.name}',
-          );
         }
 
         // Create a new EmployeeTrackingData with the updated employees
@@ -543,14 +445,11 @@ class EmployeeTrackingRepository {
 
         return updatedEmployeeTrackingData;
       } else {
-        debugPrint('🔍 DEBUG: ERROR - API response failed or is null');
-        debugPrint('🔍 DEBUG: Response: $response');
         throw Exception(
           'Failed to fetch employee tracking data: ${response['message'] ?? response['error'] ?? response['errorMessage'] ?? 'Unknown error'}',
         );
       }
     } catch (e) {
-      debugPrint('🔍 DEBUG: Exception in getEmployeeTrackingData: $e');
       // Handle error - you might want to show a snackbar
       rethrow;
     }
@@ -656,7 +555,8 @@ class EmployeeTrackingRepository {
         return '${hour.toString().padLeft(2, '0')}:${minute.padLeft(2, '0')}';
       }
     } catch (e) {
-      debugPrint('Error converting time format: $e');
+      // Not a time string we can parse, so hand back what we were given. The
+      // caller's next line does exactly that.
     }
 
     // Return original string if conversion fails
