@@ -58,7 +58,7 @@ class _AdminPayrollExportViewState
           'PAYROLL EXPORT',
           style: GoogleFonts.oswald(
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.onInverseSurface,
             letterSpacing: 1.0,
           ),
         ),
