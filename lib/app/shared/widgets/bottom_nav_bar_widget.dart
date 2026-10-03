@@ -20,6 +20,14 @@ class BottomNavBarWidget extends ConsumerStatefulWidget {
   final String organizationCode;
   final int? initialIndex;
 
+  /// Overrides the tab contents.
+  ///
+  /// The real screens each boot Firebase and fire network work from initState,
+  /// which makes the shell's own navigation/back behaviour impossible to test
+  /// in isolation. Tests pass lightweight placeholders here. Production leaves
+  /// it null and gets the real dashboards.
+  final List<Widget> Function(BuildContext context)? screensBuilder;
+
   const BottomNavBarWidget({
     required this.email,
     required this.role,
@@ -27,6 +35,7 @@ class BottomNavBarWidget extends ConsumerStatefulWidget {
     required this.organizationName,
     required this.organizationCode,
     this.initialIndex,
+    this.screensBuilder,
     super.key,
   });
 
@@ -52,7 +61,16 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
       // Ensure the role provider is fresh from the backend
       ref.read(userRoleProvider.notifier).refreshRole();
       if (mounted) {
-        await PermissionManager.requestNotificationPermission(context);
+        // Guarded: this runs in a post-frame callback with no caller, so a
+        // Firebase failure here would surface as an unhandled async error. It
+        // also re-runs on every shell rebuild, and for a user who previously
+        // denied notifications the manager raises a dialog that leads out to
+        // Android settings — which is its own app -> settings -> app loop.
+        try {
+          await PermissionManager.requestNotificationPermission(context);
+        } catch (error) {
+          debugPrint('Notification permission request failed: $error');
+        }
       }
     });
   }
@@ -111,6 +129,11 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
   }
 
   List<Widget> _getScreens() {
+    final override = widget.screensBuilder;
+    if (override != null) {
+      return override(context);
+    }
+
     // Build lazily: only the initially-visited tab is built up front. Other
     // tabs get built on first visit so their initState network calls are not
     // fired at startup while sitting in the (eager) IndexedStack.
@@ -176,9 +199,40 @@ class _BottomNavBarWidgetState extends ConsumerState<BottomNavBarWidget> {
   Widget build(BuildContext context) {
     final screens = _getScreens();
 
-    return Scaffold(
-      body: IndexedStack(index: _selectedIndex, children: screens),
-      bottomNavigationBar: _buildBottomBar(context),
+    // Back handling.
+    //
+    // This shell is a single route, and its tabs are siblings inside an
+    // IndexedStack rather than routes. So the system back gesture had nothing to
+    // pop while a non-first tab was selected: Navigator.maybePop returned false,
+    // Android fell through to the default popRoute, and the activity was
+    // finished. Settings also has no app bar of its own, so pressing back from
+    // the Settings tab closed the app instead of returning to the dashboard —
+    // which looked like the app dropping into a splash-screen loop, because the
+    // next launch is a cold start through SplashScreen.
+    //
+    // canPop is only true on the first tab, so back still exits the app from
+    // there (unchanged behaviour) but simply returns to the dashboard from any
+    // other tab.
+    final canExitApp = _selectedIndex == 0;
+
+    return PopScope(
+      // Named so the back contract can be asserted directly in tests rather
+      // than inferred from behaviour. `find.byType(PopScope)` is unreliable
+      // because PopScope is generic and the inferred type argument is not stable.
+      key: const ValueKey('bottom_nav_back_scope'),
+      canPop: canExitApp,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        if (!mounted) return;
+        setState(() {
+          _selectedIndex = 0;
+          _visitedTabs.add(0);
+        });
+      },
+      child: Scaffold(
+        body: IndexedStack(index: _selectedIndex, children: screens),
+        bottomNavigationBar: _buildBottomBar(context),
+      ),
     );
   }
 
