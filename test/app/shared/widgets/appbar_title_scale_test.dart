@@ -65,9 +65,7 @@ void main() {
     final offenders = <String>[];
     for (final f in dartSources()) {
       final src = f.readAsStringSync();
-      for (final m in RegExp(
-        r'\bappBar:\s*(?:AppBar|BauhausAppBar)\(',
-      ).allMatches(src)) {
+      for (final m in RegExp(r'\b(?:AppBar|BauhausAppBar)\(').allMatches(src)) {
         final open = m.end - 1;
         final close = closingParen(src, open);
         final block = src.substring(open, close);
