@@ -330,7 +330,7 @@ class _CareIntelligenceDashboardState
       titleSpacing: 0,
       title: Text(
         'CARE INTELLIGENCE',
-        style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+        style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
           color: Theme.of(context).colorScheme.onPrimary,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.7,

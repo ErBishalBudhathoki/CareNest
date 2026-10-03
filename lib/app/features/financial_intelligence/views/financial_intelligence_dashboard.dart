@@ -342,7 +342,7 @@ class _FinancialIntelligenceDashboardState
       titleSpacing: 0,
       title: Text(
         'FINANCIAL INTELLIGENCE',
-        style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+        style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
           color: Theme.of(context).colorScheme.onPrimary,
           letterSpacing: 0.6,
           fontWeight: FontWeight.w700,

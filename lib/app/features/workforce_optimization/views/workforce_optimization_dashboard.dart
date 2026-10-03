@@ -341,7 +341,7 @@ class _WorkforceOptimizationDashboardState
       titleSpacing: 0,
       title: Text(
         'WORKFORCE OPTIMIZATION',
-        style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
+        style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
           color: colorScheme.onSecondary,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.7,

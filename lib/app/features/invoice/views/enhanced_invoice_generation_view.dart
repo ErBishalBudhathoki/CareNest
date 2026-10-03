@@ -636,9 +636,9 @@ class _EnhancedInvoiceGenerationViewState
       elevation: 0,
       title: Text(
         l10n.generateInvoiceTitle,
-        style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-          color: Theme.of(context).colorScheme.onPrimary,
-        ),
+        style: BauhausDesign.getTextTheme(
+          context,
+        ).titleLarge?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
       ),
       leading: IconButton(
         icon: Icon(Icons.arrow_back_ios_new_rounded),

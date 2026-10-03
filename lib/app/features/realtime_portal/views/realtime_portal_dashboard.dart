@@ -351,7 +351,7 @@ class _RealtimePortalDashboardState
       titleSpacing: 0,
       title: Text(
         'REALTIME PORTAL',
-        style: textTheme.headlineMedium?.copyWith(
+        style: textTheme.titleLarge?.copyWith(
           color: Theme.of(context).colorScheme.onSurface,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.8,

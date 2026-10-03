@@ -95,7 +95,7 @@ class EmployeeStatsOverview extends StatelessWidget {
                   'TOTAL HEADCOUNT',
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         letterSpacing: 1.0,
                       ),
                 ),
@@ -146,7 +146,7 @@ class EmployeeStatsOverview extends StatelessWidget {
                     label: 'Offline',
                     value: offline.toString(),
                     icon: Icons.offline_bolt,
-                    accentColor: BauhausDesign.textMuted,
+                    accentColor: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                   _NeoStatTile(
                     width: tileWidth,
@@ -231,7 +231,7 @@ class _NeoStatTile extends StatelessWidget {
             Text(
               label.toUpperCase(),
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 letterSpacing: 0.8,
               ),
             ),
@@ -285,9 +285,9 @@ class _NeoStatusStrip extends StatelessWidget {
             Expanded(
               child: Text(
                 'No employee activity yet',
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
           ],
@@ -313,7 +313,7 @@ class _NeoStatusStrip extends StatelessWidget {
           Text(
             'STATUS STRIP',
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               letterSpacing: 0.8,
             ),
           ),
@@ -332,7 +332,10 @@ class _NeoStatusStrip extends StatelessWidget {
               const SizedBox(width: 2),
               Expanded(
                 flex: safeFlex(offline),
-                child: Container(height: 10, color: BauhausDesign.textMuted),
+                child: Container(
+                  height: 10,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ],
           ),
@@ -352,7 +355,7 @@ class _NeoStatusStrip extends StatelessWidget {
                 value: onBreak,
               ),
               _LegendChip(
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 label: 'Offline',
                 value: offline,
               ),

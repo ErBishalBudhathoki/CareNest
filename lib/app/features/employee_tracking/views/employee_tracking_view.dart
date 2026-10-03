@@ -37,11 +37,6 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
     super.initState();
 
     // Debug statements for EmployeeTrackingView initialization
-    debugPrint('🔍 DEBUG: EmployeeTrackingView initState() called');
-    debugPrint(
-      '🔍 DEBUG: Initializing TabController and loading employee data...',
-    );
-
     _tabController = TabController(length: 3, vsync: this);
 
     // Add lifecycle observer
@@ -49,9 +44,6 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
 
     // Load employee tracking data when view is initialized
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      debugPrint(
-        '🔍 DEBUG: Post-frame callback - Loading employee tracking data',
-      );
       ref
           .read(employeeTrackingViewModelProvider.notifier)
           .loadEmployeeTrackingData();
@@ -64,14 +56,9 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    debugPrint('🔍 DEBUG: App lifecycle state changed to: $state');
-
     switch (state) {
       case AppLifecycleState.resumed:
         // App came to foreground, restart timer and refresh data
-        debugPrint(
-          '🔍 DEBUG: App resumed - restarting timer and refreshing data',
-        );
         _startPeriodicRefresh();
         _refreshData();
         break;
@@ -79,7 +66,6 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
       case AppLifecycleState.inactive:
       case AppLifecycleState.detached:
         // App went to background, stop timer to save battery
-        debugPrint('🔍 DEBUG: App paused/inactive - stopping timer');
         _stopPeriodicRefresh();
         break;
       case AppLifecycleState.hidden:
@@ -90,36 +76,29 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
   void _startPeriodicRefresh() {
     // Don't start a new timer if one is already running
     if (_refreshTimer?.isActive == true) {
-      debugPrint('🔍 DEBUG: Timer already active, skipping start');
       return;
     }
 
-    debugPrint(
-      '🔍 DEBUG: Starting periodic refresh timer (${_refreshInterval.inSeconds}s interval)',
-    );
     _refreshTimer = Timer.periodic(_refreshInterval, (timer) {
-      debugPrint('🔍 DEBUG: Periodic refresh triggered');
       _refreshData();
     });
   }
 
   void _stopPeriodicRefresh() {
-    debugPrint('🔍 DEBUG: Stopping periodic refresh timer');
     _refreshTimer?.cancel();
     _refreshTimer = null;
   }
 
   Future<void> _refreshData() async {
-    debugPrint(
-      '🔍 DEBUG: _refreshData() called - refreshing employee tracking data',
-    );
     try {
       await ref
           .read(employeeTrackingViewModelProvider.notifier)
           .refreshEmployeeTrackingData();
-      debugPrint('🔍 DEBUG: Employee tracking data refreshed successfully');
     } catch (e) {
-      debugPrint('🔍 DEBUG: Error refreshing employee tracking data: $e');
+      // A failed background refresh is not worth interrupting the user for: the
+      // screen still shows the last data it had, and the periodic refresh will
+      // try again. Swallowed deliberately, and previously logged with a
+      // debugPrint that dumped the whole state object including client emails.
     }
   }
 
@@ -159,7 +138,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
       foregroundColor: colorScheme.onPrimary,
       title: Text(
         'Employee Insights',
-        style: BauhausDesign.getTextTheme(context).headlineLarge?.copyWith(
+        style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
           color: colorScheme.onPrimary,
           fontWeight: FontWeight.w600,
         ),
@@ -220,12 +199,6 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
     Map<String, int> stats,
   ) {
     // Debug print to inspect state before passing to _buildRecentActivitySection
-    debugPrint(
-      '🔍 DEBUG: State before _buildRecentActivitySection: ${state.toString()}',
-    );
-    debugPrint('🔍 DEBUG: State data: ${state.data.toString()}');
-    debugPrint('🔍 DEBUG: State employees: ${state.data.employees.toString()}');
-
     return RefreshIndicator(
       onRefresh: _refreshData,
       child: SingleChildScrollView(
@@ -276,7 +249,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
                   'SYSTEM v2.024',
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         letterSpacing: 0.8,
                       ),
                 ),
@@ -297,11 +270,11 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
                     vertical: BauhausDesign.space1,
                   ),
                   decoration: BoxDecoration(
-                    color: isRefreshing
-                        ? BauhausDesign.warning
-                        : BauhausDesign.accent,
+                    color: Theme.of(context).colorScheme.surface,
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.outline,
+                      color: isRefreshing
+                          ? BauhausDesign.warning
+                          : BauhausDesign.accent,
                       width: 2,
                     ),
                   ),
@@ -309,7 +282,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
                     isRefreshing ? 'SYNCING' : 'LIVE FEED',
                     style: BauhausDesign.getTextTheme(context).labelSmall
                         ?.copyWith(
-                          color: statusTextColor,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.bold,
                         ),
                   ),
@@ -390,7 +363,9 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
                       'ACTIVE NOW',
                       style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             letterSpacing: 0.8,
                           ),
                     ),
@@ -513,9 +488,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
             child: Text(
               subtitle,
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: invertText
-                    ? Theme.of(context).colorScheme.onInverseSurface
-                    : Theme.of(context).colorScheme.onPrimary,
+                color: BauhausDesign.readableOnColor(accent),
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -581,7 +554,9 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
                         'DISTRICT ALPHA // GRID 7',
                         style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
-                              color: Theme.of(context).colorScheme.onPrimary,
+                              color: BauhausDesign.readableOnColor(
+                                BauhausDesign.primaryBlue,
+                              ),
                               letterSpacing: 0.6,
                             ),
                       ),
@@ -656,9 +631,12 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
                       Text(
                         'Employee live zones will appear once activity begins.',
                         textAlign: TextAlign.center,
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
+                            ?.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
                       ),
                     ],
                   ),
@@ -745,7 +723,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
               Text(
                 statusLabel,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   letterSpacing: 0.6,
                 ),
               ),
@@ -763,7 +741,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
             Text(
               coords,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 12,
               ),
             ),
@@ -772,7 +750,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
             Text(
               'Distance to geofence: $distance',
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 12,
               ),
             ),
@@ -780,7 +758,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
           Text(
             'Last seen: $lastSeen',
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: 12,
             ),
           ),
@@ -842,7 +820,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
                   ),
                   child: Icon(
                     Icons.schedule,
-                    color: BauhausDesign.textMuted,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     size: 30,
                   ),
                 ),
@@ -857,9 +835,10 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
                 const SizedBox(height: BauhausDesign.space1),
                 Text(
                   'Assign employees to shifts to see live coverage and activity.',
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(context).bodyMedium
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: BauhausDesign.space3),
@@ -935,24 +914,11 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
   }
 
   Widget _buildRecentActivitySection(EmployeeTrackingState state) {
-    debugPrint('🔍 DEBUG: Inside _buildRecentActivitySection');
-    debugPrint(
-      '🔍 DEBUG: Number of employees in state: ${state.data.employees.length}',
-    );
-
     final recentEmployees = state.data.employees.where((e) {
-      debugPrint('🔍 DEBUG: Employee ${e.name} lastSeen: ${e.lastSeen}');
       return e.lastSeen != null;
     }).toList()..sort((a, b) => b.lastSeen!.compareTo(a.lastSeen!));
 
-    debugPrint(
-      '🔍 DEBUG: Number of employees with lastSeen: ${recentEmployees.length}',
-    );
-    if (recentEmployees.isNotEmpty) {
-      debugPrint(
-        '🔍 DEBUG: First recent employee: ${recentEmployees.first.name}, lastSeen: ${recentEmployees.first.lastSeen}',
-      );
-    }
+    if (recentEmployees.isNotEmpty) {}
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1015,7 +981,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
                     ),
                     child: Icon(
                       Icons.inbox,
-                      color: BauhausDesign.textMuted,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       size: 30,
                     ),
                   ),
@@ -1030,9 +996,10 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
                   Text(
                     'Synchronizing modules — check in will be logged once data pipelines are online.',
                     textAlign: TextAlign.center,
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                    style: BauhausDesign.getTextTheme(context).bodyMedium
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                   ),
                   const SizedBox(height: BauhausDesign.space3),
                   BauhausActionButton(
@@ -1149,7 +1116,6 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
   }
 
   Widget _buildShiftCard(ShiftDetail shift) {
-    debugPrint('🔍 DEBUG: Processing shift with title: $shift');
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: BauhausDesign.space4,
@@ -1162,10 +1128,15 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  shift.title,
-                  style: BauhausDesign.getTextTheme(context).headlineMedium,
+                Flexible(
+                  child: Text(
+                    shift.title,
+                    style: BauhausDesign.getTextTheme(context).titleLarge,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
                 ),
+                const SizedBox(width: BauhausDesign.space2),
                 _buildShiftStatusBadge(shift.status),
               ],
             ),
@@ -1179,7 +1150,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
               Text(
                 'Client: ${shift.clientName}',
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: 12,
                 ),
               ),
@@ -1190,13 +1161,16 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
                 Icon(
                   Icons.access_time,
                   size: 16,
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(width: BauhausDesign.space1),
                 Text(
                   '${_formatTime(shift.startTime)} - ${_formatTime(shift.endTime)}',
                   style: BauhausDesign.getTextTheme(context).bodyMedium
-                      ?.copyWith(color: BauhausDesign.textMuted, fontSize: 12),
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontSize: 12,
+                      ),
                 ),
               ],
             ),
@@ -1220,7 +1194,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
         text = 'In Progress';
         break;
       case ShiftStatus.completed:
-        color = BauhausDesign.textMuted;
+        color = Theme.of(context).colorScheme.onSurfaceVariant;
         text = 'Completed';
         break;
       case ShiftStatus.cancelled:
@@ -1243,7 +1217,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
         text,
         style: BauhausDesign.getTextTheme(
           context,
-        ).labelSmall?.copyWith(color: color),
+        ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurface),
       ),
     );
   }
@@ -1256,7 +1230,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
         return BauhausDesign.warning;
       case WorkStatus.offline:
       case WorkStatus.clockedOut:
-        return BauhausDesign.textMuted;
+        return Theme.of(context).colorScheme.onSurfaceVariant;
     }
   }
 
@@ -1341,7 +1315,9 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
             width: 40,
             height: 4,
             margin: const EdgeInsets.symmetric(vertical: BauhausDesign.space2),
-            decoration: BoxDecoration(color: BauhausDesign.textMuted),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           Expanded(
             child: SingleChildScrollView(

@@ -245,7 +245,7 @@ class _AdvancedPayrollDashboardState
       titleSpacing: 0,
       title: Text(
         'ADVANCED PAYROLL',
-        style: textTheme.headlineMedium?.copyWith(
+        style: textTheme.titleLarge?.copyWith(
           color: Theme.of(context).colorScheme.onSecondary,
           fontWeight: FontWeight.w800,
           letterSpacing: 0.8,
