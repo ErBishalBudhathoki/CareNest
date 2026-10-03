@@ -163,6 +163,11 @@ assets/icons/ic_launcher1.png
 
 # Release notes
 release_notes_*.txt
+# Per-build release notes under android/ are the source the fastlane changelog is
+# generated from, and android/fastlane/Fastfile now refuses to publish a build
+# without one. Ignoring them would make that check unsatisfiable on a fresh
+# checkout.
+!android/release_notes_*.txt
 
 # Test files
 test_*.js

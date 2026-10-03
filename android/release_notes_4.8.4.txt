@@ -1,0 +1,21 @@
+Bug fixes:
+- Fixed the app getting stuck on the splash screen. Launching from a link (for
+  example an email-verification link) could mark navigation as handled before
+  anything was actually routed, leaving the splash screen with nowhere to go.
+- Fixed system Back on Settings and Assign returning nothing: it closed the app
+  instead of going back to the dashboard, which looked like a restart loop.
+- Fixed the "Enable Notifications" dialog reappearing on every launch after
+  notifications had been denied. It now appears at most once, and is no longer
+  shown to people who have not been asked yet.
+- Fixed AppBar contrast in dark mode: dark AppBars now use the correct on-colour
+  for their text and icons instead of near-invisible dark-on-dark.
+
+Improvements:
+- Notification permission now checks the current status first, so the app stops
+  asking for a permission the system has already settled.
+- Internal test builds now always carry release notes. A build with no notes
+  fails to upload rather than publishing an empty changelog.
+
+Other Changes:
+- Added test seams for Firebase, so notification and splash behaviour can be
+  verified automatically. Test-only; not shipped in the app.
