@@ -459,7 +459,8 @@ class _AdminDashboardViewControllerState
     try {
       final response = await _apiMethod.checkInvoicingEmailKey(email);
       if (response['message'] == 'Invoicing email key found') {
-        return response['key'] ?? 'add';
+        // Server no longer returns the raw key — only presence (hasKey).
+        return response['hasKey'] == true ? 'found' : 'add';
       } else if (response['message'] == 'No invoicing email key found') {
         return 'add';
       }
