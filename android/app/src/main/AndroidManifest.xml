@@ -44,6 +44,7 @@
     </queries>
 
     <application
+        android:usesCleartextTraffic="false"
         android:label="CareNest"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
