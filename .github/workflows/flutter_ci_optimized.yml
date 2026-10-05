@@ -91,6 +91,13 @@ jobs:
           # Check for known vulnerabilities in dependencies
           dart pub audit || echo "::warning::Vulnerabilities found in dependencies"
 
+      # sync_manager_test.dart imports sync_manager_test.mocks.dart, which
+      # mockito generates and .gitignore excludes. The analyzer resolves imports
+      # at a fresh checkout, so it must run after codegen or it reports the
+      # missing file as a hard error and fails the gate.
+      - name: Generate mockito mocks
+        run: dart run build_runner build --delete-conflicting-outputs
+
       - name: Analyze code
         run: flutter analyze --fatal-infos
 
