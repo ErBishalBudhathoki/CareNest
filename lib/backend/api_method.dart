@@ -5525,7 +5525,7 @@ class ApiMethod extends ChangeNotifier {
         'supportItemName': resolvedName,
         'customPrice': price,
         'pricingType': pricingType,
-        if (region != null) 'region': region,
+        'region': ?region,
         'userEmail': userEmail,
       };
       final sw = Stopwatch()..start();
@@ -5619,7 +5619,7 @@ class ApiMethod extends ChangeNotifier {
         'supportItemName': resolvedName,
         'customPrice': price,
         'pricingType': pricingType,
-        if (region != null) 'region': region,
+        'region': ?region,
         'userEmail': userEmail,
       };
       final sw = Stopwatch()..start();

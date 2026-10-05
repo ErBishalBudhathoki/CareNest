@@ -16,6 +16,11 @@ analyzer:
     - libos/**
     - backend/node_modules/**
     - flutter_tools.*/**
+    # Vendored upstream plugin overrides. Their bundled example apps import
+    # packages that are not part of this repo's dependency graph (e.g.
+    # permission_handler_android/example -> baseflow_plugin_template), so the
+    # analyzer reports unresolved URIs for code we do not own and must not edit.
+    - third_party/**
   errors:
     avoid_print: ignore
     avoid_unnecessary_containers: ignore
