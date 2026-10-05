@@ -1,0 +1,11 @@
+Design refresh across auth, dashboard, invoices, pricing, clients and
+workforce screens, with better dark mode contrast.
+
+Fixed:
+- Splash no longer sticks when the app is opened from an unrecognised link.
+- Back from Settings or Assign returns to the dashboard.
+- The notification prompt no longer reappears on every launch.
+
+Improved:
+- Date pickers unified on the app's own picker.
+- Notification permission checks current status before asking.
