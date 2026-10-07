@@ -1233,9 +1233,10 @@ class _EnhancedInvoiceGenerationViewState
               Expanded(
                 child: Text(
                   'Client invoices always use Organization Bank Details.',
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
               ),
             ],
@@ -1496,9 +1497,12 @@ class _EnhancedInvoiceGenerationViewState
                     const SizedBox(height: 4.0),
                     Text(
                       l10n.addFilesSubtitle,
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                      style: BauhausDesign.getTextTheme(context).bodySmall
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: BauhausDesign.space2),
@@ -1550,7 +1554,9 @@ class _EnhancedInvoiceGenerationViewState
                       ),
                       style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w500,
                           ),
                     ),
@@ -1614,7 +1620,11 @@ class _EnhancedInvoiceGenerationViewState
                                 fileExtension.toUpperCase(),
                                 style: BauhausDesign.getTextTheme(context)
                                     .bodySmall
-                                    ?.copyWith(color: BauhausDesign.textMuted),
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                    ),
                               ),
                             ],
                           ),
@@ -1681,9 +1691,9 @@ class _EnhancedInvoiceGenerationViewState
         children: [
           Text(
             l10n.priceOverrideSubtitle,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: BauhausDesign.space4),
           if (_priceOverrides.isNotEmpty) ...[
@@ -2226,9 +2236,9 @@ class _EnhancedInvoiceGenerationViewState
           if (generatedPdfs.isEmpty)
             Text(
               l10n.noInvoicesGenerated,
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             )
           else
             ...generatedPdfs.asMap().entries.map((entry) {
@@ -2261,9 +2271,10 @@ class _EnhancedInvoiceGenerationViewState
                   ),
                   subtitle: Text(
                     l10n.tapToViewPdf,
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                    style: BauhausDesign.getTextTheme(context).bodySmall
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -2298,20 +2309,20 @@ class _EnhancedInvoiceGenerationViewState
   }
 
   Widget _buildFileTypeChip(String type) {
+    // Fill is the themed card plane, not a fixed tint: onSurface@10% is a
+    // near-transparent wash that reads as a different surface in each mode.
+    // Border is structural ink per DESIGN.md.
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+        color: BauhausDesign.neoSurface(context),
         borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.onSurface,
-          width: 1,
-        ),
+        border: Border.all(color: BauhausDesign.neoInk, width: 1),
       ),
       child: Text(
         type,
         style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-          color: BauhausDesign.textMuted,
+          color: BauhausDesign.neoInkOnSurface(context),
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -2357,7 +2368,7 @@ class _EnhancedInvoiceGenerationViewState
       case 'png':
         return BauhausDesign.secondary;
       default:
-        return BauhausDesign.textMuted;
+        return Theme.of(context).colorScheme.onSurfaceVariant;
     }
   }
 
@@ -2777,14 +2788,18 @@ class _EnhancedInvoiceGenerationViewState
   Widget _buildActionOption(String text, IconData icon) {
     return Row(
       children: [
-        Icon(icon, size: 16, color: BauhausDesign.textMuted),
+        Icon(
+          icon,
+          size: 16,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
             text,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ),
       ],
@@ -2817,9 +2832,9 @@ class _EnhancedInvoiceGenerationViewState
               item['clientName'] ?? l10n.unknownClient,
               item['clientState'] ?? '',
             ),
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 8),
           Row(
@@ -2830,9 +2845,10 @@ class _EnhancedInvoiceGenerationViewState
                 children: [
                   Text(
                     l10n.currentPriceLabel,
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                    style: BauhausDesign.getTextTheme(context).labelSmall
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                   ),
                   Text(
                     l10n.priceDisplay(
@@ -2852,9 +2868,10 @@ class _EnhancedInvoiceGenerationViewState
                 children: [
                   Text(
                     l10n.ndisCapLabel,
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                    style: BauhausDesign.getTextTheme(context).labelSmall
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                   ),
                   Text(
                     l10n.priceDisplay(
@@ -2874,9 +2891,10 @@ class _EnhancedInvoiceGenerationViewState
                 children: [
                   Text(
                     l10n.excessLabel,
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                    style: BauhausDesign.getTextTheme(context).labelSmall
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                   ),
                   Text(
                     l10n.priceDisplay(
