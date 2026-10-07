@@ -1,0 +1,8 @@
+Fixes:
+- Refined automated test suites to use bounded pumps instead of pumpAndSettle, so screenshot and dark-mode regressions are repeatable.
+
+Improvements:
+- Dark-mode verification now captures the invoice generation enhanced screen with a real selected employee + client payload.
+- Upload metadata now lives with the build version.
+
+This build connects to the development backend.
