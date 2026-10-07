@@ -7,6 +7,12 @@ void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   binding.framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
 
+  Future<void> pumpFor(WidgetTester tester, int seconds) async {
+    for (int i = 0; i < seconds * 5; i++) {
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+  }
+
   Future<void> waitForWidget(
     WidgetTester tester,
     Finder finder, {
@@ -27,7 +33,7 @@ void main() {
   }
 
   Future<void> captureScreenshot(String name, WidgetTester tester) async {
-    await tester.pumpAndSettle(const Duration(milliseconds: 500));
+    await pumpFor(tester, 2);
     await Future.delayed(const Duration(seconds: 2));
     print('📸 Capturing Screenshot: $name');
     await binding.takeScreenshot(name);
@@ -83,10 +89,10 @@ void main() {
       await tester.enterText(textFieldFinder.at(0), 'deverbishal331@gmail.com');
       await tester.enterText(textFieldFinder.at(1), 'Bishal@xiomi222');
       tester.testTextInput.closeConnection();
-      await tester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 2));
       print('✅ Entered admin credentials');
 
-      await tester.tap(loginFinder.last);
+      await tester.tap(loginFinder.last, warnIfMissed: false);
       print('✅ Tapped login button');
 
       // Wait for Admin Dashboard to load (API calls take time)
@@ -118,7 +124,7 @@ void main() {
         final homeBtn = find.byIcon(Icons.home);
         if (homeBtn.evaluate().isNotEmpty) {
           await tester.tap(homeBtn.first);
-          await tester.pumpAndSettle();
+          await pumpFor(tester, 2);
         }
       } else {
         print('⚠️ Invoices tab not found, skipping');
@@ -133,7 +139,7 @@ void main() {
         }
         await captureScreenshot('06_voice_assistant', tester);
         await tester.tapAt(const Offset(10, 50));
-        await tester.pumpAndSettle();
+        await pumpFor(tester, 2);
       } else {
         print('⚠️ FAB not found, skipping voice assistant');
       }
@@ -145,19 +151,19 @@ void main() {
       );
       if (assignBtn.evaluate().isNotEmpty) {
         await tester.tap(assignBtn.first);
-        await tester.pumpAndSettle();
+        await pumpFor(tester, 2);
 
         final harry = find.textContaining(
           RegExp(r'Harry James', caseSensitive: false),
         );
         if (harry.evaluate().isNotEmpty) {
           await tester.tap(harry.first);
-          await tester.pumpAndSettle();
+          await pumpFor(tester, 2);
 
           final client = find.byType(ListTile);
           if (client.evaluate().length > 1) {
             await tester.tap(client.at(1));
-            await tester.pumpAndSettle();
+            await pumpFor(tester, 2);
           }
 
           final confirm = find.textContaining(
@@ -165,13 +171,13 @@ void main() {
           );
           if (confirm.evaluate().isNotEmpty) {
             await tester.tap(confirm.first);
-            await tester.pumpAndSettle();
+            await pumpFor(tester, 2);
           }
 
           final closeBtn = find.byIcon(Icons.close);
           if (closeBtn.evaluate().isNotEmpty) {
             await tester.tap(closeBtn.first);
-            await tester.pumpAndSettle();
+            await pumpFor(tester, 2);
           }
         } else {
           print('⚠️ Harry James not found, skipping assignment');
@@ -185,7 +191,7 @@ void main() {
       final menuBtn = find.byIcon(Icons.menu);
       if (menuBtn.evaluate().isNotEmpty) {
         await tester.tap(menuBtn.first);
-        await tester.pumpAndSettle();
+        await pumpFor(tester, 2);
         final logoutBtn = find.textContaining(
           RegExp(r'Log Out|Logout', caseSensitive: false),
         );
@@ -214,7 +220,7 @@ void main() {
         await tester.enterText(textFields2.at(0), 'bishalkc331@gmail.com');
         await tester.enterText(textFields2.at(1), 'Bishal@xiomi123');
         tester.testTextInput.closeConnection();
-        await tester.pumpAndSettle();
+        await pumpFor(tester, 2);
 
         final loginBtn2 = find.textContaining(
           RegExp(r'Sign [Ii]n|Log [Ii]n|LOGIN|SIGN IN', caseSensitive: false),
@@ -240,7 +246,7 @@ void main() {
           final backButton = find.byTooltip('Back');
           if (backButton.evaluate().isNotEmpty) {
             await tester.tap(backButton.first);
-            await tester.pumpAndSettle();
+            await pumpFor(tester, 2);
           }
         }
 
@@ -248,7 +254,7 @@ void main() {
         print('--- Logging out Employee ---');
         if (menuBtn.evaluate().isNotEmpty) {
           await tester.tap(menuBtn.first);
-          await tester.pumpAndSettle();
+          await pumpFor(tester, 2);
           final logoutBtn = find.textContaining(
             RegExp(r'Log Out|Logout', caseSensitive: false),
           );
@@ -280,7 +286,7 @@ void main() {
         );
         await tester.enterText(textFields3.at(1), 'Bishal@xiomi123');
         tester.testTextInput.closeConnection();
-        await tester.pumpAndSettle();
+        await pumpFor(tester, 2);
 
         final loginBtn3 = find.textContaining(
           RegExp(r'Sign [Ii]n|Log [Ii]n|LOGIN|SIGN IN', caseSensitive: false),
@@ -299,7 +305,7 @@ void main() {
         );
         if (messagingSection.evaluate().isNotEmpty) {
           await tester.ensureVisible(messagingSection.first);
-          await tester.pumpAndSettle();
+          await pumpFor(tester, 2);
           await captureScreenshot('04_client_family_visibility', tester);
         }
 
@@ -316,7 +322,7 @@ void main() {
           if (chatInput.evaluate().isNotEmpty) {
             await tester.enterText(chatInput.first, 'Hello! See you soon.');
             tester.testTextInput.closeConnection();
-            await tester.pumpAndSettle();
+            await pumpFor(tester, 2);
           }
           await captureScreenshot('07_communication_hub_chat', tester);
         }
