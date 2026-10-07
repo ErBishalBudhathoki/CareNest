@@ -63,6 +63,19 @@ void main() {
     return hits;
   }
 
+  /// Yields 1-based line numbers of [pattern] in [file] with their text.
+  Iterable<({int line, String text})> linesMatching(
+    File file,
+    RegExp pattern,
+  ) sync* {
+    final lines = file.readAsStringSync().split('\n');
+    for (var i = 0; i < lines.length; i++) {
+      if (pattern.hasMatch(lines[i])) {
+        yield (line: i + 1, text: lines[i].trim());
+      }
+    }
+  }
+
   test('no translucent fill sits on an opaque zero-blur hard shadow', () {
     final offenders = <String>[];
 
@@ -151,6 +164,35 @@ void main() {
           'for fills and neoInkOnSurface(context) for text on them. A literal '
           'light-plane fill stays white in dark mode.\n'
           '${offenders.join('\n')}',
+    );
+  });
+
+  test('Generate Invoice never paints text with a light-plane literal', () {
+    // Regression: `textMuted` (#3D3728) is a light-plane literal. Used as a
+    // foreground it is near-black on the dark card plane, which is why the
+    // PDF/DOC/IMAGE/TXT chips and the Price override explanation were invisible
+    // in dark mode. `colorScheme.onSurfaceVariant` is the same value in light
+    // mode and the readable one in dark.
+    const target =
+        'lib/app/features/invoice/views/enhanced_invoice_generation_view.dart';
+    final file = File('${repoRoot.path}/$target');
+    expect(file.existsSync(), isTrue, reason: 'target screen moved?');
+
+    final offenders = <String>[];
+    for (final token in const ['textMuted', 'textDark']) {
+      final pattern = RegExp('BauhausDesign\\.$token\\b');
+      for (final hit in linesMatching(file, pattern)) {
+        offenders.add('$target:${hit.line}  ${hit.text}');
+      }
+    }
+
+    expect(
+      offenders,
+      isEmpty,
+      reason:
+          'Use colorScheme.onSurfaceVariant (or neoInkOnSurface(context)) for '
+          'text so it follows the active theme. Light-plane literals stay dark '
+          'in dark mode.\n${offenders.join('\n')}',
     );
   });
 
