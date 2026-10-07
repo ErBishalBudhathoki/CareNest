@@ -52,6 +52,11 @@ class CommandCategory {
   final String? setupBannerActionLabel;
   final VoidCallback? onSetupBannerTap;
 
+  /// Banner accent. Defaults to the warning tone because the banner historically
+  /// only ever meant "setup missing"; callers showing a different kind of
+  /// message (for example "couldn't verify") override it.
+  final Color? setupBannerAccent;
+
   const CommandCategory({
     required this.title,
     required this.headerIcon,
@@ -61,6 +66,7 @@ class CommandCategory {
     this.setupBannerSubtitle,
     this.setupBannerActionLabel,
     this.onSetupBannerTap,
+    this.setupBannerAccent,
   });
 }
 
@@ -650,16 +656,14 @@ class _BauhausSectionCardState extends State<_BauhausSectionCard>
   }
 
   Widget _buildSetupBanner() {
+    final accent = widget.category.setupBannerAccent ?? BauhausDesign.warning;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space3),
       decoration: BoxDecoration(
-        color: BauhausDesign.warning.withValues(alpha: 0.08),
+        color: accent.withValues(alpha: 0.08),
         border: Border(
-          bottom: BorderSide(
-            color: BauhausDesign.warning.withValues(alpha: 0.35),
-            width: 1,
-          ),
+          bottom: BorderSide(color: accent.withValues(alpha: 0.35), width: 1),
         ),
       ),
       child: Row(
@@ -669,9 +673,9 @@ class _BauhausSectionCardState extends State<_BauhausSectionCard>
             width: 34,
             height: 34,
             decoration: BoxDecoration(
-              color: BauhausDesign.warning.withValues(alpha: 0.14),
+              color: accent.withValues(alpha: 0.14),
               border: Border.all(
-                color: _readableAccent(context, BauhausDesign.warning),
+                color: _readableAccent(context, accent),
                 width: 1.5,
               ),
             ),
@@ -679,7 +683,7 @@ class _BauhausSectionCardState extends State<_BauhausSectionCard>
             child: Icon(
               Icons.settings_suggest_outlined,
               size: 18,
-              color: _readableAccent(context, BauhausDesign.warning),
+              color: _readableAccent(context, accent),
             ),
           ),
           const SizedBox(width: BauhausDesign.space3),
@@ -714,10 +718,7 @@ class _BauhausSectionCardState extends State<_BauhausSectionCard>
             TextButton(
               onPressed: widget.category.onSetupBannerTap,
               style: TextButton.styleFrom(
-                foregroundColor: _readableAccent(
-                  context,
-                  BauhausDesign.warning,
-                ),
+                foregroundColor: _readableAccent(context, accent),
                 padding: const EdgeInsets.symmetric(
                   horizontal: BauhausDesign.space2,
                   vertical: BauhausDesign.space1,

@@ -34,6 +34,7 @@ import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:carenest/app/features/settings/views/settings_view.dart';
 import 'package:carenest/app/features/security/views/api_usage_dashboard_view.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
+import 'package:carenest/app/features/admin/models/invoicing_email_setup_state.dart';
 import 'package:carenest/app/features/admin/widgets/bauhaus_command_center.dart';
 import 'package:carenest/app/features/admin/widgets/business_overview_sliver.dart';
 import 'package:carenest/app/features/training_compliance/views/admin_certification_audit_view.dart';
@@ -92,7 +93,8 @@ class _AdminDashboardViewControllerState
   Map<String, dynamic> getInitialData = {};
   late final ApiMethod _apiMethod;
   final SharedPreferencesUtils _sharedPrefs = SharedPreferencesUtils();
-  String? key;
+  InvoicingEmailSetupState _invoicingEmailSetup =
+      InvoicingEmailSetupState.unknown;
   bool _isLoading = true;
   late AnimationController _headerAnimationController;
   late AnimationController _contentAnimationController;
@@ -161,7 +163,7 @@ class _AdminDashboardViewControllerState
 
       setState(() {
         getInitialData = data;
-        key = emailKey;
+        _invoicingEmailSetup = emailKey;
         _isLoading = false;
       });
       ref.read(photoDataProvider.notifier).fetchPhotoData(widget.email);
@@ -209,9 +211,12 @@ class _AdminDashboardViewControllerState
     return null;
   }
 
-  bool get _hasConfiguredInvoicingEmail {
-    return key != null && key != 'add' && key != 'error';
-  }
+  /// True only when the server positively reported that no key exists.
+  ///
+  /// Deliberately not `state != configured`: a failed check must not masquerade
+  /// as missing setup, or every admin gets locked out and told to redo
+  /// configuration they already completed.
+  bool get _hasConfiguredInvoicingEmail => !_invoicingEmailSetup.requiresSetup;
 
   Future<void> _showEmailSettingsRequiredSheet({
     required String workflowName,
@@ -455,20 +460,25 @@ class _AdminDashboardViewControllerState
     );
   }
 
-  Future<String> _checkEmailKey(String email) async {
+  /// Asks the server whether this org can invoice, without ever throwing.
+  ///
+  /// Returns [InvoicingEmailSetupState.unverified] on any failure so the caller
+  /// can tell "not configured" apart from "could not check".
+  Future<InvoicingEmailSetupState> _checkEmailKey(String email) async {
     try {
       final response = await _apiMethod.checkInvoicingEmailKey(email);
-      if (response['message'] == 'Invoicing email key found') {
-        // Server no longer returns the raw key — only presence (hasKey).
-        return response['hasKey'] == true ? 'found' : 'add';
-      } else if (response['message'] == 'No invoicing email key found') {
-        return 'add';
-      }
-      return 'error';
+      return InvoicingEmailSetupStateX.resolve(response);
     } catch (e) {
-      debugPrint("Error checking key: $e");
-      return 'error';
+      debugPrint("Error checking invoicing email setup: $e");
+      return InvoicingEmailSetupState.unverified;
     }
+  }
+
+  /// Re-runs the check and updates the gate. Safe to call from a retry button.
+  Future<void> _refreshInvoicingEmailSetup() async {
+    final state = await _checkEmailKey(widget.email);
+    if (!mounted) return;
+    setState(() => _invoicingEmailSetup = state);
   }
 
   void _showSnackBar(String message, {bool isError = false}) {
@@ -1187,7 +1197,24 @@ class _AdminDashboardViewControllerState
 
   Widget _buildQuickActionsSliver() {
     final l10n = AppLocalizations.of(context)!;
-    final needsEmailSetup = !_hasConfiguredInvoicingEmail;
+    final setupState = _invoicingEmailSetup;
+    final needsEmailSetup = setupState.requiresSetup;
+    final couldNotVerify = setupState == InvoicingEmailSetupState.unverified;
+
+    // Only a positive "no key" from the server shows SETUP. An unreachable
+    // backend shows an honest retry affordance instead, because telling an
+    // already-configured admin to redo setup is worse than saying nothing.
+    final gateSubtitle = needsEmailSetup
+        ? 'Setup required: configure invoicing email first'
+        : (couldNotVerify ? "Couldn't verify email setup — tap retry" : null);
+    final gateStatusLabel = needsEmailSetup
+        ? 'SETUP'
+        : (couldNotVerify ? 'UNVERIFIED' : null);
+    final gateStatusColor = needsEmailSetup
+        ? BauhausDesign.warning
+        : (couldNotVerify ? BauhausDesign.info : null);
+
+    String subtitleFor(String ready) => gateSubtitle ?? ready;
 
     final categories = <CommandCategory>[
       // Invoice Management
@@ -1197,56 +1224,57 @@ class _AdminDashboardViewControllerState
         accentColor: BauhausDesign.primary,
         setupBannerTitle: needsEmailSetup
             ? 'Complete invoicing email setup to unlock this tab'
-            : null,
+            : (couldNotVerify
+                  ? "Couldn't confirm your invoicing email setup"
+                  : null),
         setupBannerSubtitle: needsEmailSetup
             ? 'Connect your organization mailbox once, then invoice creation, employee invoicing, and automatic delivery workflows will be ready to use.'
-            : null,
-        setupBannerActionLabel: needsEmailSetup ? 'SET UP NOW' : null,
-        onSetupBannerTap: needsEmailSetup ? _navigateToEmailSettings : null,
+            : (couldNotVerify
+                  ? "We couldn't reach the server to check whether setup is complete. Your actions still work — retry if you think setup is missing."
+                  : null),
+        setupBannerActionLabel: needsEmailSetup
+            ? 'SET UP NOW'
+            : (couldNotVerify ? 'RETRY' : null),
+        setupBannerAccent: couldNotVerify ? BauhausDesign.info : null,
+        onSetupBannerTap: needsEmailSetup
+            ? _navigateToEmailSettings
+            : (couldNotVerify ? _refreshInvoicingEmailSetup : null),
         actions: [
           CommandAction(
             icon: Icon(Icons.add_circle_outline_rounded),
             title: l10n.addClientButton,
-            subtitle: needsEmailSetup
-                ? 'Setup required: configure invoicing email first'
-                : 'Generate invoice for selected employees',
+            subtitle: subtitleFor('Generate invoice for selected employees'),
             color: BauhausDesign.primary,
             onTap: _navigateToEmployeeSelection,
-            statusLabel: needsEmailSetup ? 'SETUP' : null,
-            statusColor: needsEmailSetup ? BauhausDesign.warning : null,
+            statusLabel: gateStatusLabel,
+            statusColor: gateStatusColor,
           ),
           CommandAction(
             icon: Icon(Icons.person_outline_rounded),
             title: 'Employee Invoice',
-            subtitle: needsEmailSetup
-                ? 'Setup required: configure invoicing email first'
-                : 'Individual employee invoicing',
+            subtitle: subtitleFor('Individual employee invoicing'),
             color: BauhausDesign.secondary,
             onTap: _navigateToEmployeeInvoice,
-            statusLabel: needsEmailSetup ? 'SETUP' : null,
-            statusColor: needsEmailSetup ? BauhausDesign.warning : null,
+            statusLabel: gateStatusLabel,
+            statusColor: gateStatusColor,
           ),
           CommandAction(
             icon: Icon(Icons.auto_awesome_rounded),
             title: 'Auto Invoices',
-            subtitle: needsEmailSetup
-                ? 'Setup required: configure invoicing email first'
-                : 'Automatic invoice generation',
+            subtitle: subtitleFor('Automatic invoice generation'),
             color: BauhausDesign.accent,
             onTap: _navigateToAutomaticInvoiceGeneration,
-            statusLabel: needsEmailSetup ? 'SETUP' : null,
-            statusColor: needsEmailSetup ? BauhausDesign.warning : null,
+            statusLabel: gateStatusLabel,
+            statusColor: gateStatusColor,
           ),
           CommandAction(
             icon: Icon(Icons.dashboard_customize_rounded),
             title: 'Enhanced Invoice',
-            subtitle: needsEmailSetup
-                ? 'Setup required: configure invoicing email first'
-                : 'Advanced invoicing features',
+            subtitle: subtitleFor('Advanced invoicing features'),
             color: BauhausDesign.success,
             onTap: _navigateToEnhancedInvoice,
-            statusLabel: needsEmailSetup ? 'SETUP' : null,
-            statusColor: needsEmailSetup ? BauhausDesign.warning : null,
+            statusLabel: gateStatusLabel,
+            statusColor: gateStatusColor,
           ),
           CommandAction(
             icon: Icon(Icons.list_alt_rounded),
@@ -1902,9 +1930,13 @@ class _AdminDashboardViewControllerState
   }
 
   Future<void> _navigateToEmailSettings() async {
-    final currentKey = await _checkEmailKey(widget.email);
+    final currentState = await _checkEmailKey(widget.email);
     if (!mounted) return;
-    if (currentKey == 'add' || currentKey == 'error') {
+    // The settings screens still take the legacy 'found'/'add'/'error'
+    // vocabulary; map across at the boundary only.
+    final currentKey = currentState.legacyKey;
+    if (currentState.requiresSetup ||
+        currentState == InvoicingEmailSetupState.unverified) {
       await Navigator.push(
         context,
         MaterialPageRoute(
@@ -1929,11 +1961,7 @@ class _AdminDashboardViewControllerState
     }
 
     if (!mounted) return;
-    final refreshedKey = await _checkEmailKey(widget.email);
-    if (!mounted) return;
-    setState(() {
-      key = refreshedKey;
-    });
+    await _refreshInvoicingEmailSetup();
   }
 
   void _navigateToPricingManagement() {
