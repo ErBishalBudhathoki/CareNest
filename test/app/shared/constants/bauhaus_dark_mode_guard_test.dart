@@ -86,6 +86,74 @@ void main() {
     );
   });
 
+  test('Generate Invoice paints no surface with a literal light-plane fill', () {
+    // Regression: this screen filled its cards and every text field with
+    // `neoPaper` (#FFFCF5, a light-plane literal), so under the dark theme the
+    // cards stayed parchment-white on a dark scaffold and the Tax rate field
+    // rendered light body text on a white fill.
+    //
+    // Only *surface* fills are checked. A light foreground next to a fixed
+    // accent (teal headers, crimson error blocks) is correct and must stay.
+    const target =
+        'lib/app/features/invoice/views/enhanced_invoice_generation_view.dart';
+    final file = File('${repoRoot.path}/$target');
+    expect(file.existsSync(), isTrue, reason: 'target screen moved?');
+
+    final lines = file.readAsStringSync().split('\n');
+    final offenders = <String>[];
+
+    // The plane helpers must be handed a BuildContext so they can resolve the
+    // brightness. Without one they fall back to the light plane.
+    for (var i = 0; i < lines.length; i++) {
+      if (RegExp(r'neo(Card|Panel)Decoration\(').hasMatch(lines[i])) {
+        if (!RegExp(r'context:\s*context').hasMatch(lines[i])) {
+          offenders.add('$target:${i + 1}  decoration without context');
+        }
+      }
+
+      final isFillAssign = RegExp(
+        r'^\s*(color|fillColor|backgroundColor)\s*:',
+      ).hasMatch(lines[i]);
+      if (!isFillAssign) continue;
+      if (!RegExp(
+        r'BauhausDesign\.(neoPaper|surfaceWhite|surfaceLight|surfaceOffWhite)\b',
+      ).hasMatch(lines[i])) {
+        continue;
+      }
+
+      // Walk back to confirm this colour paints a surface rather than a
+      // foreground. Icon glyphs, text styles and spinners sit on accents.
+      var isSurfaceFill = true;
+      for (var j = i - 1; j >= 0 && j >= i - 8; j--) {
+        final back = lines[j];
+        if (RegExp(r'decoration:\s*BoxDecoration').hasMatch(back)) break;
+        if (RegExp(r'style:|border:|RoundedRectangleAvatar').hasMatch(back)) {
+          isSurfaceFill = false;
+          break;
+        }
+        // A glyph or label drawn on a fixed accent keeps its light ink.
+        if (RegExp(
+          r'child:\s*(Icon|Text\(|CircularProgressIndicator)|\b(Icon|Text|CircularProgressIndicator)\(',
+        ).hasMatch(back)) {
+          isSurfaceFill = false;
+          break;
+        }
+      }
+
+      if (isSurfaceFill) offenders.add('$target:${i + 1}  ${lines[i].trim()}');
+    }
+
+    expect(
+      offenders,
+      isEmpty,
+      reason:
+          'Surfaces must follow the theme: use BauhausDesign.neoSurface(context) '
+          'for fills and neoInkOnSurface(context) for text on them. A literal '
+          'light-plane fill stays white in dark mode.\n'
+          '${offenders.join('\n')}',
+    );
+  });
+
   test('design tokens keep the documented palette', () {
     // Guards the invariant the whole migration relies on: `outline` is a
     // theme-invariant near-black used for structural borders only.

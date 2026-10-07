@@ -131,17 +131,38 @@ class BauhausDesign {
     spreadRadius: 0,
   );
 
-  static BoxDecoration neoCardDecoration({Color? backgroundColor}) {
+  /// The card/panel plane, resolved for the active brightness.
+  ///
+  /// `neoPaper` is a *literal* light-plane colour (#FFFCF5). Screens that
+  /// painted their surfaces with it stayed parchment-white in dark mode while
+  /// the scaffold behind them went dark. Surfaces must be themed; only the
+  /// structural ink border stays black in both themes, per DESIGN.md.
+  static Color neoSurface(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark ? surfaceDark : neoPaper;
+
+  /// Ink for text sitting on [neoSurface]. Always the opposite plane.
+  static Color neoInkOnSurface(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark ? textLight : neoInk;
+
+  static BoxDecoration neoCardDecoration({
+    Color? backgroundColor,
+    BuildContext? context,
+  }) {
     return BoxDecoration(
-      color: backgroundColor ?? neoPaper,
+      color:
+          backgroundColor ?? (context != null ? neoSurface(context) : neoPaper),
       border: Border.all(color: neoInk, width: neoBorderWidth),
       boxShadow: const [shadowNeoCard],
     );
   }
 
-  static BoxDecoration neoPanelDecoration({Color? backgroundColor}) {
+  static BoxDecoration neoPanelDecoration({
+    Color? backgroundColor,
+    BuildContext? context,
+  }) {
     return BoxDecoration(
-      color: backgroundColor ?? neoPaper,
+      color:
+          backgroundColor ?? (context != null ? neoSurface(context) : neoPaper),
       border: Border.all(color: neoInk, width: neoInnerBorderWidth),
     );
   }
