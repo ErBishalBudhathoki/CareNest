@@ -1,0 +1,8 @@
+Fixes:
+- Add Client, Employee Invoice, Auto Invoices and Enhanced Invoice no longer
+  show a SETUP badge or block you with a setup sheet when invoicing email
+  details are already configured. The app was discarding the server's
+  confirmation that a key exists, so these actions looked unconfigured
+  regardless of what was saved.
+
+This build connects to the development backend.
