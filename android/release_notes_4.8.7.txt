@@ -1,0 +1,11 @@
+Fixes:
+- In Select Employees & Clients, each client under a selected employee showed
+  the email address twice instead of the client's name. The app read the name
+  from the wrong part of the server response and fell back to the address.
+  Client full names now display correctly.
+
+Improvements:
+- Long client names no longer overflow their card.
+- The address is hidden when identical to the name, instead of repeating it.
+
+This build connects to the development backend.
