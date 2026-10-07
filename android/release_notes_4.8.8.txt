@@ -1,0 +1,12 @@
+Fixes:
+- Generate Invoice (Enhanced) no longer shows white cards on a dark background
+  in dark mode.
+- The Tax rate field in Invoice Configuration is now readable in dark mode.
+  It previously rendered white text on a white background, making the value
+  impossible to see.
+
+Improvements:
+- Labels, hints and supporting text across this screen now match the active
+  light or dark theme.
+
+This build connects to the development backend.
