@@ -705,6 +705,8 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
                   children: [
                     Text(
                       client.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
                             color: isSelected
@@ -715,20 +717,27 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
                             fontWeight: FontWeight.w600,
                           ),
                     ),
-                    Text(
-                      client.email,
-                      style: BauhausDesign.getTextTheme(context).bodySmall
-                          ?.copyWith(
-                            color: isSelected
-                                ? Theme.of(
-                                    context,
-                                  ).colorScheme.onError.withValues(alpha: 0.9)
-                                : Theme.of(context)
-                                      .colorScheme
-                                      .onSurface, // White when selected
-                            fontSize: 12,
-                          ),
-                    ),
+                    // Only show the address when it differs from the heading.
+                    // When a client has no name on file both resolve to the same
+                    // value, and repeating it looks like a rendering bug.
+                    if (client.email.trim().isNotEmpty &&
+                        client.email.trim() != client.name.trim())
+                      Text(
+                        client.email,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: BauhausDesign.getTextTheme(context).bodySmall
+                            ?.copyWith(
+                              color: isSelected
+                                  ? Theme.of(
+                                      context,
+                                    ).colorScheme.onError.withValues(alpha: 0.9)
+                                  : Theme.of(context)
+                                        .colorScheme
+                                        .onSurface, // White when selected
+                              fontSize: 12,
+                            ),
+                      ),
                   ],
                 ),
               ),
