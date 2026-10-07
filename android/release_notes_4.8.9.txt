@@ -1,0 +1,11 @@
+Fixes:
+- In Generate Invoice (Enhanced), dark mode: the PDF, DOC, IMAGE and TXT labels
+  under Additional Files were invisible, as was the description above the
+  Price override section. Supporting text across the screen now matches the
+  active theme.
+
+Improvements:
+- The file type chips now use the app's card colour and border styling in both
+  light and dark mode.
+
+This build connects to the development backend.
