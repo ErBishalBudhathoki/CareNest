@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/invoice/models/employee_selection_model.dart';
 import 'package:carenest/backend/api_method.dart';
@@ -59,6 +60,60 @@ class EmployeeSelectionViewModel extends Notifier<EmployeeSelectionState> {
     }
   }
 
+  /// Resolves a client's display name from an assignment row.
+  ///
+  /// `getUserAssignments` returns the assignment fields plus a joined
+  /// `clientDetails` object. It has never carried a `clientName` field, so
+  /// reading only `assignment['clientName']` left the name null and fell
+  /// through to the email, which is why both the heading and the subtitle
+  /// rendered the address. Prefer an explicit name, then the joined
+  /// first/last pair, then business name, and only then the email.
+  @visibleForTesting
+  static String resolveClientName(Map<String, dynamic> assignment) {
+    var email = assignment['clientEmail']?.toString() ?? '';
+
+    final direct = assignment['clientName']?.toString() ?? '';
+    if (direct.trim().isNotEmpty) return direct.trim();
+
+    // The backend $unwinds the lookup, so clientDetails can arrive as a Map or
+    // as a single-element List depending on driver/version.
+    Map<String, dynamic>? details;
+    final raw = assignment['clientDetails'];
+    if (raw is Map) {
+      details = Map<String, dynamic>.from(raw);
+    } else if (raw is List && raw.isNotEmpty && raw.first is Map) {
+      details = Map<String, dynamic>.from(raw.first as Map);
+    }
+
+    // Prefer the joined address when the assignment itself did not carry one.
+    if (email.isEmpty && details != null) {
+      email = details['clientEmail']?.toString() ?? '';
+    }
+
+    if (details != null) {
+      final joined = details['clientName']?.toString() ?? '';
+      if (joined.trim().isNotEmpty) return joined.trim();
+
+      final full = [
+        details['clientFirstName']?.toString() ?? '',
+        details['clientLastName']?.toString() ?? '',
+      ].join(' ').trim();
+      if (full.isNotEmpty) return full;
+    }
+
+    // Some payloads flatten the client fields onto the assignment itself.
+    final flat = [
+      assignment['clientFirstName']?.toString() ?? '',
+      assignment['clientLastName']?.toString() ?? '',
+    ].join(' ').trim();
+    if (flat.isNotEmpty) return flat;
+
+    final business = assignment['businessName']?.toString().trim() ?? '';
+    if (business.isNotEmpty) return business;
+
+    return email.isEmpty ? 'Unknown' : email;
+  }
+
   /// Toggle employee selection
   void toggleEmployeeSelection(String employeeId) {
     final updatedEmployees = state.employees.map((employee) {
@@ -92,13 +147,11 @@ class EmployeeSelectionViewModel extends Notifier<EmployeeSelectionState> {
       if (response['success'] == true && response['assignments'] != null) {
         final List<dynamic> assignmentsData = response['assignments'];
         final List<ClientModel> clients = assignmentsData.map((assignment) {
+          final email = assignment['clientEmail']?.toString() ?? '';
           return ClientModel(
-            id: assignment['clientId'] ?? '',
-            email: assignment['clientEmail'] ?? '',
-            name:
-                assignment['clientName'] ??
-                assignment['clientEmail'] ??
-                'Unknown',
+            id: assignment['clientId']?.toString() ?? '',
+            email: email,
+            name: resolveClientName(assignment),
           );
         }).toList();
 
