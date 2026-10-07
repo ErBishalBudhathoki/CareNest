@@ -4403,6 +4403,36 @@ class ApiMethod extends ChangeNotifier {
     // }
   }
 
+  /// Interprets a `checkInvoicingEmailKey` HTTP response.
+  ///
+  /// Extracted from [checkInvoicingEmailKey] so the mapping can be tested
+  /// without auth headers, App Check, or a live backend.
+  ///
+  /// The server returns only `{ hasKey: true }` and never the raw encryption
+  /// key, so presence must be read from `hasKey`. A previous version of this
+  /// logic still filtered on `data['key']`, which is now always absent, so a
+  /// fully configured org was reported as "Encryption key empty" and the admin
+  /// dashboard showed SETUP on every invoicing action. Callers rely on
+  /// `hasKey` surviving this hop, so do not drop unknown fields.
+  @visibleForTesting
+  static Map<String, dynamic> parseCheckInvoicingEmailKeyResponse({
+    required int statusCode,
+    required String body,
+  }) {
+    switch (statusCode) {
+      case 200:
+        final data = Map<String, dynamic>.from(json.decode(body) as Map);
+        if (data['message'] == 'Invoicing email key found') {
+          return data;
+        }
+        return {'message': 'No invoicing email key found'};
+      case 400:
+        return {'message': 'Error retrieving invoicing email key details'};
+      default:
+        return {'message': 'Unknown error occurred'};
+    }
+  }
+
   Future<Map<String, dynamic>> checkInvoicingEmailKey(String email) async {
     // try {
     final headers = await _buildJsonHeaders(
@@ -4417,46 +4447,12 @@ class ApiMethod extends ChangeNotifier {
 
     debugPrint("checkInvoicingEmailKey: ${response.body}");
 
-    switch (response.statusCode) {
-      case 200:
-        Map<String, dynamic> data = Map<String, dynamic>.from(
-          json.decode(response.body),
-        );
-        if (kDebugMode) {
-          debugPrint("200" + data['message']);
-        }
-        debugPrint("checkInvoicingEmailKey message: ${data['message']}");
-        // Check if details exist in the response and return them
-        if (data['message'] == 'Invoicing email key found') {
-          if (data['key'] == null) {
-            return {'message': 'Encryption key empty'};
-          }
-          return data;
-        } else {
-          return {'message': 'No invoicing email key found'};
-        }
-
-      case 400:
-        Map<String, dynamic> errorData = Map<String, dynamic>.from(
-          json.decode(response.body),
-        );
-        if (kDebugMode) {
-          debugPrint("400" + errorData['message']);
-        }
-
-        return {'message': 'Error retrieving invoicing email key details'};
-
-      default:
-        return {'message': 'Unknown error occurred'};
-    }
-    // } catch (e) {
-    //   // Handle any exception that occurs during the retrieval process
-    //   debugPrint("Exception in getInvoicingEmailDetails: $e");
-    //   return {
-    //     'message':
-    //         'An error occurred during retrieving invoicing email details',
-    //   };
-    // }
+    final parsed = parseCheckInvoicingEmailKeyResponse(
+      statusCode: response.statusCode,
+      body: response.body,
+    );
+    debugPrint("checkInvoicingEmailKey message: ${parsed['message']}");
+    return parsed;
   }
 
   Future<Map<String, dynamic>> getEmailDetailToSendEmail(
