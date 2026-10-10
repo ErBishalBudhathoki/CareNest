@@ -91,6 +91,24 @@ class InvoicePdfGenerator {
         // device being present. If signing fails the invoice is still emitted,
         // unsigned, and the verifier reports that rather than failing the
         // invoice.
+        // Register this device's public key before signing, so the signature
+        // can actually be verified. Without this the verifier has no public key
+        // and can only report `unregistered-key`. Idempotent and cached server-
+        // side and locally, and deliberately non-throwing.
+        try {
+          await InvoiceSigningService.ensureRegistered(
+            post: (endpoint, body, headers) => _api.post(
+              endpoint,
+              body: body,
+              headers: headers,
+            ),
+            organizationId: _getSafeString(clientData['organizationId']),
+            keyPair: signingKeyPair,
+          );
+        } catch (e) {
+          debugPrint('Invoice signing registration skipped: $e');
+        }
+
         SignedInvoiceMetadata? signed;
         try {
           final canonical = InvoiceSigningService.canonicalInvoiceForm(
