@@ -12,6 +12,7 @@
 /// identifier leaks in.
 library;
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -21,6 +22,7 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/features/invoice/services/invoice_pdf_generator_service.dart';
 import 'package:carenest/app/features/invoice/services/sample_invoice_fixture.dart';
+import 'package:carenest/app/features/invoice/services/invoice_signing_service.dart';
 
 /// Keeps generation offline. The generator only reaches the network to look up
 /// bank details, and the fixture leaves `organizationId` and worker email
@@ -100,6 +102,94 @@ void main() {
         reason: 'sample invoice must not contain "$needle"',
       );
     }
+  }, timeout: const Timeout(Duration(minutes: 2)));
+
+  test('signs the invoice and embeds the signature in XMP metadata', () async {
+
+    // This is the language-boundary test. A Dart Ed25519 signature is worthless
+    // unless Node's Ed25519 accepts it, and the canonical serialisation that
+    // was signed has to be byte-identical on both sides. The fixture written
+    // here is what the backend interop test in
+    // backend/tests/invoice-signature-interop.test.js verifies.
+    final payload = SampleInvoiceFixture.buildInvoicePayload();
+    final client = payload['clients'].first as Map<String, dynamic>;
+    final generator = InvoicePdfGenerator(api: _NoNetworkApiMethod());
+
+    final keyPair0 = await InvoiceSigningService.loadOrCreateKeyPair();
+    final paths = await generator.generatePdfs(
+      payload,
+      showTax: true,
+      taxRate: 0.0,
+      signingKeyPair: keyPair0,
+    );
+    expect(paths, hasLength(1));
+
+    InvoiceSignableItem item(Map<String, dynamic> m) => InvoiceSignableItem(
+          code: m['ndisItemNumber'] as String,
+          date: m['date'] as String,
+          hours: m['hours'] as double,
+          rate: m['rate'] as double,
+          amount: m['amount'] as double,
+        );
+
+    final items = (client['items'] as List).cast<Map<String, dynamic>>();
+
+    final canonical = InvoiceSigningService.canonicalInvoiceForm(
+      invoiceNumber: client['invoiceNumber'] as String,
+      periodStart: client['startDate'] as String,
+      periodEnd: client['endDate'] as String,
+      subtotal: client['subtotal'] as double,
+      tax: client['tax'] as double,
+      total: client['total'] as double,
+      items: items.map(item).toList(),
+    );
+
+    // Key material is taken from a single keypair object rather than through
+    // the storage-backed helpers: flutter_secure_storage does not persist across
+    // calls in this environment, so loadOrCreateKeyPair() twice can return two
+    // different keys and the signature would be published against the wrong one.
+    final keyPair = keyPair0;
+    final pub = base64.encode((await keyPair.extractPublicKey()).bytes);
+    final signatureBase64 =
+        await InvoiceSigningService.signWith(canonical, Future.value(keyPair));
+    final keyId = await InvoiceSigningService.getDeviceKeyIdFromKey(keyPair);
+
+    // Copy the PDF this same test produced, so the embedded signature and the
+    // fixture below are guaranteed to come from the same key. Copying the file
+    // written by the other test would pair a signature with the wrong public key
+    // and the interop test would fail for a reason that is not the scheme.
+    await File(paths.first).copy('marketing/INVOICE-SAMPLE.pdf');
+
+    await File('marketing/signing-fixture.json').writeAsString(jsonEncode({
+      'canonicalForm': canonical,
+      'signatureBase64': signatureBase64,
+      'deviceKeyId': keyId,
+      'publicKeyBase64': pub,
+      'fingerprint': InvoiceSigningService.fingerprint(canonical),
+      'record': {
+        'invoiceNumber': client['invoiceNumber'],
+        'startDate': client['startDate'],
+        'endDate': client['endDate'],
+        'financialSummary': {
+          'subtotal': client['subtotal'],
+          'taxAmount': client['tax'],
+          'totalAmount': client['total'],
+        },
+        'lineItems': items
+            .map((m) {
+              final qty = (m['hours'] as num?)?.toDouble() ?? 0;
+              final rate = (m['rate'] as num?)?.toDouble() ?? 0;
+              return {
+                'supportItemNumber': m['ndisItemNumber'],
+                'quantity': qty,
+                'price': rate,
+                'totalPrice': (m['amount'] as num?)?.toDouble() ?? (qty * rate),
+                'date': m['date'],
+              };
+            })
+            .toList(),
+      },
+    }));
   }, timeout: const Timeout(Duration(minutes: 2)));
 }
 
