@@ -10,6 +10,8 @@ import 'package:carenest/app/features/invoice/utils/hours_formatting.dart';
 import '../../../shared/utils/shared_preferences_utils.dart';
 import '../../../core/services/file_conversion_service.dart';
 import 'invoice_number_generator_service.dart';
+import 'invoice_signing_service.dart';
+import 'package:cryptography/cryptography.dart';
 
 class InvoicePdfGenerator {
   final ApiMethod _api;
@@ -28,6 +30,7 @@ class InvoicePdfGenerator {
     List<String>? uploadedPhotoUrls,
     List<String>? uploadedAdditionalFileUrls,
     bool useAdminBankDetails = false,
+    SimpleKeyPair? signingKeyPair,
   }) async {
     List<String> generatedPdfPaths = [];
 
@@ -75,7 +78,54 @@ class InvoicePdfGenerator {
           _applyTaxFixesAndPersistableTotals(clientData, showTax, taxRate);
         }
 
-        final pdf = pw.Document();
+        // Sign the invoice's financial content and embed the signature in the
+        // document's XMP metadata.
+        //
+        // Replaces the invisible zero-width watermark, which never reached the
+        // file at all: the base-14 font package:pdf defaults to cannot encode
+        // those code points, so the PDF writer dropped them. XMP is stored
+        // uncompressed and needs no font, so it reliably lands in the output.
+        //
+        // The signature lets anyone verify the file against the backend's
+        // record — on any device, or by the developer — without the signing
+        // device being present. If signing fails the invoice is still emitted,
+        // unsigned, and the verifier reports that rather than failing the
+        // invoice.
+        SignedInvoiceMetadata? signed;
+        try {
+          final canonical = InvoiceSigningService.canonicalInvoiceForm(
+            invoiceNumber: _getSafeString(clientData['invoiceNumber']),
+            periodStart: _normaliseDay(clientData['startDate']),
+            periodEnd: _normaliseDay(clientData['endDate']),
+            subtotal: _getSafeDouble(clientData['subtotal']),
+            tax: _getSafeDouble(clientData['tax'] ?? clientData['taxAmount']),
+            total: _getSafeDouble(clientData['total']),
+            items: ((clientData['items'] as List?) ?? const [])
+                .whereType<Map>()
+                .map((m) => InvoiceSignableItem(
+                      code: _getSafeString(
+                        m['supportItemNumber'] ??
+                            m['itemCode'] ??
+                            m['ndisItemNumber'],
+                      ),
+                      date: _normaliseDay(m['date']),
+                      hours: _getSafeDouble(m['hours'] ?? m['quantity']),
+                      rate: _getSafeDouble(m['rate'] ?? m['unitPrice'] ?? m['price']),
+                      amount: _getSafeDouble(m['total'] ?? m['totalPrice'] ?? m['amount']),
+                    ))
+                .toList(),
+          );
+          signed = await InvoiceSigningService.buildMetadata(
+            canonical,
+            keyPair: signingKeyPair,
+          );
+        } catch (e) {
+          debugPrint('Invoice signing skipped: $e');
+        }
+
+        // `metadata` is a Document constructor parameter: it builds the
+        // PdfMetadata bound to this document's catalog.
+        final pdf = pw.Document(metadata: signed?.xml);
 
         // Generate invisible watermark for the invoice
         final invoiceNum = _getSafeString(clientData['invoiceNumber']);
@@ -251,8 +301,27 @@ class InvoicePdfGenerator {
     return generatedPdfPaths;
   }
 
-  String _getSafeString(dynamic value) {
-    if (value == null) return '';
+  String _normaliseDay(dynamic value) {
+    if (value == null) return 'unknown';
+    // Formatted by hand rather than with DateFormat: intl formats against the
+    // device locale, and a non-Gregorian or different-propensity calendar would
+    // silently change the signed bytes.
+    String pad(int n) => n.toString().padLeft(2, '0');
+    if (value is DateTime) return '${value.year}-${pad(value.month)}-${pad(value.day)}';
+    final text = value.toString();
+    if (text.isEmpty) return 'unknown';
+    try {
+      final d = DateTime.parse(text);
+      return '${d.year}-${pad(d.month)}-${pad(d.day)}';
+    } catch (_) {
+      // An unparseable date is kept as-is so the canonical form still matches
+      // whatever the stored invoice records, rather than silently becoming
+      // 'unknown' and invalidating the signature.
+      return text;
+    }
+  }
+
+  String _getSafeString(dynamic value) {    if (value == null) return '';
     if (value is String) return value;
     return value.toString();
   }
