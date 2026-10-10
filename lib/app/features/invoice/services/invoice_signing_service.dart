@@ -45,6 +45,17 @@ const String kSigningVersionElement = 'carenest:v';
 /// not stop someone who has extracted the private key from a compromised or
 /// rooted device from signing a fresh forgery; against that, a forgery must be
 /// signed by a key the backend has never seen or has revoked.
+/// Signature of the HTTP call used to register a device key.
+///
+/// Injected rather than hard-coding ApiMethod so the registration path is
+/// testable without the network, and so a backend change does not require
+/// touching the crypto.
+typedef KeyRegistrationPoster = Future<Map<String, dynamic>> Function(
+  String endpoint,
+  Map<String, dynamic> body,
+  Map<String, String> headers,
+);
+
 class InvoiceSigningService {
   InvoiceSigningService._();
 
@@ -59,8 +70,16 @@ class InvoiceSigningService {
   /// the version that produced it.
   static const int canonicalVersion = 1;
 
+  /// Keys already registered during this process. Avoids a disk read and a
+  /// repeated HTTP call for every invoice generated in a session; secure storage
+  /// still carries it across launches.
+  static final Set<String> _registeredThisSession = <String>{};
+
   static const String _privateSeedKey = 'carenest.invoice.signing.seed';
-  static const String _deviceKeyIdKey = 'carenest.invoice.signing.keyId';
+  static const String _registeredKeyPrefix = 'carenest.invoice.signing.registered.';
+
+  /// Endpoint the backend exposes for public-key registration.
+  static const String _registerEndpoint = 'invoice-signing/register';
 
   /// The device's key id.
   ///
@@ -197,6 +216,58 @@ class InvoiceSigningService {
   /// If signing fails the invoice still gets built, unsigned. A device with a
   /// broken keystore should not be unable to invoice; the verifier reports the
   /// missing signature instead, which is visible rather than silent.
+  /// Registers this device's public key with the backend, once per key.
+  ///
+  /// Without this the device signs invoices and the verifier can only report
+  /// `unregistered-key` — it has no public key to check the signature against,
+  /// so the signature is worthless. Registration is idempotent server-side
+  /// (re-registering the same key is a refresh), so it can be called lazily, and
+  /// a per-key cache keeps it to one call per key rather than one per invoice.
+  ///
+  /// Never throws. A device on a flaky connection keeps generating invoices; it
+  /// just produces an unverifiable signature instead of no invoice at all.
+  static Future<bool> ensureRegistered({
+    required KeyRegistrationPoster post,
+    required String organizationId,
+    SimpleKeyPair? keyPair,
+  }) async {
+    // An empty org means no tenant context. Guessing an organisation and binding
+    // a signing key to it is exactly what the backend guard rejects.
+    if (organizationId.isEmpty) return false;
+
+    try {
+      // The caller usually already holds the key pair to sign with; reusing it
+      // avoids loading the keystore twice for one invoice.
+      final resolved = keyPair ?? await loadOrCreateKeyPair();
+      final keyId = await getDeviceKeyIdFromKey(resolved);
+      final pub = base64.encode((await resolved.extractPublicKey()).bytes);
+
+      // Comparing the stored key rather than just its presence: a different key
+      // under the same key id must be re-registered.
+      final cacheKey = '$_registeredKeyPrefix$keyId';
+      final known = _registeredThisSession.contains(cacheKey) ||
+          (await _storage.read(key: cacheKey)) == pub;
+      if (known) return true;
+
+      final res = await post(
+        _registerEndpoint,
+        {'deviceKeyId': keyId, 'publicKeyBase64': pub},
+        {'x-organization-id': organizationId},
+      );
+
+      if (res['success'] == true) {
+        _registeredThisSession.add(cacheKey);
+        await _storage.write(key: cacheKey, value: pub);
+        return true;
+      }
+      debugPrint('Device key registration rejected: ${res['message'] ?? res['error']}');
+      return false;
+    } catch (e) {
+      debugPrint('Device key registration failed: $e');
+      return false;
+    }
+  }
+
   /// Everything the caller needs to write the signature into a PDF.
   ///
   /// The XMP document is returned rather than attached here so the PDF library
