@@ -80,10 +80,14 @@ class InvoicePdfGenerator {
         // Generate invisible watermark for the invoice
         final invoiceNum = _getSafeString(clientData['invoiceNumber']);
         debugPrint('PDF Generator: invoiceNum: $invoiceNum');
+        // generateWatermark is async. It was previously called with a bare
+        // `.toString()`, which turned the Future itself into the watermark —
+        // every invoice then carried the literal text
+        // "Instance of 'Future<String>'" instead of a digest, so the
+        // anti-tamper watermark protected nothing at all (and advertised that
+        // it was broken).
         final String watermark = invoiceNum.isNotEmpty
-            ? InvoiceNumberGeneratorService.generateWatermark(
-                invoiceNum,
-              ).toString()
+            ? await InvoiceNumberGeneratorService.generateWatermark(invoiceNum)
             : '';
 
         // Build photo attachments section asynchronously if needed
