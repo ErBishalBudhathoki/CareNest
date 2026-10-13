@@ -7601,4 +7601,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get silManagementDesc =>
       'Supported independent living: properties, occupancy, rosters and quotes.';
+
+  @override
+  String get ndisClaiming => 'NDIS Claiming';
+
+  @override
+  String get ndisClaimingDesc =>
+      'Generate bulk payment request CSVs and reconcile results.';
 }
