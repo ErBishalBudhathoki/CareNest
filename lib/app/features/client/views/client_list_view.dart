@@ -2,6 +2,7 @@ import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:carenest/app/features/client/providers/client_provider.dart';
 import 'package:carenest/app/features/realtime_portal/views/family_management_view.dart';
+import 'package:carenest/app/features/stakeholders/views/care_team_view.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/business_name_dropdown_widget.dart';
@@ -1401,6 +1402,15 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                 isFullWidth: true,
                 onPressed: () => _openFamilyAccess(client),
               ),
+              SizedBox(height: BauhausDesign.space3),
+              BauhausActionButton(
+                text: 'Care Team',
+                icon: Icons.diversity_3_outlined,
+                variant: BauhausActionVariant.primary,
+                isSmall: true,
+                isFullWidth: true,
+                onPressed: () => _openCareTeam(client),
+              ),
             ],
             if (!isHistoryMode && !client.isActivated) ...[
               SizedBox(height: BauhausDesign.space4),
@@ -1489,6 +1499,28 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => FamilyManagementView(
+          clientId: clientId,
+          clientName: client.displayName,
+        ),
+      ),
+    );
+  }
+
+  void _openCareTeam(Patient client) {
+    final clientId = client.id?.trim();
+    if (clientId == null || clientId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Client ID is missing. Unable to open Care Team.'),
+          backgroundColor: BauhausDesign.error,
+        ),
+      );
+      return;
+    }
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CareTeamView(
           clientId: clientId,
           clientName: client.displayName,
         ),
