@@ -90,6 +90,7 @@ import 'package:carenest/app/features/voice_assistant/views/voice_assistant_view
 import 'package:carenest/app/features/sil/views/sil_dashboard_view.dart';
 import 'package:carenest/app/features/sil/views/sil_property_detail_view.dart';
 import 'package:carenest/app/features/sil/views/sil_roster_builder_view.dart';
+import 'package:carenest/app/features/claiming/views/claim_dashboard_view.dart';
 import 'package:carenest/app/features/worker/views/deprecated_worker_dashboard_view.dart';
 import 'package:carenest/app/features/worker/views/worker_shift_history_view.dart';
 import 'package:carenest/app/features/teams/views/team_dashboard_view.dart';
@@ -894,6 +895,8 @@ class MyApp extends ConsumerWidget {
               propertyName: args['propertyName']?.toString() ?? 'Property',
             );
           },
+          // NDIS claiming / export (Phase 6)
+          Routes.claimDashboard: (context) => const ClaimDashboardView(),
         },
       ),
     );

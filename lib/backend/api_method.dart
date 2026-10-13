@@ -4490,6 +4490,55 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
+  // -------------------------------------------------------------------------
+  // NDIS claiming / export (Phase 6)
+  // -------------------------------------------------------------------------
+
+  Future<Map<String, dynamic>> getClaimBatches() async {
+    try {
+      return await get('ndis-claims/batches');
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> getClaimBatch(String id) async {
+    try {
+      return await get('ndis-claims/batches/$id');
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> generateClaimBatch({
+    required String from,
+    required String to,
+    bool allowInvalid = false,
+  }) async {
+    try {
+      return await post('ndis-claims/generate', body: {
+        'from': from,
+        'to': to,
+        'allowInvalid': allowInvalid,
+      });
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> importClaimResults(
+    String batchId,
+    String fileContent,
+  ) async {
+    try {
+      return await post('ndis-claims/batches/$batchId/results/import', body: {
+        'file': fileContent,
+      });
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
   Future<Map<String, dynamic>> addShiftNote({
     required String userEmail,
     required String clientEmail,

@@ -14005,6 +14005,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Supported independent living: properties, occupancy, rosters and quotes.'**
   String get silManagementDesc;
+
+  /// No description provided for @ndisClaiming.
+  ///
+  /// In en, this message translates to:
+  /// **'NDIS Claiming'**
+  String get ndisClaiming;
+
+  /// No description provided for @ndisClaimingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate bulk payment request CSVs and reconcile results.'**
+  String get ndisClaimingDesc;
 }
 
 class _AppLocalizationsDelegate

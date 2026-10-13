@@ -123,4 +123,7 @@ abstract class Routes {
   static const String silDashboard = '/sil';
   static const String silPropertyDetail = '/sil/property-detail';
   static const String silRoster = '/sil/roster';
+
+  // NDIS claiming / export (Phase 6)
+  static const String claimDashboard = '/ndis-claiming';
 }
