@@ -31,8 +31,17 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
   final _clientStateController = TextEditingController();
   final _clientZipController = TextEditingController();
   final _clientBusinessNameController = TextEditingController();
+  final _ndisNumberController = TextEditingController();
+  String _fundingType = 'plan_managed';
 
   bool _isSubmitting = false;
+
+  static const _fundingTypes = [
+    'ndia_managed',
+    'plan_managed',
+    'self_managed',
+    'combination',
+  ];
 
   bool _isCompactLayout(BuildContext context) {
     return MediaQuery.of(context).size.width < 390;
@@ -49,6 +58,7 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
     _clientStateController.dispose();
     _clientZipController.dispose();
     _clientBusinessNameController.dispose();
+    _ndisNumberController.dispose();
     super.dispose();
   }
 
@@ -556,6 +566,44 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
             debugPrint('Selected Business Name: $selectedValue');
           },
         ),
+        SizedBox(
+          height: isCompact ? BauhausDesign.space3 : BauhausDesign.space4,
+        ),
+        Text(
+          'NDIS',
+          style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: BauhausDesign.space1),
+        BauhausTextField(
+          label: 'NDIS NUMBER',
+          hintText: 'e.g. 430123456',
+          keyboardType: TextInputType.number,
+          controller: _ndisNumberController,
+          prefixIcon: const Icon(Icons.badge_outlined, size: 20),
+        ),
+        SizedBox(
+          height: isCompact ? BauhausDesign.space3 : BauhausDesign.space4,
+        ),
+        Text(
+          'FUNDING TYPE',
+          style: BauhausDesign.getTextTheme(context).labelMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: BauhausDesign.space1),
+        DropdownButtonFormField<String>(
+          initialValue: _fundingType,
+          decoration: const InputDecoration(border: OutlineInputBorder()),
+          items: _fundingTypes
+              .map((t) => DropdownMenuItem(value: t, child: Text(t)))
+              .toList(),
+          onChanged: (value) =>
+              setState(() => _fundingType = value ?? 'plan_managed'),
+        ),
       ],
     );
   }
@@ -692,6 +740,8 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
         _clientBusinessNameController.text.trim(),
         userEmail: currentUserEmail,
         organizationId: currentOrganizationId,
+        ndisNumber: _ndisNumberController.text.trim(),
+        fundingType: _fundingType,
       );
       debugPrint('Add client response: $response');
 

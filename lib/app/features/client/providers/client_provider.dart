@@ -100,6 +100,8 @@ class ClientNotifier extends Notifier<ClientState> {
     String? businessName,
     required String userEmail,
     required String organizationId,
+    String? ndisNumber,
+    String? fundingType,
   }) async {
     state = state.copyWith(error: null);
     final response = await _apiMethod.updateClient(
@@ -114,6 +116,8 @@ class ClientNotifier extends Notifier<ClientState> {
       businessName: businessName,
       userEmail: userEmail,
       organizationId: organizationId,
+      ndisNumber: ndisNumber,
+      fundingType: fundingType,
     );
 
     if (response['success'] != true &&

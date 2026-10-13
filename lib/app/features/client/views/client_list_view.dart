@@ -381,6 +381,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
       text: client.clientState ?? '',
     );
     final zipController = TextEditingController(text: client.clientZip ?? '');
+    final ndisNumberController =
+        TextEditingController(text: client.ndisNumber ?? '');
+    String selectedFundingType = client.fundingType ?? 'plan_managed';
     String selectedBusinessName = client.businessName?.trim() ?? '';
     final formKey = GlobalKey<FormState>();
     bool isSaving = false;
@@ -574,6 +577,52 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                 label: 'Postcode',
                                 keyboardType: TextInputType.number,
                               ),
+                              const SizedBox(height: BauhausDesign.space3),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  'NDIS',
+                                  style:
+                                      BauhausDesign.getTextTheme(
+                                        dialogContext,
+                                      ).labelMedium?.copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                        fontWeight: FontWeight.w800,
+                                        letterSpacing: 0.7,
+                                      ),
+                                ),
+                              ),
+                              const SizedBox(height: BauhausDesign.space1),
+                              BauhausTextField(
+                                controller: ndisNumberController,
+                                label: 'NDIS number',
+                                keyboardType: TextInputType.number,
+                              ),
+                              const SizedBox(height: BauhausDesign.space3),
+                              DropdownButtonFormField<String>(
+                                initialValue: selectedFundingType,
+                                decoration: const InputDecoration(
+                                  labelText: 'Funding type',
+                                  border: OutlineInputBorder(),
+                                ),
+                                items: const [
+                                  'ndia_managed',
+                                  'plan_managed',
+                                  'self_managed',
+                                  'combination',
+                                ]
+                                    .map((t) => DropdownMenuItem(
+                                          value: t,
+                                          child: Text(t),
+                                        ))
+                                    .toList(),
+                                onChanged: (v) => setDialogState(
+                                  () => selectedFundingType =
+                                      v ?? 'plan_managed',
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -675,6 +724,10 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                                     userContext['userEmail']!,
                                                 organizationId:
                                                     userContext['organizationId']!,
+                                                ndisNumber:
+                                                    ndisNumberController.text
+                                                        .trim(),
+                                                fundingType: selectedFundingType,
                                               );
 
                                         if (!mounted || !context.mounted)
@@ -750,6 +803,7 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     cityController.dispose();
     stateController.dispose();
     zipController.dispose();
+    ndisNumberController.dispose();
   }
 
   Future<void> _confirmDeleteClient(Patient client) async {
