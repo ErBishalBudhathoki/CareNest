@@ -4415,6 +4415,81 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
+  // -------------------------------------------------------------------------
+  // Multi-stakeholder CRM (Phase 5)
+  // -------------------------------------------------------------------------
+
+  Future<Map<String, dynamic>> getStakeholders({String? type}) async {
+    try {
+      final query =
+          type != null ? '?type=${Uri.encodeQueryComponent(type)}' : '';
+      return await get('stakeholders$query');
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> createStakeholder(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      return await post('stakeholders', body: body);
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> updateStakeholder(
+    String id,
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      return await put('stakeholders/$id', body: body);
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> deleteStakeholder(String id) async {
+    try {
+      return await delete('stakeholders/$id');
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> getClientCareTeam(String clientId) async {
+    try {
+      return await get('stakeholders/clients/$clientId/care-team');
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> linkClientStakeholder(
+    String clientId,
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      return await post('stakeholders/clients/$clientId/stakeholders', body: body);
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> unlinkClientStakeholder(
+    String clientId,
+    String stakeholderId,
+  ) async {
+    try {
+      return await delete(
+        'stakeholders/clients/$clientId/stakeholders/$stakeholderId',
+      );
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
   Future<Map<String, dynamic>> addShiftNote({
     required String userEmail,
     required String clientEmail,
