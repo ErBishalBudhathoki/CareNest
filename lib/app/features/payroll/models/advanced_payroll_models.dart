@@ -17,10 +17,31 @@ abstract class PayrollCalculation with _$PayrollCalculation {
     required TaxAndSuper taxAndSuper,
     required double grossPay,
     required double netPay,
+    PayrollHoursBreakdown? hoursBreakdown,
   }) = _PayrollCalculation;
 
   factory PayrollCalculation.fromJson(Map<String, dynamic> json) =>
       _$PayrollCalculationFromJson(json);
+}
+
+/// Segmented SCHADS hours (Phase 1). Present on the shift-based calculation
+/// path; absent on the legacy aggregate path.
+@freezed
+abstract class PayrollHoursBreakdown with _$PayrollHoursBreakdown {
+  const factory PayrollHoursBreakdown({
+    @Default(0) double baseHours,
+    @Default(0) double afternoonShiftHours,
+    @Default(0) double nightShiftHours,
+    @Default(0) double saturdayHours,
+    @Default(0) double sundayHours,
+    @Default(0) double publicHolidayHours,
+    @Default(0) double overtimeFirst2h,
+    @Default(0) double overtimeAfter2h,
+    @Default(0) double totalHours,
+  }) = _PayrollHoursBreakdown;
+
+  factory PayrollHoursBreakdown.fromJson(Map<String, dynamic> json) =>
+      _$PayrollHoursBreakdownFromJson(json);
 }
 
 @freezed

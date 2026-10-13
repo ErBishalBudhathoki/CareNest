@@ -50,6 +50,10 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
   String? _selectedEmploymentType;
   List<String> _selectedAllowances = [];
 
+  // Phase 1 (F1.2): standard ordinary hours per day used by the SCHADS engine
+  // for the daily overtime threshold.
+  int _standardHoursPerDay = 8;
+
   User? _selectedUser;
   String? _rateWarning; // To show validation warning
   void Function(VoidCallback fn)? _dialogSetState;
@@ -272,6 +276,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
         _selectedAllowances,
         widget.organizationId,
         widget.adminEmail,
+        _standardHoursPerDay,
       );
 
       if (mounted) {
@@ -499,6 +504,27 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
                   _selectedEmploymentType = val;
                 });
                 _updateRateFromClassification();
+              },
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              initialValue: _standardHoursPerDay.toString(),
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: 'Standard hours per day',
+                helperText:
+                    'Ordinary hours before overtime applies (SCHADS).',
+                border: const OutlineInputBorder(
+                  borderRadius: BorderRadius.zero,
+                ),
+                filled: true,
+                fillColor: Theme.of(context).colorScheme.surface,
+              ),
+              onChanged: (val) {
+                final parsed = int.tryParse(val.trim());
+                if (parsed != null && parsed > 0) {
+                  _standardHoursPerDay = parsed;
+                }
               },
             ),
             const SizedBox(height: 16),

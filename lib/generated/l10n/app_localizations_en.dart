@@ -7608,4 +7608,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get ndisClaimingDesc =>
       'Generate bulk payment request CSVs and reconcile results.';
+
+  @override
+  String get noteTemplates => 'Note Templates';
+
+  @override
+  String get noteTemplatesDesc =>
+      'Define the structured shift-note templates workers complete.';
 }
