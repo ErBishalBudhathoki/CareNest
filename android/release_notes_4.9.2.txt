@@ -1,0 +1,5 @@
+Fixed: SIL Management and NDIS Claiming now open correctly in this build.
+New: admins can create structured shift-note templates (Note Templates).
+Payroll: pick an employee to see a real shift-hours breakdown (base/afternoon/night/weekend/OT).
+Clients now capture NDIS number and funding type.
+Employee pay rates now capture standard hours per day.
