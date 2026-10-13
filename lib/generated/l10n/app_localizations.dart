@@ -13993,6 +13993,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your Stripe account is linked but setup is incomplete. Finish Stripe onboarding to start receiving payouts.'**
   String get paymentSettingsPendingDesc;
+
+  /// No description provided for @silManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'SIL Management'**
+  String get silManagement;
+
+  /// No description provided for @silManagementDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Supported independent living: properties, occupancy, rosters and quotes.'**
+  String get silManagementDesc;
 }
 
 class _AppLocalizationsDelegate
