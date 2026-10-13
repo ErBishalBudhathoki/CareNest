@@ -18,6 +18,12 @@ class Patient {
   final DateTime? deletedAt;
   final DateTime? purgeAfter;
 
+  /// NDIS participant number (Phase 6) — required for bulk claiming.
+  final String? ndisNumber;
+
+  /// Funding route (Phase 5/6): ndia_managed | plan_managed | self_managed | combination.
+  final String? fundingType;
+
   Patient({
     this.id,
     this.clientFirstName,
@@ -37,6 +43,8 @@ class Patient {
     this.activationPending = false,
     this.deletedAt,
     this.purgeAfter,
+    this.ndisNumber,
+    this.fundingType,
   });
 
   static DateTime? _parseDate(dynamic value) {
@@ -96,6 +104,8 @@ class Patient {
           activationPendingFromStatus,
       deletedAt: _parseDate(json['deletedAt']),
       purgeAfter: _parseDate(json['purgeAfter']),
+      ndisNumber: json['ndisNumber'] as String?,
+      fundingType: json['fundingType'] as String?,
     );
   }
 
