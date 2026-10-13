@@ -87,6 +87,9 @@ import 'package:carenest/app/features/care_intelligence/views/behavior_support_v
 import 'package:carenest/app/features/care_intelligence/views/health_monitoring_view.dart';
 import 'package:carenest/app/features/care_intelligence/views/outcome_tracking_view.dart';
 import 'package:carenest/app/features/voice_assistant/views/voice_assistant_view.dart';
+import 'package:carenest/app/features/sil/views/sil_dashboard_view.dart';
+import 'package:carenest/app/features/sil/views/sil_property_detail_view.dart';
+import 'package:carenest/app/features/sil/views/sil_roster_builder_view.dart';
 import 'package:carenest/app/features/worker/views/deprecated_worker_dashboard_view.dart';
 import 'package:carenest/app/features/worker/views/worker_shift_history_view.dart';
 import 'package:carenest/app/features/teams/views/team_dashboard_view.dart';
@@ -873,6 +876,24 @@ class MyApp extends ConsumerWidget {
           Routes.businessIntelligence: (context) =>
               const BusinessIntelligenceView(),
           Routes.reportBuilder: (context) => const ReportBuilderView(),
+          // SIL management (Phase 4)
+          Routes.silDashboard: (context) => const SILDashboardView(),
+          Routes.silPropertyDetail: (context) {
+            final args =
+                ModalRoute.of(context)?.settings.arguments as Map? ?? const {};
+            return SILPropertyDetailView(
+              propertyId: args['propertyId']?.toString() ?? '',
+              propertyName: args['propertyName']?.toString() ?? 'Property',
+            );
+          },
+          Routes.silRoster: (context) {
+            final args =
+                ModalRoute.of(context)?.settings.arguments as Map? ?? const {};
+            return SILRosterBuilderView(
+              propertyId: args['propertyId']?.toString() ?? '',
+              propertyName: args['propertyName']?.toString() ?? 'Property',
+            );
+          },
         },
       ),
     );

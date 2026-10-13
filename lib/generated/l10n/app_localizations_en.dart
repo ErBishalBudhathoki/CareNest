@@ -7594,4 +7594,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get paymentSettingsPendingDesc =>
       'Your Stripe account is linked but setup is incomplete. Finish Stripe onboarding to start receiving payouts.';
+
+  @override
+  String get silManagement => 'SIL Management';
+
+  @override
+  String get silManagementDesc =>
+      'Supported independent living: properties, occupancy, rosters and quotes.';
 }
