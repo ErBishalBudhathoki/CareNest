@@ -118,4 +118,9 @@ abstract class Routes {
   static const String workerDashboard = '/worker/dashboard';
   static const String workerShiftHistory = '/worker/shift-history';
   static const String teamDashboard = '/teams/dashboard';
+
+  // SIL management (Phase 4)
+  static const String silDashboard = '/sil';
+  static const String silPropertyDetail = '/sil/property-detail';
+  static const String silRoster = '/sil/roster';
 }

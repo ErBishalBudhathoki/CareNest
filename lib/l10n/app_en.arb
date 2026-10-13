@@ -3737,6 +3737,9 @@
   "stripeStatus": "Status",
 
   "paymentSettingsPendingTitle": "VERIFICATION PENDING",
-  "paymentSettingsPendingDesc": "Your Stripe account is linked but setup is incomplete. Finish Stripe onboarding to start receiving payouts."
+  "paymentSettingsPendingDesc": "Your Stripe account is linked but setup is incomplete. Finish Stripe onboarding to start receiving payouts.",
+
+  "silManagement": "SIL Management",
+  "silManagementDesc": "Supported independent living: properties, occupancy, rosters and quotes."
 
 }

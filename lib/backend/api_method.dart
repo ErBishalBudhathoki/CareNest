@@ -4224,6 +4224,197 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
+  // -------------------------------------------------------------------------
+  // SIL management (Phase 4)
+  // -------------------------------------------------------------------------
+
+  Future<Map<String, dynamic>> getSilProperties() async {
+    try {
+      return await get('sil/properties');
+    } catch (e) {
+      debugPrint('Error fetching SIL properties: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> getSilProperty(String id) async {
+    try {
+      return await get('sil/properties/$id');
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> createSilProperty(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      return await post('sil/properties', body: body);
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> updateSilProperty(
+    String id,
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      return await put('sil/properties/$id', body: body);
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> getSilVacancies(String propertyId) async {
+    try {
+      return await get('sil/properties/$propertyId/vacancies');
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> getSilOccupancy({
+    String? propertyId,
+    String? clientId,
+    String? status,
+  }) async {
+    try {
+      final params = <String, String>{};
+      if (propertyId != null) params['propertyId'] = propertyId;
+      if (clientId != null) params['clientId'] = clientId;
+      if (status != null) params['status'] = status;
+      final query = params.isEmpty
+          ? ''
+          : '?${params.entries.map((e) => '${e.key}=${Uri.encodeQueryComponent(e.value)}').join('&')}';
+      return await get('sil/occupancy$query');
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> createSilOccupancy(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      return await post('sil/occupancy', body: body);
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> endSilOccupancy(
+    String id,
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      return await put('sil/occupancy/$id', body: body);
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> getSilRatioRules() async {
+    try {
+      return await get('sil/ratio-rules');
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> createSilRatioRule(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      return await post('sil/ratio-rules', body: body);
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> getSilRoster({
+    required String propertyId,
+    required String weekStarting,
+  }) async {
+    try {
+      return await get(
+        'sil/rosters?propertyId=${Uri.encodeQueryComponent(propertyId)}'
+        '&weekStarting=${Uri.encodeQueryComponent(weekStarting)}',
+      );
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> buildSilRoster(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      return await post('sil/rosters', body: body);
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> publishSilRoster(String id) async {
+    try {
+      return await post('sil/rosters/$id/publish', body: const {});
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> getSilQuotes({String? clientId}) async {
+    try {
+      final query = clientId != null
+          ? '?clientId=${Uri.encodeQueryComponent(clientId)}'
+          : '';
+      return await get('sil/quotes$query');
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> createSilQuote(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      return await post('sil/quotes', body: body);
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> acceptSilQuote(String id) async {
+    try {
+      return await post('sil/quotes/$id/accept', body: const {});
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> convertSilQuote(
+    String id, {
+    Map<String, dynamic>? body,
+  }) async {
+    try {
+      return await post('sil/quotes/$id/convert', body: body ?? const {});
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> getSilRostersOfCare({String? clientId}) async {
+    try {
+      final query = clientId != null
+          ? '?clientId=${Uri.encodeQueryComponent(clientId)}'
+          : '';
+      return await get('sil/rosters-of-care$query');
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
   Future<Map<String, dynamic>> addShiftNote({
     required String userEmail,
     required String clientEmail,

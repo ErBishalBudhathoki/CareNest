@@ -1694,6 +1694,13 @@ class _AdminDashboardViewControllerState
             color: BauhausDesign.success,
             onTap: () => _navigateToClientPricingReview(),
           ),
+          CommandAction(
+            icon: Icon(Icons.home_work_outlined),
+            title: l10n.silManagement,
+            subtitle: l10n.silManagementDesc,
+            color: BauhausDesign.primary,
+            onTap: _navigateToSilManagement,
+          ),
           if (!kReleaseMode && !AppConfig.isProduction)
             CommandAction(
               icon: Icon(Icons.security_rounded),
@@ -1772,6 +1779,10 @@ class _AdminDashboardViewControllerState
         ),
       );
     }
+  }
+
+  void _navigateToSilManagement() {
+    Navigator.of(context, rootNavigator: true).pushNamed(Routes.silDashboard);
   }
 
   void _navigateToEarningsDashboard() {
