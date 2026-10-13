@@ -1,0 +1,6 @@
+SIL management: properties, rooms, occupancy, staff:client ratio rosters and quotes.
+NDIS claiming: generate Bulk Payment Request CSVs and reconcile portal results.
+Care team per client: plan manager, support coordinator, nominee and family.
+Capture NDIS number and funding type on clients.
+Structured shift-note templates with voice dictation.
+More accurate SCHADS payroll: correct shift splitting, penalties and public holidays.
