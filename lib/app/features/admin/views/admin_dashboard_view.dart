@@ -1701,6 +1701,13 @@ class _AdminDashboardViewControllerState
             color: BauhausDesign.primary,
             onTap: _navigateToSilManagement,
           ),
+          CommandAction(
+            icon: Icon(Icons.playlist_add_check_circle_outlined),
+            title: l10n.ndisClaiming,
+            subtitle: l10n.ndisClaimingDesc,
+            color: BauhausDesign.secondary,
+            onTap: _navigateToNdisClaiming,
+          ),
           if (!kReleaseMode && !AppConfig.isProduction)
             CommandAction(
               icon: Icon(Icons.security_rounded),
@@ -1783,6 +1790,10 @@ class _AdminDashboardViewControllerState
 
   void _navigateToSilManagement() {
     Navigator.of(context, rootNavigator: true).pushNamed(Routes.silDashboard);
+  }
+
+  void _navigateToNdisClaiming() {
+    Navigator.of(context, rootNavigator: true).pushNamed(Routes.claimDashboard);
   }
 
   void _navigateToEarningsDashboard() {

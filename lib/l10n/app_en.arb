@@ -3740,6 +3740,9 @@
   "paymentSettingsPendingDesc": "Your Stripe account is linked but setup is incomplete. Finish Stripe onboarding to start receiving payouts.",
 
   "silManagement": "SIL Management",
-  "silManagementDesc": "Supported independent living: properties, occupancy, rosters and quotes."
+  "silManagementDesc": "Supported independent living: properties, occupancy, rosters and quotes.",
+
+  "ndisClaiming": "NDIS Claiming",
+  "ndisClaimingDesc": "Generate bulk payment request CSVs and reconcile results."
 
 }
