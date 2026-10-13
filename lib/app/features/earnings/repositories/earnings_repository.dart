@@ -157,6 +157,19 @@ class EarningsRepository {
       };
     }
 
+    // Structured SCHADS award config (Phase 1). Sent alongside the legacy
+    // label fields so new records are forward-compatible with the segmented
+    // payroll engine while old records remain valid.
+    final award = _buildAwardPayload(
+      classificationLevel: classificationLevel,
+      payPoint: payPoint,
+      stream: stream,
+      employmentType: employmentType,
+    );
+    if (award != null) {
+      body['award'] = award;
+    }
+
     final response = await _apiMethod.post(
       'earnings/rate/$userEmail',
       body: body,
@@ -164,6 +177,64 @@ class EarningsRepository {
 
     if (response['success'] != true) {
       throw Exception(response['message'] ?? 'Failed to set pay rate');
+    }
+  }
+
+  /// Derive a structured award object from the legacy label selections.
+  /// Returns null when there is nothing meaningful to send.
+  Map<String, dynamic>? _buildAwardPayload({
+    String? classificationLevel,
+    String? payPoint,
+    String? stream,
+    String? employmentType,
+  }) {
+    final award = <String, dynamic>{'awardCode': 'MA000100'};
+
+    final level = _parseLevelNumber(classificationLevel);
+    if (level != null) award['level'] = level;
+
+    final streamEnum = _streamToAwardEnum(stream);
+    if (streamEnum != null) award['stream'] = streamEnum;
+
+    if (payPoint != null && payPoint.trim().isNotEmpty) {
+      award['payPoint'] = payPoint.trim();
+    }
+
+    if (employmentType != null && employmentType.trim().isNotEmpty) {
+      award['employmentType'] = employmentType.toLowerCase().contains('casual')
+          ? 'casual'
+          : 'permanent_ft';
+    }
+
+    // Only send when more than the default award code is present.
+    return award.length > 1 ? award : null;
+  }
+
+  int? _parseLevelNumber(String? classificationLevel) {
+    if (classificationLevel == null) return null;
+    final match = RegExp(r'(\d+)').firstMatch(classificationLevel);
+    if (match == null) return null;
+    return int.tryParse(match.group(1)!);
+  }
+
+  String? _streamToAwardEnum(String? stream) {
+    if (stream == null) return null;
+    switch (stream.trim().toLowerCase()) {
+      case 'home care (disability)':
+        return 'disability';
+      case 'home care (aged)':
+        return 'home_care';
+      case 'social & community services':
+      case 'crisis accommodation':
+        return 'social_community';
+      case 'family day care':
+        return 'home_care';
+      case 'disability':
+      case 'home_care':
+      case 'social_community':
+        return stream.trim().toLowerCase();
+      default:
+        return null;
     }
   }
 }
