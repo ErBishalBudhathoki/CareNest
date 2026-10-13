@@ -3743,6 +3743,9 @@
   "silManagementDesc": "Supported independent living: properties, occupancy, rosters and quotes.",
 
   "ndisClaiming": "NDIS Claiming",
-  "ndisClaimingDesc": "Generate bulk payment request CSVs and reconcile results."
+  "ndisClaimingDesc": "Generate bulk payment request CSVs and reconcile results.",
+
+  "noteTemplates": "Note Templates",
+  "noteTemplatesDesc": "Define the structured shift-note templates workers complete."
 
 }

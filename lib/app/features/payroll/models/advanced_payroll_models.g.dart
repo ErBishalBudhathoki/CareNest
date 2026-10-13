@@ -24,6 +24,11 @@ _PayrollCalculation _$PayrollCalculationFromJson(
   ),
   grossPay: (json['grossPay'] as num).toDouble(),
   netPay: (json['netPay'] as num).toDouble(),
+  hoursBreakdown: json['hoursBreakdown'] == null
+      ? null
+      : PayrollHoursBreakdown.fromJson(
+          json['hoursBreakdown'] as Map<String, dynamic>,
+        ),
 );
 
 Map<String, dynamic> _$PayrollCalculationToJson(_PayrollCalculation instance) =>
@@ -39,7 +44,36 @@ Map<String, dynamic> _$PayrollCalculationToJson(_PayrollCalculation instance) =>
       'taxAndSuper': instance.taxAndSuper,
       'grossPay': instance.grossPay,
       'netPay': instance.netPay,
+      'hoursBreakdown': instance.hoursBreakdown,
     };
+
+_PayrollHoursBreakdown _$PayrollHoursBreakdownFromJson(
+  Map<String, dynamic> json,
+) => _PayrollHoursBreakdown(
+  baseHours: (json['baseHours'] as num?)?.toDouble() ?? 0,
+  afternoonShiftHours: (json['afternoonShiftHours'] as num?)?.toDouble() ?? 0,
+  nightShiftHours: (json['nightShiftHours'] as num?)?.toDouble() ?? 0,
+  saturdayHours: (json['saturdayHours'] as num?)?.toDouble() ?? 0,
+  sundayHours: (json['sundayHours'] as num?)?.toDouble() ?? 0,
+  publicHolidayHours: (json['publicHolidayHours'] as num?)?.toDouble() ?? 0,
+  overtimeFirst2h: (json['overtimeFirst2h'] as num?)?.toDouble() ?? 0,
+  overtimeAfter2h: (json['overtimeAfter2h'] as num?)?.toDouble() ?? 0,
+  totalHours: (json['totalHours'] as num?)?.toDouble() ?? 0,
+);
+
+Map<String, dynamic> _$PayrollHoursBreakdownToJson(
+  _PayrollHoursBreakdown instance,
+) => <String, dynamic>{
+  'baseHours': instance.baseHours,
+  'afternoonShiftHours': instance.afternoonShiftHours,
+  'nightShiftHours': instance.nightShiftHours,
+  'saturdayHours': instance.saturdayHours,
+  'sundayHours': instance.sundayHours,
+  'publicHolidayHours': instance.publicHolidayHours,
+  'overtimeFirst2h': instance.overtimeFirst2h,
+  'overtimeAfter2h': instance.overtimeAfter2h,
+  'totalHours': instance.totalHours,
+};
 
 _PenaltyRates _$PenaltyRatesFromJson(Map<String, dynamic> json) =>
     _PenaltyRates(

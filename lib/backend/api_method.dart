@@ -4187,6 +4187,38 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
+  /// Create an org progress-note template (Phase 2 admin).
+  Future<Map<String, dynamic>> createNoteTemplate(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      return await post('notes/templates', body: body);
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Update an org progress-note template (Phase 2 admin).
+  Future<Map<String, dynamic>> updateNoteTemplate(
+    String id,
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      return await put('notes/templates/$id', body: body);
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Deactivate an org progress-note template (Phase 2 admin).
+  Future<Map<String, dynamic>> deleteNoteTemplate(String id) async {
+    try {
+      return await delete('notes/templates/$id');
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
   /// Upload a structured progress note built from a template (Phase 2).
   ///
   /// [structuredData] is keyed by template section key. [clientNoteId] is an

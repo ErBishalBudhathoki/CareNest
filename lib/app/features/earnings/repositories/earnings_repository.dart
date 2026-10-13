@@ -127,6 +127,7 @@ class EarningsRepository {
     List<String>? activeAllowances,
     String? organizationId,
     String? adminEmail,
+    int? standardHoursPerDay,
   ]) async {
     final body = {'rate': rate, 'type': type};
 
@@ -165,6 +166,7 @@ class EarningsRepository {
       payPoint: payPoint,
       stream: stream,
       employmentType: employmentType,
+      standardHoursPerDay: standardHoursPerDay,
     );
     if (award != null) {
       body['award'] = award;
@@ -187,6 +189,7 @@ class EarningsRepository {
     String? payPoint,
     String? stream,
     String? employmentType,
+    int? standardHoursPerDay,
   }) {
     final award = <String, dynamic>{'awardCode': 'MA000100'};
 
@@ -204,6 +207,10 @@ class EarningsRepository {
       award['employmentType'] = employmentType.toLowerCase().contains('casual')
           ? 'casual'
           : 'permanent_ft';
+    }
+
+    if (standardHoursPerDay != null && standardHoursPerDay > 0) {
+      award['standardHoursPerDay'] = standardHoursPerDay;
     }
 
     // Only send when more than the default award code is present.

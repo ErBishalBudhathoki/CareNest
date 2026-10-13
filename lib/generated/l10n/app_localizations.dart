@@ -14017,6 +14017,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Generate bulk payment request CSVs and reconcile results.'**
   String get ndisClaimingDesc;
+
+  /// No description provided for @noteTemplates.
+  ///
+  /// In en, this message translates to:
+  /// **'Note Templates'**
+  String get noteTemplates;
+
+  /// No description provided for @noteTemplatesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Define the structured shift-note templates workers complete.'**
+  String get noteTemplatesDesc;
 }
 
 class _AppLocalizationsDelegate

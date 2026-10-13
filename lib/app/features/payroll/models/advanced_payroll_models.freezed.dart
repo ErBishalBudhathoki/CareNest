@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PayrollCalculation {
 
- String get userId; String get period; double get baseHours; double get baseRate; double get baseAmount; PenaltyRates get penalties; Allowances get allowances; LeaveAccrual get leaveAccrual; TaxAndSuper get taxAndSuper; double get grossPay; double get netPay;
+ String get userId; String get period; double get baseHours; double get baseRate; double get baseAmount; PenaltyRates get penalties; Allowances get allowances; LeaveAccrual get leaveAccrual; TaxAndSuper get taxAndSuper; double get grossPay; double get netPay; PayrollHoursBreakdown? get hoursBreakdown;
 /// Create a copy of PayrollCalculation
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $PayrollCalculationCopyWith<PayrollCalculation> get copyWith => _$PayrollCalcula
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PayrollCalculation&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.period, period) || other.period == period)&&(identical(other.baseHours, baseHours) || other.baseHours == baseHours)&&(identical(other.baseRate, baseRate) || other.baseRate == baseRate)&&(identical(other.baseAmount, baseAmount) || other.baseAmount == baseAmount)&&(identical(other.penalties, penalties) || other.penalties == penalties)&&(identical(other.allowances, allowances) || other.allowances == allowances)&&(identical(other.leaveAccrual, leaveAccrual) || other.leaveAccrual == leaveAccrual)&&(identical(other.taxAndSuper, taxAndSuper) || other.taxAndSuper == taxAndSuper)&&(identical(other.grossPay, grossPay) || other.grossPay == grossPay)&&(identical(other.netPay, netPay) || other.netPay == netPay));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PayrollCalculation&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.period, period) || other.period == period)&&(identical(other.baseHours, baseHours) || other.baseHours == baseHours)&&(identical(other.baseRate, baseRate) || other.baseRate == baseRate)&&(identical(other.baseAmount, baseAmount) || other.baseAmount == baseAmount)&&(identical(other.penalties, penalties) || other.penalties == penalties)&&(identical(other.allowances, allowances) || other.allowances == allowances)&&(identical(other.leaveAccrual, leaveAccrual) || other.leaveAccrual == leaveAccrual)&&(identical(other.taxAndSuper, taxAndSuper) || other.taxAndSuper == taxAndSuper)&&(identical(other.grossPay, grossPay) || other.grossPay == grossPay)&&(identical(other.netPay, netPay) || other.netPay == netPay)&&(identical(other.hoursBreakdown, hoursBreakdown) || other.hoursBreakdown == hoursBreakdown));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,userId,period,baseHours,baseRate,baseAmount,penalties,allowances,leaveAccrual,taxAndSuper,grossPay,netPay);
+int get hashCode => Object.hash(runtimeType,userId,period,baseHours,baseRate,baseAmount,penalties,allowances,leaveAccrual,taxAndSuper,grossPay,netPay,hoursBreakdown);
 
 @override
 String toString() {
-  return 'PayrollCalculation(userId: $userId, period: $period, baseHours: $baseHours, baseRate: $baseRate, baseAmount: $baseAmount, penalties: $penalties, allowances: $allowances, leaveAccrual: $leaveAccrual, taxAndSuper: $taxAndSuper, grossPay: $grossPay, netPay: $netPay)';
+  return 'PayrollCalculation(userId: $userId, period: $period, baseHours: $baseHours, baseRate: $baseRate, baseAmount: $baseAmount, penalties: $penalties, allowances: $allowances, leaveAccrual: $leaveAccrual, taxAndSuper: $taxAndSuper, grossPay: $grossPay, netPay: $netPay, hoursBreakdown: $hoursBreakdown)';
 }
 
 
@@ -48,11 +48,11 @@ abstract mixin class $PayrollCalculationCopyWith<$Res>  {
   factory $PayrollCalculationCopyWith(PayrollCalculation value, $Res Function(PayrollCalculation) _then) = _$PayrollCalculationCopyWithImpl;
 @useResult
 $Res call({
- String userId, String period, double baseHours, double baseRate, double baseAmount, PenaltyRates penalties, Allowances allowances, LeaveAccrual leaveAccrual, TaxAndSuper taxAndSuper, double grossPay, double netPay
+ String userId, String period, double baseHours, double baseRate, double baseAmount, PenaltyRates penalties, Allowances allowances, LeaveAccrual leaveAccrual, TaxAndSuper taxAndSuper, double grossPay, double netPay, PayrollHoursBreakdown? hoursBreakdown
 });
 
 
-$PenaltyRatesCopyWith<$Res> get penalties;$AllowancesCopyWith<$Res> get allowances;$LeaveAccrualCopyWith<$Res> get leaveAccrual;$TaxAndSuperCopyWith<$Res> get taxAndSuper;
+$PenaltyRatesCopyWith<$Res> get penalties;$AllowancesCopyWith<$Res> get allowances;$LeaveAccrualCopyWith<$Res> get leaveAccrual;$TaxAndSuperCopyWith<$Res> get taxAndSuper;$PayrollHoursBreakdownCopyWith<$Res>? get hoursBreakdown;
 
 }
 /// @nodoc
@@ -65,7 +65,7 @@ class _$PayrollCalculationCopyWithImpl<$Res>
 
 /// Create a copy of PayrollCalculation
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? userId = null,Object? period = null,Object? baseHours = null,Object? baseRate = null,Object? baseAmount = null,Object? penalties = null,Object? allowances = null,Object? leaveAccrual = null,Object? taxAndSuper = null,Object? grossPay = null,Object? netPay = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? userId = null,Object? period = null,Object? baseHours = null,Object? baseRate = null,Object? baseAmount = null,Object? penalties = null,Object? allowances = null,Object? leaveAccrual = null,Object? taxAndSuper = null,Object? grossPay = null,Object? netPay = null,Object? hoursBreakdown = freezed,}) {
   return _then(_self.copyWith(
 userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,period: null == period ? _self.period : period // ignore: cast_nullable_to_non_nullable
@@ -78,7 +78,8 @@ as Allowances,leaveAccrual: null == leaveAccrual ? _self.leaveAccrual : leaveAcc
 as LeaveAccrual,taxAndSuper: null == taxAndSuper ? _self.taxAndSuper : taxAndSuper // ignore: cast_nullable_to_non_nullable
 as TaxAndSuper,grossPay: null == grossPay ? _self.grossPay : grossPay // ignore: cast_nullable_to_non_nullable
 as double,netPay: null == netPay ? _self.netPay : netPay // ignore: cast_nullable_to_non_nullable
-as double,
+as double,hoursBreakdown: freezed == hoursBreakdown ? _self.hoursBreakdown : hoursBreakdown // ignore: cast_nullable_to_non_nullable
+as PayrollHoursBreakdown?,
   ));
 }
 /// Create a copy of PayrollCalculation
@@ -116,6 +117,18 @@ $TaxAndSuperCopyWith<$Res> get taxAndSuper {
   
   return $TaxAndSuperCopyWith<$Res>(_self.taxAndSuper, (value) {
     return _then(_self.copyWith(taxAndSuper: value));
+  });
+}/// Create a copy of PayrollCalculation
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$PayrollHoursBreakdownCopyWith<$Res>? get hoursBreakdown {
+    if (_self.hoursBreakdown == null) {
+    return null;
+  }
+
+  return $PayrollHoursBreakdownCopyWith<$Res>(_self.hoursBreakdown!, (value) {
+    return _then(_self.copyWith(hoursBreakdown: value));
   });
 }
 }
@@ -199,10 +212,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String userId,  String period,  double baseHours,  double baseRate,  double baseAmount,  PenaltyRates penalties,  Allowances allowances,  LeaveAccrual leaveAccrual,  TaxAndSuper taxAndSuper,  double grossPay,  double netPay)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String userId,  String period,  double baseHours,  double baseRate,  double baseAmount,  PenaltyRates penalties,  Allowances allowances,  LeaveAccrual leaveAccrual,  TaxAndSuper taxAndSuper,  double grossPay,  double netPay,  PayrollHoursBreakdown? hoursBreakdown)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PayrollCalculation() when $default != null:
-return $default(_that.userId,_that.period,_that.baseHours,_that.baseRate,_that.baseAmount,_that.penalties,_that.allowances,_that.leaveAccrual,_that.taxAndSuper,_that.grossPay,_that.netPay);case _:
+return $default(_that.userId,_that.period,_that.baseHours,_that.baseRate,_that.baseAmount,_that.penalties,_that.allowances,_that.leaveAccrual,_that.taxAndSuper,_that.grossPay,_that.netPay,_that.hoursBreakdown);case _:
   return orElse();
 
 }
@@ -220,10 +233,10 @@ return $default(_that.userId,_that.period,_that.baseHours,_that.baseRate,_that.b
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String userId,  String period,  double baseHours,  double baseRate,  double baseAmount,  PenaltyRates penalties,  Allowances allowances,  LeaveAccrual leaveAccrual,  TaxAndSuper taxAndSuper,  double grossPay,  double netPay)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String userId,  String period,  double baseHours,  double baseRate,  double baseAmount,  PenaltyRates penalties,  Allowances allowances,  LeaveAccrual leaveAccrual,  TaxAndSuper taxAndSuper,  double grossPay,  double netPay,  PayrollHoursBreakdown? hoursBreakdown)  $default,) {final _that = this;
 switch (_that) {
 case _PayrollCalculation():
-return $default(_that.userId,_that.period,_that.baseHours,_that.baseRate,_that.baseAmount,_that.penalties,_that.allowances,_that.leaveAccrual,_that.taxAndSuper,_that.grossPay,_that.netPay);case _:
+return $default(_that.userId,_that.period,_that.baseHours,_that.baseRate,_that.baseAmount,_that.penalties,_that.allowances,_that.leaveAccrual,_that.taxAndSuper,_that.grossPay,_that.netPay,_that.hoursBreakdown);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -240,10 +253,10 @@ return $default(_that.userId,_that.period,_that.baseHours,_that.baseRate,_that.b
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String userId,  String period,  double baseHours,  double baseRate,  double baseAmount,  PenaltyRates penalties,  Allowances allowances,  LeaveAccrual leaveAccrual,  TaxAndSuper taxAndSuper,  double grossPay,  double netPay)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String userId,  String period,  double baseHours,  double baseRate,  double baseAmount,  PenaltyRates penalties,  Allowances allowances,  LeaveAccrual leaveAccrual,  TaxAndSuper taxAndSuper,  double grossPay,  double netPay,  PayrollHoursBreakdown? hoursBreakdown)?  $default,) {final _that = this;
 switch (_that) {
 case _PayrollCalculation() when $default != null:
-return $default(_that.userId,_that.period,_that.baseHours,_that.baseRate,_that.baseAmount,_that.penalties,_that.allowances,_that.leaveAccrual,_that.taxAndSuper,_that.grossPay,_that.netPay);case _:
+return $default(_that.userId,_that.period,_that.baseHours,_that.baseRate,_that.baseAmount,_that.penalties,_that.allowances,_that.leaveAccrual,_that.taxAndSuper,_that.grossPay,_that.netPay,_that.hoursBreakdown);case _:
   return null;
 
 }
@@ -255,7 +268,7 @@ return $default(_that.userId,_that.period,_that.baseHours,_that.baseRate,_that.b
 @JsonSerializable()
 
 class _PayrollCalculation implements PayrollCalculation {
-  const _PayrollCalculation({required this.userId, required this.period, required this.baseHours, required this.baseRate, required this.baseAmount, required this.penalties, required this.allowances, required this.leaveAccrual, required this.taxAndSuper, required this.grossPay, required this.netPay});
+  const _PayrollCalculation({required this.userId, required this.period, required this.baseHours, required this.baseRate, required this.baseAmount, required this.penalties, required this.allowances, required this.leaveAccrual, required this.taxAndSuper, required this.grossPay, required this.netPay, this.hoursBreakdown});
   factory _PayrollCalculation.fromJson(Map<String, dynamic> json) => _$PayrollCalculationFromJson(json);
 
 @override final  String userId;
@@ -269,6 +282,7 @@ class _PayrollCalculation implements PayrollCalculation {
 @override final  TaxAndSuper taxAndSuper;
 @override final  double grossPay;
 @override final  double netPay;
+@override final  PayrollHoursBreakdown? hoursBreakdown;
 
 /// Create a copy of PayrollCalculation
 /// with the given fields replaced by the non-null parameter values.
@@ -283,16 +297,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PayrollCalculation&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.period, period) || other.period == period)&&(identical(other.baseHours, baseHours) || other.baseHours == baseHours)&&(identical(other.baseRate, baseRate) || other.baseRate == baseRate)&&(identical(other.baseAmount, baseAmount) || other.baseAmount == baseAmount)&&(identical(other.penalties, penalties) || other.penalties == penalties)&&(identical(other.allowances, allowances) || other.allowances == allowances)&&(identical(other.leaveAccrual, leaveAccrual) || other.leaveAccrual == leaveAccrual)&&(identical(other.taxAndSuper, taxAndSuper) || other.taxAndSuper == taxAndSuper)&&(identical(other.grossPay, grossPay) || other.grossPay == grossPay)&&(identical(other.netPay, netPay) || other.netPay == netPay));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PayrollCalculation&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.period, period) || other.period == period)&&(identical(other.baseHours, baseHours) || other.baseHours == baseHours)&&(identical(other.baseRate, baseRate) || other.baseRate == baseRate)&&(identical(other.baseAmount, baseAmount) || other.baseAmount == baseAmount)&&(identical(other.penalties, penalties) || other.penalties == penalties)&&(identical(other.allowances, allowances) || other.allowances == allowances)&&(identical(other.leaveAccrual, leaveAccrual) || other.leaveAccrual == leaveAccrual)&&(identical(other.taxAndSuper, taxAndSuper) || other.taxAndSuper == taxAndSuper)&&(identical(other.grossPay, grossPay) || other.grossPay == grossPay)&&(identical(other.netPay, netPay) || other.netPay == netPay)&&(identical(other.hoursBreakdown, hoursBreakdown) || other.hoursBreakdown == hoursBreakdown));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,userId,period,baseHours,baseRate,baseAmount,penalties,allowances,leaveAccrual,taxAndSuper,grossPay,netPay);
+int get hashCode => Object.hash(runtimeType,userId,period,baseHours,baseRate,baseAmount,penalties,allowances,leaveAccrual,taxAndSuper,grossPay,netPay,hoursBreakdown);
 
 @override
 String toString() {
-  return 'PayrollCalculation(userId: $userId, period: $period, baseHours: $baseHours, baseRate: $baseRate, baseAmount: $baseAmount, penalties: $penalties, allowances: $allowances, leaveAccrual: $leaveAccrual, taxAndSuper: $taxAndSuper, grossPay: $grossPay, netPay: $netPay)';
+  return 'PayrollCalculation(userId: $userId, period: $period, baseHours: $baseHours, baseRate: $baseRate, baseAmount: $baseAmount, penalties: $penalties, allowances: $allowances, leaveAccrual: $leaveAccrual, taxAndSuper: $taxAndSuper, grossPay: $grossPay, netPay: $netPay, hoursBreakdown: $hoursBreakdown)';
 }
 
 
@@ -303,11 +317,11 @@ abstract mixin class _$PayrollCalculationCopyWith<$Res> implements $PayrollCalcu
   factory _$PayrollCalculationCopyWith(_PayrollCalculation value, $Res Function(_PayrollCalculation) _then) = __$PayrollCalculationCopyWithImpl;
 @override @useResult
 $Res call({
- String userId, String period, double baseHours, double baseRate, double baseAmount, PenaltyRates penalties, Allowances allowances, LeaveAccrual leaveAccrual, TaxAndSuper taxAndSuper, double grossPay, double netPay
+ String userId, String period, double baseHours, double baseRate, double baseAmount, PenaltyRates penalties, Allowances allowances, LeaveAccrual leaveAccrual, TaxAndSuper taxAndSuper, double grossPay, double netPay, PayrollHoursBreakdown? hoursBreakdown
 });
 
 
-@override $PenaltyRatesCopyWith<$Res> get penalties;@override $AllowancesCopyWith<$Res> get allowances;@override $LeaveAccrualCopyWith<$Res> get leaveAccrual;@override $TaxAndSuperCopyWith<$Res> get taxAndSuper;
+@override $PenaltyRatesCopyWith<$Res> get penalties;@override $AllowancesCopyWith<$Res> get allowances;@override $LeaveAccrualCopyWith<$Res> get leaveAccrual;@override $TaxAndSuperCopyWith<$Res> get taxAndSuper;@override $PayrollHoursBreakdownCopyWith<$Res>? get hoursBreakdown;
 
 }
 /// @nodoc
@@ -320,7 +334,7 @@ class __$PayrollCalculationCopyWithImpl<$Res>
 
 /// Create a copy of PayrollCalculation
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? userId = null,Object? period = null,Object? baseHours = null,Object? baseRate = null,Object? baseAmount = null,Object? penalties = null,Object? allowances = null,Object? leaveAccrual = null,Object? taxAndSuper = null,Object? grossPay = null,Object? netPay = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? userId = null,Object? period = null,Object? baseHours = null,Object? baseRate = null,Object? baseAmount = null,Object? penalties = null,Object? allowances = null,Object? leaveAccrual = null,Object? taxAndSuper = null,Object? grossPay = null,Object? netPay = null,Object? hoursBreakdown = freezed,}) {
   return _then(_PayrollCalculation(
 userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,period: null == period ? _self.period : period // ignore: cast_nullable_to_non_nullable
@@ -333,7 +347,8 @@ as Allowances,leaveAccrual: null == leaveAccrual ? _self.leaveAccrual : leaveAcc
 as LeaveAccrual,taxAndSuper: null == taxAndSuper ? _self.taxAndSuper : taxAndSuper // ignore: cast_nullable_to_non_nullable
 as TaxAndSuper,grossPay: null == grossPay ? _self.grossPay : grossPay // ignore: cast_nullable_to_non_nullable
 as double,netPay: null == netPay ? _self.netPay : netPay // ignore: cast_nullable_to_non_nullable
-as double,
+as double,hoursBreakdown: freezed == hoursBreakdown ? _self.hoursBreakdown : hoursBreakdown // ignore: cast_nullable_to_non_nullable
+as PayrollHoursBreakdown?,
   ));
 }
 
@@ -373,7 +388,306 @@ $TaxAndSuperCopyWith<$Res> get taxAndSuper {
   return $TaxAndSuperCopyWith<$Res>(_self.taxAndSuper, (value) {
     return _then(_self.copyWith(taxAndSuper: value));
   });
+}/// Create a copy of PayrollCalculation
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$PayrollHoursBreakdownCopyWith<$Res>? get hoursBreakdown {
+    if (_self.hoursBreakdown == null) {
+    return null;
+  }
+
+  return $PayrollHoursBreakdownCopyWith<$Res>(_self.hoursBreakdown!, (value) {
+    return _then(_self.copyWith(hoursBreakdown: value));
+  });
 }
+}
+
+
+/// @nodoc
+mixin _$PayrollHoursBreakdown {
+
+ double get baseHours; double get afternoonShiftHours; double get nightShiftHours; double get saturdayHours; double get sundayHours; double get publicHolidayHours; double get overtimeFirst2h; double get overtimeAfter2h; double get totalHours;
+/// Create a copy of PayrollHoursBreakdown
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$PayrollHoursBreakdownCopyWith<PayrollHoursBreakdown> get copyWith => _$PayrollHoursBreakdownCopyWithImpl<PayrollHoursBreakdown>(this as PayrollHoursBreakdown, _$identity);
+
+  /// Serializes this PayrollHoursBreakdown to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PayrollHoursBreakdown&&(identical(other.baseHours, baseHours) || other.baseHours == baseHours)&&(identical(other.afternoonShiftHours, afternoonShiftHours) || other.afternoonShiftHours == afternoonShiftHours)&&(identical(other.nightShiftHours, nightShiftHours) || other.nightShiftHours == nightShiftHours)&&(identical(other.saturdayHours, saturdayHours) || other.saturdayHours == saturdayHours)&&(identical(other.sundayHours, sundayHours) || other.sundayHours == sundayHours)&&(identical(other.publicHolidayHours, publicHolidayHours) || other.publicHolidayHours == publicHolidayHours)&&(identical(other.overtimeFirst2h, overtimeFirst2h) || other.overtimeFirst2h == overtimeFirst2h)&&(identical(other.overtimeAfter2h, overtimeAfter2h) || other.overtimeAfter2h == overtimeAfter2h)&&(identical(other.totalHours, totalHours) || other.totalHours == totalHours));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,baseHours,afternoonShiftHours,nightShiftHours,saturdayHours,sundayHours,publicHolidayHours,overtimeFirst2h,overtimeAfter2h,totalHours);
+
+@override
+String toString() {
+  return 'PayrollHoursBreakdown(baseHours: $baseHours, afternoonShiftHours: $afternoonShiftHours, nightShiftHours: $nightShiftHours, saturdayHours: $saturdayHours, sundayHours: $sundayHours, publicHolidayHours: $publicHolidayHours, overtimeFirst2h: $overtimeFirst2h, overtimeAfter2h: $overtimeAfter2h, totalHours: $totalHours)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $PayrollHoursBreakdownCopyWith<$Res>  {
+  factory $PayrollHoursBreakdownCopyWith(PayrollHoursBreakdown value, $Res Function(PayrollHoursBreakdown) _then) = _$PayrollHoursBreakdownCopyWithImpl;
+@useResult
+$Res call({
+ double baseHours, double afternoonShiftHours, double nightShiftHours, double saturdayHours, double sundayHours, double publicHolidayHours, double overtimeFirst2h, double overtimeAfter2h, double totalHours
+});
+
+
+
+
+}
+/// @nodoc
+class _$PayrollHoursBreakdownCopyWithImpl<$Res>
+    implements $PayrollHoursBreakdownCopyWith<$Res> {
+  _$PayrollHoursBreakdownCopyWithImpl(this._self, this._then);
+
+  final PayrollHoursBreakdown _self;
+  final $Res Function(PayrollHoursBreakdown) _then;
+
+/// Create a copy of PayrollHoursBreakdown
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? baseHours = null,Object? afternoonShiftHours = null,Object? nightShiftHours = null,Object? saturdayHours = null,Object? sundayHours = null,Object? publicHolidayHours = null,Object? overtimeFirst2h = null,Object? overtimeAfter2h = null,Object? totalHours = null,}) {
+  return _then(_self.copyWith(
+baseHours: null == baseHours ? _self.baseHours : baseHours // ignore: cast_nullable_to_non_nullable
+as double,afternoonShiftHours: null == afternoonShiftHours ? _self.afternoonShiftHours : afternoonShiftHours // ignore: cast_nullable_to_non_nullable
+as double,nightShiftHours: null == nightShiftHours ? _self.nightShiftHours : nightShiftHours // ignore: cast_nullable_to_non_nullable
+as double,saturdayHours: null == saturdayHours ? _self.saturdayHours : saturdayHours // ignore: cast_nullable_to_non_nullable
+as double,sundayHours: null == sundayHours ? _self.sundayHours : sundayHours // ignore: cast_nullable_to_non_nullable
+as double,publicHolidayHours: null == publicHolidayHours ? _self.publicHolidayHours : publicHolidayHours // ignore: cast_nullable_to_non_nullable
+as double,overtimeFirst2h: null == overtimeFirst2h ? _self.overtimeFirst2h : overtimeFirst2h // ignore: cast_nullable_to_non_nullable
+as double,overtimeAfter2h: null == overtimeAfter2h ? _self.overtimeAfter2h : overtimeAfter2h // ignore: cast_nullable_to_non_nullable
+as double,totalHours: null == totalHours ? _self.totalHours : totalHours // ignore: cast_nullable_to_non_nullable
+as double,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [PayrollHoursBreakdown].
+extension PayrollHoursBreakdownPatterns on PayrollHoursBreakdown {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _PayrollHoursBreakdown value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _PayrollHoursBreakdown() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _PayrollHoursBreakdown value)  $default,){
+final _that = this;
+switch (_that) {
+case _PayrollHoursBreakdown():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _PayrollHoursBreakdown value)?  $default,){
+final _that = this;
+switch (_that) {
+case _PayrollHoursBreakdown() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double baseHours,  double afternoonShiftHours,  double nightShiftHours,  double saturdayHours,  double sundayHours,  double publicHolidayHours,  double overtimeFirst2h,  double overtimeAfter2h,  double totalHours)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _PayrollHoursBreakdown() when $default != null:
+return $default(_that.baseHours,_that.afternoonShiftHours,_that.nightShiftHours,_that.saturdayHours,_that.sundayHours,_that.publicHolidayHours,_that.overtimeFirst2h,_that.overtimeAfter2h,_that.totalHours);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double baseHours,  double afternoonShiftHours,  double nightShiftHours,  double saturdayHours,  double sundayHours,  double publicHolidayHours,  double overtimeFirst2h,  double overtimeAfter2h,  double totalHours)  $default,) {final _that = this;
+switch (_that) {
+case _PayrollHoursBreakdown():
+return $default(_that.baseHours,_that.afternoonShiftHours,_that.nightShiftHours,_that.saturdayHours,_that.sundayHours,_that.publicHolidayHours,_that.overtimeFirst2h,_that.overtimeAfter2h,_that.totalHours);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double baseHours,  double afternoonShiftHours,  double nightShiftHours,  double saturdayHours,  double sundayHours,  double publicHolidayHours,  double overtimeFirst2h,  double overtimeAfter2h,  double totalHours)?  $default,) {final _that = this;
+switch (_that) {
+case _PayrollHoursBreakdown() when $default != null:
+return $default(_that.baseHours,_that.afternoonShiftHours,_that.nightShiftHours,_that.saturdayHours,_that.sundayHours,_that.publicHolidayHours,_that.overtimeFirst2h,_that.overtimeAfter2h,_that.totalHours);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _PayrollHoursBreakdown implements PayrollHoursBreakdown {
+  const _PayrollHoursBreakdown({this.baseHours = 0, this.afternoonShiftHours = 0, this.nightShiftHours = 0, this.saturdayHours = 0, this.sundayHours = 0, this.publicHolidayHours = 0, this.overtimeFirst2h = 0, this.overtimeAfter2h = 0, this.totalHours = 0});
+  factory _PayrollHoursBreakdown.fromJson(Map<String, dynamic> json) => _$PayrollHoursBreakdownFromJson(json);
+
+@override@JsonKey() final  double baseHours;
+@override@JsonKey() final  double afternoonShiftHours;
+@override@JsonKey() final  double nightShiftHours;
+@override@JsonKey() final  double saturdayHours;
+@override@JsonKey() final  double sundayHours;
+@override@JsonKey() final  double publicHolidayHours;
+@override@JsonKey() final  double overtimeFirst2h;
+@override@JsonKey() final  double overtimeAfter2h;
+@override@JsonKey() final  double totalHours;
+
+/// Create a copy of PayrollHoursBreakdown
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$PayrollHoursBreakdownCopyWith<_PayrollHoursBreakdown> get copyWith => __$PayrollHoursBreakdownCopyWithImpl<_PayrollHoursBreakdown>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$PayrollHoursBreakdownToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PayrollHoursBreakdown&&(identical(other.baseHours, baseHours) || other.baseHours == baseHours)&&(identical(other.afternoonShiftHours, afternoonShiftHours) || other.afternoonShiftHours == afternoonShiftHours)&&(identical(other.nightShiftHours, nightShiftHours) || other.nightShiftHours == nightShiftHours)&&(identical(other.saturdayHours, saturdayHours) || other.saturdayHours == saturdayHours)&&(identical(other.sundayHours, sundayHours) || other.sundayHours == sundayHours)&&(identical(other.publicHolidayHours, publicHolidayHours) || other.publicHolidayHours == publicHolidayHours)&&(identical(other.overtimeFirst2h, overtimeFirst2h) || other.overtimeFirst2h == overtimeFirst2h)&&(identical(other.overtimeAfter2h, overtimeAfter2h) || other.overtimeAfter2h == overtimeAfter2h)&&(identical(other.totalHours, totalHours) || other.totalHours == totalHours));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,baseHours,afternoonShiftHours,nightShiftHours,saturdayHours,sundayHours,publicHolidayHours,overtimeFirst2h,overtimeAfter2h,totalHours);
+
+@override
+String toString() {
+  return 'PayrollHoursBreakdown(baseHours: $baseHours, afternoonShiftHours: $afternoonShiftHours, nightShiftHours: $nightShiftHours, saturdayHours: $saturdayHours, sundayHours: $sundayHours, publicHolidayHours: $publicHolidayHours, overtimeFirst2h: $overtimeFirst2h, overtimeAfter2h: $overtimeAfter2h, totalHours: $totalHours)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$PayrollHoursBreakdownCopyWith<$Res> implements $PayrollHoursBreakdownCopyWith<$Res> {
+  factory _$PayrollHoursBreakdownCopyWith(_PayrollHoursBreakdown value, $Res Function(_PayrollHoursBreakdown) _then) = __$PayrollHoursBreakdownCopyWithImpl;
+@override @useResult
+$Res call({
+ double baseHours, double afternoonShiftHours, double nightShiftHours, double saturdayHours, double sundayHours, double publicHolidayHours, double overtimeFirst2h, double overtimeAfter2h, double totalHours
+});
+
+
+
+
+}
+/// @nodoc
+class __$PayrollHoursBreakdownCopyWithImpl<$Res>
+    implements _$PayrollHoursBreakdownCopyWith<$Res> {
+  __$PayrollHoursBreakdownCopyWithImpl(this._self, this._then);
+
+  final _PayrollHoursBreakdown _self;
+  final $Res Function(_PayrollHoursBreakdown) _then;
+
+/// Create a copy of PayrollHoursBreakdown
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? baseHours = null,Object? afternoonShiftHours = null,Object? nightShiftHours = null,Object? saturdayHours = null,Object? sundayHours = null,Object? publicHolidayHours = null,Object? overtimeFirst2h = null,Object? overtimeAfter2h = null,Object? totalHours = null,}) {
+  return _then(_PayrollHoursBreakdown(
+baseHours: null == baseHours ? _self.baseHours : baseHours // ignore: cast_nullable_to_non_nullable
+as double,afternoonShiftHours: null == afternoonShiftHours ? _self.afternoonShiftHours : afternoonShiftHours // ignore: cast_nullable_to_non_nullable
+as double,nightShiftHours: null == nightShiftHours ? _self.nightShiftHours : nightShiftHours // ignore: cast_nullable_to_non_nullable
+as double,saturdayHours: null == saturdayHours ? _self.saturdayHours : saturdayHours // ignore: cast_nullable_to_non_nullable
+as double,sundayHours: null == sundayHours ? _self.sundayHours : sundayHours // ignore: cast_nullable_to_non_nullable
+as double,publicHolidayHours: null == publicHolidayHours ? _self.publicHolidayHours : publicHolidayHours // ignore: cast_nullable_to_non_nullable
+as double,overtimeFirst2h: null == overtimeFirst2h ? _self.overtimeFirst2h : overtimeFirst2h // ignore: cast_nullable_to_non_nullable
+as double,overtimeAfter2h: null == overtimeAfter2h ? _self.overtimeAfter2h : overtimeAfter2h // ignore: cast_nullable_to_non_nullable
+as double,totalHours: null == totalHours ? _self.totalHours : totalHours // ignore: cast_nullable_to_non_nullable
+as double,
+  ));
+}
+
+
 }
 
 
