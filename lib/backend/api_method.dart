@@ -4151,6 +4151,79 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
+  /// Fetch organisation progress-note templates (Phase 2).
+  Future<List<Map<String, dynamic>>> getNoteTemplates({
+    String? serviceType,
+  }) async {
+    try {
+      final query = serviceType != null && serviceType.trim().isNotEmpty
+          ? '?serviceType=${Uri.encodeQueryComponent(serviceType)}'
+          : '';
+      final response = await get('notes/templates$query');
+      if (response['success'] == true) {
+        final data = response['data'];
+        final list = (data is Map ? data['templates'] : null) as List?;
+        return (list ?? [])
+            .whereType<Map>()
+            .map((e) => Map<String, dynamic>.from(e))
+            .toList();
+      }
+      return const [];
+    } catch (e) {
+      debugPrint('Error fetching note templates: $e');
+      return const [];
+    }
+  }
+
+  /// Upload a structured progress note built from a template (Phase 2).
+  ///
+  /// [structuredData] is keyed by template section key. [clientNoteId] is an
+  /// idempotency key so offline retries do not create duplicate notes.
+  Future<UploadNotes> uploadStructuredNote({
+    required String userEmail,
+    required String clientEmail,
+    required String templateId,
+    required Map<String, dynamic> structuredData,
+    String? shiftId,
+    List<Map<String, dynamic>>? attachments,
+    String? clientNoteId,
+  }) async {
+    try {
+      final response = await post(
+        'notes',
+        body: {
+          "userEmail": userEmail,
+          "clientEmail": clientEmail,
+          "noteType": "structured",
+          "templateId": templateId,
+          "structuredData": structuredData,
+          "shiftId": ?shiftId,
+          "attachments": ?attachments,
+          "clientNoteId": ?clientNoteId,
+        },
+      );
+      if (response['success'] == true) {
+        return UploadNotes(
+          success: true,
+          title: "Success",
+          message:
+              response['message']?.toString() ?? "Note uploaded successfully",
+          surfaceColor: Colors.green,
+        );
+      }
+      return UploadNotes(
+        success: false,
+        title: "Error",
+        message: response['message']?.toString() ?? "Note upload failed",
+        surfaceColor: Colors.red,
+      );
+    } on SocketException {
+      throw Exception('Failed to upload note: network error');
+    } catch (e) {
+      throw Exception('Failed to upload note: $e');
+    }
+  }
+
   Future<Map<String, dynamic>> addShiftNote({
     required String userEmail,
     required String clientEmail,
