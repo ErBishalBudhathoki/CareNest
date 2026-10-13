@@ -3056,6 +3056,8 @@ class ApiMethod extends ChangeNotifier {
     String businessName, {
     String? userEmail,
     String? organizationId,
+    String? ndisNumber,
+    String? fundingType,
   }) async {
     try {
       debugPrint('${_baseUrl}addClient $Email');
@@ -3080,6 +3082,12 @@ class ApiMethod extends ChangeNotifier {
       if (organizationId != null) {
         requestBody["organizationId"] = organizationId;
       }
+      if (ndisNumber != null) {
+        requestBody["ndisNumber"] = ndisNumber;
+      }
+      if (fundingType != null) {
+        requestBody["fundingType"] = fundingType;
+      }
       final response = await post('addClient', body: requestBody);
       return response;
     } catch (e) {
@@ -3100,6 +3108,8 @@ class ApiMethod extends ChangeNotifier {
     String? businessName,
     required String userEmail,
     required String organizationId,
+    String? ndisNumber,
+    String? fundingType,
   }) async {
     try {
       return await put(
@@ -3115,6 +3125,8 @@ class ApiMethod extends ChangeNotifier {
           'businessName': ?businessName,
           'userEmail': userEmail,
           'organizationId': organizationId,
+          'ndisNumber': ?ndisNumber,
+          'fundingType': ?fundingType,
         },
       );
     } catch (e) {
