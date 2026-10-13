@@ -126,4 +126,7 @@ abstract class Routes {
 
   // NDIS claiming / export (Phase 6)
   static const String claimDashboard = '/ndis-claiming';
+
+  // Progress-note templates admin (Phase 2)
+  static const String noteTemplates = '/notes/templates';
 }

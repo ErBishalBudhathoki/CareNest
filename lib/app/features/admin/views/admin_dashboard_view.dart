@@ -1708,6 +1708,13 @@ class _AdminDashboardViewControllerState
             color: BauhausDesign.secondary,
             onTap: _navigateToNdisClaiming,
           ),
+          CommandAction(
+            icon: Icon(Icons.description_outlined),
+            title: l10n.noteTemplates,
+            subtitle: l10n.noteTemplatesDesc,
+            color: BauhausDesign.warning,
+            onTap: _navigateToNoteTemplates,
+          ),
           if (!kReleaseMode && !AppConfig.isProduction)
             CommandAction(
               icon: Icon(Icons.security_rounded),
@@ -1794,6 +1801,10 @@ class _AdminDashboardViewControllerState
 
   void _navigateToNdisClaiming() {
     Navigator.of(context, rootNavigator: true).pushNamed(Routes.claimDashboard);
+  }
+
+  void _navigateToNoteTemplates() {
+    Navigator.of(context, rootNavigator: true).pushNamed(Routes.noteTemplates);
   }
 
   void _navigateToEarningsDashboard() {

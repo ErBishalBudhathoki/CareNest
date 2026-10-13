@@ -28,6 +28,10 @@ class _AdvancedPayrollDashboardState
   String? _resolvedUserId;
   bool _isBootstrapping = false;
 
+  // Shift-based preview (F1.1): the employee whose real shifts are segmented.
+  List<Map<String, dynamic>> _employees = const [];
+  String? _selectedEmployeeEmail;
+
   @override
   void initState() {
     super.initState();
@@ -108,6 +112,7 @@ class _AdvancedPayrollDashboardState
       await ref
           .read(advancedPayrollViewModelProvider.notifier)
           .getPayrollSummary(orgId, _selectedPeriod);
+      await _loadEmployees(orgId);
 
       _loadedOrganizationId = orgId;
       _loadedPeriod = _selectedPeriod;
@@ -116,6 +121,28 @@ class _AdvancedPayrollDashboardState
       if (mounted) {
         setState(() {});
       }
+    }
+  }
+
+  Future<void> _loadEmployees(String orgId) async {
+    try {
+      final api = ref.read(app_providers.apiMethodProvider);
+      final response = await api.getOrganizationEmployees(orgId);
+      final list = (response['employees'] as List?) ?? const [];
+      final employees = list
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .where((e) => (e['email']?.toString() ?? '').isNotEmpty)
+          .toList();
+      if (!mounted) return;
+      setState(() {
+        _employees = employees;
+        if (_selectedEmployeeEmail == null && employees.isNotEmpty) {
+          _selectedEmployeeEmail = employees.first['email']?.toString();
+        }
+      });
+    } catch (_) {
+      // Employee list is optional; the aggregate fallback still works.
     }
   }
 
@@ -473,6 +500,15 @@ class _AdvancedPayrollDashboardState
                       onPressed: () => _showPeriodPicker(context),
                     ),
                     _buildInlineButton(
+                      label: _selectedEmployeeEmail == null
+                          ? 'EMPLOYEE'
+                          : 'EMPLOYEE: ${_employeeLabel(_selectedEmployeeEmail!)}',
+                      icon: Icons.person_search_rounded,
+                      onPressed: _employees.isEmpty
+                          ? null
+                          : () => _showEmployeePicker(context),
+                    ),
+                    _buildInlineButton(
                       label: 'REFRESH',
                       icon: Icons.refresh_rounded,
                       onPressed: () => _initializeDashboard(force: true),
@@ -544,7 +580,7 @@ class _AdvancedPayrollDashboardState
   Widget _buildInlineButton({
     required String label,
     required IconData icon,
-    required VoidCallback onPressed,
+    required VoidCallback? onPressed,
   }) {
     return OutlinedButton.icon(
       onPressed: onPressed,
@@ -1144,9 +1180,55 @@ class _AdvancedPayrollDashboardState
               ),
             ],
           ),
+          if (calculation.hoursBreakdown != null) ...[
+            const SizedBox(height: BauhausDesign.space4),
+            Text(
+              'Hours breakdown',
+              style: textTheme.titleSmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: BauhausDesign.space2),
+            Wrap(
+              spacing: BauhausDesign.space2,
+              runSpacing: BauhausDesign.space2,
+              children: _buildHoursBreakdownChips(
+                context,
+                calculation.hoursBreakdown!,
+              ),
+            ),
+          ],
         ],
       ),
     );
+  }
+
+  List<Widget> _buildHoursBreakdownChips(
+    BuildContext context,
+    PayrollHoursBreakdown h,
+  ) {
+    final rows = <(String, double)>[
+      ('Base', h.baseHours),
+      ('Afternoon', h.afternoonShiftHours),
+      ('Night', h.nightShiftHours),
+      ('Saturday', h.saturdayHours),
+      ('Sunday', h.sundayHours),
+      ('Public holiday', h.publicHolidayHours),
+      ('OT (first 2h)', h.overtimeFirst2h),
+      ('OT (after 2h)', h.overtimeAfter2h),
+    ];
+    return rows
+        .where((r) => r.$2 > 0)
+        .map(
+          (r) => Chip(
+            label: Text('${r.$1}: ${r.$2.toStringAsFixed(2)}h'),
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.surfaceContainerHighest,
+          ),
+        )
+        .toList();
   }
 
   Widget _buildEmployeeLedger(BuildContext context, PayrollSummary? summary) {
@@ -1319,6 +1401,39 @@ class _AdvancedPayrollDashboardState
     );
   }
 
+  String _employeeLabel(String email) {
+    final match = _employees.firstWhere(
+      (e) => e['email']?.toString() == email,
+      orElse: () => const {},
+    );
+    final name = [match['firstName'], match['lastName']]
+        .where((v) => v != null && v.toString().trim().isNotEmpty)
+        .join(' ')
+        .trim();
+    return name.isEmpty ? email : name;
+  }
+
+  Future<void> _showEmployeePicker(BuildContext context) async {
+    final selected = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('Select employee'),
+        children: [
+          for (final employee in _employees)
+            SimpleDialogOption(
+              onPressed: () => Navigator.of(
+                dialogContext,
+              ).pop(employee['email']?.toString()),
+              child: Text(_employeeLabel(employee['email']?.toString() ?? '')),
+            ),
+        ],
+      ),
+    );
+    if (selected != null && mounted) {
+      setState(() => _selectedEmployeeEmail = selected);
+    }
+  }
+
   Future<void> _showPeriodPicker(BuildContext context) async {
     final controller = TextEditingController(text: _selectedPeriod);
     String? validationError;
@@ -1384,6 +1499,16 @@ class _AdvancedPayrollDashboardState
     return regex.hasMatch(period);
   }
 
+  /// First/last instants of a `YYYY-MM` period.
+  (DateTime, DateTime) _periodDateRange(String period) {
+    final parts = period.split('-');
+    final year = int.tryParse(parts.isNotEmpty ? parts[0] : '') ?? DateTime.now().year;
+    final month = int.tryParse(parts.length > 1 ? parts[1] : '') ?? DateTime.now().month;
+    final start = DateTime(year, month, 1);
+    final end = DateTime(year, month + 1, 0, 23, 59, 59);
+    return (start, end);
+  }
+
   Future<void> _calculatePayroll() async {
     final orgId = _activeOrganizationId ?? _resolveOrganizationId();
     if (orgId == null || orgId.isEmpty) {
@@ -1394,27 +1519,76 @@ class _AdvancedPayrollDashboardState
       return;
     }
 
-    final userId = _resolvedUserId ?? await _resolveUserId() ?? 'system';
+    Map<String, dynamic> payrollData;
+    final email = _selectedEmployeeEmail;
+    if (email != null && email.isNotEmpty) {
+      // Shift-based preview (F1.1): segment the employee's real shifts so the
+      // SCHADS engine runs and an hours breakdown is produced.
+      final (start, end) = _periodDateRange(_selectedPeriod);
+      List<Map<String, dynamic>> shifts = const [];
+      try {
+        final api = ref.read(app_providers.apiMethodProvider);
+        final response = await api.getScheduleShifts(
+          organizationId: orgId,
+          startDate: start,
+          endDate: end,
+          employeeEmail: email,
+        );
+        final raw = (response['shifts'] ?? response['data'] ?? const []) as List;
+        shifts = raw
+            .whereType<Map>()
+            .map((s) {
+              final m = Map<String, dynamic>.from(s);
+              return {
+                'startTime': m['startTime'],
+                'endTime': m['endTime'],
+                'breakDuration': m['breakDuration'] ?? 0,
+              };
+            })
+            .where((m) => m['startTime'] != null && m['endTime'] != null)
+            .toList();
+      } catch (_) {
+        // Fall through to the "no shifts" message.
+      }
+
+      if (shifts.isEmpty) {
+        _showSnack(
+          'No shifts found for $email in $_selectedPeriod.',
+          isError: true,
+        );
+        return;
+      }
+
+      payrollData = {
+        'organizationId': orgId,
+        'userId': email,
+        'period': _selectedPeriod,
+        'shifts': shifts,
+      };
+    } else {
+      final userId = _resolvedUserId ?? await _resolveUserId() ?? 'system';
+      payrollData = {
+        'organizationId': orgId,
+        'userId': userId,
+        'period': _selectedPeriod,
+        'awardLevel': 'SCHADS-2',
+        'hours': {
+          'regular': 76,
+          'overtime': 4,
+          'saturday': 4,
+          'sunday': 0,
+          'publicHoliday': 0,
+        },
+        'travelKm': 0,
+        'mealAllowance': 0,
+        'sleepovers': 0,
+        'hasFirstAid': false,
+      };
+    }
 
     final success = await ref
         .read(advancedPayrollViewModelProvider.notifier)
-        .calculatePayroll({
-          'organizationId': orgId,
-          'userId': userId,
-          'period': _selectedPeriod,
-          'awardLevel': 'SCHADS-2',
-          'hours': {
-            'regular': 76,
-            'overtime': 4,
-            'saturday': 4,
-            'sunday': 0,
-            'publicHoliday': 0,
-          },
-          'travelKm': 0,
-          'mealAllowance': 0,
-          'sleepovers': 0,
-          'hasFirstAid': false,
-        });
+        .calculatePayroll(payrollData);
 
     if (success) {
       _showSnack('Payroll calculation completed.');
