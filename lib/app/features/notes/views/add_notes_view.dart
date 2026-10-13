@@ -7,6 +7,8 @@ import 'package:carenest/backend/api_method.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
+import 'package:carenest/app/features/notes/providers/note_templates_provider.dart';
+import 'package:carenest/app/features/notes/widgets/structured_note_composer.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -40,6 +42,10 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
   String accumulatedText = '';
   bool _isInitialized = false;
   bool _isSaving = false;
+
+  /// When non-null, the structured template composer is shown instead of the
+  /// free-text field (Phase 2).
+  Map<String, dynamic>? _selectedTemplate;
 
   @override
   void initState() {
@@ -130,6 +136,22 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
           },
           variant: BauhausActionVariant.ghost,
         ),
+        actions: [
+          if (_selectedTemplate == null)
+            IconButton(
+              tooltip: 'Use a template',
+              icon: const Icon(Icons.description_outlined),
+              onPressed: _isSaving ? null : _pickTemplate,
+            )
+          else
+            IconButton(
+              tooltip: 'Switch to free text',
+              icon: const Icon(Icons.edit_note),
+              onPressed: _isSaving
+                  ? null
+                  : () => setState(() => _selectedTemplate = null),
+            ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(
@@ -138,7 +160,9 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
           ),
         ),
       ),
-      body: Padding(
+      body: _selectedTemplate != null
+          ? _buildStructuredBody(context)
+          : Padding(
         padding: const EdgeInsets.all(BauhausDesign.space4),
         child: Column(
           children: [
@@ -297,6 +321,105 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
         setState(() {
           _isSaving = false;
         });
+      }
+    }
+  }
+
+  Widget _buildStructuredBody(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(BauhausDesign.space4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            _selectedTemplate?['name']?.toString() ?? 'Template',
+            style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: BauhausDesign.space4),
+          StructuredNoteComposer(
+            template: _selectedTemplate!,
+            isSubmitting: _isSaving,
+            onSubmit: _saveStructuredNote,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _pickTemplate() async {
+    final templates =
+        await ref.read(noteTemplatesProvider(null).future);
+    if (!mounted) return;
+
+    if (templates.isEmpty) {
+      _showSnackBar('No note templates available', isError: true);
+      return;
+    }
+
+    final selected = await showModalBottomSheet<Map<String, dynamic>>(
+      context: context,
+      builder: (sheetContext) {
+        return SafeArea(
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              const ListTile(
+                title: Text('Choose a note template'),
+                dense: true,
+              ),
+              for (final template in templates)
+                ListTile(
+                  leading: const Icon(Icons.description_outlined),
+                  title: Text(template['name']?.toString() ?? 'Template'),
+                  subtitle: template['description']?.toString().isNotEmpty == true
+                      ? Text(template['description'].toString())
+                      : null,
+                  onTap: () => Navigator.of(sheetContext).pop(template),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (selected != null && mounted) {
+      setState(() => _selectedTemplate = selected);
+    }
+  }
+
+  Future<void> _saveStructuredNote(Map<String, dynamic> data) async {
+    final templateId = _selectedTemplate?['id']?.toString();
+    if (templateId == null || templateId.isEmpty) {
+      _showSnackBar('Invalid template', isError: true);
+      return;
+    }
+
+    setState(() => _isSaving = true);
+    try {
+      final response = await apiMethod.uploadStructuredNote(
+        userEmail: widget.userEmail,
+        clientEmail: widget.clientEmail,
+        templateId: templateId,
+        structuredData: data,
+      );
+
+      if (!mounted) return;
+      if (response.success) {
+        _showSnackBar(response.message);
+        await Future.delayed(const Duration(seconds: 1));
+        if (mounted) {
+          Navigator.of(context).pop(true);
+        }
+      } else {
+        _showSnackBar(response.message, isError: true);
+      }
+    } catch (error) {
+      _showSnackBar('An error occurred while saving the note', isError: true);
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
       }
     }
   }
