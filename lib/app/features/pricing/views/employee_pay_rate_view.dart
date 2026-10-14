@@ -130,6 +130,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
 
       _selectedEmploymentType = user.employmentType ?? 'Permanent';
       _selectedAllowances = user.activeAllowances;
+      _standardHoursPerDay = user.standardHoursPerDay ?? 8;
 
       final rates = user.detailedRates;
       _saturdayRateController.text = rates?.saturdayRate.toString() ?? '';

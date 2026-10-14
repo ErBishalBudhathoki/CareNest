@@ -59,6 +59,12 @@ class User {
   late final DateTime? dob; // Added Date of Birth
   late final List<String> permissions;
 
+  /// Structured SCHADS award config (Phase 1), when the record has one.
+  late final Map<String, dynamic>? award;
+
+  /// Ordinary hours/day before overtime (from `award.standardHoursPerDay`).
+  late final int? standardHoursPerDay;
+
   User({
     required this.id,
     required this.organizationId,
@@ -81,6 +87,8 @@ class User {
     this.employmentType,
     this.dob,
     this.permissions = const [],
+    this.award,
+    this.standardHoursPerDay,
   });
 
   bool get hasAdminAccess {
@@ -162,11 +170,25 @@ class User {
         permissions:
             (json['permissions'] as List?)?.map((e) => e.toString()).toList() ??
             [],
+        award: json['award'] is Map
+            ? Map<String, dynamic>.from(json['award'] as Map)
+            : null,
+        standardHoursPerDay: _parseIntOrNull(
+          (json['award'] is Map ? (json['award'] as Map)['standardHoursPerDay'] : null) ??
+              json['standardHoursPerDay'],
+        ),
       );
     } catch (e) {
       debugPrint('Error parsing user data: $e');
       debugPrint('JSON data: $json');
       rethrow;
     }
+  }
+
+  static int? _parseIntOrNull(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    return int.tryParse(value.toString());
   }
 }
