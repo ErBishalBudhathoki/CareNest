@@ -292,7 +292,7 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
                           ),
                         ),
                         child: Text(
-                          DateFormat('MMMM dd yyyy').format(startDate),
+                          DateFormat('dd/MM/yyyy').format(startDate),
                           style: BauhausDesign.getTextTheme(context).bodyMedium
                               ?.copyWith(
                                 color: Theme.of(context).colorScheme.onSurface,
@@ -345,7 +345,7 @@ class _AddTimeOffRequestViewState extends ConsumerState<AddTimeOffRequestView> {
                           ),
                         ),
                         child: Text(
-                          DateFormat('MMMM dd yyyy').format(endDate),
+                          DateFormat('dd/MM/yyyy').format(endDate),
                           style: BauhausDesign.getTextTheme(context).bodyMedium
                               ?.copyWith(
                                 color: Theme.of(context).colorScheme.onSurface,

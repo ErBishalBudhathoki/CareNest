@@ -139,7 +139,7 @@ class ClientAppointmentDetailView extends ConsumerWidget {
 
     final dayName = date != null ? DateFormat('EEEE').format(date) : '';
     final formattedDate = date != null
-        ? DateFormat('MMMM d, yyyy').format(date)
+        ? DateFormat('dd/MM/yyyy').format(date)
         : appointment.date;
     final status = appointment.status.isNotEmpty
         ? appointment.status

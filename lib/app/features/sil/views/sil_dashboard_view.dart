@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:carenest/app/features/client/models/client_model.dart';
+import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
 import 'package:carenest/app/features/sil/models/sil_models.dart';
 import 'package:carenest/app/features/sil/repositories/sil_repository.dart';
 import 'package:carenest/app/features/sil/viewmodels/sil_viewmodels.dart';
@@ -423,6 +424,7 @@ class _RostersOfCareTab extends ConsumerStatefulWidget {
 class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
   List<SILRosterOfCare> _rosters = const [];
   bool _loading = true;
+  bool _invoicing = false;
 
   @override
   void initState() {
@@ -454,24 +456,179 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
     }
     return RefreshIndicator(
       onRefresh: _load,
-      child: ListView.separated(
-        padding: const EdgeInsets.all(12),
-        itemCount: _rosters.length,
-        separatorBuilder: (_, _) => const SizedBox(height: 8),
-        itemBuilder: (context, index) {
-          final roc = _rosters[index];
-          return Card(
-            child: ListTile(
-              leading: const Icon(Icons.assignment_outlined),
-              title: Text('RoC ${roc.id.substring(0, roc.id.length.clamp(0, 8))}'),
-              subtitle: Text(
-                '${roc.status} · ${roc.supports.length} supports · review ${roc.reviewSchedule.cadence}',
-              ),
+      child: Stack(
+        children: [
+          ListView.separated(
+            padding: const EdgeInsets.all(12),
+            itemCount: _rosters.length,
+            separatorBuilder: (_, _) => const SizedBox(height: 8),
+            itemBuilder: (context, index) {
+              final roc = _rosters[index];
+              final billable =
+                  roc.status == 'active' || roc.status == 'under_review';
+              return Card(
+                child: ListTile(
+                  leading: const Icon(Icons.assignment_outlined),
+                  title: Text(
+                    'RoC ${roc.id.substring(0, roc.id.length.clamp(0, 8))}',
+                  ),
+                  subtitle: Text(
+                    '${roc.status} · ${roc.supports.length} supports · review ${roc.reviewSchedule.cadence}',
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.receipt_long_outlined),
+                    tooltip: billable
+                        ? 'Generate invoice'
+                        : 'Only an active roster of care can be invoiced',
+                    onPressed: billable && !_invoicing
+                        ? () => _showInvoiceDialog(roc)
+                        : null,
+                  ),
+                ),
+              );
+            },
+          ),
+          if (_invoicing)
+            const Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: LinearProgressIndicator(minHeight: 2),
             ),
-          );
-        },
+        ],
       ),
     );
+  }
+
+  /// Prompt for a billing period (defaulting to the current week) and bill the
+  /// roster of care, then surface the resulting invoice. See
+  /// docs/SIL_MANAGEMENT_SPEC.md section 7.
+  Future<void> _showInvoiceDialog(SILRosterOfCare roc) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    var range = DateTimeRange(
+      start: today,
+      end: today.add(const Duration(days: 6)),
+    );
+    DateTime? dueDate;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setState) => AlertDialog(
+          title: const Text('Generate invoice'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Billing period'),
+                subtitle: Text(
+                  '${_formatDate(range.start)} → ${_formatDate(range.end)}',
+                ),
+                trailing: const Icon(Icons.date_range_outlined),
+                onTap: () async {
+                  final picked = await showBauhausDateRangePicker(
+                    context: dialogContext,
+                    initialStart: range.start,
+                    initialEnd: range.end,
+                    firstDate: DateTime(now.year - 3),
+                    lastDate: DateTime(now.year + 3),
+                  );
+                  if (picked != null) setState(() => range = picked);
+                },
+              ),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Due date (optional)'),
+                subtitle: Text(
+                  dueDate == null
+                      ? 'Default: 30 days after the period'
+                      : _formatDate(dueDate!),
+                ),
+                trailing: const Icon(Icons.event_outlined),
+                onTap: () async {
+                  final picked = await showBauhausDatePicker(
+                    context: dialogContext,
+                    initialDate: dueDate ?? range.end,
+                    firstDate: range.start,
+                    lastDate: DateTime(now.year + 5),
+                  );
+                  if (picked != null) setState(() => dueDate = picked);
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Generate'),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    setState(() => _invoicing = true);
+    try {
+      final invoice = await ref
+          .read(silRepositoryProvider)
+          .invoiceRosterOfCare(
+            roc.id,
+            from: _formatDate(range.start),
+            to: _formatDate(range.end),
+            dueDate: dueDate == null ? null : _formatDate(dueDate!),
+          );
+      if (!mounted) return;
+      final route = invoice.billing;
+      final routeLabel = route == null
+          ? ''
+          : route.isClaim
+          ? ' · NDIA claim (CSV)'
+          : ' · ${route.recipientType == 'plan_manager' ? 'plan manager' : 'participant'} PDF';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Invoice ${invoice.invoiceNumber} created$routeLabel'),
+          action: invoice.invoiceId.isEmpty
+              ? null
+              : SnackBarAction(
+                  label: 'View',
+                  onPressed: () => _openInvoice(invoice.invoiceId),
+                ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to generate invoice: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _invoicing = false);
+    }
+  }
+
+  void _openInvoice(String invoiceId) {
+    final organizationId =
+        ref.read(app_providers.organizationIdProvider) ?? '';
+    Navigator.of(context).pushNamed(
+      Routes.invoiceDetails,
+      arguments: {
+        'invoiceId': invoiceId,
+        'organizationId': organizationId,
+      },
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    final m = date.month.toString().padLeft(2, '0');
+    final d = date.day.toString().padLeft(2, '0');
+    return '${date.year}-$m-$d';
   }
 }
 

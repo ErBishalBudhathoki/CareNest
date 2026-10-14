@@ -56,7 +56,7 @@ class AnalyticsDashboardView extends ConsumerWidget {
                 children: [
                   _DashboardStatusStrip(
                     activeLabel:
-                        '${DateFormat('MMM d').format(filter.startDate)} - ${DateFormat('MMM d').format(filter.endDate)}',
+                        '${DateFormat('dd/MM').format(filter.startDate)} - ${DateFormat('dd/MM').format(filter.endDate)}',
                   ),
                   const SizedBox(height: BauhausDesign.space3),
                   Container(
@@ -86,7 +86,7 @@ class AnalyticsDashboardView extends ConsumerWidget {
                         const SizedBox(width: 8),
                         _DateFilterButton(
                           currentRange:
-                              '${DateFormat('MMM d').format(filter.startDate)} - ${DateFormat('MMM d').format(filter.endDate)}',
+                              '${DateFormat('dd/MM').format(filter.startDate)} - ${DateFormat('dd/MM').format(filter.endDate)}',
                           onTap: () => _showFilterOptions(context, ref, filter),
                         ),
                       ],

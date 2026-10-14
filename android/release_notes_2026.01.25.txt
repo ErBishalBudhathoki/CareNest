@@ -1,0 +1,16 @@
+# Release Notes - v2026.01.25 (MAJOR UPDATE)
+
+🚀 Major Update: Completely rebuilt app!
+
+✨ Highlights:
+- **UI Overhaul**: Fresh Bauhaus design for better UX.
+- **New Backend**: Rewritten for speed & reliability.
+- **Advanced Invoicing**: New engine for precision & flexibility.
+- **Modern Tech**: Updated core for smoother performance.
+
+🛠 Improvements:
+- Optimized for large data
+- Enhanced security
+- Improved stability
+
+Enjoy the new update!

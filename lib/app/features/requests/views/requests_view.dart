@@ -651,7 +651,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                         ).titleMedium?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        DateFormat('MMM d, yyyy').format(startDate),
+                        DateFormat('dd/MM/yyyy').format(startDate),
                         style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
                               color: Theme.of(

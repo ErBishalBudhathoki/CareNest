@@ -554,7 +554,7 @@ class _EditCertificationDialogState
                       Text(
                         _expiryDate == null
                             ? AppLocalizations.of(context)!.selectExpiryDate
-                            : DateFormat('dd MMM yyyy').format(_expiryDate!),
+                            : DateFormat('dd/MM/yyyy').format(_expiryDate!),
                         style: BauhausDesign.getTextTheme(context).bodyMedium,
                       ),
                     ],
@@ -771,7 +771,7 @@ class _UploadCertificationDialogState
                         Text(
                           _expiryDate == null
                               ? AppLocalizations.of(context)!.selectExpiryDate
-                              : DateFormat('dd MMM yyyy').format(_expiryDate!),
+                              : DateFormat('dd/MM/yyyy').format(_expiryDate!),
                           style: BauhausDesign.getTextTheme(context).bodyMedium,
                         ),
                       ],

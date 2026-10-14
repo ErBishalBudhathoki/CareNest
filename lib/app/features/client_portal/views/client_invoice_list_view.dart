@@ -477,7 +477,7 @@ class _InvoiceCard extends StatelessWidget {
     if (date == null) return 'N/A';
     try {
       final DateTime parsedDate = DateTime.parse(date.toString());
-      return DateFormat('MMM d, yyyy').format(parsedDate);
+      return DateFormat('dd/MM/yyyy').format(parsedDate);
     } catch (_) {
       return date.toString();
     }

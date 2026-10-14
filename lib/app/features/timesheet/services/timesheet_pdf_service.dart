@@ -29,8 +29,8 @@ class TimesheetPdfService {
     });
 
     // Formatting helpers
-    final dateFormat = DateFormat('EEE, MMM dd, yyyy');
-    final periodFormat = DateFormat('MMM dd, yyyy');
+    final dateFormat = DateFormat('EEE, dd/MM/yyyy');
+    final periodFormat = DateFormat('dd/MM/yyyy');
 
     pdf.addPage(
       pw.MultiPage(

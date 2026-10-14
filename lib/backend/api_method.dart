@@ -4459,6 +4459,28 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
+  /// Bill one period of an active roster of care (Phase 4 → 6). The generated
+  /// invoice inherits the participant's funding route (claim CSV vs PDF).
+  Future<Map<String, dynamic>> generateSilRosterOfCareInvoice(
+    String id, {
+    required String from,
+    required String to,
+    String? dueDate,
+  }) async {
+    try {
+      return await post(
+        'sil/rosters-of-care/$id/invoice',
+        body: {
+          'from': from,
+          'to': to,
+          'dueDate': ?dueDate,
+        },
+      );
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
   // -------------------------------------------------------------------------
   // Multi-stakeholder CRM (Phase 5)
   // -------------------------------------------------------------------------

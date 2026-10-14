@@ -120,6 +120,12 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
       return DateTime.parse(value);
     } catch (_) {}
 
+    // Canonical app format (DD/MM/YYYY).
+    try {
+      return DateFormat('dd/MM/yyyy').parseStrict(value);
+    } catch (_) {}
+
+    // Legacy stored format (DD-MM-YYYY).
     try {
       return DateFormat('dd-MM-yyyy').parseStrict(value);
     } catch (_) {}
@@ -538,7 +544,7 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${DateFormat('dd-MM-yyyy').format(holidayDate)} • ${DateFormat('EEEE').format(holidayDate)}',
+                        '${DateFormat('dd/MM/yyyy').format(holidayDate)} • ${DateFormat('EEEE').format(holidayDate)}',
                         style: BauhausDesign.getTextTheme(context).bodySmall
                             ?.copyWith(
                               color: Theme.of(

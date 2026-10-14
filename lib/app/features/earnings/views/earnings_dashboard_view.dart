@@ -259,7 +259,7 @@ class EarningsDashboardView extends ConsumerWidget {
     DateTime start,
     DateTime end,
   ) {
-    final df = DateFormat('MMM d');
+    final df = DateFormat('dd/MM');
     if (period == EarningsPeriod.weekly) {
       return '${df.format(start)} – ${df.format(end)}';
     }
@@ -991,8 +991,8 @@ class EarningsDashboardView extends ConsumerWidget {
       final end = DateTime.tryParse(item.periodEnd);
       if (start == null) return item.periodStart;
       if (!isWeekly) return DateFormat('MMM yyyy').format(start).toUpperCase();
-      if (end == null) return DateFormat('MMM d').format(start).toUpperCase();
-      return '${DateFormat('MMM d').format(start)} – ${DateFormat('MMM d').format(end)}'
+      if (end == null) return DateFormat('dd/MM').format(start).toUpperCase();
+      return '${DateFormat('dd/MM').format(start)} – ${DateFormat('dd/MM').format(end)}'
           .toUpperCase();
     }
 

@@ -344,7 +344,7 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
                         ),
                       ),
                       child: Text(
-                        DateFormat('MMMM dd yyyy').format(selectedDate),
+                        DateFormat('dd/MM/yyyy').format(selectedDate),
                         style: BauhausDesign.getTextTheme(context).bodyMedium
                             ?.copyWith(
                               color: Theme.of(context).colorScheme.onSurface,

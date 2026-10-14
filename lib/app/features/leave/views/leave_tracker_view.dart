@@ -348,7 +348,7 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
     AsyncValue<Map<String, dynamic>?> forecastAsync,
     LeaveViewModelState viewModel,
   ) {
-    final dateStr = DateFormat('dd MMM yyyy').format(_forecastTargetDate);
+    final dateStr = DateFormat('dd/MM/yyyy').format(_forecastTargetDate);
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -646,7 +646,7 @@ class _LeaveTrackerViewState extends ConsumerState<LeaveTrackerView> {
                       ),
                       const SizedBox(width: BauhausDesign.space2),
                       Text(
-                        "${DateFormat('dd MMM').format(req.startDate)} — ${DateFormat('dd MMM yyyy').format(req.endDate)}",
+                        "${DateFormat('dd/MM').format(req.startDate)} — ${DateFormat('dd/MM/yyyy').format(req.endDate)}",
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
