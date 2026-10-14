@@ -1,0 +1,3 @@
+New: generate an invoice from a SIL roster of care. NDIA-managed work flows to NDIS claiming; plan/self-managed work produces an invoice.
+Dates now display as DD/MM/YYYY throughout the app.
+Fixed: sign-in no longer fails with "Route not found" (the app always uses the backend's /api path).
