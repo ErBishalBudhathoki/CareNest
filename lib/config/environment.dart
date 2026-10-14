@@ -12,6 +12,18 @@ class AppConfig {
     return _normalizeAndValidateBaseUrl(
       rawBaseUrl,
       sourceLabel: '${flavorName.toUpperCase()} base URL',
+      ensureApiRoot: true,
+    );
+  }
+
+  /// Normalizes the API base URL, guaranteeing it points at the backend's
+  /// `/api` root. Exposed for tests.
+  @visibleForTesting
+  static String normalizeApiBaseUrl(String raw) {
+    return _normalizeAndValidateBaseUrl(
+      raw,
+      sourceLabel: 'Provided API base URL',
+      ensureApiRoot: true,
     );
   }
 
@@ -27,6 +39,7 @@ class AppConfig {
   static String _normalizeAndValidateBaseUrl(
     String raw, {
     required String sourceLabel,
+    bool ensureApiRoot = false,
   }) {
     final trimmed = raw.trim();
     if (trimmed.isEmpty) {
@@ -36,7 +49,24 @@ class AppConfig {
     }
 
     final withoutTrailing = trimmed.replaceAll(RegExp(r'/+$'), '');
-    final normalized = '$withoutTrailing/';
+
+    // For the API base, guarantee the `/api` root. A bare host (or explicit
+    // root path) gets `/api` appended — the backend mounts every API route
+    // under `/api`, so a base without it 404s on every request. URLs that
+    // already end in `/api` are left untouched, and custom path prefixes are
+    // respected. This makes builds independent of whether the caller (CI,
+    // deploy script, local run) pre-appended `/api` to the --dart-define URL.
+    var resolved = withoutTrailing;
+    if (ensureApiRoot) {
+      final path = Uri.tryParse(withoutTrailing)?.path ?? '';
+      final endsWithApi = path.endsWith('/api') || path == '/api';
+      final hasCustomPath = path.isNotEmpty && path != '/';
+      if (!endsWithApi && !hasCustomPath) {
+        resolved = '$withoutTrailing/api';
+      }
+    }
+
+    final normalized = '$resolved/';
     final parsed = Uri.tryParse(normalized);
     final isHttp = parsed?.scheme == 'http' || parsed?.scheme == 'https';
     final hasHost = parsed?.host.isNotEmpty == true;
