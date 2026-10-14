@@ -1,0 +1,2 @@
+Fixed: employee pay rates now save the full SCHADS award (allowances and standard hours per day).
+Fixed: NDIS claiming now flags support items that aren't in the NDIS catalogue before export.
