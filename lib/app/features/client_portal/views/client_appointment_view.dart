@@ -443,7 +443,7 @@ class _AppointmentCard extends StatelessWidget {
 
     final dayName = date != null ? DateFormat('EEEE').format(date) : '';
     final formattedDate = date != null
-        ? DateFormat('MMM d, yyyy').format(date)
+        ? DateFormat('dd/MM/yyyy').format(date)
         : appointment.date;
     final colorScheme = Theme.of(context).colorScheme;
     final headerBackground = isUpcoming

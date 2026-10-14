@@ -148,7 +148,7 @@ class MessageBubble extends StatelessWidget {
     } else if (messageDate == today.subtract(const Duration(days: 1))) {
       return 'Yesterday ${DateFormat('HH:mm').format(time)}';
     } else {
-      return DateFormat('MMM d, HH:mm').format(time);
+      return DateFormat('dd/MM, HH:mm').format(time);
     }
   }
 }

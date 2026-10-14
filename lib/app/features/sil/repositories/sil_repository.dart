@@ -193,6 +193,28 @@ class SILRepository {
         .toList();
   }
 
+  /// Bill one period of an active roster of care. The returned invoice summary
+  /// carries the stamped funding route so the UI can tell the user whether it
+  /// became a claim CSV or a PDF.
+  Future<SILRosterOfCareInvoice> invoiceRosterOfCare(
+    String id, {
+    required String from,
+    required String to,
+    String? dueDate,
+  }) async {
+    final response = await _apiMethod.generateSilRosterOfCareInvoice(
+      id,
+      from: from,
+      to: to,
+      dueDate: dueDate,
+    );
+    _ensureSuccess(response, 'Failed to generate invoice');
+    final data = response['data'];
+    return SILRosterOfCareInvoice.fromJson(
+      data is Map ? Map<String, dynamic>.from(data) : const {},
+    );
+  }
+
   void _ensureSuccess(Map<String, dynamic> response, String fallback) {
     if (response['success'] != true) {
       throw Exception(response['message']?.toString() ?? fallback);

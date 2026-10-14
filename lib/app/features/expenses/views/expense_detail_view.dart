@@ -27,7 +27,7 @@ class ExpenseDetailView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currencyFormat = NumberFormat.currency(symbol: '\$');
-    final dateFormat = DateFormat('MMMM dd, yyyy');
+    final dateFormat = DateFormat('dd/MM/yyyy');
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(

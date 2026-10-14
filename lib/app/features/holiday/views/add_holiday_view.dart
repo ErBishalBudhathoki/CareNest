@@ -47,7 +47,7 @@ class _AddHolidayScreenState extends ConsumerState<AddHolidayScreen> {
 
     if (picked != null) {
       setState(() {
-        _dateController.text = DateFormat('dd-MM-yyyy').format(picked);
+        _dateController.text = DateFormat('dd/MM/yyyy').format(picked);
         _dayController.text = DateFormat('EEEE').format(picked);
       });
     }

@@ -251,7 +251,7 @@ class _WeekRangeHeader extends StatelessWidget {
           Expanded(
             child: Center(
               child: Text(
-                '${DateFormat('MMM dd', AppLocalizations.of(context)!.localeName).format(weekStart)} – ${DateFormat('MMM dd, yyyy', AppLocalizations.of(context)!.localeName).format(weekEnd)}'
+                '${DateFormat('dd/MM', AppLocalizations.of(context)!.localeName).format(weekStart)} – ${DateFormat('dd/MM/yyyy', AppLocalizations.of(context)!.localeName).format(weekEnd)}'
                     .toUpperCase(),
                 style: BauhausDesign.getTextTheme(context).titleMedium
                     ?.copyWith(
@@ -964,7 +964,7 @@ class _EmptyWeekState extends StatelessWidget {
             ),
             const SizedBox(height: BauhausDesign.space1),
             Text(
-              '${DateFormat('MMM dd', AppLocalizations.of(context)!.localeName).format(weekStart)} – ${DateFormat('MMM dd', AppLocalizations.of(context)!.localeName).format(weekEnd)}',
+              '${DateFormat('dd/MM', AppLocalizations.of(context)!.localeName).format(weekStart)} – ${DateFormat('dd/MM', AppLocalizations.of(context)!.localeName).format(weekEnd)}',
               style: GoogleFonts.inter(
                 fontSize: 12,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,

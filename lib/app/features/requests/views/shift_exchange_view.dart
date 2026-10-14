@@ -472,7 +472,7 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
     if (dateStr == null) return 'N/A';
     try {
       final date = DateTime.parse(dateStr);
-      return DateFormat('EEE, MMM d').format(date);
+      return DateFormat('EEE, dd/MM').format(date);
     } catch (e) {
       return dateStr;
     }
@@ -623,7 +623,7 @@ class _ShiftDetailsDialogContentState
     if (date == null) return '';
     try {
       final dt = DateTime.parse(date.toString());
-      return DateFormat('EEE, MMM d').format(dt);
+      return DateFormat('EEE, dd/MM').format(dt);
     } catch (e) {
       return date.toString();
     }

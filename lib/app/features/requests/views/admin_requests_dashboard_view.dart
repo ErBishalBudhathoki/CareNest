@@ -261,7 +261,7 @@ class _AdminRequestsDashboardViewState
                       ),
                       Text(
                         request.createdAt != null
-                            ? DateFormat('MMM d, y').format(request.createdAt!)
+                            ? DateFormat('dd/MM/yyyy').format(request.createdAt!)
                             : '',
                         style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
@@ -408,10 +408,10 @@ class _AdminRequestsDashboardViewState
 
       try {
         if (startsStr != null) {
-          from = DateFormat('MMM d, y').format(DateTime.parse(startsStr));
+          from = DateFormat('dd/MM/yyyy').format(DateTime.parse(startsStr));
         }
         if (endsStr != null) {
-          to = DateFormat('MMM d, y').format(DateTime.parse(endsStr));
+          to = DateFormat('dd/MM/yyyy').format(DateTime.parse(endsStr));
         }
       } catch (e) {
         // Keep original
@@ -440,7 +440,7 @@ class _AdminRequestsDashboardViewState
       if (startsStr != null) {
         try {
           final startDt = DateTime.parse(startsStr);
-          date = DateFormat('MMM d, y').format(startDt);
+          date = DateFormat('dd/MM/yyyy').format(startDt);
 
           final startTime = DateFormat('h:mm a').format(startDt);
           String endTime = '';

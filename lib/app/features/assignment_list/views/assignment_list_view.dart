@@ -1219,7 +1219,7 @@ class _EnhancedAssignmentCardState
     if (dateString.isEmpty) return AppLocalizations.of(context)!.unknown;
     try {
       final date = DateTime.parse(dateString);
-      return DateFormat('MMM dd, yyyy').format(date);
+      return DateFormat('dd/MM/yyyy').format(date);
     } catch (_) {
       return dateString;
     }
@@ -1229,7 +1229,7 @@ class _EnhancedAssignmentCardState
     if (dateString.isEmpty) return AppLocalizations.of(context)!.unknown;
     try {
       final date = DateTime.parse(dateString);
-      return DateFormat('EEE, MMM dd').format(date);
+      return DateFormat('EEE, dd/MM').format(date);
     } catch (_) {
       return dateString;
     }
