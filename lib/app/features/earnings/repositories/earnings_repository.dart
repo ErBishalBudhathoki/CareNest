@@ -167,6 +167,7 @@ class EarningsRepository {
       stream: stream,
       employmentType: employmentType,
       standardHoursPerDay: standardHoursPerDay,
+      activeAllowances: activeAllowances,
     );
     if (award != null) {
       body['award'] = award;
@@ -190,6 +191,7 @@ class EarningsRepository {
     String? stream,
     String? employmentType,
     int? standardHoursPerDay,
+    List<String>? activeAllowances,
   }) {
     final award = <String, dynamic>{'awardCode': 'MA000100'};
 
@@ -211,6 +213,15 @@ class EarningsRepository {
 
     if (standardHoursPerDay != null && standardHoursPerDay > 0) {
       award['standardHoursPerDay'] = standardHoursPerDay;
+    }
+
+    // Map the selected allowances onto the structured award flags the payroll
+    // engine reads (`resolveProfile` allowances).
+    if (activeAllowances != null) {
+      final lowered = activeAllowances.map((a) => a.toLowerCase()).toList();
+      award['firstAidAllowance'] =
+          lowered.any((a) => a.contains('first aid'));
+      award['mealAllowanceEligible'] = lowered.any((a) => a.contains('meal'));
     }
 
     // Only send when more than the default award code is present.
