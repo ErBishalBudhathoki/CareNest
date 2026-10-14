@@ -18,6 +18,32 @@ void main() {
       );
     });
 
+    test('API base URL always points at /api', () {
+      // Bare host (the shape the .env / CI build passes) gets /api appended.
+      expect(
+        AppConfig.normalizeApiBaseUrl('https://api.example.com'),
+        'https://api.example.com/api/',
+      );
+      expect(
+        AppConfig.normalizeApiBaseUrl('https://api.example.com/'),
+        'https://api.example.com/api/',
+      );
+      // Already-correct URLs are left untouched (idempotent).
+      expect(
+        AppConfig.normalizeApiBaseUrl('https://api.example.com/api'),
+        'https://api.example.com/api/',
+      );
+      expect(
+        AppConfig.normalizeApiBaseUrl('https://api.example.com/api/'),
+        'https://api.example.com/api/',
+      );
+      // A custom path prefix is respected, not doubled.
+      expect(
+        AppConfig.normalizeApiBaseUrl('https://api.example.com/gateway/'),
+        'https://api.example.com/gateway/',
+      );
+    });
+
     test('resolves /uploads path against base URL', () {
       final resolved = AppConfig.resolveResourceUrl(
         '/uploads/receipt.png',
