@@ -1319,7 +1319,7 @@ class _ClientInvoiceDetailViewState
     if (date == null) return 'N/A';
     try {
       final DateTime parsedDate = DateTime.parse(date.toString());
-      return DateFormat('MMMM d, yyyy').format(parsedDate);
+      return DateFormat('dd/MM/yyyy').format(parsedDate);
     } catch (_) {
       return date.toString();
     }

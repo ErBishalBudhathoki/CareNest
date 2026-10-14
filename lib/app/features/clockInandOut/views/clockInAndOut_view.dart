@@ -163,7 +163,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
           ),
           const SizedBox(width: BauhausDesign.space4),
           Text(
-            DateFormat('EEE dd MMM').format(_selectedDate).toUpperCase(),
+            DateFormat('EEE dd/MM').format(_selectedDate).toUpperCase(),
             style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
               fontWeight: FontWeight.w900,
               color: Theme.of(context).colorScheme.onSurface,

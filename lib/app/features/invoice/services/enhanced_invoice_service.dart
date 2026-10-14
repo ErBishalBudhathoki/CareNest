@@ -4325,11 +4325,80 @@ class EnhancedInvoiceService {
               'detail=$paymentLinkDetail',
             );
           }
-          savedInvoiceMeta[i] = {
-            'invoiceId': backendInvoiceId,
-            'paymentLinkUrl': paymentLinkUrl,
-          };
-          savedInvoiceIndexes.add(i);
+          // Capture the funding/billing routing returned by the backend
+          // (Phase 6). billing.artifact === 'claim_csv' → NDIA claim
+          // (suppress PDF); billing.artifact === 'invoice_pdf' → generate
+          // PDF addressed to plan_manager or participant.
+          final billing = response['data']?['billing'];
+          if (billing is Map<String, dynamic>) {
+            _invoices[i]['billing'] = billing;
+            invoice['billing'] = billing;
+          }
+          final String artifact =
+              billing is Map<String, dynamic>
+                  ? (billing['artifact']?.toString() ?? '')
+                  : '';
+          final String recipientType =
+              billing is Map<String, dynamic>
+                  ? (billing['recipientType']?.toString() ?? '')
+                  : '';
+          final bool isClaimInvoice = artifact == 'claim_csv';
+
+          if (isClaimInvoice) {
+            // NDIA-managed: route to claiming, not PDF generation.
+            _invoices[i]['routing'] = 'claim';
+            invoice['routing'] = 'claim';
+            debugPrint(
+              'Invoice for ${invoice['clientName']} routed to NDIA claim '
+              '(artifact=$artifact, no PDF).',
+            );
+            savedInvoiceMeta[i] = {
+              'invoiceId': backendInvoiceId,
+              'paymentLinkUrl': paymentLinkUrl,
+              'routing': 'claim',
+            };
+            // Not added to savedInvoiceIndexes → no PDF regeneration.
+          } else {
+            // Plan-managed work is billed to the plan manager, not the
+            // participant. Re-address the regenerated PDF (and the persisted
+            // header) when the backend resolved a linked plan-manager
+            // stakeholder.
+            if (recipientType == 'plan_manager') {
+              final recipient = response['data']?['billingRecipient'];
+              if (recipient is Map<String, dynamic>) {
+                final String pmName = recipient['name']?.toString() ?? '';
+                final String pmEmail = recipient['email']?.toString() ?? '';
+                final String pmCompany =
+                    recipient['company']?.toString() ?? '';
+                if (pmName.isNotEmpty ||
+                    pmEmail.isNotEmpty ||
+                    pmCompany.isNotEmpty) {
+                  final Map<String, dynamic> baseBillTo =
+                      invoice['billTo'] is Map
+                          ? Map<String, dynamic>.from(
+                            invoice['billTo'] as Map,
+                          )
+                          : <String, dynamic>{};
+                  final Map<String, dynamic> planManagerBillTo = {
+                    ...baseBillTo,
+                    'name': pmName,
+                    'email': pmEmail,
+                    if (pmCompany.isNotEmpty) 'businessName': pmCompany,
+                  };
+                  invoice['billTo'] = planManagerBillTo;
+                  debugPrint(
+                    'Invoice for ${invoice['clientName']} addressed to plan '
+                    'manager "$pmName" ($pmEmail).',
+                  );
+                }
+              }
+            }
+            savedInvoiceMeta[i] = {
+              'invoiceId': backendInvoiceId,
+              'paymentLinkUrl': paymentLinkUrl,
+            };
+            savedInvoiceIndexes.add(i);
+          }
         } else {
           final errorMessage =
               response['message'] ?? response['error'] ?? 'Unknown error';

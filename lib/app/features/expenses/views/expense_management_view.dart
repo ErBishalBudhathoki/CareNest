@@ -649,7 +649,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
 
   Widget _buildRecentExpenseItem(ExpenseModel expense) {
     final currencyFormat = NumberFormat.currency(symbol: '\$');
-    final dateFormat = DateFormat('MMM dd, yyyy');
+    final dateFormat = DateFormat('dd/MM/yyyy');
 
     return _squareCard(
       margin: const EdgeInsets.only(bottom: 12),
@@ -878,7 +878,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
 
   Widget _buildExpenseCard(ExpenseModel expense) {
     final currencyFormat = NumberFormat.currency(symbol: '\$');
-    final dateFormat = DateFormat('MMM dd, yyyy');
+    final dateFormat = DateFormat('dd/MM/yyyy');
 
     return _squareCard(
       onTap: () {
@@ -1187,7 +1187,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
 
   Widget _buildApprovalCard(ExpenseModel expense) {
     final currencyFormat = NumberFormat.currency(symbol: '\$');
-    final dateFormat = DateFormat('MMM dd, yyyy');
+    final dateFormat = DateFormat('dd/MM/yyyy');
 
     return _squareCard(
       onTap: () {
@@ -1469,7 +1469,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
 
   Widget _buildRecurringExpenseCard(ExpenseModel expense) {
     final currencyFormat = NumberFormat.currency(symbol: '\$');
-    final dateFormat = DateFormat('MMM dd, yyyy');
+    final dateFormat = DateFormat('dd/MM/yyyy');
 
     return _squareCard(
       padding: const EdgeInsets.all(20),

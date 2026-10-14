@@ -261,5 +261,5 @@ String _formatDate(dynamic value) {
   if (raw == null || raw.trim().isEmpty) return 'Submitted date unknown';
   final parsed = DateTime.tryParse(raw);
   if (parsed == null) return raw;
-  return DateFormat('dd MMM yyyy, h:mm a').format(parsed.toLocal());
+  return DateFormat('dd/MM/yyyy, h:mm a').format(parsed.toLocal());
 }

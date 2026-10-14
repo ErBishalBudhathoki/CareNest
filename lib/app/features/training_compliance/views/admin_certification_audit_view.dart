@@ -137,7 +137,7 @@ class _AdminCertificationAuditViewState
           Text(
             AppLocalizations.of(
               context,
-            )!.expiresLabel(DateFormat('dd MMM yyyy').format(cert.expiryDate)),
+            )!.expiresLabel(DateFormat('dd/MM/yyyy').format(cert.expiryDate)),
             style: BauhausDesign.getTextTheme(context).bodyMedium,
           ),
           if (cert.certificationNumber != null &&
@@ -276,7 +276,7 @@ class _AdminCertificationAuditViewState
                       Text(
                         expiryDate == null
                             ? AppLocalizations.of(context)!.selectExpiryDate
-                            : DateFormat('dd MMM yyyy').format(expiryDate!),
+                            : DateFormat('dd/MM/yyyy').format(expiryDate!),
                         style: BauhausDesign.getTextTheme(context).bodyMedium,
                       ),
                     ],

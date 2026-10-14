@@ -242,7 +242,7 @@ class TimesheetHistoryView extends ConsumerWidget {
     List<TimesheetEntry> entries,
   ) {
     final locale = AppLocalizations.of(context)!.localeName;
-    final dateFormat = DateFormat('MMM dd', locale);
+    final dateFormat = DateFormat('dd/MM', locale);
     final yearFormat = DateFormat('yyyy', locale);
 
     // Group entries by weekday to show in the timeline

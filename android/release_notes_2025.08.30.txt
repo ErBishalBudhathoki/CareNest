@@ -1,0 +1,8 @@
+Release Notes for Version 2025.08.30
+
+• Bug fixes and performance improvements
+• Enhanced user experience
+• Updated dependencies for better security
+• General stability improvements
+
+This release includes various improvements to make the app more reliable and user-friendly.

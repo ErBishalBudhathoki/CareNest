@@ -854,7 +854,7 @@ class AppointmentTimelineView extends ConsumerWidget {
                                   ),
                                   SizedBox(height: 2),
                                   Text(
-                                    'Signature ID: ${confirmation.signatureId} • Secured: ${DateFormat('yyyy-MM-dd HH:mm').format(confirmation.timestamp)}',
+                                    'Signature ID: ${confirmation.signatureId} • Secured: ${DateFormat('dd/MM/yyyy HH:mm').format(confirmation.timestamp)}',
                                     style: GoogleFonts.shareTechMono(
                                       fontSize: 9,
                                       color: Theme.of(

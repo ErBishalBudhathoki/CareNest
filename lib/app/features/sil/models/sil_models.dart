@@ -294,3 +294,61 @@ abstract class SILRosterOfCare with _$SILRosterOfCare {
   factory SILRosterOfCare.fromJson(Map<String, dynamic> json) =>
       _$SILRosterOfCareFromJson(json);
 }
+
+// ---------------------------------------------------------------------------
+// Roster-of-care invoice result
+// ---------------------------------------------------------------------------
+
+/// The stamped funding route of a generated invoice (`billing` block from the
+/// backend). `artifact` is `claim_csv` for NDIA-managed work and
+/// `invoice_pdf` otherwise.
+class SILRosterOfCareBillingRoute {
+  const SILRosterOfCareBillingRoute({
+    this.fundingType = '',
+    this.recipientType = '',
+    this.artifact = '',
+    this.planManagerStakeholderId,
+  });
+
+  final String fundingType;
+  final String recipientType;
+  final String artifact;
+  final String? planManagerStakeholderId;
+
+  bool get isClaim => artifact == 'claim_csv';
+
+  factory SILRosterOfCareBillingRoute.fromJson(Map<String, dynamic> json) {
+    return SILRosterOfCareBillingRoute(
+      fundingType: json['fundingType']?.toString() ?? '',
+      recipientType: json['recipientType']?.toString() ?? '',
+      artifact: json['artifact']?.toString() ?? '',
+      planManagerStakeholderId: json['planManagerStakeholderId']?.toString(),
+    );
+  }
+}
+
+/// Summary returned by `POST /api/sil/rosters-of-care/:id/invoice`.
+class SILRosterOfCareInvoice {
+  const SILRosterOfCareInvoice({
+    required this.invoiceId,
+    required this.invoiceNumber,
+    this.billing,
+  });
+
+  final String invoiceId;
+  final String invoiceNumber;
+  final SILRosterOfCareBillingRoute? billing;
+
+  factory SILRosterOfCareInvoice.fromJson(Map<String, dynamic> json) {
+    final billing = json['billing'];
+    return SILRosterOfCareInvoice(
+      invoiceId: json['invoiceId']?.toString() ?? '',
+      invoiceNumber: json['invoiceNumber']?.toString() ?? '',
+      billing: billing is Map
+          ? SILRosterOfCareBillingRoute.fromJson(
+              Map<String, dynamic>.from(billing),
+            )
+          : null,
+    );
+  }
+}

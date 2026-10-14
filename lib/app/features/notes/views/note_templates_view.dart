@@ -175,7 +175,7 @@ class _TemplateEditorDialogState extends State<_TemplateEditorDialog> {
         TextEditingController(text: t?['description']?.toString() ?? '');
     _sections = ((t?['sections'] as List?) ?? const [])
         .whereType<Map>()
-        .map((e) => {
+        .map((e) => <String, dynamic>{
               'key': e['key']?.toString() ?? '',
               'label': e['label']?.toString() ?? '',
               'type': e['type']?.toString() ?? 'text',
@@ -197,7 +197,7 @@ class _TemplateEditorDialogState extends State<_TemplateEditorDialog> {
 
   void _addSection() {
     setState(() {
-      _sections.add({
+      _sections.add(<String, dynamic>{
         'key': '',
         'label': '',
         'type': 'text',

@@ -182,6 +182,12 @@ class HolidayService {
       return DateTime.parse(value);
     } catch (_) {}
 
+    // Canonical app format (DD/MM/YYYY).
+    try {
+      return DateFormat('dd/MM/yyyy').parseStrict(value);
+    } catch (_) {}
+
+    // Legacy stored format (DD-MM-YYYY).
     try {
       return DateFormat('dd-MM-yyyy').parseStrict(value);
     } catch (_) {}

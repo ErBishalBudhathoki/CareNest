@@ -573,7 +573,7 @@ class _EnhancedPredictiveInsightsViewState
           ),
           const SizedBox(height: BauhausDesign.space3),
           ...state.demandForecast.map((forecast) {
-            final dateStr = DateFormat('EEE, MMM d').format(forecast.date);
+            final dateStr = DateFormat('EEE, dd/MM').format(forecast.date);
 
             return Padding(
               padding: const EdgeInsets.only(bottom: BauhausDesign.space3),
@@ -797,7 +797,7 @@ class _EnhancedPredictiveInsightsViewState
                       ),
                       _buildComplianceStat(
                         'Next Audit',
-                        DateFormat('MMM d').format(risk.nextAudit),
+                        DateFormat('dd/MM').format(risk.nextAudit),
                       ),
                     ];
 
