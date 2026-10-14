@@ -1,0 +1,2 @@
+Fixed a sign-in error ("Route not found: POST /firebase-auth/sync").
+The app now always calls the backend's /api path, so login and sync work on every build.
