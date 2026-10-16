@@ -215,6 +215,25 @@ class SILRepository {
     );
   }
 
+  /// Materialise a roster of care's agreed weekly pattern into that week's
+  /// shifts (unassigned). Returns the number created/skipped.
+  Future<({int created, int skipped})> materializeRosterOfCareShifts(
+    String id, {
+    required String weekStarting,
+  }) async {
+    final response = await _apiMethod.materializeSilRosterOfCareShifts(
+      id,
+      weekStarting: weekStarting,
+    );
+    _ensureSuccess(response, 'Failed to plan shifts');
+    final data = response['data'];
+    final map = data is Map ? Map<String, dynamic>.from(data) : const {};
+    return (
+      created: (map['created'] as num?)?.toInt() ?? 0,
+      skipped: (map['skipped'] as num?)?.toInt() ?? 0,
+    );
+  }
+
   void _ensureSuccess(Map<String, dynamic> response, String fallback) {
     if (response['success'] != true) {
       throw Exception(response['message']?.toString() ?? fallback);

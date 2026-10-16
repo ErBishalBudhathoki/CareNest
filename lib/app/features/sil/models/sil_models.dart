@@ -209,6 +209,9 @@ abstract class SILQuoteLine with _$SILQuoteLine {
     @Default(0) double unitPrice,
     @Default('P2') String gstCode,
     @Default(0) double amount,
+    @Default(<String>[]) List<String> days,
+    @Default('') String startTime,
+    @Default('') String endTime,
     @Default(SILPriceValidation()) SILPriceValidation priceValidation,
   }) = _SILQuoteLine;
 
@@ -260,6 +263,9 @@ abstract class SILRocSupport with _$SILRocSupport {
     @Default(0) double unitPrice,
     @Default('P2') String gstCode,
     @Default(0) double amount,
+    @Default(<String>[]) List<String> days,
+    @Default('') String startTime,
+    @Default('') String endTime,
   }) = _SILRocSupport;
 
   factory SILRocSupport.fromJson(Map<String, dynamic> json) =>

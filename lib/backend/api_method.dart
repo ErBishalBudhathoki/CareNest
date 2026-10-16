@@ -4481,6 +4481,22 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
+  /// Materialise an active roster of care's agreed weekly pattern into that
+  /// week's shifts (unassigned), so staff can be assigned in one place.
+  Future<Map<String, dynamic>> materializeSilRosterOfCareShifts(
+    String id, {
+    required String weekStarting,
+  }) async {
+    try {
+      return await post(
+        'sil/rosters-of-care/$id/materialize-shifts',
+        body: {'weekStarting': weekStarting},
+      );
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
   // -------------------------------------------------------------------------
   // Multi-stakeholder CRM (Phase 5)
   // -------------------------------------------------------------------------
