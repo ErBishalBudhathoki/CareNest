@@ -3,6 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/sil/models/sil_models.dart';
 import 'package:carenest/app/features/sil/repositories/sil_repository.dart';
 
+/// The repositories surface server messages as `Exception: <message>`. These
+/// strings are shown to support coordinators in snack bars, so drop the Dart
+/// noise and keep the message the API actually wrote.
+String silErrorMessage(Object error) {
+  final text = error.toString();
+  return text.startsWith('Exception: ') ? text.substring(11) : text;
+}
+
 // ---------------------------------------------------------------------------
 // Properties + occupancy
 // ---------------------------------------------------------------------------
@@ -154,7 +162,10 @@ class SILRosterViewModel extends Notifier<SILRosterState> {
     return SILRosterState();
   }
 
-  Future<void> load({required String propertyId, required String weekStarting}) async {
+  Future<void> load({
+    required String propertyId,
+    required String weekStarting,
+  }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
       final roster = await _repository.getRoster(
@@ -167,7 +178,10 @@ class SILRosterViewModel extends Notifier<SILRosterState> {
     }
   }
 
-  Future<void> buildRoster({required String propertyId, required String weekStarting}) async {
+  Future<void> buildRoster({
+    required String propertyId,
+    required String weekStarting,
+  }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
       final roster = await _repository.buildRoster(
@@ -250,7 +264,7 @@ class SILQuoteViewModel extends Notifier<SILQuoteState> {
       await load();
       return quote;
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      state = state.copyWith(isLoading: false, error: silErrorMessage(e));
       return null;
     }
   }
@@ -262,7 +276,7 @@ class SILQuoteViewModel extends Notifier<SILQuoteState> {
       await load();
       return true;
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      state = state.copyWith(isLoading: false, error: silErrorMessage(e));
       return false;
     }
   }
