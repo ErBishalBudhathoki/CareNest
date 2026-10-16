@@ -881,9 +881,9 @@ class EarningsDashboardView extends ConsumerWidget {
                         ),
                       ),
                       shadow: Shadow(
-                        blurRadius: 20,
+                        blurRadius: 0,
                         color: colorScheme.error.withValues(alpha: 0.6),
-                        offset: Offset(0, 10),
+                        offset: Offset(4, 4),
                       ),
                     ),
                   ],

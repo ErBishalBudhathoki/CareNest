@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/business_intelligence_viewmodel.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
 import 'package:carenest/app/features/workforce_optimization/utils/workforce_export_helper.dart';
@@ -101,14 +101,14 @@ class _BusinessIntelligenceViewState
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline, size: 64, color: AppColors.colorRed),
+          const Icon(Icons.error_outline, size: 64, color: BauhausDesign.error),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'Error loading data',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: AppColors.colorFontPrimary,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
@@ -131,15 +131,15 @@ class _BusinessIntelligenceViewState
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.colorPink,
-            AppColors.colorPink.withValues(alpha: 0.8),
+            BauhausDesign.tertiary,
+            BauhausDesign.tertiary.withValues(alpha: 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.colorPink.withValues(alpha: 0.3),
+            color: BauhausDesign.tertiary.withValues(alpha: 0.3),
             offset: const Offset(0, 4),
           ),
         ],
@@ -193,12 +193,12 @@ class _BusinessIntelligenceViewState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Key Performance Indicators',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: AppColors.colorFontPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -215,7 +215,7 @@ class _BusinessIntelligenceViewState
                       '\$${((state.dashboard?.kpis.totalRevenue ?? 0) / 1000).toStringAsFixed(1)}K',
                       '+12%',
                       true,
-                      AppColors.colorGreen,
+                      BauhausDesign.success,
                       Icons.attach_money,
                     ),
                   ),
@@ -226,7 +226,7 @@ class _BusinessIntelligenceViewState
                       '${state.dashboard?.clients.active ?? 0}',
                       '+8%',
                       true,
-                      AppColors.colorBlue,
+                      BauhausDesign.primaryBlue,
                       Icons.people,
                     ),
                   ),
@@ -241,7 +241,7 @@ class _BusinessIntelligenceViewState
                       '${((state.dashboard?.clients.retention ?? 0) * 100).toStringAsFixed(0)}%',
                       '+3%',
                       true,
-                      AppColors.colorPurple,
+                      BauhausDesign.secondaryDeep,
                       Icons.loyalty,
                     ),
                   ),
@@ -252,7 +252,7 @@ class _BusinessIntelligenceViewState
                       '${((state.dashboard?.operations.efficiency ?? 0) * 100).toStringAsFixed(0)}%',
                       '+5%',
                       true,
-                      AppColors.colorOrange,
+                      BauhausDesign.warning,
                       Icons.trending_up,
                     ),
                   ),
@@ -278,7 +278,7 @@ class _BusinessIntelligenceViewState
         color: Theme.of(context).colorScheme.surface,
         border: Border.all(color: color.withValues(alpha: 0.2), width: 2),
         boxShadow: [
-          BoxShadow(color: AppColors.colorShadow, offset: const Offset(0, 2)),
+          BoxShadow(color: BauhausDesign.shadowColor, offset: const Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -313,8 +313,8 @@ class _BusinessIntelligenceViewState
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                 decoration: BoxDecoration(
                   color: isPositive
-                      ? AppColors.colorGreen.withValues(alpha: 0.1)
-                      : AppColors.colorRed.withValues(alpha: 0.1),
+                      ? BauhausDesign.success.withValues(alpha: 0.1)
+                      : BauhausDesign.error.withValues(alpha: 0.1),
                 ),
                 child: Text(
                   change,
@@ -322,8 +322,8 @@ class _BusinessIntelligenceViewState
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: isPositive
-                        ? AppColors.colorGreen
-                        : AppColors.colorRed,
+                        ? BauhausDesign.success
+                        : BauhausDesign.error,
                   ),
                 ),
               ),
@@ -338,12 +338,12 @@ class _BusinessIntelligenceViewState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Revenue Forecast',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: AppColors.colorFontPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -355,7 +355,7 @@ class _BusinessIntelligenceViewState
               color: Theme.of(context).colorScheme.surface,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.colorShadow,
+                  color: BauhausDesign.shadowColor,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -387,11 +387,11 @@ class _BusinessIntelligenceViewState
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppColors.colorGreen.withValues(alpha: 0.1),
+              color: BauhausDesign.success.withValues(alpha: 0.1),
             ),
             child: Icon(
               Icons.show_chart,
-              color: AppColors.colorGreen,
+              color: BauhausDesign.success,
               size: 24,
             ),
           ),
@@ -405,7 +405,7 @@ class _BusinessIntelligenceViewState
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.colorFontPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -424,7 +424,7 @@ class _BusinessIntelligenceViewState
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w700,
-              color: AppColors.colorGreen,
+              color: BauhausDesign.success,
             ),
           ),
         ],
@@ -436,12 +436,12 @@ class _BusinessIntelligenceViewState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Churn Risk',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: AppColors.colorFontPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -453,7 +453,7 @@ class _BusinessIntelligenceViewState
               color: Theme.of(context).colorScheme.surface,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.colorShadow,
+                  color: BauhausDesign.shadowColor,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -471,10 +471,10 @@ class _BusinessIntelligenceViewState
   Widget _buildChurnItem(dynamic prediction) {
     final risk = prediction.churnProbability ?? 0.0;
     final riskColor = risk > 0.7
-        ? AppColors.colorRed
+        ? BauhausDesign.error
         : risk > 0.4
-        ? AppColors.colorOrange
-        : AppColors.colorGreen;
+        ? BauhausDesign.warning
+        : BauhausDesign.success;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -504,7 +504,7 @@ class _BusinessIntelligenceViewState
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.colorFontPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -574,7 +574,7 @@ class _BusinessIntelligenceViewState
             icon: const Icon(Icons.analytics),
             label: const Text('What-If'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.colorPrimary,
+              backgroundColor: BauhausDesign.neutral,
               foregroundColor: Theme.of(context).colorScheme.surface,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(),
@@ -588,9 +588,9 @@ class _BusinessIntelligenceViewState
             icon: const Icon(Icons.download),
             label: const Text('Export'),
             style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.colorPrimary,
+              foregroundColor: BauhausDesign.neutral,
               padding: const EdgeInsets.symmetric(vertical: 16),
-              side: const BorderSide(color: AppColors.colorPrimary),
+              side: const BorderSide(color: BauhausDesign.neutral),
               shape: RoundedRectangleBorder(),
             ),
           ),

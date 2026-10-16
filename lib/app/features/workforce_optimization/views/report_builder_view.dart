@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/workforce_optimization/utils/workforce_export_helper.dart';
 
 class ReportBuilderView extends ConsumerStatefulWidget {
@@ -89,15 +89,15 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.colorSecondary,
-            AppColors.colorSecondary.withValues(alpha: 0.8),
+            BauhausDesign.secondary,
+            BauhausDesign.secondary.withValues(alpha: 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.colorSecondary.withValues(alpha: 0.3),
+            color: BauhausDesign.secondary.withValues(alpha: 0.3),
             offset: const Offset(0, 4),
           ),
         ],
@@ -160,12 +160,12 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Select Metrics',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: AppColors.colorFontPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -174,7 +174,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
             color: Theme.of(context).colorScheme.surface,
             boxShadow: [
               BoxShadow(
-                color: AppColors.colorShadow,
+                color: BauhausDesign.shadowColor,
                 offset: const Offset(0, 2),
               ),
             ],
@@ -198,18 +198,18 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
                 },
                 title: Row(
                   children: [
-                    Icon(icon, size: 20, color: AppColors.colorPrimary),
+                    Icon(icon, size: 20, color: BauhausDesign.neutral),
                     const SizedBox(width: 12),
                     Text(
                       name,
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppColors.colorFontPrimary,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   ],
                 ),
-                activeColor: AppColors.colorPrimary,
+                activeColor: BauhausDesign.neutral,
               );
             }).toList(),
           ),
@@ -225,12 +225,12 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Export Format',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: AppColors.colorFontPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -239,7 +239,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
             color: Theme.of(context).colorScheme.surface,
             boxShadow: [
               BoxShadow(
-                color: AppColors.colorShadow,
+                color: BauhausDesign.shadowColor,
                 offset: const Offset(0, 2),
               ),
             ],
@@ -259,10 +259,10 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
                     format,
                     style: TextStyle(
                       fontSize: 14,
-                      color: AppColors.colorFontPrimary,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
-                  activeColor: AppColors.colorPrimary,
+                  activeColor: BauhausDesign.neutral,
                 );
               }).toList(),
             ),
@@ -284,12 +284,12 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Time Period',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: AppColors.colorFontPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -298,7 +298,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
             color: Theme.of(context).colorScheme.surface,
             boxShadow: [
               BoxShadow(
-                color: AppColors.colorShadow,
+                color: BauhausDesign.shadowColor,
                 offset: const Offset(0, 2),
               ),
             ],
@@ -318,10 +318,10 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
                     period,
                     style: TextStyle(
                       fontSize: 14,
-                      color: AppColors.colorFontPrimary,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
-                  activeColor: AppColors.colorPrimary,
+                  activeColor: BauhausDesign.neutral,
                 );
               }).toList(),
             ),
@@ -337,37 +337,37 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
         'name': 'Executive Summary',
         'description': 'High-level KPIs and insights',
         'icon': Icons.business_center,
-        'color': AppColors.colorBlue,
+        'color': BauhausDesign.primaryBlue,
       },
       {
         'name': 'Operational Report',
         'description': 'Detailed workforce metrics',
         'icon': Icons.assessment,
-        'color': AppColors.colorGreen,
+        'color': BauhausDesign.success,
       },
       {
         'name': 'Financial Analysis',
         'description': 'Revenue and profitability',
         'icon': Icons.attach_money,
-        'color': AppColors.colorOrange,
+        'color': BauhausDesign.warning,
       },
       {
         'name': 'Quality Report',
         'description': 'Quality and compliance metrics',
         'icon': Icons.verified,
-        'color': AppColors.colorPurple,
+        'color': BauhausDesign.secondaryDeep,
       },
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Quick Templates',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: AppColors.colorFontPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -427,12 +427,12 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
           color: Theme.of(context).colorScheme.surface,
           border: Border.all(
             color: selected
-                ? AppColors.colorPrimary
+                ? BauhausDesign.neutral
                 : color.withValues(alpha: 0.2),
             width: selected ? 3 : 2,
           ),
           boxShadow: [
-            BoxShadow(color: AppColors.colorShadow, offset: const Offset(0, 2)),
+            BoxShadow(color: BauhausDesign.shadowColor, offset: const Offset(0, 2)),
           ],
         ),
         child: Column(
@@ -451,7 +451,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: AppColors.colorFontPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 4),
@@ -483,7 +483,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
             icon: const Icon(Icons.play_arrow),
             label: const Text('Generate Report'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.colorPrimary,
+              backgroundColor: BauhausDesign.neutral,
               foregroundColor: Theme.of(context).colorScheme.surface,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(),

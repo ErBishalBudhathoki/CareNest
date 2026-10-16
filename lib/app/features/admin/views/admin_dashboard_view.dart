@@ -566,7 +566,10 @@ class _AdminDashboardViewControllerState
         onPressed: _openVoiceAssistant,
         backgroundColor: BauhausDesign.primary,
         foregroundColor: BauhausDesign.textDark,
-        shape: const CircleBorder(),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
+          side: BorderSide(color: BauhausDesign.neoInk, width: 2.5),
+        ),
         clipBehavior: Clip.antiAlias,
         tooltip: 'Voice Assistant',
         child: Icon(Icons.keyboard_voice_outlined),
