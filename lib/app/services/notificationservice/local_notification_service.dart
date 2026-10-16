@@ -200,6 +200,8 @@ class LocalNotificationService {
         return 'Emergency Alerts';
       case 'payments':
         return 'Payment Notifications';
+      case 'rosters':
+        return 'Roster Notifications';
       default:
         return 'General Notifications';
     }
@@ -221,6 +223,8 @@ class LocalNotificationService {
         return 'High-priority emergency broadcast alerts';
       case 'payments':
         return 'Invoice payments, payouts and billing alerts';
+      case 'rosters':
+        return 'Shift roster and rosters-of-care notifications';
       default:
         return 'General application notifications';
     }
@@ -386,6 +390,20 @@ class LocalNotificationService {
               showBadge: true,
             );
 
+        // Roster notifications channel — published shift rosters
+        const AndroidNotificationChannel rostersChannel =
+            AndroidNotificationChannel(
+              'rosters',
+              'Roster Notifications',
+              description: 'Shift roster and rosters-of-care notifications',
+              importance: Importance.max,
+              playSound: true,
+              sound: null, // Use default system notification sound
+              enableVibration: true,
+              enableLights: true,
+              showBadge: true,
+            );
+
         // Create the notification channels
         await androidPlugin.createNotificationChannel(mainChannel);
         await androidPlugin.createNotificationChannel(timerChannel);
@@ -394,8 +412,9 @@ class LocalNotificationService {
         await androidPlugin.createNotificationChannel(expenseChannel);
         await androidPlugin.createNotificationChannel(emergencyChannel);
         await androidPlugin.createNotificationChannel(paymentsChannel);
+        await androidPlugin.createNotificationChannel(rostersChannel);
         debugPrint(
-          'DEBUG_LOCAL_NOTIF: Created notification channels: invoice, timer_alerts, message, timesheet_reminders, expense_reminders, emergency_alerts, payments',
+          'DEBUG_LOCAL_NOTIF: Created notification channels: invoice, timer_alerts, message, timesheet_reminders, expense_reminders, emergency_alerts, payments, rosters',
         );
       }
     }
