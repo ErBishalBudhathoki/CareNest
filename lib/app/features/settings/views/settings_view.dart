@@ -711,7 +711,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                           textAlign: TextAlign.center,
                           style: BauhausDesign.getTextTheme(
                             context,
-                          ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                          ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                         ),
                       ),
                       const SizedBox(height: BauhausDesign.space8),

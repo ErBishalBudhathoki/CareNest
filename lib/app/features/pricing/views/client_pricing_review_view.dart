@@ -480,7 +480,7 @@ class _ClientPricingReviewViewState
                       client['clientEmail'] ?? '',
                       style: BauhausDesign.getTextTheme(
                         context,
-                      ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                      ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: BauhausDesign.space2),
@@ -618,7 +618,7 @@ class _ClientPricingReviewViewState
                   Icon(
                     Icons.email_outlined,
                     size: 14,
-                    color: BauhausDesign.textMuted,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                   const SizedBox(width: BauhausDesign.space1),
                   Expanded(
@@ -626,7 +626,7 @@ class _ClientPricingReviewViewState
                       client['clientEmail'] ?? '',
                       style: BauhausDesign.getTextTheme(
                         context,
-                      ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                      ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -899,7 +899,7 @@ class _ClientPricingReviewViewState
                   ? '\$${ndisPriceCap.toStringAsFixed(2)}'
                   : AppLocalizations.of(context)!.notAvailableLabel,
               priceCapType ?? AppLocalizations.of(context)!.notAvailableLabel,
-              BauhausDesign.textMuted,
+              Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
           Container(
@@ -955,7 +955,7 @@ class _ClientPricingReviewViewState
                   ndisPriceCap != null
                       ? '\$${ndisPriceCap.toStringAsFixed(2)}'
                       : AppLocalizations.of(context)!.notAvailableLabel,
-                  BauhausDesign.textMuted,
+                  Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -994,7 +994,7 @@ class _ClientPricingReviewViewState
         Text(
           label,
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-            color: BauhausDesign.textMuted,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -1021,7 +1021,7 @@ class _ClientPricingReviewViewState
         Text(
           label,
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-            color: BauhausDesign.textMuted,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -1084,7 +1084,7 @@ class _ClientPricingReviewViewState
       case 'missing':
         return BauhausDesign.error;
       default:
-        return BauhausDesign.textMuted;
+        return Theme.of(context).colorScheme.onSurfaceVariant;
     }
   }
 }
@@ -1480,7 +1480,7 @@ class _ClientPricingDetailPageState
                                 ?.copyWith(
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1.2,
-                                  color: BauhausDesign.textMuted,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 ),
                           ),
                           const SizedBox(height: BauhausDesign.space1),
@@ -1524,7 +1524,7 @@ class _ClientPricingDetailPageState
                                         .labelSmall
                                         ?.copyWith(
                                           fontWeight: FontWeight.bold,
-                                          color: BauhausDesign.textMuted,
+                                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                                         ),
                                   ),
                                   const SizedBox(height: BauhausDesign.space1),
@@ -1568,7 +1568,7 @@ class _ClientPricingDetailPageState
                                         .labelSmall
                                         ?.copyWith(
                                           fontWeight: FontWeight.bold,
-                                          color: BauhausDesign.textMuted,
+                                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                                         ),
                                   ),
                                   const SizedBox(height: BauhausDesign.space1),
@@ -1636,7 +1636,7 @@ class _ClientPricingDetailPageState
                                 .labelSmall
                                 ?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: BauhausDesign.textMuted,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 ),
                           ),
                           const SizedBox(width: BauhausDesign.space3),

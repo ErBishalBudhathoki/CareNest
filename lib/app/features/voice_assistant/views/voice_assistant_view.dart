@@ -415,7 +415,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
           textAlign: TextAlign.center,
           style: BauhausDesign.getTextTheme(
             context,
-          ).bodyLarge?.copyWith(color: BauhausDesign.textMuted),
+          ).bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
       ),
     );
@@ -560,7 +560,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
                     'Tools: ${command.toolCalls.join(', ')}',
                 ].join('  •  '),
                 style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -765,7 +765,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
             label,
             style: BauhausDesign.getTextTheme(
               context,
-            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+            ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
         ],
       ),
@@ -778,7 +778,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
         'No matching app data to preview.',
         style: BauhausDesign.getTextTheme(
           context,
-        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+        ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
       );
     }
 
@@ -906,7 +906,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
           Text(
             'Missing: ${missingFields.join(', ')}',
             style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -972,7 +972,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
                       itemNumber,
                       style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w700,
                           ),
                     ),
@@ -982,7 +982,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
                         subtitle,
                         style: BauhausDesign.getTextTheme(
                           context,
-                        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                        ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                       ),
                     ],
                   ],
@@ -1030,7 +1030,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
               subtitle,
               style: BauhausDesign.getTextTheme(
                 context,
-              ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+              ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
           ],
         ],

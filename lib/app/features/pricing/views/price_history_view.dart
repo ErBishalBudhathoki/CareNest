@@ -369,7 +369,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                       overflow: TextOverflow.ellipsis,
                       style: BauhausDesign.getTextTheme(
                         context,
-                      ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                      ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                   ],
                 ),
@@ -795,7 +795,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
             secondary,
             style: BauhausDesign.getTextTheme(
               context,
-            ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+            ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
         ],
       ),
@@ -842,7 +842,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                   overflow: TextOverflow.ellipsis,
                   style: BauhausDesign.getTextTheme(
                     context,
-                  ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                  ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -911,7 +911,7 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
         textAlign: TextAlign.center,
         style: BauhausDesign.getTextTheme(
           context,
-        ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+        ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
     );
   }

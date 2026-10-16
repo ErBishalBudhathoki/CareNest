@@ -74,7 +74,7 @@ class _SILDashboardViewState extends ConsumerState<SILDashboardView>
         children: [
           _PropertiesTab(clients: _clients),
           _QuotesTab(clients: _clients, clientsLoading: _clientsLoading),
-          const _RostersOfCareTab(),
+          _RostersOfCareTab(clients: _clients),
         ],
       ),
     );
@@ -496,7 +496,9 @@ class _QuoteActions extends ConsumerWidget {
 // ---------------------------------------------------------------------------
 
 class _RostersOfCareTab extends ConsumerStatefulWidget {
-  const _RostersOfCareTab();
+  const _RostersOfCareTab({required this.clients});
+
+  final List<Patient> clients;
 
   @override
   ConsumerState<_RostersOfCareTab> createState() => _RostersOfCareTabState();
@@ -525,6 +527,38 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
       if (mounted) setState(() => _loading = false);
     }
   }
+
+  static String _shortId(String id) => id.length <= 8 ? id : id.substring(0, 8);
+
+  /// Human label for the participant whose roster this is. Falls back to the
+  /// roster id when the client list has not loaded or the client is unknown.
+  String _clientLabel(SILRosterOfCare roc) {
+    for (final client in widget.clients) {
+      if (client.id != null && client.id == roc.clientId) {
+        return client.displayName;
+      }
+    }
+    return 'RoC ${_shortId(roc.id)}';
+  }
+
+  /// Resolve the SIL property name for a roster, so the roster screen is titled
+  /// with the real property instead of a placeholder.
+  String _propertyName(String? propertyId) {
+    if (propertyId == null || propertyId.isEmpty) return 'SIL property';
+    final properties = ref.read(silPropertiesViewModelProvider).properties;
+    for (final property in properties) {
+      if (property.id == propertyId) return property.name;
+    }
+    return 'SIL property';
+  }
+
+  /// A roster can only be planned when at least one support carries an agreed
+  /// weekly pattern (days + start/end time); otherwise materialising produces
+  /// no shifts.
+  bool _hasPattern(SILRosterOfCare roc) => roc.supports.any(
+    (s) =>
+        s.days.isNotEmpty && s.startTime.isNotEmpty && s.endTime.isNotEmpty,
+  );
 
   /// Materialise this RoC's agreed weekly pattern into that week's shifts, then
   /// open the roster builder for the property so staff can be assigned in one
@@ -559,16 +593,27 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
         ),
       );
       final propertyId = roc.propertyId;
-      if (propertyId != null && propertyId.isNotEmpty) {
-        Navigator.of(context).pushNamed(
-          Routes.silRoster,
-          arguments: {
-            'propertyId': propertyId,
-            'propertyName': 'SIL property',
-            'weekStarting': monday.toIso8601String(),
-          },
+      if (propertyId == null || propertyId.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'This roster of care has no SIL property attached, so its shifts '
+              'cannot be rostered. Attach a property first.',
+            ),
+          ),
         );
+        return;
       }
+      Navigator.of(context).pushNamed(
+        Routes.silRoster,
+        arguments: {
+          'propertyId': propertyId,
+          'propertyName': _propertyName(propertyId),
+          'weekStarting': monday.toIso8601String(),
+          // Land straight on the assign list for the week just planned.
+          'autoBuild': true,
+        },
+      );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -599,24 +644,26 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
               final roc = _rosters[index];
               final billable =
                   roc.status == 'active' || roc.status == 'under_review';
+              final plannable = billable && _hasPattern(roc);
               return Card(
                 child: ListTile(
                   leading: const Icon(Icons.assignment_outlined),
-                  title: Text(
-                    'RoC ${roc.id.substring(0, roc.id.length.clamp(0, 8))}',
-                  ),
+                  title: Text(_clientLabel(roc)),
                   subtitle: Text(
-                    '${roc.status} · ${roc.supports.length} supports · review ${roc.reviewSchedule.cadence}',
+                    'RoC ${_shortId(roc.id)} · ${roc.status} · '
+                    '${roc.supports.length} supports · review ${roc.reviewSchedule.cadence}',
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
                         icon: const Icon(Icons.event_available_outlined),
-                        tooltip: billable
+                        tooltip: plannable
                             ? 'Plan week & assign staff'
-                            : 'Only an active roster of care can be planned',
-                        onPressed: billable ? () => _planAndStaff(roc) : null,
+                            : !billable
+                            ? 'Only an active roster of care can be planned'
+                            : 'This roster of care has no agreed weekly pattern to plan',
+                        onPressed: plannable ? () => _planAndStaff(roc) : null,
                       ),
                       IconButton(
                         icon: const Icon(Icons.receipt_long_outlined),

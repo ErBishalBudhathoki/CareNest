@@ -435,7 +435,7 @@ class _BauhausPricingDashboardViewState
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -559,7 +559,7 @@ class _BauhausPricingDashboardViewState
                             style: BauhausDesign.getTextTheme(context)
                                 .labelSmall
                                 ?.copyWith(
-                                  color: BauhausDesign.textMuted,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                                   fontWeight: FontWeight.w700,
                                 ),
                           ),
@@ -637,7 +637,7 @@ class _BauhausPricingDashboardViewState
                     totalItems.toString(),
                   ),
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -706,7 +706,7 @@ class _BauhausPricingDashboardViewState
               l10n.moduleNoTrackedChanges,
               style: BauhausDesign.getTextTheme(
                 context,
-              ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+              ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
             )
           else
             ...changes.map((record) {
@@ -754,7 +754,7 @@ class _BauhausPricingDashboardViewState
                       dateText,
                       style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w700,
                           ),
                     ),

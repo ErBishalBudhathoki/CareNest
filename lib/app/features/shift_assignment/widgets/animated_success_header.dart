@@ -342,7 +342,7 @@ class _AnimatedSuccessHeaderState extends State<AnimatedSuccessHeader>
                   label,
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w500,
                       ),
                 ),

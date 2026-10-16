@@ -631,7 +631,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   title,
                   style: BauhausDesign.getTextTheme(
                     context,
-                  ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                  ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -686,7 +686,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                 Text(
                   '${expense.category} • ${dateFormat.format(expense.date)}',
                   style: BauhausDesign.getTextTheme(context).bodyMedium
-                      ?.copyWith(color: BauhausDesign.textMuted, fontSize: 12),
+                      ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12),
                 ),
               ],
             ),
@@ -762,7 +762,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                         subtitle,
                         style: BauhausDesign.getTextTheme(context).bodyMedium
                             ?.copyWith(
-                              color: BauhausDesign.textMuted,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                               fontSize: 12,
                             ),
                       ),
@@ -771,7 +771,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                 ),
                 Icon(
                   Icons.arrow_forward_ios,
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   size: 16,
                 ),
               ],
@@ -923,12 +923,12 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
           const SizedBox(height: 8.0),
           Row(
             children: [
-              Icon(Icons.category, size: 14, color: BauhausDesign.textMuted),
+              Icon(Icons.category, size: 14, color: Theme.of(context).colorScheme.onSurfaceVariant),
               const SizedBox(width: 4.0),
               Text(
                 expense.category,
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: 12,
                 ),
               ),
@@ -936,13 +936,13 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               Icon(
                 Icons.calendar_today,
                 size: 14,
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               const SizedBox(width: 4.0),
               Text(
                 dateFormat.format(expense.date),
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: 12,
                 ),
               ),
@@ -959,14 +959,14 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                     Icon(
                       Icons.repeat,
                       size: 14,
-                      color: BauhausDesign.textMuted,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: 4.0),
                     Text(
                       'Recurring',
                       style: BauhausDesign.getTextTheme(context).bodyMedium
                           ?.copyWith(
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontSize: 12,
                           ),
                     ),
@@ -1065,7 +1065,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   'Create a new expense entry with details, receipts, and optional recurring settings.',
                   style: BauhausDesign.getTextTheme(
                     context,
-                  ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                  ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -1122,7 +1122,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                     'Pro tip: Attaching a receipt speeds up approvals and reduces back-and-forth.',
                     style: BauhausDesign.getTextTheme(
                       context,
-                    ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                    ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                 ),
               ],
@@ -1261,7 +1261,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                 expense.description!,
                 style: BauhausDesign.getTextTheme(
                   context,
-                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1273,27 +1273,27 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               Icon(
                 Icons.person_outline,
                 size: 16,
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               const SizedBox(width: 8.0),
               Expanded(
                 child: Text(
                   'Submitted by ${expense.submittedBy}',
                   style: BauhausDesign.getTextTheme(context).bodyMedium
-                      ?.copyWith(color: BauhausDesign.textMuted, fontSize: 12),
+                      ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               Icon(
                 Icons.access_time_outlined,
                 size: 16,
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               const SizedBox(width: 4.0),
               Text(
                 dateFormat.format(expense.createdAt),
                 style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: 12,
                 ),
               ),
@@ -1519,7 +1519,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
           const SizedBox(height: 16),
           Row(
             children: [
-              Icon(Icons.category, size: 16, color: BauhausDesign.textMuted),
+              Icon(Icons.category, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
               const SizedBox(width: 8),
               Text(
                 expense.category,
@@ -1529,7 +1529,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
               Icon(
                 Icons.calendar_today,
                 size: 16,
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               const SizedBox(width: 8),
               Text(
@@ -1793,7 +1793,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                     'No approved expenses to show category breakdown',
                     style: BauhausDesign.getTextTheme(
                       context,
-                    ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                    ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                 ),
               )
@@ -1898,7 +1898,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                 child: Text(
                   title,
                   style: BauhausDesign.getTextTheme(context).bodyMedium
-                      ?.copyWith(color: BauhausDesign.textMuted, fontSize: 12),
+                      ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -2031,7 +2031,7 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
                   overflow: TextOverflow.ellipsis,
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 0.4,
                       ),

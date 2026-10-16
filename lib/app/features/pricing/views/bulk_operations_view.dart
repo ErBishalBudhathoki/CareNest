@@ -598,7 +598,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                       overflow: TextOverflow.ellipsis,
                       style: BauhausDesign.getTextTheme(
                         context,
-                      ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                      ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                   ],
                 ),
@@ -851,7 +851,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                     '${_selectedItemNumbers.length} ${l10n.employeesSelected}',
                     style: BauhausDesign.getTextTheme(
                       context,
-                    ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                    ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -928,7 +928,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                             overflow: TextOverflow.ellipsis,
                             style: BauhausDesign.getTextTheme(context)
                                 .labelSmall
-                                ?.copyWith(color: BauhausDesign.textMuted),
+                                ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                           ),
                         ],
                       ),
@@ -962,7 +962,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                   l10n.moduleNoTrackedChanges,
                   style: BauhausDesign.getTextTheme(
                     context,
-                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                  ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                 )
               : Column(
                   children: _events
@@ -988,7 +988,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                   l10n.moduleNoTrackedChanges,
                   style: BauhausDesign.getTextTheme(
                     context,
-                  ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                  ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                 )
               : Column(
                   children: timeline
@@ -1043,7 +1043,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
             overflow: TextOverflow.ellipsis,
             style: BauhausDesign.getTextTheme(
               context,
-            ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+            ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: 2),
           Text(
@@ -1057,7 +1057,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
             stamp,
             style: BauhausDesign.getTextTheme(
               context,
-            ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+            ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
         ],
       ),
@@ -1094,7 +1094,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
             subtitle,
             style: BauhausDesign.getTextTheme(
               context,
-            ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+            ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: 4),
           child,
@@ -1145,7 +1145,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: BoxDecoration(
           color: onTap == null
-              ? BauhausDesign.textMuted
+              ? Theme.of(context).colorScheme.onSurfaceVariant
               : BauhausDesign.primary,
           border: Border.all(
             color: Theme.of(context).colorScheme.onSurface,

@@ -81,7 +81,7 @@ class UtilizationGauge extends StatelessWidget {
                   'AVG. RATE',
                   style: BauhausDesign.getTextTheme(
                     context,
-                  ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                  ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
               ),
             ],

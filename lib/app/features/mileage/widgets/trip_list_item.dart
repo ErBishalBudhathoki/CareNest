@@ -38,7 +38,7 @@ class TripListItem extends StatelessWidget {
                     trip.date.toString().split(' ')[0], // Or use DateFormat
                     style: BauhausDesign.getTextTheme(
                       context,
-                    ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                    ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                 ],
               ),

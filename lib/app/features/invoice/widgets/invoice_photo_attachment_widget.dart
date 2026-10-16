@@ -283,7 +283,7 @@ class _InvoicePhotoAttachmentWidgetState
         subtitle,
         style: BauhausDesign.getTextTheme(
           context,
-        ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+        ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
       onTap: onTap,
     );
@@ -424,7 +424,7 @@ class _InvoicePhotoAttachmentWidgetState
             hintText: 'Describe the attached photos...',
             prefixIcon: Icon(
               Icons.description_outlined,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             maxLines: 2,
             onChanged: widget.onDescriptionChanged,

@@ -544,7 +544,7 @@ class _PricingConfigurationViewState
                     AppLocalizations.of(context)!.organizationFallbackDesc,
                     style: BauhausDesign.getTextTheme(
                       context,
-                    ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                    ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                   const SizedBox(height: BauhausDesign.space3),
                   TextFormField(
@@ -594,7 +594,7 @@ class _PricingConfigurationViewState
                       suffixStyle: BauhausDesign.getTextTheme(context)
                           .bodyMedium
                           ?.copyWith(
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w600,
                           ),
                     ),
@@ -799,7 +799,7 @@ class _PricingConfigurationViewState
                   )!.lastModified(rule['lastModified']),
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -948,7 +948,7 @@ class _PricingConfigurationViewState
                   )!.lastSynced(integration['lastSync']),
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -1281,7 +1281,7 @@ class _PricingConfigurationViewState
                   description,
                   style: BauhausDesign.getTextTheme(
                     context,
-                  ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                  ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
               ],
             ),
@@ -1395,7 +1395,7 @@ class _PricingConfigurationViewState
                       description,
                       style: BauhausDesign.getTextTheme(
                         context,
-                      ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                      ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                   ],
                 ),

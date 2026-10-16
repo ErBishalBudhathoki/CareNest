@@ -333,7 +333,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
             : l10n.moduleStatusIdle,
         statusColor: bulkCandidates > 0
             ? BauhausDesign.info
-            : BauhausDesign.textMuted,
+            : Theme.of(context).colorScheme.onSurfaceVariant,
         primaryMetricValue: bulkCandidates.toString(),
         primaryMetricLabel: l10n.moduleMetricBulkCandidates,
         secondaryMetricValue: recommendedBatchSize.toString(),
@@ -354,7 +354,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
             : l10n.moduleStatusIdle,
         statusColor: updatesLast7d > 0
             ? BauhausDesign.success
-            : BauhausDesign.textMuted,
+            : Theme.of(context).colorScheme.onSurfaceVariant,
         primaryMetricValue: updatesLast7d.toString(),
         primaryMetricLabel: l10n.moduleMetricWeeklyChanges,
         secondaryMetricValue: customEntries.toString(),
@@ -506,7 +506,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                                 )!.pricingManagementDesc,
                                 style: BauhausDesign.getTextTheme(context)
                                     .labelLarge
-                                    ?.copyWith(color: BauhausDesign.textMuted),
+                                    ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -546,7 +546,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                             AppLocalizations.of(context)!.manageAndOptimizeDesc,
                             style: BauhausDesign.getTextTheme(context)
                                 .bodyMedium
-                                ?.copyWith(color: BauhausDesign.textMuted),
+                                ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -844,7 +844,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                       subtitle,
                       style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w700,
                           ),
                       maxLines: 1,
@@ -924,7 +924,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                             AppLocalizations.of(context)!.chooseModuleDesc,
                             style: BauhausDesign.getTextTheme(context)
                                 .labelLarge
-                                ?.copyWith(color: BauhausDesign.textMuted),
+                                ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                           ),
                         ],
                       ),
@@ -970,7 +970,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                         _PricingModuleInsight(
                           badge: l10n.moduleBadgeOverview,
                           statusLabel: l10n.moduleStatusIdle,
-                          statusColor: BauhausDesign.textMuted,
+                          statusColor: Theme.of(context).colorScheme.onSurfaceVariant,
                           primaryMetricValue: '--',
                           primaryMetricLabel: l10n.moduleMetricCoverage,
                           secondaryMetricValue: '--',
@@ -1116,7 +1116,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                           module['subtitle'].toString(),
                           style: BauhausDesign.getTextTheme(
                             context,
-                          ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                          ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -1148,7 +1148,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                 progressLabel,
                 style: BauhausDesign.getTextTheme(
                   context,
-                ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1292,7 +1292,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
           Text(
             label,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w700,
             ),
             maxLines: 2,
@@ -1519,7 +1519,7 @@ class _PricingManagementViewState extends ConsumerState<PricingManagementView>
                       subtitle,
                       style: BauhausDesign.getTextTheme(
                         context,
-                      ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                      ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                   ],
                 ),

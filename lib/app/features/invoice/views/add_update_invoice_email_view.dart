@@ -130,7 +130,7 @@ class _AddUpdateInvoicingEmailViewState
                             'Organization',
                             style: BauhausDesign.getTextTheme(context)
                                 .labelMedium
-                                ?.copyWith(color: BauhausDesign.textMuted),
+                                ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                           ),
                           const SizedBox(height: BauhausDesign.space1),
                           Text(
@@ -160,7 +160,7 @@ class _AddUpdateInvoicingEmailViewState
                 'Configure your email settings for invoice delivery',
                 style: BauhausDesign.getTextTheme(
                   context,
-                ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
               const SizedBox(height: BauhausDesign.space4),
               // Email Field
@@ -247,7 +247,7 @@ class _AddUpdateInvoicingEmailViewState
                                 isHidden
                                     ? Icons.visibility_off
                                     : Icons.visibility,
-                                color: BauhausDesign.textMuted,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                               onPressed: () {
                                 _passwordVisibilityNotifier.value = !isHidden;
@@ -361,7 +361,7 @@ class _AddUpdateInvoicingEmailViewState
       hintText: hintText,
       hintStyle: BauhausDesign.getTextTheme(
         context,
-      ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+      ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
       filled: true,
       fillColor: Theme.of(context).colorScheme.surface,
       contentPadding: const EdgeInsets.symmetric(

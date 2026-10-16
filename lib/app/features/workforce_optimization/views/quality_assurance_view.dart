@@ -114,7 +114,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
               fontSize: 14,
               color: Theme.of(
                 context,
-              ).colorScheme.onSurfaceVariant, // BauhausDesign.textMuted
+              ).colorScheme.onSurfaceVariant, // Theme.of(context).colorScheme.onSurfaceVariant
             ),
           ),
         ],
@@ -442,7 +442,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
               Icons.inbox_outlined,
               size: 48,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ), // BauhausDesign.textMuted
+            ), // Theme.of(context).colorScheme.onSurfaceVariant
             const SizedBox(height: 12),
             Text(
               message,
@@ -450,7 +450,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
                 fontSize: 14,
                 color: Theme.of(
                   context,
-                ).colorScheme.onSurfaceVariant, // BauhausDesign.textMuted
+                ).colorScheme.onSurfaceVariant, // Theme.of(context).colorScheme.onSurfaceVariant
               ),
             ),
           ],

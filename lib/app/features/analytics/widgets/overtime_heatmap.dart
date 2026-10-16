@@ -212,9 +212,9 @@ class _DayBar extends StatelessWidget {
         if (value > 0)
           Text(
             value.toStringAsFixed(0),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 10,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         const SizedBox(height: 4),

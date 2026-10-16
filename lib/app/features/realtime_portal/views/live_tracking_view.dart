@@ -335,7 +335,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
                           fontSize: 14,
                           color: Theme.of(context)
                               .colorScheme
-                              .onSurfaceVariant, // BauhausDesign.textMuted
+                              .onSurfaceVariant, // Theme.of(context).colorScheme.onSurfaceVariant
                         ),
                       ),
                       SizedBox(height: 4),
@@ -400,7 +400,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
             size: 64,
             color: Theme.of(
               context,
-            ).colorScheme.onSurfaceVariant, // BauhausDesign.textMuted
+            ).colorScheme.onSurfaceVariant, // Theme.of(context).colorScheme.onSurfaceVariant
           ),
           SizedBox(height: 16),
           Text(
@@ -418,7 +418,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
               fontSize: 14,
               color: Theme.of(
                 context,
-              ).colorScheme.onSurfaceVariant, // BauhausDesign.textMuted
+              ).colorScheme.onSurfaceVariant, // Theme.of(context).colorScheme.onSurfaceVariant
             ),
             textAlign: TextAlign.center,
           ),
@@ -438,7 +438,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
           icon,
           color: Theme.of(context).colorScheme.onSurfaceVariant,
           size: 20,
-        ), // BauhausDesign.textMuted
+        ), // Theme.of(context).colorScheme.onSurfaceVariant
         SizedBox(width: 12),
         Text(
           label,
@@ -446,7 +446,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
             fontSize: 14,
             color: Theme.of(
               context,
-            ).colorScheme.onSurfaceVariant, // BauhausDesign.textMuted
+            ).colorScheme.onSurfaceVariant, // Theme.of(context).colorScheme.onSurfaceVariant
           ),
         ),
         const Spacer(),
