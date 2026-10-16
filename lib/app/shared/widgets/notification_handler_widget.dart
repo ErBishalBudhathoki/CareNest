@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carenest/app/features/home/viewmodels/home_viewmodel.dart';
 import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/client_portal/views/client_invoice_detail_view.dart';
+import 'package:carenest/app/routes/app_pages.dart';
 
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
@@ -142,6 +143,30 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
               );
               // Example navigation:
               // Navigator.of(context).pushNamed('/messages', arguments: {'messageId': messageId});
+            }
+            break;
+          case 'sil_roster':
+            // A roster was published. Admins go straight to SIL management;
+            // everyone else (the rostered staff) lands on the home dashboard,
+            // which reloads their shifts.
+            _debugLog(
+              'DEBUG_NOTIF_HANDLER: Roster publish notification, role-aware navigation',
+            );
+            if (SharedPreferencesUtils().getRole() == UserRole.admin &&
+                mounted) {
+              Navigator.of(
+                context,
+                rootNavigator: true,
+              ).pushNamed(Routes.silDashboard);
+            } else {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                '/bottomNavBar',
+                (route) => false,
+                arguments: {
+                  'email': SharedPreferencesUtils().getUserEmail() ?? '',
+                  'role': UserRole.employee,
+                },
+              );
             }
             break;
           case 'emergency_broadcast':
@@ -646,6 +671,21 @@ class _NotificationHandlerState extends ConsumerState<NotificationHandler>
         switch (notificationType) {
           case 'invoice':
             // Update invoice-related UI
+            break;
+          case 'sil_roster':
+            // A roster was published for this organisation; refresh the
+            // dashboard so the new shifts show up without a manual pull.
+            _debugLog(
+              'DEBUG_NOTIF_HANDLER: Roster published - refreshing home dashboard',
+            );
+            final rosterUtils = SharedPreferencesUtils();
+            await rosterUtils.init();
+            final rosterEmail = rosterUtils.getUserEmail();
+            if (rosterEmail != null && rosterEmail.isNotEmpty) {
+              ref
+                  .read(homeViewModelProvider.notifier)
+                  .refreshSilently(rosterEmail);
+            }
             break;
           case 'timer':
             // Update timer-related UI
