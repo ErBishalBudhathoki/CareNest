@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/features/claiming/models/claim_import_result.dart';
 import 'package:carenest/app/features/claiming/models/claim_models.dart';
 import 'package:carenest/app/features/claiming/repositories/claim_repository.dart';
 
@@ -12,6 +13,9 @@ class ClaimState {
   final String? lastCsv;
   final ClaimValidation? validation;
 
+  /// Reconciliation outcome of the most recent (or opened) results import.
+  final ClaimImportResult? lastImport;
+
   ClaimState({
     this.isLoading = false,
     this.error,
@@ -20,6 +24,7 @@ class ClaimState {
     this.activeLines = const [],
     this.lastCsv,
     this.validation,
+    this.lastImport,
   });
 
   ClaimState copyWith({
@@ -30,6 +35,8 @@ class ClaimState {
     List<ClaimLine>? activeLines,
     String? lastCsv,
     ClaimValidation? validation,
+    ClaimImportResult? lastImport,
+    bool clearLastImport = false,
   }) {
     return ClaimState(
       isLoading: isLoading ?? this.isLoading,
@@ -39,6 +46,7 @@ class ClaimState {
       activeLines: activeLines ?? this.activeLines,
       lastCsv: lastCsv ?? this.lastCsv,
       validation: validation ?? this.validation,
+      lastImport: clearLastImport ? null : (lastImport ?? this.lastImport),
     );
   }
 }
@@ -111,15 +119,27 @@ class ClaimViewModel extends Notifier<ClaimState> {
     }
   }
 
-  Future<bool> importResults(String batchId, String fileContent) async {
-    state = state.copyWith(isLoading: true, error: null);
+  /// Imports a results file and returns the reconciliation summary, or null
+  /// when the import itself failed (network/validation error). A non-null
+  /// result may still describe a `partial` or `failed` reconciliation — that is
+  /// a successful import with a business outcome the officer must see.
+  Future<ClaimImportResult?> importResults(
+    String batchId,
+    String fileContent,
+  ) async {
+    state = state.copyWith(
+      isLoading: true,
+      error: null,
+      clearLastImport: true,
+    );
     try {
-      await _repository.importResults(batchId, fileContent);
+      final result = await _repository.importResults(batchId, fileContent);
       await load();
-      return true;
+      state = state.copyWith(isLoading: false, lastImport: result);
+      return result;
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
-      return false;
+      return null;
     }
   }
 }
