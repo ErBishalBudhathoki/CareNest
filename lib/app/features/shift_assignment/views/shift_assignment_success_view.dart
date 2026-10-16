@@ -265,7 +265,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
             AppLocalizations.of(context)!.processingAssignment,
             style: BauhausDesign.getTextTheme(
               context,
-            ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+            ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
         ],
       ),
@@ -408,7 +408,7 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
           textAlign: TextAlign.center,
           overflow: TextOverflow.ellipsis,
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-            color: BauhausDesign.textMuted,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontWeight: FontWeight.w500,
             height: 1.2,
           ),
@@ -602,7 +602,7 @@ ${AppLocalizations.of(context)!.assignmentId}: ${assignment.assignmentId}
                       style: BauhausDesign.getTextTheme(context).labelMedium
                           ?.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                     ),
                     Text(

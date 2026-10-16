@@ -655,7 +655,7 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
                       business.businessEmail,
                       style: BauhausDesign.getTextTheme(
                         context,
-                      ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+                      ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                   ],
                 ),
@@ -729,7 +729,7 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
   Widget _buildInfoRow(BuildContext context, IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, size: 16, color: BauhausDesign.textMuted),
+        Icon(icon, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
         SizedBox(width: BauhausDesign.space2),
         Expanded(
           child: Text(

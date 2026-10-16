@@ -114,7 +114,7 @@ class BauhausProfileCard extends StatelessWidget {
               userEmail,
               textAlign: TextAlign.left,
               style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 0.2,
               ),

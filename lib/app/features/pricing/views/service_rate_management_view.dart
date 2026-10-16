@@ -289,7 +289,7 @@ class _ServiceRateManagementViewState
               hintText: l10n.searchServiceRatesHint,
               hintStyle: BauhausDesign.getTextTheme(
                 context,
-              ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+              ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
               prefixIcon: Icon(
                 Icons.search,
                 color: Theme.of(context).colorScheme.onSurface,
@@ -486,7 +486,7 @@ class _ServiceRateManagementViewState
                       overflow: TextOverflow.ellipsis,
                       style: BauhausDesign.getTextTheme(
                         context,
-                      ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                      ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                   ],
                 ),
@@ -546,7 +546,7 @@ class _ServiceRateManagementViewState
           emptyTitle ?? l10n.moduleNoDataYet,
           style: BauhausDesign.getTextTheme(
             context,
-          ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+          ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
       );
     }
@@ -591,7 +591,7 @@ class _ServiceRateManagementViewState
                       overflow: TextOverflow.ellipsis,
                       style: BauhausDesign.getTextTheme(
                         context,
-                      ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+                      ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -669,7 +669,7 @@ class _ServiceRateManagementViewState
           l10n.moduleNoDataYet,
           style: BauhausDesign.getTextTheme(
             context,
-          ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+          ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
       );
     }

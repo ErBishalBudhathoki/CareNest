@@ -77,7 +77,7 @@ class DateFormatSettingsView extends ConsumerWidget {
                     AppLocalizations.of(context)!.formatOptions,
                     style: BauhausDesign.getTextTheme(context).labelSmall
                         ?.copyWith(
-                          color: BauhausDesign.textMuted,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.0,
                         ),
@@ -286,7 +286,7 @@ class DateFormatSettingsView extends ConsumerWidget {
                     subtitle,
                     style: BauhausDesign.getTextTheme(
                       context,
-                    ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+                    ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                 ],
               ),

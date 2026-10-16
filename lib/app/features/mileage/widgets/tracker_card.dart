@@ -67,7 +67,7 @@ class TrackerCard extends StatelessWidget {
           isTracking ? 'INSIGHTS...' : 'READY',
           style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
             fontWeight: FontWeight.bold,
-            color: isTracking ? BauhausDesign.primary : BauhausDesign.textMuted,
+            color: isTracking ? BauhausDesign.primary : Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: BauhausDesign.space1),

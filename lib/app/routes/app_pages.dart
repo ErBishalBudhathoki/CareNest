@@ -332,8 +332,8 @@ class AppPages {
             return Scaffold(
               appBar: AppBar(
                 title: const Text('Shift Details'),
-                backgroundColor: Theme.of(context).primaryColor,
-                foregroundColor: Colors.white,
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
               ),
               body: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -511,6 +511,7 @@ class AppPages {
               weekStarting: (weekRaw != null && weekRaw.isNotEmpty)
                   ? DateTime.tryParse(weekRaw)
                   : null,
+              autoBuild: args['autoBuild'] == true,
             );
           },
           // NDIS claiming / export (Phase 6)

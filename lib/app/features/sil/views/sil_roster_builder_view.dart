@@ -14,11 +14,16 @@ class SILRosterBuilderView extends ConsumerStatefulWidget {
     required this.propertyId,
     required this.propertyName,
     this.weekStarting,
+    this.autoBuild = false,
   });
 
   final String propertyId;
   final String propertyName;
   final DateTime? weekStarting;
+
+  /// When true the roster is rebuilt from shifts on open, so the caller can
+  /// land straight on the assign list after planning a week.
+  final bool autoBuild;
 
   @override
   ConsumerState<SILRosterBuilderView> createState() =>
@@ -39,15 +44,35 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
 
   SILRepository get _repo => ref.read(silRepositoryProvider);
 
-  String get _weekIso =>
-      _weekStarting.toIso8601String().split('T').first;
+  String get _weekIso => _weekStarting.toIso8601String().split('T').first;
+
+  /// Format an ISO-8601 instant (stored in UTC) as a local `HH:MM` clock.
+  ///
+  /// Slicing the raw ISO string showed the UTC clock, so a 09:00 AEDT shift
+  /// read as "22:00".
+  static String _localHm(String? iso) {
+    if (iso == null || iso.isEmpty) return '';
+    final parsed = DateTime.tryParse(iso);
+    if (parsed == null) return '';
+    final local = parsed.toLocal();
+    final h = local.hour.toString().padLeft(2, '0');
+    final m = local.minute.toString().padLeft(2, '0');
+    return '$h:$m';
+  }
 
   @override
   void initState() {
     super.initState();
     _weekStarting = _mondayOf(widget.weekStarting ?? DateTime.now());
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _load();
+      // When arriving straight from "Plan week & assign staff" the shifts were
+      // just materialised, so build the roster immediately instead of showing
+      // an empty "No roster for this week" state.
+      if (widget.autoBuild) {
+        _build();
+      } else {
+        _load();
+      }
       _loadEmployees();
     });
   }
@@ -280,15 +305,20 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
         ? theme.colorScheme.error
         : theme.colorScheme.tertiary;
     final unassigned = entry.assignedStaff == 0 && entry.shiftId != null;
+    final start = _localHm(entry.startTime);
+    final end = _localHm(entry.endTime);
+    final timeRange = start.isEmpty
+        ? ''
+        : end.isEmpty
+        ? start
+        : '$start–$end';
 
     return Card(
       child: ListTile(
         leading: Icon(Icons.event, color: color),
         title: Text(entry.shiftType),
         subtitle: Text(
-          '${entry.startTime != null ? entry.startTime!.substring(11, 16) : ''}'
-          '${entry.endTime != null ? '–${entry.endTime!.substring(11, 16)}' : ''}'
-          ' · staff ${entry.assignedStaff}/${entry.requiredStaff}',
+          '$timeRange · staff ${entry.assignedStaff}/${entry.requiredStaff}',
         ),
         onTap: unassigned ? () => _assign(entry) : null,
         trailing: unassigned

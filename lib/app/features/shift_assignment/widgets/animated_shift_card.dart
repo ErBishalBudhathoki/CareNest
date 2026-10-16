@@ -232,7 +232,7 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
               Text(
                 label,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -265,7 +265,7 @@ class _AnimatedShiftCardState extends State<AnimatedShiftCard>
           Text(
             '${AppLocalizations.of(context)!.timeWorked}: ',
             style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w500,
             ),
           ),

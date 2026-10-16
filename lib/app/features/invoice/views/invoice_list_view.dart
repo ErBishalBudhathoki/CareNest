@@ -378,7 +378,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
             '${l10n.dueLabel}: ${DateFormat.yMMMd(l10n.localeName).format(invoice.dueDate)}',
             style: BauhausDesign.getTextTheme(
               context,
-            ).labelSmall?.copyWith(color: BauhausDesign.textMuted),
+            ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: BauhausDesign.space3),
           Row(
@@ -475,7 +475,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
                 l10n.cancel,
                 style: BauhausDesign.getTextTheme(
                   context,
-                ).labelLarge?.copyWith(color: BauhausDesign.textMuted),
+                ).labelLarge?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
             ),
             TextButton(
@@ -663,7 +663,7 @@ class _InvoiceListViewState extends ConsumerState<InvoiceListView>
                 l10n.cancel,
                 style: BauhausDesign.getTextTheme(
                   context,
-                ).labelLarge?.copyWith(color: BauhausDesign.textMuted),
+                ).labelLarge?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
             ),
             TextButton(

@@ -62,7 +62,7 @@ class _EnhancedPredictiveInsightsViewState
                 horizontal: BauhausDesign.space3,
               ),
               labelColor: BauhausDesign.primary,
-              unselectedLabelColor: BauhausDesign.textMuted,
+              unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
               indicatorColor: BauhausDesign.primary,
               indicatorWeight: 3,
               labelStyle: GoogleFonts.inter(
@@ -239,7 +239,7 @@ class _EnhancedPredictiveInsightsViewState
                           'Confidence',
                           style: GoogleFonts.inter(
                             fontSize: 12,
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                         Container(
@@ -299,7 +299,7 @@ class _EnhancedPredictiveInsightsViewState
               'All workers have low churn risk',
               style: GoogleFonts.inter(
                 fontSize: 14,
-                color: BauhausDesign.textMuted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
           ],
@@ -420,7 +420,7 @@ class _EnhancedPredictiveInsightsViewState
                                 prediction.workerEmail,
                                 style: GoogleFonts.inter(
                                   fontSize: 12,
-                                  color: BauhausDesign.textMuted,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 ),
                               ),
                             ],
@@ -653,7 +653,7 @@ class _EnhancedPredictiveInsightsViewState
                         'Peak Hours: ${forecast.peakHours.map((h) => '$h:00').join(', ')}',
                         style: GoogleFonts.inter(
                           fontSize: 12,
-                          color: BauhausDesign.textMuted,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -877,7 +877,7 @@ class _EnhancedPredictiveInsightsViewState
                               style: GoogleFonts.inter(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w700,
-                                color: BauhausDesign.textMuted,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 letterSpacing: 0.5,
                               ),
                             ),
@@ -932,7 +932,7 @@ class _EnhancedPredictiveInsightsViewState
           textAlign: TextAlign.center,
           style: GoogleFonts.inter(
             fontSize: 11,
-            color: BauhausDesign.textMuted,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,

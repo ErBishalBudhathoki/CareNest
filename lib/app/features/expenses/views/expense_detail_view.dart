@@ -358,7 +358,7 @@ class ExpenseDetailView extends ConsumerWidget {
           '$label: ',
           style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
             fontWeight: FontWeight.bold,
-            color: BauhausDesign.textMuted,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
         Expanded(

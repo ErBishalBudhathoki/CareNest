@@ -219,7 +219,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
                       Text(
                         'Automated validation, error detection & payment predictions',
                         style: textTheme.bodySmall?.copyWith(
-                          color: BauhausDesign.textMuted,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -330,7 +330,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
                 Text(
                   title,
                   style: textTheme.labelSmall?.copyWith(
-                    color: BauhausDesign.textMuted,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.8,
                   ),
@@ -426,7 +426,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
                             Text(
                               description,
                               style: textTheme.bodySmall?.copyWith(
-                                color: BauhausDesign.textMuted,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ],
@@ -577,7 +577,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
               Text(
                 body,
                 style: textTheme.bodyMedium?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: BauhausDesign.space5),
@@ -589,7 +589,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
                     child: Text(
                       primaryLabel != null ? 'CANCEL' : 'OK',
                       style: textTheme.labelLarge?.copyWith(
-                        color: BauhausDesign.textMuted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -726,7 +726,7 @@ class _QuickGenerateWidgetState extends ConsumerState<_QuickGenerateWidget> {
           Text(
             'Type a natural language note to auto-create an invoice.',
             style: textTheme.bodySmall?.copyWith(
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: BauhausDesign.space3),

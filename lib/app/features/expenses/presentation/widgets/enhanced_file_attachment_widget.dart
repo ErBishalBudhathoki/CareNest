@@ -381,7 +381,7 @@ class _EnhancedFileAttachmentWidgetState
               '${_selectedFiles.length}/${widget.maxFiles}',
               style: BauhausDesign.getTextTheme(
                 context,
-              ).bodyMedium?.copyWith(color: BauhausDesign.textMuted),
+              ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
           ],
         ),
@@ -575,9 +575,9 @@ class _EnhancedFileAttachmentWidgetState
             controller: _descriptionController,
             label: 'File Description (Optional)',
             hintText: 'Add a description for your attachments...',
-            prefixIcon: const Icon(
+            prefixIcon: Icon(
               Icons.description,
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             maxLines: 2,
             onChanged: widget.onDescriptionChanged,

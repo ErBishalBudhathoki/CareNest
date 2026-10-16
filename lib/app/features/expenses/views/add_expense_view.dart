@@ -445,9 +445,9 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                           l10n.expenseCategoryLabel,
                         ).copyWith(
                           labelText: l10n.expenseCategoryLabel,
-                          prefixIcon: const Icon(
+                          prefixIcon: Icon(
                             Icons.category,
-                            color: BauhausDesign.textMuted,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                     items: _categories.map((category) {
@@ -508,9 +508,9 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                               l10n.expenseClientLabel,
                             ).copyWith(
                               labelText: l10n.expenseClientLabel,
-                              prefixIcon: const Icon(
+                              prefixIcon: Icon(
                                 Icons.person,
-                                color: BauhausDesign.textMuted,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                               suffixIcon: isLoading
                                   ? const SizedBox(
@@ -526,7 +526,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                         hint: Text(
                           l10n.expenseClientHint,
                           style: BauhausDesign.getTextTheme(context).bodyMedium
-                              ?.copyWith(color: BauhausDesign.textMuted),
+                              ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                         ),
                         items: clients.map((client) {
                           return DropdownMenuItem<Patient>(
@@ -558,9 +558,9 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                           ).format(_selectedDate),
                         ),
                         label: l10n.expenseDateLabel,
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.calendar_today,
-                          color: BauhausDesign.textMuted,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ),
@@ -570,9 +570,9 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                     controller: _descriptionController,
                     label: l10n.expenseDescriptionLabel,
                     hintText: l10n.expenseDescriptionHint,
-                    prefixIcon: const Icon(
+                    prefixIcon: Icon(
                       Icons.description,
-                      color: BauhausDesign.textMuted,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     maxLines: 3,
                   ),
@@ -606,9 +606,9 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                             l10n.expenseFrequencyLabel,
                           ).copyWith(
                             labelText: l10n.expenseFrequencyLabel,
-                            prefixIcon: const Icon(
+                            prefixIcon: Icon(
                               Icons.repeat,
-                              color: BauhausDesign.textMuted,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
                           ),
                       items: _frequencies.map((frequency) {

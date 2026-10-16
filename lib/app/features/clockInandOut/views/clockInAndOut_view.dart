@@ -105,7 +105,7 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
               Text(
                 'TOTAL TODAY',
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   letterSpacing: 2.0,
                 ),
               ),
@@ -309,14 +309,14 @@ class _ClockInAndOutViewState extends ConsumerState<ClockInAndOutView> {
             '$employeeName · ${duration}h · ${breakMin}m break',
             style: BauhausDesign.getTextTheme(
               context,
-            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+            ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: BauhausDesign.space1),
           Text(
             'Client: $clientName',
             style: BauhausDesign.getTextTheme(
               context,
-            ).bodySmall?.copyWith(color: BauhausDesign.textMuted),
+            ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
         ],
       ),

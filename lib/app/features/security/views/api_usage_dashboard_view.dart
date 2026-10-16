@@ -449,7 +449,7 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
 
   TextStyle? get _itemSubtitleStyle => BauhausDesign.getTextTheme(
     context,
-  ).bodySmall?.copyWith(color: BauhausDesign.textMuted);
+  ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant);
 
   @override
   Widget build(BuildContext context) {

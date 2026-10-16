@@ -1040,7 +1040,7 @@ class _FinancialIntelligenceDashboardState
           Text(
             label,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-              color: BauhausDesign.textMuted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -1550,7 +1550,7 @@ class _FinancialIntelligenceDashboardState
               Text(
                 item.timeLabel,
                 style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                  color: BauhausDesign.textMuted,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w700,
                 ),
               ),
