@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_time_picker.dart';
 import 'package:carenest/app/features/sil/models/sil_models.dart';
 import 'package:carenest/app/features/sil/repositories/sil_repository.dart';
 import 'package:carenest/app/features/sil/viewmodels/sil_viewmodels.dart';
@@ -286,6 +287,12 @@ class _QuotesTab extends ConsumerWidget {
     final hoursController = TextEditingController(text: '1');
     final priceController = TextEditingController();
     String fundingType = 'plan_managed';
+    final selectedDays = <String>{};
+    TimeOfDay startTime = const TimeOfDay(hour: 9, minute: 0);
+    TimeOfDay endTime = const TimeOfDay(hour: 15, minute: 0);
+
+    String fmt(TimeOfDay t) =>
+        '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
     final created = await showDialog<bool>(
       context: context,
@@ -340,6 +347,59 @@ class _QuotesTab extends ConsumerWidget {
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   decoration: const InputDecoration(labelText: 'Unit price'),
                 ),
+                const SizedBox(height: 16),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Agreed weekly pattern',
+                    style: Theme.of(dialogContext).textTheme.labelLarge,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 6,
+                  children: const ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                      .map(
+                        (d) => FilterChip(
+                          label: Text(d),
+                          selected: selectedDays.contains(d),
+                          onSelected: (on) => setState(
+                            () => on ? selectedDays.add(d) : selectedDays.remove(d),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () async {
+                          final t = await showBauhausTimePicker(
+                            context: dialogContext,
+                            initialTime: startTime,
+                          );
+                          if (t != null) setState(() => startTime = t);
+                        },
+                        child: Text('Start ${fmt(startTime)}'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () async {
+                          final t = await showBauhausTimePicker(
+                            context: dialogContext,
+                            initialTime: endTime,
+                          );
+                          if (t != null) setState(() => endTime = t);
+                        },
+                        child: Text('End ${fmt(endTime)}'),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -359,6 +419,9 @@ class _QuotesTab extends ConsumerWidget {
                       'hoursPerWeek':
                           double.tryParse(hoursController.text.trim()) ?? 0,
                       'unitPrice': double.tryParse(priceController.text.trim()) ?? 0,
+                      'days': selectedDays.toList(),
+                      'startTime': fmt(startTime),
+                      'endTime': fmt(endTime),
                     },
                   ],
                 });
@@ -463,6 +526,58 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
     }
   }
 
+  /// Materialise this RoC's agreed weekly pattern into that week's shifts, then
+  /// open the roster builder for the property so staff can be assigned in one
+  /// place (see docs/SIL_MANAGEMENT_SPEC.md §7).
+  Future<void> _planAndStaff(SILRosterOfCare roc) async {
+    final now = DateTime.now();
+    final picked = await showBauhausDatePicker(
+      context: context,
+      initialDate: now,
+      firstDate: DateTime(now.year - 1),
+      lastDate: DateTime(now.year + 1),
+    );
+    if (picked == null || !mounted) return;
+
+    final monday = DateTime(picked.year, picked.month, picked.day)
+        .subtract(Duration(days: (picked.weekday + 6) % 7));
+    final weekIso = monday.toIso8601String().split('T').first;
+
+    try {
+      final repo = ref.read(silRepositoryProvider);
+      final result = await repo.materializeRosterOfCareShifts(
+        roc.id,
+        weekStarting: weekIso,
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Planned ${result.created} shift(s)'
+            '${result.skipped > 0 ? ' · ${result.skipped} already existed' : ''}.',
+          ),
+        ),
+      );
+      final propertyId = roc.propertyId;
+      if (propertyId != null && propertyId.isNotEmpty) {
+        Navigator.of(context).pushNamed(
+          Routes.silRoster,
+          arguments: {
+            'propertyId': propertyId,
+            'propertyName': 'SIL property',
+            'weekStarting': monday.toIso8601String(),
+          },
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$e')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_loading) return const Center(child: CircularProgressIndicator());
@@ -493,14 +608,26 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
                   subtitle: Text(
                     '${roc.status} · ${roc.supports.length} supports · review ${roc.reviewSchedule.cadence}',
                   ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.receipt_long_outlined),
-                    tooltip: billable
-                        ? 'Generate invoice'
-                        : 'Only an active roster of care can be invoiced',
-                    onPressed: billable && !_invoicing
-                        ? () => _showInvoiceDialog(roc)
-                        : null,
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.event_available_outlined),
+                        tooltip: billable
+                            ? 'Plan week & assign staff'
+                            : 'Only an active roster of care can be planned',
+                        onPressed: billable ? () => _planAndStaff(roc) : null,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.receipt_long_outlined),
+                        tooltip: billable
+                            ? 'Generate invoice'
+                            : 'Only an active roster of care can be invoiced',
+                        onPressed: billable && !_invoicing
+                            ? () => _showInvoiceDialog(roc)
+                            : null,
+                      ),
+                    ],
                   ),
                 ),
               );

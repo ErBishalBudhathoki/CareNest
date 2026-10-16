@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/app/features/sil/models/sil_models.dart';
 import 'package:carenest/app/features/sil/repositories/sil_repository.dart';
 
 /// Weekly SIL roster builder (Phase 4). Builds a roster from shifts and shows
-/// ratio compliance; supports publishing.
+/// ratio compliance; supports publishing and inline staff assignment.
 class SILRosterBuilderView extends ConsumerStatefulWidget {
   const SILRosterBuilderView({
     super.key,
     required this.propertyId,
     required this.propertyName,
+    this.weekStarting,
   });
 
   final String propertyId;
   final String propertyName;
+  final DateTime? weekStarting;
 
   @override
   ConsumerState<SILRosterBuilderView> createState() =>
@@ -23,9 +27,10 @@ class SILRosterBuilderView extends ConsumerStatefulWidget {
 
 class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
   SILRoster? _roster;
-  DateTime _weekStarting = _mondayOf(DateTime.now());
+  late DateTime _weekStarting;
   bool _loading = false;
   String? _error;
+  List<Map<String, dynamic>> _employees = const [];
 
   static DateTime _mondayOf(DateTime date) {
     final d = DateTime(date.year, date.month, date.day);
@@ -36,6 +41,89 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
 
   String get _weekIso =>
       _weekStarting.toIso8601String().split('T').first;
+
+  @override
+  void initState() {
+    super.initState();
+    _weekStarting = _mondayOf(widget.weekStarting ?? DateTime.now());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _load();
+      _loadEmployees();
+    });
+  }
+
+  Future<void> _loadEmployees() async {
+    final orgId = ref.read(app_providers.organizationIdProvider);
+    if (orgId == null || orgId.isEmpty) return;
+    try {
+      final api = ref.read(app_providers.apiMethodProvider);
+      final response = await api.getOrganizationEmployees(orgId);
+      final list = (response['employees'] as List?) ?? const [];
+      if (!mounted) return;
+      setState(() {
+        _employees = list
+            .whereType<Map>()
+            .map((e) => Map<String, dynamic>.from(e))
+            .where((e) => (e['email']?.toString() ?? '').isNotEmpty)
+            .toList();
+      });
+    } catch (_) {
+      // Assignment is optional; the roster still renders without the list.
+    }
+  }
+
+  String _employeeLabel(Map<String, dynamic> e) {
+    final name = [e['firstName'], e['lastName']]
+        .where((v) => v != null && v.toString().trim().isNotEmpty)
+        .join(' ')
+        .trim();
+    return name.isEmpty ? (e['email']?.toString() ?? '') : name;
+  }
+
+  Future<void> _assign(SILRosterEntry entry) async {
+    if (entry.shiftId == null) return;
+    if (_employees.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No employees available to assign.')),
+      );
+      return;
+    }
+    final selected = await showDialog<Map<String, dynamic>>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('Assign support worker'),
+        children: [
+          for (final e in _employees)
+            SimpleDialogOption(
+              onPressed: () => Navigator.of(dialogContext).pop(e),
+              child: Text(_employeeLabel(e)),
+            ),
+        ],
+      ),
+    );
+    if (selected == null || !mounted) return;
+    try {
+      final api = ref.read(app_providers.apiMethodProvider);
+      final response = await api.updateShift(entry.shiftId!, {
+        'employeeEmail': selected['email'],
+      });
+      if (!mounted) return;
+      if (response['success'] == true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Assigned ${_employeeLabel(selected)}.')),
+        );
+        await _build();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['error']?.toString() ?? 'Assignment failed.')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+      }
+    }
+  }
 
   Future<void> _load() async {
     setState(() {
@@ -191,6 +279,7 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
         : entry.compliance == 'understaffed'
         ? theme.colorScheme.error
         : theme.colorScheme.tertiary;
+    final unassigned = entry.assignedStaff == 0 && entry.shiftId != null;
 
     return Card(
       child: ListTile(
@@ -201,11 +290,18 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
           '${entry.endTime != null ? '–${entry.endTime!.substring(11, 16)}' : ''}'
           ' · staff ${entry.assignedStaff}/${entry.requiredStaff}',
         ),
-        trailing: Chip(
-          label: Text(entry.compliance),
-          backgroundColor: color.withValues(alpha: 0.12),
-          side: BorderSide(color: color),
-        ),
+        onTap: unassigned ? () => _assign(entry) : null,
+        trailing: unassigned
+            ? ActionChip(
+                avatar: const Icon(Icons.person_add_alt, size: 18),
+                label: const Text('Assign'),
+                onPressed: () => _assign(entry),
+              )
+            : Chip(
+                label: Text(entry.compliance),
+                backgroundColor: color.withValues(alpha: 0.12),
+                side: BorderSide(color: color),
+              ),
       ),
     );
   }
