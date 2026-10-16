@@ -3444,7 +3444,7 @@ as List<String>,
 /// @nodoc
 mixin _$SILQuoteLine {
 
- String get supportNumber; String get supportName; String get shiftType; double get hoursPerWeek; double get unitPrice; String get gstCode; double get amount; SILPriceValidation get priceValidation;
+ String get supportNumber; String get supportName; String get shiftType; double get hoursPerWeek; double get unitPrice; String get gstCode; double get amount; List<String> get days; String get startTime; String get endTime; SILPriceValidation get priceValidation;
 /// Create a copy of SILQuoteLine
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -3457,16 +3457,16 @@ $SILQuoteLineCopyWith<SILQuoteLine> get copyWith => _$SILQuoteLineCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SILQuoteLine&&(identical(other.supportNumber, supportNumber) || other.supportNumber == supportNumber)&&(identical(other.supportName, supportName) || other.supportName == supportName)&&(identical(other.shiftType, shiftType) || other.shiftType == shiftType)&&(identical(other.hoursPerWeek, hoursPerWeek) || other.hoursPerWeek == hoursPerWeek)&&(identical(other.unitPrice, unitPrice) || other.unitPrice == unitPrice)&&(identical(other.gstCode, gstCode) || other.gstCode == gstCode)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.priceValidation, priceValidation) || other.priceValidation == priceValidation));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SILQuoteLine&&(identical(other.supportNumber, supportNumber) || other.supportNumber == supportNumber)&&(identical(other.supportName, supportName) || other.supportName == supportName)&&(identical(other.shiftType, shiftType) || other.shiftType == shiftType)&&(identical(other.hoursPerWeek, hoursPerWeek) || other.hoursPerWeek == hoursPerWeek)&&(identical(other.unitPrice, unitPrice) || other.unitPrice == unitPrice)&&(identical(other.gstCode, gstCode) || other.gstCode == gstCode)&&(identical(other.amount, amount) || other.amount == amount)&&const DeepCollectionEquality().equals(other.days, days)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.priceValidation, priceValidation) || other.priceValidation == priceValidation));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,supportNumber,supportName,shiftType,hoursPerWeek,unitPrice,gstCode,amount,priceValidation);
+int get hashCode => Object.hash(runtimeType,supportNumber,supportName,shiftType,hoursPerWeek,unitPrice,gstCode,amount,const DeepCollectionEquality().hash(days),startTime,endTime,priceValidation);
 
 @override
 String toString() {
-  return 'SILQuoteLine(supportNumber: $supportNumber, supportName: $supportName, shiftType: $shiftType, hoursPerWeek: $hoursPerWeek, unitPrice: $unitPrice, gstCode: $gstCode, amount: $amount, priceValidation: $priceValidation)';
+  return 'SILQuoteLine(supportNumber: $supportNumber, supportName: $supportName, shiftType: $shiftType, hoursPerWeek: $hoursPerWeek, unitPrice: $unitPrice, gstCode: $gstCode, amount: $amount, days: $days, startTime: $startTime, endTime: $endTime, priceValidation: $priceValidation)';
 }
 
 
@@ -3477,7 +3477,7 @@ abstract mixin class $SILQuoteLineCopyWith<$Res>  {
   factory $SILQuoteLineCopyWith(SILQuoteLine value, $Res Function(SILQuoteLine) _then) = _$SILQuoteLineCopyWithImpl;
 @useResult
 $Res call({
- String supportNumber, String supportName, String shiftType, double hoursPerWeek, double unitPrice, String gstCode, double amount, SILPriceValidation priceValidation
+ String supportNumber, String supportName, String shiftType, double hoursPerWeek, double unitPrice, String gstCode, double amount, List<String> days, String startTime, String endTime, SILPriceValidation priceValidation
 });
 
 
@@ -3494,7 +3494,7 @@ class _$SILQuoteLineCopyWithImpl<$Res>
 
 /// Create a copy of SILQuoteLine
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? supportNumber = null,Object? supportName = null,Object? shiftType = null,Object? hoursPerWeek = null,Object? unitPrice = null,Object? gstCode = null,Object? amount = null,Object? priceValidation = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? supportNumber = null,Object? supportName = null,Object? shiftType = null,Object? hoursPerWeek = null,Object? unitPrice = null,Object? gstCode = null,Object? amount = null,Object? days = null,Object? startTime = null,Object? endTime = null,Object? priceValidation = null,}) {
   return _then(_self.copyWith(
 supportNumber: null == supportNumber ? _self.supportNumber : supportNumber // ignore: cast_nullable_to_non_nullable
 as String,supportName: null == supportName ? _self.supportName : supportName // ignore: cast_nullable_to_non_nullable
@@ -3503,7 +3503,10 @@ as String,hoursPerWeek: null == hoursPerWeek ? _self.hoursPerWeek : hoursPerWeek
 as double,unitPrice: null == unitPrice ? _self.unitPrice : unitPrice // ignore: cast_nullable_to_non_nullable
 as double,gstCode: null == gstCode ? _self.gstCode : gstCode // ignore: cast_nullable_to_non_nullable
 as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
-as double,priceValidation: null == priceValidation ? _self.priceValidation : priceValidation // ignore: cast_nullable_to_non_nullable
+as double,days: null == days ? _self.days : days // ignore: cast_nullable_to_non_nullable
+as List<String>,startTime: null == startTime ? _self.startTime : startTime // ignore: cast_nullable_to_non_nullable
+as String,endTime: null == endTime ? _self.endTime : endTime // ignore: cast_nullable_to_non_nullable
+as String,priceValidation: null == priceValidation ? _self.priceValidation : priceValidation // ignore: cast_nullable_to_non_nullable
 as SILPriceValidation,
   ));
 }
@@ -3598,10 +3601,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String supportNumber,  String supportName,  String shiftType,  double hoursPerWeek,  double unitPrice,  String gstCode,  double amount,  SILPriceValidation priceValidation)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String supportNumber,  String supportName,  String shiftType,  double hoursPerWeek,  double unitPrice,  String gstCode,  double amount,  List<String> days,  String startTime,  String endTime,  SILPriceValidation priceValidation)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SILQuoteLine() when $default != null:
-return $default(_that.supportNumber,_that.supportName,_that.shiftType,_that.hoursPerWeek,_that.unitPrice,_that.gstCode,_that.amount,_that.priceValidation);case _:
+return $default(_that.supportNumber,_that.supportName,_that.shiftType,_that.hoursPerWeek,_that.unitPrice,_that.gstCode,_that.amount,_that.days,_that.startTime,_that.endTime,_that.priceValidation);case _:
   return orElse();
 
 }
@@ -3619,10 +3622,10 @@ return $default(_that.supportNumber,_that.supportName,_that.shiftType,_that.hour
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String supportNumber,  String supportName,  String shiftType,  double hoursPerWeek,  double unitPrice,  String gstCode,  double amount,  SILPriceValidation priceValidation)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String supportNumber,  String supportName,  String shiftType,  double hoursPerWeek,  double unitPrice,  String gstCode,  double amount,  List<String> days,  String startTime,  String endTime,  SILPriceValidation priceValidation)  $default,) {final _that = this;
 switch (_that) {
 case _SILQuoteLine():
-return $default(_that.supportNumber,_that.supportName,_that.shiftType,_that.hoursPerWeek,_that.unitPrice,_that.gstCode,_that.amount,_that.priceValidation);case _:
+return $default(_that.supportNumber,_that.supportName,_that.shiftType,_that.hoursPerWeek,_that.unitPrice,_that.gstCode,_that.amount,_that.days,_that.startTime,_that.endTime,_that.priceValidation);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -3639,10 +3642,10 @@ return $default(_that.supportNumber,_that.supportName,_that.shiftType,_that.hour
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String supportNumber,  String supportName,  String shiftType,  double hoursPerWeek,  double unitPrice,  String gstCode,  double amount,  SILPriceValidation priceValidation)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String supportNumber,  String supportName,  String shiftType,  double hoursPerWeek,  double unitPrice,  String gstCode,  double amount,  List<String> days,  String startTime,  String endTime,  SILPriceValidation priceValidation)?  $default,) {final _that = this;
 switch (_that) {
 case _SILQuoteLine() when $default != null:
-return $default(_that.supportNumber,_that.supportName,_that.shiftType,_that.hoursPerWeek,_that.unitPrice,_that.gstCode,_that.amount,_that.priceValidation);case _:
+return $default(_that.supportNumber,_that.supportName,_that.shiftType,_that.hoursPerWeek,_that.unitPrice,_that.gstCode,_that.amount,_that.days,_that.startTime,_that.endTime,_that.priceValidation);case _:
   return null;
 
 }
@@ -3654,7 +3657,7 @@ return $default(_that.supportNumber,_that.supportName,_that.shiftType,_that.hour
 @JsonSerializable()
 
 class _SILQuoteLine implements SILQuoteLine {
-  const _SILQuoteLine({required this.supportNumber, this.supportName = '', this.shiftType = 'day', this.hoursPerWeek = 0, this.unitPrice = 0, this.gstCode = 'P2', this.amount = 0, this.priceValidation = const SILPriceValidation()});
+  const _SILQuoteLine({required this.supportNumber, this.supportName = '', this.shiftType = 'day', this.hoursPerWeek = 0, this.unitPrice = 0, this.gstCode = 'P2', this.amount = 0, final  List<String> days = const <String>[], this.startTime = '', this.endTime = '', this.priceValidation = const SILPriceValidation()}): _days = days;
   factory _SILQuoteLine.fromJson(Map<String, dynamic> json) => _$SILQuoteLineFromJson(json);
 
 @override final  String supportNumber;
@@ -3664,6 +3667,15 @@ class _SILQuoteLine implements SILQuoteLine {
 @override@JsonKey() final  double unitPrice;
 @override@JsonKey() final  String gstCode;
 @override@JsonKey() final  double amount;
+ final  List<String> _days;
+@override@JsonKey() List<String> get days {
+  if (_days is EqualUnmodifiableListView) return _days;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_days);
+}
+
+@override@JsonKey() final  String startTime;
+@override@JsonKey() final  String endTime;
 @override@JsonKey() final  SILPriceValidation priceValidation;
 
 /// Create a copy of SILQuoteLine
@@ -3679,16 +3691,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SILQuoteLine&&(identical(other.supportNumber, supportNumber) || other.supportNumber == supportNumber)&&(identical(other.supportName, supportName) || other.supportName == supportName)&&(identical(other.shiftType, shiftType) || other.shiftType == shiftType)&&(identical(other.hoursPerWeek, hoursPerWeek) || other.hoursPerWeek == hoursPerWeek)&&(identical(other.unitPrice, unitPrice) || other.unitPrice == unitPrice)&&(identical(other.gstCode, gstCode) || other.gstCode == gstCode)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.priceValidation, priceValidation) || other.priceValidation == priceValidation));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SILQuoteLine&&(identical(other.supportNumber, supportNumber) || other.supportNumber == supportNumber)&&(identical(other.supportName, supportName) || other.supportName == supportName)&&(identical(other.shiftType, shiftType) || other.shiftType == shiftType)&&(identical(other.hoursPerWeek, hoursPerWeek) || other.hoursPerWeek == hoursPerWeek)&&(identical(other.unitPrice, unitPrice) || other.unitPrice == unitPrice)&&(identical(other.gstCode, gstCode) || other.gstCode == gstCode)&&(identical(other.amount, amount) || other.amount == amount)&&const DeepCollectionEquality().equals(other._days, _days)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.priceValidation, priceValidation) || other.priceValidation == priceValidation));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,supportNumber,supportName,shiftType,hoursPerWeek,unitPrice,gstCode,amount,priceValidation);
+int get hashCode => Object.hash(runtimeType,supportNumber,supportName,shiftType,hoursPerWeek,unitPrice,gstCode,amount,const DeepCollectionEquality().hash(_days),startTime,endTime,priceValidation);
 
 @override
 String toString() {
-  return 'SILQuoteLine(supportNumber: $supportNumber, supportName: $supportName, shiftType: $shiftType, hoursPerWeek: $hoursPerWeek, unitPrice: $unitPrice, gstCode: $gstCode, amount: $amount, priceValidation: $priceValidation)';
+  return 'SILQuoteLine(supportNumber: $supportNumber, supportName: $supportName, shiftType: $shiftType, hoursPerWeek: $hoursPerWeek, unitPrice: $unitPrice, gstCode: $gstCode, amount: $amount, days: $days, startTime: $startTime, endTime: $endTime, priceValidation: $priceValidation)';
 }
 
 
@@ -3699,7 +3711,7 @@ abstract mixin class _$SILQuoteLineCopyWith<$Res> implements $SILQuoteLineCopyWi
   factory _$SILQuoteLineCopyWith(_SILQuoteLine value, $Res Function(_SILQuoteLine) _then) = __$SILQuoteLineCopyWithImpl;
 @override @useResult
 $Res call({
- String supportNumber, String supportName, String shiftType, double hoursPerWeek, double unitPrice, String gstCode, double amount, SILPriceValidation priceValidation
+ String supportNumber, String supportName, String shiftType, double hoursPerWeek, double unitPrice, String gstCode, double amount, List<String> days, String startTime, String endTime, SILPriceValidation priceValidation
 });
 
 
@@ -3716,7 +3728,7 @@ class __$SILQuoteLineCopyWithImpl<$Res>
 
 /// Create a copy of SILQuoteLine
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? supportNumber = null,Object? supportName = null,Object? shiftType = null,Object? hoursPerWeek = null,Object? unitPrice = null,Object? gstCode = null,Object? amount = null,Object? priceValidation = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? supportNumber = null,Object? supportName = null,Object? shiftType = null,Object? hoursPerWeek = null,Object? unitPrice = null,Object? gstCode = null,Object? amount = null,Object? days = null,Object? startTime = null,Object? endTime = null,Object? priceValidation = null,}) {
   return _then(_SILQuoteLine(
 supportNumber: null == supportNumber ? _self.supportNumber : supportNumber // ignore: cast_nullable_to_non_nullable
 as String,supportName: null == supportName ? _self.supportName : supportName // ignore: cast_nullable_to_non_nullable
@@ -3725,7 +3737,10 @@ as String,hoursPerWeek: null == hoursPerWeek ? _self.hoursPerWeek : hoursPerWeek
 as double,unitPrice: null == unitPrice ? _self.unitPrice : unitPrice // ignore: cast_nullable_to_non_nullable
 as double,gstCode: null == gstCode ? _self.gstCode : gstCode // ignore: cast_nullable_to_non_nullable
 as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
-as double,priceValidation: null == priceValidation ? _self.priceValidation : priceValidation // ignore: cast_nullable_to_non_nullable
+as double,days: null == days ? _self._days : days // ignore: cast_nullable_to_non_nullable
+as List<String>,startTime: null == startTime ? _self.startTime : startTime // ignore: cast_nullable_to_non_nullable
+as String,endTime: null == endTime ? _self.endTime : endTime // ignore: cast_nullable_to_non_nullable
+as String,priceValidation: null == priceValidation ? _self.priceValidation : priceValidation // ignore: cast_nullable_to_non_nullable
 as SILPriceValidation,
   ));
 }
@@ -4326,7 +4341,7 @@ $SILQuoteTotalsCopyWith<$Res> get totals {
 /// @nodoc
 mixin _$SILRocSupport {
 
- String get supportNumber; String get supportName; String get shiftType; double get hoursPerWeek; double get unitPrice; String get gstCode; double get amount;
+ String get supportNumber; String get supportName; String get shiftType; double get hoursPerWeek; double get unitPrice; String get gstCode; double get amount; List<String> get days; String get startTime; String get endTime;
 /// Create a copy of SILRocSupport
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -4339,16 +4354,16 @@ $SILRocSupportCopyWith<SILRocSupport> get copyWith => _$SILRocSupportCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SILRocSupport&&(identical(other.supportNumber, supportNumber) || other.supportNumber == supportNumber)&&(identical(other.supportName, supportName) || other.supportName == supportName)&&(identical(other.shiftType, shiftType) || other.shiftType == shiftType)&&(identical(other.hoursPerWeek, hoursPerWeek) || other.hoursPerWeek == hoursPerWeek)&&(identical(other.unitPrice, unitPrice) || other.unitPrice == unitPrice)&&(identical(other.gstCode, gstCode) || other.gstCode == gstCode)&&(identical(other.amount, amount) || other.amount == amount));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SILRocSupport&&(identical(other.supportNumber, supportNumber) || other.supportNumber == supportNumber)&&(identical(other.supportName, supportName) || other.supportName == supportName)&&(identical(other.shiftType, shiftType) || other.shiftType == shiftType)&&(identical(other.hoursPerWeek, hoursPerWeek) || other.hoursPerWeek == hoursPerWeek)&&(identical(other.unitPrice, unitPrice) || other.unitPrice == unitPrice)&&(identical(other.gstCode, gstCode) || other.gstCode == gstCode)&&(identical(other.amount, amount) || other.amount == amount)&&const DeepCollectionEquality().equals(other.days, days)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,supportNumber,supportName,shiftType,hoursPerWeek,unitPrice,gstCode,amount);
+int get hashCode => Object.hash(runtimeType,supportNumber,supportName,shiftType,hoursPerWeek,unitPrice,gstCode,amount,const DeepCollectionEquality().hash(days),startTime,endTime);
 
 @override
 String toString() {
-  return 'SILRocSupport(supportNumber: $supportNumber, supportName: $supportName, shiftType: $shiftType, hoursPerWeek: $hoursPerWeek, unitPrice: $unitPrice, gstCode: $gstCode, amount: $amount)';
+  return 'SILRocSupport(supportNumber: $supportNumber, supportName: $supportName, shiftType: $shiftType, hoursPerWeek: $hoursPerWeek, unitPrice: $unitPrice, gstCode: $gstCode, amount: $amount, days: $days, startTime: $startTime, endTime: $endTime)';
 }
 
 
@@ -4359,7 +4374,7 @@ abstract mixin class $SILRocSupportCopyWith<$Res>  {
   factory $SILRocSupportCopyWith(SILRocSupport value, $Res Function(SILRocSupport) _then) = _$SILRocSupportCopyWithImpl;
 @useResult
 $Res call({
- String supportNumber, String supportName, String shiftType, double hoursPerWeek, double unitPrice, String gstCode, double amount
+ String supportNumber, String supportName, String shiftType, double hoursPerWeek, double unitPrice, String gstCode, double amount, List<String> days, String startTime, String endTime
 });
 
 
@@ -4376,7 +4391,7 @@ class _$SILRocSupportCopyWithImpl<$Res>
 
 /// Create a copy of SILRocSupport
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? supportNumber = null,Object? supportName = null,Object? shiftType = null,Object? hoursPerWeek = null,Object? unitPrice = null,Object? gstCode = null,Object? amount = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? supportNumber = null,Object? supportName = null,Object? shiftType = null,Object? hoursPerWeek = null,Object? unitPrice = null,Object? gstCode = null,Object? amount = null,Object? days = null,Object? startTime = null,Object? endTime = null,}) {
   return _then(_self.copyWith(
 supportNumber: null == supportNumber ? _self.supportNumber : supportNumber // ignore: cast_nullable_to_non_nullable
 as String,supportName: null == supportName ? _self.supportName : supportName // ignore: cast_nullable_to_non_nullable
@@ -4385,7 +4400,10 @@ as String,hoursPerWeek: null == hoursPerWeek ? _self.hoursPerWeek : hoursPerWeek
 as double,unitPrice: null == unitPrice ? _self.unitPrice : unitPrice // ignore: cast_nullable_to_non_nullable
 as double,gstCode: null == gstCode ? _self.gstCode : gstCode // ignore: cast_nullable_to_non_nullable
 as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
-as double,
+as double,days: null == days ? _self.days : days // ignore: cast_nullable_to_non_nullable
+as List<String>,startTime: null == startTime ? _self.startTime : startTime // ignore: cast_nullable_to_non_nullable
+as String,endTime: null == endTime ? _self.endTime : endTime // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 
@@ -4470,10 +4488,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String supportNumber,  String supportName,  String shiftType,  double hoursPerWeek,  double unitPrice,  String gstCode,  double amount)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String supportNumber,  String supportName,  String shiftType,  double hoursPerWeek,  double unitPrice,  String gstCode,  double amount,  List<String> days,  String startTime,  String endTime)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SILRocSupport() when $default != null:
-return $default(_that.supportNumber,_that.supportName,_that.shiftType,_that.hoursPerWeek,_that.unitPrice,_that.gstCode,_that.amount);case _:
+return $default(_that.supportNumber,_that.supportName,_that.shiftType,_that.hoursPerWeek,_that.unitPrice,_that.gstCode,_that.amount,_that.days,_that.startTime,_that.endTime);case _:
   return orElse();
 
 }
@@ -4491,10 +4509,10 @@ return $default(_that.supportNumber,_that.supportName,_that.shiftType,_that.hour
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String supportNumber,  String supportName,  String shiftType,  double hoursPerWeek,  double unitPrice,  String gstCode,  double amount)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String supportNumber,  String supportName,  String shiftType,  double hoursPerWeek,  double unitPrice,  String gstCode,  double amount,  List<String> days,  String startTime,  String endTime)  $default,) {final _that = this;
 switch (_that) {
 case _SILRocSupport():
-return $default(_that.supportNumber,_that.supportName,_that.shiftType,_that.hoursPerWeek,_that.unitPrice,_that.gstCode,_that.amount);case _:
+return $default(_that.supportNumber,_that.supportName,_that.shiftType,_that.hoursPerWeek,_that.unitPrice,_that.gstCode,_that.amount,_that.days,_that.startTime,_that.endTime);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -4511,10 +4529,10 @@ return $default(_that.supportNumber,_that.supportName,_that.shiftType,_that.hour
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String supportNumber,  String supportName,  String shiftType,  double hoursPerWeek,  double unitPrice,  String gstCode,  double amount)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String supportNumber,  String supportName,  String shiftType,  double hoursPerWeek,  double unitPrice,  String gstCode,  double amount,  List<String> days,  String startTime,  String endTime)?  $default,) {final _that = this;
 switch (_that) {
 case _SILRocSupport() when $default != null:
-return $default(_that.supportNumber,_that.supportName,_that.shiftType,_that.hoursPerWeek,_that.unitPrice,_that.gstCode,_that.amount);case _:
+return $default(_that.supportNumber,_that.supportName,_that.shiftType,_that.hoursPerWeek,_that.unitPrice,_that.gstCode,_that.amount,_that.days,_that.startTime,_that.endTime);case _:
   return null;
 
 }
@@ -4526,7 +4544,7 @@ return $default(_that.supportNumber,_that.supportName,_that.shiftType,_that.hour
 @JsonSerializable()
 
 class _SILRocSupport implements SILRocSupport {
-  const _SILRocSupport({required this.supportNumber, this.supportName = '', this.shiftType = 'day', this.hoursPerWeek = 0, this.unitPrice = 0, this.gstCode = 'P2', this.amount = 0});
+  const _SILRocSupport({required this.supportNumber, this.supportName = '', this.shiftType = 'day', this.hoursPerWeek = 0, this.unitPrice = 0, this.gstCode = 'P2', this.amount = 0, final  List<String> days = const <String>[], this.startTime = '', this.endTime = ''}): _days = days;
   factory _SILRocSupport.fromJson(Map<String, dynamic> json) => _$SILRocSupportFromJson(json);
 
 @override final  String supportNumber;
@@ -4536,6 +4554,15 @@ class _SILRocSupport implements SILRocSupport {
 @override@JsonKey() final  double unitPrice;
 @override@JsonKey() final  String gstCode;
 @override@JsonKey() final  double amount;
+ final  List<String> _days;
+@override@JsonKey() List<String> get days {
+  if (_days is EqualUnmodifiableListView) return _days;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_days);
+}
+
+@override@JsonKey() final  String startTime;
+@override@JsonKey() final  String endTime;
 
 /// Create a copy of SILRocSupport
 /// with the given fields replaced by the non-null parameter values.
@@ -4550,16 +4577,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SILRocSupport&&(identical(other.supportNumber, supportNumber) || other.supportNumber == supportNumber)&&(identical(other.supportName, supportName) || other.supportName == supportName)&&(identical(other.shiftType, shiftType) || other.shiftType == shiftType)&&(identical(other.hoursPerWeek, hoursPerWeek) || other.hoursPerWeek == hoursPerWeek)&&(identical(other.unitPrice, unitPrice) || other.unitPrice == unitPrice)&&(identical(other.gstCode, gstCode) || other.gstCode == gstCode)&&(identical(other.amount, amount) || other.amount == amount));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SILRocSupport&&(identical(other.supportNumber, supportNumber) || other.supportNumber == supportNumber)&&(identical(other.supportName, supportName) || other.supportName == supportName)&&(identical(other.shiftType, shiftType) || other.shiftType == shiftType)&&(identical(other.hoursPerWeek, hoursPerWeek) || other.hoursPerWeek == hoursPerWeek)&&(identical(other.unitPrice, unitPrice) || other.unitPrice == unitPrice)&&(identical(other.gstCode, gstCode) || other.gstCode == gstCode)&&(identical(other.amount, amount) || other.amount == amount)&&const DeepCollectionEquality().equals(other._days, _days)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,supportNumber,supportName,shiftType,hoursPerWeek,unitPrice,gstCode,amount);
+int get hashCode => Object.hash(runtimeType,supportNumber,supportName,shiftType,hoursPerWeek,unitPrice,gstCode,amount,const DeepCollectionEquality().hash(_days),startTime,endTime);
 
 @override
 String toString() {
-  return 'SILRocSupport(supportNumber: $supportNumber, supportName: $supportName, shiftType: $shiftType, hoursPerWeek: $hoursPerWeek, unitPrice: $unitPrice, gstCode: $gstCode, amount: $amount)';
+  return 'SILRocSupport(supportNumber: $supportNumber, supportName: $supportName, shiftType: $shiftType, hoursPerWeek: $hoursPerWeek, unitPrice: $unitPrice, gstCode: $gstCode, amount: $amount, days: $days, startTime: $startTime, endTime: $endTime)';
 }
 
 
@@ -4570,7 +4597,7 @@ abstract mixin class _$SILRocSupportCopyWith<$Res> implements $SILRocSupportCopy
   factory _$SILRocSupportCopyWith(_SILRocSupport value, $Res Function(_SILRocSupport) _then) = __$SILRocSupportCopyWithImpl;
 @override @useResult
 $Res call({
- String supportNumber, String supportName, String shiftType, double hoursPerWeek, double unitPrice, String gstCode, double amount
+ String supportNumber, String supportName, String shiftType, double hoursPerWeek, double unitPrice, String gstCode, double amount, List<String> days, String startTime, String endTime
 });
 
 
@@ -4587,7 +4614,7 @@ class __$SILRocSupportCopyWithImpl<$Res>
 
 /// Create a copy of SILRocSupport
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? supportNumber = null,Object? supportName = null,Object? shiftType = null,Object? hoursPerWeek = null,Object? unitPrice = null,Object? gstCode = null,Object? amount = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? supportNumber = null,Object? supportName = null,Object? shiftType = null,Object? hoursPerWeek = null,Object? unitPrice = null,Object? gstCode = null,Object? amount = null,Object? days = null,Object? startTime = null,Object? endTime = null,}) {
   return _then(_SILRocSupport(
 supportNumber: null == supportNumber ? _self.supportNumber : supportNumber // ignore: cast_nullable_to_non_nullable
 as String,supportName: null == supportName ? _self.supportName : supportName // ignore: cast_nullable_to_non_nullable
@@ -4596,7 +4623,10 @@ as String,hoursPerWeek: null == hoursPerWeek ? _self.hoursPerWeek : hoursPerWeek
 as double,unitPrice: null == unitPrice ? _self.unitPrice : unitPrice // ignore: cast_nullable_to_non_nullable
 as double,gstCode: null == gstCode ? _self.gstCode : gstCode // ignore: cast_nullable_to_non_nullable
 as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
-as double,
+as double,days: null == days ? _self._days : days // ignore: cast_nullable_to_non_nullable
+as List<String>,startTime: null == startTime ? _self.startTime : startTime // ignore: cast_nullable_to_non_nullable
+as String,endTime: null == endTime ? _self.endTime : endTime // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 

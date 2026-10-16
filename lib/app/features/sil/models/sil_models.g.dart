@@ -283,6 +283,11 @@ _SILQuoteLine _$SILQuoteLineFromJson(Map<String, dynamic> json) =>
       unitPrice: (json['unitPrice'] as num?)?.toDouble() ?? 0,
       gstCode: json['gstCode'] as String? ?? 'P2',
       amount: (json['amount'] as num?)?.toDouble() ?? 0,
+      days:
+          (json['days'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+          const <String>[],
+      startTime: json['startTime'] as String? ?? '',
+      endTime: json['endTime'] as String? ?? '',
       priceValidation: json['priceValidation'] == null
           ? const SILPriceValidation()
           : SILPriceValidation.fromJson(
@@ -299,6 +304,9 @@ Map<String, dynamic> _$SILQuoteLineToJson(_SILQuoteLine instance) =>
       'unitPrice': instance.unitPrice,
       'gstCode': instance.gstCode,
       'amount': instance.amount,
+      'days': instance.days,
+      'startTime': instance.startTime,
+      'endTime': instance.endTime,
       'priceValidation': instance.priceValidation,
     };
 
@@ -355,6 +363,11 @@ _SILRocSupport _$SILRocSupportFromJson(Map<String, dynamic> json) =>
       unitPrice: (json['unitPrice'] as num?)?.toDouble() ?? 0,
       gstCode: json['gstCode'] as String? ?? 'P2',
       amount: (json['amount'] as num?)?.toDouble() ?? 0,
+      days:
+          (json['days'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+          const <String>[],
+      startTime: json['startTime'] as String? ?? '',
+      endTime: json['endTime'] as String? ?? '',
     );
 
 Map<String, dynamic> _$SILRocSupportToJson(_SILRocSupport instance) =>
@@ -366,6 +379,9 @@ Map<String, dynamic> _$SILRocSupportToJson(_SILRocSupport instance) =>
       'unitPrice': instance.unitPrice,
       'gstCode': instance.gstCode,
       'amount': instance.amount,
+      'days': instance.days,
+      'startTime': instance.startTime,
+      'endTime': instance.endTime,
     };
 
 _SILReviewSchedule _$SILReviewScheduleFromJson(Map<String, dynamic> json) =>

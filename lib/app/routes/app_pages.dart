@@ -504,9 +504,13 @@ class AppPages {
           Routes.silRoster: (context) {
             final args =
                 ModalRoute.of(context)?.settings.arguments as Map? ?? const {};
+            final weekRaw = args['weekStarting']?.toString();
             return SILRosterBuilderView(
               propertyId: args['propertyId']?.toString() ?? '',
               propertyName: args['propertyName']?.toString() ?? 'Property',
+              weekStarting: (weekRaw != null && weekRaw.isNotEmpty)
+                  ? DateTime.tryParse(weekRaw)
+                  : null,
             );
           },
           // NDIS claiming / export (Phase 6)
