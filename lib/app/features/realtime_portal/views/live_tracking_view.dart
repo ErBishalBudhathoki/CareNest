@@ -1,4 +1,4 @@
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/realtime_portal/viewmodels/realtime_tracking_viewmodel.dart';
 import 'package:carenest/app/features/realtime_portal/services/websocket_service.dart';
 import 'package:flutter/foundation.dart';
@@ -79,17 +79,17 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
       case 'approaching':
         message = 'Worker is approaching your location';
         icon = Icons.directions_walk;
-        color = AppColors.colorWarning;
+        color = BauhausDesign.error;
         break;
       case 'arrived':
         message = 'Worker has arrived at your location';
         icon = Icons.check_circle;
-        color = AppColors.colorSuccess;
+        color = BauhausDesign.success;
         break;
       case 'departed':
         message = 'Worker has left your location';
         icon = Icons.exit_to_app;
-        color = AppColors.error;
+        color = BauhausDesign.error;
         break;
     }
 

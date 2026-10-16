@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:carenest/app/features/notes/viewmodels/note_templates_viewmodel.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 
 /// Admin UI to manage organisation progress-note templates (Phase 2).
 ///
@@ -359,12 +360,14 @@ class _TemplateEditorDialogState extends State<_TemplateEditorDialog> {
                 onChanged: (v) => section['options'] = v,
               ),
             ],
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              dense: true,
-              title: const Text('Required'),
-              value: section['required'] == true,
-              onChanged: (v) => setState(() => section['required'] = v),
+            Row(
+              children: [
+                const Expanded(child: Text('Required')),
+                BauhausSwitch(
+                  value: section['required'] == true,
+                  onChanged: (v) => setState(() => section['required'] = v),
+                ),
+              ],
             ),
           ],
         ),

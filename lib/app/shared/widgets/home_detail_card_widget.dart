@@ -174,8 +174,8 @@ class _HomeDetailCardState extends State<HomeDetailCard>
                                           color: colorScheme.shadow.withValues(
                                             alpha: 0.26,
                                           ),
-                                          blurRadius: 8,
-                                          offset: Offset(0, 2),
+                                          blurRadius: 0,
+                                          offset: Offset(2, 2),
                                         ),
                                       ],
                                     ),

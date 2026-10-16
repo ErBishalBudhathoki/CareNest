@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/workforce_planning_viewmodel.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
 import 'package:carenest/app/features/workforce_optimization/utils/workforce_export_helper.dart';
@@ -109,14 +109,14 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline, size: 64, color: AppColors.colorRed),
+          const Icon(Icons.error_outline, size: 64, color: BauhausDesign.error),
           const SizedBox(height: 16),
           Text(
             'Error loading data',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: AppColors.colorFontPrimary,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
@@ -132,7 +132,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
           ElevatedButton(
             onPressed: _loadData,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.colorPrimary,
+              backgroundColor: BauhausDesign.neutral,
             ),
             child: const Text('Retry'),
           ),
@@ -147,15 +147,15 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.colorBlue,
-            AppColors.colorBlue.withValues(alpha: 0.8),
+            BauhausDesign.primaryBlue,
+            BauhausDesign.primaryBlue.withValues(alpha: 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.colorBlue.withValues(alpha: 0.3),
+            color: BauhausDesign.primaryBlue.withValues(alpha: 0.3),
             offset: const Offset(0, 4),
           ),
         ],
@@ -212,12 +212,12 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               'Demand Forecast',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: AppColors.colorFontPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             if (state.confidence != null)
@@ -227,14 +227,14 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.colorGreen.withValues(alpha: 0.1),
+                  color: BauhausDesign.success.withValues(alpha: 0.1),
                 ),
                 child: Text(
                   '${(state.confidence!.accuracy * 100).toStringAsFixed(0)}% Confidence',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.colorGreen,
+                    color: BauhausDesign.success,
                   ),
                 ),
               ),
@@ -249,7 +249,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
               color: Theme.of(context).colorScheme.surface,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.colorShadow,
+                  color: BauhausDesign.shadowColor,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -281,11 +281,11 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppColors.colorBlue.withValues(alpha: 0.1),
+              color: BauhausDesign.primaryBlue.withValues(alpha: 0.1),
             ),
             child: Icon(
               Icons.calendar_today,
-              color: AppColors.colorBlue,
+              color: BauhausDesign.primaryBlue,
               size: 24,
             ),
           ),
@@ -299,7 +299,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.colorFontPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -321,7 +321,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.colorBlue,
+                  color: BauhausDesign.primaryBlue,
                 ),
               ),
               Text(
@@ -342,12 +342,12 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Turnover Risk',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: AppColors.colorFontPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -359,7 +359,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
               color: Theme.of(context).colorScheme.surface,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.colorShadow,
+                  color: BauhausDesign.shadowColor,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -377,10 +377,10 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
   Widget _buildTurnoverItem(dynamic prediction) {
     final risk = prediction.riskScore ?? 0.0;
     final riskColor = risk > 0.7
-        ? AppColors.colorRed
+        ? BauhausDesign.error
         : risk > 0.4
-        ? AppColors.colorOrange
-        : AppColors.colorGreen;
+        ? BauhausDesign.warning
+        : BauhausDesign.success;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -410,7 +410,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.colorFontPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -446,12 +446,12 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Skill Gaps',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: AppColors.colorFontPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -464,7 +464,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
               color: Theme.of(context).colorScheme.surface,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.colorShadow,
+                  color: BauhausDesign.shadowColor,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -477,7 +477,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
                     children: [
                       const Icon(
                         Icons.warning_amber,
-                        color: AppColors.colorOrange,
+                        color: BauhausDesign.warning,
                         size: 20,
                       ),
                       const SizedBox(width: 12),
@@ -486,7 +486,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
                           gap.skill,
                           style: TextStyle(
                             fontSize: 14,
-                            color: AppColors.colorFontPrimary,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       ),
@@ -495,7 +495,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.colorOrange,
+                          color: BauhausDesign.warning,
                         ),
                       ),
                     ],
@@ -546,7 +546,7 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
             icon: const Icon(Icons.analytics),
             label: const Text('Run Scenario'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.colorPrimary,
+              backgroundColor: BauhausDesign.neutral,
               foregroundColor: Theme.of(context).colorScheme.surface,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(),
@@ -560,9 +560,9 @@ class _WorkforcePlanningViewState extends ConsumerState<WorkforcePlanningView> {
             icon: const Icon(Icons.download),
             label: const Text('Export'),
             style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.colorPrimary,
+              foregroundColor: BauhausDesign.neutral,
               padding: const EdgeInsets.symmetric(vertical: 16),
-              side: const BorderSide(color: AppColors.colorPrimary),
+              side: const BorderSide(color: BauhausDesign.neutral),
               shape: RoundedRectangleBorder(),
             ),
           ),

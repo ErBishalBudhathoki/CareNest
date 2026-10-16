@@ -10,6 +10,7 @@ import '../../client/providers/client_provider.dart';
 import '../presentation/widgets/enhanced_file_attachment_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
@@ -577,21 +578,44 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                     maxLines: 3,
                   ),
                   const SizedBox(height: 16.0),
-                  SwitchListTile(
-                    title: Text(
-                      l10n.expenseRecurringLabel,
-                      style: BauhausDesign.getTextTheme(context).labelLarge,
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        width: BauhausDesign.borderThick,
+                      ),
                     ),
-                    value: _isRecurring,
-                    activeThumbColor: BauhausDesign.primary,
-                    onChanged: (value) {
-                      setState(() {
-                        _isRecurring = value;
-                      });
-                    },
-                    subtitle: Text(
-                      l10n.expenseRecurringSubtitle,
-                      style: BauhausDesign.getTextTheme(context).bodySmall,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l10n.expenseRecurringLabel,
+                                style: BauhausDesign.getTextTheme(
+                                  context,
+                                ).labelLarge,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                l10n.expenseRecurringSubtitle,
+                                style: BauhausDesign.getTextTheme(
+                                  context,
+                                ).bodySmall,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        BauhausSwitch(
+                          value: _isRecurring,
+                          onChanged: (value) =>
+                              setState(() => _isRecurring = value),
+                        ),
+                      ],
                     ),
                   ),
                   if (_isRecurring) ...[

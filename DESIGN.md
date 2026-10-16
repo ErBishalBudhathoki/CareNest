@@ -133,8 +133,10 @@ spacing:
 ## Brand & Style
 Neo-Industrial Ledger embodies a high-utility, neo-brutalist financial audit interface designed for engineers, financial operators, and forensic accountants. The aesthetic prioritizes absolute legibility, rapid data processing, and tactile feedback.
 
+**This is the CareNest Bauhaus system.** Every surface in the app — screens, dialogs, sheets, nav — is Bauhaus neo-brutalism. There is exactly one design language. Legacy Material defaults (rounded switches, pill chips, soft blurred shadows, the old grey/purple `AppColors` palette) are defects to fix, not style choices to keep.
+
 Key design attributes:
-- **Design Movement:** Neo-Brutalism fused with industrial terminal instrumentation.
+- **Design Movement:** Bauhaus neo-brutalism fused with industrial terminal instrumentation.
 - **Visual Rhythm:** Heavy solid stroke borders (`2px` to `2.5px`), offset hard-drop shadows with zero blur, and distinct technical status indicators.
 - **Atmosphere:** Rigorous, dense, tactile, and unapologetically engineered, evoking specialized hardware monitors and retro-futuristic financial matrix tools.
 
@@ -185,6 +187,33 @@ Geometry is strictly sharp (`roundedness: 0`).
 - Pill and stadium shapes are **never** acceptable, including on interactive controls such as switches and toggles. Use `BauhausSwitch`, which has a square track and square thumb.
 - `BauhausDesign.radiusXs`, `radiusSm`, `radiusMd`, `radiusLg`, `radiusXl`, `radiusFull` and `radiusPill` are all `0.0`. Writing `BorderRadius.circular(BauhausDesign.radiusMd)` therefore renders sharp despite looking rounded at the call site; only a non-zero **literal** radius is a violation.
 - `cardTheme`, `chipTheme` and `dialogTheme` already force `BorderRadius.zero`, so bare `Card(` and `Chip(` are sharp by inheritance. Material widgets that are *not* themed that way — notably `Switch` and `Switch.adaptive` — must be replaced with their Bauhaus equivalent.
+
+## Component Library (Bauhaus)
+
+Use the shared Bauhaus widgets instead of their Material equivalents. Material
+controls that are **not** themed to zero radius (`Switch`, `Checkbox`, `Slider`,
+`Radio`) render rounded geometry and must never be used directly.
+
+| Need | Use | Never use |
+|---|---|---|
+| Card / panel | `BauhausCard` | bare `Card` on a non-themed surface |
+| Toggle | `BauhausSwitch` | `Switch`, `Switch.adaptive`, `SwitchListTile` |
+| Checkbox | `BauhausCheckbox` | `Checkbox`, `CheckboxListTile` |
+| Branded CTA | `BauhausActionButton`, `BauhausButton` | `ElevatedButton` for branded actions |
+| Icon button | `BauhausIconButton` | bare `IconButton` without the structural border |
+| Chip / tag | `BauhausChip` | `Chip` with a pill shape |
+| Search field | `BauhausSearchBar` | Material `SearchBar` |
+| Text field | `BauhausTextField` | `TextField` with a rounded outline |
+| Section header | `BauhausSectionHeader` | plain `Text` headers |
+| Empty / error / loading | `BauhausEmptyState`, `BauhausErrorState`, `BauhausLoadingState` | spinner-only Material states |
+| Progress | `BauhausProgressIndicator` | rounded progress bars |
+| Stat tile | `BauhausStatCard` | rounded metric cards |
+
+Enforcement rules:
+- **No legacy palettes.** `AppColors` (the retired Tailwind grey / purple / blue set) must not be used. Use `BauhausDesign.*` tokens or `Theme.of(context).colorScheme`.
+- **No `Colors.grey`.** Muted text is `colorScheme.onSurfaceVariant`; subtle borders are `colorScheme.outlineVariant`; structural borders are `BauhausDesign.neoInk`.
+- **No blurred shadows.** Depth is a hard offset (`BauhausDesign.shadowHard*`), never `blurRadius > 0`.
+- **No rounded geometry** except the documented avatar / indicator exceptions in *Shapes* — this includes the FAB, which is a square block, never a `CircleBorder`.
 
 ## Components
 

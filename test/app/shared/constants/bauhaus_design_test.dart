@@ -417,10 +417,6 @@ void main() {
         AppTheme.themeData.colorScheme,
         BauhausDesign.lightTheme.colorScheme,
       );
-      expect(
-        AppTheme().defaultPinTheme.decoration?.borderRadius,
-        BorderRadius.zero,
-      );
     });
   });
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/resource_allocation_viewmodel.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
 import 'package:carenest/app/features/workforce_optimization/utils/workforce_export_helper.dart';
@@ -98,14 +98,14 @@ class _ResourceAllocationViewState
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline, size: 64, color: AppColors.colorRed),
+          const Icon(Icons.error_outline, size: 64, color: BauhausDesign.error),
           const SizedBox(height: 16),
           Text(
             'Error loading data',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: AppColors.colorFontPrimary,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
@@ -128,15 +128,15 @@ class _ResourceAllocationViewState
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.colorPurple,
-            AppColors.colorPurple.withValues(alpha: 0.8),
+            BauhausDesign.secondaryDeep,
+            BauhausDesign.secondaryDeep.withValues(alpha: 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.colorPurple.withValues(alpha: 0.3),
+            color: BauhausDesign.secondaryDeep.withValues(alpha: 0.3),
             offset: const Offset(0, 4),
           ),
         ],
@@ -190,12 +190,12 @@ class _ResourceAllocationViewState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Workload Analysis',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: AppColors.colorFontPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -208,7 +208,7 @@ class _ResourceAllocationViewState
               color: Theme.of(context).colorScheme.surface,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.colorShadow,
+                  color: BauhausDesign.shadowColor,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -218,14 +218,14 @@ class _ResourceAllocationViewState
                 _buildWorkloadMetric(
                   'Average Utilization',
                   '${((state.metrics?.utilizationRate ?? 0) * 100).toStringAsFixed(0)}%',
-                  AppColors.colorBlue,
+                  BauhausDesign.primaryBlue,
                   Icons.trending_up,
                 ),
                 const Divider(height: 32),
                 _buildWorkloadMetric(
                   'Average Score',
                   '${((state.metrics?.averageScore ?? 0) * 100).toStringAsFixed(0)}%',
-                  AppColors.colorGreen,
+                  BauhausDesign.success,
                   Icons.balance,
                 ),
               ],
@@ -253,7 +253,7 @@ class _ResourceAllocationViewState
         Expanded(
           child: Text(
             label,
-            style: TextStyle(fontSize: 16, color: AppColors.colorFontPrimary),
+            style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurface),
           ),
         ),
         Text(
@@ -272,12 +272,12 @@ class _ResourceAllocationViewState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Recommendations',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: AppColors.colorFontPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -289,7 +289,7 @@ class _ResourceAllocationViewState
               color: Theme.of(context).colorScheme.surface,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.colorShadow,
+                  color: BauhausDesign.shadowColor,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -321,11 +321,11 @@ class _ResourceAllocationViewState
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppColors.colorPurple.withValues(alpha: 0.1),
+              color: BauhausDesign.secondaryDeep.withValues(alpha: 0.1),
             ),
             child: Icon(
               Icons.lightbulb_outline,
-              color: AppColors.colorPurple,
+              color: BauhausDesign.secondaryDeep,
               size: 24,
             ),
           ),
@@ -339,7 +339,7 @@ class _ResourceAllocationViewState
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.colorFontPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -355,7 +355,7 @@ class _ResourceAllocationViewState
           ),
           const Icon(
             Icons.arrow_forward,
-            color: AppColors.colorPurple,
+            color: BauhausDesign.secondaryDeep,
             size: 20,
           ),
         ],
@@ -401,7 +401,7 @@ class _ResourceAllocationViewState
             icon: const Icon(Icons.auto_fix_high),
             label: const Text('Optimize'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.colorPrimary,
+              backgroundColor: BauhausDesign.neutral,
               foregroundColor: Theme.of(context).colorScheme.surface,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(),
@@ -415,9 +415,9 @@ class _ResourceAllocationViewState
             icon: const Icon(Icons.download),
             label: const Text('Export'),
             style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.colorPrimary,
+              foregroundColor: BauhausDesign.neutral,
               padding: const EdgeInsets.symmetric(vertical: 16),
-              side: const BorderSide(color: AppColors.colorPrimary),
+              side: const BorderSide(color: BauhausDesign.neutral),
               shape: RoundedRectangleBorder(),
             ),
           ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:carenest/app/shared/constants/values/colors/app_colors.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/performance_analytics_viewmodel.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
 import 'package:carenest/app/features/workforce_optimization/utils/workforce_export_helper.dart';
@@ -106,14 +106,14 @@ class _PerformanceAnalyticsViewState
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline, size: 64, color: AppColors.colorRed),
+          const Icon(Icons.error_outline, size: 64, color: BauhausDesign.error),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'Error loading data',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: AppColors.colorFontPrimary,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
@@ -136,15 +136,15 @@ class _PerformanceAnalyticsViewState
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.colorGreen,
-            AppColors.colorGreen.withValues(alpha: 0.8),
+            BauhausDesign.success,
+            BauhausDesign.success.withValues(alpha: 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.colorGreen.withValues(alpha: 0.3),
+            color: BauhausDesign.success.withValues(alpha: 0.3),
             offset: const Offset(0, 4),
           ),
         ],
@@ -198,12 +198,12 @@ class _PerformanceAnalyticsViewState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Key Metrics',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: AppColors.colorFontPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -215,7 +215,7 @@ class _PerformanceAnalyticsViewState
                 '4.6',
                 '+0.3',
                 true,
-                AppColors.colorGreen,
+                BauhausDesign.success,
                 Icons.star,
               ),
             ),
@@ -226,7 +226,7 @@ class _PerformanceAnalyticsViewState
                 '87%',
                 '+5%',
                 true,
-                AppColors.colorBlue,
+                BauhausDesign.primaryBlue,
                 Icons.speed,
               ),
             ),
@@ -241,7 +241,7 @@ class _PerformanceAnalyticsViewState
                 '92%',
                 '+2%',
                 true,
-                AppColors.colorPurple,
+                BauhausDesign.secondaryDeep,
                 Icons.verified,
               ),
             ),
@@ -252,7 +252,7 @@ class _PerformanceAnalyticsViewState
                 '95%',
                 '+1%',
                 true,
-                AppColors.colorOrange,
+                BauhausDesign.warning,
                 Icons.schedule,
               ),
             ),
@@ -276,7 +276,7 @@ class _PerformanceAnalyticsViewState
         color: Theme.of(context).colorScheme.surface,
         border: Border.all(color: color.withValues(alpha: 0.2), width: 2),
         boxShadow: [
-          BoxShadow(color: AppColors.colorShadow, offset: const Offset(0, 2)),
+          BoxShadow(color: BauhausDesign.shadowColor, offset: const Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -311,8 +311,8 @@ class _PerformanceAnalyticsViewState
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: isPositive
-                      ? AppColors.colorGreen.withValues(alpha: 0.1)
-                      : AppColors.colorRed.withValues(alpha: 0.1),
+                      ? BauhausDesign.success.withValues(alpha: 0.1)
+                      : BauhausDesign.error.withValues(alpha: 0.1),
                 ),
                 child: Text(
                   change,
@@ -320,8 +320,8 @@ class _PerformanceAnalyticsViewState
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: isPositive
-                        ? AppColors.colorGreen
-                        : AppColors.colorRed,
+                        ? BauhausDesign.success
+                        : BauhausDesign.error,
                   ),
                 ),
               ),
@@ -336,12 +336,12 @@ class _PerformanceAnalyticsViewState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Trend Analysis',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: AppColors.colorFontPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -353,7 +353,7 @@ class _PerformanceAnalyticsViewState
               color: Theme.of(context).colorScheme.surface,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.colorShadow,
+                  color: BauhausDesign.shadowColor,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -372,10 +372,10 @@ class _PerformanceAnalyticsViewState
     final score = data.overallScore ?? 0.0;
     final isPositive = score >= 0.7;
     final color = isPositive
-        ? AppColors.colorGreen
+        ? BauhausDesign.success
         : score >= 0.5
-        ? AppColors.colorOrange
-        : AppColors.colorRed;
+        ? BauhausDesign.warning
+        : BauhausDesign.error;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -409,7 +409,7 @@ class _PerformanceAnalyticsViewState
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.colorFontPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -468,7 +468,7 @@ class _PerformanceAnalyticsViewState
             icon: const Icon(Icons.assessment),
             label: const Text('View Report'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.colorPrimary,
+              backgroundColor: BauhausDesign.neutral,
               foregroundColor: Theme.of(context).colorScheme.surface,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(),
@@ -482,9 +482,9 @@ class _PerformanceAnalyticsViewState
             icon: const Icon(Icons.download),
             label: const Text('Export'),
             style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.colorPrimary,
+              foregroundColor: BauhausDesign.neutral,
               padding: const EdgeInsets.symmetric(vertical: 16),
-              side: const BorderSide(color: AppColors.colorPrimary),
+              side: const BorderSide(color: BauhausDesign.neutral),
               shape: RoundedRectangleBorder(),
             ),
           ),

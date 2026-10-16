@@ -539,6 +539,18 @@ class BauhausDesign {
           side: border,
         ),
       ),
+      checkboxTheme: CheckboxThemeData(
+        fillColor: WidgetStateProperty.resolveWith<Color?>((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return surfaceContainerHighest;
+          }
+          if (states.contains(WidgetState.selected)) return primary;
+          return surfaceWhite;
+        }),
+        checkColor: const WidgetStatePropertyAll(textDark),
+        side: BorderSide(color: neoInk, width: borderThin),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+      ),
       dialogTheme: DialogThemeData(
         backgroundColor: surfaceWhite,
         elevation: 0,
@@ -810,6 +822,16 @@ class BauhausDesign {
           borderRadius: BorderRadius.zero,
           side: border,
         ),
+      ),
+      checkboxTheme: CheckboxThemeData(
+        fillColor: WidgetStateProperty.resolveWith<Color?>((states) {
+          if (states.contains(WidgetState.disabled)) return surfaceDarkest;
+          if (states.contains(WidgetState.selected)) return primary;
+          return surfaceDark;
+        }),
+        checkColor: const WidgetStatePropertyAll(textDark),
+        side: BorderSide(color: textLight, width: borderThin),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: surfaceDark,
