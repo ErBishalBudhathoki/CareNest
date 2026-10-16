@@ -197,34 +197,37 @@ class GeofenceService {
                 Expanded(child: Text('Location Access Needed')),
               ],
             ),
-            content: const Column(
+            content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'CareNest uses your location to:',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 12),
-                _PermissionBullet(
+                const SizedBox(height: 12),
+                const _PermissionBullet(
                   icon: Icons.notifications_active,
                   text:
                       'Remind you to clock in when you arrive at a client\'s location',
                 ),
-                SizedBox(height: 8),
-                _PermissionBullet(
+                const SizedBox(height: 8),
+                const _PermissionBullet(
                   icon: Icons.timer,
                   text: 'Ensure accurate timesheet records',
                 ),
-                SizedBox(height: 8),
-                _PermissionBullet(
+                const SizedBox(height: 8),
+                const _PermissionBullet(
                   icon: Icons.map,
                   text: 'Provide navigation to appointments',
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Text(
                   'Your location data is never shared and is only used to improve your work experience.',
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),

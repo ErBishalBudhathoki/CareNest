@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/authed_network_image.dart';
@@ -199,9 +200,9 @@ class ImageErrorHandler {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: surfaceColor ?? Colors.grey[300],
+        color: surfaceColor ?? BauhausDesign.surfaceOffWhite,
       ),
-      child: Icon(icon, size: size * 0.6, color: iconColor ?? Colors.grey[600]),
+      child: Icon(icon, size: size * 0.6, color: iconColor ?? BauhausDesign.textMuted),
     );
   }
 
@@ -214,7 +215,7 @@ class ImageErrorHandler {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: surfaceColor ?? Colors.grey[100],
+        color: surfaceColor ?? BauhausDesign.surfaceContainerLow,
       ),
       child: Center(
         child: SizedBox(
