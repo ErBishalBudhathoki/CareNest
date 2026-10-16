@@ -390,7 +390,25 @@ class _QuoteActions extends ConsumerWidget {
       onSelected: (action) async {
         final notifier = ref.read(silQuoteViewModelProvider.notifier);
         if (action == 'accept') {
-          await notifier.accept(quote.id);
+          // A quote whose lines breach an NDIS price cap cannot be accepted
+          // (server returns 409 PRICE_VALIDATION_FAILED). Report the outcome:
+          // silently swallowing it left the officer with no feedback and no
+          // way to tell an accepted quote from a rejected one.
+          final ok = await notifier.accept(quote.id);
+          if (context.mounted) {
+            final error = ref.read(silQuoteViewModelProvider).error;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  ok
+                      ? 'Quote accepted.'
+                      : (error ?? 'Quote could not be accepted.'),
+                ),
+                backgroundColor:
+                    ok ? null : Theme.of(context).colorScheme.error,
+              ),
+            );
+          }
         } else if (action == 'convert') {
           final roc = await notifier.convert(quote.id);
           if (roc != null && context.mounted) {
