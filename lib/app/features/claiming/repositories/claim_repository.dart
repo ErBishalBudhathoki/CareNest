@@ -1,5 +1,6 @@
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
+import 'package:carenest/app/features/claiming/models/claim_import_result.dart';
 import 'package:carenest/app/features/claiming/models/claim_models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -67,9 +68,31 @@ class ClaimRepository {
     );
   }
 
-  Future<void> importResults(String batchId, String fileContent) async {
+  /// Imports a Bulk Payment Results File and returns the reconciliation
+  /// summary. The status of the batch afterwards (`reconciled`, `partial`,
+  /// `failed`) is carried in [ClaimImportResult.batchStatus] so the caller can
+  /// distinguish a clean import from a rejected or partially-rejected one.
+  Future<ClaimImportResult> importResults(
+    String batchId,
+    String fileContent,
+  ) async {
     final response = await _apiMethod.importClaimResults(batchId, fileContent);
     _ensureSuccess(response, 'Failed to import claim results');
+
+    final data = response['data'];
+    if (data is! Map) return const ClaimImportResult();
+
+    final batch = data['batch'] is Map
+        ? Map<String, dynamic>.from(data['batch'] as Map)
+        : const <String, dynamic>{};
+    final summary = data['summary'] is Map
+        ? Map<String, dynamic>.from(data['summary'] as Map)
+        : const <String, dynamic>{};
+
+    return ClaimImportResult.fromJson({
+      ...summary,
+      'batchStatus': batch['status'],
+    });
   }
 
   void _ensureSuccess(Map<String, dynamic> response, String fallback) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:carenest/app/features/claiming/models/claim_import_result.dart';
 import 'package:carenest/app/features/claiming/models/claim_models.dart';
 import 'package:carenest/app/features/claiming/viewmodels/claim_viewmodel.dart';
 import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
@@ -51,6 +52,8 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
                 padding: const EdgeInsets.all(16),
                 children: [
                   if (state.error != null) _buildError(context, state.error!),
+                  if (state.lastImport != null)
+                    _buildImportResult(context, state.lastImport!),
                   if (state.validation != null &&
                       state.validation!.errors.isNotEmpty)
                     _buildValidation(context, state.validation!),
@@ -71,6 +74,40 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
                 ],
               ),
             ),
+    );
+  }
+
+  /// Reconciliation outcome of the last results import. A `partial` or
+  /// `failed` import is a real business outcome, not an error: it has to stay
+  /// on screen with the accepted/rejected/unmatched counts, because a claim
+  /// officer has to re-submit or chase the rejected lines.
+  Widget _buildImportResult(BuildContext context, ClaimImportResult result) {
+    final theme = Theme.of(context);
+    final clean = result.isClean;
+    return Card(
+      color: clean
+          ? theme.colorScheme.primaryContainer
+          : theme.colorScheme.errorContainer,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              clean
+                  ? 'Results imported'
+                  : 'Results imported — attention needed',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Text(result.summaryLine),
+            if (result.batchStatus.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text('Batch status: ${result.batchStatus}'),
+            ],
+          ],
+        ),
+      ),
     );
   }
 
@@ -242,12 +279,21 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
     );
 
     if (content == null || content.isEmpty || !mounted) return;
-    final ok = await ref
+    final result = await ref
         .read(claimViewModelProvider.notifier)
         .importResults(batchId, content);
-    if (ok && mounted) {
+    if (result != null && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Results imported.')),
+        SnackBar(
+          content: Text(
+            result.isClean
+                ? 'Results imported. ${result.summaryLine}'
+                : 'Results imported with issues — ${result.summaryLine}',
+          ),
+          backgroundColor: result.isClean
+              ? null
+              : Theme.of(context).colorScheme.error,
+        ),
       );
     }
   }
