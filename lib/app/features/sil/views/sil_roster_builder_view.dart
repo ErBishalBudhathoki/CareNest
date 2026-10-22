@@ -273,18 +273,36 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
                       if (roster.ratioWarnings.isNotEmpty)
                         Card(
                           color: Theme.of(context).colorScheme.errorContainer,
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('Ratio warnings',
-                                    style: TextStyle(fontWeight: FontWeight.bold)),
-                                const SizedBox(height: 4),
-                                ...roster.ratioWarnings
-                                    .map((w) => Text('• ${w.message}')),
-                              ],
-                            ),
+                          child: Builder(
+                            builder: (context) {
+                              // Text inside must pair with errorContainer
+                              // (onErrorContainer), not the surrounding
+                              // onSurface — the default would render
+                              // near-white text on the pale error background
+                              // in dark mode and become unreadable.
+                              final warnColor =
+                                  Theme.of(context).colorScheme.onErrorContainer;
+                              return Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Ratio warnings',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: warnColor,
+                                        )),
+                                    const SizedBox(height: 4),
+                                    ...roster.ratioWarnings.map(
+                                      (w) => Text(
+                                        '• ${w.message}',
+                                        style: TextStyle(color: warnColor),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           ),
                         ),
                       const SizedBox(height: 8),
