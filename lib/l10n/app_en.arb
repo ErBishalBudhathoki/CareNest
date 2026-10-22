@@ -3742,6 +3742,183 @@
   "silManagement": "SIL Management",
   "silManagementDesc": "Supported independent living: properties, occupancy, rosters and quotes.",
 
+  "silTabProperties": "Properties",
+  "silTabQuotes": "Quotes",
+  "silTabRostersOfCare": "Rosters of Care",
+  "silStatusActive": "active",
+  "silStatusInactive": "inactive",
+  "silCreate": "Create",
+
+  "silNoProperties": "No SIL properties yet.",
+  "silPropertyFABLabel": "Property",
+  "silNewProperty": "New SIL property",
+  "silPropertyName": "Name",
+  "silPropertyType": "Type",
+  "silDesignCategory": "SIL design category",
+  "silNumberOfRooms": "Number of rooms",
+  "silRoomsCount": "{count} rooms",
+  "@silRoomsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "silNoQuotes": "No SIL quotes yet.",
+  "silQuoteTitle": "Quote {id}",
+  "@silQuoteTitle": {
+    "placeholders": {
+      "id": {}
+    }
+  },
+  "silWeeklyShort": "${amount}/wk",
+  "@silWeeklyShort": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "silQuoteFABLabel": "Quote",
+  "silNewQuote": "New SIL quote",
+  "silFundingType": "Funding type",
+  "silSupportItemNumber": "Support item number",
+  "silHoursPerWeek": "Hours per week",
+  "silUnitPrice": "Unit price",
+  "silWeeklyPattern": "Agreed weekly pattern",
+  "silStart": "Start {time}",
+  "@silStart": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "silEnd": "End {time}",
+  "@silEnd": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "silQuoteAccepted": "Quote accepted.",
+  "silQuoteNotAccepted": "Quote could not be accepted.",
+  "silConvertedToRoC": "Converted to roster of care.",
+  "silQuoteAcceptAction": "Accept",
+  "silQuoteConvertAction": "Convert to RoC",
+
+  "silNoRoCs": "No rosters of care yet.\nAccept a quote and convert it.",
+  "silRoCFallbackId": "RoC {id}",
+  "@silRoCFallbackId": {
+    "placeholders": {
+      "id": {}
+    }
+  },
+  "silPropertyFallback": "SIL property",
+  "silRoCSubtitle": "RoC {id} · {status} · {supports} supports · review {cadence}",
+  "@silRoCSubtitle": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      },
+      "status": {
+        "type": "String"
+      },
+      "supports": {
+        "type": "int"
+      },
+      "cadence": {
+        "type": "String"
+      }
+    }
+  },
+  "silPlanWeekTooltip": "Plan week & assign staff",
+  "silPlanNotBillable": "Only an active roster of care can be planned",
+  "silPlanNoPattern": "This roster of care has no agreed weekly pattern to plan",
+  "silGenerateInvoiceTooltip": "Generate invoice",
+  "silInvoiceNotBillable": "Only an active roster of care can be invoiced",
+  "silInvoiceDialogTitle": "Generate invoice",
+  "silPlannedShiftsDone": "Planned {created} shift(s)",
+  "@silPlannedShiftsDone": {
+    "placeholders": {
+      "created": {}
+    }
+  },
+  "silSkippedShifts": "{count} already existed",
+  "@silSkippedShifts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "silRoCNoProperty": "This roster of care has no SIL property attached, so its shifts cannot be rostered. Attach a property first.",
+  "silBillingPeriod": "Billing period",
+  "silDueDateOptional": "Due date (optional)",
+  "silDueDateDefault": "Default: 30 days after the period",
+  "silRouteNdiaClaim": " · NDIA claim (CSV)",
+  "silRoutePlanManagerPdf": " · plan manager PDF",
+  "silRouteParticipantPdf": " · participant PDF",
+  "silInvoiceCreated": "Invoice {number} created",
+  "@silInvoiceCreated": {
+    "placeholders": {
+      "number": {}
+    }
+  },
+  "silViewAction": "View",
+  "silInvoiceFailed": "Failed to generate invoice: {error}",
+  "@silInvoiceFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+
+  "silPropertyRosterTooltip": "Roster",
+  "silPropertyRooms": "Rooms",
+  "silPropertyOccupy": "Occupy",
+  "silPropertyVacate": "Vacate",
+  "silPropertyOccupied": "Occupied",
+  "silPropertyVacant": "Vacant",
+  "silPropertyNoRooms": "No rooms configured.",
+  "silPropertyNoClients": "No clients available.",
+  "silPropertyNoVacantRooms": "No vacant rooms.",
+  "silPropertyCreateOccupancy": "Create occupancy",
+  "silPropertyRoomLabel": "Room",
+
+  "silRosterTitle": "Roster · {propertyName}",
+  "@silRosterTitle": {
+    "placeholders": {
+      "propertyName": {}
+    }
+  },
+  "silRosterPublish": "Publish",
+  "silRosterWeek": "Week of {weekIso}",
+  "@silRosterWeek": {
+    "placeholders": {
+      "weekIso": {}
+    }
+  },
+  "silRosterBuildFromShifts": "Build from shifts",
+  "silRosterWarnings": "Ratio warnings",
+  "silRosterEmpty": "No roster for this week.\nTap the refresh icon to build from shifts.",
+  "silRosterStaffCount": "staff {assigned}/{required}",
+  "@silRosterStaffCount": {
+    "placeholders": {
+      "assigned": {
+        "type": "int"
+      },
+      "required": {
+        "type": "int"
+      }
+    }
+  },
+  "silRosterAssign": "Assign",
+  "silRosterAssignWorker": "Assign support worker",
+  "silRosterNoEmployees": "No employees available to assign.",
+  "silRosterAssignedTo": "Assigned {name}.",
+  "@silRosterAssignedTo": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "silRosterAssignFailed": "Assignment failed.",
+
   "ndisClaiming": "NDIS Claiming",
   "ndisClaimingDesc": "Generate bulk payment request CSVs and reconcile results.",
 

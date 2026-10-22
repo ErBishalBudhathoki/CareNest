@@ -7,6 +7,7 @@ import 'package:carenest/app/shared/widgets/bauhaus_time_picker.dart';
 import 'package:carenest/app/features/sil/models/sil_models.dart';
 import 'package:carenest/app/features/sil/repositories/sil_repository.dart';
 import 'package:carenest/app/features/sil/viewmodels/sil_viewmodels.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
@@ -57,15 +58,16 @@ class _SILDashboardViewState extends ConsumerState<SILDashboardView>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SIL Management'),
+        title: Text(l10n.silManagement),
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [
-            Tab(text: 'Properties'),
-            Tab(text: 'Quotes'),
-            Tab(text: 'Rosters of Care'),
+          tabs: [
+            Tab(text: l10n.silTabProperties),
+            Tab(text: l10n.silTabQuotes),
+            Tab(text: l10n.silTabRostersOfCare),
           ],
         ),
       ),
@@ -92,14 +94,15 @@ class _PropertiesTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(silPropertiesViewModelProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: state.isLoading && state.properties.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : state.properties.isEmpty
-          ? const _EmptyState(
+          ? _EmptyState(
               icon: Icons.home_work_outlined,
-              message: 'No SIL properties yet.',
+              message: l10n.silNoProperties,
             )
           : RefreshIndicator(
               onRefresh: () =>
@@ -115,8 +118,9 @@ class _PropertiesTab extends ConsumerWidget {
                       leading: const Icon(Icons.home_work_outlined),
                       title: Text(property.name),
                       subtitle: Text(
-                        '${property.propertyType} · ${property.rooms.length} rooms · '
-                        '${property.active ? 'active' : 'inactive'}',
+                        '${property.propertyType} · '
+                        '${l10n.silRoomsCount(property.rooms.length)} · '
+                        '${property.active ? l10n.silStatusActive : l10n.silStatusInactive}',
                       ),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () => Navigator.of(context).pushNamed(
@@ -133,13 +137,14 @@ class _PropertiesTab extends ConsumerWidget {
             ),
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.add),
-        label: const Text('Property'),
+        label: Text(l10n.silPropertyFABLabel),
         onPressed: () => _showCreatePropertyDialog(context, ref),
       ),
     );
   }
 
   Future<void> _showCreatePropertyDialog(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     final nameController = TextEditingController();
     final roomsController = TextEditingController(text: '1');
     String propertyType = 'house';
@@ -149,19 +154,19 @@ class _PropertiesTab extends ConsumerWidget {
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (dialogContext, setState) => AlertDialog(
-          title: const Text('New SIL property'),
+          title: Text(l10n.silNewProperty),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
                   controller: nameController,
-                  decoration: const InputDecoration(labelText: 'Name'),
+                  decoration: InputDecoration(labelText: l10n.silPropertyName),
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
                   initialValue: propertyType,
-                  decoration: const InputDecoration(labelText: 'Type'),
+                  decoration: InputDecoration(labelText: l10n.silPropertyType),
                   items: const ['house', 'townhouse', 'apartment', 'group_home', 'other']
                       .map((t) => DropdownMenuItem(value: t, child: Text(t)))
                       .toList(),
@@ -170,7 +175,7 @@ class _PropertiesTab extends ConsumerWidget {
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
                   initialValue: designCategory,
-                  decoration: const InputDecoration(labelText: 'SIL design category'),
+                  decoration: InputDecoration(labelText: l10n.silDesignCategory),
                   items: const [
                     'basic',
                     'basic_vacancy',
@@ -187,7 +192,7 @@ class _PropertiesTab extends ConsumerWidget {
                 TextField(
                   controller: roomsController,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: 'Number of rooms'),
+                  decoration: InputDecoration(labelText: l10n.silNumberOfRooms),
                 ),
               ],
             ),
@@ -195,7 +200,7 @@ class _PropertiesTab extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () async {
@@ -216,7 +221,7 @@ class _PropertiesTab extends ConsumerWidget {
                 });
                 if (dialogContext.mounted) Navigator.of(dialogContext).pop(ok);
               },
-              child: const Text('Create'),
+              child: Text(l10n.silCreate),
             ),
           ],
         ),
@@ -244,14 +249,15 @@ class _QuotesTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(silQuoteViewModelProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: state.isLoading && state.quotes.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : state.quotes.isEmpty
-          ? const _EmptyState(
+          ? _EmptyState(
               icon: Icons.request_quote_outlined,
-              message: 'No SIL quotes yet.',
+              message: l10n.silNoQuotes,
             )
           : ListView.separated(
               padding: const EdgeInsets.all(12),
@@ -262,9 +268,14 @@ class _QuotesTab extends ConsumerWidget {
                 return Card(
                   child: ListTile(
                     leading: const Icon(Icons.request_quote_outlined),
-                    title: Text('Quote ${quote.id.substring(0, quote.id.length.clamp(0, 8))}'),
+                    title: Text(
+                      l10n.silQuoteTitle(
+                        quote.id.substring(0, quote.id.length.clamp(0, 8)),
+                      ),
+                    ),
                     subtitle: Text(
-                      '${quote.status} · \$${quote.totals.weeklyAmount.toStringAsFixed(2)}/wk',
+                      '${quote.status} · '
+                      '${l10n.silWeeklyShort(quote.totals.weeklyAmount.toStringAsFixed(2))}',
                     ),
                     trailing: _QuoteActions(quote: quote),
                   ),
@@ -273,7 +284,7 @@ class _QuotesTab extends ConsumerWidget {
             ),
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.add),
-        label: const Text('Quote'),
+        label: Text(l10n.silQuoteFABLabel),
         onPressed: clientsLoading || clients.isEmpty
             ? null
             : () => _showCreateQuoteDialog(context, ref),
@@ -282,6 +293,7 @@ class _QuotesTab extends ConsumerWidget {
   }
 
   Future<void> _showCreateQuoteDialog(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     String? clientId = clients.first.id;
     final supportController = TextEditingController();
     final hoursController = TextEditingController(text: '1');
@@ -298,14 +310,14 @@ class _QuotesTab extends ConsumerWidget {
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (dialogContext, setState) => AlertDialog(
-          title: const Text('New SIL quote'),
+          title: Text(l10n.silNewQuote),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 DropdownButtonFormField<String>(
                   initialValue: clientId,
-                  decoration: const InputDecoration(labelText: 'Client'),
+                  decoration: InputDecoration(labelText: l10n.client),
                   items: clients
                       .where((c) => c.id != null)
                       .map((c) => DropdownMenuItem(
@@ -321,7 +333,7 @@ class _QuotesTab extends ConsumerWidget {
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
                   initialValue: fundingType,
-                  decoration: const InputDecoration(labelText: 'Funding type'),
+                  decoration: InputDecoration(labelText: l10n.silFundingType),
                   items: const ['ndia_managed', 'plan_managed', 'self_managed']
                       .map((t) => DropdownMenuItem(value: t, child: Text(t)))
                       .toList(),
@@ -330,8 +342,9 @@ class _QuotesTab extends ConsumerWidget {
                 const SizedBox(height: 12),
                 TextField(
                   controller: supportController,
-                  decoration: const InputDecoration(
-                    labelText: 'Support item number',
+                  decoration: InputDecoration(
+                    labelText: l10n.silSupportItemNumber,
+                    // Example NDIS support-item number: a data value, not prose.
                     hintText: '01_011_0107_1_1',
                   ),
                 ),
@@ -339,25 +352,27 @@ class _QuotesTab extends ConsumerWidget {
                 TextField(
                   controller: hoursController,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(labelText: 'Hours per week'),
+                  decoration: InputDecoration(labelText: l10n.silHoursPerWeek),
                 ),
                 const SizedBox(height: 12),
                 TextField(
                   controller: priceController,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(labelText: 'Unit price'),
+                  decoration: InputDecoration(labelText: l10n.silUnitPrice),
                 ),
                 const SizedBox(height: 16),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Agreed weekly pattern',
+                    l10n.silWeeklyPattern,
                     style: Theme.of(dialogContext).textTheme.labelLarge,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 6,
+                  // Day abbreviations double as the API `days` values
+                  // ('Mon'..'Sun'), so they stay untranslated.
                   children: const ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
                       .map(
                         (d) => FilterChip(
@@ -382,7 +397,7 @@ class _QuotesTab extends ConsumerWidget {
                           );
                           if (t != null) setState(() => startTime = t);
                         },
-                        child: Text('Start ${fmt(startTime)}'),
+                        child: Text(l10n.silStart(fmt(startTime))),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -395,7 +410,7 @@ class _QuotesTab extends ConsumerWidget {
                           );
                           if (t != null) setState(() => endTime = t);
                         },
-                        child: Text('End ${fmt(endTime)}'),
+                        child: Text(l10n.silEnd(fmt(endTime))),
                       ),
                     ),
                   ],
@@ -406,7 +421,7 @@ class _QuotesTab extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () async {
@@ -427,7 +442,7 @@ class _QuotesTab extends ConsumerWidget {
                 });
                 if (dialogContext.mounted) Navigator.of(dialogContext).pop(quote != null);
               },
-              child: const Text('Create'),
+              child: Text(l10n.silCreate),
             ),
           ],
         ),
@@ -449,6 +464,7 @@ class _QuoteActions extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     return PopupMenuButton<String>(
       onSelected: (action) async {
         final notifier = ref.read(silQuoteViewModelProvider.notifier);
@@ -464,8 +480,8 @@ class _QuoteActions extends ConsumerWidget {
               SnackBar(
                 content: Text(
                   ok
-                      ? 'Quote accepted.'
-                      : (error ?? 'Quote could not be accepted.'),
+                      ? l10n.silQuoteAccepted
+                      : (error ?? l10n.silQuoteNotAccepted),
                 ),
                 backgroundColor:
                     ok ? null : Theme.of(context).colorScheme.error,
@@ -476,16 +492,16 @@ class _QuoteActions extends ConsumerWidget {
           final roc = await notifier.convert(quote.id);
           if (roc != null && context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Converted to roster of care.')),
+              SnackBar(content: Text(l10n.silConvertedToRoC)),
             );
           }
         }
       },
       itemBuilder: (context) => [
         if (quote.status == 'sent' || quote.status == 'draft')
-          const PopupMenuItem(value: 'accept', child: Text('Accept')),
+          PopupMenuItem(value: 'accept', child: Text(l10n.silQuoteAcceptAction)),
         if (quote.status == 'accepted')
-          const PopupMenuItem(value: 'convert', child: Text('Convert to RoC')),
+          PopupMenuItem(value: 'convert', child: Text(l10n.silQuoteConvertAction)),
       ],
     );
   }
@@ -538,18 +554,19 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
         return client.displayName;
       }
     }
-    return 'RoC ${_shortId(roc.id)}';
+    return AppLocalizations.of(context)!.silRoCFallbackId(_shortId(roc.id));
   }
 
   /// Resolve the SIL property name for a roster, so the roster screen is titled
   /// with the real property instead of a placeholder.
   String _propertyName(String? propertyId) {
-    if (propertyId == null || propertyId.isEmpty) return 'SIL property';
+    final fallback = AppLocalizations.of(context)!.silPropertyFallback;
+    if (propertyId == null || propertyId.isEmpty) return fallback;
     final properties = ref.read(silPropertiesViewModelProvider).properties;
     for (final property in properties) {
       if (property.id == propertyId) return property.name;
     }
-    return 'SIL property';
+    return fallback;
   }
 
   /// A roster can only be planned when at least one support carries an agreed
@@ -564,6 +581,7 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
   /// open the roster builder for the property so staff can be assigned in one
   /// place (see docs/SIL_MANAGEMENT_SPEC.md §7).
   Future<void> _planAndStaff(SILRosterOfCare roc) async {
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
     final picked = await showBauhausDatePicker(
       context: context,
@@ -587,20 +605,15 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Planned ${result.created} shift(s)'
-            '${result.skipped > 0 ? ' · ${result.skipped} already existed' : ''}.',
+            '${l10n.silPlannedShiftsDone(result.created)}'
+            '${result.skipped > 0 ? ' · ${l10n.silSkippedShifts(result.skipped)}' : ''}.',
           ),
         ),
       );
       final propertyId = roc.propertyId;
       if (propertyId == null || propertyId.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'This roster of care has no SIL property attached, so its shifts '
-              'cannot be rostered. Attach a property first.',
-            ),
-          ),
+          SnackBar(content: Text(l10n.silRoCNoProperty)),
         );
         return;
       }
@@ -625,11 +638,12 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (_loading) return const Center(child: CircularProgressIndicator());
     if (_rosters.isEmpty) {
-      return const _EmptyState(
+      return _EmptyState(
         icon: Icons.assignment_outlined,
-        message: 'No rosters of care yet.\nAccept a quote and convert it.',
+        message: l10n.silNoRoCs,
       );
     }
     return RefreshIndicator(
@@ -650,8 +664,12 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
                   leading: const Icon(Icons.assignment_outlined),
                   title: Text(_clientLabel(roc)),
                   subtitle: Text(
-                    'RoC ${_shortId(roc.id)} · ${roc.status} · '
-                    '${roc.supports.length} supports · review ${roc.reviewSchedule.cadence}',
+                    l10n.silRoCSubtitle(
+                      _shortId(roc.id),
+                      roc.status,
+                      roc.supports.length,
+                      roc.reviewSchedule.cadence,
+                    ),
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -659,17 +677,17 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
                       IconButton(
                         icon: const Icon(Icons.event_available_outlined),
                         tooltip: plannable
-                            ? 'Plan week & assign staff'
+                            ? l10n.silPlanWeekTooltip
                             : !billable
-                            ? 'Only an active roster of care can be planned'
-                            : 'This roster of care has no agreed weekly pattern to plan',
+                            ? l10n.silPlanNotBillable
+                            : l10n.silPlanNoPattern,
                         onPressed: plannable ? () => _planAndStaff(roc) : null,
                       ),
                       IconButton(
                         icon: const Icon(Icons.receipt_long_outlined),
                         tooltip: billable
-                            ? 'Generate invoice'
-                            : 'Only an active roster of care can be invoiced',
+                            ? l10n.silGenerateInvoiceTooltip
+                            : l10n.silInvoiceNotBillable,
                         onPressed: billable && !_invoicing
                             ? () => _showInvoiceDialog(roc)
                             : null,
@@ -696,6 +714,7 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
   /// roster of care, then surface the resulting invoice. See
   /// docs/SIL_MANAGEMENT_SPEC.md section 7.
   Future<void> _showInvoiceDialog(SILRosterOfCare roc) async {
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     var range = DateTimeRange(
@@ -708,13 +727,13 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (dialogContext, setState) => AlertDialog(
-          title: const Text('Generate invoice'),
+          title: Text(l10n.silInvoiceDialogTitle),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Billing period'),
+                title: Text(l10n.silBillingPeriod),
                 subtitle: Text(
                   '${_formatDate(range.start)} → ${_formatDate(range.end)}',
                 ),
@@ -732,10 +751,10 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
               ),
               ListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Due date (optional)'),
+                title: Text(l10n.silDueDateOptional),
                 subtitle: Text(
                   dueDate == null
-                      ? 'Default: 30 days after the period'
+                      ? l10n.silDueDateDefault
                       : _formatDate(dueDate!),
                 ),
                 trailing: const Icon(Icons.event_outlined),
@@ -754,11 +773,11 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
-              child: const Text('Generate'),
+              child: Text(l10n.generate),
             ),
           ],
         ),
@@ -782,15 +801,17 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
       final routeLabel = route == null
           ? ''
           : route.isClaim
-          ? ' · NDIA claim (CSV)'
-          : ' · ${route.recipientType == 'plan_manager' ? 'plan manager' : 'participant'} PDF';
+          ? l10n.silRouteNdiaClaim
+          : route.recipientType == 'plan_manager'
+          ? l10n.silRoutePlanManagerPdf
+          : l10n.silRouteParticipantPdf;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Invoice ${invoice.invoiceNumber} created$routeLabel'),
+          content: Text('${l10n.silInvoiceCreated(invoice.invoiceNumber)}$routeLabel'),
           action: invoice.invoiceId.isEmpty
               ? null
               : SnackBarAction(
-                  label: 'View',
+                  label: l10n.silViewAction,
                   onPressed: () => _openInvoice(invoice.invoiceId),
                 ),
         ),
@@ -798,7 +819,7 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to generate invoice: $e')),
+        SnackBar(content: Text(l10n.silInvoiceFailed(e.toString()))),
       );
     } finally {
       if (mounted) setState(() => _invoicing = false);

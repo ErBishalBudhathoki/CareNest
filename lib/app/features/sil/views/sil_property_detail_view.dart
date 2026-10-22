@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:carenest/app/features/client/models/client_model.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:carenest/app/features/sil/models/sil_models.dart';
 import 'package:carenest/app/features/sil/repositories/sil_repository.dart';
 import 'package:carenest/app/routes/app_pages.dart';
@@ -73,12 +74,13 @@ class _SILPropertyDetailViewState extends ConsumerState<SILPropertyDetailView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.propertyName),
         actions: [
           IconButton(
-            tooltip: 'Roster',
+            tooltip: l10n.silPropertyRosterTooltip,
             icon: const Icon(Icons.calendar_month_outlined),
             onPressed: () => Navigator.of(context).pushNamed(
               Routes.silRoster,
@@ -101,7 +103,7 @@ class _SILPropertyDetailViewState extends ConsumerState<SILPropertyDetailView> {
                 children: [
                   if (_board != null) _buildSummary(context, _board!),
                   const SizedBox(height: 16),
-                  Text('Rooms', style: Theme.of(context).textTheme.titleMedium),
+                  Text(l10n.silPropertyRooms, style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
                   ..._buildRooms(context, _board),
                 ],
@@ -109,22 +111,23 @@ class _SILPropertyDetailViewState extends ConsumerState<SILPropertyDetailView> {
             ),
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.person_add_alt),
-        label: const Text('Occupy'),
+        label: Text(l10n.silPropertyOccupy),
         onPressed: _board == null ? null : _showCreateOccupancyDialog,
       ),
     );
   }
 
   Widget _buildSummary(BuildContext context, SILVacancyBoard board) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _stat(context, 'Rooms', '${board.totalRooms}'),
-            _stat(context, 'Occupied', '${board.occupiedCount}'),
-            _stat(context, 'Vacant', '${board.vacantCount}'),
+            _stat(context, l10n.silPropertyRooms, '${board.totalRooms}'),
+            _stat(context, l10n.silPropertyOccupied, '${board.occupiedCount}'),
+            _stat(context, l10n.silPropertyVacant, '${board.vacantCount}'),
           ],
         ),
       ),
@@ -142,7 +145,7 @@ class _SILPropertyDetailViewState extends ConsumerState<SILPropertyDetailView> {
 
   List<Widget> _buildRooms(BuildContext context, SILVacancyBoard? board) {
     if (board == null || board.rooms.isEmpty) {
-      return [const Text('No rooms configured.')];
+      return [Text(AppLocalizations.of(context)!.silPropertyNoRooms)];
     }
     return board.rooms.map((room) {
       final occupancy = _occupancy.where((o) => o.roomId == room.roomId).toList();
@@ -154,11 +157,15 @@ class _SILPropertyDetailViewState extends ConsumerState<SILPropertyDetailView> {
             color: occupied ? Theme.of(context).colorScheme.primary : null,
           ),
           title: Text(room.label.isNotEmpty ? room.label : room.roomId),
-          subtitle: Text(occupied ? 'Occupied' : 'Vacant'),
+          subtitle: Text(
+            occupied
+                ? AppLocalizations.of(context)!.silPropertyOccupied
+                : AppLocalizations.of(context)!.silPropertyVacant,
+          ),
           trailing: occupied
               ? TextButton(
                   onPressed: () => _endOccupancy(occupancy.first),
-                  child: const Text('Vacate'),
+                  child: Text(AppLocalizations.of(context)!.silPropertyVacate),
                 )
               : null,
         ),
@@ -178,9 +185,10 @@ class _SILPropertyDetailViewState extends ConsumerState<SILPropertyDetailView> {
   }
 
   Future<void> _showCreateOccupancyDialog() async {
+    final l10n = AppLocalizations.of(context)!;
     if (_clients.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No clients available.')),
+        SnackBar(content: Text(l10n.silPropertyNoClients)),
       );
       return;
     }
@@ -190,7 +198,7 @@ class _SILPropertyDetailViewState extends ConsumerState<SILPropertyDetailView> {
 
     if (vacantRooms.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No vacant rooms.')),
+        SnackBar(content: Text(l10n.silPropertyNoVacantRooms)),
       );
       return;
     }
@@ -199,13 +207,13 @@ class _SILPropertyDetailViewState extends ConsumerState<SILPropertyDetailView> {
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (dialogContext, setState) => AlertDialog(
-          title: const Text('Create occupancy'),
+          title: Text(l10n.silPropertyCreateOccupancy),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               DropdownButtonFormField<String>(
                 initialValue: clientId,
-                decoration: const InputDecoration(labelText: 'Client'),
+                decoration: InputDecoration(labelText: l10n.client),
                 items: _clients
                     .where((c) => c.id != null)
                     .map((c) => DropdownMenuItem(
@@ -221,7 +229,7 @@ class _SILPropertyDetailViewState extends ConsumerState<SILPropertyDetailView> {
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 initialValue: roomId,
-                decoration: const InputDecoration(labelText: 'Room'),
+                decoration: InputDecoration(labelText: l10n.silPropertyRoomLabel),
                 items: vacantRooms
                     .map((r) => DropdownMenuItem(
                           value: r.roomId,
@@ -235,7 +243,7 @@ class _SILPropertyDetailViewState extends ConsumerState<SILPropertyDetailView> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () async {
@@ -253,7 +261,7 @@ class _SILPropertyDetailViewState extends ConsumerState<SILPropertyDetailView> {
                   }
                 }
               },
-              child: const Text('Create'),
+              child: Text(l10n.silCreate),
             ),
           ],
         ),

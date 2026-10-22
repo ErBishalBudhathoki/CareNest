@@ -3,6 +3,7 @@ import 'package:carenest/app/features/sil/models/sil_models.dart';
 import 'package:carenest/app/features/sil/repositories/sil_repository.dart';
 import 'package:carenest/app/features/sil/views/sil_roster_builder_view.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -76,8 +77,10 @@ Widget _buildApp(SILRepository repo) {
       silRepositoryProvider.overrideWith((ref) => repo),
       app_providers.organizationIdProvider.overrideWithValue('org-1'),
     ],
-    child: const MaterialApp(
-      home: SILRosterBuilderView(
+    child: MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: const SILRosterBuilderView(
         propertyId: 'prop-1',
         propertyName: 'Mock House',
       ),

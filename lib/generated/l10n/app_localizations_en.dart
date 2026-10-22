@@ -7603,6 +7603,275 @@ class AppLocalizationsEn extends AppLocalizations {
       'Supported independent living: properties, occupancy, rosters and quotes.';
 
   @override
+  String get silTabProperties => 'Properties';
+
+  @override
+  String get silTabQuotes => 'Quotes';
+
+  @override
+  String get silTabRostersOfCare => 'Rosters of Care';
+
+  @override
+  String get silStatusActive => 'active';
+
+  @override
+  String get silStatusInactive => 'inactive';
+
+  @override
+  String get silCreate => 'Create';
+
+  @override
+  String get silNoProperties => 'No SIL properties yet.';
+
+  @override
+  String get silPropertyFABLabel => 'Property';
+
+  @override
+  String get silNewProperty => 'New SIL property';
+
+  @override
+  String get silPropertyName => 'Name';
+
+  @override
+  String get silPropertyType => 'Type';
+
+  @override
+  String get silDesignCategory => 'SIL design category';
+
+  @override
+  String get silNumberOfRooms => 'Number of rooms';
+
+  @override
+  String silRoomsCount(int count) {
+    return '$count rooms';
+  }
+
+  @override
+  String get silNoQuotes => 'No SIL quotes yet.';
+
+  @override
+  String silQuoteTitle(Object id) {
+    return 'Quote $id';
+  }
+
+  @override
+  String silWeeklyShort(Object amount) {
+    return '\$$amount/wk';
+  }
+
+  @override
+  String get silQuoteFABLabel => 'Quote';
+
+  @override
+  String get silNewQuote => 'New SIL quote';
+
+  @override
+  String get silFundingType => 'Funding type';
+
+  @override
+  String get silSupportItemNumber => 'Support item number';
+
+  @override
+  String get silHoursPerWeek => 'Hours per week';
+
+  @override
+  String get silUnitPrice => 'Unit price';
+
+  @override
+  String get silWeeklyPattern => 'Agreed weekly pattern';
+
+  @override
+  String silStart(Object time) {
+    return 'Start $time';
+  }
+
+  @override
+  String silEnd(Object time) {
+    return 'End $time';
+  }
+
+  @override
+  String get silQuoteAccepted => 'Quote accepted.';
+
+  @override
+  String get silQuoteNotAccepted => 'Quote could not be accepted.';
+
+  @override
+  String get silConvertedToRoC => 'Converted to roster of care.';
+
+  @override
+  String get silQuoteAcceptAction => 'Accept';
+
+  @override
+  String get silQuoteConvertAction => 'Convert to RoC';
+
+  @override
+  String get silNoRoCs =>
+      'No rosters of care yet.\nAccept a quote and convert it.';
+
+  @override
+  String silRoCFallbackId(Object id) {
+    return 'RoC $id';
+  }
+
+  @override
+  String get silPropertyFallback => 'SIL property';
+
+  @override
+  String silRoCSubtitle(
+    String id,
+    String status,
+    int supports,
+    String cadence,
+  ) {
+    return 'RoC $id · $status · $supports supports · review $cadence';
+  }
+
+  @override
+  String get silPlanWeekTooltip => 'Plan week & assign staff';
+
+  @override
+  String get silPlanNotBillable =>
+      'Only an active roster of care can be planned';
+
+  @override
+  String get silPlanNoPattern =>
+      'This roster of care has no agreed weekly pattern to plan';
+
+  @override
+  String get silGenerateInvoiceTooltip => 'Generate invoice';
+
+  @override
+  String get silInvoiceNotBillable =>
+      'Only an active roster of care can be invoiced';
+
+  @override
+  String get silInvoiceDialogTitle => 'Generate invoice';
+
+  @override
+  String silPlannedShiftsDone(Object created) {
+    return 'Planned $created shift(s)';
+  }
+
+  @override
+  String silSkippedShifts(int count) {
+    return '$count already existed';
+  }
+
+  @override
+  String get silRoCNoProperty =>
+      'This roster of care has no SIL property attached, so its shifts cannot be rostered. Attach a property first.';
+
+  @override
+  String get silBillingPeriod => 'Billing period';
+
+  @override
+  String get silDueDateOptional => 'Due date (optional)';
+
+  @override
+  String get silDueDateDefault => 'Default: 30 days after the period';
+
+  @override
+  String get silRouteNdiaClaim => ' · NDIA claim (CSV)';
+
+  @override
+  String get silRoutePlanManagerPdf => ' · plan manager PDF';
+
+  @override
+  String get silRouteParticipantPdf => ' · participant PDF';
+
+  @override
+  String silInvoiceCreated(Object number) {
+    return 'Invoice $number created';
+  }
+
+  @override
+  String get silViewAction => 'View';
+
+  @override
+  String silInvoiceFailed(Object error) {
+    return 'Failed to generate invoice: $error';
+  }
+
+  @override
+  String get silPropertyRosterTooltip => 'Roster';
+
+  @override
+  String get silPropertyRooms => 'Rooms';
+
+  @override
+  String get silPropertyOccupy => 'Occupy';
+
+  @override
+  String get silPropertyVacate => 'Vacate';
+
+  @override
+  String get silPropertyOccupied => 'Occupied';
+
+  @override
+  String get silPropertyVacant => 'Vacant';
+
+  @override
+  String get silPropertyNoRooms => 'No rooms configured.';
+
+  @override
+  String get silPropertyNoClients => 'No clients available.';
+
+  @override
+  String get silPropertyNoVacantRooms => 'No vacant rooms.';
+
+  @override
+  String get silPropertyCreateOccupancy => 'Create occupancy';
+
+  @override
+  String get silPropertyRoomLabel => 'Room';
+
+  @override
+  String silRosterTitle(Object propertyName) {
+    return 'Roster · $propertyName';
+  }
+
+  @override
+  String get silRosterPublish => 'Publish';
+
+  @override
+  String silRosterWeek(Object weekIso) {
+    return 'Week of $weekIso';
+  }
+
+  @override
+  String get silRosterBuildFromShifts => 'Build from shifts';
+
+  @override
+  String get silRosterWarnings => 'Ratio warnings';
+
+  @override
+  String get silRosterEmpty =>
+      'No roster for this week.\nTap the refresh icon to build from shifts.';
+
+  @override
+  String silRosterStaffCount(int assigned, int required) {
+    return 'staff $assigned/$required';
+  }
+
+  @override
+  String get silRosterAssign => 'Assign';
+
+  @override
+  String get silRosterAssignWorker => 'Assign support worker';
+
+  @override
+  String get silRosterNoEmployees => 'No employees available to assign.';
+
+  @override
+  String silRosterAssignedTo(Object name) {
+    return 'Assigned $name.';
+  }
+
+  @override
+  String get silRosterAssignFailed => 'Assignment failed.';
+
+  @override
   String get ndisClaiming => 'NDIS Claiming';
 
   @override

@@ -14006,6 +14006,462 @@ abstract class AppLocalizations {
   /// **'Supported independent living: properties, occupancy, rosters and quotes.'**
   String get silManagementDesc;
 
+  /// No description provided for @silTabProperties.
+  ///
+  /// In en, this message translates to:
+  /// **'Properties'**
+  String get silTabProperties;
+
+  /// No description provided for @silTabQuotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Quotes'**
+  String get silTabQuotes;
+
+  /// No description provided for @silTabRostersOfCare.
+  ///
+  /// In en, this message translates to:
+  /// **'Rosters of Care'**
+  String get silTabRostersOfCare;
+
+  /// No description provided for @silStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'active'**
+  String get silStatusActive;
+
+  /// No description provided for @silStatusInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'inactive'**
+  String get silStatusInactive;
+
+  /// No description provided for @silCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get silCreate;
+
+  /// No description provided for @silNoProperties.
+  ///
+  /// In en, this message translates to:
+  /// **'No SIL properties yet.'**
+  String get silNoProperties;
+
+  /// No description provided for @silPropertyFABLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Property'**
+  String get silPropertyFABLabel;
+
+  /// No description provided for @silNewProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'New SIL property'**
+  String get silNewProperty;
+
+  /// No description provided for @silPropertyName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get silPropertyName;
+
+  /// No description provided for @silPropertyType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get silPropertyType;
+
+  /// No description provided for @silDesignCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'SIL design category'**
+  String get silDesignCategory;
+
+  /// No description provided for @silNumberOfRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of rooms'**
+  String get silNumberOfRooms;
+
+  /// No description provided for @silRoomsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} rooms'**
+  String silRoomsCount(int count);
+
+  /// No description provided for @silNoQuotes.
+  ///
+  /// In en, this message translates to:
+  /// **'No SIL quotes yet.'**
+  String get silNoQuotes;
+
+  /// No description provided for @silQuoteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quote {id}'**
+  String silQuoteTitle(Object id);
+
+  /// No description provided for @silWeeklyShort.
+  ///
+  /// In en, this message translates to:
+  /// **'\${amount}/wk'**
+  String silWeeklyShort(Object amount);
+
+  /// No description provided for @silQuoteFABLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Quote'**
+  String get silQuoteFABLabel;
+
+  /// No description provided for @silNewQuote.
+  ///
+  /// In en, this message translates to:
+  /// **'New SIL quote'**
+  String get silNewQuote;
+
+  /// No description provided for @silFundingType.
+  ///
+  /// In en, this message translates to:
+  /// **'Funding type'**
+  String get silFundingType;
+
+  /// No description provided for @silSupportItemNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Support item number'**
+  String get silSupportItemNumber;
+
+  /// No description provided for @silHoursPerWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours per week'**
+  String get silHoursPerWeek;
+
+  /// No description provided for @silUnitPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit price'**
+  String get silUnitPrice;
+
+  /// No description provided for @silWeeklyPattern.
+  ///
+  /// In en, this message translates to:
+  /// **'Agreed weekly pattern'**
+  String get silWeeklyPattern;
+
+  /// No description provided for @silStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start {time}'**
+  String silStart(Object time);
+
+  /// No description provided for @silEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'End {time}'**
+  String silEnd(Object time);
+
+  /// No description provided for @silQuoteAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Quote accepted.'**
+  String get silQuoteAccepted;
+
+  /// No description provided for @silQuoteNotAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Quote could not be accepted.'**
+  String get silQuoteNotAccepted;
+
+  /// No description provided for @silConvertedToRoC.
+  ///
+  /// In en, this message translates to:
+  /// **'Converted to roster of care.'**
+  String get silConvertedToRoC;
+
+  /// No description provided for @silQuoteAcceptAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get silQuoteAcceptAction;
+
+  /// No description provided for @silQuoteConvertAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Convert to RoC'**
+  String get silQuoteConvertAction;
+
+  /// No description provided for @silNoRoCs.
+  ///
+  /// In en, this message translates to:
+  /// **'No rosters of care yet.\nAccept a quote and convert it.'**
+  String get silNoRoCs;
+
+  /// No description provided for @silRoCFallbackId.
+  ///
+  /// In en, this message translates to:
+  /// **'RoC {id}'**
+  String silRoCFallbackId(Object id);
+
+  /// No description provided for @silPropertyFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'SIL property'**
+  String get silPropertyFallback;
+
+  /// No description provided for @silRoCSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'RoC {id} · {status} · {supports} supports · review {cadence}'**
+  String silRoCSubtitle(String id, String status, int supports, String cadence);
+
+  /// No description provided for @silPlanWeekTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan week & assign staff'**
+  String get silPlanWeekTooltip;
+
+  /// No description provided for @silPlanNotBillable.
+  ///
+  /// In en, this message translates to:
+  /// **'Only an active roster of care can be planned'**
+  String get silPlanNotBillable;
+
+  /// No description provided for @silPlanNoPattern.
+  ///
+  /// In en, this message translates to:
+  /// **'This roster of care has no agreed weekly pattern to plan'**
+  String get silPlanNoPattern;
+
+  /// No description provided for @silGenerateInvoiceTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate invoice'**
+  String get silGenerateInvoiceTooltip;
+
+  /// No description provided for @silInvoiceNotBillable.
+  ///
+  /// In en, this message translates to:
+  /// **'Only an active roster of care can be invoiced'**
+  String get silInvoiceNotBillable;
+
+  /// No description provided for @silInvoiceDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate invoice'**
+  String get silInvoiceDialogTitle;
+
+  /// No description provided for @silPlannedShiftsDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned {created} shift(s)'**
+  String silPlannedShiftsDone(Object created);
+
+  /// No description provided for @silSkippedShifts.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} already existed'**
+  String silSkippedShifts(int count);
+
+  /// No description provided for @silRoCNoProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'This roster of care has no SIL property attached, so its shifts cannot be rostered. Attach a property first.'**
+  String get silRoCNoProperty;
+
+  /// No description provided for @silBillingPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing period'**
+  String get silBillingPeriod;
+
+  /// No description provided for @silDueDateOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date (optional)'**
+  String get silDueDateOptional;
+
+  /// No description provided for @silDueDateDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Default: 30 days after the period'**
+  String get silDueDateDefault;
+
+  /// No description provided for @silRouteNdiaClaim.
+  ///
+  /// In en, this message translates to:
+  /// **' · NDIA claim (CSV)'**
+  String get silRouteNdiaClaim;
+
+  /// No description provided for @silRoutePlanManagerPdf.
+  ///
+  /// In en, this message translates to:
+  /// **' · plan manager PDF'**
+  String get silRoutePlanManagerPdf;
+
+  /// No description provided for @silRouteParticipantPdf.
+  ///
+  /// In en, this message translates to:
+  /// **' · participant PDF'**
+  String get silRouteParticipantPdf;
+
+  /// No description provided for @silInvoiceCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice {number} created'**
+  String silInvoiceCreated(Object number);
+
+  /// No description provided for @silViewAction.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get silViewAction;
+
+  /// No description provided for @silInvoiceFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to generate invoice: {error}'**
+  String silInvoiceFailed(Object error);
+
+  /// No description provided for @silPropertyRosterTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Roster'**
+  String get silPropertyRosterTooltip;
+
+  /// No description provided for @silPropertyRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms'**
+  String get silPropertyRooms;
+
+  /// No description provided for @silPropertyOccupy.
+  ///
+  /// In en, this message translates to:
+  /// **'Occupy'**
+  String get silPropertyOccupy;
+
+  /// No description provided for @silPropertyVacate.
+  ///
+  /// In en, this message translates to:
+  /// **'Vacate'**
+  String get silPropertyVacate;
+
+  /// No description provided for @silPropertyOccupied.
+  ///
+  /// In en, this message translates to:
+  /// **'Occupied'**
+  String get silPropertyOccupied;
+
+  /// No description provided for @silPropertyVacant.
+  ///
+  /// In en, this message translates to:
+  /// **'Vacant'**
+  String get silPropertyVacant;
+
+  /// No description provided for @silPropertyNoRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'No rooms configured.'**
+  String get silPropertyNoRooms;
+
+  /// No description provided for @silPropertyNoClients.
+  ///
+  /// In en, this message translates to:
+  /// **'No clients available.'**
+  String get silPropertyNoClients;
+
+  /// No description provided for @silPropertyNoVacantRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'No vacant rooms.'**
+  String get silPropertyNoVacantRooms;
+
+  /// No description provided for @silPropertyCreateOccupancy.
+  ///
+  /// In en, this message translates to:
+  /// **'Create occupancy'**
+  String get silPropertyCreateOccupancy;
+
+  /// No description provided for @silPropertyRoomLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Room'**
+  String get silPropertyRoomLabel;
+
+  /// No description provided for @silRosterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Roster · {propertyName}'**
+  String silRosterTitle(Object propertyName);
+
+  /// No description provided for @silRosterPublish.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish'**
+  String get silRosterPublish;
+
+  /// No description provided for @silRosterWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Week of {weekIso}'**
+  String silRosterWeek(Object weekIso);
+
+  /// No description provided for @silRosterBuildFromShifts.
+  ///
+  /// In en, this message translates to:
+  /// **'Build from shifts'**
+  String get silRosterBuildFromShifts;
+
+  /// No description provided for @silRosterWarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Ratio warnings'**
+  String get silRosterWarnings;
+
+  /// No description provided for @silRosterEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No roster for this week.\nTap the refresh icon to build from shifts.'**
+  String get silRosterEmpty;
+
+  /// No description provided for @silRosterStaffCount.
+  ///
+  /// In en, this message translates to:
+  /// **'staff {assigned}/{required}'**
+  String silRosterStaffCount(int assigned, int required);
+
+  /// No description provided for @silRosterAssign.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign'**
+  String get silRosterAssign;
+
+  /// No description provided for @silRosterAssignWorker.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign support worker'**
+  String get silRosterAssignWorker;
+
+  /// No description provided for @silRosterNoEmployees.
+  ///
+  /// In en, this message translates to:
+  /// **'No employees available to assign.'**
+  String get silRosterNoEmployees;
+
+  /// No description provided for @silRosterAssignedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned {name}.'**
+  String silRosterAssignedTo(Object name);
+
+  /// No description provided for @silRosterAssignFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment failed.'**
+  String get silRosterAssignFailed;
+
   /// No description provided for @ndisClaiming.
   ///
   /// In en, this message translates to:

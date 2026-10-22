@@ -5,6 +5,7 @@ import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import 'package:carenest/app/features/sil/models/sil_models.dart';
 import 'package:carenest/app/features/sil/repositories/sil_repository.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Weekly SIL roster builder (Phase 4). Builds a roster from shifts and shows
 /// ratio compliance; supports publishing and inline staff assignment.
@@ -107,16 +108,17 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
 
   Future<void> _assign(SILRosterEntry entry) async {
     if (entry.shiftId == null) return;
+    final l10n = AppLocalizations.of(context)!;
     if (_employees.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No employees available to assign.')),
+        SnackBar(content: Text(l10n.silRosterNoEmployees)),
       );
       return;
     }
     final selected = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (dialogContext) => SimpleDialog(
-        title: const Text('Assign support worker'),
+        title: Text(l10n.silRosterAssignWorker),
         children: [
           for (final e in _employees)
             SimpleDialogOption(
@@ -135,12 +137,12 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
       if (!mounted) return;
       if (response['success'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Assigned ${_employeeLabel(selected)}.')),
+          SnackBar(content: Text(l10n.silRosterAssignedTo(_employeeLabel(selected)))),
         );
         await _build();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response['error']?.toString() ?? 'Assignment failed.')),
+          SnackBar(content: Text(response['error']?.toString() ?? l10n.silRosterAssignFailed)),
         );
       }
     } catch (e) {
@@ -201,15 +203,16 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final roster = _roster;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Roster · ${widget.propertyName}'),
+        title: Text(l10n.silRosterTitle(widget.propertyName)),
         actions: [
           if (roster != null && roster.status == 'draft')
             TextButton(
               onPressed: _publish,
-              child: const Text('Publish'),
+              child: Text(l10n.silRosterPublish),
             ),
         ],
       ),
@@ -221,7 +224,7 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
               children: [
                 Expanded(
                   child: Text(
-                    'Week of $_weekIso'
+                    '${l10n.silRosterWeek(_weekIso)}'
                     '${roster != null ? ' · ${roster.status}' : ''}',
                   ),
                 ),
@@ -242,7 +245,7 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
                   },
                 ),
                 IconButton(
-                  tooltip: 'Build from shifts',
+                  tooltip: l10n.silRosterBuildFromShifts,
                   icon: const Icon(Icons.autorenew),
                   onPressed: _build,
                 ),
@@ -258,11 +261,11 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
             child: _loading
                 ? const Center(child: CircularProgressIndicator())
                 : roster == null || roster.entries.isEmpty
-                ? const Center(
+                ? Center(
                     child: Padding(
                       padding: EdgeInsets.all(24),
                       child: Text(
-                        'No roster for this week.\nTap the refresh icon to build from shifts.',
+                        l10n.silRosterEmpty,
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -287,7 +290,7 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Ratio warnings',
+                                    Text(l10n.silRosterWarnings,
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: warnColor,
@@ -317,6 +320,7 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
 
   Widget _buildEntry(SILRosterEntry entry) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final color = entry.compliance == 'ok'
         ? theme.colorScheme.primary
         : entry.compliance == 'understaffed'
@@ -336,13 +340,13 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
         leading: Icon(Icons.event, color: color),
         title: Text(entry.shiftType),
         subtitle: Text(
-          '$timeRange · staff ${entry.assignedStaff}/${entry.requiredStaff}',
+          '$timeRange · ${l10n.silRosterStaffCount(entry.assignedStaff, entry.requiredStaff)}',
         ),
         onTap: unassigned ? () => _assign(entry) : null,
         trailing: unassigned
             ? ActionChip(
                 avatar: const Icon(Icons.person_add_alt, size: 18),
-                label: const Text('Assign'),
+                label: Text(l10n.silRosterAssign),
                 onPressed: () => _assign(entry),
               )
             : Chip(
