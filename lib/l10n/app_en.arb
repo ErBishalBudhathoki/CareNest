@@ -3918,6 +3918,7 @@
     }
   },
   "silRosterAssignFailed": "Assignment failed.",
+  "clientDetailsUnavailable": "Client details aren't available for this shift yet.",
 
   "ndisClaiming": "NDIS Claiming",
   "ndisClaimingDesc": "Generate bulk payment request CSVs and reconcile results.",

@@ -14462,6 +14462,12 @@ abstract class AppLocalizations {
   /// **'Assignment failed.'**
   String get silRosterAssignFailed;
 
+  /// No description provided for @clientDetailsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Client details aren\'t available for this shift yet.'**
+  String get clientDetailsUnavailable;
+
   /// No description provided for @ndisClaiming.
   ///
   /// In en, this message translates to:

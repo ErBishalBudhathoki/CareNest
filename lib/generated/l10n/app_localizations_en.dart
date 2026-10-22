@@ -7872,6 +7872,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get silRosterAssignFailed => 'Assignment failed.';
 
   @override
+  String get clientDetailsUnavailable =>
+      'Client details aren\'t available for this shift yet.';
+
+  @override
   String get ndisClaiming => 'NDIS Claiming';
 
   @override

@@ -80,17 +80,30 @@ class _ClientAndAppointmentDetailsState
       }
     });
 
-    getAppointmentData().then((_) {
-      setState(() {
-        isInitCompleted = true;
-        clientDetails =
-            clientAndAppointmentData['data']?['clientDetails']?.isNotEmpty ==
-                true
-            ? clientAndAppointmentData['data']!['clientDetails'][0]
-            : null;
-      });
-      _startAnimations();
-    });
+    getAppointmentData()
+        .then((_) {
+          if (!mounted) return;
+          setState(() {
+            isInitCompleted = true;
+            clientDetails =
+                clientAndAppointmentData['data']?['clientDetails']?.isNotEmpty ==
+                    true
+                ? clientAndAppointmentData['data']!['clientDetails'][0]
+                : null;
+          });
+          _startAnimations();
+        })
+        .catchError((Object error, StackTrace stack) {
+          // Never leave the screen on the loading spinner: fall back to the
+          // "no client data" state so the worker sees an outcome.
+          debugPrint('Failed to load appointment details: $error');
+          if (!mounted) return null;
+          setState(() {
+            isInitCompleted = true;
+            clientAndAppointmentData = {};
+          });
+          return null;
+        });
   }
 
   Future<void> _syncTimerWithServer() async {
@@ -205,18 +218,54 @@ class _ClientAndAppointmentDetailsState
               widget.clientEmail,
             ))
             as Map;
-    setState(() {
-      debugPrint(
-        "Clinet Email: ${widget.clientEmail} "
-        "${clientAndAppointmentData['data']?['clientDetails'][0]}",
-      );
-      setClientAndAppointmentData = clientAndAppointmentData;
-      isCurrentClient =
-          (clientAndAppointmentData['data']?['clientDetails'][0]?['clientEmail'] ==
-          widget.clientEmail);
-    });
-    debugPrint("client apt det: $clientAndAppointmentData");
+
+    // The API returns an empty clientDetails list on 404/error. Indexing it
+    // blindly threw a RangeError inside initState, which left the spinner
+    // running forever.
+    final detailsList = clientAndAppointmentData['data']?['clientDetails'];
+    final firstDetails = detailsList is List && detailsList.isNotEmpty
+        ? detailsList.first
+        : null;
+
+    if (mounted) {
+      setState(() {
+        setClientAndAppointmentData = clientAndAppointmentData;
+        isCurrentClient =
+            firstDetails is Map &&
+            firstDetails['clientEmail'] == widget.clientEmail;
+      });
+    }
+    debugPrint(
+      'client apt det for ${widget.clientEmail}: '
+      '${firstDetails == null ? 'no client details' : firstDetails['clientEmail']}',
+    );
     return clientAndAppointmentData;
+  }
+
+  /// Retry the details load after a failure so the worker isn't stuck on an
+  /// empty screen.
+  Future<void> _retryLoadAppointmentData() async {
+    setState(() => isInitCompleted = false);
+    try {
+      await getAppointmentData();
+      if (!mounted) return;
+      setState(() {
+        isInitCompleted = true;
+        clientDetails =
+            clientAndAppointmentData['data']?['clientDetails']?.isNotEmpty ==
+                true
+            ? clientAndAppointmentData['data']!['clientDetails'][0]
+            : null;
+      });
+      _startAnimations();
+    } catch (e) {
+      debugPrint('Retry failed to load appointment details: $e');
+      if (!mounted) return;
+      setState(() {
+        isInitCompleted = true;
+        clientAndAppointmentData = {};
+      });
+    }
   }
 
   Future<dynamic> _startTimer(TimerService timerService) async {
@@ -1515,6 +1564,12 @@ class _ClientAndAppointmentDetailsState
                   letterSpacing: 1.0,
                 ),
               ),
+              const SizedBox(height: BauhausDesign.space4),
+              FilledButton.icon(
+                onPressed: _retryLoadAppointmentData,
+                icon: const Icon(Icons.refresh),
+                label: Text(AppLocalizations.of(context)!.retryButton),
+              ),
             ],
           ),
         ),
@@ -1558,6 +1613,12 @@ class _ClientAndAppointmentDetailsState
                   fontSize: 18,
                   letterSpacing: 1.0,
                 ),
+              ),
+              const SizedBox(height: BauhausDesign.space4),
+              FilledButton.icon(
+                onPressed: _retryLoadAppointmentData,
+                icon: const Icon(Icons.refresh),
+                label: Text(AppLocalizations.of(context)!.retryButton),
               ),
             ],
           ),

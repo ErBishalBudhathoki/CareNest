@@ -494,23 +494,39 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                                   const SizedBox(height: 16),
                               itemBuilder: (context, index) {
                                 final appointment = appointments[index];
-                                final clientEmail = appointment['clientEmail'];
+                                final clientEmail =
+                                    appointment['clientEmail']?.toString() ?? '';
 
                                 return BauhausAppointmentCard(
                                   appointment: appointment,
                                   onTap: () {
-                                    if (clientEmail != null) {
-                                      Navigator.push(
+                                    // SIL cards without a resolved participant
+                                    // have no email; the details screen keys on
+                                    // it, so explain instead of doing nothing.
+                                    if (clientEmail.isEmpty) {
+                                      ScaffoldMessenger.of(
                                         context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              ClientAndAppointmentDetails(
-                                                userEmail: widget.email,
-                                                clientEmail: clientEmail,
-                                              ),
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            AppLocalizations.of(
+                                              context,
+                                            )!.clientDetailsUnavailable,
+                                          ),
                                         ),
                                       );
+                                      return;
                                     }
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ClientAndAppointmentDetails(
+                                              userEmail: widget.email,
+                                              clientEmail: clientEmail,
+                                            ),
+                                      ),
+                                    );
                                   },
                                 );
                               },
