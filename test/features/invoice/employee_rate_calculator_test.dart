@@ -75,26 +75,38 @@ void main() {
       expect(result['source'], 'EMP_BASE');
     });
 
-    test('Evening shift should apply when finishing after 8 PM', () {
+    test('Evening shift should apply when finishing after 6 PM', () {
       final date = DateTime(2023, 10, 2); // Monday
-      // 2:00 PM to 9:00 PM (finishes after 8 PM)
+      // 2:00 PM to 7:00 PM (finishes after 6 PM)
       final result = calc(
         date: date,
         startTime: '02:00 PM',
-        endTime: '09:00 PM',
+        endTime: '07:00 PM',
       );
 
       expect(result['rate'], 28.0);
       expect(result['source'], 'EMP_EVENING_SHIFT');
     });
 
-    test('Night shift should apply when starting before 6 AM', () {
+    test('an early-morning start that finishes after 6 AM is a day shift', () {
       final date = DateTime(2023, 10, 2); // Monday
       // 4:00 AM to 12:00 PM
       final result = calc(
         date: date,
         startTime: '04:00 AM',
         endTime: '12:00 PM',
+      );
+
+      expect(result['rate'], 25.0);
+      expect(result['source'], 'EMP_BASE');
+    });
+
+    test('a shift finishing at 6 AM is a night shift', () {
+      final date = DateTime(2023, 10, 2); // Monday
+      final result = calc(
+        date: date,
+        startTime: '10:00 PM',
+        endTime: '06:00 AM',
       );
 
       expect(result['rate'], 30.0);
@@ -136,11 +148,11 @@ void main() {
 
     test('Time parsing handles "at" format', () {
       final date = DateTime(2023, 10, 2);
-      // "04:00 AM at Client Location" - sanitization check
+      // "10:00 PM at Client Location" - sanitization check
       final result = calc(
         date: date,
-        startTime: '04:00 AM at Home',
-        endTime: '12:00 PM',
+        startTime: '10:00 PM at Home',
+        endTime: '06:00 AM',
       );
 
       expect(result['rate'], 30.0); // Night shift

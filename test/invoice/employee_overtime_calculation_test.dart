@@ -139,11 +139,11 @@ void main() {
       expect(items.length, equals(3));
 
       final ordinaryItem = items.firstWhere(
-        (i) => i['itemName'] == 'Weekday Ordinary',
+        (i) => i['itemName'] == 'Evening Shift',
       );
       expect(ordinaryItem['hours'], equals(8.0));
-      expect(ordinaryItem['rate'], equals(34.44));
-      expect(ordinaryItem['amount'], closeTo(275.52, 0.01));
+      expect(ordinaryItem['rate'], equals(38.75));
+      expect(ordinaryItem['amount'], closeTo(310.0, 0.01));
 
       final overtimeFirst = items.firstWhere(
         (i) => i['itemName'] == 'Overtime (first 2h)',

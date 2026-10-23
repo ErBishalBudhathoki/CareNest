@@ -60,22 +60,23 @@ Map<String, dynamic> calculateEmployeeRateDecision({
           isOvernight = true;
         }
 
-        // Night Shift Logic:
-        // 1. Finishes after 12 midnight (isOvernight is true)
-        // 2. Commences before 6.00 am
-        if (isOvernight || startHour < 6) {
+        // Night Shift Logic (SCHADS):
+        // 1. Finishes after midnight and at or before 6.00 am, or
+        // 2. Runs 00:00–06:00.
+        // An early-morning start that finishes after 06:00 is a day shift.
+        final finishesBySix = endHour < 6 || (endHour == 6 && endMinute == 0);
+        if (isOvernight || finishesBySix) {
           final night = nightShiftRate.toDouble();
           final chosen = night > 0 ? night : base;
           return {'rate': chosen, 'source': 'EMP_NIGHT_SHIFT'};
         }
 
         // Evening Shift Logic:
-        // Finishes after 8.00 pm (20:00) and before 12 midnight
-        // We know it's not overnight, so endHour is on the same day.
-        bool finishesAfter8pm =
-            endHour > 20 || (endHour == 20 && endMinute > 0);
+        // Finishes after 6.00 pm (18:00) and at or before midnight.
+        final finishesAfter6pm =
+            endHour > 18 || (endHour == 18 && endMinute > 0);
 
-        if (finishesAfter8pm) {
+        if (finishesAfter6pm) {
           final evening = eveningShiftRate.toDouble();
           final chosen = evening > 0 ? evening : base;
           return {'rate': chosen, 'source': 'EMP_EVENING_SHIFT'};
