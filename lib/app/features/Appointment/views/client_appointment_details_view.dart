@@ -202,8 +202,14 @@ class _ClientAndAppointmentDetailsState
       debugPrint("2");
       return;
     } else {
+      // Same empty-list hazard as getAppointmentData: the API returns
+      // `clientDetails: []` on 404/error, so `[0]` would throw RangeError.
+      final detailsList = clientAndAppointmentData['data']?['clientDetails'];
+      final firstDetail = detailsList is List && detailsList.isNotEmpty
+          ? detailsList.first
+          : null;
       debugPrint(
-        "3: ${widget.clientEmail} : ${clientAndAppointmentData['data']?['clientDetails'][0]?['clientEmail']}",
+        "3: ${widget.clientEmail} : ${firstDetail is Map ? firstDetail['clientEmail'] : null}",
       );
       timerModel.start();
       // await _startTimer();

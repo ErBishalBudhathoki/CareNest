@@ -1976,11 +1976,18 @@ class ApiMethod extends ChangeNotifier {
     debugPrint(url);
 
     try {
-      final headers = await _buildJsonHeaders(
-        includeAuth: true,
-        includeAppCheck: true,
-      );
-      final response = await _get(Uri.parse(url), headers: headers);
+      // Bound the whole fetch, not just the request: `_buildJsonHeaders`
+      // awaits a Firebase ID token and an App Check token first, and either
+      // can stall. Without this the Future never settles and the caller's
+      // loading state is permanent. TimeoutException is caught by the
+      // existing `catch (e)` below and mapped to the standard fallback.
+      final response = await Future<http.Response>(() async {
+        final headers = await _buildJsonHeaders(
+          includeAuth: true,
+          includeAppCheck: true,
+        );
+        return _get(Uri.parse(url), headers: headers);
+      }).timeout(const Duration(seconds: 20));
 
       debugPrint(
         '=== API METHOD DEBUG: loadAppointmentDetails status: ${response.statusCode} ===',
