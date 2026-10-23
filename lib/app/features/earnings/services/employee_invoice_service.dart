@@ -9,6 +9,8 @@ import 'package:carenest/app/features/pricing/constants/schads_rate_constants.da
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
+import 'package:carenest/app/core/providers/organization_provider.dart';
+import 'package:carenest/app/features/invoice/utils/weekly_overtime_calculator.dart';
 import '../../mileage/repositories/mileage_repository.dart';
 import '../../mileage/models/trip_model.dart';
 
@@ -39,7 +41,16 @@ class EmployeeInvoiceService {
 
       // 1b. Fetch Holidays for the period
       final holidayService = _ref.read(holidayServiceProvider);
-      final holidays = await holidayService.getAllHolidays();
+      final orgState = _ref
+          .read(organizationProvider)
+          .currentOrganization
+          ?.address
+          ?.state;
+      final holidays = await holidayService.getAllHolidays(
+        startDate: startDate,
+        endDate: endDate,
+        jurisdiction: orgState,
+      );
       // Create a set of date strings for quick lookup "DD-MM-YYYY"
       final holidaySet = holidays.map((h) => h.date).map((d) {
         // Format DateTime to "DD-MM-YYYY" string if not already
@@ -160,7 +171,7 @@ class EmployeeInvoiceService {
         // 3. First Aid - Casual (Per Hour)
         if (activeAllowances.contains('First aid - Casual')) {
           final rate =
-              SchadsRateConstants.allowances['First aid - Casual'] ?? 0.54;
+              SchadsRateConstants.allowances['First aid - Casual'] ?? 0.56;
           final amount = rate * item.hours;
           items.add({
             'date': item.date,
@@ -274,7 +285,7 @@ class EmployeeInvoiceService {
 
       // --- VEHICLE ALLOWANCE LOGIC ---
       // 4. Process Trips for Reimbursement
-      final vehicleRate = SchadsRateConstants.allowances['Vehicle'] ?? 0.99;
+      final vehicleRate = SchadsRateConstants.allowances['Vehicle'] ?? 1.05;
 
       for (final trip in trips) {
         // Filter for reimbursable trips within the date range (double check date)
@@ -301,20 +312,72 @@ class EmployeeInvoiceService {
       }
 
       // --- WEEKLY ALLOWANCES (Fixed) ---
-      // First Aid (Full-time: $20.46/week, Casual: $0.54/hr)
+      // First Aid (Full-time: $21.43/week, Casual: $0.56/hr)
       if (activeAllowances.contains('First aid - Full-time')) {
         final rate = SchadsRateConstants.allowances['First aid - Full-time']!;
-        // Add once per week. For simplicity, add to the last day or separate item.
-        // Check if we haven't exceeded date range (assuming generating for 1 pay period).
+        // One allowance per week in which the employee worked.
+        final weeks = <String>{};
+        for (final item in summary.history) {
+          final date = DateTime.tryParse(item.date);
+          if (date == null) continue;
+          final monday = DateTime(
+            date.year,
+            date.month,
+            date.day,
+          ).subtract(Duration(days: date.weekday - 1));
+          weeks.add(monday.toIso8601String().split('T')[0]);
+        }
+        final weekCount = weeks.isEmpty ? 1 : weeks.length;
         items.add({
           'date': endDate.toIso8601String().split('T')[0],
           'startTime': '',
           'endTime': '',
-          'hours': 1,
+          'hours': weekCount.toDouble(),
           'rate': rate,
-          'amount': rate,
+          'amount': rate * weekCount,
           'itemCode': 'ALW-FA-FT',
           'itemName': l10n.allowanceFirstAidWeekly,
+          'clientState': '',
+        });
+      }
+
+      // --- WEEKLY OVERTIME ---
+      // Daily overtime is handled per shift above. Add the separate weekly
+      // premium (38h full-time / 76h part-time / 152h casual).
+      final weeklySegments = <WeeklyOvertimeSegment>[];
+      for (final item in items) {
+        final code = (item['itemCode'] ?? '').toString();
+        if (code != 'PAY') continue;
+        final hours = (item['hours'] as num?)?.toDouble() ?? 0;
+        if (hours <= 0) continue;
+        final rawDate = item['date']?.toString() ?? '';
+        final date = DateTime.tryParse(rawDate);
+        if (date == null) continue;
+        if (holidayIsoSet.contains(rawDate.split('T').first)) continue;
+        final rate = (item['rate'] as num?)?.toDouble() ?? 0;
+        weeklySegments.add(
+          WeeklyOvertimeSegment(start: date, hours: hours, rate: rate),
+        );
+      }
+
+      final weeklyOvertime = calculateWeeklyOvertime(
+        segments: weeklySegments,
+        employmentType: user?.employmentType ?? 'Permanent',
+        baseRate: (user?.detailedRates?.baseRate ?? user?.payRate ?? 0)
+            .toDouble(),
+      );
+      if (weeklyOvertime.amount > 0.004 && weeklyOvertime.hours > 0) {
+        items.add({
+          'date': endDate.toIso8601String().split('T')[0],
+          'startTime': '',
+          'endTime': '',
+          'hours': weeklyOvertime.hours,
+          'rate': double.parse(
+            (weeklyOvertime.amount / weeklyOvertime.hours).toStringAsFixed(4),
+          ),
+          'amount': weeklyOvertime.amount,
+          'itemCode': 'OT-WEEKLY',
+          'itemName': l10n.overtime,
           'clientState': '',
         });
       }

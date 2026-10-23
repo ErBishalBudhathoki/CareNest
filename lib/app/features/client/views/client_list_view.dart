@@ -1,6 +1,12 @@
-import 'package:carenest/app/core/providers/app_providers.dart';
+import 'dart:io';
+
+import 'package:carenest/app/core/providers/app_providers.dart'
+    hide apiMethodProvider;
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:carenest/app/features/client/providers/client_provider.dart';
+import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:carenest/app/features/realtime_portal/views/family_management_view.dart';
 import 'package:carenest/app/features/stakeholders/views/care_team_view.dart';
 import 'package:carenest/app/routes/app_pages.dart';
@@ -381,8 +387,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
       text: client.clientState ?? '',
     );
     final zipController = TextEditingController(text: client.clientZip ?? '');
-    final ndisNumberController =
-        TextEditingController(text: client.ndisNumber ?? '');
+    final ndisNumberController = TextEditingController(
+      text: client.ndisNumber ?? '',
+    );
     String selectedFundingType = client.fundingType ?? 'plan_managed';
     String selectedBusinessName = client.businessName?.trim() ?? '';
     final formKey = GlobalKey<FormState>();
@@ -607,20 +614,23 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                   labelText: 'Funding type',
                                   border: OutlineInputBorder(),
                                 ),
-                                items: const [
-                                  'ndia_managed',
-                                  'plan_managed',
-                                  'self_managed',
-                                  'combination',
-                                ]
-                                    .map((t) => DropdownMenuItem(
-                                          value: t,
-                                          child: Text(t),
-                                        ))
-                                    .toList(),
+                                items:
+                                    const [
+                                          'ndia_managed',
+                                          'plan_managed',
+                                          'self_managed',
+                                          'combination',
+                                        ]
+                                        .map(
+                                          (t) => DropdownMenuItem(
+                                            value: t,
+                                            child: Text(t),
+                                          ),
+                                        )
+                                        .toList(),
                                 onChanged: (v) => setDialogState(
-                                  () => selectedFundingType =
-                                      v ?? 'plan_managed',
+                                  () =>
+                                      selectedFundingType = v ?? 'plan_managed',
                                 ),
                               ),
                             ],
@@ -724,10 +734,11 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                                     userContext['userEmail']!,
                                                 organizationId:
                                                     userContext['organizationId']!,
-                                                ndisNumber:
-                                                    ndisNumberController.text
-                                                        .trim(),
-                                                fundingType: selectedFundingType,
+                                                ndisNumber: ndisNumberController
+                                                    .text
+                                                    .trim(),
+                                                fundingType:
+                                                    selectedFundingType,
                                               );
 
                                         if (!mounted || !context.mounted)
@@ -804,6 +815,394 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     stateController.dispose();
     zipController.dispose();
     ndisNumberController.dispose();
+  }
+
+  Future<void> _showNdisPlanDialog(Patient client) async {
+    final userContext = await _getRequiredUserContext();
+    if (userContext == null || !mounted) return;
+
+    final api = ref.read(apiMethodProvider);
+    final organizationId = userContext['organizationId']!;
+    final userEmail = userContext['userEmail']!;
+
+    Map<String, dynamic> plan = {};
+    try {
+      final details = await api.getClientDetails(
+        client.clientEmail ?? '',
+        clientId: client.id,
+        organizationId: organizationId,
+      );
+      final data = details?['data'];
+      if (data is Map) {
+        final candidate =
+            data['plan'] ??
+            (data['client'] is Map ? data['client']['plan'] : null);
+        if (candidate is Map) plan = Map<String, dynamic>.from(candidate);
+      }
+    } catch (_) {
+      // A missing plan is a valid starting state; the user can enter it now.
+    }
+    if (!mounted) return;
+
+    final budgetController = TextEditingController(
+      text: plan['totalBudget']?.toString() ?? '',
+    );
+    final documentUrlController = TextEditingController(
+      text: plan['documentUrl']?.toString() ?? '',
+    );
+    final documentNameController = TextEditingController(
+      text: plan['documentName']?.toString() ?? '',
+    );
+    final notesController = TextEditingController(
+      text: plan['notes']?.toString() ?? '',
+    );
+    DateTime? startDate = DateTime.tryParse(
+      plan['startDate']?.toString() ?? '',
+    );
+    DateTime? endDate = DateTime.tryParse(plan['endDate']?.toString() ?? '');
+    final formKey = GlobalKey<FormState>();
+    bool isSaving = false;
+    String? errorText;
+    PlatformFile? planFile;
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            Future<void> pickDate({required bool isStart}) async {
+              final now = DateTime.now();
+              final initial = (isStart ? startDate : endDate) ?? now;
+              final picked = await showBauhausDatePicker(
+                context: dialogContext,
+                initialDate: initial,
+                firstDate: DateTime(now.year - 5),
+                lastDate: DateTime(now.year + 10),
+              );
+              if (picked == null) return;
+              setDialogState(() {
+                if (isStart) {
+                  startDate = picked;
+                } else {
+                  endDate = picked;
+                }
+              });
+            }
+
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              insetPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 20,
+              ),
+              child: Container(
+                width: _dialogWidth(dialogContext, maxWidth: 640),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 3,
+                  ),
+                  boxShadow: const [BauhausDesign.shadowHard],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: BauhausDesign.space4,
+                        vertical: BauhausDesign.space3,
+                      ),
+                      color: BauhausDesign.warning,
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.account_balance_wallet_outlined,
+                            size: 22,
+                          ),
+                          const SizedBox(width: BauhausDesign.space2),
+                          Expanded(
+                            child: Text(
+                              'NDIS PLAN — ${client.displayName}',
+                              style: BauhausDesign.getTextTheme(dialogContext)
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 0.8,
+                                  ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(BauhausDesign.space4),
+                        child: Form(
+                          key: formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Text(
+                                'The plan period and budget gate NDIA-managed '
+                                'invoices. Claims cannot exceed the remaining '
+                                'budget.',
+                                style: BauhausDesign.getTextTheme(
+                                  dialogContext,
+                                ).bodySmall,
+                              ),
+                              const SizedBox(height: BauhausDesign.space4),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: OutlinedButton.icon(
+                                      onPressed: () => pickDate(isStart: true),
+                                      icon: const Icon(Icons.event_outlined),
+                                      label: Text(
+                                        startDate == null
+                                            ? 'Plan start'
+                                            : 'Start ${_formatShortDate(startDate)}',
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: BauhausDesign.space3),
+                                  Expanded(
+                                    child: OutlinedButton.icon(
+                                      onPressed: () => pickDate(isStart: false),
+                                      icon: const Icon(
+                                        Icons.event_available_outlined,
+                                      ),
+                                      label: Text(
+                                        endDate == null
+                                            ? 'Plan end'
+                                            : 'End ${_formatShortDate(endDate)}',
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: BauhausDesign.space4),
+                              TextFormField(
+                                controller: budgetController,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                      decimal: true,
+                                    ),
+                                decoration: const InputDecoration(
+                                  labelText: 'Total plan budget (AUD)',
+                                  prefixText: '\$ ',
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return null;
+                                  }
+                                  final parsed = double.tryParse(value);
+                                  if (parsed == null || parsed < 0) {
+                                    return 'Enter a valid non-negative amount';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: BauhausDesign.space4),
+                              TextFormField(
+                                controller: documentNameController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Plan document name (optional)',
+                                ),
+                              ),
+                              const SizedBox(height: BauhausDesign.space3),
+                              TextFormField(
+                                controller: documentUrlController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Plan document URL (optional)',
+                                ),
+                              ),
+                              const SizedBox(height: BauhausDesign.space3),
+                              OutlinedButton.icon(
+                                onPressed: isSaving
+                                    ? null
+                                    : () async {
+                                        final result =
+                                            await FilePicker.pickFiles(
+                                              type: FileType.custom,
+                                              allowedExtensions: const [
+                                                'pdf',
+                                                'doc',
+                                                'docx',
+                                              ],
+                                            );
+                                        final file = result?.files.single;
+                                        if (file == null) return;
+                                        setDialogState(() {
+                                          planFile = file;
+                                          documentNameController.text =
+                                              file.name;
+                                        });
+                                      },
+                                icon: const Icon(Icons.upload_file_outlined),
+                                label: Text(
+                                  planFile == null
+                                      ? 'Attach plan document'
+                                      : 'Selected: ${planFile!.name}',
+                                ),
+                              ),
+                              const SizedBox(height: BauhausDesign.space3),
+                              TextFormField(
+                                controller: notesController,
+                                maxLines: 2,
+                                decoration: const InputDecoration(
+                                  labelText: 'Notes (optional)',
+                                ),
+                              ),
+                              if (errorText != null) ...[
+                                const SizedBox(height: BauhausDesign.space3),
+                                Text(
+                                  errorText!,
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.error,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        BauhausDesign.space4,
+                        0,
+                        BauhausDesign.space4,
+                        BauhausDesign.space4,
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: BauhausActionButton(
+                              text: 'Cancel',
+                              variant: BauhausActionVariant.secondary,
+                              onPressed: isSaving
+                                  ? null
+                                  : () => Navigator.of(dialogContext).pop(),
+                            ),
+                          ),
+                          const SizedBox(width: BauhausDesign.space3),
+                          Expanded(
+                            child: BauhausActionButton(
+                              text: 'Save Plan',
+                              variant: BauhausActionVariant.primary,
+                              isLoading: isSaving,
+                              onPressed: isSaving
+                                  ? null
+                                  : () async {
+                                      if (!formKey.currentState!.validate()) {
+                                        return;
+                                      }
+                                      setDialogState(() {
+                                        isSaving = true;
+                                        errorText = null;
+                                      });
+
+                                      String? uploadedPlanUrl;
+                                      if (planFile?.path != null) {
+                                        try {
+                                          final storageRef = FirebaseStorage
+                                              .instance
+                                              .ref()
+                                              .child(
+                                                'ndis_plans/$organizationId/'
+                                                '${client.id}/'
+                                                '${DateTime.now().millisecondsSinceEpoch}_'
+                                                '${planFile!.name}',
+                                              );
+                                          await storageRef.putFile(
+                                            File(planFile!.path!),
+                                          );
+                                          uploadedPlanUrl = await storageRef
+                                              .getDownloadURL();
+                                        } catch (e) {
+                                          if (!dialogContext.mounted) return;
+                                          setDialogState(() {
+                                            isSaving = false;
+                                            errorText =
+                                                'Failed to upload the plan document: $e';
+                                          });
+                                          return;
+                                        }
+                                      }
+
+                                      final response = await api
+                                          .updateClientPlan(
+                                            clientId: client.id!,
+                                            organizationId: organizationId,
+                                            userEmail: userEmail,
+                                            startDate: startDate,
+                                            endDate: endDate,
+                                            totalBudget:
+                                                budgetController.text
+                                                    .trim()
+                                                    .isEmpty
+                                                ? 0
+                                                : double.tryParse(
+                                                    budgetController.text
+                                                        .trim(),
+                                                  ),
+                                            documentUrl:
+                                                uploadedPlanUrl ??
+                                                documentUrlController.text
+                                                    .trim(),
+                                            documentName:
+                                                planFile?.name ??
+                                                documentNameController.text
+                                                    .trim(),
+                                            notes: notesController.text.trim(),
+                                          );
+                                      if (!dialogContext.mounted) return;
+                                      if (response['success'] == true ||
+                                          response['data'] != null) {
+                                        Navigator.of(dialogContext).pop();
+                                        ScaffoldMessenger.of(
+                                          this.context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: const Text(
+                                              'NDIS plan updated.',
+                                            ),
+                                            backgroundColor:
+                                                BauhausDesign.success,
+                                          ),
+                                        );
+                                      } else {
+                                        setDialogState(() {
+                                          isSaving = false;
+                                          errorText =
+                                              response['message']?.toString() ??
+                                              response['error']?.toString() ??
+                                              'Failed to update the NDIS plan.';
+                                        });
+                                      }
+                                    },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    budgetController.dispose();
+    documentUrlController.dispose();
+    documentNameController.dispose();
+    notesController.dispose();
   }
 
   Future<void> _confirmDeleteClient(Patient client) async {
@@ -1345,9 +1744,12 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                       SizedBox(height: BauhausDesign.space1),
                       Text(
                         client.clientEmail,
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
+                            ?.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
                       ),
                     ],
                   ),
@@ -1449,6 +1851,15 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
               ),
               SizedBox(height: BauhausDesign.space3),
               BauhausActionButton(
+                text: 'NDIS Plan',
+                icon: Icons.account_balance_wallet_outlined,
+                variant: BauhausActionVariant.warning,
+                isSmall: true,
+                isFullWidth: true,
+                onPressed: () => _showNdisPlanDialog(client),
+              ),
+              SizedBox(height: BauhausDesign.space3),
+              BauhausActionButton(
                 text: 'Family Access',
                 icon: Icons.family_restroom_outlined,
                 variant: BauhausActionVariant.warning,
@@ -1522,7 +1933,11 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
   Widget _buildInfoRow(BuildContext context, IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
+        Icon(
+          icon,
+          size: 16,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
         SizedBox(width: BauhausDesign.space2),
         Expanded(
           child: Text(
@@ -1574,10 +1989,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
 
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => CareTeamView(
-          clientId: clientId,
-          clientName: client.displayName,
-        ),
+        builder: (_) =>
+            CareTeamView(clientId: clientId, clientName: client.displayName),
       ),
     );
   }

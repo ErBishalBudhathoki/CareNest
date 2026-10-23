@@ -216,21 +216,12 @@ class NDISMatcher {
     }
   }
 
-  // Placeholder for actual holiday checking logic
-  // In a real app, this would query a database or API, or use a comprehensive list.
-  bool _isFixedHoliday(DateTime date) {
-    // Example fixed holidays
-    final knownHolidays = [
-      DateTime(date.year, 1, 1), // New Year's Day
-      DateTime(date.year, 1, 26), // Australia Day
-      // Good Friday and Easter Monday would need more complex date calculations
-      DateTime(date.year, 4, 25), // Anzac Day
-      DateTime(date.year, 12, 25), // Christmas Day
-      DateTime(date.year, 12, 26), // Boxing Day
-    ];
-    return knownHolidays.any(
-      (d) => d.year == date.year && d.month == date.month && d.day == date.day,
-    );
+  /// A date is a public holiday only when the merged API + organisation
+  /// calendar says so. Hardcoded dates are deliberately not used: they ignore
+  /// state gazettal and would override an organisation's own calendar.
+  bool _isHoliday(DateTime date, List<String> dynamicHolidays) {
+    final key = DateFormat('yyyy-MM-dd').format(date);
+    return dynamicHolidays.contains(key);
   }
 
   NDISItem? getItemByNumber(String itemNumber) {
@@ -257,6 +248,7 @@ class NDISMatcher {
     String? preferredRegistrationGroupNumber,
     bool isHighIntensityShift = false,
     bool preferTTP = false, // Provider policy might dictate this
+    bool isSleepoverShift = false,
   }) {
     if (!_isLoaded) {
       log.warning(
@@ -269,13 +261,8 @@ class NDISMatcher {
     );
 
     final shiftDateOnly = DateUtils.dateOnly(shiftStart);
-    final String shiftDateString = DateFormat(
-      'yyyy-MM-dd',
-    ).format(shiftDateOnly);
 
-    final bool isActualHoliday =
-        dynamicHolidays.contains(shiftDateString) ||
-        _isFixedHoliday(shiftDateOnly);
+    final bool isActualHoliday = _isHoliday(shiftDateOnly, dynamicHolidays);
 
     final dayOfWeek =
         shiftStart.weekday; // DateTime.monday = 1, ... DateTime.sunday = 7
@@ -340,27 +327,30 @@ class NDISMatcher {
         score += 70; // Base score for being a weekday item
       }
 
-      // 2. Time of Day Matching (for Weekdays)
+      // 2. Time of Day Matching (for Weekdays).
+      // NDIS Price Arrangements bands:
+      //   night    00:00–06:00
+      //   daytime  06:00–20:00
+      //   evening  20:00–24:00
       if (!isActualHoliday &&
           dayOfWeek >= DateTime.monday &&
           dayOfWeek <= DateTime.friday) {
-        if ((hour >= 20 || hour < 6)) {
+        final minuteOfDay = hour * 60 + shiftStart.minute;
+        if (minuteOfDay < 6 * 60) {
           // Night hours
           if (itemNameLower.contains("weekday night")) score += 50;
-          if (itemNameLower.contains("night-time sleepover") &&
+          if (isSleepoverShift &&
+              itemNameLower.contains("night-time sleepover") &&
               item.unit.toUpperCase() == 'E') {
             score += 55; // Slightly higher for specific type
           }
-        } else if (hour >= 18 && hour < 22) {
-          // Evening hours (adjust upper limit if needed)
-          // NDIS specific definitions for evening may vary, common is 8PM onwards.
-          // Some item names specify evening starting earlier. Let's check "weekday evening" explicitly.
-          if (itemNameLower.contains("weekday evening") &&
-              (hour >= 18 && hour < 22)) {
-            score += 40; // Example: 01_015_0107_1_1 (Weekday Evening)
+        } else if (minuteOfDay >= 20 * 60) {
+          // Evening band starts at 20:00.
+          if (itemNameLower.contains("weekday evening")) {
+            score += 40;
           }
-        } else if (hour >= 6 && hour < 18) {
-          // Daytime hours
+        } else {
+          // Daytime band
           if (itemNameLower.contains("weekday daytime")) score += 30;
         }
         // Generic weekday items (no specific time in name)
@@ -403,6 +393,12 @@ class NDISMatcher {
       if (preferredRegistrationGroupNumber != null &&
           item.registrationGroupNumber == preferredRegistrationGroupNumber) {
         score += 25; // Strong preference
+      }
+
+      // Sleepover items are a fixed-fee product for an inactive overnight
+      // stay. They must never be auto-selected for active night support.
+      if (!isSleepoverShift && itemNameLower.contains('sleepover')) {
+        score -= 100;
       }
 
       // Add item to scored list if it has a positive score (meaning some relevance)

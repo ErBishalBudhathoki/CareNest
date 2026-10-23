@@ -23,6 +23,28 @@ import 'package:carenest/generated/l10n/app_localizations.dart';
 
 import 'package:carenest/app/features/mileage/repositories/mileage_repository.dart';
 
+/// Thrown when an NDIA-managed invoice contains a price above the NDIS cap.
+/// Claiming above the cap is invalid, so generation is refused rather than
+/// producing an invoice that the NDIA will reject.
+class PriceCapExceededException implements Exception {
+  final String message;
+  const PriceCapExceededException(this.message);
+
+  @override
+  String toString() => message;
+}
+
+/// Thrown when the backend refuses to persist a generated invoice (for
+/// example, an NDIS plan-budget or funding-validation failure). Surfacing this
+/// prevents the UI from presenting a PDF for an invoice that was never saved.
+class InvoiceSaveBlockedException implements Exception {
+  final String message;
+  const InvoiceSaveBlockedException(this.message);
+
+  @override
+  String toString() => message;
+}
+
 /// Enhanced Invoice Service with Pricing Integration
 /// Task 5.4: Update invoice service with enhanced pricing integration
 class EnhancedInvoiceService {
@@ -905,6 +927,14 @@ class EnhancedInvoiceService {
       // Store processed invoices
       _invoices = List<Map<String, dynamic>>.from(processedData['clients']);
 
+      // NDIA-managed work is claimable only at or below the published cap.
+      // Refuse to generate an invoice that cannot be claimed.
+      _enforceNdiaManagedPriceCaps(
+        _invoices,
+        invoiceType: invoiceType,
+        allowOverride: allowPriceCapOverride,
+      );
+
       // Inject recurrence info if provided
       if (recurrence != null) {
         for (var invoice in _invoices) {
@@ -1278,6 +1308,12 @@ class EnhancedInvoiceService {
       } else if (e.toString().contains('BANK_DETAILS_REQUIRED')) {
         errorMsg = l10n?.bankDetailsRequiredError ?? errorMsg;
         debugPrint('Bank details missing for both employee and admin');
+      } else if (e is PriceCapExceededException) {
+        errorMsg = e.message;
+        debugPrint('NDIA-managed invoice blocked: ${e.message}');
+      } else if (e is InvoiceSaveBlockedException) {
+        errorMsg = e.message;
+        debugPrint('Invoice persistence blocked: ${e.message}');
       } else {
         errorMsg = 'Error generating invoices: ${e.toString()}';
         debugPrint('General error in invoice generation: ${e.toString()}');
@@ -1297,6 +1333,47 @@ class EnhancedInvoiceService {
     } finally {
       _isLoading = false;
     }
+  }
+
+  /// Block invoice generation when an NDIA-managed participant has a line
+  /// above the NDIS price cap. An explicit admin override
+  /// (`allowPriceCapOverride`) still proceeds and is recorded in metadata.
+  void _enforceNdiaManagedPriceCaps(
+    List<Map<String, dynamic>> invoices, {
+    String? invoiceType,
+    bool allowOverride = false,
+  }) {
+    if ((invoiceType ?? '').toLowerCase() == 'employee') return;
+    if (allowOverride) return;
+
+    final blocked = <String>[];
+    for (final invoice in invoices) {
+      final fundingType =
+          (invoice['fundingType'] ?? invoice['clientFundingType'] ?? '')
+              .toString()
+              .toLowerCase();
+      final isNdiaManaged = fundingType.contains('ndia');
+      if (!isNdiaManaged) continue;
+
+      final lineItems = invoice['lineItems'] as List<dynamic>? ?? [];
+      for (final item in lineItems) {
+        if (item is! Map<String, dynamic>) continue;
+        if (item['exceedsPriceCap'] != true) continue;
+        final code = item['ndisItemNumber'] ?? item['itemCode'] ?? '';
+        final label = item['description'] ?? item['itemName'] ?? 'Support item';
+        blocked.add(
+          '$code $label: \$${item['price']} exceeds cap \$${item['priceCap']}',
+        );
+      }
+    }
+
+    if (blocked.isEmpty) return;
+
+    throw PriceCapExceededException(
+      'Cannot generate an NDIA-managed invoice with prices above the NDIS '
+      'price cap. Correct the following items or use the documented override:'
+      '\n- ${blocked.join('\n- ')}',
+    );
   }
 
   /// Add detailed pricing information to invoices
@@ -3911,6 +3988,7 @@ class EnhancedInvoiceService {
   }) async {
     final savedInvoiceIndexes = <int>[];
     final savedInvoiceMeta = <int, Map<String, dynamic>>{};
+    String? persistBlockedReason;
 
     try {
       if (organizationId == null || organizationId.isEmpty) {
@@ -4340,14 +4418,12 @@ class EnhancedInvoiceService {
             _invoices[i]['billing'] = billing;
             invoice['billing'] = billing;
           }
-          final String artifact =
-              billing is Map<String, dynamic>
-                  ? (billing['artifact']?.toString() ?? '')
-                  : '';
-          final String recipientType =
-              billing is Map<String, dynamic>
-                  ? (billing['recipientType']?.toString() ?? '')
-                  : '';
+          final String artifact = billing is Map<String, dynamic>
+              ? (billing['artifact']?.toString() ?? '')
+              : '';
+          final String recipientType = billing is Map<String, dynamic>
+              ? (billing['recipientType']?.toString() ?? '')
+              : '';
           final bool isClaimInvoice = artifact == 'claim_csv';
 
           if (isClaimInvoice) {
@@ -4374,17 +4450,14 @@ class EnhancedInvoiceService {
               if (recipient is Map<String, dynamic>) {
                 final String pmName = recipient['name']?.toString() ?? '';
                 final String pmEmail = recipient['email']?.toString() ?? '';
-                final String pmCompany =
-                    recipient['company']?.toString() ?? '';
+                final String pmCompany = recipient['company']?.toString() ?? '';
                 if (pmName.isNotEmpty ||
                     pmEmail.isNotEmpty ||
                     pmCompany.isNotEmpty) {
                   final Map<String, dynamic> baseBillTo =
                       invoice['billTo'] is Map
-                          ? Map<String, dynamic>.from(
-                            invoice['billTo'] as Map,
-                          )
-                          : <String, dynamic>{};
+                      ? Map<String, dynamic>.from(invoice['billTo'] as Map)
+                      : <String, dynamic>{};
                   final Map<String, dynamic> planManagerBillTo = {
                     ...baseBillTo,
                     'name': pmName,
@@ -4406,15 +4479,28 @@ class EnhancedInvoiceService {
             savedInvoiceIndexes.add(i);
           }
         } else {
+          final planValidation = response['planValidation'];
+          final planMessage = planValidation is Map
+              ? planValidation['message']?.toString()
+              : null;
           final errorMessage =
-              response['message'] ?? response['error'] ?? 'Unknown error';
+              planMessage ??
+              response['message'] ??
+              response['error'] ??
+              'Unknown error';
+          persistBlockedReason ??= errorMessage.toString();
           debugPrint(
             'Failed to save invoice for client: ${invoice['clientName']}, error: $errorMessage',
           );
           debugPrint('Full response: $response');
         }
       }
+
+      if (persistBlockedReason != null) {
+        throw InvoiceSaveBlockedException(persistBlockedReason);
+      }
     } catch (e) {
+      if (e is InvoiceSaveBlockedException) rethrow;
       debugPrint('Error saving invoices to backend: $e');
       return _dedupePdfPaths(pdfPaths);
     }

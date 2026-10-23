@@ -105,9 +105,9 @@ void main() {
     await tester.pumpAndSettle();
 
     // 8. Verify Base Rate Updated
-    // $26.30 is the rate for SACS Level 1 PP 1
+    // $27.55 is the rate for SACS Level 1 PP 1 (effective 01/12/2026)
     final baseRateValueFinder = find.byWidgetPredicate(
-      (w) => w is EditableText && w.controller.text == '26.30',
+      (w) => w is EditableText && w.controller.text == '27.55',
     );
     expect(baseRateValueFinder, findsOneWidget);
   });

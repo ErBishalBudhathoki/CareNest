@@ -9,6 +9,8 @@ import 'package:carenest/app/features/invoice/models/ndis_matcher.dart';
 import 'package:carenest/app/features/auth/models/user_model.dart';
 import 'package:carenest/app/features/holiday/services/holiday_service.dart';
 import 'package:carenest/app/features/invoice/utils/employee_rate_calculator.dart';
+import 'package:carenest/app/features/invoice/utils/ndis_time_band_splitter.dart';
+import 'package:carenest/app/features/invoice/utils/weekly_overtime_calculator.dart';
 
 class InvoiceDataProcessor {
   final Ref ref; // Accept ref to access providers
@@ -349,22 +351,27 @@ class InvoiceDataProcessor {
     debugPrint('assignedClients structure: ${assignedClients.keys}');
     debugPrint('assignedClients content: $assignedClients');
 
-    // 1. Fetch Holidays if needed (for Employee Pay Rates)
+    // 1. Fetch Holidays (used by both employee pay rates and client NDIS
+    //    time-band matching). Only holidays that apply to the service state,
+    //    plus organisation-defined holidays, are included.
     Set<String> holidaySet = {};
-    if (invoiceType == 'employee') {
-      try {
-        debugPrint(
-          'Fetching holidays for employee invoice rate calculation...',
-        );
-        final holidayService = ref.read(holidayServiceProvider);
-        final holidays = await holidayService.getAllHolidays();
-        holidaySet = holidays
-            .map((h) => h.date.toIso8601String().split('T')[0])
-            .toSet();
-        debugPrint('Loaded ${holidaySet.length} holidays');
-      } catch (e) {
-        debugPrint('InvoiceDataProcessor: Failed to load holidays: $e');
-      }
+    try {
+      debugPrint('Fetching holidays for invoice rate calculation...');
+      final holidayService = ref.read(holidayServiceProvider);
+      final jurisdiction = _resolveServiceState(assignedClients);
+      final holidays = await holidayService.getAllHolidays(
+        startDate: startDate,
+        endDate: endDate,
+        jurisdiction: jurisdiction,
+      );
+      holidaySet = holidays
+          .map((h) => h.date.toIso8601String().split('T')[0])
+          .toSet();
+      debugPrint(
+        'Loaded ${holidaySet.length} holidays for jurisdiction ${jurisdiction ?? 'national'}',
+      );
+    } catch (e) {
+      debugPrint('InvoiceDataProcessor: Failed to load holidays: $e');
     }
 
     final lineItemViewModel = ref.read(lineItemViewModelProvider.notifier);
@@ -591,6 +598,9 @@ class InvoiceDataProcessor {
     }
 
     debugPrint('Processed ${processedClients.length} clients');
+    if (invoiceType == 'employee') {
+      _applyWeeklyOvertime(processedClients);
+    }
     _setInvoiceDetails(assignedClients);
 
     // Compute global period ending date from all processed clients
@@ -621,6 +631,152 @@ class InvoiceDataProcessor {
       'endDate': this.endDate,
       // invoiceNumber removed - will be generated in enhanced_invoice_service
     };
+  }
+
+  /// Add SCHADS weekly overtime across every assignment belonging to the same
+  /// employee. The premium is emitted as a separate top-up line so ordinary
+  /// hours are not rewritten and daily overtime is never double-counted.
+  void _applyWeeklyOvertime(List<Map<String, dynamic>> clients) {
+    final groups = <String, List<Map<String, dynamic>>>{};
+    final clientByItem = <Map<String, dynamic>, Map<String, dynamic>>{};
+
+    for (final client in clients) {
+      final items = (client['items'] as List<dynamic>? ?? [])
+          .whereType<Map<String, dynamic>>();
+      for (final item in items) {
+        final employeeKey = (item['employeeId'] ?? item['employeeEmail'] ?? '')
+            .toString();
+        if (employeeKey.isEmpty) continue;
+
+        final rateSource = (item['rateSource'] ?? '').toString();
+        if (rateSource == 'EMP_OVERTIME' || rateSource == 'EMP_WEEKLY_OT') {
+          continue;
+        }
+        final itemName = (item['itemName'] ?? '').toString().toLowerCase();
+        if (itemName.contains('overtime') ||
+            itemName.contains('public holiday')) {
+          continue;
+        }
+        if (_getSafeDouble(item['hours']) <= 0) continue;
+
+        groups.putIfAbsent(employeeKey, () => []).add(item);
+        clientByItem[item] = client;
+      }
+    }
+
+    for (final entry in groups.entries) {
+      final items = entry.value;
+      if (items.isEmpty) continue;
+
+      final first = items.first;
+      final baseRate = _getSafeDouble(first['baseRate']);
+      final employmentType = (first['employeeEmploymentType'] ?? '').toString();
+      if (baseRate <= 0) continue;
+
+      final segments = <WeeklyOvertimeSegment>[];
+      for (final item in items) {
+        final date = _tryParseDateFlexible(item['date'] as String?);
+        if (date == null) continue;
+        final parts = (item['startTime'] ?? '00:00').toString().split(':');
+        final hour = int.tryParse(parts[0]) ?? 0;
+        final minute = parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0;
+        segments.add(
+          WeeklyOvertimeSegment(
+            start: DateTime(date.year, date.month, date.day, hour, minute),
+            hours: _getSafeDouble(item['hours']),
+            rate: _getSafeDouble(item['rate']),
+          ),
+        );
+      }
+
+      final result = calculateWeeklyOvertime(
+        segments: segments,
+        employmentType: employmentType,
+        baseRate: baseRate,
+      );
+      if (result.amount <= 0.004 || result.hours <= 0) continue;
+
+      final last = items.last;
+      final client = clientByItem[last];
+      if (client == null) continue;
+
+      final topUpRate = result.amount / result.hours;
+      final topUp = {
+        'date': last['date'],
+        'day': last['day'],
+        'startTime': last['startTime'],
+        'endTime': last['endTime'],
+        'hours': result.hours,
+        'rate': double.parse(topUpRate.toStringAsFixed(4)),
+        'expectedRate': double.parse(topUpRate.toStringAsFixed(4)),
+        'amount': result.amount,
+        'rateSource': 'EMP_WEEKLY_OT',
+        'itemName': 'Weekly Overtime Top-up',
+        'itemCode': '',
+        'workedTimeSource': last['workedTimeSource'],
+        'ndisItem': {'itemNumber': '', 'itemName': 'Weekly Overtime Top-up'},
+        'ndisItemNumber': '',
+        'ndisItemName': 'Weekly Overtime Top-up',
+        'weeklyOvertimeOt1Hours': result.ot1Hours,
+        'weeklyOvertimeOt2Hours': result.ot2Hours,
+        'weeklyOvertimeCycleWeeks': result.cycleWeeks,
+      };
+
+      (client['items'] as List<dynamic>).add(topUp);
+      debugPrint(
+        'InvoiceDataProcessor: Weekly OT for $entry.key '
+        '(${employmentType.isEmpty ? 'full-time' : employmentType}): '
+        '${result.hours}h, top-up \$${result.amount}',
+      );
+    }
+
+    for (final client in clients) {
+      _recalculateClientTotals(client);
+    }
+  }
+
+  void _recalculateClientTotals(Map<String, dynamic> client) {
+    final items = (client['items'] as List<dynamic>? ?? [])
+        .whereType<Map<String, dynamic>>();
+    final itemsSubtotal = items.fold<double>(
+      0,
+      (sum, item) => sum + _getSafeDouble(item['amount']),
+    );
+    final expensesTotal = _getSafeDouble(client['expensesTotal']);
+    final subtotal = itemsSubtotal + expensesTotal;
+    final taxRate = _getSafeDouble(client['taxRate']);
+    final taxAmount = taxRate > 0 ? subtotal * taxRate : 0.0;
+
+    client['itemsSubtotal'] = itemsSubtotal;
+    client['subtotal'] = subtotal;
+    client['taxAmount'] = taxAmount;
+    client['total'] = subtotal + taxAmount;
+  }
+
+  /// Resolve the state where support is delivered, used to filter public
+  /// holidays to the correct jurisdiction. Prefers client detail records (the
+  /// participant's address) and falls back to the assignment payload.
+  String? _resolveServiceState(Map<String, dynamic> assignedClients) {
+    final details = assignedClients['clientDetail'] as List<dynamic>? ?? [];
+    for (final detail in details) {
+      if (detail is Map) {
+        final value = (detail['clientState'] ?? detail['state'])
+            ?.toString()
+            .trim();
+        if (value != null && value.isNotEmpty) return value;
+      }
+    }
+
+    final clients = assignedClients['clients'] as List<dynamic>? ?? [];
+    for (final client in clients) {
+      if (client is Map) {
+        final value = (client['clientState'] ?? client['state'])
+            ?.toString()
+            .trim();
+        if (value != null && value.isNotEmpty) return value;
+      }
+    }
+    return null;
   }
 
   Map<String, String> _createItemMap(List<Map<String, dynamic>> lineItems) {
@@ -720,6 +876,19 @@ class InvoiceDataProcessor {
     clientData['clientState'] = clientDetail['clientState'] ?? '';
     clientData['clientZip'] = clientDetail['clientZip'] ?? '';
     clientData['clientPhone'] = clientDetail['clientPhone'] ?? '';
+    // Funding route is required to decide whether an over-cap price may be
+    // invoiced at all. NDIA-managed work must be blocked, not warned.
+    clientData['fundingType'] =
+        clientDetail['fundingType'] ??
+        clientDetail['funding_type'] ??
+        doc['fundingType'] ??
+        doc['funding_type'] ??
+        '';
+    clientData['ndisNumber'] =
+        clientDetail['ndisNumber'] ??
+        clientDetail['ndis_number'] ??
+        doc['ndisNumber'] ??
+        '';
     clientData['clientABN'] =
         clientDetail['abn'] ??
         clientDetail['clientABN'] ??
@@ -872,6 +1041,25 @@ class InvoiceDataProcessor {
             // 2. NDIS Item Matching & Pricing (Only if not already calculated AND not an employee invoice)
             // We strictly avoid NDIS fallback for employee invoices to prevent incorrect billing rates
             if (!rateCalculated && invoiceType != 'employee') {
+              // Split the shift at NDIS time-band boundaries (06:00/20:00 and
+              // midnight) so a 15:00–23:00 shift bills daytime + evening.
+              final bandItems = await _buildClientBandItems(
+                date: date,
+                startTime: startTime,
+                endTime: endTime,
+                hours: hoursWorked,
+                baseItemNumber: itemNumber,
+                baseItemName: itemName,
+                holidaySet: holidaySet,
+                organizationId: organizationId,
+                clientId: clientId,
+                workedTimeSource: 'database',
+              );
+              if (bandItems != null && bandItems.isNotEmpty) {
+                items.addAll(bandItems);
+                continue;
+              }
+
               // Attempt to upgrade NDIS item based on actual shift time (Penalty Rates)
               if (_matcherLoaded) {
                 try {
@@ -891,17 +1079,20 @@ class InvoiceDataProcessor {
                       minute,
                     );
 
+                    // Stay inside the same support category/registration group
+                    // as the scheduled item; otherwise a "Saturday" item from a
+                    // different support type could be selected.
+                    final baseItem = _ndisMatcher.getItemByNumber(itemNumber);
+
                     // Try to find a better match
-                    // We use the current item's registration group as a hint if available
-                    // Note: we don't have the full item object here easily without lookup,
-                    // but we can trust the matcher to find the best fit from all loaded items.
                     final bestMatch = _ndisMatcher.findBestMatch(
                       shiftStart: shiftStartDateTime,
-                      dynamicHolidays:
-                          [], // Ideally fetch this from HolidayService
-                      // If we have an existing item number, we could look it up to get its category/group
-                      // to ensure we stay within the same type of support.
-                      // For now, we rely on the matcher's scoring.
+                      dynamicHolidays: (holidaySet ?? const <String>{})
+                          .toList(),
+                      preferredSupportCategoryNumber:
+                          baseItem?.supportCategoryNumber,
+                      preferredRegistrationGroupNumber:
+                          baseItem?.registrationGroupNumber,
                     );
 
                     if (bestMatch != null) {
@@ -1125,6 +1316,23 @@ class InvoiceDataProcessor {
 
         // 2. NDIS Item Matching & Pricing (Only if not already calculated AND not an employee invoice)
         if (!rateCalculated && invoiceType != 'employee') {
+          final bandItems = await _buildClientBandItems(
+            date: dateList[i],
+            startTime: startTimeList[i],
+            endTime: endTimeList[i],
+            hours: totalHours[i],
+            baseItemNumber: itemNumber,
+            baseItemName: itemName,
+            holidaySet: holidaySet,
+            organizationId: organizationId,
+            clientId: clientId,
+            workedTimeSource: 'calculated',
+          );
+          if (bandItems != null && bandItems.isNotEmpty) {
+            items.addAll(bandItems);
+            continue;
+          }
+
           if (itemNumber.isNotEmpty) {
             resolvedPricing = await _getEnhancedPricingWithSource(
               itemNumber,
@@ -1641,6 +1849,159 @@ class InvoiceDataProcessor {
     }
   }
 
+  /// Build client invoice lines split across NDIS time bands.
+  ///
+  /// A 15:00–23:00 weekday shift becomes:
+  ///   15:00–20:00 weekday daytime
+  ///   20:00–23:00 weekday evening
+  /// Each window is matched within the same support category as [baseItemNumber]
+  /// so a band upgrade can never jump to an unrelated support. Adjacent windows
+  /// that resolve to the same item are merged back into one line.
+  ///
+  /// Returns `null` when the shift cannot be split safely (missing base item,
+  /// unparseable times, or matcher not loaded); callers then fall back to the
+  /// legacy single-line behaviour.
+  Future<List<Map<String, dynamic>>?> _buildClientBandItems({
+    required String date,
+    required String startTime,
+    required String endTime,
+    required double hours,
+    required String baseItemNumber,
+    required String baseItemName,
+    required Set<String>? holidaySet,
+    required String? organizationId,
+    required String? clientId,
+    required String workedTimeSource,
+  }) async {
+    if (baseItemNumber.isEmpty || !_matcherLoaded) return null;
+
+    final baseItem = _ndisMatcher.getItemByNumber(baseItemNumber);
+    if (baseItem == null) return null;
+
+    final day = _tryParseDateFlexible(date);
+    if (day == null) return null;
+
+    final startParts = startTime.split(':');
+    final endParts = endTime.split(':');
+    if (startParts.length < 2 || endParts.length < 2) return null;
+    final startHour = int.tryParse(startParts[0]);
+    final startMinute = int.tryParse(startParts[1]);
+    final endHour = int.tryParse(endParts[0]);
+    final endMinute = int.tryParse(endParts[1]);
+    if (startHour == null ||
+        startMinute == null ||
+        endHour == null ||
+        endMinute == null) {
+      return null;
+    }
+
+    final start = DateTime(
+      day.year,
+      day.month,
+      day.day,
+      startHour,
+      startMinute,
+    );
+    var end = DateTime(day.year, day.month, day.day, endHour, endMinute);
+    if (!end.isAfter(start)) {
+      // Overnight shift (e.g. 22:00 → 06:00).
+      end = end.add(const Duration(days: 1));
+    }
+    if (!end.isAfter(start)) return null;
+
+    final splitter = NdisTimeBandSplitter(_ndisMatcher);
+    final windows = splitter.split(
+      start: start,
+      end: end,
+      totalHours: hours,
+      holidays: holidaySet ?? const <String>{},
+      fallbackItem: baseItem,
+    );
+    if (windows.isEmpty) return null;
+
+    // Merge adjacent windows that resolved to the same item on the same day.
+    final merged = <NdisBandWindow>[];
+    for (final window in windows) {
+      final last = merged.isEmpty ? null : merged.last;
+      final sameItem = last?.item?.itemNumber == window.item?.itemNumber;
+      final sameDay =
+          last != null && DateUtils.isSameDay(last.start, window.start);
+      if (sameItem && sameDay) {
+        merged[merged.length - 1] = NdisBandWindow(
+          start: last.start,
+          end: window.end,
+          hours: double.parse((last.hours + window.hours).toStringAsFixed(2)),
+          item: window.item,
+        );
+      } else {
+        merged.add(window);
+      }
+    }
+
+    final result = <Map<String, dynamic>>[];
+    for (final window in merged) {
+      final itemNumber = window.item?.itemNumber ?? baseItemNumber;
+      final itemName = window.item?.itemName ?? baseItemName;
+      var rate = 0.0;
+      Map<String, dynamic>? resolvedPricing;
+      var rateSource = 'UNRESOLVED';
+
+      if (itemNumber.isNotEmpty) {
+        resolvedPricing = await _getEnhancedPricingWithSource(
+          itemNumber,
+          organizationId,
+          clientId: clientId,
+        );
+        rate = _getSafeDouble(resolvedPricing['price']);
+        rateSource = 'NDIS_PRICING';
+      }
+
+      final segmentDate = _formatDateLike(date, window.start);
+      final segmentDay = helpers.findDayOfWeek([segmentDate]).first;
+
+      result.add({
+        'date': segmentDate,
+        'day': segmentDay,
+        'startTime': DateFormat('HH:mm').format(window.start),
+        'endTime': DateFormat('HH:mm').format(window.end),
+        'hours': window.hours,
+        'rate': rate,
+        if (resolvedPricing != null) 'pricingMetadata': {...resolvedPricing},
+        if (resolvedPricing?['region'] != null)
+          'region': resolvedPricing!['region'],
+        'expectedRate': null,
+        'amount': double.parse((window.hours * rate).toStringAsFixed(2)),
+        'rateSource': rateSource,
+        'itemName': itemName,
+        'itemCode': itemNumber,
+        'workedTimeSource': workedTimeSource,
+        'ndisItem': {'itemNumber': itemNumber, 'itemName': itemName},
+        'ndisItemNumber': itemNumber,
+        'ndisItemName': itemName,
+      });
+    }
+
+    return result;
+  }
+
+  /// Format [date] using the same delimiter style as the source [template],
+  /// so downstream parsers keep working across a midnight split.
+  String _formatDateLike(String template, DateTime date) {
+    if (template.contains('/')) {
+      return DateFormat('dd/MM/yyyy').format(date);
+    }
+    if (template.contains('-')) {
+      final firstPart = template.split('-').first;
+      if (firstPart.length == 4) {
+        return DateFormat('yyyy-MM-dd').format(date);
+      }
+      if (firstPart.length == 2) {
+        return DateFormat('dd-MM-yyyy').format(date);
+      }
+    }
+    return DateFormat('yyyy-MM-dd').format(date);
+  }
+
   /// Generate invoice items for an employee shift, applying SCHADS compliance rules:
   /// 1. Minimum Engagement (2 hours)
   /// 2. Daily Overtime (> 8 hours on standard weekdays; first 2h @ OT1, rest @ OT2)
@@ -1673,7 +2034,9 @@ class InvoiceDataProcessor {
     final parsedShiftDate = _tryParseDateFlexible(date);
     final isStandardDay =
         parsedShiftDate != null &&
-        !(holidaySet?.contains(parsedShiftDate.toIso8601String().split('T')[0]) ??
+        !(holidaySet?.contains(
+              parsedShiftDate.toIso8601String().split('T')[0],
+            ) ??
             false) &&
         parsedShiftDate.weekday != DateTime.saturday &&
         parsedShiftDate.weekday != DateTime.sunday;
@@ -1787,6 +2150,12 @@ class InvoiceDataProcessor {
       'itemName': itemName,
       'itemCode': '',
       'workedTimeSource': workedTimeSource,
+      // Weekly overtime is calculated across every assignment for this
+      // employee, so the item must carry its owner and base rate.
+      'employeeId': employeeUser?.id,
+      'employeeEmail': employeeUser?.email,
+      'employeeEmploymentType': employeeUser?.employmentType,
+      'baseRate': base,
       'ndisItem': {'itemNumber': '', 'itemName': itemName},
       'ndisItemNumber': '',
       'ndisItemName': itemName,
@@ -1800,13 +2169,13 @@ class InvoiceDataProcessor {
     if (overtimeHours > 0) {
       final ot1Rate =
           ((rates?.overtimeRate ?? 0.0).toDouble() > 0
-              ? rates!.overtimeRate
-              : base * 1.5)
+                  ? rates!.overtimeRate
+                  : base * 1.5)
               .toDouble();
       final ot2Rate =
           ((rates?.overtimeRate2 ?? 0.0).toDouble() > 0
-              ? rates!.overtimeRate2
-              : base * 2.0)
+                  ? rates!.overtimeRate2
+                  : base * 2.0)
               .toDouble();
 
       void addOvertimeItem(String name, double hours, double rate) {
@@ -1834,16 +2203,8 @@ class InvoiceDataProcessor {
         );
       }
 
-      addOvertimeItem(
-        'Overtime (first 2h)',
-        overtimeHoursFirstTier,
-        ot1Rate,
-      );
-      addOvertimeItem(
-        'Overtime (>2h)',
-        overtimeHoursSecondTier,
-        ot2Rate,
-      );
+      addOvertimeItem('Overtime (first 2h)', overtimeHoursFirstTier, ot1Rate);
+      addOvertimeItem('Overtime (>2h)', overtimeHoursSecondTier, ot2Rate);
     }
 
     return resultItems;

@@ -16,34 +16,123 @@ final holidayServiceProvider = Provider<HolidayService>((ref) {
 class HolidayService {
   final ApiMethod _apiMethod;
 
-  // Method to fetch holidays from Nager.Date API for the current year
+  // Nager.Date responses are stable for a calendar year; cache them so an
+  // invoice that spans several years does not refetch the same data.
+  static final Map<int, List<Holiday>> _publicHolidayCache = {};
+
+  static const Map<String, String> _stateNameToCode = {
+    'new south wales': 'NSW',
+    'victoria': 'VIC',
+    'queensland': 'QLD',
+    'south australia': 'SA',
+    'western australia': 'WA',
+    'tasmania': 'TAS',
+    'northern territory': 'NT',
+    'australian capital territory': 'ACT',
+  };
 
   HolidayService(this._apiMethod);
 
-  Future<List<Holiday>> getAllHolidays() async {
-    try {
-      final publicHolidays = await _fetchPublicHolidays();
-      final customHolidays = await _fetchCustomHolidays();
+  /// Return the merged holiday calendar used for penalty rates.
+  ///
+  /// Sources:
+  ///   1. Nager.Date (officially gazetted national + state holidays)
+  ///   2. MongoDB holidays configured by the organisation
+  ///
+  /// Only public holidays that apply to [jurisdiction] are returned. Custom
+  /// organisation holidays are always returned. If the external API fails the
+  /// custom holidays are still returned, so a network outage can never make an
+  /// organisation holiday disappear.
+  Future<List<Holiday>> getAllHolidays({
+    DateTime? startDate,
+    DateTime? endDate,
+    String? jurisdiction,
+  }) async {
+    final stateCode = normalizeStateCode(jurisdiction);
 
-      final merged = [...publicHolidays, ...customHolidays];
-      merged.sort((a, b) => a.date.compareTo(b.date));
-      return merged;
+    List<Holiday> publicHolidays = [];
+    try {
+      final years = _yearsBetween(startDate, endDate);
+      final yearLists = await Future.wait(years.map(_fetchPublicHolidays));
+      publicHolidays = [
+        for (final list in yearLists)
+          for (final holiday in list)
+            if (_appliesToState(holiday, stateCode)) holiday,
+      ];
     } catch (e) {
-      debugPrint('Error fetching holidays: $e');
-      // If public API fails, at least return custom holidays or cached
-      try {
-        return await _fetchCustomHolidays();
-      } catch (e2) {
-        return [];
-      }
+      debugPrint('Error fetching public holidays: $e');
     }
+
+    List<Holiday> customHolidays = [];
+    try {
+      customHolidays = await _fetchCustomHolidays();
+    } catch (e) {
+      debugPrint('Error fetching organisation holidays: $e');
+    }
+
+    // Deduplicate by date. Organisation-defined holidays win so an org can
+    // label a day it observes; a date is either a holiday or it is not.
+    final byDate = <String, Holiday>{};
+    for (final holiday in publicHolidays) {
+      byDate[_dateKey(holiday.date)] = holiday;
+    }
+    for (final holiday in customHolidays) {
+      byDate[_dateKey(holiday.date)] = holiday;
+    }
+
+    final merged = byDate.values.toList()
+      ..sort((a, b) => a.date.compareTo(b.date));
+    return merged;
   }
 
-  Future<List<Holiday>> _fetchPublicHolidays() async {
+  /// Normalise a state name/code to the two- or three-letter code used by the
+  /// Nager.Date `counties` field (e.g. `New South Wales` -> `NSW`).
+  static String? normalizeStateCode(String? raw) {
+    if (raw == null) return null;
+    var value = raw.trim();
+    if (value.isEmpty) return null;
+    if (value.toUpperCase().startsWith('AU-')) {
+      value = value.substring(3);
+    }
+    final upper = value.toUpperCase();
+    if (upper.length <= 3) return upper;
+    return _stateNameToCode[value.toLowerCase()];
+  }
+
+  static bool _appliesToState(Holiday holiday, String? stateCode) {
+    final jurisdiction = holiday.jurisdiction.toLowerCase();
+    if (jurisdiction == 'national' || jurisdiction == 'custom') return true;
+    if (stateCode == null) {
+      // Unknown organisation state: only national holidays are safe to apply.
+      return false;
+    }
+    return jurisdiction == stateCode.toLowerCase();
+  }
+
+  static String _dateKey(DateTime date) =>
+      DateFormat('yyyy-MM-dd').format(date);
+
+  static List<int> _yearsBetween(DateTime? startDate, DateTime? endDate) {
+    final now = DateTime.now();
+    final start = startDate ?? DateTime(now.year);
+    final end = endDate ?? start;
+    final first = start.isAfter(end) ? end : start;
+    final last = start.isAfter(end) ? start : end;
+    final years = <int>[];
+    for (var year = first.year; year <= last.year && years.length < 6; year++) {
+      years.add(year);
+    }
+    if (years.isEmpty) years.add(now.year);
+    return years;
+  }
+
+  Future<List<Holiday>> _fetchPublicHolidays(int year) async {
+    final cached = _publicHolidayCache[year];
+    if (cached != null) return cached;
+
     final List<Holiday> holidays = [];
     try {
-      final currentYear = DateTime.now().year;
-      final url = 'https://date.nager.at/api/v3/publicholidays/$currentYear/AU';
+      final url = 'https://date.nager.at/api/v3/publicholidays/$year/AU';
 
       debugPrint('Fetching public holidays from: $url');
       final response = await http.get(Uri.parse(url));
@@ -59,17 +148,10 @@ class HolidayService {
           if (dateStr != null && name != null) {
             final date = DateTime.parse(dateStr);
 
-            // Map jurisdictions
+            // Map jurisdictions.
             // If counties is null, it's National.
             // If not null, it's a list like ["AU-ACT", "AU-NSW"].
-            // Our app supports single jurisdiction filtering.
-            // We can create multiple Holiday objects for each state if needed,
-            // or just label it based on the first one if the UI only filters by simple state keys.
-            // But wait, the UI filters: National, NSW, VIC, etc.
-            // If a holiday is in multiple states but not all, we should probably add it for each state.
-
             if (counties == null) {
-              // National
               holidays.add(
                 Holiday(
                   id: 'public_${date.millisecondsSinceEpoch}_${name.hashCode}_nat',
@@ -82,7 +164,6 @@ class HolidayService {
               );
             } else {
               for (var countyCode in counties) {
-                // countyCode is "AU-NSW" -> "NSW"
                 final state = countyCode.toString().replaceFirst('AU-', '');
                 holidays.add(
                   Holiday(
@@ -99,8 +180,9 @@ class HolidayService {
           }
         }
       }
+      _publicHolidayCache[year] = holidays;
     } catch (e) {
-      debugPrint('Error in _fetchPublicHolidays: $e');
+      debugPrint('Error in _fetchPublicHolidays($year): $e');
     }
     return holidays;
   }

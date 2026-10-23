@@ -31,106 +31,112 @@ class SchadsRateConstants {
 
   static List<String> get streams => levelsForStream.keys.toList();
 
-  static const List<String> employmentTypes = ['Permanent', 'Casual'];
+  static const List<String> employmentTypes = [
+    'Permanent',
+    'Part Time',
+    'Casual',
+  ];
 
   static const Map<String, double> rates = {
+    // Source: Fair Work Pay Guide MA000100, published 18/09/2026,
+    // effective the first full pay period on or after 01/12/2026.
     // Social & Community Services
-    'Social & Community Services - Level 1 - Pay Point 1': 26.30,
-    'Social & Community Services - Level 1 - Pay Point 2': 27.15,
-    'Social & Community Services - Level 1 - Pay Point 3': 28.12,
-    'Social & Community Services - Level 2 - Pay Point 1': 34.58,
-    'Social & Community Services - Level 2 - Pay Point 2': 35.67,
-    'Social & Community Services - Level 2 - Pay Point 3': 36.75,
-    'Social & Community Services - Level 2 - Pay Point 4': 37.73,
-    'Social & Community Services - Level 3 - Pay Point 1': 38.65,
-    'Social & Community Services - Level 3 - Pay Point 2': 39.77,
-    'Social & Community Services - Level 3 - Pay Point 3': 40.62,
-    'Social & Community Services - Level 3 - Pay Point 4': 41.45,
-    'Social & Community Services - Level 4 - Pay Point 1': 44.58,
-    'Social & Community Services - Level 4 - Pay Point 2': 45.75,
-    'Social & Community Services - Level 4 - Pay Point 3': 46.93,
-    'Social & Community Services - Level 4 - Pay Point 4': 47.97,
-    'Social & Community Services - Level 5 - Pay Point 1': 51.00,
-    'Social & Community Services - Level 5 - Pay Point 2': 52.10,
-    'Social & Community Services - Level 5 - Pay Point 3': 53.31,
-    'Social & Community Services - Level 6 - Pay Point 1': 55.72,
-    'Social & Community Services - Level 6 - Pay Point 2': 56.95,
-    'Social & Community Services - Level 6 - Pay Point 3': 58.19,
-    'Social & Community Services - Level 7 - Pay Point 1': 60.27,
-    'Social & Community Services - Level 7 - Pay Point 2': 61.53,
-    'Social & Community Services - Level 7 - Pay Point 3': 62.79,
-    'Social & Community Services - Level 8 - Pay Point 1': 65.39,
-    'Social & Community Services - Level 8 - Pay Point 2': 66.67,
-    'Social & Community Services - Level 8 - Pay Point 3': 67.96,
+    'Social & Community Services - Level 1 - Pay Point 1': 27.55,
+    'Social & Community Services - Level 1 - Pay Point 2': 28.44,
+    'Social & Community Services - Level 1 - Pay Point 3': 29.45,
+    'Social & Community Services - Level 2 - Pay Point 1': 36.22,
+    'Social & Community Services - Level 2 - Pay Point 2': 37.36,
+    'Social & Community Services - Level 2 - Pay Point 3': 38.50,
+    'Social & Community Services - Level 2 - Pay Point 4': 39.53,
+    'Social & Community Services - Level 3 - Pay Point 1': 40.49,
+    'Social & Community Services - Level 3 - Pay Point 2': 41.66,
+    'Social & Community Services - Level 3 - Pay Point 3': 42.55,
+    'Social & Community Services - Level 3 - Pay Point 4': 43.42,
+    'Social & Community Services - Level 4 - Pay Point 1': 46.70,
+    'Social & Community Services - Level 4 - Pay Point 2': 47.92,
+    'Social & Community Services - Level 4 - Pay Point 3': 49.16,
+    'Social & Community Services - Level 4 - Pay Point 4': 50.25,
+    'Social & Community Services - Level 5 - Pay Point 1': 53.43,
+    'Social & Community Services - Level 5 - Pay Point 2': 54.58,
+    'Social & Community Services - Level 5 - Pay Point 3': 55.85,
+    'Social & Community Services - Level 6 - Pay Point 1': 58.37,
+    'Social & Community Services - Level 6 - Pay Point 2': 59.66,
+    'Social & Community Services - Level 6 - Pay Point 3': 60.95,
+    'Social & Community Services - Level 7 - Pay Point 1': 63.13,
+    'Social & Community Services - Level 7 - Pay Point 2': 64.46,
+    'Social & Community Services - Level 7 - Pay Point 3': 65.77,
+    'Social & Community Services - Level 8 - Pay Point 1': 68.49,
+    'Social & Community Services - Level 8 - Pay Point 2': 69.84,
+    'Social & Community Services - Level 8 - Pay Point 3': 71.19,
 
     // Crisis Accommodation
-    'Crisis Accommodation - Level 1 - Pay Point 1': 38.65,
-    'Crisis Accommodation - Level 1 - Pay Point 2': 39.77,
-    'Crisis Accommodation - Level 1 - Pay Point 3': 40.62,
-    'Crisis Accommodation - Level 1 - Pay Point 4': 41.45,
-    'Crisis Accommodation - Level 2 - Pay Point 1': 44.58,
-    'Crisis Accommodation - Level 2 - Pay Point 2': 45.75,
-    'Crisis Accommodation - Level 2 - Pay Point 3': 46.93,
-    'Crisis Accommodation - Level 2 - Pay Point 4': 47.97,
-    'Crisis Accommodation - Level 3 - Pay Point 1': 51.00,
-    'Crisis Accommodation - Level 3 - Pay Point 2': 52.10,
-    'Crisis Accommodation - Level 3 - Pay Point 3': 53.31,
-    'Crisis Accommodation - Level 4 - Pay Point 1': 55.72,
-    'Crisis Accommodation - Level 4 - Pay Point 2': 56.95,
-    'Crisis Accommodation - Level 4 - Pay Point 3': 58.19,
+    'Crisis Accommodation - Level 1 - Pay Point 1': 40.49,
+    'Crisis Accommodation - Level 1 - Pay Point 2': 41.66,
+    'Crisis Accommodation - Level 1 - Pay Point 3': 42.55,
+    'Crisis Accommodation - Level 1 - Pay Point 4': 43.42,
+    'Crisis Accommodation - Level 2 - Pay Point 1': 46.70,
+    'Crisis Accommodation - Level 2 - Pay Point 2': 47.92,
+    'Crisis Accommodation - Level 2 - Pay Point 3': 49.16,
+    'Crisis Accommodation - Level 2 - Pay Point 4': 50.25,
+    'Crisis Accommodation - Level 3 - Pay Point 1': 53.43,
+    'Crisis Accommodation - Level 3 - Pay Point 2': 54.58,
+    'Crisis Accommodation - Level 3 - Pay Point 3': 55.85,
+    'Crisis Accommodation - Level 4 - Pay Point 1': 58.37,
+    'Crisis Accommodation - Level 4 - Pay Point 2': 59.66,
+    'Crisis Accommodation - Level 4 - Pay Point 3': 60.95,
 
     // Family Day Care
-    'Family Day Care - Level 1 - Pay Point 1': 26.33,
-    'Family Day Care - Level 1 - Pay Point 2': 27.18,
-    'Family Day Care - Level 1 - Pay Point 3': 28.16,
-    'Family Day Care - Level 1 - Pay Point 4': 29.11,
-    'Family Day Care - Level 2 - Pay Point 1': 29.94,
-    'Family Day Care - Level 2 - Pay Point 2': 30.91,
-    'Family Day Care - Level 2 - Pay Point 3': 31.89,
-    'Family Day Care - Level 2 - Pay Point 4': 32.65,
-    'Family Day Care - Level 3 - Pay Point 1': 33.48,
-    'Family Day Care - Level 3 - Pay Point 2': 34.52,
-    'Family Day Care - Level 3 - Pay Point 3': 35.59,
-    'Family Day Care - Level 3 - Pay Point 4': 36.57,
-    'Family Day Care - Level 4 - Pay Point 1': 37.62,
-    'Family Day Care - Level 4 - Pay Point 2': 38.02,
-    'Family Day Care - Level 4 - Pay Point 3': 38.91,
-    'Family Day Care - Level 4 - Pay Point 4': 39.55,
-    'Family Day Care - Level 5 - Pay Point 1': 42.38,
-    'Family Day Care - Level 5 - Pay Point 2': 43.56,
-    'Family Day Care - Level 5 - Pay Point 3': 44.74,
-    'Family Day Care - Level 5 - Pay Point 4': 45.91,
+    'Family Day Care - Level 1 - Pay Point 1': 27.58,
+    'Family Day Care - Level 1 - Pay Point 2': 28.47,
+    'Family Day Care - Level 1 - Pay Point 3': 29.50,
+    'Family Day Care - Level 1 - Pay Point 4': 30.49,
+    'Family Day Care - Level 2 - Pay Point 1': 31.36,
+    'Family Day Care - Level 2 - Pay Point 2': 32.38,
+    'Family Day Care - Level 2 - Pay Point 3': 33.41,
+    'Family Day Care - Level 2 - Pay Point 4': 34.20,
+    'Family Day Care - Level 3 - Pay Point 1': 35.07,
+    'Family Day Care - Level 3 - Pay Point 2': 36.16,
+    'Family Day Care - Level 3 - Pay Point 3': 37.28,
+    'Family Day Care - Level 3 - Pay Point 4': 38.30,
+    'Family Day Care - Level 4 - Pay Point 1': 39.41,
+    'Family Day Care - Level 4 - Pay Point 2': 39.83,
+    'Family Day Care - Level 4 - Pay Point 3': 40.76,
+    'Family Day Care - Level 4 - Pay Point 4': 41.43,
+    'Family Day Care - Level 5 - Pay Point 1': 44.40,
+    'Family Day Care - Level 5 - Pay Point 2': 45.62,
+    'Family Day Care - Level 5 - Pay Point 3': 46.87,
+    'Family Day Care - Level 5 - Pay Point 4': 48.09,
 
     // Home Care (Disability)
-    'Home Care (Disability) - Level 1 - Pay Point 1': 26.05,
-    'Home Care (Disability) - Level 2 - Pay Point 1': 27.55,
-    'Home Care (Disability) - Level 2 - Pay Point 2': 27.74,
-    'Home Care (Disability) - Level 3 - Pay Point 1': 28.12,
-    'Home Care (Disability) - Level 3 - Pay Point 2': 28.98,
-    'Home Care (Disability) - Level 4 - Pay Point 1': 30.67,
-    'Home Care (Disability) - Level 4 - Pay Point 2': 31.29,
-    'Home Care (Disability) - Level 5 - Pay Point 1': 32.89,
-    'Home Care (Disability) - Level 5 - Pay Point 2': 34.19,
+    'Home Care (Disability) - Level 1 - Pay Point 1': 31.38,
+    'Home Care (Disability) - Level 2 - Pay Point 1': 33.19,
+    'Home Care (Disability) - Level 2 - Pay Point 2': 33.41,
+    'Home Care (Disability) - Level 3 - Pay Point 1': 33.87,
+    'Home Care (Disability) - Level 3 - Pay Point 2': 34.92,
+    'Home Care (Disability) - Level 4 - Pay Point 1': 36.95,
+    'Home Care (Disability) - Level 4 - Pay Point 2': 37.68,
+    'Home Care (Disability) - Level 5 - Pay Point 1': 39.62,
+    'Home Care (Disability) - Level 5 - Pay Point 2': 40.58,
 
     // Home Care (Aged)
-    'Home Care (Aged) - Level 1 - Introductory': 31.13,
-    'Home Care (Aged) - Level 2 - Home carer': 32.86,
-    'Home Care (Aged) - Level 3 - Qualified': 34.59,
-    'Home Care (Aged) - Level 4 - Senior': 35.97,
-    'Home Care (Aged) - Level 5 - Specialist': 37.35,
-    'Home Care (Aged) - Level 6 - Team leader': 38.74,
+    'Home Care (Aged) - Level 1 - Introductory': 32.61,
+    'Home Care (Aged) - Level 2 - Home carer': 34.42,
+    'Home Care (Aged) - Level 3 - Qualified': 36.23,
+    'Home Care (Aged) - Level 4 - Senior': 37.68,
+    'Home Care (Aged) - Level 5 - Specialist': 39.13,
+    'Home Care (Aged) - Level 6 - Team leader': 40.58,
   };
 
   static const Map<String, double> allowances = {
-    'First aid - Full-time': 20.46, // Per week
-    'First aid - Casual': 0.54, // Per hour
-    'Laundry': 0.32, // Per shift
-    'Meal': 16.62, // Per occasion
-    'Sleepover': 60.02, // Per sleepover
-    'On call (Mon-Fri)': 24.50, // Per 24h
-    'On call (Pub Hol/Other)': 48.51, // Per 24h
-    'Uniform': 1.23, // Per shift
-    'Vehicle': 0.99, // Per km
+    'First aid - Full-time': 21.43, // Per week
+    'First aid - Casual': 0.56, // Per hour, capped at $21.43/week
+    'Laundry': 0.33, // Per shift, capped at $1.53/week
+    'Meal': 17.30, // Per occasion, plus $17.30 after >4h overtime
+    'Sleepover': 62.87, // Per sleepover
+    'On call (Mon-Fri)': 25.66, // Per 24h
+    'On call (Pub Hol/Other)': 50.81, // Per 24h
+    'Uniform': 1.26, // Per shift, capped at $6.41/week
+    'Vehicle': 1.05, // Per km (1 Sep 2026 – 28 Feb 2027)
   };
 
   static List<String> getPayPoints(String stream, String level) {

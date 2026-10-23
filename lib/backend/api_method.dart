@@ -1787,7 +1787,8 @@ class ApiMethod extends ChangeNotifier {
         return {
           'success': false,
           'data': [],
-          'message': 'Could not load appointments (HTTP ${response.statusCode}).',
+          'message':
+              'Could not load appointments (HTTP ${response.statusCode}).',
         };
       }
     } catch (e) {
@@ -3165,6 +3166,36 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
+  Future<Map<String, dynamic>> updateClientPlan({
+    required String clientId,
+    required String organizationId,
+    required String userEmail,
+    DateTime? startDate,
+    DateTime? endDate,
+    double? totalBudget,
+    String? documentUrl,
+    String? documentName,
+    String? notes,
+  }) async {
+    try {
+      return await put(
+        'client/$clientId/plan',
+        body: {
+          'organizationId': organizationId,
+          'userEmail': userEmail,
+          'startDate': startDate?.toIso8601String().split('T').first,
+          'endDate': endDate?.toIso8601String().split('T').first,
+          'totalBudget': ?totalBudget,
+          'documentUrl': ?documentUrl,
+          'documentName': ?documentName,
+          'notes': ?notes,
+        },
+      );
+    } catch (e) {
+      return {'success': false, 'message': 'Failed to update NDIS plan: $e'};
+    }
+  }
+
   Future<Map<String, dynamic>> deleteClient({
     required String clientId,
     required String userEmail,
@@ -4421,9 +4452,7 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
-  Future<Map<String, dynamic>> buildSilRoster(
-    Map<String, dynamic> body,
-  ) async {
+  Future<Map<String, dynamic>> buildSilRoster(Map<String, dynamic> body) async {
     try {
       return await post('sil/rosters', body: body);
     } catch (e) {
@@ -4450,9 +4479,7 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
-  Future<Map<String, dynamic>> createSilQuote(
-    Map<String, dynamic> body,
-  ) async {
+  Future<Map<String, dynamic>> createSilQuote(Map<String, dynamic> body) async {
     try {
       return await post('sil/quotes', body: body);
     } catch (e) {
@@ -4501,11 +4528,7 @@ class ApiMethod extends ChangeNotifier {
     try {
       return await post(
         'sil/rosters-of-care/$id/invoice',
-        body: {
-          'from': from,
-          'to': to,
-          'dueDate': ?dueDate,
-        },
+        body: {'from': from, 'to': to, 'dueDate': ?dueDate},
       );
     } catch (e) {
       return {'success': false, 'message': e.toString()};
@@ -4534,8 +4557,9 @@ class ApiMethod extends ChangeNotifier {
 
   Future<Map<String, dynamic>> getStakeholders({String? type}) async {
     try {
-      final query =
-          type != null ? '?type=${Uri.encodeQueryComponent(type)}' : '';
+      final query = type != null
+          ? '?type=${Uri.encodeQueryComponent(type)}'
+          : '';
       return await get('stakeholders$query');
     } catch (e) {
       return {'success': false, 'message': e.toString()};
@@ -4584,7 +4608,10 @@ class ApiMethod extends ChangeNotifier {
     Map<String, dynamic> body,
   ) async {
     try {
-      return await post('stakeholders/clients/$clientId/stakeholders', body: body);
+      return await post(
+        'stakeholders/clients/$clientId/stakeholders',
+        body: body,
+      );
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -4629,11 +4656,10 @@ class ApiMethod extends ChangeNotifier {
     bool allowInvalid = false,
   }) async {
     try {
-      return await post('ndis-claims/generate', body: {
-        'from': from,
-        'to': to,
-        'allowInvalid': allowInvalid,
-      });
+      return await post(
+        'ndis-claims/generate',
+        body: {'from': from, 'to': to, 'allowInvalid': allowInvalid},
+      );
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -4644,9 +4670,10 @@ class ApiMethod extends ChangeNotifier {
     String fileContent,
   ) async {
     try {
-      return await post('ndis-claims/batches/$batchId/results/import', body: {
-        'file': fileContent,
-      });
+      return await post(
+        'ndis-claims/batches/$batchId/results/import',
+        body: {'file': fileContent},
+      );
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
