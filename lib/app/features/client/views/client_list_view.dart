@@ -863,6 +863,7 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     final formKey = GlobalKey<FormState>();
     bool isSaving = false;
     String? errorText;
+    String? uploadWarning;
     PlatformFile? planFile;
 
     await showDialog<void>(
@@ -1143,14 +1144,13 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                           uploadedPlanUrl = await storageRef
                                               .getDownloadURL();
                                         } catch (e) {
-                                          if (!dialogContext.mounted) return;
-                                          setDialogState(() {
-                                            isSaving = false;
-                                            errorText =
-                                                l10n?.planUploadFailed('$e') ??
-                                                'Failed to upload the plan document: $e';
-                                          });
-                                          return;
+                                          // The budget/period is more important
+                                          // than the attachment: keep saving the
+                                          // plan and warn that the file failed.
+                                          uploadWarning =
+                                              l10n?.planUploadFailed('$e') ??
+                                              'Failed to upload the plan document: $e';
+                                          uploadedPlanUrl = null;
                                         }
                                       }
 
@@ -1189,11 +1189,15 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                         ).showSnackBar(
                                           SnackBar(
                                             content: Text(
-                                              l10n?.planUpdated ??
-                                                  'NDIS plan updated.',
+                                              uploadWarning == null
+                                                  ? (l10n?.planUpdated ??
+                                                        'NDIS plan updated.')
+                                                  : 'NDIS plan updated. $uploadWarning',
                                             ),
                                             backgroundColor:
-                                                BauhausDesign.success,
+                                                uploadWarning == null
+                                                ? BauhausDesign.success
+                                                : BauhausDesign.warning,
                                           ),
                                         );
                                       } else {
