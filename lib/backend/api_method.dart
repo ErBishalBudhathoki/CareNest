@@ -1382,12 +1382,17 @@ class ApiMethod extends ChangeNotifier {
 
   /// Stops the timer for a specific user or organization.
 
-  Future<void> stopTimer({String? userEmail, String? organizationId}) async {
+  Future<void> stopTimer({
+    String? userEmail,
+    String? organizationId,
+    bool persistWorkedTime = true,
+  }) async {
     final Map<String, dynamic> requestBody = {};
 
     // Add parameters if provided
     if (userEmail != null) requestBody['userEmail'] = userEmail;
     if (organizationId != null) requestBody['organizationId'] = organizationId;
+    if (!persistWorkedTime) requestBody['persistWorkedTime'] = false;
 
     final response = await post('active-timers/stop', body: requestBody);
     debugPrint('Stop timer response: ${json.encode(response)}');

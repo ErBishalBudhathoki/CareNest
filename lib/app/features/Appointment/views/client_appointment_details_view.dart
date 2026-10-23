@@ -328,6 +328,11 @@ class _ClientAndAppointmentDetailsState
       await apiMethod.stopTimer(
         userEmail: widget.userEmail,
         organizationId: organizationId,
+        // The end-shift flow immediately calls setWorkedTime, which persists
+        // the single worked-time row linked to the selected shift. Letting the
+        // stop endpoint also write one double-counted the shift in payroll and
+        // analytics.
+        persistWorkedTime: false,
       );
       await timerService.stopTimer();
       debugPrint("Timer stopped successfully");
