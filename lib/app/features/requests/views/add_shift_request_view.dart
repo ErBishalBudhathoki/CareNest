@@ -40,6 +40,20 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
     super.dispose();
   }
 
+  /// Rolls the end time to the next day when the user picked the same date and
+  /// an end time before the start (e.g. SIL night shifts 22:00 -> 02:00).
+  DateTime _applyOvernight(DateTime start, DateTime end) {
+    final endDay = endDate ?? selectedDate;
+    final sameDay =
+        endDay.year == selectedDate.year &&
+        endDay.month == selectedDate.month &&
+        endDay.day == selectedDate.day;
+    if (sameDay && end.isBefore(start)) {
+      return end.add(const Duration(days: 1));
+    }
+    return end;
+  }
+
   void _showSuccessDialog() {
     showDialog(
       context: context,
@@ -121,13 +135,14 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
     );
 
     final endDateTime = endDate ?? selectedDate;
-    final end = DateTime(
+    var end = DateTime(
       endDateTime.year,
       endDateTime.month,
       endDateTime.day,
       endTime.hour,
       endTime.minute,
     );
+    end = _applyOvernight(start, end);
 
     if (end.isBefore(start)) {
       setState(() => _isSubmitting = false);
@@ -190,6 +205,7 @@ class _AddShiftRequestViewState extends ConsumerState<AddShiftRequestView> {
       endTime.hour,
       endTime.minute,
     );
+    end = _applyOvernight(start, end);
 
     final duration = end.difference(start);
     final hours = duration.inHours;

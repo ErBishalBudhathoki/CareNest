@@ -1777,18 +1777,27 @@ class ApiMethod extends ChangeNotifier {
           return {'data': []};
         }
       } else if (response.statusCode == 404) {
-        // User has no appointments yet - return empty data structure
+        // User has no appointments yet - a normal empty result, not an error.
         debugPrint('No appointments found for user: $email');
-        return {'data': []};
+        return {'success': true, 'data': []};
       } else {
-        // For other status codes, log the error and return empty data
+        // For other status codes, surface a failure so the UI can offer a
+        // retry instead of pretending the user has no shifts.
         debugPrint('API error ${response.statusCode}: ${response.body}');
-        return {'data': []};
+        return {
+          'success': false,
+          'data': [],
+          'message': 'Could not load appointments (HTTP ${response.statusCode}).',
+        };
       }
     } catch (e) {
       // Handle network errors or other exceptions
       debugPrint('Network error loading appointments: $e');
-      return {'data': []};
+      return {
+        'success': false,
+        'data': [],
+        'message': 'Could not load appointments: $e',
+      };
     }
   }
 

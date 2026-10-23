@@ -474,6 +474,26 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                             // We can use ref.listen for this instead, see below
 
                             if (appointments.isEmpty) {
+                              // A failed appointment fetch must not masquerade
+                              // as "no shifts": offer a retry instead.
+                              if (data.shiftsUnavailable) {
+                                return BauhausErrorState(
+                                  title: AppLocalizations.of(
+                                    context,
+                                  )!.errorLoadingDashboard,
+                                  message:
+                                      data.shiftsErrorMessage ??
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.noUpcomingShiftsMessage,
+                                  retryText: AppLocalizations.of(
+                                    context,
+                                  )!.retryButton,
+                                  onRetry: () => ref
+                                      .read(homeViewModelProvider.notifier)
+                                      .loadDashboard(widget.email),
+                                );
+                              }
                               return BauhausEmptyState(
                                 title: AppLocalizations.of(
                                   context,

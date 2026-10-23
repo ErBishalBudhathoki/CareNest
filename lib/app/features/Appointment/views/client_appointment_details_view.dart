@@ -107,22 +107,33 @@ class _ClientAndAppointmentDetailsState
   }
 
   Future<void> _syncTimerWithServer() async {
-    final timerService = ref.read(timerServiceProvider);
-    final response = await apiMethod.getTimerStatus(widget.userEmail);
-
-    if (response['success'] && response['isRunning']) {
+    try {
+      final timerService = ref.read(timerServiceProvider);
+      final response = await apiMethod.getTimerStatus(widget.userEmail);
       final serverTimer = response['timer'];
-      final startTime = DateTime.parse(serverTimer['startTime']);
-      final currentTime = DateTime.now();
-      final elapsedSeconds = currentTime.difference(startTime).inSeconds;
 
-      timerService.setTimerClientEmail(serverTimer['clientEmail']);
-      timerService.setElapsedSeconds(elapsedSeconds);
-      if (!timerService.isRunning) {
-        timerService.start();
+      if (response['success'] == true &&
+          response['isRunning'] == true &&
+          serverTimer is Map &&
+          serverTimer['startTime'] != null) {
+        final startTime = DateTime.tryParse(serverTimer['startTime'].toString());
+        if (startTime == null) return;
+        final currentTime = DateTime.now();
+        final elapsedSeconds = currentTime.difference(startTime).inSeconds;
+
+        timerService.setTimerClientEmail(
+          (serverTimer['clientEmail'] ?? widget.clientEmail).toString(),
+        );
+        timerService.setElapsedSeconds(elapsedSeconds);
+        if (!timerService.isRunning) {
+          timerService.start();
+        }
+      } else {
+        timerService.stop();
       }
-    } else {
-      timerService.stop();
+    } catch (e) {
+      // Timer sync is best-effort: a failed call must not crash the screen.
+      debugPrint('Error syncing timer with server: $e');
     }
   }
 

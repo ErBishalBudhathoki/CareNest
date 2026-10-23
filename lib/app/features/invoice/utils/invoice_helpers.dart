@@ -109,30 +109,50 @@ class InvoiceHelpers {
       final sanitizedTimeStr = _sanitizeTimeString(timeStr);
       debugPrint('Sanitized time string: "$sanitizedTimeStr"');
 
-      // Try to parse with jm format (e.g., "6:00 AM")
-      try {
-        return DateFormat.jm().parse(sanitizedTimeStr);
-      } catch (e) {
-        // If that fails, try with Hm format (e.g., "06:00")
-        try {
-          return DateFormat('H:mm').parse(sanitizedTimeStr);
-        } catch (e2) {
-          // If that fails too, try with just hour format (e.g., "6")
-          try {
-            final hour = int.parse(
-              sanitizedTimeStr.replaceAll(RegExp(r'[^0-9]'), ''),
-            );
-            return DateTime(1970, 1, 1, hour % 24, 0);
-          } catch (e3) {
-            throw Exception('Failed to parse time with multiple formats');
-          }
-        }
+      // ICU (via intl) formats meridiem with a narrow no-break space; parsing
+      // "11:00 PM" through DateFormat.jm() therefore throws, and the old
+      // fallback misread the hour (e.g. "5:00 PM" became 05:00). Parse the
+      // value directly instead of relying on locale patterns.
+      final normalized = sanitizedTimeStr
+          .replaceAll(RegExp('[\u00A0\u202F]'), ' ')
+          .replaceAll('.', '')
+          .trim()
+          .toUpperCase();
+
+      final withMinutes = RegExp(
+        r'^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*([AP]M)?$',
+      ).firstMatch(normalized);
+      if (withMinutes != null) {
+        final hour = _to24Hour(
+          int.parse(withMinutes.group(1)!),
+          withMinutes.group(4),
+        );
+        final minute = int.parse(withMinutes.group(2)!);
+        final second = withMinutes.group(3) == null
+            ? 0
+            : int.parse(withMinutes.group(3)!);
+        return DateTime(1970, 1, 1, hour, minute, second);
       }
+
+      final hourOnly = RegExp(r'^(\d{1,2})\s*([AP]M)?$').firstMatch(normalized);
+      if (hourOnly != null) {
+        final hour = _to24Hour(int.parse(hourOnly.group(1)!), hourOnly.group(2));
+        return DateTime(1970, 1, 1, hour, 0);
+      }
+
+      debugPrint('Unable to parse time "$timeStr"');
+      return DateTime(1970, 1, 1, 0, 0);
     } catch (e) {
       debugPrint('Error parsing time "$timeStr": $e');
-      // Return a default time as fallback
-      return DateFormat.jm().parse("12:00 AM");
+      return DateTime(1970, 1, 1, 0, 0);
     }
+  }
+
+  /// Converts a 12-hour clock value to 24-hour. No meridiem = already 24-hour.
+  int _to24Hour(int hour, String? meridiem) {
+    if (meridiem == null) return hour % 24;
+    if (meridiem == 'AM') return hour == 12 ? 0 : hour % 12;
+    return hour == 12 ? 12 : (hour % 12) + 12;
   }
 
   /// Gets the time period based on the provided time string.

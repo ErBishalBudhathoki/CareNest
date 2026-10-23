@@ -1,6 +1,7 @@
 import 'package:carenest/app/features/home/models/home_dashboard_data.dart';
 import 'package:carenest/app/features/home/repositories/home_repository.dart';
 import 'package:carenest/app/core/services/timer_service.dart';
+import 'package:carenest/app/shared/utils/schedule_time_parser.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -160,46 +161,6 @@ class HomeViewModel extends AsyncNotifier<HomeDashboardData> {
   }
 
   DateTime? _parseScheduleDateTime(String? dateStr, String? timeStr) {
-    if (dateStr == null || timeStr == null) return null;
-    try {
-      DateTime parsedDate;
-      if (dateStr.contains('-')) {
-        parsedDate = DateTime.parse(dateStr);
-      } else if (dateStr.contains('/')) {
-        final parts = dateStr.split('/');
-        if (parts.length == 3) {
-          parsedDate = DateTime(
-            int.parse(parts[2]),
-            int.parse(parts[0]),
-            int.parse(parts[1]),
-          );
-        } else {
-          return null;
-        }
-      } else {
-        return null;
-      }
-
-      final timeParts = timeStr.split(':');
-      if (timeParts.length >= 2) {
-        int hour = int.parse(timeParts[0].trim());
-        final minutePart = timeParts[1].replaceAll(RegExp(r'[^0-9]'), '');
-        int minute = minutePart.isNotEmpty ? int.parse(minutePart) : 0;
-
-        if (timeStr.toUpperCase().contains('PM') && hour != 12) hour += 12;
-        if (timeStr.toUpperCase().contains('AM') && hour == 12) hour = 0;
-
-        return DateTime(
-          parsedDate.year,
-          parsedDate.month,
-          parsedDate.day,
-          hour,
-          minute,
-        );
-      }
-      return null;
-    } catch (_) {
-      return null;
-    }
+    return ScheduleTimeParser.parseDateTime(dateStr, timeStr);
   }
 }

@@ -3,6 +3,7 @@ import 'package:carenest/app/features/home/models/home_dashboard_data.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/core/services/timer_service.dart';
+import 'package:carenest/app/shared/utils/schedule_time_parser.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Provider for HomeRepository
@@ -46,6 +47,17 @@ class HomeRepository {
       }
 
       List<Map<String, dynamic>> appointments = [];
+      var shiftsUnavailable = false;
+      String? shiftsErrorMessage;
+
+      // `getAppointmentData` reports transport/server failures with
+      // success:false; a 404 (no appointments) is success:true with an empty
+      // list. Only the former should surface a retry affordance.
+      if (appointmentResponse['success'] == false) {
+        shiftsUnavailable = true;
+        shiftsErrorMessage = appointmentResponse['message']?.toString();
+      }
+
       if (appointmentResponse['success'] == true ||
           appointmentResponse.containsKey('data')) {
         final data = appointmentResponse['data'];
@@ -88,7 +100,7 @@ class HomeRepository {
                   if (timerService.isRunning &&
                       timerService.timerClientEmail ==
                           assignment['clientEmail']) {
-                    final shiftDate = DateTime.tryParse(shift['date'] ?? '');
+                    final shiftDate = ScheduleTimeParser.parseDate(shift['date']);
                     if (shiftDate != null) {
                       final today = DateTime(now.year, now.month, now.day);
                       final isToday =
@@ -188,6 +200,8 @@ class HomeRepository {
       return HomeDashboardData(
         activeBroadcasts: broadcasts,
         upcomingAppointments: appointments,
+        shiftsUnavailable: shiftsUnavailable,
+        shiftsErrorMessage: shiftsErrorMessage,
       );
     } catch (e) {
       throw Exception('Failed to load home dashboard data: $e');
@@ -195,65 +209,7 @@ class HomeRepository {
   }
 
   DateTime? _parseDateTime(dynamic date, dynamic time) {
-    try {
-      if (date == null || time == null) return null;
-
-      String dateStr = date.toString().trim();
-      String timeStr = time.toString().trim();
-
-      DateTime parsedDate;
-      if (dateStr.contains('-')) {
-        parsedDate = DateTime.parse(dateStr);
-      } else if (dateStr.contains('/')) {
-        final parts = dateStr.split('/');
-        if (parts.length == 3) {
-          try {
-            // Try MM/DD/YYYY first
-            parsedDate = DateTime(
-              int.parse(parts[2]),
-              int.parse(parts[0]),
-              int.parse(parts[1]),
-            );
-          } catch (e) {
-            // Fallback to DD/MM/YYYY
-            parsedDate = DateTime(
-              int.parse(parts[2]),
-              int.parse(parts[1]),
-              int.parse(parts[0]),
-            );
-          }
-        } else {
-          return null;
-        }
-      } else {
-        return null;
-      }
-
-      if (timeStr.contains(':')) {
-        final timeParts = timeStr.split(':');
-        if (timeParts.length >= 2) {
-          int hour = int.parse(timeParts[0].trim());
-          String minutePart = timeParts[1].replaceAll(RegExp(r'[^0-9]'), '');
-          int minute = minutePart.isNotEmpty ? int.parse(minutePart) : 0;
-
-          if (timeStr.toUpperCase().contains('PM') && hour != 12) {
-            hour += 12;
-          } else if (timeStr.toUpperCase().contains('AM') && hour == 12) {
-            hour = 0;
-          }
-          return DateTime(
-            parsedDate.year,
-            parsedDate.month,
-            parsedDate.day,
-            hour,
-            minute,
-          );
-        }
-      }
-      return null;
-    } catch (e) {
-      return null;
-    }
+    return ScheduleTimeParser.parseDateTime(date, time);
   }
 
   /// Fetch only active emergency broadcasts (used by the polling timer).

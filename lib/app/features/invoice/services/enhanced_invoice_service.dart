@@ -2809,6 +2809,12 @@ class EnhancedInvoiceService {
       ref.read(invoiceGenerationStateProvider.notifier).state =
           InvoiceGenerationState.loading;
 
+      if (_invoices.isEmpty) {
+        throw StateError(
+          'No invoice data available. Generate the invoice before sending emails.',
+        );
+      }
+
       // Get invoice details from the first invoice
       final invoiceNumber = _invoices[0]['invoiceNumber'] ?? '';
       final endDate = _invoices[0]['endDate'] ?? '';
