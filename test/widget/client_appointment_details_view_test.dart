@@ -162,4 +162,49 @@ void main() {
     expect(api.detailsCalls, 2);
     expect(find.text('LOADING APPOINTMENT DETAILS...'), findsNothing);
   });
+
+  testWidgets('renders SIL roster shift details (schedule + participant)', (
+    tester,
+  ) async {
+    // Shape returned for a SIL roster shift: no ClientAssignment, the
+    // synthetic assignment carries the schedule built from Shift documents.
+    final api = _FakeApiMethod({
+      'success': true,
+      'data': {
+        'clientDetails': [
+          {
+            'clientFirstName': 'Nadia',
+            'clientLastName': 'NDIA',
+            'clientEmail': 'sil.ndia@mailinator.com',
+          },
+        ],
+        'assignedClient': {
+          '_id': 'sil-shift-6ada24d5210dbd451597fb82',
+          'clientEmail': 'sil.ndia@mailinator.com',
+          'isSilRosterShift': true,
+          'schedule': [
+            {
+              'date': '2026-10-23',
+              'startTime': '09:00',
+              'endTime': '11:00',
+              'break': null,
+              'shiftType': 'day',
+            },
+          ],
+          'dateList': ['2026-10-23'],
+          'startTimeList': ['09:00'],
+          'endTimeList': ['11:00'],
+          'breakList': [null],
+          'timeRecords': <dynamic>[],
+        },
+      },
+    });
+
+    await tester.pumpWidget(_buildApp(api));
+    await _pumpFrames(tester);
+
+    expect(find.text('LOADING APPOINTMENT DETAILS...'), findsNothing);
+    expect(find.textContaining('Nadia'), findsWidgets);
+    expect(find.textContaining('2026-10-23'), findsWidgets);
+  });
 }
