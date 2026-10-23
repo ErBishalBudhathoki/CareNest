@@ -1643,7 +1643,7 @@ class InvoiceDataProcessor {
 
   /// Generate invoice items for an employee shift, applying SCHADS compliance rules:
   /// 1. Minimum Engagement (2 hours)
-  /// 2. Daily Overtime (> 10 hours)
+  /// 2. Daily Overtime (> 8 hours on standard weekdays; first 2h @ OT1, rest @ OT2)
   List<Map<String, dynamic>> _generateEmployeeItems({
     required String date,
     required String startTime,
@@ -1667,24 +1667,39 @@ class InvoiceDataProcessor {
     }
 
     // 2. Daily Overtime Logic (SCHADS 26)
-    // First 10 hours are ordinary/penalty, excess is overtime
+    // Ordinary hours are capped at 8/day on standard weekdays; the first 2
+    // overtime hours are paid at OT1 and anything beyond at OT2. Weekend and
+    // public-holiday shifts are paid entirely at the penalty rate (no split).
+    final parsedShiftDate = _tryParseDateFlexible(date);
+    final isStandardDay =
+        parsedShiftDate != null &&
+        !(holidaySet?.contains(parsedShiftDate.toIso8601String().split('T')[0]) ??
+            false) &&
+        parsedShiftDate.weekday != DateTime.saturday &&
+        parsedShiftDate.weekday != DateTime.sunday;
+
     double ordinaryHours = effectiveHours;
     double overtimeHours = 0.0;
+    double overtimeHoursFirstTier = 0.0;
+    double overtimeHoursSecondTier = 0.0;
 
-    if (effectiveHours > 10.0) {
-      ordinaryHours = 10.0;
-      overtimeHours = effectiveHours - 10.0;
+    if (isStandardDay && effectiveHours > 8.0) {
+      ordinaryHours = 8.0;
+      overtimeHours = effectiveHours - 8.0;
+      overtimeHoursFirstTier = overtimeHours > 2.0 ? 2.0 : overtimeHours;
+      overtimeHoursSecondTier = overtimeHours - overtimeHoursFirstTier;
     }
 
     debugPrint(
       'InvoiceDataProcessor: Shift $date ($startTime-$endTime) '
       'inputHours=$hours effectiveHours=$effectiveHours '
       'ordinaryHours=$ordinaryHours overtimeHours=$overtimeHours '
-      'splitApplied=${effectiveHours > 10.0}',
+      'ot1=$overtimeHoursFirstTier ot2=$overtimeHoursSecondTier '
+      'isStandardDay=$isStandardDay',
     );
 
     // Common Rate Calculation Logic
-    DateTime? shiftDate = _tryParseDateFlexible(date);
+    final shiftDate = parsedShiftDate;
     if (shiftDate == null) {
       debugPrint(
         'InvoiceDataProcessor: Could not parse date $date for employee item',
@@ -1781,43 +1796,53 @@ class InvoiceDataProcessor {
       'rate=$ordinaryRate amount=${ordinaryHours * ordinaryRate}',
     );
 
-    // -- Calculate Overtime Item (if any) --
+    // -- Calculate Overtime Items (if any) --
     if (overtimeHours > 0) {
-      // Use overtimeRate from user model
-      double otRate = (rates?.overtimeRate ?? 0.0).toDouble();
+      final ot1Rate =
+          ((rates?.overtimeRate ?? 0.0).toDouble() > 0
+              ? rates!.overtimeRate
+              : base * 1.5)
+              .toDouble();
+      final ot2Rate =
+          ((rates?.overtimeRate2 ?? 0.0).toDouble() > 0
+              ? rates!.overtimeRate2
+              : base * 2.0)
+              .toDouble();
 
-      // Fallback: if OT rate is 0, use 1.5x base rate
-      if (otRate <= 0) {
-        double base = (rates?.baseRate ?? employeeUser?.payRate ?? 0.0)
-            .toDouble();
-        otRate = base * 1.5;
+      void addOvertimeItem(String name, double hours, double rate) {
+        if (hours <= 0) return;
+        resultItems.add({
+          'date': date,
+          'day': dayOfWeek,
+          'startTime': startTime,
+          'endTime': endTime,
+          'hours': hours,
+          'rate': rate,
+          'expectedRate': rate,
+          'amount': hours * rate,
+          'rateSource': 'EMP_OVERTIME',
+          'itemName': name,
+          'itemCode': '',
+          'workedTimeSource': workedTimeSource,
+          'ndisItem': {'itemNumber': '', 'itemName': name},
+          'ndisItemNumber': '',
+          'ndisItemName': name,
+        });
         debugPrint(
-          'InvoiceDataProcessor: Using fallback OT rate (1.5x Base): $otRate',
+          'InvoiceDataProcessor: OVERTIME item "$name" hours=$hours '
+          'rate=$rate amount=${hours * rate}',
         );
       }
 
-      String otItemName = 'Overtime (>10h Shift)';
-
-      resultItems.add({
-        'date': date,
-        'day': dayOfWeek,
-        'startTime': startTime,
-        'endTime': endTime,
-        'hours': overtimeHours,
-        'rate': otRate,
-        'expectedRate': otRate,
-        'amount': overtimeHours * otRate,
-        'rateSource': 'EMP_OVERTIME',
-        'itemName': otItemName,
-        'itemCode': '',
-        'workedTimeSource': workedTimeSource,
-        'ndisItem': {'itemNumber': '', 'itemName': otItemName},
-        'ndisItemNumber': '',
-        'ndisItemName': otItemName,
-      });
-      debugPrint(
-        'InvoiceDataProcessor: OVERTIME item "$otItemName" hours=$overtimeHours '
-        'rate=$otRate amount=${overtimeHours * otRate}',
+      addOvertimeItem(
+        'Overtime (first 2h)',
+        overtimeHoursFirstTier,
+        ot1Rate,
+      );
+      addOvertimeItem(
+        'Overtime (>2h)',
+        overtimeHoursSecondTier,
+        ot2Rate,
       );
     }
 

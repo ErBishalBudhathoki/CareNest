@@ -52,7 +52,7 @@ class FakeApiMethod extends ApiMethod {
 
 void main() {
   group('Employee Overtime Calculation Test', () {
-    test('processInvoiceData splits shift exceeding 10 hours correctly', () async {
+    test('processInvoiceData splits a >8h weekday shift into 8h + 2h OT1 + rest OT2', () async {
       final container = ProviderContainer(
         overrides: [
           app_providers.apiMethodProvider.overrideWithValue(FakeApiMethod()),
@@ -135,22 +135,99 @@ void main() {
         );
       }
 
-      // We expect two items: Weekday Ordinary (capped at 10.0) and Overtime (0.1814)
-      expect(items.length, equals(2));
+      // Standard weekday: 8h ordinary, first 2h of OT, remainder at OT2.
+      expect(items.length, equals(3));
 
       final ordinaryItem = items.firstWhere(
         (i) => i['itemName'] == 'Weekday Ordinary',
       );
-      expect(ordinaryItem['hours'], equals(10.0));
+      expect(ordinaryItem['hours'], equals(8.0));
       expect(ordinaryItem['rate'], equals(34.44));
-      expect(ordinaryItem['amount'], equals(344.4));
+      expect(ordinaryItem['amount'], closeTo(275.52, 0.01));
 
-      final overtimeItem = items.firstWhere(
-        (i) => i['itemName'] == 'Overtime (>10h Shift)',
+      final overtimeFirst = items.firstWhere(
+        (i) => i['itemName'] == 'Overtime (first 2h)',
       );
-      expect(overtimeItem['hours'], closeTo(0.18, 0.01));
-      expect(overtimeItem['rate'], equals(48.22));
-      expect(overtimeItem['amount'], closeTo(8.75, 0.1));
+      expect(overtimeFirst['hours'], equals(2.0));
+      expect(overtimeFirst['rate'], equals(48.22));
+      expect(overtimeFirst['amount'], closeTo(96.44, 0.01));
+
+      final overtimeSecond = items.firstWhere(
+        (i) => i['itemName'] == 'Overtime (>2h)',
+      );
+      expect(overtimeSecond['hours'], closeTo(0.18, 0.01));
+      expect(overtimeSecond['rate'], equals(68.88));
+      expect(overtimeSecond['amount'], closeTo(12.40, 0.05));
+    });
+
+    test('weekend shifts are not overtime-split', () async {
+      final container = ProviderContainer(
+        overrides: [
+          app_providers.apiMethodProvider.overrideWithValue(FakeApiMethod()),
+        ],
+      );
+
+      final processor = container.read(invoiceDataProcessorProvider);
+
+      // 2026-05-23 is a Saturday. 10 hours are all paid at the Saturday rate,
+      // with no daily overtime split (SCHADS OT applies to standard days).
+      final assignedClients = {
+        'clients': [
+          {
+            'clientId': 'client_123',
+            'clientEmail': 'client@example.com',
+            'clientFirstName': 'Client',
+            'clientLastName': 'Name',
+            'workedTimeData': {
+              'success': true,
+              'workedTimes': [
+                {
+                  'actualWorkedTime': 10.0,
+                  'correspondingSchedule': {
+                    'date': '2026-05-23',
+                    'startTime': '08:00',
+                    'endTime': '18:00',
+                  },
+                },
+              ],
+            },
+            'assignments': [
+              {
+                'clientEmail': 'client@example.com',
+                'userEmail': 'employee@example.com',
+                'schedule': [
+                  {
+                    'date': '2026-05-23',
+                    'startTime': '08:00',
+                    'endTime': '18:00',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        'clientDetail': <Map<String, dynamic>>[
+          {
+            'clientEmail': 'client@example.com',
+            'firstName': 'Client',
+            'lastName': 'Name',
+          },
+        ],
+      };
+
+      final result = await processor.processInvoiceData(
+        assignedClients: assignedClients,
+        lineItems: [],
+        invoiceType: 'employee',
+      );
+
+      final items =
+          (result['clients'] as List).first['items'] as List;
+      final overtime = items.where((i) => i['rateSource'] == 'EMP_OVERTIME');
+      expect(overtime, isEmpty);
+      expect(items, hasLength(1));
+      expect(items.first['hours'], equals(10.0));
+      expect(items.first['rate'], equals(48.22)); // Saturday rate
     });
 
     test(
@@ -170,15 +247,21 @@ void main() {
           'items': [
             {
               'itemName': 'Weekday Ordinary',
-              'hours': 10.0,
+              'hours': 8.0,
               'rate': 34.44,
-              'amount': 344.40,
+              'amount': 275.52,
             },
             {
-              'itemName': 'Overtime (>10h Shift)',
-              'hours': 0.1814,
+              'itemName': 'Overtime (first 2h)',
+              'hours': 2.0,
               'rate': 48.22,
-              'amount': 8.75,
+              'amount': 96.44,
+            },
+            {
+              'itemName': 'Overtime (>2h)',
+              'hours': 0.1814,
+              'rate': 68.88,
+              'amount': 12.49,
             },
           ],
         };
@@ -189,13 +272,13 @@ void main() {
         // Verify lineItems was aligned with items
         expect(client.containsKey('lineItems'), isTrue);
         final lineItems = client['lineItems'] as List;
-        expect(lineItems.length, equals(2));
+        expect(lineItems.length, equals(3));
         expect(identical(client['items'], client['lineItems']), isTrue);
 
         // Verify totals are recalculated correctly using fallback to amount
-        expect(client['itemsSubtotal'], closeTo(353.15, 0.01));
-        expect(client['subtotal'], closeTo(353.15, 0.01));
-        expect(client['total'], closeTo(353.15, 0.01));
+        expect(client['itemsSubtotal'], closeTo(384.45, 0.05));
+        expect(client['subtotal'], closeTo(384.45, 0.05));
+        expect(client['total'], closeTo(384.45, 0.05));
       },
     );
   });
