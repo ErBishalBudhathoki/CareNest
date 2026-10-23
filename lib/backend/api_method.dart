@@ -1011,6 +1011,16 @@ class ApiMethod extends ChangeNotifier {
       }
     }
 
+    // Multi-org admins: tell the backend which organisation this session is
+    // acting on. The server validates membership of this id and scopes SIL /
+    // schedule writes to it. Safe when signed out (no stored org -> no header).
+    if (includeAuth && !headers.containsKey('x-organization-id')) {
+      final organizationId = SharedPreferencesUtils().getOrganizationId();
+      if (organizationId != null && organizationId.isNotEmpty) {
+        headers['x-organization-id'] = organizationId;
+      }
+    }
+
     if (includeAppCheck && !headers.containsKey('X-Firebase-AppCheck')) {
       final appCheckToken = await _getAppCheckToken();
       if (appCheckToken != null && appCheckToken.isNotEmpty) {
