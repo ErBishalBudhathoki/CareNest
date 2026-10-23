@@ -32,6 +32,22 @@ class _FakeApiMethod extends ApiMethod {
       {'success': false, 'isRunning': false};
 }
 
+/// Simulates a transport-level failure (offline, timeout, stalled token) so the
+/// init chain's catch path is exercised rather than the API's fallback payload.
+class _ThrowingApiMethod extends ApiMethod {
+  @override
+  Future<dynamic> getClientAndAppointmentData(
+    String userEmail,
+    String clientEmail,
+  ) async {
+    throw Exception('SocketException: Failed host lookup (offline)');
+  }
+
+  @override
+  Future<Map<String, dynamic>> getTimerStatus(String userEmail) async =>
+      {'success': false, 'isRunning': false};
+}
+
 Widget _buildApp(ApiMethod api) {
   return ProviderScope(
     overrides: [apiMethodProvider.overrideWithValue(api)],
@@ -79,6 +95,51 @@ void main() {
     expect(api.detailsCalls, 1);
     expect(find.text('LOADING APPOINTMENT DETAILS...'), findsNothing);
     expect(find.text('NO CLIENT DETAILS FOUND'), findsOneWidget);
+    expect(find.text('Retry'), findsOneWidget);
+  });
+
+  testWidgets('a valid payload renders the client details, not a spinner', (
+    tester,
+  ) async {
+    final api = _FakeApiMethod({
+      'success': true,
+      'data': {
+        'clientDetails': [
+          {
+            'clientEmail': 'sil.ndia@mailinator.com',
+            'clientFirstName': 'Nadia',
+            'clientLastName': 'Haddad',
+            'clientPhone': '0400000000',
+            'clientAddress': '12 Test St',
+            'clientCity': 'Sydney',
+            'clientState': 'NSW',
+            'clientZip': '2000',
+          },
+        ],
+        'assignedClient': null,
+      },
+    });
+
+    await tester.pumpWidget(_buildApp(api));
+    await _pumpFrames(tester);
+
+    expect(api.detailsCalls, 1);
+    expect(find.text('LOADING APPOINTMENT DETAILS...'), findsNothing);
+    expect(find.text('CLIENT INFORMATION'), findsOneWidget);
+    expect(find.text('Nadia Haddad'), findsOneWidget);
+    expect(find.text('sil.ndia@mailinator.com'), findsOneWidget);
+  });
+
+  testWidgets('a throwing request ends the loading state with an error panel', (
+    tester,
+  ) async {
+    final api = _ThrowingApiMethod();
+
+    await tester.pumpWidget(_buildApp(api));
+    await _pumpFrames(tester);
+
+    expect(find.text('LOADING APPOINTMENT DETAILS...'), findsNothing);
+    expect(find.text('NO CLIENT DATA FOUND'), findsOneWidget);
     expect(find.text('Retry'), findsOneWidget);
   });
 
