@@ -14491,6 +14491,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Define the structured shift-note templates workers complete.'**
   String get noteTemplatesDesc;
+
+  /// No description provided for @ndisPlanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'NDIS Plan — {clientName}'**
+  String ndisPlanTitle(Object clientName);
+
+  /// No description provided for @ndisPlanDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'The plan period and budget gate NDIA-managed invoices. Claims cannot exceed the remaining budget.'**
+  String get ndisPlanDescription;
+
+  /// No description provided for @planStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan start'**
+  String get planStart;
+
+  /// No description provided for @planEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan end'**
+  String get planEnd;
+
+  /// No description provided for @planStartDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Start {date}'**
+  String planStartDate(Object date);
+
+  /// No description provided for @planEndDate.
+  ///
+  /// In en, this message translates to:
+  /// **'End {date}'**
+  String planEndDate(Object date);
+
+  /// No description provided for @planBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Total plan budget (AUD)'**
+  String get planBudget;
+
+  /// No description provided for @planBudgetInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid non-negative amount'**
+  String get planBudgetInvalid;
+
+  /// No description provided for @planDocumentName.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan document name (optional)'**
+  String get planDocumentName;
+
+  /// No description provided for @planDocumentUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan document URL (optional)'**
+  String get planDocumentUrl;
+
+  /// No description provided for @planNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (optional)'**
+  String get planNotes;
+
+  /// No description provided for @planAttachDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach plan document'**
+  String get planAttachDocument;
+
+  /// No description provided for @planSelectedFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected: {fileName}'**
+  String planSelectedFile(Object fileName);
+
+  /// No description provided for @planUploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to upload the plan document: {error}'**
+  String planUploadFailed(Object error);
+
+  /// No description provided for @planUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'NDIS plan updated.'**
+  String get planUpdated;
+
+  /// No description provided for @planSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update the NDIS plan.'**
+  String get planSaveFailed;
+
+  /// No description provided for @planCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get planCancel;
+
+  /// No description provided for @planSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Plan'**
+  String get planSave;
 }
 
 class _AppLocalizationsDelegate

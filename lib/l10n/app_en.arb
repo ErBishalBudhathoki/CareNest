@@ -3924,6 +3924,50 @@
   "ndisClaimingDesc": "Generate bulk payment request CSVs and reconcile results.",
 
   "noteTemplates": "Note Templates",
-  "noteTemplatesDesc": "Define the structured shift-note templates workers complete."
+  "noteTemplatesDesc": "Define the structured shift-note templates workers complete.",
+
+  "ndisPlanTitle": "NDIS Plan — {clientName}",
+  "@ndisPlanTitle": {
+    "placeholders": {
+      "clientName": {}
+    }
+  },
+  "ndisPlanDescription": "The plan period and budget gate NDIA-managed invoices. Claims cannot exceed the remaining budget.",
+  "planStart": "Plan start",
+  "planEnd": "Plan end",
+  "planStartDate": "Start {date}",
+  "@planStartDate": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "planEndDate": "End {date}",
+  "@planEndDate": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "planBudget": "Total plan budget (AUD)",
+  "planBudgetInvalid": "Enter a valid non-negative amount",
+  "planDocumentName": "Plan document name (optional)",
+  "planDocumentUrl": "Plan document URL (optional)",
+  "planNotes": "Notes (optional)",
+  "planAttachDocument": "Attach plan document",
+  "planSelectedFile": "Selected: {fileName}",
+  "@planSelectedFile": {
+    "placeholders": {
+      "fileName": {}
+    }
+  },
+  "planUploadFailed": "Failed to upload the plan document: {error}",
+  "@planUploadFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "planUpdated": "NDIS plan updated.",
+  "planSaveFailed": "Failed to update the NDIS plan.",
+  "planCancel": "Cancel",
+  "planSave": "Save Plan"
 
 }

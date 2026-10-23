@@ -871,6 +871,7 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
       builder: (dialogContext) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
+            final l10n = AppLocalizations.of(dialogContext);
             Future<void> pickDate({required bool isStart}) async {
               final now = DateTime.now();
               final initial = (isStart ? startDate : endDate) ?? now;
@@ -925,7 +926,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                           const SizedBox(width: BauhausDesign.space2),
                           Expanded(
                             child: Text(
-                              'NDIS PLAN — ${client.displayName}',
+                              l10n?.ndisPlanTitle(client.displayName) ??
+                                  'NDIS Plan',
                               style: BauhausDesign.getTextTheme(dialogContext)
                                   .titleMedium
                                   ?.copyWith(
@@ -946,9 +948,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               Text(
-                                'The plan period and budget gate NDIA-managed '
-                                'invoices. Claims cannot exceed the remaining '
-                                'budget.',
+                                l10n?.ndisPlanDescription ??
+                                    'The plan period and budget gate NDIA-managed invoices.',
                                 style: BauhausDesign.getTextTheme(
                                   dialogContext,
                                 ).bodySmall,
@@ -962,8 +963,11 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                       icon: const Icon(Icons.event_outlined),
                                       label: Text(
                                         startDate == null
-                                            ? 'Plan start'
-                                            : 'Start ${_formatShortDate(startDate)}',
+                                            ? (l10n?.planStart ?? 'Plan start')
+                                            : (l10n?.planStartDate(
+                                                    _formatShortDate(startDate),
+                                                  ) ??
+                                                  'Start ${_formatShortDate(startDate)}'),
                                       ),
                                     ),
                                   ),
@@ -976,8 +980,11 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                       ),
                                       label: Text(
                                         endDate == null
-                                            ? 'Plan end'
-                                            : 'End ${_formatShortDate(endDate)}',
+                                            ? (l10n?.planEnd ?? 'Plan end')
+                                            : (l10n?.planEndDate(
+                                                    _formatShortDate(endDate),
+                                                  ) ??
+                                                  'End ${_formatShortDate(endDate)}'),
                                       ),
                                     ),
                                   ),
@@ -990,8 +997,10 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                     const TextInputType.numberWithOptions(
                                       decimal: true,
                                     ),
-                                decoration: const InputDecoration(
-                                  labelText: 'Total plan budget (AUD)',
+                                decoration: InputDecoration(
+                                  labelText:
+                                      l10n?.planBudget ??
+                                      'Total plan budget (AUD)',
                                   prefixText: '\$ ',
                                 ),
                                 validator: (value) {
@@ -1000,7 +1009,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                   }
                                   final parsed = double.tryParse(value);
                                   if (parsed == null || parsed < 0) {
-                                    return 'Enter a valid non-negative amount';
+                                    return l10n?.planBudgetInvalid ??
+                                        'Enter a valid non-negative amount';
                                   }
                                   return null;
                                 },
@@ -1008,15 +1018,19 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                               const SizedBox(height: BauhausDesign.space4),
                               TextFormField(
                                 controller: documentNameController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Plan document name (optional)',
+                                decoration: InputDecoration(
+                                  labelText:
+                                      l10n?.planDocumentName ??
+                                      'Plan document name (optional)',
                                 ),
                               ),
                               const SizedBox(height: BauhausDesign.space3),
                               TextFormField(
                                 controller: documentUrlController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Plan document URL (optional)',
+                                decoration: InputDecoration(
+                                  labelText:
+                                      l10n?.planDocumentUrl ??
+                                      'Plan document URL (optional)',
                                 ),
                               ),
                               const SizedBox(height: BauhausDesign.space3),
@@ -1044,16 +1058,21 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                 icon: const Icon(Icons.upload_file_outlined),
                                 label: Text(
                                   planFile == null
-                                      ? 'Attach plan document'
-                                      : 'Selected: ${planFile!.name}',
+                                      ? (l10n?.planAttachDocument ??
+                                            'Attach plan document')
+                                      : (l10n?.planSelectedFile(
+                                              planFile!.name,
+                                            ) ??
+                                            'Selected: ${planFile!.name}'),
                                 ),
                               ),
                               const SizedBox(height: BauhausDesign.space3),
                               TextFormField(
                                 controller: notesController,
                                 maxLines: 2,
-                                decoration: const InputDecoration(
-                                  labelText: 'Notes (optional)',
+                                decoration: InputDecoration(
+                                  labelText:
+                                      l10n?.planNotes ?? 'Notes (optional)',
                                 ),
                               ),
                               if (errorText != null) ...[
@@ -1082,7 +1101,7 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                         children: [
                           Expanded(
                             child: BauhausActionButton(
-                              text: 'Cancel',
+                              text: l10n?.planCancel ?? 'Cancel',
                               variant: BauhausActionVariant.secondary,
                               onPressed: isSaving
                                   ? null
@@ -1092,7 +1111,7 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                           const SizedBox(width: BauhausDesign.space3),
                           Expanded(
                             child: BauhausActionButton(
-                              text: 'Save Plan',
+                              text: l10n?.planSave ?? 'Save Plan',
                               variant: BauhausActionVariant.primary,
                               isLoading: isSaving,
                               onPressed: isSaving
@@ -1128,6 +1147,7 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                           setDialogState(() {
                                             isSaving = false;
                                             errorText =
+                                                l10n?.planUploadFailed('$e') ??
                                                 'Failed to upload the plan document: $e';
                                           });
                                           return;
@@ -1168,8 +1188,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                           this.context,
                                         ).showSnackBar(
                                           SnackBar(
-                                            content: const Text(
-                                              'NDIS plan updated.',
+                                            content: Text(
+                                              l10n?.planUpdated ??
+                                                  'NDIS plan updated.',
                                             ),
                                             backgroundColor:
                                                 BauhausDesign.success,
@@ -1181,7 +1202,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                           errorText =
                                               response['message']?.toString() ??
                                               response['error']?.toString() ??
-                                              'Failed to update the NDIS plan.';
+                                              (l10n?.planSaveFailed ??
+                                                  'Failed to update the NDIS plan.');
                                         });
                                       }
                                     },

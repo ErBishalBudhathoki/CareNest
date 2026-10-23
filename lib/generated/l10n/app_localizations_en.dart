@@ -7888,4 +7888,69 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get noteTemplatesDesc =>
       'Define the structured shift-note templates workers complete.';
+
+  @override
+  String ndisPlanTitle(Object clientName) {
+    return 'NDIS Plan — $clientName';
+  }
+
+  @override
+  String get ndisPlanDescription =>
+      'The plan period and budget gate NDIA-managed invoices. Claims cannot exceed the remaining budget.';
+
+  @override
+  String get planStart => 'Plan start';
+
+  @override
+  String get planEnd => 'Plan end';
+
+  @override
+  String planStartDate(Object date) {
+    return 'Start $date';
+  }
+
+  @override
+  String planEndDate(Object date) {
+    return 'End $date';
+  }
+
+  @override
+  String get planBudget => 'Total plan budget (AUD)';
+
+  @override
+  String get planBudgetInvalid => 'Enter a valid non-negative amount';
+
+  @override
+  String get planDocumentName => 'Plan document name (optional)';
+
+  @override
+  String get planDocumentUrl => 'Plan document URL (optional)';
+
+  @override
+  String get planNotes => 'Notes (optional)';
+
+  @override
+  String get planAttachDocument => 'Attach plan document';
+
+  @override
+  String planSelectedFile(Object fileName) {
+    return 'Selected: $fileName';
+  }
+
+  @override
+  String planUploadFailed(Object error) {
+    return 'Failed to upload the plan document: $error';
+  }
+
+  @override
+  String get planUpdated => 'NDIS plan updated.';
+
+  @override
+  String get planSaveFailed => 'Failed to update the NDIS plan.';
+
+  @override
+  String get planCancel => 'Cancel';
+
+  @override
+  String get planSave => 'Save Plan';
 }
