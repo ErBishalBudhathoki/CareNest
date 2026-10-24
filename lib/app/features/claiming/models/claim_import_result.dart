@@ -40,9 +40,8 @@ class ClaimImportResult {
     }
 
     return ClaimImportResult(
-      batchStatus: json['batchStatus']?.toString() ??
-          json['status']?.toString() ??
-          '',
+      batchStatus:
+          json['batchStatus']?.toString() ?? json['status']?.toString() ?? '',
       accepted: intOf(json['accepted']),
       rejected: intOf(json['rejected']),
       unmatched: intOf(json['unmatched']),
@@ -56,7 +55,8 @@ class ClaimImportResult {
       if (rejected > 0) '$rejected rejected',
       if (unmatched > 0) '$unmatched unmatched',
     ];
-    if (parts.isEmpty) return 'No claim lines were returned in the results file.';
+    if (parts.isEmpty)
+      return 'No claim lines were returned in the results file.';
     return parts.join(' · ');
   }
 }

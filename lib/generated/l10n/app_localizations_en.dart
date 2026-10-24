@@ -7953,4 +7953,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planSave => 'Save Plan';
+
+  @override
+  String get planCategoryBudgets => 'Category budgets (optional)';
+
+  @override
+  String get planCategoryNumber => 'Cat';
+
+  @override
+  String get planCategoryName => 'Category name';
+
+  @override
+  String get planCategoryAmount => 'Budget';
+
+  @override
+  String get planAddCategory => 'Add category';
+
+  @override
+  String get planRemoveCategory => 'Remove category';
 }

@@ -545,9 +545,284 @@ as double,
 
 
 /// @nodoc
+mixin _$ClaimRemittance {
+
+ String get status; double get paidAmount; String? get paidAt; String get reference; String get notes;
+/// Create a copy of ClaimRemittance
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ClaimRemittanceCopyWith<ClaimRemittance> get copyWith => _$ClaimRemittanceCopyWithImpl<ClaimRemittance>(this as ClaimRemittance, _$identity);
+
+  /// Serializes this ClaimRemittance to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClaimRemittance&&(identical(other.status, status) || other.status == status)&&(identical(other.paidAmount, paidAmount) || other.paidAmount == paidAmount)&&(identical(other.paidAt, paidAt) || other.paidAt == paidAt)&&(identical(other.reference, reference) || other.reference == reference)&&(identical(other.notes, notes) || other.notes == notes));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,status,paidAmount,paidAt,reference,notes);
+
+@override
+String toString() {
+  return 'ClaimRemittance(status: $status, paidAmount: $paidAmount, paidAt: $paidAt, reference: $reference, notes: $notes)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ClaimRemittanceCopyWith<$Res>  {
+  factory $ClaimRemittanceCopyWith(ClaimRemittance value, $Res Function(ClaimRemittance) _then) = _$ClaimRemittanceCopyWithImpl;
+@useResult
+$Res call({
+ String status, double paidAmount, String? paidAt, String reference, String notes
+});
+
+
+
+
+}
+/// @nodoc
+class _$ClaimRemittanceCopyWithImpl<$Res>
+    implements $ClaimRemittanceCopyWith<$Res> {
+  _$ClaimRemittanceCopyWithImpl(this._self, this._then);
+
+  final ClaimRemittance _self;
+  final $Res Function(ClaimRemittance) _then;
+
+/// Create a copy of ClaimRemittance
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? paidAmount = null,Object? paidAt = freezed,Object? reference = null,Object? notes = null,}) {
+  return _then(_self.copyWith(
+status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,paidAmount: null == paidAmount ? _self.paidAmount : paidAmount // ignore: cast_nullable_to_non_nullable
+as double,paidAt: freezed == paidAt ? _self.paidAt : paidAt // ignore: cast_nullable_to_non_nullable
+as String?,reference: null == reference ? _self.reference : reference // ignore: cast_nullable_to_non_nullable
+as String,notes: null == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ClaimRemittance].
+extension ClaimRemittancePatterns on ClaimRemittance {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ClaimRemittance value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ClaimRemittance() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ClaimRemittance value)  $default,){
+final _that = this;
+switch (_that) {
+case _ClaimRemittance():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ClaimRemittance value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ClaimRemittance() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String status,  double paidAmount,  String? paidAt,  String reference,  String notes)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ClaimRemittance() when $default != null:
+return $default(_that.status,_that.paidAmount,_that.paidAt,_that.reference,_that.notes);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String status,  double paidAmount,  String? paidAt,  String reference,  String notes)  $default,) {final _that = this;
+switch (_that) {
+case _ClaimRemittance():
+return $default(_that.status,_that.paidAmount,_that.paidAt,_that.reference,_that.notes);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String status,  double paidAmount,  String? paidAt,  String reference,  String notes)?  $default,) {final _that = this;
+switch (_that) {
+case _ClaimRemittance() when $default != null:
+return $default(_that.status,_that.paidAmount,_that.paidAt,_that.reference,_that.notes);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _ClaimRemittance implements ClaimRemittance {
+  const _ClaimRemittance({this.status = 'unpaid', this.paidAmount = 0, this.paidAt, this.reference = '', this.notes = ''});
+  factory _ClaimRemittance.fromJson(Map<String, dynamic> json) => _$ClaimRemittanceFromJson(json);
+
+@override@JsonKey() final  String status;
+@override@JsonKey() final  double paidAmount;
+@override final  String? paidAt;
+@override@JsonKey() final  String reference;
+@override@JsonKey() final  String notes;
+
+/// Create a copy of ClaimRemittance
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ClaimRemittanceCopyWith<_ClaimRemittance> get copyWith => __$ClaimRemittanceCopyWithImpl<_ClaimRemittance>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$ClaimRemittanceToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClaimRemittance&&(identical(other.status, status) || other.status == status)&&(identical(other.paidAmount, paidAmount) || other.paidAmount == paidAmount)&&(identical(other.paidAt, paidAt) || other.paidAt == paidAt)&&(identical(other.reference, reference) || other.reference == reference)&&(identical(other.notes, notes) || other.notes == notes));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,status,paidAmount,paidAt,reference,notes);
+
+@override
+String toString() {
+  return 'ClaimRemittance(status: $status, paidAmount: $paidAmount, paidAt: $paidAt, reference: $reference, notes: $notes)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ClaimRemittanceCopyWith<$Res> implements $ClaimRemittanceCopyWith<$Res> {
+  factory _$ClaimRemittanceCopyWith(_ClaimRemittance value, $Res Function(_ClaimRemittance) _then) = __$ClaimRemittanceCopyWithImpl;
+@override @useResult
+$Res call({
+ String status, double paidAmount, String? paidAt, String reference, String notes
+});
+
+
+
+
+}
+/// @nodoc
+class __$ClaimRemittanceCopyWithImpl<$Res>
+    implements _$ClaimRemittanceCopyWith<$Res> {
+  __$ClaimRemittanceCopyWithImpl(this._self, this._then);
+
+  final _ClaimRemittance _self;
+  final $Res Function(_ClaimRemittance) _then;
+
+/// Create a copy of ClaimRemittance
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? paidAmount = null,Object? paidAt = freezed,Object? reference = null,Object? notes = null,}) {
+  return _then(_ClaimRemittance(
+status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,paidAmount: null == paidAmount ? _self.paidAmount : paidAmount // ignore: cast_nullable_to_non_nullable
+as double,paidAt: freezed == paidAt ? _self.paidAt : paidAt // ignore: cast_nullable_to_non_nullable
+as String?,reference: null == reference ? _self.reference : reference // ignore: cast_nullable_to_non_nullable
+as String,notes: null == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
 mixin _$ClaimBatch {
 
- String get id; String get status; String get fundingType; String get registrationNumber; String get abn; ClaimPeriod? get period; ClaimTotals get totals; String? get generatedAt; String? get reconciledAt;
+ String get id; String get status; String get fundingType; String get registrationNumber; String get abn; ClaimPeriod? get period; ClaimTotals get totals; String? get generatedAt; String? get submittedAt; String? get reconciledAt; String get portalReference; String get submittedBy; ClaimRemittance? get remittance; String? get resubmissionOf; String? get resubmittedBatchId;
 /// Create a copy of ClaimBatch
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -560,16 +835,16 @@ $ClaimBatchCopyWith<ClaimBatch> get copyWith => _$ClaimBatchCopyWithImpl<ClaimBa
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClaimBatch&&(identical(other.id, id) || other.id == id)&&(identical(other.status, status) || other.status == status)&&(identical(other.fundingType, fundingType) || other.fundingType == fundingType)&&(identical(other.registrationNumber, registrationNumber) || other.registrationNumber == registrationNumber)&&(identical(other.abn, abn) || other.abn == abn)&&(identical(other.period, period) || other.period == period)&&(identical(other.totals, totals) || other.totals == totals)&&(identical(other.generatedAt, generatedAt) || other.generatedAt == generatedAt)&&(identical(other.reconciledAt, reconciledAt) || other.reconciledAt == reconciledAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClaimBatch&&(identical(other.id, id) || other.id == id)&&(identical(other.status, status) || other.status == status)&&(identical(other.fundingType, fundingType) || other.fundingType == fundingType)&&(identical(other.registrationNumber, registrationNumber) || other.registrationNumber == registrationNumber)&&(identical(other.abn, abn) || other.abn == abn)&&(identical(other.period, period) || other.period == period)&&(identical(other.totals, totals) || other.totals == totals)&&(identical(other.generatedAt, generatedAt) || other.generatedAt == generatedAt)&&(identical(other.submittedAt, submittedAt) || other.submittedAt == submittedAt)&&(identical(other.reconciledAt, reconciledAt) || other.reconciledAt == reconciledAt)&&(identical(other.portalReference, portalReference) || other.portalReference == portalReference)&&(identical(other.submittedBy, submittedBy) || other.submittedBy == submittedBy)&&(identical(other.remittance, remittance) || other.remittance == remittance)&&(identical(other.resubmissionOf, resubmissionOf) || other.resubmissionOf == resubmissionOf)&&(identical(other.resubmittedBatchId, resubmittedBatchId) || other.resubmittedBatchId == resubmittedBatchId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,status,fundingType,registrationNumber,abn,period,totals,generatedAt,reconciledAt);
+int get hashCode => Object.hash(runtimeType,id,status,fundingType,registrationNumber,abn,period,totals,generatedAt,submittedAt,reconciledAt,portalReference,submittedBy,remittance,resubmissionOf,resubmittedBatchId);
 
 @override
 String toString() {
-  return 'ClaimBatch(id: $id, status: $status, fundingType: $fundingType, registrationNumber: $registrationNumber, abn: $abn, period: $period, totals: $totals, generatedAt: $generatedAt, reconciledAt: $reconciledAt)';
+  return 'ClaimBatch(id: $id, status: $status, fundingType: $fundingType, registrationNumber: $registrationNumber, abn: $abn, period: $period, totals: $totals, generatedAt: $generatedAt, submittedAt: $submittedAt, reconciledAt: $reconciledAt, portalReference: $portalReference, submittedBy: $submittedBy, remittance: $remittance, resubmissionOf: $resubmissionOf, resubmittedBatchId: $resubmittedBatchId)';
 }
 
 
@@ -580,11 +855,11 @@ abstract mixin class $ClaimBatchCopyWith<$Res>  {
   factory $ClaimBatchCopyWith(ClaimBatch value, $Res Function(ClaimBatch) _then) = _$ClaimBatchCopyWithImpl;
 @useResult
 $Res call({
- String id, String status, String fundingType, String registrationNumber, String abn, ClaimPeriod? period, ClaimTotals totals, String? generatedAt, String? reconciledAt
+ String id, String status, String fundingType, String registrationNumber, String abn, ClaimPeriod? period, ClaimTotals totals, String? generatedAt, String? submittedAt, String? reconciledAt, String portalReference, String submittedBy, ClaimRemittance? remittance, String? resubmissionOf, String? resubmittedBatchId
 });
 
 
-$ClaimPeriodCopyWith<$Res>? get period;$ClaimTotalsCopyWith<$Res> get totals;
+$ClaimPeriodCopyWith<$Res>? get period;$ClaimTotalsCopyWith<$Res> get totals;$ClaimRemittanceCopyWith<$Res>? get remittance;
 
 }
 /// @nodoc
@@ -597,7 +872,7 @@ class _$ClaimBatchCopyWithImpl<$Res>
 
 /// Create a copy of ClaimBatch
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? status = null,Object? fundingType = null,Object? registrationNumber = null,Object? abn = null,Object? period = freezed,Object? totals = null,Object? generatedAt = freezed,Object? reconciledAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? status = null,Object? fundingType = null,Object? registrationNumber = null,Object? abn = null,Object? period = freezed,Object? totals = null,Object? generatedAt = freezed,Object? submittedAt = freezed,Object? reconciledAt = freezed,Object? portalReference = null,Object? submittedBy = null,Object? remittance = freezed,Object? resubmissionOf = freezed,Object? resubmittedBatchId = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
@@ -607,7 +882,13 @@ as String,abn: null == abn ? _self.abn : abn // ignore: cast_nullable_to_non_nul
 as String,period: freezed == period ? _self.period : period // ignore: cast_nullable_to_non_nullable
 as ClaimPeriod?,totals: null == totals ? _self.totals : totals // ignore: cast_nullable_to_non_nullable
 as ClaimTotals,generatedAt: freezed == generatedAt ? _self.generatedAt : generatedAt // ignore: cast_nullable_to_non_nullable
+as String?,submittedAt: freezed == submittedAt ? _self.submittedAt : submittedAt // ignore: cast_nullable_to_non_nullable
 as String?,reconciledAt: freezed == reconciledAt ? _self.reconciledAt : reconciledAt // ignore: cast_nullable_to_non_nullable
+as String?,portalReference: null == portalReference ? _self.portalReference : portalReference // ignore: cast_nullable_to_non_nullable
+as String,submittedBy: null == submittedBy ? _self.submittedBy : submittedBy // ignore: cast_nullable_to_non_nullable
+as String,remittance: freezed == remittance ? _self.remittance : remittance // ignore: cast_nullable_to_non_nullable
+as ClaimRemittance?,resubmissionOf: freezed == resubmissionOf ? _self.resubmissionOf : resubmissionOf // ignore: cast_nullable_to_non_nullable
+as String?,resubmittedBatchId: freezed == resubmittedBatchId ? _self.resubmittedBatchId : resubmittedBatchId // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -631,6 +912,18 @@ $ClaimTotalsCopyWith<$Res> get totals {
   
   return $ClaimTotalsCopyWith<$Res>(_self.totals, (value) {
     return _then(_self.copyWith(totals: value));
+  });
+}/// Create a copy of ClaimBatch
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ClaimRemittanceCopyWith<$Res>? get remittance {
+    if (_self.remittance == null) {
+    return null;
+  }
+
+  return $ClaimRemittanceCopyWith<$Res>(_self.remittance!, (value) {
+    return _then(_self.copyWith(remittance: value));
   });
 }
 }
@@ -714,10 +1007,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String status,  String fundingType,  String registrationNumber,  String abn,  ClaimPeriod? period,  ClaimTotals totals,  String? generatedAt,  String? reconciledAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String status,  String fundingType,  String registrationNumber,  String abn,  ClaimPeriod? period,  ClaimTotals totals,  String? generatedAt,  String? submittedAt,  String? reconciledAt,  String portalReference,  String submittedBy,  ClaimRemittance? remittance,  String? resubmissionOf,  String? resubmittedBatchId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ClaimBatch() when $default != null:
-return $default(_that.id,_that.status,_that.fundingType,_that.registrationNumber,_that.abn,_that.period,_that.totals,_that.generatedAt,_that.reconciledAt);case _:
+return $default(_that.id,_that.status,_that.fundingType,_that.registrationNumber,_that.abn,_that.period,_that.totals,_that.generatedAt,_that.submittedAt,_that.reconciledAt,_that.portalReference,_that.submittedBy,_that.remittance,_that.resubmissionOf,_that.resubmittedBatchId);case _:
   return orElse();
 
 }
@@ -735,10 +1028,10 @@ return $default(_that.id,_that.status,_that.fundingType,_that.registrationNumber
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String status,  String fundingType,  String registrationNumber,  String abn,  ClaimPeriod? period,  ClaimTotals totals,  String? generatedAt,  String? reconciledAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String status,  String fundingType,  String registrationNumber,  String abn,  ClaimPeriod? period,  ClaimTotals totals,  String? generatedAt,  String? submittedAt,  String? reconciledAt,  String portalReference,  String submittedBy,  ClaimRemittance? remittance,  String? resubmissionOf,  String? resubmittedBatchId)  $default,) {final _that = this;
 switch (_that) {
 case _ClaimBatch():
-return $default(_that.id,_that.status,_that.fundingType,_that.registrationNumber,_that.abn,_that.period,_that.totals,_that.generatedAt,_that.reconciledAt);case _:
+return $default(_that.id,_that.status,_that.fundingType,_that.registrationNumber,_that.abn,_that.period,_that.totals,_that.generatedAt,_that.submittedAt,_that.reconciledAt,_that.portalReference,_that.submittedBy,_that.remittance,_that.resubmissionOf,_that.resubmittedBatchId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -755,10 +1048,10 @@ return $default(_that.id,_that.status,_that.fundingType,_that.registrationNumber
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String status,  String fundingType,  String registrationNumber,  String abn,  ClaimPeriod? period,  ClaimTotals totals,  String? generatedAt,  String? reconciledAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String status,  String fundingType,  String registrationNumber,  String abn,  ClaimPeriod? period,  ClaimTotals totals,  String? generatedAt,  String? submittedAt,  String? reconciledAt,  String portalReference,  String submittedBy,  ClaimRemittance? remittance,  String? resubmissionOf,  String? resubmittedBatchId)?  $default,) {final _that = this;
 switch (_that) {
 case _ClaimBatch() when $default != null:
-return $default(_that.id,_that.status,_that.fundingType,_that.registrationNumber,_that.abn,_that.period,_that.totals,_that.generatedAt,_that.reconciledAt);case _:
+return $default(_that.id,_that.status,_that.fundingType,_that.registrationNumber,_that.abn,_that.period,_that.totals,_that.generatedAt,_that.submittedAt,_that.reconciledAt,_that.portalReference,_that.submittedBy,_that.remittance,_that.resubmissionOf,_that.resubmittedBatchId);case _:
   return null;
 
 }
@@ -770,7 +1063,7 @@ return $default(_that.id,_that.status,_that.fundingType,_that.registrationNumber
 @JsonSerializable()
 
 class _ClaimBatch implements ClaimBatch {
-  const _ClaimBatch({required this.id, this.status = 'draft', this.fundingType = 'ndia_managed', this.registrationNumber = '', this.abn = '', this.period, this.totals = const ClaimTotals(), this.generatedAt, this.reconciledAt});
+  const _ClaimBatch({required this.id, this.status = 'draft', this.fundingType = 'ndia_managed', this.registrationNumber = '', this.abn = '', this.period, this.totals = const ClaimTotals(), this.generatedAt, this.submittedAt, this.reconciledAt, this.portalReference = '', this.submittedBy = '', this.remittance, this.resubmissionOf, this.resubmittedBatchId});
   factory _ClaimBatch.fromJson(Map<String, dynamic> json) => _$ClaimBatchFromJson(json);
 
 @override final  String id;
@@ -781,7 +1074,13 @@ class _ClaimBatch implements ClaimBatch {
 @override final  ClaimPeriod? period;
 @override@JsonKey() final  ClaimTotals totals;
 @override final  String? generatedAt;
+@override final  String? submittedAt;
 @override final  String? reconciledAt;
+@override@JsonKey() final  String portalReference;
+@override@JsonKey() final  String submittedBy;
+@override final  ClaimRemittance? remittance;
+@override final  String? resubmissionOf;
+@override final  String? resubmittedBatchId;
 
 /// Create a copy of ClaimBatch
 /// with the given fields replaced by the non-null parameter values.
@@ -796,16 +1095,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClaimBatch&&(identical(other.id, id) || other.id == id)&&(identical(other.status, status) || other.status == status)&&(identical(other.fundingType, fundingType) || other.fundingType == fundingType)&&(identical(other.registrationNumber, registrationNumber) || other.registrationNumber == registrationNumber)&&(identical(other.abn, abn) || other.abn == abn)&&(identical(other.period, period) || other.period == period)&&(identical(other.totals, totals) || other.totals == totals)&&(identical(other.generatedAt, generatedAt) || other.generatedAt == generatedAt)&&(identical(other.reconciledAt, reconciledAt) || other.reconciledAt == reconciledAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClaimBatch&&(identical(other.id, id) || other.id == id)&&(identical(other.status, status) || other.status == status)&&(identical(other.fundingType, fundingType) || other.fundingType == fundingType)&&(identical(other.registrationNumber, registrationNumber) || other.registrationNumber == registrationNumber)&&(identical(other.abn, abn) || other.abn == abn)&&(identical(other.period, period) || other.period == period)&&(identical(other.totals, totals) || other.totals == totals)&&(identical(other.generatedAt, generatedAt) || other.generatedAt == generatedAt)&&(identical(other.submittedAt, submittedAt) || other.submittedAt == submittedAt)&&(identical(other.reconciledAt, reconciledAt) || other.reconciledAt == reconciledAt)&&(identical(other.portalReference, portalReference) || other.portalReference == portalReference)&&(identical(other.submittedBy, submittedBy) || other.submittedBy == submittedBy)&&(identical(other.remittance, remittance) || other.remittance == remittance)&&(identical(other.resubmissionOf, resubmissionOf) || other.resubmissionOf == resubmissionOf)&&(identical(other.resubmittedBatchId, resubmittedBatchId) || other.resubmittedBatchId == resubmittedBatchId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,status,fundingType,registrationNumber,abn,period,totals,generatedAt,reconciledAt);
+int get hashCode => Object.hash(runtimeType,id,status,fundingType,registrationNumber,abn,period,totals,generatedAt,submittedAt,reconciledAt,portalReference,submittedBy,remittance,resubmissionOf,resubmittedBatchId);
 
 @override
 String toString() {
-  return 'ClaimBatch(id: $id, status: $status, fundingType: $fundingType, registrationNumber: $registrationNumber, abn: $abn, period: $period, totals: $totals, generatedAt: $generatedAt, reconciledAt: $reconciledAt)';
+  return 'ClaimBatch(id: $id, status: $status, fundingType: $fundingType, registrationNumber: $registrationNumber, abn: $abn, period: $period, totals: $totals, generatedAt: $generatedAt, submittedAt: $submittedAt, reconciledAt: $reconciledAt, portalReference: $portalReference, submittedBy: $submittedBy, remittance: $remittance, resubmissionOf: $resubmissionOf, resubmittedBatchId: $resubmittedBatchId)';
 }
 
 
@@ -816,11 +1115,11 @@ abstract mixin class _$ClaimBatchCopyWith<$Res> implements $ClaimBatchCopyWith<$
   factory _$ClaimBatchCopyWith(_ClaimBatch value, $Res Function(_ClaimBatch) _then) = __$ClaimBatchCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String status, String fundingType, String registrationNumber, String abn, ClaimPeriod? period, ClaimTotals totals, String? generatedAt, String? reconciledAt
+ String id, String status, String fundingType, String registrationNumber, String abn, ClaimPeriod? period, ClaimTotals totals, String? generatedAt, String? submittedAt, String? reconciledAt, String portalReference, String submittedBy, ClaimRemittance? remittance, String? resubmissionOf, String? resubmittedBatchId
 });
 
 
-@override $ClaimPeriodCopyWith<$Res>? get period;@override $ClaimTotalsCopyWith<$Res> get totals;
+@override $ClaimPeriodCopyWith<$Res>? get period;@override $ClaimTotalsCopyWith<$Res> get totals;@override $ClaimRemittanceCopyWith<$Res>? get remittance;
 
 }
 /// @nodoc
@@ -833,7 +1132,7 @@ class __$ClaimBatchCopyWithImpl<$Res>
 
 /// Create a copy of ClaimBatch
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? status = null,Object? fundingType = null,Object? registrationNumber = null,Object? abn = null,Object? period = freezed,Object? totals = null,Object? generatedAt = freezed,Object? reconciledAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? status = null,Object? fundingType = null,Object? registrationNumber = null,Object? abn = null,Object? period = freezed,Object? totals = null,Object? generatedAt = freezed,Object? submittedAt = freezed,Object? reconciledAt = freezed,Object? portalReference = null,Object? submittedBy = null,Object? remittance = freezed,Object? resubmissionOf = freezed,Object? resubmittedBatchId = freezed,}) {
   return _then(_ClaimBatch(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
@@ -843,7 +1142,13 @@ as String,abn: null == abn ? _self.abn : abn // ignore: cast_nullable_to_non_nul
 as String,period: freezed == period ? _self.period : period // ignore: cast_nullable_to_non_nullable
 as ClaimPeriod?,totals: null == totals ? _self.totals : totals // ignore: cast_nullable_to_non_nullable
 as ClaimTotals,generatedAt: freezed == generatedAt ? _self.generatedAt : generatedAt // ignore: cast_nullable_to_non_nullable
+as String?,submittedAt: freezed == submittedAt ? _self.submittedAt : submittedAt // ignore: cast_nullable_to_non_nullable
 as String?,reconciledAt: freezed == reconciledAt ? _self.reconciledAt : reconciledAt // ignore: cast_nullable_to_non_nullable
+as String?,portalReference: null == portalReference ? _self.portalReference : portalReference // ignore: cast_nullable_to_non_nullable
+as String,submittedBy: null == submittedBy ? _self.submittedBy : submittedBy // ignore: cast_nullable_to_non_nullable
+as String,remittance: freezed == remittance ? _self.remittance : remittance // ignore: cast_nullable_to_non_nullable
+as ClaimRemittance?,resubmissionOf: freezed == resubmissionOf ? _self.resubmissionOf : resubmissionOf // ignore: cast_nullable_to_non_nullable
+as String?,resubmittedBatchId: freezed == resubmittedBatchId ? _self.resubmittedBatchId : resubmittedBatchId // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -869,6 +1174,18 @@ $ClaimTotalsCopyWith<$Res> get totals {
   return $ClaimTotalsCopyWith<$Res>(_self.totals, (value) {
     return _then(_self.copyWith(totals: value));
   });
+}/// Create a copy of ClaimBatch
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ClaimRemittanceCopyWith<$Res>? get remittance {
+    if (_self.remittance == null) {
+    return null;
+  }
+
+  return $ClaimRemittanceCopyWith<$Res>(_self.remittance!, (value) {
+    return _then(_self.copyWith(remittance: value));
+  });
 }
 }
 
@@ -876,7 +1193,7 @@ $ClaimTotalsCopyWith<$Res> get totals {
 /// @nodoc
 mixin _$ClaimLine {
 
- String get id; String get ndisNumber; String get supportNumber; String get claimReference; double get quantity; double get unitPrice; double get requestedAmount; String get gstCode; String get claimType; String get status; String get rejectionReason; String? get serviceDate;
+ String get id; String get ndisNumber; String get supportNumber; String get claimReference; double get quantity; double get unitPrice; double get requestedAmount; String get gstCode; String get claimType; String get status; String get rejectionReason; double get paidAmount; String? get paidAt; String get remittanceReference; String? get resubmittedInBatchId; String? get serviceDate;
 /// Create a copy of ClaimLine
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -889,16 +1206,16 @@ $ClaimLineCopyWith<ClaimLine> get copyWith => _$ClaimLineCopyWithImpl<ClaimLine>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClaimLine&&(identical(other.id, id) || other.id == id)&&(identical(other.ndisNumber, ndisNumber) || other.ndisNumber == ndisNumber)&&(identical(other.supportNumber, supportNumber) || other.supportNumber == supportNumber)&&(identical(other.claimReference, claimReference) || other.claimReference == claimReference)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.unitPrice, unitPrice) || other.unitPrice == unitPrice)&&(identical(other.requestedAmount, requestedAmount) || other.requestedAmount == requestedAmount)&&(identical(other.gstCode, gstCode) || other.gstCode == gstCode)&&(identical(other.claimType, claimType) || other.claimType == claimType)&&(identical(other.status, status) || other.status == status)&&(identical(other.rejectionReason, rejectionReason) || other.rejectionReason == rejectionReason)&&(identical(other.serviceDate, serviceDate) || other.serviceDate == serviceDate));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClaimLine&&(identical(other.id, id) || other.id == id)&&(identical(other.ndisNumber, ndisNumber) || other.ndisNumber == ndisNumber)&&(identical(other.supportNumber, supportNumber) || other.supportNumber == supportNumber)&&(identical(other.claimReference, claimReference) || other.claimReference == claimReference)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.unitPrice, unitPrice) || other.unitPrice == unitPrice)&&(identical(other.requestedAmount, requestedAmount) || other.requestedAmount == requestedAmount)&&(identical(other.gstCode, gstCode) || other.gstCode == gstCode)&&(identical(other.claimType, claimType) || other.claimType == claimType)&&(identical(other.status, status) || other.status == status)&&(identical(other.rejectionReason, rejectionReason) || other.rejectionReason == rejectionReason)&&(identical(other.paidAmount, paidAmount) || other.paidAmount == paidAmount)&&(identical(other.paidAt, paidAt) || other.paidAt == paidAt)&&(identical(other.remittanceReference, remittanceReference) || other.remittanceReference == remittanceReference)&&(identical(other.resubmittedInBatchId, resubmittedInBatchId) || other.resubmittedInBatchId == resubmittedInBatchId)&&(identical(other.serviceDate, serviceDate) || other.serviceDate == serviceDate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,ndisNumber,supportNumber,claimReference,quantity,unitPrice,requestedAmount,gstCode,claimType,status,rejectionReason,serviceDate);
+int get hashCode => Object.hash(runtimeType,id,ndisNumber,supportNumber,claimReference,quantity,unitPrice,requestedAmount,gstCode,claimType,status,rejectionReason,paidAmount,paidAt,remittanceReference,resubmittedInBatchId,serviceDate);
 
 @override
 String toString() {
-  return 'ClaimLine(id: $id, ndisNumber: $ndisNumber, supportNumber: $supportNumber, claimReference: $claimReference, quantity: $quantity, unitPrice: $unitPrice, requestedAmount: $requestedAmount, gstCode: $gstCode, claimType: $claimType, status: $status, rejectionReason: $rejectionReason, serviceDate: $serviceDate)';
+  return 'ClaimLine(id: $id, ndisNumber: $ndisNumber, supportNumber: $supportNumber, claimReference: $claimReference, quantity: $quantity, unitPrice: $unitPrice, requestedAmount: $requestedAmount, gstCode: $gstCode, claimType: $claimType, status: $status, rejectionReason: $rejectionReason, paidAmount: $paidAmount, paidAt: $paidAt, remittanceReference: $remittanceReference, resubmittedInBatchId: $resubmittedInBatchId, serviceDate: $serviceDate)';
 }
 
 
@@ -909,7 +1226,7 @@ abstract mixin class $ClaimLineCopyWith<$Res>  {
   factory $ClaimLineCopyWith(ClaimLine value, $Res Function(ClaimLine) _then) = _$ClaimLineCopyWithImpl;
 @useResult
 $Res call({
- String id, String ndisNumber, String supportNumber, String claimReference, double quantity, double unitPrice, double requestedAmount, String gstCode, String claimType, String status, String rejectionReason, String? serviceDate
+ String id, String ndisNumber, String supportNumber, String claimReference, double quantity, double unitPrice, double requestedAmount, String gstCode, String claimType, String status, String rejectionReason, double paidAmount, String? paidAt, String remittanceReference, String? resubmittedInBatchId, String? serviceDate
 });
 
 
@@ -926,7 +1243,7 @@ class _$ClaimLineCopyWithImpl<$Res>
 
 /// Create a copy of ClaimLine
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? ndisNumber = null,Object? supportNumber = null,Object? claimReference = null,Object? quantity = null,Object? unitPrice = null,Object? requestedAmount = null,Object? gstCode = null,Object? claimType = null,Object? status = null,Object? rejectionReason = null,Object? serviceDate = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? ndisNumber = null,Object? supportNumber = null,Object? claimReference = null,Object? quantity = null,Object? unitPrice = null,Object? requestedAmount = null,Object? gstCode = null,Object? claimType = null,Object? status = null,Object? rejectionReason = null,Object? paidAmount = null,Object? paidAt = freezed,Object? remittanceReference = null,Object? resubmittedInBatchId = freezed,Object? serviceDate = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,ndisNumber: null == ndisNumber ? _self.ndisNumber : ndisNumber // ignore: cast_nullable_to_non_nullable
@@ -939,7 +1256,11 @@ as double,gstCode: null == gstCode ? _self.gstCode : gstCode // ignore: cast_nul
 as String,claimType: null == claimType ? _self.claimType : claimType // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String,rejectionReason: null == rejectionReason ? _self.rejectionReason : rejectionReason // ignore: cast_nullable_to_non_nullable
-as String,serviceDate: freezed == serviceDate ? _self.serviceDate : serviceDate // ignore: cast_nullable_to_non_nullable
+as String,paidAmount: null == paidAmount ? _self.paidAmount : paidAmount // ignore: cast_nullable_to_non_nullable
+as double,paidAt: freezed == paidAt ? _self.paidAt : paidAt // ignore: cast_nullable_to_non_nullable
+as String?,remittanceReference: null == remittanceReference ? _self.remittanceReference : remittanceReference // ignore: cast_nullable_to_non_nullable
+as String,resubmittedInBatchId: freezed == resubmittedInBatchId ? _self.resubmittedInBatchId : resubmittedInBatchId // ignore: cast_nullable_to_non_nullable
+as String?,serviceDate: freezed == serviceDate ? _self.serviceDate : serviceDate // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -1025,10 +1346,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String ndisNumber,  String supportNumber,  String claimReference,  double quantity,  double unitPrice,  double requestedAmount,  String gstCode,  String claimType,  String status,  String rejectionReason,  String? serviceDate)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String ndisNumber,  String supportNumber,  String claimReference,  double quantity,  double unitPrice,  double requestedAmount,  String gstCode,  String claimType,  String status,  String rejectionReason,  double paidAmount,  String? paidAt,  String remittanceReference,  String? resubmittedInBatchId,  String? serviceDate)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ClaimLine() when $default != null:
-return $default(_that.id,_that.ndisNumber,_that.supportNumber,_that.claimReference,_that.quantity,_that.unitPrice,_that.requestedAmount,_that.gstCode,_that.claimType,_that.status,_that.rejectionReason,_that.serviceDate);case _:
+return $default(_that.id,_that.ndisNumber,_that.supportNumber,_that.claimReference,_that.quantity,_that.unitPrice,_that.requestedAmount,_that.gstCode,_that.claimType,_that.status,_that.rejectionReason,_that.paidAmount,_that.paidAt,_that.remittanceReference,_that.resubmittedInBatchId,_that.serviceDate);case _:
   return orElse();
 
 }
@@ -1046,10 +1367,10 @@ return $default(_that.id,_that.ndisNumber,_that.supportNumber,_that.claimReferen
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String ndisNumber,  String supportNumber,  String claimReference,  double quantity,  double unitPrice,  double requestedAmount,  String gstCode,  String claimType,  String status,  String rejectionReason,  String? serviceDate)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String ndisNumber,  String supportNumber,  String claimReference,  double quantity,  double unitPrice,  double requestedAmount,  String gstCode,  String claimType,  String status,  String rejectionReason,  double paidAmount,  String? paidAt,  String remittanceReference,  String? resubmittedInBatchId,  String? serviceDate)  $default,) {final _that = this;
 switch (_that) {
 case _ClaimLine():
-return $default(_that.id,_that.ndisNumber,_that.supportNumber,_that.claimReference,_that.quantity,_that.unitPrice,_that.requestedAmount,_that.gstCode,_that.claimType,_that.status,_that.rejectionReason,_that.serviceDate);case _:
+return $default(_that.id,_that.ndisNumber,_that.supportNumber,_that.claimReference,_that.quantity,_that.unitPrice,_that.requestedAmount,_that.gstCode,_that.claimType,_that.status,_that.rejectionReason,_that.paidAmount,_that.paidAt,_that.remittanceReference,_that.resubmittedInBatchId,_that.serviceDate);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1066,10 +1387,10 @@ return $default(_that.id,_that.ndisNumber,_that.supportNumber,_that.claimReferen
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String ndisNumber,  String supportNumber,  String claimReference,  double quantity,  double unitPrice,  double requestedAmount,  String gstCode,  String claimType,  String status,  String rejectionReason,  String? serviceDate)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String ndisNumber,  String supportNumber,  String claimReference,  double quantity,  double unitPrice,  double requestedAmount,  String gstCode,  String claimType,  String status,  String rejectionReason,  double paidAmount,  String? paidAt,  String remittanceReference,  String? resubmittedInBatchId,  String? serviceDate)?  $default,) {final _that = this;
 switch (_that) {
 case _ClaimLine() when $default != null:
-return $default(_that.id,_that.ndisNumber,_that.supportNumber,_that.claimReference,_that.quantity,_that.unitPrice,_that.requestedAmount,_that.gstCode,_that.claimType,_that.status,_that.rejectionReason,_that.serviceDate);case _:
+return $default(_that.id,_that.ndisNumber,_that.supportNumber,_that.claimReference,_that.quantity,_that.unitPrice,_that.requestedAmount,_that.gstCode,_that.claimType,_that.status,_that.rejectionReason,_that.paidAmount,_that.paidAt,_that.remittanceReference,_that.resubmittedInBatchId,_that.serviceDate);case _:
   return null;
 
 }
@@ -1081,7 +1402,7 @@ return $default(_that.id,_that.ndisNumber,_that.supportNumber,_that.claimReferen
 @JsonSerializable()
 
 class _ClaimLine implements ClaimLine {
-  const _ClaimLine({required this.id, this.ndisNumber = '', this.supportNumber = '', this.claimReference = '', this.quantity = 0, this.unitPrice = 0, this.requestedAmount = 0, this.gstCode = 'P2', this.claimType = 'DIRECT_SERVICE', this.status = 'pending', this.rejectionReason = '', this.serviceDate});
+  const _ClaimLine({required this.id, this.ndisNumber = '', this.supportNumber = '', this.claimReference = '', this.quantity = 0, this.unitPrice = 0, this.requestedAmount = 0, this.gstCode = 'P2', this.claimType = 'DIRECT_SERVICE', this.status = 'pending', this.rejectionReason = '', this.paidAmount = 0, this.paidAt, this.remittanceReference = '', this.resubmittedInBatchId, this.serviceDate});
   factory _ClaimLine.fromJson(Map<String, dynamic> json) => _$ClaimLineFromJson(json);
 
 @override final  String id;
@@ -1095,6 +1416,10 @@ class _ClaimLine implements ClaimLine {
 @override@JsonKey() final  String claimType;
 @override@JsonKey() final  String status;
 @override@JsonKey() final  String rejectionReason;
+@override@JsonKey() final  double paidAmount;
+@override final  String? paidAt;
+@override@JsonKey() final  String remittanceReference;
+@override final  String? resubmittedInBatchId;
 @override final  String? serviceDate;
 
 /// Create a copy of ClaimLine
@@ -1110,16 +1435,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClaimLine&&(identical(other.id, id) || other.id == id)&&(identical(other.ndisNumber, ndisNumber) || other.ndisNumber == ndisNumber)&&(identical(other.supportNumber, supportNumber) || other.supportNumber == supportNumber)&&(identical(other.claimReference, claimReference) || other.claimReference == claimReference)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.unitPrice, unitPrice) || other.unitPrice == unitPrice)&&(identical(other.requestedAmount, requestedAmount) || other.requestedAmount == requestedAmount)&&(identical(other.gstCode, gstCode) || other.gstCode == gstCode)&&(identical(other.claimType, claimType) || other.claimType == claimType)&&(identical(other.status, status) || other.status == status)&&(identical(other.rejectionReason, rejectionReason) || other.rejectionReason == rejectionReason)&&(identical(other.serviceDate, serviceDate) || other.serviceDate == serviceDate));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClaimLine&&(identical(other.id, id) || other.id == id)&&(identical(other.ndisNumber, ndisNumber) || other.ndisNumber == ndisNumber)&&(identical(other.supportNumber, supportNumber) || other.supportNumber == supportNumber)&&(identical(other.claimReference, claimReference) || other.claimReference == claimReference)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.unitPrice, unitPrice) || other.unitPrice == unitPrice)&&(identical(other.requestedAmount, requestedAmount) || other.requestedAmount == requestedAmount)&&(identical(other.gstCode, gstCode) || other.gstCode == gstCode)&&(identical(other.claimType, claimType) || other.claimType == claimType)&&(identical(other.status, status) || other.status == status)&&(identical(other.rejectionReason, rejectionReason) || other.rejectionReason == rejectionReason)&&(identical(other.paidAmount, paidAmount) || other.paidAmount == paidAmount)&&(identical(other.paidAt, paidAt) || other.paidAt == paidAt)&&(identical(other.remittanceReference, remittanceReference) || other.remittanceReference == remittanceReference)&&(identical(other.resubmittedInBatchId, resubmittedInBatchId) || other.resubmittedInBatchId == resubmittedInBatchId)&&(identical(other.serviceDate, serviceDate) || other.serviceDate == serviceDate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,ndisNumber,supportNumber,claimReference,quantity,unitPrice,requestedAmount,gstCode,claimType,status,rejectionReason,serviceDate);
+int get hashCode => Object.hash(runtimeType,id,ndisNumber,supportNumber,claimReference,quantity,unitPrice,requestedAmount,gstCode,claimType,status,rejectionReason,paidAmount,paidAt,remittanceReference,resubmittedInBatchId,serviceDate);
 
 @override
 String toString() {
-  return 'ClaimLine(id: $id, ndisNumber: $ndisNumber, supportNumber: $supportNumber, claimReference: $claimReference, quantity: $quantity, unitPrice: $unitPrice, requestedAmount: $requestedAmount, gstCode: $gstCode, claimType: $claimType, status: $status, rejectionReason: $rejectionReason, serviceDate: $serviceDate)';
+  return 'ClaimLine(id: $id, ndisNumber: $ndisNumber, supportNumber: $supportNumber, claimReference: $claimReference, quantity: $quantity, unitPrice: $unitPrice, requestedAmount: $requestedAmount, gstCode: $gstCode, claimType: $claimType, status: $status, rejectionReason: $rejectionReason, paidAmount: $paidAmount, paidAt: $paidAt, remittanceReference: $remittanceReference, resubmittedInBatchId: $resubmittedInBatchId, serviceDate: $serviceDate)';
 }
 
 
@@ -1130,7 +1455,7 @@ abstract mixin class _$ClaimLineCopyWith<$Res> implements $ClaimLineCopyWith<$Re
   factory _$ClaimLineCopyWith(_ClaimLine value, $Res Function(_ClaimLine) _then) = __$ClaimLineCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String ndisNumber, String supportNumber, String claimReference, double quantity, double unitPrice, double requestedAmount, String gstCode, String claimType, String status, String rejectionReason, String? serviceDate
+ String id, String ndisNumber, String supportNumber, String claimReference, double quantity, double unitPrice, double requestedAmount, String gstCode, String claimType, String status, String rejectionReason, double paidAmount, String? paidAt, String remittanceReference, String? resubmittedInBatchId, String? serviceDate
 });
 
 
@@ -1147,7 +1472,7 @@ class __$ClaimLineCopyWithImpl<$Res>
 
 /// Create a copy of ClaimLine
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? ndisNumber = null,Object? supportNumber = null,Object? claimReference = null,Object? quantity = null,Object? unitPrice = null,Object? requestedAmount = null,Object? gstCode = null,Object? claimType = null,Object? status = null,Object? rejectionReason = null,Object? serviceDate = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? ndisNumber = null,Object? supportNumber = null,Object? claimReference = null,Object? quantity = null,Object? unitPrice = null,Object? requestedAmount = null,Object? gstCode = null,Object? claimType = null,Object? status = null,Object? rejectionReason = null,Object? paidAmount = null,Object? paidAt = freezed,Object? remittanceReference = null,Object? resubmittedInBatchId = freezed,Object? serviceDate = freezed,}) {
   return _then(_ClaimLine(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,ndisNumber: null == ndisNumber ? _self.ndisNumber : ndisNumber // ignore: cast_nullable_to_non_nullable
@@ -1160,7 +1485,11 @@ as double,gstCode: null == gstCode ? _self.gstCode : gstCode // ignore: cast_nul
 as String,claimType: null == claimType ? _self.claimType : claimType // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String,rejectionReason: null == rejectionReason ? _self.rejectionReason : rejectionReason // ignore: cast_nullable_to_non_nullable
-as String,serviceDate: freezed == serviceDate ? _self.serviceDate : serviceDate // ignore: cast_nullable_to_non_nullable
+as String,paidAmount: null == paidAmount ? _self.paidAmount : paidAmount // ignore: cast_nullable_to_non_nullable
+as double,paidAt: freezed == paidAt ? _self.paidAt : paidAt // ignore: cast_nullable_to_non_nullable
+as String?,remittanceReference: null == remittanceReference ? _self.remittanceReference : remittanceReference // ignore: cast_nullable_to_non_nullable
+as String,resubmittedInBatchId: freezed == resubmittedInBatchId ? _self.resubmittedInBatchId : resubmittedInBatchId // ignore: cast_nullable_to_non_nullable
+as String?,serviceDate: freezed == serviceDate ? _self.serviceDate : serviceDate // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

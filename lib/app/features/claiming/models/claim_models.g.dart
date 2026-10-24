@@ -20,6 +20,24 @@ _ClaimTotals _$ClaimTotalsFromJson(Map<String, dynamic> json) => _ClaimTotals(
 Map<String, dynamic> _$ClaimTotalsToJson(_ClaimTotals instance) =>
     <String, dynamic>{'lines': instance.lines, 'amount': instance.amount};
 
+_ClaimRemittance _$ClaimRemittanceFromJson(Map<String, dynamic> json) =>
+    _ClaimRemittance(
+      status: json['status'] as String? ?? 'unpaid',
+      paidAmount: (json['paidAmount'] as num?)?.toDouble() ?? 0,
+      paidAt: json['paidAt'] as String?,
+      reference: json['reference'] as String? ?? '',
+      notes: json['notes'] as String? ?? '',
+    );
+
+Map<String, dynamic> _$ClaimRemittanceToJson(_ClaimRemittance instance) =>
+    <String, dynamic>{
+      'status': instance.status,
+      'paidAmount': instance.paidAmount,
+      'paidAt': instance.paidAt,
+      'reference': instance.reference,
+      'notes': instance.notes,
+    };
+
 _ClaimBatch _$ClaimBatchFromJson(Map<String, dynamic> json) => _ClaimBatch(
   id: json['id'] as String,
   status: json['status'] as String? ?? 'draft',
@@ -33,7 +51,15 @@ _ClaimBatch _$ClaimBatchFromJson(Map<String, dynamic> json) => _ClaimBatch(
       ? const ClaimTotals()
       : ClaimTotals.fromJson(json['totals'] as Map<String, dynamic>),
   generatedAt: json['generatedAt'] as String?,
+  submittedAt: json['submittedAt'] as String?,
   reconciledAt: json['reconciledAt'] as String?,
+  portalReference: json['portalReference'] as String? ?? '',
+  submittedBy: json['submittedBy'] as String? ?? '',
+  remittance: json['remittance'] == null
+      ? null
+      : ClaimRemittance.fromJson(json['remittance'] as Map<String, dynamic>),
+  resubmissionOf: json['resubmissionOf'] as String?,
+  resubmittedBatchId: json['resubmittedBatchId'] as String?,
 );
 
 Map<String, dynamic> _$ClaimBatchToJson(_ClaimBatch instance) =>
@@ -46,7 +72,13 @@ Map<String, dynamic> _$ClaimBatchToJson(_ClaimBatch instance) =>
       'period': instance.period,
       'totals': instance.totals,
       'generatedAt': instance.generatedAt,
+      'submittedAt': instance.submittedAt,
       'reconciledAt': instance.reconciledAt,
+      'portalReference': instance.portalReference,
+      'submittedBy': instance.submittedBy,
+      'remittance': instance.remittance,
+      'resubmissionOf': instance.resubmissionOf,
+      'resubmittedBatchId': instance.resubmittedBatchId,
     };
 
 _ClaimLine _$ClaimLineFromJson(Map<String, dynamic> json) => _ClaimLine(
@@ -61,6 +93,10 @@ _ClaimLine _$ClaimLineFromJson(Map<String, dynamic> json) => _ClaimLine(
   claimType: json['claimType'] as String? ?? 'DIRECT_SERVICE',
   status: json['status'] as String? ?? 'pending',
   rejectionReason: json['rejectionReason'] as String? ?? '',
+  paidAmount: (json['paidAmount'] as num?)?.toDouble() ?? 0,
+  paidAt: json['paidAt'] as String?,
+  remittanceReference: json['remittanceReference'] as String? ?? '',
+  resubmittedInBatchId: json['resubmittedInBatchId'] as String?,
   serviceDate: json['serviceDate'] as String?,
 );
 
@@ -77,6 +113,10 @@ Map<String, dynamic> _$ClaimLineToJson(_ClaimLine instance) =>
       'claimType': instance.claimType,
       'status': instance.status,
       'rejectionReason': instance.rejectionReason,
+      'paidAmount': instance.paidAmount,
+      'paidAt': instance.paidAt,
+      'remittanceReference': instance.remittanceReference,
+      'resubmittedInBatchId': instance.resubmittedInBatchId,
       'serviceDate': instance.serviceDate,
     };
 

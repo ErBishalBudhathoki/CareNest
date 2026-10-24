@@ -3968,6 +3968,12 @@
   "planUpdated": "NDIS plan updated.",
   "planSaveFailed": "Failed to update the NDIS plan.",
   "planCancel": "Cancel",
-  "planSave": "Save Plan"
+  "planSave": "Save Plan",
+  "planCategoryBudgets": "Category budgets (optional)",
+  "planCategoryNumber": "Cat",
+  "planCategoryName": "Category name",
+  "planCategoryAmount": "Budget",
+  "planAddCategory": "Add category",
+  "planRemoveCategory": "Remove category"
 
 }

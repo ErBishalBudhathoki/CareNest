@@ -5,10 +5,7 @@ part 'claim_models.g.dart';
 
 @freezed
 abstract class ClaimPeriod with _$ClaimPeriod {
-  const factory ClaimPeriod({
-    String? from,
-    String? to,
-  }) = _ClaimPeriod;
+  const factory ClaimPeriod({String? from, String? to}) = _ClaimPeriod;
 
   factory ClaimPeriod.fromJson(Map<String, dynamic> json) =>
       _$ClaimPeriodFromJson(json);
@@ -26,6 +23,20 @@ abstract class ClaimTotals with _$ClaimTotals {
 }
 
 @freezed
+abstract class ClaimRemittance with _$ClaimRemittance {
+  const factory ClaimRemittance({
+    @Default('unpaid') String status,
+    @Default(0) double paidAmount,
+    String? paidAt,
+    @Default('') String reference,
+    @Default('') String notes,
+  }) = _ClaimRemittance;
+
+  factory ClaimRemittance.fromJson(Map<String, dynamic> json) =>
+      _$ClaimRemittanceFromJson(json);
+}
+
+@freezed
 abstract class ClaimBatch with _$ClaimBatch {
   const factory ClaimBatch({
     required String id,
@@ -36,7 +47,13 @@ abstract class ClaimBatch with _$ClaimBatch {
     ClaimPeriod? period,
     @Default(ClaimTotals()) ClaimTotals totals,
     String? generatedAt,
+    String? submittedAt,
     String? reconciledAt,
+    @Default('') String portalReference,
+    @Default('') String submittedBy,
+    ClaimRemittance? remittance,
+    String? resubmissionOf,
+    String? resubmittedBatchId,
   }) = _ClaimBatch;
 
   factory ClaimBatch.fromJson(Map<String, dynamic> json) =>
@@ -57,6 +74,10 @@ abstract class ClaimLine with _$ClaimLine {
     @Default('DIRECT_SERVICE') String claimType,
     @Default('pending') String status,
     @Default('') String rejectionReason,
+    @Default(0) double paidAmount,
+    String? paidAt,
+    @Default('') String remittanceReference,
+    String? resubmittedInBatchId,
     String? serviceDate,
   }) = _ClaimLine;
 

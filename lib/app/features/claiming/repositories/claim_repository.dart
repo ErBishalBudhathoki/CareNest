@@ -24,11 +24,15 @@ class ClaimRepository {
         .toList();
   }
 
-  Future<({ClaimBatch batch, List<ClaimLine> lines})> getBatch(String id) async {
+  Future<({ClaimBatch batch, List<ClaimLine> lines})> getBatch(
+    String id,
+  ) async {
     final response = await _apiMethod.getClaimBatch(id);
     _ensureSuccess(response, 'Failed to load claim batch');
     final data = response['data'] as Map;
-    final batch = ClaimBatch.fromJson(Map<String, dynamic>.from(data['batch'] as Map));
+    final batch = ClaimBatch.fromJson(
+      Map<String, dynamic>.from(data['batch'] as Map),
+    );
     final lines = ((data['lines'] as List?) ?? const [])
         .whereType<Map>()
         .map((e) => ClaimLine.fromJson(Map<String, dynamic>.from(e)))
@@ -36,7 +40,8 @@ class ClaimRepository {
     return (batch: batch, lines: lines);
   }
 
-  Future<({ClaimBatch batch, String csv, ClaimValidation validation})> generate({
+  Future<({ClaimBatch batch, String csv, ClaimValidation validation})>
+  generate({
     required String from,
     required String to,
     bool allowInvalid = false,
@@ -50,7 +55,8 @@ class ClaimRepository {
       final data = response['data'];
       final validation = data is Map && data['validation'] is Map
           ? ClaimValidation.fromJson(
-              Map<String, dynamic>.from(data['validation'] as Map))
+              Map<String, dynamic>.from(data['validation'] as Map),
+            )
           : null;
       throw ClaimGenerationException(
         response['message']?.toString() ?? 'Failed to generate claim batch',
@@ -59,12 +65,63 @@ class ClaimRepository {
     }
     final data = response['data'] as Map;
     return (
-      batch: ClaimBatch.fromJson(Map<String, dynamic>.from(data['batch'] as Map)),
+      batch: ClaimBatch.fromJson(
+        Map<String, dynamic>.from(data['batch'] as Map),
+      ),
       csv: data['csv']?.toString() ?? '',
       validation: data['validation'] is Map
           ? ClaimValidation.fromJson(
-              Map<String, dynamic>.from(data['validation'] as Map))
+              Map<String, dynamic>.from(data['validation'] as Map),
+            )
           : const ClaimValidation(),
+    );
+  }
+
+  Future<ClaimBatch> submit(String id, {String portalReference = ''}) async {
+    final response = await _apiMethod.submitClaimBatch(
+      id,
+      portalReference: portalReference,
+    );
+    _ensureSuccess(response, 'Failed to submit claim batch');
+    final batch = response['data']?['batch'];
+    if (batch is! Map) {
+      throw Exception('Claim batch was submitted but no batch was returned.');
+    }
+    return ClaimBatch.fromJson(Map<String, dynamic>.from(batch));
+  }
+
+  Future<({ClaimBatch batch, double outstanding})> recordRemittance(
+    String id, {
+    required double paidAmount,
+    String? paidAt,
+    String reference = '',
+    String notes = '',
+  }) async {
+    final response = await _apiMethod.recordClaimRemittance(
+      id,
+      paidAmount: paidAmount,
+      paidAt: paidAt,
+      reference: reference,
+      notes: notes,
+    );
+    _ensureSuccess(response, 'Failed to record claim remittance');
+    final data = response['data'];
+    final batch = data is Map && data['batch'] is Map
+        ? ClaimBatch.fromJson(Map<String, dynamic>.from(data['batch'] as Map))
+        : throw Exception('Remittance was recorded but no batch was returned.');
+    final outstanding = (data['outstanding'] as num?)?.toDouble() ?? 0.0;
+    return (batch: batch, outstanding: outstanding);
+  }
+
+  Future<({ClaimBatch batch, String csv})> resubmit(String id) async {
+    final response = await _apiMethod.resubmitClaimBatch(id);
+    _ensureSuccess(response, 'Failed to resubmit rejected claim lines');
+    final data = response['data'] as Map;
+    return (
+      batch: ClaimBatch.fromJson(
+        Map<String, dynamic>.from(data['batch'] as Map),
+      ),
+      csv: data['csv']?.toString() ?? '',
     );
   }
 

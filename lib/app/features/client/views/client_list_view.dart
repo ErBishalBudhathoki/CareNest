@@ -19,6 +19,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum _ClientDeleteMode { cancel, soft, force }
 
+/// Controllers for one editable NDIS category envelope in the plan dialog.
+class _PlanCategoryDraft {
+  final TextEditingController number;
+  final TextEditingController name;
+  final TextEditingController budget;
+
+  _PlanCategoryDraft({String number = '', String name = '', String budget = ''})
+    : number = TextEditingController(text: number),
+      name = TextEditingController(text: name),
+      budget = TextEditingController(text: budget);
+
+  Map<String, dynamic> toJson() => {
+    'categoryNumber': number.text.trim(),
+    'name': name.text.trim(),
+    'budget': double.tryParse(budget.text.trim()) ?? 0,
+  };
+
+  void dispose() {
+    number.dispose();
+    name.dispose();
+    budget.dispose();
+  }
+}
+
 enum _ClientListMode { active, history }
 
 class ClientListView extends ConsumerStatefulWidget {
@@ -856,6 +880,17 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     final notesController = TextEditingController(
       text: plan['notes']?.toString() ?? '',
     );
+    final categoryDrafts = <_PlanCategoryDraft>[];
+    for (final raw in (plan['categories'] as List<dynamic>? ?? [])) {
+      if (raw is! Map) continue;
+      categoryDrafts.add(
+        _PlanCategoryDraft(
+          number: raw['categoryNumber']?.toString() ?? '',
+          name: raw['name']?.toString() ?? '',
+          budget: raw['budget']?.toString() ?? '',
+        ),
+      );
+    }
     DateTime? startDate = DateTime.tryParse(
       plan['startDate']?.toString() ?? '',
     );
@@ -1017,6 +1052,99 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                 },
                               ),
                               const SizedBox(height: BauhausDesign.space4),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      l10n?.planCategoryBudgets ??
+                                          'Category budgets (optional)',
+                                      style: BauhausDesign.getTextTheme(
+                                        dialogContext,
+                                      ).titleSmall,
+                                    ),
+                                  ),
+                                  TextButton.icon(
+                                    onPressed: isSaving
+                                        ? null
+                                        : () => setDialogState(
+                                            () => categoryDrafts.add(
+                                              _PlanCategoryDraft(),
+                                            ),
+                                          ),
+                                    icon: const Icon(Icons.add, size: 18),
+                                    label: Text(
+                                      l10n?.planAddCategory ?? 'Add category',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              for (final draft in categoryDrafts)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    bottom: BauhausDesign.space2,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 64,
+                                        child: TextField(
+                                          controller: draft.number,
+                                          decoration: InputDecoration(
+                                            labelText:
+                                                l10n?.planCategoryNumber ??
+                                                'Cat',
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: BauhausDesign.space2,
+                                      ),
+                                      Expanded(
+                                        child: TextField(
+                                          controller: draft.name,
+                                          decoration: InputDecoration(
+                                            labelText:
+                                                l10n?.planCategoryName ??
+                                                'Category name',
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: BauhausDesign.space2,
+                                      ),
+                                      SizedBox(
+                                        width: 104,
+                                        child: TextField(
+                                          controller: draft.budget,
+                                          keyboardType:
+                                              const TextInputType.numberWithOptions(
+                                                decimal: true,
+                                              ),
+                                          decoration: InputDecoration(
+                                            labelText:
+                                                l10n?.planCategoryAmount ??
+                                                'Budget',
+                                            prefixText: '\$ ',
+                                          ),
+                                        ),
+                                      ),
+                                      IconButton(
+                                        tooltip:
+                                            l10n?.planRemoveCategory ??
+                                            'Remove category',
+                                        onPressed: isSaving
+                                            ? null
+                                            : () => setDialogState(
+                                                () => categoryDrafts.remove(
+                                                  draft,
+                                                ),
+                                              ),
+                                        icon: const Icon(Icons.delete_outline),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              const SizedBox(height: BauhausDesign.space4),
                               TextFormField(
                                 controller: documentNameController,
                                 decoration: InputDecoration(
@@ -1170,6 +1298,15 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
                                                     budgetController.text
                                                         .trim(),
                                                   ),
+                                            categories: categoryDrafts
+                                                .map((draft) => draft.toJson())
+                                                .where(
+                                                  (category) =>
+                                                      (category['categoryNumber']
+                                                              as String)
+                                                          .isNotEmpty,
+                                                )
+                                                .toList(),
                                             documentUrl:
                                                 uploadedPlanUrl ??
                                                 documentUrlController.text
@@ -1229,6 +1366,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     documentUrlController.dispose();
     documentNameController.dispose();
     notesController.dispose();
+    for (final draft in categoryDrafts) {
+      draft.dispose();
+    }
   }
 
   Future<void> _confirmDeleteClient(Patient client) async {

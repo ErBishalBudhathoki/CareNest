@@ -14599,6 +14599,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save Plan'**
   String get planSave;
+
+  /// No description provided for @planCategoryBudgets.
+  ///
+  /// In en, this message translates to:
+  /// **'Category budgets (optional)'**
+  String get planCategoryBudgets;
+
+  /// No description provided for @planCategoryNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Cat'**
+  String get planCategoryNumber;
+
+  /// No description provided for @planCategoryName.
+  ///
+  /// In en, this message translates to:
+  /// **'Category name'**
+  String get planCategoryName;
+
+  /// No description provided for @planCategoryAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget'**
+  String get planCategoryAmount;
+
+  /// No description provided for @planAddCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Add category'**
+  String get planAddCategory;
+
+  /// No description provided for @planRemoveCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove category'**
+  String get planRemoveCategory;
 }
 
 class _AppLocalizationsDelegate

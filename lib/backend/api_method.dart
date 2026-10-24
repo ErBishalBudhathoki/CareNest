@@ -3173,6 +3173,7 @@ class ApiMethod extends ChangeNotifier {
     DateTime? startDate,
     DateTime? endDate,
     double? totalBudget,
+    List<Map<String, dynamic>>? categories,
     String? documentUrl,
     String? documentName,
     String? notes,
@@ -3186,6 +3187,7 @@ class ApiMethod extends ChangeNotifier {
           'startDate': startDate?.toIso8601String().split('T').first,
           'endDate': endDate?.toIso8601String().split('T').first,
           'totalBudget': ?totalBudget,
+          'categories': ?categories,
           'documentUrl': ?documentUrl,
           'documentName': ?documentName,
           'notes': ?notes,
@@ -4674,6 +4676,54 @@ class ApiMethod extends ChangeNotifier {
         'ndis-claims/batches/$batchId/results/import',
         body: {'file': fileContent},
       );
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> submitClaimBatch(
+    String batchId, {
+    String portalReference = '',
+    String? submittedAt,
+  }) async {
+    try {
+      return await post(
+        'ndis-claims/batches/$batchId/submit',
+        body: {
+          if (portalReference.isNotEmpty) 'portalReference': portalReference,
+          'submittedAt': ?submittedAt,
+        },
+      );
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> recordClaimRemittance(
+    String batchId, {
+    required double paidAmount,
+    String? paidAt,
+    String reference = '',
+    String notes = '',
+  }) async {
+    try {
+      return await post(
+        'ndis-claims/batches/$batchId/remittance',
+        body: {
+          'paidAmount': paidAmount,
+          'paidAt': ?paidAt,
+          if (reference.isNotEmpty) 'reference': reference,
+          if (notes.isNotEmpty) 'notes': notes,
+        },
+      );
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> resubmitClaimBatch(String batchId) async {
+    try {
+      return await post('ndis-claims/batches/$batchId/resubmit');
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }

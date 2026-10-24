@@ -59,7 +59,10 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
                     _buildValidation(context, state.validation!),
                   if (state.lastCsv != null && state.lastCsv!.isNotEmpty)
                     _buildCsvActions(context, state.lastCsv!),
-                  Text('Batches', style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    'Batches',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 8),
                   if (state.batches.isEmpty)
                     const Padding(
@@ -114,10 +117,7 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
   Widget _buildError(BuildContext context, String message) {
     return Card(
       color: Theme.of(context).colorScheme.errorContainer,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Text(message),
-      ),
+      child: Padding(padding: const EdgeInsets.all(12), child: Text(message)),
     );
   }
 
@@ -130,8 +130,10 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Pre-export validation failed',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              'Pre-export validation failed',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 4),
             ...validation.errors
                 .take(20)
@@ -183,8 +185,13 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
     final period = batch.period;
     return Card(
       child: ListTile(
-        leading: Icon(_statusIcon(batch.status), color: _statusColor(theme, batch.status)),
-        title: Text('Batch ${batch.id.substring(0, batch.id.length.clamp(0, 8))}'),
+        leading: Icon(
+          _statusIcon(batch.status),
+          color: _statusColor(theme, batch.status),
+        ),
+        title: Text(
+          'Batch ${batch.id.substring(0, batch.id.length.clamp(0, 8))}',
+        ),
         subtitle: Text(
           '${batch.status} · ${batch.totals.lines} lines · '
           '\$${batch.totals.amount.toStringAsFixed(2)}'
@@ -192,10 +199,53 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
         ),
         isThreeLine: period?.from != null,
         onTap: () => _showBatchDetail(batch.id),
-        trailing: IconButton(
-          tooltip: 'Import results',
-          icon: const Icon(Icons.upload_file),
-          onPressed: () => _importResults(batch.id),
+        trailing: PopupMenuButton<String>(
+          tooltip: 'Claim actions',
+          onSelected: (action) {
+            switch (action) {
+              case 'submit':
+                _submitBatch(batch.id);
+                break;
+              case 'results':
+                _importResults(batch.id);
+                break;
+              case 'remittance':
+                _recordRemittance(batch);
+                break;
+              case 'resubmit':
+                _resubmitRejected(batch.id);
+                break;
+            }
+          },
+          itemBuilder: (context) => [
+            if (['generated', 'partial', 'failed'].contains(batch.status))
+              const PopupMenuItem(
+                value: 'submit',
+                child: Text('Mark submitted'),
+              ),
+            if (batch.status != 'paid')
+              const PopupMenuItem(
+                value: 'results',
+                child: Text('Import results file'),
+              ),
+            if ([
+              'submitted',
+              'reconciled',
+              'partial',
+              'failed',
+              'paid',
+            ].contains(batch.status))
+              const PopupMenuItem(
+                value: 'remittance',
+                child: Text('Record payment'),
+              ),
+            if (['partial', 'failed'].contains(batch.status) &&
+                batch.resubmittedBatchId == null)
+              const PopupMenuItem(
+                value: 'resubmit',
+                child: Text('Resubmit rejected'),
+              ),
+          ],
         ),
       ),
     );
@@ -203,8 +253,12 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
 
   IconData _statusIcon(String status) {
     switch (status) {
+      case 'submitted':
+        return Icons.outbox_outlined;
       case 'reconciled':
         return Icons.verified_outlined;
+      case 'paid':
+        return Icons.payments_outlined;
       case 'partial':
         return Icons.rule_folder_outlined;
       case 'failed':
@@ -216,7 +270,11 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
 
   Color _statusColor(ThemeData theme, String status) {
     switch (status) {
+      case 'submitted':
+        return theme.colorScheme.secondary;
       case 'reconciled':
+        return theme.colorScheme.primary;
+      case 'paid':
         return theme.colorScheme.primary;
       case 'partial':
         return theme.colorScheme.tertiary;
@@ -225,6 +283,136 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
       default:
         return theme.colorScheme.onSurfaceVariant;
     }
+  }
+
+  Future<void> _submitBatch(String batchId) async {
+    final controller = TextEditingController();
+    final portalReference = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Mark claim batch submitted'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            labelText: 'Portal reference (optional)',
+            hintText: 'PACE / myplace receipt reference',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () =>
+                Navigator.of(dialogContext).pop(controller.text.trim()),
+            child: const Text('Mark submitted'),
+          ),
+        ],
+      ),
+    );
+    if (portalReference == null || !mounted) return;
+
+    final ok = await ref
+        .read(claimViewModelProvider.notifier)
+        .submitBatch(batchId, portalReference: portalReference);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          ok
+              ? 'Batch marked submitted.'
+              : ref.read(claimViewModelProvider).error ?? 'Submit failed.',
+        ),
+      ),
+    );
+  }
+
+  Future<void> _recordRemittance(ClaimBatch batch) async {
+    final amountController = TextEditingController(
+      text: batch.totals.amount.toStringAsFixed(2),
+    );
+    final referenceController = TextEditingController();
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Record NDIA payment'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: amountController,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              decoration: const InputDecoration(
+                labelText: 'Paid amount',
+                prefixText: '\$ ',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: referenceController,
+              decoration: const InputDecoration(
+                labelText: 'Remittance reference (optional)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Save payment'),
+          ),
+        ],
+      ),
+    );
+    if (result != true || !mounted) return;
+
+    final paidAmount = double.tryParse(amountController.text.trim());
+    if (paidAmount == null || paidAmount < 0) return;
+    final ok = await ref
+        .read(claimViewModelProvider.notifier)
+        .recordRemittance(
+          batch.id,
+          paidAmount: paidAmount,
+          reference: referenceController.text.trim(),
+        );
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          ok
+              ? 'Payment recorded.'
+              : ref.read(claimViewModelProvider).error ??
+                    'Payment recording failed.',
+        ),
+      ),
+    );
+  }
+
+  Future<void> _resubmitRejected(String batchId) async {
+    final ok = await ref
+        .read(claimViewModelProvider.notifier)
+        .resubmitRejected(batchId);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          ok
+              ? 'Rejected lines resubmitted in a new batch.'
+              : ref.read(claimViewModelProvider).error ??
+                    'Resubmission failed.',
+        ),
+      ),
+    );
   }
 
   Future<void> _pickRangeAndGenerate() async {
@@ -239,14 +427,13 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
     if (picked == null || !mounted) return;
     setState(() => _range = picked);
 
-    final csv = await ref.read(claimViewModelProvider.notifier).generate(
-          from: _iso(picked.start),
-          to: _iso(picked.end),
-        );
+    final csv = await ref
+        .read(claimViewModelProvider.notifier)
+        .generate(from: _iso(picked.start), to: _iso(picked.end));
     if (csv != null && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Claim batch generated.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Claim batch generated.')));
     }
   }
 
@@ -312,26 +499,30 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
           controller: scrollController,
           padding: const EdgeInsets.all(16),
           children: [
-            Text('Claim lines (${state.activeLines.length})',
-                style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              'Claim lines (${state.activeLines.length})',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             const SizedBox(height: 8),
-            ...state.activeLines.map((line) => ListTile(
-                  dense: true,
-                  leading: Icon(
-                    line.status == 'rejected' ? Icons.close : Icons.check,
-                    color: line.status == 'rejected'
-                        ? Theme.of(context).colorScheme.error
-                        : Theme.of(context).colorScheme.primary,
-                  ),
-                  title: Text(line.supportNumber),
-                  subtitle: Text(
-                    '${line.claimReference}\n'
-                    '${line.quantity} × \$${line.unitPrice.toStringAsFixed(2)} '
-                    '= \$${line.requestedAmount.toStringAsFixed(2)}'
-                    '${line.rejectionReason.isNotEmpty ? '\n${line.rejectionReason}' : ''}',
-                  ),
-                  isThreeLine: true,
-                )),
+            ...state.activeLines.map(
+              (line) => ListTile(
+                dense: true,
+                leading: Icon(
+                  line.status == 'rejected' ? Icons.close : Icons.check,
+                  color: line.status == 'rejected'
+                      ? Theme.of(context).colorScheme.error
+                      : Theme.of(context).colorScheme.primary,
+                ),
+                title: Text(line.supportNumber),
+                subtitle: Text(
+                  '${line.claimReference}\n'
+                  '${line.quantity} × \$${line.unitPrice.toStringAsFixed(2)} '
+                  '= \$${line.requestedAmount.toStringAsFixed(2)}'
+                  '${line.rejectionReason.isNotEmpty ? '\n${line.rejectionReason}' : ''}',
+                ),
+                isThreeLine: true,
+              ),
+            ),
           ],
         ),
       ),

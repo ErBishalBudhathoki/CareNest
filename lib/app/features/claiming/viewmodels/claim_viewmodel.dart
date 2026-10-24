@@ -119,6 +119,57 @@ class ClaimViewModel extends Notifier<ClaimState> {
     }
   }
 
+  Future<bool> submitBatch(
+    String batchId, {
+    String portalReference = '',
+  }) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      await _repository.submit(batchId, portalReference: portalReference);
+      await load();
+      return true;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> recordRemittance(
+    String batchId, {
+    required double paidAmount,
+    String? paidAt,
+    String reference = '',
+    String notes = '',
+  }) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      await _repository.recordRemittance(
+        batchId,
+        paidAmount: paidAmount,
+        paidAt: paidAt,
+        reference: reference,
+        notes: notes,
+      );
+      await load();
+      return true;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> resubmitRejected(String batchId) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      await _repository.resubmit(batchId);
+      await load();
+      return true;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      return false;
+    }
+  }
+
   /// Imports a results file and returns the reconciliation summary, or null
   /// when the import itself failed (network/validation error). A non-null
   /// result may still describe a `partial` or `failed` reconciliation — that is
@@ -127,11 +178,7 @@ class ClaimViewModel extends Notifier<ClaimState> {
     String batchId,
     String fileContent,
   ) async {
-    state = state.copyWith(
-      isLoading: true,
-      error: null,
-      clearLastImport: true,
-    );
+    state = state.copyWith(isLoading: true, error: null, clearLastImport: true);
     try {
       final result = await _repository.importResults(batchId, fileContent);
       await load();
@@ -144,5 +191,6 @@ class ClaimViewModel extends Notifier<ClaimState> {
   }
 }
 
-final claimViewModelProvider =
-    NotifierProvider<ClaimViewModel, ClaimState>(ClaimViewModel.new);
+final claimViewModelProvider = NotifierProvider<ClaimViewModel, ClaimState>(
+  ClaimViewModel.new,
+);
