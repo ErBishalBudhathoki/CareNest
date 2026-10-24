@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class SmartExpenseDashboard extends StatefulWidget {
   final String? organizationId;
@@ -297,26 +298,26 @@ class _SmartExpenseDashboardState extends State<SmartExpenseDashboard> {
 
   void _scanReceipt() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Opening camera for receipt scan...')),
+      SnackBar(content: Text(AppLocalizations.of(context)!.openingCameraForReceiptScan)),
     );
   }
 
   void _categorizeExpense() {
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Categorizing expense...')));
+    ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.categorizingExpense)));
   }
 
   void _checkPolicy() {
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Checking expense policy...')));
+    ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.checkingExpensePolicy)));
   }
 
   void _calculateMileage() {
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Calculating mileage...')));
+    ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.calculatingMileage)));
   }
 }
 

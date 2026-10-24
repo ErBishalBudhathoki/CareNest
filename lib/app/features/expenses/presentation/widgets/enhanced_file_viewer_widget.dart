@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 import 'file_types.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Enhanced file viewer widget that supports multiple file types
 /// including images, PDFs, and Word documents with proper error handling
@@ -240,12 +241,12 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
         barrierDismissible: false,
         builder: (BuildContext context) {
           dialogContext = context;
-          return const AlertDialog(
+          return AlertDialog(
             content: Row(
               children: [
                 CircularProgressIndicator(),
                 SizedBox(width: 16),
-                Text('Checking file availability...'),
+                Text(AppLocalizations.of(context)!.checkingFileAvailability),
               ],
             ),
           );
@@ -284,12 +285,12 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
         barrierDismissible: false,
         builder: (BuildContext context) {
           dialogContext = context;
-          return const AlertDialog(
+          return AlertDialog(
             content: Row(
               children: [
                 CircularProgressIndicator(),
                 SizedBox(width: 16),
-                Text('Downloading file...'),
+                Text(AppLocalizations.of(context)!.downloadingFile),
               ],
             ),
           );
@@ -393,7 +394,7 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+            child: Text(AppLocalizations.of(context)!.ok),
           ),
         ],
       ),
@@ -417,7 +418,7 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
               color: Theme.of(context).colorScheme.error,
             ),
             SizedBox(width: 8),
-            Text('Image Load Error'),
+            Text(AppLocalizations.of(context)!.imageLoadError),
           ],
         ),
         content: Column(
@@ -488,7 +489,7 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+            child: Text(AppLocalizations.of(context)!.close),
           ),
           ElevatedButton(
             onPressed: () {
@@ -500,7 +501,7 @@ class EnhancedFileViewerWidget extends ConsumerWidget {
               backgroundColor: Theme.of(context).colorScheme.secondary,
               foregroundColor: Theme.of(context).colorScheme.onSecondary,
             ),
-            child: const Text('Retry'),
+            child: Text(AppLocalizations.of(context)!.retryButton),
           ),
         ],
       ),
@@ -940,7 +941,7 @@ class _FullScreenImageViewer extends StatelessWidget {
               // TODO: Implement share functionality
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: const Text('Share functionality coming soon'),
+                  content: Text(AppLocalizations.of(context)!.shareComingSoon),
                 ),
               );
             },
@@ -1060,7 +1061,7 @@ class _FullScreenImageViewer extends StatelessWidget {
                           });
                         },
                         icon: Icon(Icons.refresh),
-                        label: const Text('Retry'),
+                        label: Text(AppLocalizations.of(context)!.retryButton),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(
                             context,
@@ -1082,7 +1083,7 @@ class _FullScreenImageViewer extends StatelessWidget {
                           }
                         },
                         icon: Icon(Icons.open_in_new),
-                        label: const Text('Open in Browser'),
+                        label: Text(AppLocalizations.of(context)!.openInBrowser),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(
                             context,

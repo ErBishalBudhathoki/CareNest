@@ -13,6 +13,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../../../shared/constants/bauhaus_design.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 // import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 
 class AddNotesView extends ConsumerStatefulWidget {
@@ -365,8 +366,8 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
           child: ListView(
             shrinkWrap: true,
             children: [
-              const ListTile(
-                title: Text('Choose a note template'),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.chooseNoteTemplate),
                 dense: true,
               ),
               for (final template in templates)

@@ -15067,6 +15067,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Suggestions loaded'**
   String get suggestionsLoaded;
+
+  /// No description provided for @actionSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Action successful!'**
+  String get actionSuccessful;
+
+  /// No description provided for @addSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Add section'**
+  String get addSection;
+
+  /// No description provided for @calculatingMileage.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculating mileage...'**
+  String get calculatingMileage;
+
+  /// No description provided for @categorizingExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Categorizing expense...'**
+  String get categorizingExpense;
+
+  /// No description provided for @checkingExpensePolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking expense policy...'**
+  String get checkingExpensePolicy;
+
+  /// No description provided for @checkingFileAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking file availability...'**
+  String get checkingFileAvailability;
+
+  /// No description provided for @chooseNoteTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a note template'**
+  String get chooseNoteTemplate;
+
+  /// No description provided for @couldNotOpenMaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open maps application'**
+  String get couldNotOpenMaps;
+
+  /// No description provided for @deactivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate'**
+  String get deactivate;
+
+  /// No description provided for @deactivateTemplateQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate template?'**
+  String get deactivateTemplateQuestion;
+
+  /// No description provided for @downloadingFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading file...'**
+  String get downloadingFile;
+
+  /// No description provided for @failedToLoadOnboardingStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load onboarding status'**
+  String get failedToLoadOnboardingStatus;
+
+  /// No description provided for @finalizeApproveOnboarding.
+  ///
+  /// In en, this message translates to:
+  /// **'Finalize & Approve Onboarding'**
+  String get finalizeApproveOnboarding;
+
+  /// No description provided for @imageLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Image Load Error'**
+  String get imageLoadError;
+
+  /// No description provided for @noDocumentsUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'No documents uploaded.'**
+  String get noDocumentsUploaded;
+
+  /// No description provided for @noPendingOnboardings.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending onboardings'**
+  String get noPendingOnboardings;
+
+  /// No description provided for @noRecordSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'No record selected'**
+  String get noRecordSelected;
+
+  /// No description provided for @noShiftsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No Shifts Available'**
+  String get noShiftsAvailable;
+
+  /// No description provided for @noShiftsFoundForClient.
+  ///
+  /// In en, this message translates to:
+  /// **'No shifts found for this client.'**
+  String get noShiftsFoundForClient;
+
+  /// No description provided for @onboardingFinalized.
+  ///
+  /// In en, this message translates to:
+  /// **'Onboarding Finalized'**
+  String get onboardingFinalized;
+
+  /// No description provided for @onboardingSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Onboarding Submitted!'**
+  String get onboardingSubmitted;
+
+  /// No description provided for @openInBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Browser'**
+  String get openInBrowser;
+
+  /// No description provided for @openingCameraForReceiptScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening camera for receipt scan...'**
+  String get openingCameraForReceiptScan;
+
+  /// No description provided for @payNowCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'PAY NOW'**
+  String get payNowCaps;
+
+  /// No description provided for @pdfReadyChooseDownloads.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF ready. Choose Files/Downloads to save a copy.'**
+  String get pdfReadyChooseDownloads;
+
+  /// No description provided for @pendingOnboardings.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Onboardings'**
+  String get pendingOnboardings;
+
+  /// No description provided for @requiredLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get requiredLabel;
+
+  /// No description provided for @saveNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Save note'**
+  String get saveNote;
+
+  /// No description provided for @selectShift.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Shift'**
+  String get selectShift;
+
+  /// No description provided for @shareComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Share functionality coming soon'**
+  String get shareComingSoon;
+
+  /// No description provided for @submitDisputeCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'SUBMIT DISPUTE'**
+  String get submitDisputeCaps;
+
+  /// No description provided for @swapOfferCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Swap offer created!'**
+  String get swapOfferCreated;
+
+  /// No description provided for @templateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Template'**
+  String get templateLabel;
+
+  /// No description provided for @templateNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Template name is required.'**
+  String get templateNameRequired;
+
+  /// No description provided for @timerResumedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Timer resumed successfully'**
+  String get timerResumedSuccessfully;
+
+  /// No description provided for @timerStartedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Timer started successfully'**
+  String get timerStartedSuccessfully;
+
+  /// No description provided for @viewAllHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'View all history'**
+  String get viewAllHistory;
 }
 
 class _AppLocalizationsDelegate

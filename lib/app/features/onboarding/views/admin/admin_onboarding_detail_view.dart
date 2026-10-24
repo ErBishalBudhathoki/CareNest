@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/onboarding_providers.dart';
 import '../../models/employee_document.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class AdminOnboardingDetailView extends ConsumerWidget {
   const AdminOnboardingDetailView({super.key});
@@ -19,7 +20,7 @@ class AdminOnboardingDetailView extends ConsumerWidget {
     }
 
     if (record == null) {
-      return const Scaffold(body: Center(child: Text('No record selected')));
+      return Scaffold(body: Center(child: Text(AppLocalizations.of(context)!.noRecordSelected)));
     }
 
     final name = '${user?['firstName'] ?? ''} ${user?['lastName'] ?? ''}'
@@ -47,7 +48,7 @@ class AdminOnboardingDetailView extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             if (state.selectedDocuments.isEmpty)
-              const Text('No documents uploaded.')
+              Text(AppLocalizations.of(context)!.noDocumentsUploaded)
             else
               ...state.selectedDocuments.map(
                 (doc) => _buildDocumentTile(context, ref, doc),
@@ -63,7 +64,7 @@ class AdminOnboardingDetailView extends ConsumerWidget {
                   backgroundColor: colorScheme.secondary,
                   foregroundColor: colorScheme.onSecondary,
                 ),
-                child: const Text('Finalize & Approve Onboarding'),
+                child: Text(AppLocalizations.of(context)!.finalizeApproveOnboarding),
               ),
           ],
         ),
@@ -169,7 +170,7 @@ class AdminOnboardingDetailView extends ConsumerWidget {
     if (context.mounted) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Onboarding Finalized')));
+      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.onboardingFinalized)));
       Navigator.of(context).pop();
     }
   }

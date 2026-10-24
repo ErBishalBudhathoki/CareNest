@@ -608,7 +608,7 @@ class _ClientAndAppointmentDetailsState
 
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Time updated successfully')),
+              SnackBar(content: Text(AppLocalizations.of(context)!.timeUpdatedSuccessfully)),
             );
           }
         }
@@ -690,7 +690,7 @@ class _ClientAndAppointmentDetailsState
         timerModel.setTimerClientEmail(widget.clientEmail);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Timer resumed successfully')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.timerResumedSuccessfully)),
           );
         }
       }
@@ -1340,8 +1340,8 @@ class _ClientAndAppointmentDetailsState
                                 if (response['success'] == true) {
                                   if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Swap offer created!'),
+                                      SnackBar(
+                                        content: Text(AppLocalizations.of(context)!.swapOfferCreated),
                                       ),
                                     );
                                   }
@@ -2272,8 +2272,8 @@ class _ClientAndAppointmentDetailsState
             );
             if (!success && mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Could not open maps application'),
+                SnackBar(
+                  content: Text(AppLocalizations.of(context)!.couldNotOpenMaps),
                   duration: Duration(seconds: 2),
                 ),
               );
@@ -2559,8 +2559,8 @@ class _ClientAndAppointmentDetailsState
                           // Show success message
                           if (!mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Timer started successfully'),
+                            SnackBar(
+                              content: Text(AppLocalizations.of(context)!.timerStartedSuccessfully),
                               duration: Duration(seconds: 2),
                             ),
                           );

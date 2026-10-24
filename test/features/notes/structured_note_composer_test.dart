@@ -1,4 +1,5 @@
 import 'package:carenest/app/features/notes/widgets/structured_note_composer.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -38,7 +39,11 @@ void main() {
     ],
   };
 
-  Widget wrap(Widget child) => MaterialApp(home: Scaffold(body: child));
+  Widget wrap(Widget child) => MaterialApp(
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
+    home: Scaffold(body: child),
+  );
 
   testWidgets('renders all sections and collects entered values', (tester) async {
     Map<String, dynamic>? submitted;

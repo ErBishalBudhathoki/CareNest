@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Renders a progress-note template as a sectioned form and returns the
 /// collected answers keyed by section key (Phase 2).
@@ -179,7 +180,7 @@ class _StructuredNoteComposerState extends State<StructuredNoteComposer> {
                   width: 18,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : const Text('Save note'),
+              : Text(AppLocalizations.of(context)!.saveNote),
         ),
       ],
     );

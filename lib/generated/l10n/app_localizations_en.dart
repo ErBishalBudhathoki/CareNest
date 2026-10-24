@@ -8195,4 +8195,117 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get suggestionsLoaded => 'Suggestions loaded';
+
+  @override
+  String get actionSuccessful => 'Action successful!';
+
+  @override
+  String get addSection => 'Add section';
+
+  @override
+  String get calculatingMileage => 'Calculating mileage...';
+
+  @override
+  String get categorizingExpense => 'Categorizing expense...';
+
+  @override
+  String get checkingExpensePolicy => 'Checking expense policy...';
+
+  @override
+  String get checkingFileAvailability => 'Checking file availability...';
+
+  @override
+  String get chooseNoteTemplate => 'Choose a note template';
+
+  @override
+  String get couldNotOpenMaps => 'Could not open maps application';
+
+  @override
+  String get deactivate => 'Deactivate';
+
+  @override
+  String get deactivateTemplateQuestion => 'Deactivate template?';
+
+  @override
+  String get downloadingFile => 'Downloading file...';
+
+  @override
+  String get failedToLoadOnboardingStatus => 'Failed to load onboarding status';
+
+  @override
+  String get finalizeApproveOnboarding => 'Finalize & Approve Onboarding';
+
+  @override
+  String get imageLoadError => 'Image Load Error';
+
+  @override
+  String get noDocumentsUploaded => 'No documents uploaded.';
+
+  @override
+  String get noPendingOnboardings => 'No pending onboardings';
+
+  @override
+  String get noRecordSelected => 'No record selected';
+
+  @override
+  String get noShiftsAvailable => 'No Shifts Available';
+
+  @override
+  String get noShiftsFoundForClient => 'No shifts found for this client.';
+
+  @override
+  String get onboardingFinalized => 'Onboarding Finalized';
+
+  @override
+  String get onboardingSubmitted => 'Onboarding Submitted!';
+
+  @override
+  String get openInBrowser => 'Open in Browser';
+
+  @override
+  String get openingCameraForReceiptScan =>
+      'Opening camera for receipt scan...';
+
+  @override
+  String get payNowCaps => 'PAY NOW';
+
+  @override
+  String get pdfReadyChooseDownloads =>
+      'PDF ready. Choose Files/Downloads to save a copy.';
+
+  @override
+  String get pendingOnboardings => 'Pending Onboardings';
+
+  @override
+  String get requiredLabel => 'Required';
+
+  @override
+  String get saveNote => 'Save note';
+
+  @override
+  String get selectShift => 'Select Shift';
+
+  @override
+  String get shareComingSoon => 'Share functionality coming soon';
+
+  @override
+  String get submitDisputeCaps => 'SUBMIT DISPUTE';
+
+  @override
+  String get swapOfferCreated => 'Swap offer created!';
+
+  @override
+  String get templateLabel => 'Template';
+
+  @override
+  String get templateNameRequired => 'Template name is required.';
+
+  @override
+  String get timerResumedSuccessfully => 'Timer resumed successfully';
+
+  @override
+  String get timerStartedSuccessfully => 'Timer started successfully';
+
+  @override
+  String get viewAllHistory => 'View all history';
 }

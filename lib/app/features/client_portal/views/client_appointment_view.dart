@@ -10,6 +10,7 @@ import '../models/client_portal_models.dart';
 import 'client_appointment_detail_view.dart';
 import 'client_service_history_view.dart';
 import 'package:intl/intl.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 DateTime? _parseAppointmentDateTime({
   required String dateValue,
@@ -769,7 +770,7 @@ class _ServiceHistoryFooter extends ConsumerWidget {
                 );
               },
               icon: const Icon(Icons.arrow_forward),
-              label: const Text('View all history'),
+              label: Text(AppLocalizations.of(context)!.viewAllHistory),
             ),
           ),
       ],

@@ -18,6 +18,7 @@ import '../models/client_portal_models.dart';
 import '../repositories/client_portal_repository.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 InputDecoration _activeInputDecoration(BuildContext context, String hint) {
   final colorScheme = Theme.of(context).colorScheme;
@@ -90,7 +91,7 @@ class _ClientInvoiceDetailViewState
       if (next.hasValue && !next.hasError && prevLoading) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Action successful!'),
+            content: Text(AppLocalizations.of(context)!.actionSuccessful),
             backgroundColor: BauhausDesign.success,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -941,7 +942,7 @@ class _ClientInvoiceDetailViewState
                 ),
               ),
               icon: const Icon(Icons.payment),
-              label: const Text('PAY NOW'),
+              label: Text(AppLocalizations.of(context)!.payNowCaps),
             ),
           ),
         ],
@@ -1069,7 +1070,7 @@ class _ClientInvoiceDetailViewState
                 Navigator.pop(context);
               }
             },
-            child: const Text('SUBMIT DISPUTE'),
+            child: Text(AppLocalizations.of(context)!.submitDisputeCaps),
           ),
         ],
       ),
@@ -1128,8 +1129,8 @@ class _ClientInvoiceDetailViewState
 
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('PDF ready. Choose Files/Downloads to save a copy.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.pdfReadyChooseDownloads),
           backgroundColor: BauhausDesign.success,
         ),
       );

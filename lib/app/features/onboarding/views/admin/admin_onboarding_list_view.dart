@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/onboarding_providers.dart';
 import 'admin_onboarding_detail_view.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class AdminOnboardingListView extends ConsumerStatefulWidget {
   const AdminOnboardingListView({super.key});
@@ -35,14 +36,14 @@ class _AdminOnboardingListViewState
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
-        title: const Text('Pending Onboardings'),
+        title: Text(AppLocalizations.of(context)!.pendingOnboardings),
       ),
       body: state.isLoading
           ? const Center(child: CircularProgressIndicator())
           : state.error != null
           ? Center(child: Text('Error: ${state.error}'))
           : state.pendingList.isEmpty
-          ? const Center(child: Text('No pending onboardings'))
+          ? Center(child: Text(AppLocalizations.of(context)!.noPendingOnboardings))
           : ListView.builder(
               itemCount: state.pendingList.length,
               itemBuilder: (context, index) {

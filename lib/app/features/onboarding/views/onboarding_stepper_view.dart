@@ -11,6 +11,7 @@ import 'widgets/onboarding_success_view.dart';
 import 'widgets/personal_details_form.dart';
 import 'widgets/superannuation_form.dart';
 import 'widgets/tax_details_form.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class OnboardingStepperView extends ConsumerStatefulWidget {
   const OnboardingStepperView({super.key});
@@ -60,9 +61,9 @@ class _OnboardingStepperViewState extends ConsumerState<OnboardingStepperView> {
         child: CircularProgressIndicator(),
       );
     } else if (record == null) {
-      content = const Center(
+      content = Center(
         key: ValueKey('error'),
-        child: Text('Failed to load onboarding status'),
+        child: Text(AppLocalizations.of(context)!.failedToLoadOnboardingStatus),
       );
     } else if (!_isReviewing &&
         const {
@@ -284,8 +285,8 @@ class _OnboardingStepperViewState extends ConsumerState<OnboardingStepperView> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Onboarding Submitted!'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.onboardingSubmitted),
             backgroundColor: BauhausDesign.success,
           ),
         );

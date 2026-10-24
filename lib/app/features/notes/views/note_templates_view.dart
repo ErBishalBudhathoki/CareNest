@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:carenest/app/features/notes/viewmodels/note_templates_viewmodel.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Admin UI to manage organisation progress-note templates (Phase 2).
 ///
@@ -38,7 +39,7 @@ class _NoteTemplatesViewState extends ConsumerState<NoteTemplatesView> {
     final state = ref.watch(noteTemplatesViewModelProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Note Templates')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.noteTemplates)),
       body: state.isLoading && state.templates.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : state.templates.isEmpty
@@ -92,7 +93,7 @@ class _NoteTemplatesViewState extends ConsumerState<NoteTemplatesView> {
             ),
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.add),
-        label: const Text('Template'),
+        label: Text(AppLocalizations.of(context)!.templateLabel),
         onPressed: () => _openEditor(null),
       ),
     );
@@ -128,18 +129,18 @@ class _NoteTemplatesViewState extends ConsumerState<NoteTemplatesView> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Deactivate template?'),
+        title: Text(AppLocalizations.of(context)!.deactivateTemplateQuestion),
         content: const Text(
           'It will no longer appear in the shift-notes picker. Existing notes are kept.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('Deactivate'),
+            child: Text(AppLocalizations.of(context)!.deactivate),
           ),
         ],
       ),
@@ -212,7 +213,7 @@ class _TemplateEditorDialogState extends State<_TemplateEditorDialog> {
   void _submit() {
     if (_nameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Template name is required.')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.templateNameRequired)),
       );
       return;
     }
@@ -273,7 +274,7 @@ class _TemplateEditorDialogState extends State<_TemplateEditorDialog> {
                   ),
                   TextButton.icon(
                     icon: const Icon(Icons.add),
-                    label: const Text('Add section'),
+                    label: Text(AppLocalizations.of(context)!.addSection),
                     onPressed: _addSection,
                   ),
                 ],
@@ -286,9 +287,9 @@ class _TemplateEditorDialogState extends State<_TemplateEditorDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(AppLocalizations.of(context)!.cancel),
         ),
-        FilledButton(onPressed: _submit, child: const Text('Save')),
+        FilledButton(onPressed: _submit, child: Text(AppLocalizations.of(context)!.save)),
       ],
     );
   }
@@ -362,7 +363,7 @@ class _TemplateEditorDialogState extends State<_TemplateEditorDialog> {
             ],
             Row(
               children: [
-                const Expanded(child: Text('Required')),
+                Expanded(child: Text(AppLocalizations.of(context)!.requiredLabel)),
                 BauhausSwitch(
                   value: section['required'] == true,
                   onChanged: (v) => setState(() => section['required'] = v),

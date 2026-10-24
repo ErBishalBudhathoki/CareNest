@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'client_invoice_detail_view.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class ClientPortalDashboard extends StatelessWidget {
   final String? clientId;
@@ -1287,7 +1288,7 @@ class _ClientPortalDashboardBodyState
                 );
               },
               icon: const Icon(Icons.arrow_forward),
-              label: const Text('View all history'),
+              label: Text(AppLocalizations.of(context)!.viewAllHistory),
             ),
           ),
       ],

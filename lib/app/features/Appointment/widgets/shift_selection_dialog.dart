@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 Future<int?> showShiftSelectionDialog(
   BuildContext context,
@@ -146,19 +147,19 @@ class _ShiftSelectionDialogContentState
   Widget build(BuildContext context) {
     if (allShifts.isEmpty) {
       return AlertDialog(
-        title: const Text('No Shifts Available'),
-        content: const Text('No shifts found for this client.'),
+        title: Text(AppLocalizations.of(context)!.noShiftsAvailable),
+        content: Text(AppLocalizations.of(context)!.noShiftsFoundForClient),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(null),
-            child: const Text('Close'),
+            child: Text(AppLocalizations.of(context)!.close),
           ),
         ],
       );
     }
 
     return AlertDialog(
-      title: const Text('Select Shift'),
+      title: Text(AppLocalizations.of(context)!.selectShift),
       content: SizedBox(
         width: double.maxFinite,
         child: ListView.builder(
@@ -207,7 +208,7 @@ class _ShiftSelectionDialogContentState
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(null),
-          child: const Text('Cancel'),
+          child: Text(AppLocalizations.of(context)!.cancel),
         ),
       ],
     );
