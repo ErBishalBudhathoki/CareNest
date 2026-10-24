@@ -1,4 +1,5 @@
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
@@ -77,8 +78,23 @@ class SessionTimeoutService {
   }
 
   Future<bool> isSessionValid({Duration? timeout}) async {
+    await _sharedPrefs.init();
+    final cachedEmail = await _sharedPrefs.getUserEmailFromSharedPreferences();
     final firebaseUser = _auth.currentUser;
+
     if (firebaseUser == null) {
+      // Firebase can drop its in-memory user before the cached session is
+      // cleared. If the app has a local identity and the session age is still
+      // valid, allow an offline start; the first API call will re-auth.
+      if (cachedEmail != null && cachedEmail.isNotEmpty) {
+        final expired = await isSessionExpired(timeout: timeout);
+        if (!expired) {
+          debugPrint(
+            'SessionTimeoutService: no Firebase user; accepting cached session for $cachedEmail',
+          );
+          return true;
+        }
+      }
       debugPrint('SessionTimeoutService: no Firebase user, session invalid');
       return false;
     }
@@ -99,7 +115,32 @@ class SessionTimeoutService {
       }
       return true;
     } catch (e) {
+      // A network outage must not sign a worker out of an otherwise valid
+      // session: they need the cached dashboard and the offline worked-time
+      // queue. Only bypass token refresh when the device is actually offline
+      // and the cached identity matches the Firebase user.
+      final offline = await _isOffline();
+      final cachedMatches =
+          cachedEmail != null &&
+          cachedEmail.isNotEmpty &&
+          cachedEmail.toLowerCase() == (firebaseUser.email ?? '').toLowerCase();
+      if (offline && cachedMatches) {
+        debugPrint(
+          'SessionTimeoutService: offline; accepting cached session for ${firebaseUser.email}',
+        );
+        return true;
+      }
       debugPrint('SessionTimeoutService: token validation failed: $e');
+      return false;
+    }
+  }
+
+  Future<bool> _isOffline() async {
+    try {
+      final results = await Connectivity().checkConnectivity();
+      return !results.any((result) => result != ConnectivityResult.none);
+    } catch (_) {
+      // If connectivity cannot be determined, fail closed (normal validation).
       return false;
     }
   }

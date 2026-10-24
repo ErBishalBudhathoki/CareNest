@@ -350,10 +350,14 @@ class _ClientAndAppointmentDetailsState
         // analytics.
         persistWorkedTime: false,
       );
-      await timerService.stopTimer();
       debugPrint("Timer stopped successfully");
     } catch (e) {
-      debugPrint("Error stopping timer: $e");
+      // The worked-time save is the source of truth and is queued separately
+      // when offline. Always stop the local clock so the worker does not keep
+      // accruing time (and accidentally save the shift twice) after ending it.
+      debugPrint("Error stopping server timer: $e");
+    } finally {
+      await timerService.stopTimer();
     }
   }
 
@@ -448,8 +452,30 @@ class _ClientAndAppointmentDetailsState
 
     while (shouldRetry && !success) {
       try {
-        // Get fresh data before showing dialog
-        await _loadClientData();
+        // Refresh before showing the shift picker when possible. Offline, the
+        // details screen already has the shift data loaded; keep using it so
+        // the end-of-shift flow can still queue a save.
+        final previousData = Map<String, dynamic>.from(
+          clientAndAppointmentData,
+        );
+        try {
+          await _loadClientData();
+        } catch (e) {
+          debugPrint('Offline refresh failed; using loaded shift data: $e');
+        }
+
+        final refreshed = clientAndAppointmentData;
+        final refreshedHasClient =
+            refreshed['data'] != null &&
+            refreshed['data']['assignedClient'] != null;
+        final previousHasClient =
+            previousData['data'] != null &&
+            previousData['data']['assignedClient'] != null;
+        if (!refreshedHasClient && previousHasClient) {
+          // A failed network load can replace the payload with an error map.
+          // Put the already-rendered shift data back before selecting a shift.
+          clientAndAppointmentData = previousData;
+        }
 
         if (!mounted) return;
 
@@ -609,6 +635,7 @@ class _ClientAndAppointmentDetailsState
             shiftStartTime: pendingSave['shiftStartTime'] as String?,
             shiftEndTime: pendingSave['shiftEndTime'] as String?,
             shiftBreak: pendingSave['shiftBreak'],
+            clientRequestId: pendingSave['clientRequestId'] as String?,
           );
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(

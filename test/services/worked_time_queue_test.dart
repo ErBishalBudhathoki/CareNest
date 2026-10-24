@@ -8,6 +8,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 class _FakeApi extends ApiMethod {
   int calls = 0;
   bool failPermanently = false;
+  String? lastClientRequestId;
 
   @override
   Future<dynamic> setWorkedTime(
@@ -22,6 +23,7 @@ class _FakeApi extends ApiMethod {
     String? clientRequestId,
   }) async {
     calls += 1;
+    lastClientRequestId = clientRequestId;
     if (failPermanently) {
       throw Exception('Bad request, please check your input data');
     }
@@ -59,6 +61,7 @@ void main() {
       shiftStartTime: '15:00',
       shiftEndTime: '23:00',
       shiftBreak: '00:30',
+      clientRequestId: 'offline-request-1',
     );
 
     expect(await queue.pendingCount(), 1);
@@ -67,6 +70,7 @@ void main() {
     final synced = await queue.flush(api);
     expect(synced, 1);
     expect(api.calls, 1);
+    expect(api.lastClientRequestId, 'offline-request-1');
     expect(await queue.pendingCount(), 0);
   });
 
