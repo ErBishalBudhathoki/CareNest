@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:carenest/app/features/invoice/utils/hours_formatting.dart';
 import 'package:flutter/services.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Price Prompt Dialog Widget
 /// Handles missing price prompts during single invoice generation
@@ -85,7 +86,7 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
       actions: [
         TextButton(
           onPressed: _isLoading ? null : _handleCancel,
-          child: const Text('Cancel'),
+          child: Text(AppLocalizations.of(context)!.cancel),
         ),
         ElevatedButton(
           onPressed: _isLoading ? null : _handleSubmit,
@@ -95,7 +96,7 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
                   height: 16,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : const Text('Apply Price'),
+              : Text(AppLocalizations.of(context)!.applyPrice),
         ),
       ],
     );
@@ -286,8 +287,8 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
         ),
         const SizedBox(height: 8),
         CheckboxListTile(
-          title: const Text('Save as custom pricing'),
-          subtitle: const Text('Save this price for future use'),
+          title: Text(AppLocalizations.of(context)!.saveAsCustomPricing),
+          subtitle: Text(AppLocalizations.of(context)!.saveThisPriceForFutureUse),
           value: _saveAsCustomPricing,
           onChanged: (value) {
             setState(() {
@@ -308,7 +309,7 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
               children: [
                 if (hasClientContext)
                   CheckboxListTile(
-                    title: const Text('Apply to this client only'),
+                    title: Text(AppLocalizations.of(context)!.applyToThisClientOnly),
                     value: _applyToClient,
                     onChanged: (value) {
                       setState(() {
@@ -322,7 +323,7 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
                     dense: true,
                   ),
                 CheckboxListTile(
-                  title: const Text('Apply to entire organization'),
+                  title: Text(AppLocalizations.of(context)!.applyToEntireOrganization),
                   value: _applyToOrganization,
                   onChanged: (value) {
                     setState(() {
@@ -383,7 +384,7 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('NDIS Price Cap Information'),
+        title: Text(AppLocalizations.of(context)!.ndisPriceCapInformation),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -392,17 +393,16 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
               'NDIS Price Cap: \$${widget.promptData['priceCap'].toStringAsFixed(2)}',
             ),
             const SizedBox(height: 8),
-            const Text(
-              'This is the maximum price allowed by NDIS for this support item. '
-              'Prices above this cap may require additional justification or approval.',
-              style: TextStyle(fontSize: 14),
+            Text(
+              AppLocalizations.of(context)!.ndisPriceCapExplanation,
+              style: const TextStyle(fontSize: 14),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+            child: Text(AppLocalizations.of(context)!.ok),
           ),
         ],
       ),

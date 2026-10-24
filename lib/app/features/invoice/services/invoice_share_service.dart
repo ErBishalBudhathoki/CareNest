@@ -12,6 +12,7 @@ import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class InvoiceShareService {
   final InvoiceManagementService _invoiceService;
@@ -1579,32 +1580,32 @@ Your Invoice Team
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Share Invoice'),
-          content: const Text('Choose how you want to share this invoice:'),
+          title: Text(AppLocalizations.of(context)!.shareInvoice),
+          content: Text(AppLocalizations.of(context)!.chooseHowToShareInvoice),
           actions: [
             TextButton.icon(
               onPressed: () => Navigator.of(context).pop(ShareMethod.link),
               icon: const Icon(Icons.link),
-              label: const Text('Share Link'),
+              label: Text(AppLocalizations.of(context)!.shareLink),
             ),
             TextButton.icon(
               onPressed: () => Navigator.of(context).pop(ShareMethod.pdf),
               icon: const Icon(Icons.picture_as_pdf),
-              label: const Text('Share PDF'),
+              label: Text(AppLocalizations.of(context)!.sharePdf),
             ),
             TextButton.icon(
               onPressed: () => Navigator.of(context).pop(ShareMethod.email),
               icon: const Icon(Icons.email),
-              label: const Text('Email'),
+              label: Text(AppLocalizations.of(context)!.emailLabel),
             ),
             TextButton.icon(
               onPressed: () => Navigator.of(context).pop(ShareMethod.whatsapp),
               icon: const Icon(Icons.chat),
-              label: const Text('WhatsApp'),
+              label: Text(AppLocalizations.of(context)!.whatsapp),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
           ],
         );

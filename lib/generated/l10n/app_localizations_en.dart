@@ -7975,4 +7975,64 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planRemoveCategory => 'Remove category';
+
+  @override
+  String get applyPrice => 'Apply Price';
+
+  @override
+  String get applyToEntireOrganization => 'Apply to entire organization';
+
+  @override
+  String get applyToThisClientOnly => 'Apply to this client only';
+
+  @override
+  String get chooseHowToShareInvoice =>
+      'Choose how you want to share this invoice:';
+
+  @override
+  String get generatingInvoicesPleaseWait =>
+      'Generating invoices... Please wait.';
+
+  @override
+  String get invoiceFrequencyAnnually => 'Annually';
+
+  @override
+  String get invoiceFrequencyFortnightly => 'Fortnightly';
+
+  @override
+  String get invoiceFrequencyMonthly => 'Monthly';
+
+  @override
+  String get invoiceFrequencyQuarterly => 'Quarterly';
+
+  @override
+  String get invoiceFrequencyWeekly => 'Weekly';
+
+  @override
+  String get ndisPriceCapInformation => 'NDIS Price Cap Information';
+
+  @override
+  String get organizationDataUnavailable => 'Organization data is unavailable';
+
+  @override
+  String get paymentSubmittedSuccessfully => 'Payment submitted successfully';
+
+  @override
+  String get saveAsCustomPricing => 'Save as custom pricing';
+
+  @override
+  String get saveThisPriceForFutureUse => 'Save this price for future use';
+
+  @override
+  String get shareLink => 'Share Link';
+
+  @override
+  String get sharePdf => 'Share PDF';
+
+  @override
+  String get whatsapp => 'WhatsApp';
+
+  @override
+  String get ndisPriceCapExplanation =>
+      'This is the maximum price allowed by NDIS for this support item. Prices above this cap may require additional justification or approval.';
 }

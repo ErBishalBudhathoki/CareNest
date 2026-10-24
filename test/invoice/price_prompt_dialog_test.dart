@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:carenest/app/features/invoice/presentation/widgets/price_prompt_dialog.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Widget tests for PricePromptDialog to verify quantity formatting
 /// and tooltip content, and simulate a successful price entry flow.
@@ -17,6 +18,9 @@ void main() {
   }) async {
     await tester.pumpWidget(
       MaterialApp(
+        // The dialog renders its labels through AppLocalizations.
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: Builder(
             builder: (context) {

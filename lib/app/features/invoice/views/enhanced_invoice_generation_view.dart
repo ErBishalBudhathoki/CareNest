@@ -1774,15 +1774,15 @@ class _EnhancedInvoiceGenerationViewState
             DropdownButtonFormField<String>(
               initialValue: _recurrenceFrequency,
               decoration: InputDecoration(labelText: l10n.frequency),
-              items: const [
-                DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
+              items: [
+                DropdownMenuItem(value: 'weekly', child: Text(AppLocalizations.of(context)!.invoiceFrequencyWeekly)),
                 DropdownMenuItem(
                   value: 'fortnightly',
-                  child: Text('Fortnightly'),
+                  child: Text(AppLocalizations.of(context)!.invoiceFrequencyFortnightly),
                 ),
-                DropdownMenuItem(value: 'monthly', child: Text('Monthly')),
-                DropdownMenuItem(value: 'quarterly', child: Text('Quarterly')),
-                DropdownMenuItem(value: 'annually', child: Text('Annually')),
+                DropdownMenuItem(value: 'monthly', child: Text(AppLocalizations.of(context)!.invoiceFrequencyMonthly)),
+                DropdownMenuItem(value: 'quarterly', child: Text(AppLocalizations.of(context)!.invoiceFrequencyQuarterly)),
+                DropdownMenuItem(value: 'annually', child: Text(AppLocalizations.of(context)!.invoiceFrequencyAnnually)),
               ],
               onChanged: (val) {
                 if (val != null) setState(() => _recurrenceFrequency = val);

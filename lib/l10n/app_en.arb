@@ -3975,6 +3975,25 @@
   "planCategoryName": "Category name",
   "planCategoryAmount": "Budget",
   "planAddCategory": "Add category",
-  "planRemoveCategory": "Remove category"
-
+  "planRemoveCategory": "Remove category",
+  "applyPrice": "Apply Price",
+  "applyToEntireOrganization": "Apply to entire organization",
+  "applyToThisClientOnly": "Apply to this client only",
+  "chooseHowToShareInvoice": "Choose how you want to share this invoice:",
+  "generatingInvoicesPleaseWait": "Generating invoices... Please wait.",
+  "invoiceFrequencyAnnually": "Annually",
+  "invoiceFrequencyFortnightly": "Fortnightly",
+  "invoiceFrequencyMonthly": "Monthly",
+  "invoiceFrequencyQuarterly": "Quarterly",
+  "invoiceFrequencyWeekly": "Weekly",
+  "ndisPriceCapInformation": "NDIS Price Cap Information",
+  "organizationDataUnavailable": "Organization data is unavailable",
+  "paymentSubmittedSuccessfully": "Payment submitted successfully",
+  "saveAsCustomPricing": "Save as custom pricing",
+  "saveThisPriceForFutureUse": "Save this price for future use",
+  "shareLink": "Share Link",
+  "sharePdf": "Share PDF",
+  "whatsapp": "WhatsApp"
+,
+  "ndisPriceCapExplanation": "This is the maximum price allowed by NDIS for this support item. Prices above this cap may require additional justification or approval."
 }

@@ -14641,6 +14641,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Remove category'**
   String get planRemoveCategory;
+
+  /// No description provided for @applyPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Price'**
+  String get applyPrice;
+
+  /// No description provided for @applyToEntireOrganization.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to entire organization'**
+  String get applyToEntireOrganization;
+
+  /// No description provided for @applyToThisClientOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to this client only'**
+  String get applyToThisClientOnly;
+
+  /// No description provided for @chooseHowToShareInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose how you want to share this invoice:'**
+  String get chooseHowToShareInvoice;
+
+  /// No description provided for @generatingInvoicesPleaseWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating invoices... Please wait.'**
+  String get generatingInvoicesPleaseWait;
+
+  /// No description provided for @invoiceFrequencyAnnually.
+  ///
+  /// In en, this message translates to:
+  /// **'Annually'**
+  String get invoiceFrequencyAnnually;
+
+  /// No description provided for @invoiceFrequencyFortnightly.
+  ///
+  /// In en, this message translates to:
+  /// **'Fortnightly'**
+  String get invoiceFrequencyFortnightly;
+
+  /// No description provided for @invoiceFrequencyMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get invoiceFrequencyMonthly;
+
+  /// No description provided for @invoiceFrequencyQuarterly.
+  ///
+  /// In en, this message translates to:
+  /// **'Quarterly'**
+  String get invoiceFrequencyQuarterly;
+
+  /// No description provided for @invoiceFrequencyWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get invoiceFrequencyWeekly;
+
+  /// No description provided for @ndisPriceCapInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'NDIS Price Cap Information'**
+  String get ndisPriceCapInformation;
+
+  /// No description provided for @organizationDataUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization data is unavailable'**
+  String get organizationDataUnavailable;
+
+  /// No description provided for @paymentSubmittedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment submitted successfully'**
+  String get paymentSubmittedSuccessfully;
+
+  /// No description provided for @saveAsCustomPricing.
+  ///
+  /// In en, this message translates to:
+  /// **'Save as custom pricing'**
+  String get saveAsCustomPricing;
+
+  /// No description provided for @saveThisPriceForFutureUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Save this price for future use'**
+  String get saveThisPriceForFutureUse;
+
+  /// No description provided for @shareLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Link'**
+  String get shareLink;
+
+  /// No description provided for @sharePdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Share PDF'**
+  String get sharePdf;
+
+  /// No description provided for @whatsapp.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp'**
+  String get whatsapp;
+
+  /// No description provided for @ndisPriceCapExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'This is the maximum price allowed by NDIS for this support item. Prices above this cap may require additional justification or approval.'**
+  String get ndisPriceCapExplanation;
 }
 
 class _AppLocalizationsDelegate

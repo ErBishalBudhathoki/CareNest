@@ -6,6 +6,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/features/invoice/repositories/invoice_ai_repository.dart';
 import 'package:carenest/app/features/invoice/views/invoice_list_view.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class InvoiceAIDashboard extends ConsumerWidget {
   final String? organizationId;
@@ -462,7 +463,7 @@ class InvoiceAIDashboard extends ConsumerWidget {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Generating invoices... Please wait.'),
+            content: Text(AppLocalizations.of(context)!.generatingInvoicesPleaseWait),
             backgroundColor: Theme.of(context).colorScheme.onSurface,
           ),
         );
