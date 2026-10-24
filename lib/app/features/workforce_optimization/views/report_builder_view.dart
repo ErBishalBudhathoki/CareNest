@@ -378,7 +378,9 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
             crossAxisCount: 2,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: 1.1,
+            // Two-line template names plus a two-line description need the
+            // extra height; at 1.1 the tile overflowed by ~9px on device.
+            childAspectRatio: 0.95,
           ),
           itemCount: templates.length,
           itemBuilder: (context, index) {
@@ -422,7 +424,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           border: Border.all(
@@ -437,33 +439,40 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 48,
-              height: 48,
+              width: 44,
+              height: 44,
               decoration: BoxDecoration(color: color.withValues(alpha: 0.1)),
               child: Icon(icon, color: color, size: 24),
             ),
-            const SizedBox(height: 12),
-            Text(
-              name,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.onSurface,
+            const SizedBox(height: 8),
+            Flexible(
+              child: Text(
+                name,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             const SizedBox(height: 4),
-            Text(
-              description,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 11,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+            Flexible(
+              child: Text(
+                description,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

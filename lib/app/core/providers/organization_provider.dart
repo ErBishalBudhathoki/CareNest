@@ -48,7 +48,11 @@ class OrganizationNotifier extends Notifier<OrganizationState> {
   OrganizationState build() {
     _repository = ref.watch(organizationRepositoryProvider);
     _prefs = ref.watch(sharedPreferencesProvider);
-    loadUserOrganizations();
+    // `loadUserOrganizations` writes `state` straight away, and Riverpod 3
+    // throws "Tried to read the state of an uninitialized provider" when that
+    // happens while build() is still on the stack. Defer to the next
+    // microtask so the notifier is mounted first.
+    Future.microtask(loadUserOrganizations);
     return const OrganizationState();
   }
 
