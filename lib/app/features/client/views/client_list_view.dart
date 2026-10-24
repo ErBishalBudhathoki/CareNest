@@ -118,6 +118,18 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     return {'userEmail': userEmail, 'organizationId': organizationId};
   }
 
+  /// Dispose dialog controllers only after the route's exit animation. A
+  /// TextField still depends on its controller while the dialog is animating
+  /// out; disposing immediately triggers Flutter's `_dependents.isEmpty`
+  /// assertion.
+  void _disposeAfterDialog(List<VoidCallback> disposers) {
+    Future<void>.delayed(const Duration(milliseconds: 500), () {
+      for (final dispose in disposers) {
+        dispose();
+      }
+    });
+  }
+
   double _dialogWidth(
     BuildContext context, {
     double maxWidth = 760,
@@ -1362,13 +1374,13 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
       },
     );
 
-    budgetController.dispose();
-    documentUrlController.dispose();
-    documentNameController.dispose();
-    notesController.dispose();
-    for (final draft in categoryDrafts) {
-      draft.dispose();
-    }
+    _disposeAfterDialog([
+      budgetController.dispose,
+      documentUrlController.dispose,
+      documentNameController.dispose,
+      notesController.dispose,
+      for (final draft in categoryDrafts) draft.dispose,
+    ]);
   }
 
   Future<void> _confirmDeleteClient(Patient client) async {

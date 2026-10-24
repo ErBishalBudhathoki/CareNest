@@ -205,20 +205,23 @@ class _BauhausCommandCenterState extends State<BauhausCommandCenter> {
         .toList();
   }
 
-  Future<void> _onActionTap(
+  void _onActionTap(
     CommandCategory category,
     CommandAction action,
-  ) async {
-    await CommandDeskPrefs.recordActionUse(category.title, action.title);
-    if (!mounted) {
-      action.onTap();
-      return;
-    }
-    setState(() {
-      _lastUsedByCategory[category.title] =
-          DateTime.now().millisecondsSinceEpoch;
-    });
+  ) {
+    // Navigate immediately. Recency tracking is a best-effort side effect and
+    // must never block the action (SharedPreferences can be slow or fail on a
+    // cold start).
     action.onTap();
+    CommandDeskPrefs.recordActionUse(category.title, action.title)
+        .then((_) {
+          if (!mounted) return;
+          setState(() {
+            _lastUsedByCategory[category.title] =
+                DateTime.now().millisecondsSinceEpoch;
+          });
+        })
+        .catchError((Object _) {});
   }
 
   /// True when this section floated above its original position via recency.

@@ -580,116 +580,136 @@ class _ScheduleDashboardScreenState
             _showSmartAssignDialog(shift);
           }
         },
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Time column
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
               children: [
-                Text(
-                  timeFormat.format(shift.startTime),
-                  style: BauhausDesign.getTextTheme(context).titleMedium
-                      ?.copyWith(
-                        color: BauhausDesign.primary,
-                        fontWeight: FontWeight.w800,
-                      ),
+                // Time column
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      timeFormat.format(shift.startTime),
+                      style: BauhausDesign.getTextTheme(context).titleMedium
+                          ?.copyWith(
+                            color: BauhausDesign.primary,
+                            fontWeight: FontWeight.w800,
+                          ),
+                    ),
+                    Text(
+                      timeFormat.format(shift.endTime),
+                      style: BauhausDesign.getTextTheme(context).bodySmall
+                          ?.copyWith(
+                            color: BauhausDesign.accent,
+                            fontWeight: FontWeight.w700,
+                          ),
+                    ),
+                  ],
                 ),
-                Text(
-                  timeFormat.format(shift.endTime),
-                  style: BauhausDesign.getTextTheme(context).bodySmall
-                      ?.copyWith(
-                        color: BauhausDesign.accent,
-                        fontWeight: FontWeight.w700,
-                      ),
+
+                // Vertical divider
+                Container(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: BauhausDesign.space3,
+                  ),
+                  width: 2,
+                  height: 40,
+                  decoration: BoxDecoration(color: statusColor),
                 ),
+
+                // Details column
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        shift.clientName ??
+                            shift.clientEmail ??
+                            AppLocalizations.of(context)!.noClient,
+                        style: BauhausDesign.getTextTheme(context).bodyLarge,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        shift.employeeName ??
+                            shift.employeeEmail ??
+                            AppLocalizations.of(context)!.unassigned,
+                        style: BauhausDesign.getTextTheme(context).bodyMedium
+                            ?.copyWith(
+                              color: shift.employeeEmail != null
+                                  ? Theme.of(context).colorScheme.onSurface
+                                  : BauhausDesign.primary,
+                              fontWeight: shift.employeeEmail != null
+                                  ? FontWeight.normal
+                                  : FontWeight.w600,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Status badge
+                BauhausChip(
+                  text:
+                      shift.status.value[0].toUpperCase() +
+                      shift.status.value.substring(1),
+                  color: statusColor,
+                  isSmall: true,
+                ),
+
+                if (widget.isAdmin && shift.employeeEmail == null)
+                  const Padding(
+                    padding: EdgeInsets.only(left: BauhausDesign.space2),
+                    child: Icon(
+                      Icons.auto_awesome,
+                      color: BauhausDesign.accent,
+                      size: 20,
+                    ),
+                  ),
               ],
             ),
-
-            // Vertical divider
-            Container(
-              margin: const EdgeInsets.symmetric(
-                horizontal: BauhausDesign.space3,
-              ),
-              width: 2,
-              height: 40,
-              decoration: BoxDecoration(color: statusColor),
-            ),
-
-            // Details column
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    shift.clientName ??
-                        shift.clientEmail ??
-                        AppLocalizations.of(context)!.noClient,
-                    style: BauhausDesign.getTextTheme(context).bodyLarge,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    shift.employeeName ??
-                        shift.employeeEmail ??
-                        AppLocalizations.of(context)!.unassigned,
-                    style: BauhausDesign.getTextTheme(context).bodyMedium
-                        ?.copyWith(
-                          color: shift.employeeEmail != null
-                              ? Theme.of(context).colorScheme.onSurface
-                              : BauhausDesign.primary,
-                          fontWeight: shift.employeeEmail != null
-                              ? FontWeight.normal
-                              : FontWeight.w600,
-                        ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Status badge
-            BauhausChip(
-              text:
-                  shift.status.value[0].toUpperCase() +
-                  shift.status.value.substring(1),
-              color: statusColor,
-              isSmall: true,
-            ),
-
             if (widget.isAdmin &&
                 shift.status != ShiftStatus.completed &&
-                shift.status != ShiftStatus.cancelled)
-              PopupMenuButton<String>(
-                tooltip: 'Billing actions',
-                onSelected: (action) {
-                  if (action == 'cancel') {
-                    _showCancellationDialog(shift);
-                  } else if (action == 'travel') {
-                    _showProviderTravelDialog(shift);
-                  }
-                },
-                itemBuilder: (context) => const [
-                  PopupMenuItem(value: 'cancel', child: Text('Cancel & bill')),
-                  PopupMenuItem(
-                    value: 'travel',
-                    child: Text('Provider travel'),
+                shift.status != ShiftStatus.cancelled) ...[
+              const SizedBox(height: BauhausDesign.space3),
+              Row(
+                children: [
+                  Expanded(
+                    child: BauhausActionButton(
+                      text: 'Cancel & bill',
+                      icon: Icons.cancel_outlined,
+                      variant: BauhausActionVariant.warning,
+                      isSmall: true,
+                      onPressed: () => _showCancellationDialog(shift),
+                    ),
+                  ),
+                  const SizedBox(width: BauhausDesign.space2),
+                  Expanded(
+                    child: BauhausActionButton(
+                      text: 'Provider travel',
+                      icon: Icons.route_outlined,
+                      variant: BauhausActionVariant.secondary,
+                      isSmall: true,
+                      onPressed: () => _showProviderTravelDialog(shift),
+                    ),
                   ),
                 ],
               ),
-
-            if (widget.isAdmin && shift.employeeEmail == null)
-              const Padding(
-                padding: EdgeInsets.only(left: BauhausDesign.space2),
-                child: Icon(
-                  Icons.auto_awesome,
-                  color: BauhausDesign.accent,
-                  size: 20,
-                ),
-              ),
+            ],
           ],
         ),
       ),
     );
+  }
+
+  void _disposeAfterDialog(List<VoidCallback> disposers) {
+    Future<void>.delayed(const Duration(milliseconds: 500), () {
+      for (final dispose in disposers) {
+        dispose();
+      }
+    });
   }
 
   Future<void> _showCancellationDialog(ShiftModel shift) async {
@@ -816,7 +836,7 @@ class _ScheduleDashboardScreenState
       ),
     );
 
-    noticeController.dispose();
+    _disposeAfterDialog([noticeController.dispose]);
     if (result == true) await _loadShifts();
   }
 
@@ -854,6 +874,15 @@ class _ScheduleDashboardScreenState
         'number': number,
         'name': (item['supportItemName'] ?? item['Support Item Name'] ?? '')
             .toString(),
+      };
+    }
+    // Core-support catalogues follow the pattern
+    // <category>_799_<registrationGroup>_1_1 for non-labour travel. Use it as a
+    // fallback when the catalog list is paginated or the travel row is absent.
+    if (category.isNotEmpty && registrationGroup.isNotEmpty) {
+      return {
+        'number': '${category}_799_${registrationGroup}_1_1',
+        'name': 'Provider travel - non-labour costs',
       };
     }
     return null;
@@ -1161,10 +1190,12 @@ class _ScheduleDashboardScreenState
       ),
     );
 
-    kmController.dispose();
-    minutesController.dispose();
-    nonLabourController.dispose();
-    labourController.dispose();
+    _disposeAfterDialog([
+      kmController.dispose,
+      minutesController.dispose,
+      nonLabourController.dispose,
+      labourController.dispose,
+    ]);
     if (result == true) await _loadShifts();
   }
 

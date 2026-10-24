@@ -26,11 +26,14 @@ class MainActivity: FlutterFragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // FLAG_SECURE: block screenshots and screen recordings of NDIS PII.
-        // Persists for the window lifetime; no per-screen handling needed.
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_SECURE,
-            WindowManager.LayoutParams.FLAG_SECURE
-        )
+        // Release builds keep this on. Debug builds disable it so QA can
+        // capture evidence while testing; production is unaffected.
+        if (!BuildConfig.DEBUG) {
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE
+            )
+        }
         super.onCreate(savedInstanceState)
     }
 
