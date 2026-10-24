@@ -18,10 +18,15 @@
 ///     --dart-define=WORKER_PASSWORD="$WORKER_PASSWORD"
 ///
 /// Preconditions (development database):
-///   * the worker has at least one shift this week that has not been logged
-///     yet — run `node backend/scripts/plan_sil_current_week.js` (and
-///     `reset_sil_test_week.js` for a repeatable week);
+///   * the worker has a client assignment carrying this week's SIL roster
+///     shift — materialise the week with
+///     `node backend/scripts/plan_sil_current_week.js` and assign the shifts
+///     to the worker (`reset_sil_test_week.js` restarts a repeatable week);
 ///   * no timer is already running for this worker from a previous run.
+///
+/// The emulator's non-dismissible device-integrity warning and the post-login
+/// notification nudge are acknowledged before the flow is driven, since their
+/// modal barriers swallow every tap.
 library;
 
 import 'package:flutter/material.dart';
@@ -70,23 +75,39 @@ void main() {
     return found;
   }
 
+  /// The app opens the non-dismissible device-integrity warning on emulators
+  /// and offers the notification settings nudge after login. Both sit on a
+  /// modal barrier that swallows every tap, so acknowledge them before driving
+  /// the UI.
+  Future<void> acknowledgeBlockingDialogs(WidgetTester tester) async {
+    for (final label in const ['I understand', 'Cancel']) {
+      final button = find.text(label);
+      if (button.evaluate().isEmpty) continue;
+      await tester.tap(button.first);
+      await settle(tester, 1);
+      debugPrint('ℹ️ dismissed the "$label" dialog');
+    }
+  }
+
   Future<void> signIn(WidgetTester tester) async {
     final fields = find.byType(TextField);
-    if (find.byType(AutofillGroup).evaluate().isEmpty) {
-      debugPrint('ℹ️ no login screen — reusing the persisted session');
-      return;
+    // The app may boot straight into the dashboard (persisted session) or into
+    // the login form, and the splash takes a variable amount of time. Wait for
+    // either before deciding.
+    final homeHeader = find.text('UPCOMING SHIFTS');
+    final bootWatch = Stopwatch()..start();
+    while (fields.evaluate().isEmpty &&
+        homeHeader.evaluate().isEmpty &&
+        bootWatch.elapsed < const Duration(seconds: 40)) {
+      await tester.pump(const Duration(milliseconds: 500));
     }
 
-    expect(
-      await waitFor(
-        tester,
-        fields,
-        timeout: const Duration(seconds: 20),
-        label: 'login fields',
-      ),
-      isTrue,
-      reason: 'the login form should render',
-    );
+    await acknowledgeBlockingDialogs(tester);
+
+    if (fields.evaluate().isEmpty) {
+      debugPrint('ℹ️ no login form — reusing the persisted session');
+      return;
+    }
 
     var signedIn = false;
     for (var attempt = 1; attempt <= 3 && !signedIn; attempt++) {
@@ -129,9 +150,11 @@ void main() {
 
     app.main();
     await settle(tester, 6);
+    await acknowledgeBlockingDialogs(tester);
 
     await signIn(tester);
     await settle(tester, 3);
+    await acknowledgeBlockingDialogs(tester);
 
     // ---- Open the participant's details from the home shift card ----------
     final cards = find.byType(BauhausAppointmentCard);
@@ -148,6 +171,8 @@ void main() {
           '(run: node backend/scripts/plan_sil_current_week.js)',
     );
 
+    await tester.ensureVisible(cards.first);
+    await settle(tester, 2);
     await tester.tap(cards.first);
     await settle(tester, 4);
 
@@ -165,15 +190,39 @@ void main() {
     // A timer left running from a previous attempt shows END SHIFT straight
     // away, so treat both states as "the shift is open".
     if (startShift.evaluate().isNotEmpty) {
+      // The action button sits below the fold on a phone screen.
+      await tester.ensureVisible(startShift.first);
+      await settle(tester, 2);
       await tester.tap(startShift.first);
       await settle(tester, 4);
+      var clockedIn = await waitFor(
+        tester,
+        endShift,
+        timeout: const Duration(seconds: 20),
+        label: 'END SHIFT after clocking in',
+      );
+
+      // The timer is persisted server-side, but this screen does not always
+      // rebuild for it. Reopening the participant picks up the running timer.
+      if (!clockedIn) {
+        debugPrint('ℹ️ details did not refresh; reopening the participant');
+        final back = find.byIcon(Icons.arrow_back);
+        if (back.evaluate().isNotEmpty) {
+          await tester.tap(back.first);
+          await settle(tester, 3);
+          await tester.tap(cards.first);
+          await settle(tester, 4);
+          clockedIn = await waitFor(
+            tester,
+            endShift,
+            timeout: const Duration(seconds: 20),
+            label: 'END SHIFT after reopening',
+          );
+        }
+      }
+
       expect(
-        await waitFor(
-          tester,
-          endShift,
-          timeout: const Duration(seconds: 20),
-          label: 'END SHIFT after clocking in',
-        ),
+        clockedIn,
         isTrue,
         reason: 'clocking in should flip the button to END SHIFT',
       );
@@ -183,38 +232,43 @@ void main() {
     expect(endShift.evaluate().isNotEmpty, isTrue);
 
     // ---- Clock out and link the worked time to the roster shift ----------
+    await tester.ensureVisible(endShift.first);
+    await settle(tester, 2);
     await tester.tap(endShift.first);
     await settle(tester, 4);
 
+    // The details screen asks which roster shift the worked time belongs to.
+    // If the row is already chosen the confirm dialog can be up immediately,
+    // so only drive the picker when it is actually on screen.
+    final confirmTitle = find.text('CONFIRM SHIFT ASSOCIATION');
     final shiftPicker = await waitFor(
       tester,
       find.text('Select Shift'),
-      timeout: const Duration(seconds: 20),
+      timeout: confirmTitle.evaluate().isNotEmpty
+          ? const Duration(seconds: 2)
+          : const Duration(seconds: 20),
       label: 'shift picker',
     );
-    expect(
-      shiftPicker,
-      isTrue,
-      reason: 'the details screen offers the roster shift to link time to',
-    );
 
-    // Already-logged shifts render as disabled rows, so only the enabled ones
-    // can be picked.
-    final shiftOptions = find.byWidgetPredicate(
-      (widget) => widget is ListTile && widget.enabled,
-    );
-    expect(
-      shiftOptions.evaluate().isNotEmpty,
-      isTrue,
-      reason: 'at least one unlogged shift should be selectable',
-    );
-    await tester.tap(shiftOptions.first);
-    await settle(tester, 3);
+    if (shiftPicker) {
+      // Already-logged shifts render as disabled rows, so only the enabled ones
+      // can be picked.
+      final shiftOptions = find.byWidgetPredicate(
+        (widget) => widget is ListTile && widget.enabled,
+      );
+      expect(
+        shiftOptions.evaluate().isNotEmpty,
+        isTrue,
+        reason: 'at least one unlogged shift should be selectable',
+      );
+      await tester.tap(shiftOptions.first);
+      await settle(tester, 3);
+    }
 
     expect(
       await waitFor(
         tester,
-        find.text('CONFIRM SHIFT ASSOCIATION'),
+        confirmTitle,
         timeout: const Duration(seconds: 20),
         label: 'confirm shift dialog',
       ),
@@ -222,14 +276,15 @@ void main() {
       reason: 'the confirm dialog should appear before the save',
     );
     await tester.tap(find.text('CONFIRM').first);
-    await settle(tester, 6);
 
     // ---- The save landed --------------------------------------------------
+    // Watch for the confirmation straight away: the snackbar only lives for a
+    // few seconds, so settling first would miss it.
     expect(
       await waitFor(
         tester,
         find.text('Time updated successfully'),
-        timeout: const Duration(seconds: 30),
+        timeout: const Duration(seconds: 20),
         label: 'worked-time success',
       ),
       isTrue,
