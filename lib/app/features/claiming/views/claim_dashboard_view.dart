@@ -6,6 +6,7 @@ import 'package:carenest/app/features/claiming/models/claim_import_result.dart';
 import 'package:carenest/app/features/claiming/models/claim_models.dart';
 import 'package:carenest/app/features/claiming/viewmodels/claim_viewmodel.dart';
 import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// NDIS claiming dashboard (Phase 6): generate a Bulk Payment Request CSV for
 /// NDIA-managed claims and import the returned results file.
@@ -35,7 +36,7 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('NDIS Claiming'),
+        title: Text(AppLocalizations.of(context)!.ndisClaiming),
         actions: [
           IconButton(
             tooltip: 'Pick period & generate',
@@ -152,7 +153,7 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
     return Card(
       child: ListTile(
         leading: const Icon(Icons.table_view_outlined),
-        title: const Text('Generated CSV ready'),
+        title: Text(AppLocalizations.of(context)!.generatedCsvReady),
         subtitle: Text('${csv.split('\n').length - 1} rows'),
         trailing: Wrap(
           spacing: 4,
@@ -164,7 +165,7 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
                 await Clipboard.setData(ClipboardData(text: csv));
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('CSV copied to clipboard.')),
+                    SnackBar(content: Text(AppLocalizations.of(context)!.csvCopiedToClipboard)),
                   );
                 }
               },
@@ -223,14 +224,14 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
           },
           itemBuilder: (context) => [
             if (['generated', 'partial', 'failed'].contains(batch.status))
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'submit',
-                child: Text('Mark submitted'),
+                child: Text(AppLocalizations.of(context)!.markSubmitted),
               ),
             if (batch.status != 'paid')
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'results',
-                child: Text('Import results file'),
+                child: Text(AppLocalizations.of(context)!.importResultsFile),
               ),
             if ([
               'submitted',
@@ -239,15 +240,15 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
               'failed',
               'paid',
             ].contains(batch.status))
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'remittance',
-                child: Text('Record payment'),
+                child: Text(AppLocalizations.of(context)!.recordPayment),
               ),
             if (['partial', 'failed'].contains(batch.status) &&
                 batch.resubmittedBatchId == null)
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'resubmit',
-                child: Text('Resubmit rejected'),
+                child: Text(AppLocalizations.of(context)!.resubmitRejected),
               ),
           ],
         ),
@@ -294,7 +295,7 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
     final portalReference = await showDialog<String>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Mark claim batch submitted'),
+        title: Text(AppLocalizations.of(context)!.markClaimBatchSubmitted),
         content: TextField(
           controller: controller,
           decoration: const InputDecoration(
@@ -306,12 +307,12 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           FilledButton(
             onPressed: () =>
                 Navigator.of(dialogContext).pop(controller.text.trim()),
-            child: const Text('Mark submitted'),
+            child: Text(AppLocalizations.of(context)!.markSubmitted),
           ),
         ],
       ),
@@ -341,7 +342,7 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Record NDIA payment'),
+        title: Text(AppLocalizations.of(context)!.recordNdiaPayment),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -369,11 +370,11 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('Save payment'),
+            child: Text(AppLocalizations.of(context)!.savePayment),
           ),
         ],
       ),
@@ -437,7 +438,7 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
     if (csv != null && mounted) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Claim batch generated.')));
+      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.claimBatchGenerated)));
     }
   }
 
@@ -446,7 +447,7 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
     final content = await showDialog<String>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Import results file'),
+        title: Text(AppLocalizations.of(context)!.importResultsFile),
         content: TextField(
           controller: controller,
           maxLines: 8,
@@ -458,12 +459,12 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           FilledButton(
             onPressed: () =>
                 Navigator.of(dialogContext).pop(controller.text.trim()),
-            child: const Text('Import'),
+            child: Text(AppLocalizations.of(context)!.importAction),
           ),
         ],
       ),
@@ -558,7 +559,7 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
     await showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Bulk Payment Request CSV'),
+        title: Text(AppLocalizations.of(context)!.bulkPaymentRequestCsv),
         content: SizedBox(
           width: double.maxFinite,
           child: SingleChildScrollView(
@@ -568,7 +569,7 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Close'),
+            child: Text(AppLocalizations.of(context)!.close),
           ),
         ],
       ),

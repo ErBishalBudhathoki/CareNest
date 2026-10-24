@@ -5,6 +5,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/business_intelligence_viewmodel.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
 import 'package:carenest/app/features/workforce_optimization/utils/workforce_export_helper.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class BusinessIntelligenceView extends ConsumerStatefulWidget {
   const BusinessIntelligenceView({super.key});
@@ -572,7 +573,7 @@ class _BusinessIntelligenceViewState
           child: ElevatedButton.icon(
             onPressed: () => _runWhatIf(),
             icon: const Icon(Icons.analytics),
-            label: const Text('What-If'),
+            label: Text(AppLocalizations.of(context)!.whatIf),
             style: ElevatedButton.styleFrom(
               backgroundColor: BauhausDesign.neutral,
               foregroundColor: Theme.of(context).colorScheme.surface,
@@ -586,7 +587,7 @@ class _BusinessIntelligenceViewState
           child: OutlinedButton.icon(
             onPressed: () => _exportCsv(),
             icon: const Icon(Icons.download),
-            label: const Text('Export'),
+            label: Text(AppLocalizations.of(context)!.export),
             style: OutlinedButton.styleFrom(
               foregroundColor: BauhausDesign.neutral,
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -605,7 +606,7 @@ class _BusinessIntelligenceViewState
     final orgId = orgState.currentOrganization?.id;
     if (orgId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Organization context is unavailable')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.organizationContextUnavailable)),
       );
       return;
     }
@@ -629,7 +630,7 @@ class _BusinessIntelligenceViewState
     if (scenario == null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Scenario analysis failed')));
+      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.scenarioAnalysisFailed)));
       return;
     }
     showDialog(
@@ -660,7 +661,7 @@ class _BusinessIntelligenceViewState
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Close'),
+            child: Text(AppLocalizations.of(context)!.close),
           ),
         ],
       ),

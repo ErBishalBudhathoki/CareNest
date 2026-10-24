@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:carenest/app/features/stakeholders/models/stakeholder_models.dart';
 import 'package:carenest/app/features/stakeholders/viewmodels/stakeholder_viewmodel.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Client care team (Phase 5): plan manager, support coordinator, nominee and
 /// family, with funding-type routing.
@@ -88,7 +89,7 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
             ),
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.person_add_alt_1),
-        label: const Text('Add'),
+        label: Text(AppLocalizations.of(context)!.add),
         onPressed: () => _showAddSheet(state),
       ),
     );
@@ -99,7 +100,7 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
     return Card(
       child: ListTile(
         leading: const Icon(Icons.account_balance_wallet_outlined),
-        title: const Text('Funding type'),
+        title: Text(AppLocalizations.of(context)!.fundingType),
         subtitle: Text(current),
         trailing: DropdownButton<String>(
           value: _fundingTypes.contains(current) ? current : null,
@@ -124,8 +125,8 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
               );
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Link a stakeholder to set the funding type.'),
+                SnackBar(
+                  content: Text(AppLocalizations.of(context)!.linkAStakeholderToSetFundingType),
                 ),
               );
             }
@@ -153,7 +154,7 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
           children: [
             if (entry.isPrimary)
               Chip(
-                label: const Text('Primary'),
+                label: Text(AppLocalizations.of(context)!.primary),
                 backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.12),
                 side: BorderSide(color: theme.colorScheme.primary),
               ),
@@ -179,13 +180,13 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
           children: [
             ListTile(
               leading: const Icon(Icons.link),
-              title: const Text('Link existing stakeholder'),
+              title: Text(AppLocalizations.of(context)!.linkExistingStakeholder),
               enabled: state.allStakeholders.isNotEmpty,
               onTap: () => Navigator.of(sheetContext).pop('link'),
             ),
             ListTile(
               leading: const Icon(Icons.add),
-              title: const Text('Create new stakeholder'),
+              title: Text(AppLocalizations.of(context)!.createNewStakeholder),
               onTap: () => Navigator.of(sheetContext).pop('create'),
             ),
           ],
@@ -212,7 +213,7 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (dialogContext, setState) => AlertDialog(
-          title: const Text('Link stakeholder'),
+          title: Text(AppLocalizations.of(context)!.linkStakeholder),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -239,7 +240,7 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
                 value: isPrimary,
-                title: const Text('Primary contact'),
+                title: Text(AppLocalizations.of(context)!.primaryContact),
                 onChanged: (v) => setState(() => isPrimary = v ?? false),
               ),
             ],
@@ -247,7 +248,7 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             FilledButton(
               onPressed: () async {
@@ -260,7 +261,7 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
                     );
                 if (dialogContext.mounted) Navigator.of(dialogContext).pop(ok);
               },
-              child: const Text('Link'),
+              child: Text(AppLocalizations.of(context)!.link),
             ),
           ],
         ),
@@ -269,7 +270,7 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
 
     if (linked == true && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Stakeholder linked.')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.stakeholderLinked)),
       );
     }
   }
@@ -284,7 +285,7 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (dialogContext, setState) => AlertDialog(
-          title: const Text('New stakeholder'),
+          title: Text(AppLocalizations.of(context)!.newStakeholder),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -319,7 +320,7 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             FilledButton(
               onPressed: () async {
@@ -333,7 +334,7 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
                 });
                 if (dialogContext.mounted) Navigator.of(dialogContext).pop(ok);
               },
-              child: const Text('Create'),
+              child: Text(AppLocalizations.of(context)!.create),
             ),
           ],
         ),
@@ -342,7 +343,7 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
 
     if (created == true && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Stakeholder created. Link it to the client.')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.stakeholderCreatedLinkToClient)),
       );
     }
   }

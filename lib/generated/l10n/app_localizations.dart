@@ -14755,6 +14755,318 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This is the maximum price allowed by NDIS for this support item. Prices above this cap may require additional justification or approval.'**
   String get ndisPriceCapExplanation;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @export.
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get export;
+
+  /// No description provided for @optimize.
+  ///
+  /// In en, this message translates to:
+  /// **'Optimize'**
+  String get optimize;
+
+  /// No description provided for @organizationContextUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization context is unavailable'**
+  String get organizationContextUnavailable;
+
+  /// No description provided for @performanceTrends.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance Trends'**
+  String get performanceTrends;
+
+  /// No description provided for @reportExportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Report export failed'**
+  String get reportExportFailed;
+
+  /// No description provided for @runAudit.
+  ///
+  /// In en, this message translates to:
+  /// **'Run Audit'**
+  String get runAudit;
+
+  /// No description provided for @runScenario.
+  ///
+  /// In en, this message translates to:
+  /// **'Run Scenario'**
+  String get runScenario;
+
+  /// No description provided for @scenarioAnalysisFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Scenario analysis failed'**
+  String get scenarioAnalysisFailed;
+
+  /// No description provided for @scenarioComparison.
+  ///
+  /// In en, this message translates to:
+  /// **'Scenario Comparison'**
+  String get scenarioComparison;
+
+  /// No description provided for @viewReport.
+  ///
+  /// In en, this message translates to:
+  /// **'View Report'**
+  String get viewReport;
+
+  /// No description provided for @whatIf.
+  ///
+  /// In en, this message translates to:
+  /// **'What-If'**
+  String get whatIf;
+
+  /// No description provided for @bulkPaymentRequestCsv.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulk Payment Request CSV'**
+  String get bulkPaymentRequestCsv;
+
+  /// No description provided for @claimBatchGenerated.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim batch generated.'**
+  String get claimBatchGenerated;
+
+  /// No description provided for @csvCopiedToClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'CSV copied to clipboard.'**
+  String get csvCopiedToClipboard;
+
+  /// No description provided for @generatedCsvReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Generated CSV ready'**
+  String get generatedCsvReady;
+
+  /// No description provided for @importAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Import'**
+  String get importAction;
+
+  /// No description provided for @importResultsFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Import results file'**
+  String get importResultsFile;
+
+  /// No description provided for @markClaimBatchSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark claim batch submitted'**
+  String get markClaimBatchSubmitted;
+
+  /// No description provided for @markSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark submitted'**
+  String get markSubmitted;
+
+  /// No description provided for @recordNdiaPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Record NDIA payment'**
+  String get recordNdiaPayment;
+
+  /// No description provided for @recordPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Record payment'**
+  String get recordPayment;
+
+  /// No description provided for @resubmitRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Resubmit rejected'**
+  String get resubmitRejected;
+
+  /// No description provided for @savePayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Save payment'**
+  String get savePayment;
+
+  /// No description provided for @add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get add;
+
+  /// No description provided for @create.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get create;
+
+  /// No description provided for @createNewStakeholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Create new stakeholder'**
+  String get createNewStakeholder;
+
+  /// No description provided for @fundingType.
+  ///
+  /// In en, this message translates to:
+  /// **'Funding type'**
+  String get fundingType;
+
+  /// No description provided for @link.
+  ///
+  /// In en, this message translates to:
+  /// **'Link'**
+  String get link;
+
+  /// No description provided for @linkAStakeholderToSetFundingType.
+  ///
+  /// In en, this message translates to:
+  /// **'Link a stakeholder to set the funding type.'**
+  String get linkAStakeholderToSetFundingType;
+
+  /// No description provided for @linkExistingStakeholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Link existing stakeholder'**
+  String get linkExistingStakeholder;
+
+  /// No description provided for @linkStakeholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Link stakeholder'**
+  String get linkStakeholder;
+
+  /// No description provided for @newStakeholder.
+  ///
+  /// In en, this message translates to:
+  /// **'New stakeholder'**
+  String get newStakeholder;
+
+  /// No description provided for @primary.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary'**
+  String get primary;
+
+  /// No description provided for @primaryContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary contact'**
+  String get primaryContact;
+
+  /// No description provided for @stakeholderCreatedLinkToClient.
+  ///
+  /// In en, this message translates to:
+  /// **'Stakeholder created. Link it to the client.'**
+  String get stakeholderCreatedLinkToClient;
+
+  /// No description provided for @stakeholderLinked.
+  ///
+  /// In en, this message translates to:
+  /// **'Stakeholder linked.'**
+  String get stakeholderLinked;
+
+  /// No description provided for @approve.
+  ///
+  /// In en, this message translates to:
+  /// **'APPROVE'**
+  String get approve;
+
+  /// No description provided for @assign.
+  ///
+  /// In en, this message translates to:
+  /// **'ASSIGN'**
+  String get assign;
+
+  /// No description provided for @bulkActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulk Actions'**
+  String get bulkActions;
+
+  /// No description provided for @generateCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'GENERATE'**
+  String get generateCaps;
+
+  /// No description provided for @groupByClient.
+  ///
+  /// In en, this message translates to:
+  /// **'Group by client'**
+  String get groupByClient;
+
+  /// No description provided for @preview.
+  ///
+  /// In en, this message translates to:
+  /// **'PREVIEW'**
+  String get preview;
+
+  /// No description provided for @push.
+  ///
+  /// In en, this message translates to:
+  /// **'Push'**
+  String get push;
+
+  /// No description provided for @reject.
+  ///
+  /// In en, this message translates to:
+  /// **'REJECT'**
+  String get reject;
+
+  /// No description provided for @retryCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'RETRY'**
+  String get retryCaps;
+
+  /// No description provided for @runSuggestFirstToPickWorkers.
+  ///
+  /// In en, this message translates to:
+  /// **'Run SUGGEST first to pick workers'**
+  String get runSuggestFirstToPickWorkers;
+
+  /// No description provided for @schedule.
+  ///
+  /// In en, this message translates to:
+  /// **'SCHEDULE'**
+  String get schedule;
+
+  /// No description provided for @sendNow.
+  ///
+  /// In en, this message translates to:
+  /// **'SEND NOW'**
+  String get sendNow;
+
+  /// No description provided for @sms.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS'**
+  String get sms;
+
+  /// No description provided for @suggest.
+  ///
+  /// In en, this message translates to:
+  /// **'SUGGEST'**
+  String get suggest;
+
+  /// No description provided for @suggestionsLoaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestions loaded'**
+  String get suggestionsLoaded;
 }
 
 class _AppLocalizationsDelegate

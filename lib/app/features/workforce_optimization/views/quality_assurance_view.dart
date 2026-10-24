@@ -5,6 +5,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/quality_assurance_viewmodel.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
 import 'package:carenest/app/features/workforce_optimization/utils/workforce_export_helper.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class QualityAssuranceView extends ConsumerStatefulWidget {
   const QualityAssuranceView({super.key});
@@ -469,8 +470,8 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
               final orgId = orgState.currentOrganization?.id;
               if (orgId == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Organization context is unavailable'),
+                  SnackBar(
+                    content: Text(AppLocalizations.of(context)!.organizationContextUnavailable),
                   ),
                 );
                 return;
@@ -480,7 +481,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
                   .performComplianceCheck(organizationId: orgId);
             },
             icon: const Icon(Icons.fact_check),
-            label: const Text('Run Audit'),
+            label: Text(AppLocalizations.of(context)!.runAudit),
             style: ElevatedButton.styleFrom(
               backgroundColor: BauhausDesign.neutral,
               foregroundColor: Theme.of(context).colorScheme.surface,
@@ -494,7 +495,7 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
           child: OutlinedButton.icon(
             onPressed: () => _exportCsv(),
             icon: const Icon(Icons.download),
-            label: const Text('Export'),
+            label: Text(AppLocalizations.of(context)!.export),
             style: OutlinedButton.styleFrom(
               foregroundColor: BauhausDesign.neutral,
               padding: const EdgeInsets.symmetric(vertical: 16),

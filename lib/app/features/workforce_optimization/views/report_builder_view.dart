@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/workforce_optimization/utils/workforce_export_helper.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class ReportBuilderView extends ConsumerStatefulWidget {
   const ReportBuilderView({super.key});
@@ -490,7 +491,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
                 ? null
                 : () => _generateReport(),
             icon: const Icon(Icons.play_arrow),
-            label: const Text('Generate Report'),
+            label: Text(AppLocalizations.of(context)!.generateReport),
             style: ElevatedButton.styleFrom(
               backgroundColor: BauhausDesign.neutral,
               foregroundColor: Theme.of(context).colorScheme.surface,
@@ -569,7 +570,7 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Report export failed')));
+      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.reportExportFailed)));
     }
   }
 }

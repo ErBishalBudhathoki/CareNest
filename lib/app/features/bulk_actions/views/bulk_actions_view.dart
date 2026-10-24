@@ -49,7 +49,7 @@ class _BulkActionsViewState extends ConsumerState<BulkActionsView>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bulk Actions'),
+        title: Text(AppLocalizations.of(context)!.bulkActions),
         backgroundColor: BauhausDesign.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
         bottom: TabBar(
@@ -121,7 +121,7 @@ Widget _buildTabError(
           ElevatedButton.icon(
             onPressed: onRetry,
             icon: const Icon(Icons.refresh, size: 20),
-            label: const Text('RETRY'),
+            label: Text(AppLocalizations.of(context)!.retryCaps),
             style: ElevatedButton.styleFrom(
               backgroundColor: BauhausDesign.primary,
               foregroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -319,7 +319,7 @@ class _BulkTimesheetTabState extends ConsumerState<_BulkTimesheetTab> {
                     ? null
                     : () => _approveTimesheets(),
                 icon: const Icon(Icons.check_circle, size: 20),
-                label: const Text('APPROVE'),
+                label: Text(AppLocalizations.of(context)!.approve),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: BauhausDesign.success,
                   foregroundColor: Theme.of(context).colorScheme.onSecondary,
@@ -331,7 +331,7 @@ class _BulkTimesheetTabState extends ConsumerState<_BulkTimesheetTab> {
                     ? null
                     : () => _rejectTimesheets(),
                 icon: const Icon(Icons.cancel, size: 20),
-                label: const Text('REJECT'),
+                label: Text(AppLocalizations.of(context)!.reject),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: BauhausDesign.error,
                   foregroundColor: Theme.of(context).colorScheme.onError,
@@ -528,7 +528,7 @@ class _BulkInvoiceTabState extends ConsumerState<_BulkInvoiceTab> {
                         ? null
                         : () => _previewInvoices(),
                     icon: const Icon(Icons.preview, size: 20),
-                    label: const Text('PREVIEW'),
+                    label: Text(AppLocalizations.of(context)!.preview),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: BauhausDesign.secondary,
                       foregroundColor: Theme.of(
@@ -544,7 +544,7 @@ class _BulkInvoiceTabState extends ConsumerState<_BulkInvoiceTab> {
                         ? null
                         : () => _generateInvoices(),
                     icon: const Icon(Icons.receipt_long, size: 20),
-                    label: const Text('GENERATE'),
+                    label: Text(AppLocalizations.of(context)!.generateCaps),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: BauhausDesign.primary,
                       foregroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -604,7 +604,7 @@ class _BulkInvoiceTabState extends ConsumerState<_BulkInvoiceTab> {
                 onChanged: (value) {
                   setState(() => _groupByClient = value ?? true);
                 },
-                title: const Text('Group by client'),
+                title: Text(AppLocalizations.of(context)!.groupByClient),
                 dense: true,
                 contentPadding: EdgeInsets.zero,
               ),
@@ -835,7 +835,7 @@ class _BulkAssignmentTabState extends ConsumerState<_BulkAssignmentTab> {
                     ? null
                     : () => _getSuggestions(),
                 icon: const Icon(Icons.lightbulb, size: 20),
-                label: const Text('SUGGEST'),
+                label: Text(AppLocalizations.of(context)!.suggest),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: BauhausDesign.secondary,
                   foregroundColor: Theme.of(context).colorScheme.onSecondary,
@@ -846,7 +846,7 @@ class _BulkAssignmentTabState extends ConsumerState<_BulkAssignmentTab> {
                     ? null
                     : () => _assignShifts(),
                 icon: const Icon(Icons.assignment_turned_in, size: 20),
-                label: const Text('ASSIGN'),
+                label: Text(AppLocalizations.of(context)!.assign),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: BauhausDesign.primary,
                   foregroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -967,8 +967,8 @@ class _BulkAssignmentTabState extends ConsumerState<_BulkAssignmentTab> {
         }
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Suggestions loaded'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.suggestionsLoaded),
           backgroundColor: BauhausDesign.success,
         ),
       );
@@ -994,8 +994,8 @@ class _BulkAssignmentTabState extends ConsumerState<_BulkAssignmentTab> {
         .toList();
     if (pairs.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Run SUGGEST first to pick workers'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.runSuggestFirstToPickWorkers),
           backgroundColor: BauhausDesign.warning,
         ),
       );
@@ -1139,7 +1139,7 @@ class _BulkMessagingTabState extends ConsumerState<_BulkMessagingTab> {
             spacing: 8,
             children: [
               FilterChip(
-                label: const Text('Push'),
+                label: Text(AppLocalizations.of(context)!.push),
                 selected: _selectedChannels.contains('push'),
                 onSelected: (value) {
                   setState(() {
@@ -1152,7 +1152,7 @@ class _BulkMessagingTabState extends ConsumerState<_BulkMessagingTab> {
                 },
               ),
               FilterChip(
-                label: const Text('SMS'),
+                label: Text(AppLocalizations.of(context)!.sms),
                 selected: _selectedChannels.contains('sms'),
                 onSelected: (value) {
                   setState(() {
@@ -1165,7 +1165,7 @@ class _BulkMessagingTabState extends ConsumerState<_BulkMessagingTab> {
                 },
               ),
               FilterChip(
-                label: const Text('Email'),
+                label: Text(AppLocalizations.of(context)!.emailLabel),
                 selected: _selectedChannels.contains('email'),
                 onSelected: (value) {
                   setState(() {
@@ -1211,7 +1211,7 @@ class _BulkMessagingTabState extends ConsumerState<_BulkMessagingTab> {
                     ? () => _sendMessages()
                     : null,
                 icon: const Icon(Icons.send),
-                label: const Text('SEND NOW'),
+                label: Text(AppLocalizations.of(context)!.sendNow),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: BauhausDesign.primary,
                   foregroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -1227,7 +1227,7 @@ class _BulkMessagingTabState extends ConsumerState<_BulkMessagingTab> {
                     ? () => _scheduleMessages()
                     : null,
                 icon: const Icon(Icons.schedule),
-                label: const Text('SCHEDULE'),
+                label: Text(AppLocalizations.of(context)!.schedule),
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size.fromHeight(48),
                   padding: const EdgeInsets.symmetric(

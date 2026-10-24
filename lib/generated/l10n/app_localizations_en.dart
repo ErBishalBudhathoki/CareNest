@@ -8035,4 +8035,164 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get ndisPriceCapExplanation =>
       'This is the maximum price allowed by NDIS for this support item. Prices above this cap may require additional justification or approval.';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get export => 'Export';
+
+  @override
+  String get optimize => 'Optimize';
+
+  @override
+  String get organizationContextUnavailable =>
+      'Organization context is unavailable';
+
+  @override
+  String get performanceTrends => 'Performance Trends';
+
+  @override
+  String get reportExportFailed => 'Report export failed';
+
+  @override
+  String get runAudit => 'Run Audit';
+
+  @override
+  String get runScenario => 'Run Scenario';
+
+  @override
+  String get scenarioAnalysisFailed => 'Scenario analysis failed';
+
+  @override
+  String get scenarioComparison => 'Scenario Comparison';
+
+  @override
+  String get viewReport => 'View Report';
+
+  @override
+  String get whatIf => 'What-If';
+
+  @override
+  String get bulkPaymentRequestCsv => 'Bulk Payment Request CSV';
+
+  @override
+  String get claimBatchGenerated => 'Claim batch generated.';
+
+  @override
+  String get csvCopiedToClipboard => 'CSV copied to clipboard.';
+
+  @override
+  String get generatedCsvReady => 'Generated CSV ready';
+
+  @override
+  String get importAction => 'Import';
+
+  @override
+  String get importResultsFile => 'Import results file';
+
+  @override
+  String get markClaimBatchSubmitted => 'Mark claim batch submitted';
+
+  @override
+  String get markSubmitted => 'Mark submitted';
+
+  @override
+  String get recordNdiaPayment => 'Record NDIA payment';
+
+  @override
+  String get recordPayment => 'Record payment';
+
+  @override
+  String get resubmitRejected => 'Resubmit rejected';
+
+  @override
+  String get savePayment => 'Save payment';
+
+  @override
+  String get add => 'Add';
+
+  @override
+  String get create => 'Create';
+
+  @override
+  String get createNewStakeholder => 'Create new stakeholder';
+
+  @override
+  String get fundingType => 'Funding type';
+
+  @override
+  String get link => 'Link';
+
+  @override
+  String get linkAStakeholderToSetFundingType =>
+      'Link a stakeholder to set the funding type.';
+
+  @override
+  String get linkExistingStakeholder => 'Link existing stakeholder';
+
+  @override
+  String get linkStakeholder => 'Link stakeholder';
+
+  @override
+  String get newStakeholder => 'New stakeholder';
+
+  @override
+  String get primary => 'Primary';
+
+  @override
+  String get primaryContact => 'Primary contact';
+
+  @override
+  String get stakeholderCreatedLinkToClient =>
+      'Stakeholder created. Link it to the client.';
+
+  @override
+  String get stakeholderLinked => 'Stakeholder linked.';
+
+  @override
+  String get approve => 'APPROVE';
+
+  @override
+  String get assign => 'ASSIGN';
+
+  @override
+  String get bulkActions => 'Bulk Actions';
+
+  @override
+  String get generateCaps => 'GENERATE';
+
+  @override
+  String get groupByClient => 'Group by client';
+
+  @override
+  String get preview => 'PREVIEW';
+
+  @override
+  String get push => 'Push';
+
+  @override
+  String get reject => 'REJECT';
+
+  @override
+  String get retryCaps => 'RETRY';
+
+  @override
+  String get runSuggestFirstToPickWorkers =>
+      'Run SUGGEST first to pick workers';
+
+  @override
+  String get schedule => 'SCHEDULE';
+
+  @override
+  String get sendNow => 'SEND NOW';
+
+  @override
+  String get sms => 'SMS';
+
+  @override
+  String get suggest => 'SUGGEST';
+
+  @override
+  String get suggestionsLoaded => 'Suggestions loaded';
 }

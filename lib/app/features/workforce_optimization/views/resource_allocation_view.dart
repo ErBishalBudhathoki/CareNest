@@ -5,6 +5,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/resource_allocation_viewmodel.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
 import 'package:carenest/app/features/workforce_optimization/utils/workforce_export_helper.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class ResourceAllocationView extends ConsumerStatefulWidget {
   const ResourceAllocationView({super.key});
@@ -399,7 +400,7 @@ class _ResourceAllocationViewState
           child: ElevatedButton.icon(
             onPressed: () => _optimize(),
             icon: const Icon(Icons.auto_fix_high),
-            label: const Text('Optimize'),
+            label: Text(AppLocalizations.of(context)!.optimize),
             style: ElevatedButton.styleFrom(
               backgroundColor: BauhausDesign.neutral,
               foregroundColor: Theme.of(context).colorScheme.surface,
@@ -413,7 +414,7 @@ class _ResourceAllocationViewState
           child: OutlinedButton.icon(
             onPressed: () => _exportCsv(),
             icon: const Icon(Icons.download),
-            label: const Text('Export'),
+            label: Text(AppLocalizations.of(context)!.export),
             style: OutlinedButton.styleFrom(
               foregroundColor: BauhausDesign.neutral,
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -432,7 +433,7 @@ class _ResourceAllocationViewState
     final orgId = orgState.currentOrganization?.id;
     if (orgId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Organization context is unavailable')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.organizationContextUnavailable)),
       );
       return;
     }

@@ -5,6 +5,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/workforce_optimization/viewmodels/performance_analytics_viewmodel.dart';
 import 'package:carenest/app/core/providers/organization_provider.dart';
 import 'package:carenest/app/features/workforce_optimization/utils/workforce_export_helper.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class PerformanceAnalyticsView extends ConsumerStatefulWidget {
   const PerformanceAnalyticsView({super.key});
@@ -466,7 +467,7 @@ class _PerformanceAnalyticsViewState
           child: ElevatedButton.icon(
             onPressed: () => _viewReport(),
             icon: const Icon(Icons.assessment),
-            label: const Text('View Report'),
+            label: Text(AppLocalizations.of(context)!.viewReport),
             style: ElevatedButton.styleFrom(
               backgroundColor: BauhausDesign.neutral,
               foregroundColor: Theme.of(context).colorScheme.surface,
@@ -480,7 +481,7 @@ class _PerformanceAnalyticsViewState
           child: OutlinedButton.icon(
             onPressed: () => _exportCsv(),
             icon: const Icon(Icons.download),
-            label: const Text('Export'),
+            label: Text(AppLocalizations.of(context)!.export),
             style: OutlinedButton.styleFrom(
               foregroundColor: BauhausDesign.neutral,
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -498,7 +499,7 @@ class _PerformanceAnalyticsViewState
     final orgId = orgState.currentOrganization?.id;
     if (orgId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Organization context is unavailable')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.organizationContextUnavailable)),
       );
       return;
     }
@@ -513,7 +514,7 @@ class _PerformanceAnalyticsViewState
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Performance Trends'),
+        title: Text(AppLocalizations.of(context)!.performanceTrends),
         content: SingleChildScrollView(
           child: Text(
             (entries == null || entries.isEmpty)
@@ -524,7 +525,7 @@ class _PerformanceAnalyticsViewState
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Close'),
+            child: Text(AppLocalizations.of(context)!.close),
           ),
         ],
       ),
