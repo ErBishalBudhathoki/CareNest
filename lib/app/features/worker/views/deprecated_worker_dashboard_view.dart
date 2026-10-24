@@ -28,8 +28,8 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
       final email = currentUser?.email ?? '';
       if (orgId.isEmpty || email.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Organization details are not available yet.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.organizationDetailsUnavailable),
           ),
         );
         return;

@@ -192,7 +192,7 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
                                       Icons.visibility,
                                       size: 18,
                                     ),
-                                    label: const Text('View File'),
+                                    label: Text(AppLocalizations.of(context)!.viewFile),
                                   ),
                                   const SizedBox(width: BauhausDesign.space2),
                                 ],
@@ -200,14 +200,14 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
                                   onPressed: () =>
                                       _showEditDialog(context, cert),
                                   icon: const Icon(Icons.edit, size: 18),
-                                  label: const Text('Edit'),
+                                  label: Text(AppLocalizations.of(context)!.edit),
                                 ),
                                 const SizedBox(width: BauhausDesign.space2),
                                 TextButton.icon(
                                   onPressed: () =>
                                       _confirmDelete(context, cert),
                                   icon: const Icon(Icons.delete, size: 18),
-                                  label: const Text('Delete'),
+                                  label: Text(AppLocalizations.of(context)!.delete),
                                   style: TextButton.styleFrom(
                                     foregroundColor: BauhausDesign.error,
                                   ),
@@ -409,18 +409,18 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
     final shouldDelete = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Certification'),
+        title: Text(AppLocalizations.of(context)!.deleteCertification),
         content: const Text(
           'Are you sure you want to delete this certification?',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete'),
+            child: Text(AppLocalizations.of(context)!.delete),
           ),
         ],
       ),

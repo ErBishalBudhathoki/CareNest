@@ -14,6 +14,7 @@ import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class PdfViewPage extends StatefulWidget {
   final String pdfPath;
@@ -331,7 +332,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
       if (zipPath.isNotEmpty && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('PDF saved successfully'),
+            content: Text(AppLocalizations.of(context)!.pdfSavedSuccessfully),
             backgroundColor: Theme.of(context).colorScheme.secondary,
           ),
         );

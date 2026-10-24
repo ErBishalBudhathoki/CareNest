@@ -17,6 +17,7 @@ import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import '../providers/voice_providers.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class VoiceAssistantView extends ConsumerStatefulWidget {
   const VoiceAssistantView({super.key});
@@ -610,7 +611,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
                 child: OutlinedButton.icon(
                   onPressed: () => _openSuggestedRoute(command),
                   icon: const Icon(Icons.open_in_new),
-                  label: const Text('Open in app'),
+                  label: Text(AppLocalizations.of(context)!.openInApp),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Theme.of(context).colorScheme.onSurface,
                     side: BorderSide(
@@ -997,7 +998,7 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
                     color: Theme.of(context).colorScheme.outline,
                   ),
                 ),
-                child: const Text('Select'),
+                child: Text(AppLocalizations.of(context)!.select),
               ),
             ],
           ),

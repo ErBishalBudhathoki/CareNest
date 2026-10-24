@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:carenest/app/core/utils/navigation.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Backend error codes meaning "the credential you sent is no good".
 /// Matched deliberately narrow: login failures use different codes
@@ -59,8 +60,8 @@ void maybePromptReLogin(Map<String, dynamic> response) {
     if (navigator == null || context == null) return;
     navigator.pushNamedAndRemoveUntil(Routes.login, (_) => false);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Session expired. Please sign in again.'),
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.sessionExpiredSignInAgain),
         duration: Duration(seconds: 4),
       ),
     );

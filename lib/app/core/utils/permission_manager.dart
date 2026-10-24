@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class PermissionManager {
   static const String _keyNotificationDenied = 'notification_permission_denied';
@@ -144,18 +145,18 @@ class PermissionManager {
         bool? result = await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: const Text('Storage Permission Required'),
+            title: Text(AppLocalizations.of(ctx)!.storagePermissionRequired),
             content: const Text(
               'This app needs storage permission to save invoices to your device.',
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Cancel'),
+                child: Text(AppLocalizations.of(ctx)!.cancel),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('Grant'),
+                child: Text(AppLocalizations.of(ctx)!.grant),
               ),
             ],
           ),
@@ -202,14 +203,14 @@ class PermissionManager {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(ctx)!.cancel),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               openAppSettings();
             },
-            child: const Text('Open Settings'),
+            child: Text(AppLocalizations.of(ctx)!.openSettings),
           ),
         ],
       ),

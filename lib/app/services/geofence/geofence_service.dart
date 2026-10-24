@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Result of a permission request with detailed information
 class LocationPermissionResult {
@@ -190,11 +191,11 @@ class GeofenceService {
           context: context,
           barrierDismissible: false,
           builder: (context) => AlertDialog(
-            title: const Row(
+            title: Row(
               children: [
                 Icon(Icons.location_on, color: Colors.blue, size: 28),
                 SizedBox(width: 12),
-                Expanded(child: Text('Location Access Needed')),
+                Expanded(child: Text(AppLocalizations.of(context)!.locationAccessNeeded)),
               ],
             ),
             content: Column(
@@ -234,11 +235,11 @@ class GeofenceService {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: const Text('Not Now'),
+                child: Text(AppLocalizations.of(context)!.notNow),
               ),
               ElevatedButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: const Text('Enable Location'),
+                child: Text(AppLocalizations.of(context)!.enableLocation),
               ),
             ],
           ),
@@ -252,11 +253,11 @@ class GeofenceService {
           context: context,
           barrierDismissible: false,
           builder: (context) => AlertDialog(
-            title: const Row(
+            title: Row(
               children: [
                 Icon(Icons.location_searching, color: Colors.orange, size: 28),
                 SizedBox(width: 12),
-                Expanded(child: Text('Background Location')),
+                Expanded(child: Text(AppLocalizations.of(context)!.backgroundLocation)),
               ],
             ),
             content: const Column(
@@ -303,11 +304,11 @@ class GeofenceService {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: const Text('Skip (Limited Features)'),
+                child: Text(AppLocalizations.of(context)!.skipLimitedFeatures),
               ),
               ElevatedButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: const Text('Continue'),
+                child: Text(AppLocalizations.of(context)!.continueAction),
               ),
             ],
           ),

@@ -119,7 +119,7 @@ class _WorkerShiftHistoryViewState
                       const SizedBox(height: 12),
                       OutlinedButton(
                         onPressed: _loadHistory,
-                        child: const Text('Retry'),
+                        child: Text(AppLocalizations.of(context)!.retryButton),
                       ),
                     ],
                   ),

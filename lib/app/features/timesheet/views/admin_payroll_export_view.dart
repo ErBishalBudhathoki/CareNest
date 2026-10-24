@@ -43,8 +43,8 @@ class _AdminPayrollExportViewState
       final prevLoading = previous?.isLoading ?? false;
       if (!next.isLoading && !next.hasError && prevLoading) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Export generated successfully'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.exportGeneratedSuccessfully),
             backgroundColor: BauhausDesign.success,
           ),
         );

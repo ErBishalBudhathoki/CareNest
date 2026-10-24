@@ -3,6 +3,7 @@ import 'package:animation_list/animation_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class LineItemsView extends ConsumerStatefulWidget {
   const LineItemsView({super.key});
@@ -77,7 +78,7 @@ class _LineItemsControllerState extends ConsumerState<LineItemsView> {
         child: Builder(
           builder: (context) {
             if (_lineItems.isEmpty) {
-              return const Text("No support item retrieved");
+              return Text(AppLocalizations.of(context)!.noSupportItemRetrieved);
             } else {
               return AnimationList(
                 duration: 1000,

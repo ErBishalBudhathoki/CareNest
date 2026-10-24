@@ -1,3 +1,4 @@
+import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_error_widget.dart';
@@ -9,7 +10,9 @@ void main() {
       const testMessage = 'This is a test error message';
 
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: BauhausErrorWidget(title: testTitle, message: testMessage),
           ),
@@ -27,6 +30,8 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: BauhausErrorWidget(
               title: 'ERROR',
@@ -51,7 +56,9 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: BauhausErrorWidget(title: 'ERROR', message: 'Test message'),
           ),
@@ -63,7 +70,9 @@ void main() {
 
     testWidgets('displays custom icon when provided', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: BauhausErrorWidget(
               title: 'NETWORK ERROR',
@@ -79,7 +88,9 @@ void main() {
 
     testWidgets('displays default error icon', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: BauhausErrorWidget(title: 'ERROR', message: 'Test message'),
           ),
@@ -92,7 +103,9 @@ void main() {
     group('compact layout', () {
       testWidgets('renders in compact mode', (tester) async {
         await tester.pumpWidget(
-          const MaterialApp(
+          MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: Scaffold(
               body: BauhausErrorWidget(
                 title: 'COMPACT ERROR',
@@ -112,6 +125,8 @@ void main() {
 
         await tester.pumpWidget(
           MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: Scaffold(
               body: BauhausErrorWidget(
                 title: 'ERROR',
@@ -162,6 +177,8 @@ void main() {
       ) async {
         await tester.pumpWidget(
           MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: Scaffold(
               body: BauhausErrorWidget.permission(permissionType: 'Camera'),
             ),
@@ -177,7 +194,9 @@ void main() {
     group('diagnostics', () {
       testWidgets('shows diagnostics button when enabled', (tester) async {
         await tester.pumpWidget(
-          const MaterialApp(
+          MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: Scaffold(
               body: BauhausErrorWidget(
                 title: 'ERROR',
@@ -194,7 +213,9 @@ void main() {
 
       testWidgets('hides diagnostics button when disabled', (tester) async {
         await tester.pumpWidget(
-          const MaterialApp(
+          MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: Scaffold(
               body: BauhausErrorWidget(
                 title: 'ERROR',
@@ -212,7 +233,9 @@ void main() {
         const diagnosticInfo = 'Stack trace: line 42';
 
         await tester.pumpWidget(
-          const MaterialApp(
+          MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: Scaffold(
               body: BauhausErrorWidget(
                 title: 'ERROR',
@@ -237,7 +260,9 @@ void main() {
     group('accessibility', () {
       testWidgets('error icon has proper semantics', (tester) async {
         await tester.pumpWidget(
-          const MaterialApp(
+          MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: Scaffold(
               body: BauhausErrorWidget(
                 title: 'ERROR',
@@ -255,6 +280,8 @@ void main() {
       testWidgets('retry button is tappable', (tester) async {
         await tester.pumpWidget(
           MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: Scaffold(
               body: BauhausErrorWidget(
                 title: 'ERROR',

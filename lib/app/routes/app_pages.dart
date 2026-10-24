@@ -63,6 +63,7 @@ import 'package:carenest/app/features/workforce_optimization/views/workforce_pla
 import 'package:carenest/app/shared/widgets/bottom_nav_bar_widget.dart';
 import 'package:carenest/app/shared/widgets/nav_bar_widget.dart';
 import 'package:carenest/app/shared/widgets/splash_screen_widget.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 part 'app_routes.dart';
 
 /// Central named-route table shared by every entrypoint
@@ -331,7 +332,7 @@ class AppPages {
                 arguments['shiftData'] as Map<String, dynamic>? ?? {};
             return Scaffold(
               appBar: AppBar(
-                title: const Text('Shift Details'),
+                title: Text(AppLocalizations.of(context)!.shiftDetails),
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
               ),

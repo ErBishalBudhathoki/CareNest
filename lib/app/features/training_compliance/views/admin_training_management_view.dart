@@ -191,7 +191,7 @@ class _AdminTrainingManagementViewState
       context: context,
       builder: (context) => AlertDialog(
         title: Text(AppLocalizations.of(context)!.deleteButton),
-        content: const Text('Delete this training module?'),
+        content: Text(AppLocalizations.of(context)!.deleteThisTrainingModuleQuestion),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),

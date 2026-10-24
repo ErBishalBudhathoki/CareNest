@@ -162,7 +162,7 @@ class _AdminComplianceManagementViewState
       context: context,
       builder: (context) => AlertDialog(
         title: Text(AppLocalizations.of(context)!.deleteButton),
-        content: const Text('Delete this checklist?'),
+        content: Text(AppLocalizations.of(context)!.deleteThisChecklistQuestion),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),

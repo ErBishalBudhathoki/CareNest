@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Standardized error widget using Bauhaus design system
 ///
@@ -319,11 +320,11 @@ class _DiagnosticsButton extends StatelessWidget {
                   Navigator.pop(ctx);
                   showAppSnackBar(context, 'Copied to clipboard');
                 },
-                child: const Text('COPY'),
+                child: Text(AppLocalizations.of(context)!.copyCaps),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: const Text('CLOSE'),
+                child: Text(AppLocalizations.of(context)!.closeCaps),
               ),
             ],
           ),

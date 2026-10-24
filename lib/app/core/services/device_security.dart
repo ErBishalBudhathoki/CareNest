@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:carenest/app/core/utils/navigation.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Device integrity posture reported by the native shells
 /// (root/jailbreak indicators, emulator, debuggable build).
@@ -84,7 +85,7 @@ class DeviceSecurity {
       context: nav.context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: const Text('Security warning'),
+        title: Text(AppLocalizations.of(context)!.securityWarning),
         content: Text(
           'This device shows signs of rooting or jailbreaking '
           '(${posture.reasons.join(', ')}), which exposes app data — '
@@ -95,7 +96,7 @@ class DeviceSecurity {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('I understand'),
+            child: Text(AppLocalizations.of(context)!.iUnderstand),
           ),
         ],
       ),

@@ -192,7 +192,7 @@ class _AdminCertificationRequirementsViewState
       context: context,
       builder: (context) => AlertDialog(
         title: Text(AppLocalizations.of(context)!.deleteButton),
-        content: const Text('Delete this requirement?'),
+        content: Text(AppLocalizations.of(context)!.deleteThisRequirementQuestion),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),

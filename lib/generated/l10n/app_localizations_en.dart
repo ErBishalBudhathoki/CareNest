@@ -8494,4 +8494,81 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get userEmailNotFound => 'Error: User email not found.';
+
+  @override
+  String get backgroundLocation => 'Background Location';
+
+  @override
+  String get continueAction => 'Continue';
+
+  @override
+  String get copyCaps => 'COPY';
+
+  @override
+  String get couldNotLaunchFileUrl => 'Could not launch file URL';
+
+  @override
+  String get deleteCertification => 'Delete Certification';
+
+  @override
+  String get deleteThisChecklistQuestion => 'Delete this checklist?';
+
+  @override
+  String get deleteThisRequirementQuestion => 'Delete this requirement?';
+
+  @override
+  String get deleteThisTrainingModuleQuestion => 'Delete this training module?';
+
+  @override
+  String get enableLocation => 'Enable Location';
+
+  @override
+  String get exportGeneratedSuccessfully => 'Export generated successfully';
+
+  @override
+  String get grant => 'Grant';
+
+  @override
+  String get iUnderstand => 'I understand';
+
+  @override
+  String get locationAccessNeeded => 'Location Access Needed';
+
+  @override
+  String get noSupportItemRetrieved => 'No support item retrieved';
+
+  @override
+  String get notNow => 'Not Now';
+
+  @override
+  String get openInApp => 'Open in app';
+
+  @override
+  String get openSettings => 'Open Settings';
+
+  @override
+  String get organizationDetailsUnavailable =>
+      'Organization details are not available yet.';
+
+  @override
+  String get pdfSavedSuccessfully => 'PDF saved successfully';
+
+  @override
+  String get securityWarning => 'Security warning';
+
+  @override
+  String get select => 'Select';
+
+  @override
+  String get sessionExpiredSignInAgain =>
+      'Session expired. Please sign in again.';
+
+  @override
+  String get skipLimitedFeatures => 'Skip (Limited Features)';
+
+  @override
+  String get storagePermissionRequired => 'Storage Permission Required';
+
+  @override
+  String get viewFile => 'View File';
 }

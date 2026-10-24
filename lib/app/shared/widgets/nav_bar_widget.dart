@@ -22,6 +22,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 
 import 'package:flutter/services.dart' show SystemNavigator, MethodChannel;
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 // Use a static GlobalKey to prevent duplicates
 final _navBarScaffoldKey = GlobalKey<ScaffoldState>(
@@ -332,7 +333,7 @@ class NavBarWidget extends ConsumerWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Account'),
+          title: Text(AppLocalizations.of(context)!.deleteAccount),
           content: const Text(
             'Start account deletion? After approval, your account is deactivated and records required for payroll, tax, audit, and care obligations are retained for up to 90 days before permanent deletion.',
           ),
@@ -342,14 +343,14 @@ class NavBarWidget extends ConsumerWidget {
                 _deleteAccount(theme, ref);
                 Navigator.of(context).pop();
               },
-              child: const Text('Yes'),
+              child: Text(AppLocalizations.of(context)!.yes),
             ),
             TextButton(
               onPressed: () {
                 // Dismiss the dialog
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
           ],
         );

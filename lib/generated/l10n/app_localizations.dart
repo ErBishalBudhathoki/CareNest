@@ -15637,6 +15637,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error: User email not found.'**
   String get userEmailNotFound;
+
+  /// No description provided for @backgroundLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Background Location'**
+  String get backgroundLocation;
+
+  /// No description provided for @continueAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueAction;
+
+  /// No description provided for @copyCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'COPY'**
+  String get copyCaps;
+
+  /// No description provided for @couldNotLaunchFileUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not launch file URL'**
+  String get couldNotLaunchFileUrl;
+
+  /// No description provided for @deleteCertification.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Certification'**
+  String get deleteCertification;
+
+  /// No description provided for @deleteThisChecklistQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this checklist?'**
+  String get deleteThisChecklistQuestion;
+
+  /// No description provided for @deleteThisRequirementQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this requirement?'**
+  String get deleteThisRequirementQuestion;
+
+  /// No description provided for @deleteThisTrainingModuleQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this training module?'**
+  String get deleteThisTrainingModuleQuestion;
+
+  /// No description provided for @enableLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Location'**
+  String get enableLocation;
+
+  /// No description provided for @exportGeneratedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Export generated successfully'**
+  String get exportGeneratedSuccessfully;
+
+  /// No description provided for @grant.
+  ///
+  /// In en, this message translates to:
+  /// **'Grant'**
+  String get grant;
+
+  /// No description provided for @iUnderstand.
+  ///
+  /// In en, this message translates to:
+  /// **'I understand'**
+  String get iUnderstand;
+
+  /// No description provided for @locationAccessNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Location Access Needed'**
+  String get locationAccessNeeded;
+
+  /// No description provided for @noSupportItemRetrieved.
+  ///
+  /// In en, this message translates to:
+  /// **'No support item retrieved'**
+  String get noSupportItemRetrieved;
+
+  /// No description provided for @notNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Now'**
+  String get notNow;
+
+  /// No description provided for @openInApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in app'**
+  String get openInApp;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get openSettings;
+
+  /// No description provided for @organizationDetailsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization details are not available yet.'**
+  String get organizationDetailsUnavailable;
+
+  /// No description provided for @pdfSavedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF saved successfully'**
+  String get pdfSavedSuccessfully;
+
+  /// No description provided for @securityWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Security warning'**
+  String get securityWarning;
+
+  /// No description provided for @select.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get select;
+
+  /// No description provided for @sessionExpiredSignInAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Session expired. Please sign in again.'**
+  String get sessionExpiredSignInAgain;
+
+  /// No description provided for @skipLimitedFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip (Limited Features)'**
+  String get skipLimitedFeatures;
+
+  /// No description provided for @storagePermissionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage Permission Required'**
+  String get storagePermissionRequired;
+
+  /// No description provided for @viewFile.
+  ///
+  /// In en, this message translates to:
+  /// **'View File'**
+  String get viewFile;
 }
 
 class _AppLocalizationsDelegate
