@@ -38,6 +38,7 @@ class WorkedTimeQueueService {
     String? shiftStartTime,
     String? shiftEndTime,
     dynamic shiftBreak,
+    String? clientRequestId,
   }) async {
     try {
       final box = await _ensureBox();
@@ -55,6 +56,7 @@ class WorkedTimeQueueService {
           'shiftStartTime': shiftStartTime,
           'shiftEndTime': shiftEndTime,
           'shiftBreak': shiftBreak,
+          'clientRequestId': clientRequestId,
         }),
       );
       debugPrint('WorkedTimeQueue: queued save for $clientEmail ($id)');
@@ -110,6 +112,7 @@ class WorkedTimeQueueService {
           shiftStartTime: entry['shiftStartTime']?.toString(),
           shiftEndTime: entry['shiftEndTime']?.toString(),
           shiftBreak: entry['shiftBreak'],
+          clientRequestId: entry['clientRequestId']?.toString(),
         );
         if (id.isNotEmpty) await box.delete(id);
         synced += 1;

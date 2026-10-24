@@ -1882,6 +1882,7 @@ class ApiMethod extends ChangeNotifier {
     String? shiftStartTime,
     String? shiftEndTime,
     dynamic shiftBreak,
+    String? clientRequestId,
   }) async {
     try {
       final url = '${_baseUrl}setWorkedTime';
@@ -1916,6 +1917,7 @@ class ApiMethod extends ChangeNotifier {
         'startTime': normalizedStartTime,
         'endTime': normalizedEndTime,
         'breakDuration': ?breakDuration,
+        'clientRequestId': ?clientRequestId,
       };
 
       debugPrint('Request body: ${json.encode(body)}');

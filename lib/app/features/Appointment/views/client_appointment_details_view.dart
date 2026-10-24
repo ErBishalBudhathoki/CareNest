@@ -551,6 +551,8 @@ class _ClientAndAppointmentDetailsState
           'shiftStartTime': shiftStartTime,
           'shiftEndTime': shiftEndTime,
           'shiftBreak': shiftBreak,
+          'clientRequestId':
+              '${DateTime.now().microsecondsSinceEpoch}-${widget.clientEmail.hashCode}',
         };
 
         final response = await apiMethod.setWorkedTime(
@@ -562,6 +564,7 @@ class _ClientAndAppointmentDetailsState
           shiftStartTime: shiftStartTime,
           shiftEndTime: shiftEndTime,
           shiftBreak: shiftBreak,
+          clientRequestId: pendingSave['clientRequestId'] as String?,
         );
 
         if (response != null) {

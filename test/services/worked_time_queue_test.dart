@@ -19,6 +19,7 @@ class _FakeApi extends ApiMethod {
     String? shiftStartTime,
     String? shiftEndTime,
     dynamic shiftBreak,
+    String? clientRequestId,
   }) async {
     calls += 1;
     if (failPermanently) {
@@ -69,21 +70,24 @@ void main() {
     expect(await queue.pendingCount(), 0);
   });
 
-  test('drops a permanently invalid save instead of retrying forever', () async {
-    final queue = WorkedTimeQueueService.instance;
-    await queue.enqueue(
-      userEmail: 'worker@example.com',
-      clientEmail: 'sil.ndia@mailinator.com',
-      workedTime: '08:00:00',
-      shiftIndex: 0,
-      shiftDate: '2026-10-24',
-      shiftStartTime: '15:00',
-      shiftEndTime: '23:00',
-    );
+  test(
+    'drops a permanently invalid save instead of retrying forever',
+    () async {
+      final queue = WorkedTimeQueueService.instance;
+      await queue.enqueue(
+        userEmail: 'worker@example.com',
+        clientEmail: 'sil.ndia@mailinator.com',
+        workedTime: '08:00:00',
+        shiftIndex: 0,
+        shiftDate: '2026-10-24',
+        shiftStartTime: '15:00',
+        shiftEndTime: '23:00',
+      );
 
-    final api = _FakeApi()..failPermanently = true;
-    final synced = await queue.flush(api);
-    expect(synced, 0);
-    expect(await queue.pendingCount(), 0);
-  });
+      final api = _FakeApi()..failPermanently = true;
+      final synced = await queue.flush(api);
+      expect(synced, 0);
+      expect(await queue.pendingCount(), 0);
+    },
+  );
 }
