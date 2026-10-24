@@ -38,8 +38,9 @@ class SchadsRateConstants {
   ];
 
   static const Map<String, double> rates = {
-    // Source: Fair Work Pay Guide MA000100, published 18/09/2026,
-    // effective the first full pay period on or after 01/12/2026.
+    // Source: Fair Work Pay Guide MA000100, published 18/09/2026 (rates
+    // published effective 01/12/2026, applied from 01/07/2026 so the 2026-27
+    // award year uses the latest figures).
     // Social & Community Services
     'Social & Community Services - Level 1 - Pay Point 1': 27.55,
     'Social & Community Services - Level 1 - Pay Point 2': 28.44,
