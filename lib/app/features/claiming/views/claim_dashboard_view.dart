@@ -195,9 +195,13 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
         subtitle: Text(
           '${batch.status} · ${batch.totals.lines} lines · '
           '\$${batch.totals.amount.toStringAsFixed(2)}'
+          '${batch.remittance != null && batch.remittance!.paidAmount > 0 ? '\nPaid \$${batch.remittance!.paidAmount.toStringAsFixed(2)} · '
+                    'Outstanding \$${(batch.totals.amount - batch.remittance!.paidAmount).clamp(0, double.infinity).toStringAsFixed(2)}' : ''}'
           '${period?.from != null ? '\n${period!.from!.substring(0, 10)} → ${period.to!.substring(0, 10)}' : ''}',
         ),
-        isThreeLine: period?.from != null,
+        isThreeLine:
+            period?.from != null ||
+            (batch.remittance != null && batch.remittance!.paidAmount > 0),
         onTap: () => _showBatchDetail(batch.id),
         trailing: PopupMenuButton<String>(
           tooltip: 'Claim actions',
@@ -503,12 +507,33 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
               'Claim lines (${state.activeLines.length})',
               style: Theme.of(context).textTheme.titleMedium,
             ),
+            if (state.activeBatch?.remittance != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                '${state.activeBatch!.remittance!.status.replaceAll('_', ' ')} · '
+                'Paid \$${state.activeBatch!.remittance!.paidAmount.toStringAsFixed(2)} '
+                'of \$${state.activeBatch!.totals.amount.toStringAsFixed(2)}'
+                '${state.activeBatch!.remittance!.reference.isNotEmpty ? ' · ${state.activeBatch!.remittance!.reference}' : ''}',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
             const SizedBox(height: 8),
-            ...state.activeLines.map(
-              (line) => ListTile(
+            ...state.activeLines.map((line) {
+              final paid = line.paidAmount > 0
+                  ? '\nPaid \$${line.paidAmount.toStringAsFixed(2)}'
+                        '${line.remittanceReference.isNotEmpty ? ' · ${line.remittanceReference}' : ''}'
+                  : '';
+              final rejected = line.rejectionReason.isNotEmpty
+                  ? '\nRejected: ${line.rejectionReason}'
+                  : '';
+              return ListTile(
                 dense: true,
                 leading: Icon(
-                  line.status == 'rejected' ? Icons.close : Icons.check,
+                  line.status == 'rejected'
+                      ? Icons.close
+                      : line.paidAmount > 0
+                      ? Icons.payments_outlined
+                      : Icons.check,
                   color: line.status == 'rejected'
                       ? Theme.of(context).colorScheme.error
                       : Theme.of(context).colorScheme.primary,
@@ -518,11 +543,11 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
                   '${line.claimReference}\n'
                   '${line.quantity} × \$${line.unitPrice.toStringAsFixed(2)} '
                   '= \$${line.requestedAmount.toStringAsFixed(2)}'
-                  '${line.rejectionReason.isNotEmpty ? '\n${line.rejectionReason}' : ''}',
+                  '$paid$rejected',
                 ),
                 isThreeLine: true,
-              ),
-            ),
+              );
+            }),
           ],
         ),
       ),

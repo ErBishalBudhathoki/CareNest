@@ -4681,6 +4681,99 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
+  Future<Map<String, dynamic>> createCancellationCharge({
+    required String shiftId,
+    required String reason,
+    String? cancelledAt,
+    double? noticeHours,
+    double? unitPrice,
+  }) async {
+    try {
+      return await post(
+        'ndis-claims/cancellations',
+        body: {
+          'shiftId': shiftId,
+          'reason': reason,
+          'cancelledAt': ?cancelledAt,
+          'noticeHours': ?noticeHours,
+          'unitPrice': ?unitPrice,
+        },
+      );
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> createProviderTravelFromTrips({
+    required String shiftId,
+    double minutes = 0,
+    String? labourSupportNumber,
+    String? labourSupportName,
+    double? labourUnitPrice,
+    String? nonLabourSupportNumber,
+    String? nonLabourSupportName,
+    double? kmUnitPrice,
+  }) async {
+    try {
+      return await post(
+        'ndis-claims/provider-travel/from-trips',
+        body: {
+          'shiftId': shiftId,
+          if (minutes > 0) 'minutes': minutes,
+          if (labourSupportNumber != null && labourSupportNumber.isNotEmpty)
+            'labourSupportNumber': labourSupportNumber,
+          if (labourSupportName != null && labourSupportName.isNotEmpty)
+            'labourSupportName': labourSupportName,
+          'labourUnitPrice': ?labourUnitPrice,
+          if (nonLabourSupportNumber != null &&
+              nonLabourSupportNumber.isNotEmpty)
+            'nonLabourSupportNumber': nonLabourSupportNumber,
+          if (nonLabourSupportName != null && nonLabourSupportName.isNotEmpty)
+            'nonLabourSupportName': nonLabourSupportName,
+          'kmUnitPrice': ?kmUnitPrice,
+        },
+      );
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> createProviderTravelCharge({
+    required String shiftId,
+    double minutes = 0,
+    double km = 0,
+    String? labourSupportNumber,
+    String? labourSupportName,
+    double? labourUnitPrice,
+    String? nonLabourSupportNumber,
+    String? nonLabourSupportName,
+    double? kmUnitPrice,
+  }) async {
+    try {
+      return await post(
+        'ndis-claims/provider-travel',
+        body: {
+          'shiftId': shiftId,
+          if (minutes > 0) 'minutes': minutes,
+          if (km > 0) 'km': km,
+          if (labourSupportNumber != null && labourSupportNumber.isNotEmpty)
+            'labourSupportNumber': labourSupportNumber,
+          if (labourSupportName != null && labourSupportName.isNotEmpty)
+            'labourSupportName': labourSupportName,
+          'labourUnitPrice': ?labourUnitPrice,
+          if (nonLabourSupportNumber != null &&
+              nonLabourSupportNumber.isNotEmpty)
+            'nonLabourSupportNumber': nonLabourSupportNumber,
+          if (nonLabourSupportName != null && nonLabourSupportName.isNotEmpty)
+            'nonLabourSupportName': nonLabourSupportName,
+          'kmUnitPrice': ?kmUnitPrice,
+        },
+      );
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
   Future<Map<String, dynamic>> submitClaimBatch(
     String batchId, {
     String portalReference = '',

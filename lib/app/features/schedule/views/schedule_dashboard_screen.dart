@@ -16,6 +16,8 @@ import 'package:carenest/app/core/providers/app_providers.dart'
 import 'package:intl/intl.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
+import 'package:carenest/app/features/mileage/models/trip_model.dart';
+import 'package:carenest/app/features/mileage/repositories/mileage_repository.dart';
 
 /// Schedule Dashboard Screen with Bauhaus styling
 class ScheduleDashboardScreen extends ConsumerStatefulWidget {
@@ -654,6 +656,27 @@ class _ScheduleDashboardScreenState
               isSmall: true,
             ),
 
+            if (widget.isAdmin &&
+                shift.status != ShiftStatus.completed &&
+                shift.status != ShiftStatus.cancelled)
+              PopupMenuButton<String>(
+                tooltip: 'Billing actions',
+                onSelected: (action) {
+                  if (action == 'cancel') {
+                    _showCancellationDialog(shift);
+                  } else if (action == 'travel') {
+                    _showProviderTravelDialog(shift);
+                  }
+                },
+                itemBuilder: (context) => const [
+                  PopupMenuItem(value: 'cancel', child: Text('Cancel & bill')),
+                  PopupMenuItem(
+                    value: 'travel',
+                    child: Text('Provider travel'),
+                  ),
+                ],
+              ),
+
             if (widget.isAdmin && shift.employeeEmail == null)
               const Padding(
                 padding: EdgeInsets.only(left: BauhausDesign.space2),
@@ -667,6 +690,482 @@ class _ScheduleDashboardScreenState
         ),
       ),
     );
+  }
+
+  Future<void> _showCancellationDialog(ShiftModel shift) async {
+    final now = DateTime.now();
+    final noticeHours = shift.startTime.difference(now).inMinutes / 60.0;
+    final noticeController = TextEditingController(
+      text: (noticeHours < 0 ? 0 : noticeHours).toStringAsFixed(1),
+    );
+    String reason = 'NSCC';
+    bool isSaving = false;
+    String? error;
+    final api = ref.read(app_providers.apiMethodProvider);
+
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Cancel & bill'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '${shift.clientName ?? shift.clientEmail ?? 'Participant'} · '
+                '${DateFormat('d MMM, h:mm a').format(shift.startTime)}',
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                initialValue: reason,
+                decoration: const InputDecoration(
+                  labelText: 'Cancellation reason',
+                  border: OutlineInputBorder(),
+                ),
+                items: const [
+                  DropdownMenuItem(
+                    value: 'NSCC',
+                    child: Text('NSCC — short notice cancellation'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'NSDH',
+                    child: Text('NSDH — did not show / no access'),
+                  ),
+                ],
+                onChanged: isSaving
+                    ? null
+                    : (value) => setDialogState(() => reason = value ?? 'NSCC'),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: noticeController,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                decoration: const InputDecoration(
+                  labelText: 'Notice (hours)',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              if (error != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  error!,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: isSaving
+                  ? null
+                  : () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: isSaving
+                  ? null
+                  : () async {
+                      setDialogState(() {
+                        isSaving = true;
+                        error = null;
+                      });
+                      final response = await api.createCancellationCharge(
+                        shiftId: shift.id,
+                        reason: reason,
+                        noticeHours: double.tryParse(
+                          noticeController.text.trim(),
+                        ),
+                      );
+                      if (!dialogContext.mounted) return;
+                      if (response['success'] == true) {
+                        Navigator.of(dialogContext).pop(true);
+                        final data = response['data'];
+                        final billable = data is Map ? data['billable'] : null;
+                        final amount = data is Map
+                            ? (data['amount'] as num?)?.toDouble()
+                            : null;
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                billable == true
+                                    ? 'Cancellation invoiced'
+                                          '${amount != null ? ' · \$${amount.toStringAsFixed(2)}' : ''}.'
+                                    : response['message']?.toString() ??
+                                          'Shift cancelled. No fee applied.',
+                              ),
+                            ),
+                          );
+                        }
+                      } else {
+                        setDialogState(() {
+                          isSaving = false;
+                          error =
+                              response['message']?.toString() ??
+                              'Cancellation billing failed.';
+                        });
+                      }
+                    },
+              child: const Text('Bill cancellation'),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    noticeController.dispose();
+    if (result == true) await _loadShifts();
+  }
+
+  Future<Map<String, String>?> _findTravelSupportItem(ShiftModel shift) async {
+    if (shift.supportItems.isEmpty) return null;
+    final supportNumber = shift.supportItems.first.itemNumber;
+    final parts = supportNumber.split('_');
+    final category = parts.isNotEmpty ? parts[0] : '';
+    final registrationGroup = parts.length > 2 ? parts[2] : '';
+    final api = ref.read(app_providers.apiMethodProvider);
+    final items = await api.getAllSupportItems();
+
+    for (final item in items) {
+      final name = (item['supportItemName'] ?? item['Support Item Name'] ?? '')
+          .toString()
+          .toLowerCase();
+      if (!name.contains('provider travel') || !name.contains('non-labour')) {
+        continue;
+      }
+      final number =
+          (item['supportItemNumber'] ?? item['Support Item Number'] ?? '')
+              .toString();
+      final itemParts = number.split('_');
+      if (category.isNotEmpty &&
+          itemParts.isNotEmpty &&
+          itemParts[0] != category) {
+        continue;
+      }
+      if (registrationGroup.isNotEmpty &&
+          itemParts.length > 2 &&
+          itemParts[2] != registrationGroup) {
+        continue;
+      }
+      return {
+        'number': number,
+        'name': (item['supportItemName'] ?? item['Support Item Name'] ?? '')
+            .toString(),
+      };
+    }
+    return null;
+  }
+
+  Future<void> _showProviderTravelDialog(ShiftModel shift) async {
+    if (shift.employeeId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Assign a worker before billing travel.')),
+      );
+      return;
+    }
+
+    final repo = ref.read(mileageRepositoryProvider);
+    List<Trip> trips = const [];
+    try {
+      final start = shift.startTime.subtract(const Duration(days: 1));
+      final end = shift.endTime.add(const Duration(days: 1));
+      trips = await repo.getTrips(
+        shift.employeeId!,
+        startDate: DateFormat('yyyy-MM-dd').format(start),
+        endDate: DateFormat('yyyy-MM-dd').format(end),
+      );
+    } catch (e) {
+      debugPrint('Provider travel: failed to load trips: $e');
+    }
+
+    final matched = trips.where((trip) {
+      if (trip.status.toUpperCase() != 'APPROVED') return false;
+      if (!trip.isReimbursable) return false;
+      if (shift.clientId != null &&
+          trip.clientId != null &&
+          trip.clientId != shift.clientId) {
+        return false;
+      }
+      return true;
+    }).toList();
+
+    Map<String, String>? travelItem;
+    try {
+      travelItem = await _findTravelSupportItem(shift);
+    } catch (e) {
+      debugPrint('Provider travel: support item lookup failed: $e');
+    }
+    if (!mounted) return;
+
+    final selected = matched.map((trip) => trip.id).toSet();
+    final selectedKm = matched
+        .where((trip) => selected.contains(trip.id))
+        .fold<double>(0, (sum, trip) => sum + trip.distance);
+    final kmController = TextEditingController(
+      text: selectedKm.toStringAsFixed(2),
+    );
+    final minutesController = TextEditingController(text: '0');
+    final nonLabourController = TextEditingController(
+      text: travelItem?['number'] ?? '',
+    );
+    final labourController = TextEditingController();
+    bool isSaving = false;
+    String? error;
+    final api = ref.read(app_providers.apiMethodProvider);
+
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          void recalculateKm() {
+            final total = matched
+                .where((trip) => selected.contains(trip.id))
+                .fold<double>(0, (sum, trip) => sum + trip.distance);
+            kmController.text = total.toStringAsFixed(2);
+          }
+
+          return AlertDialog(
+            title: const Text('Provider travel'),
+            content: SizedBox(
+              width: double.maxFinite,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      '${matched.length} approved trip(s) found for this worker.',
+                    ),
+                    if (matched.isNotEmpty)
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxHeight: 180),
+                        child: ListView(
+                          shrinkWrap: true,
+                          children: matched
+                              .map(
+                                (trip) => CheckboxListTile(
+                                  dense: true,
+                                  value: selected.contains(trip.id),
+                                  title: Text(
+                                    '${trip.startLocation} → ${trip.endLocation}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  subtitle: Text(
+                                    '${DateFormat('d MMM').format(trip.date)} · '
+                                    '${trip.distance.toStringAsFixed(2)} km',
+                                  ),
+                                  onChanged: isSaving
+                                      ? null
+                                      : (value) {
+                                          setDialogState(() {
+                                            if (value == true) {
+                                              selected.add(trip.id);
+                                            } else {
+                                              selected.remove(trip.id);
+                                            }
+                                            recalculateKm();
+                                          });
+                                        },
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: kmController,
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            decoration: const InputDecoration(
+                              labelText: 'Km',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: TextField(
+                            controller: minutesController,
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            decoration: const InputDecoration(
+                              labelText: 'Travel minutes (optional)',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: nonLabourController,
+                      decoration: const InputDecoration(
+                        labelText: 'Non-labour travel support item',
+                        hintText: '01_799_...',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: labourController,
+                      decoration: const InputDecoration(
+                        labelText: 'Labour travel support item (optional)',
+                        hintText: 'Required only when billing minutes',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    if (travelItem == null) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        'No matching provider-travel item was found for this '
+                        'support category. Enter the NDIS item number manually.',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                    if (error != null) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        error!,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: isSaving
+                    ? null
+                    : () async {
+                        setDialogState(() {
+                          isSaving = true;
+                          error = null;
+                        });
+                        final response = await api
+                            .createProviderTravelFromTrips(
+                              shiftId: shift.id,
+                              minutes:
+                                  double.tryParse(
+                                    minutesController.text.trim(),
+                                  ) ??
+                                  0,
+                              labourSupportNumber: labourController.text.trim(),
+                              nonLabourSupportNumber: nonLabourController.text
+                                  .trim(),
+                              nonLabourSupportName: travelItem?['name'],
+                            );
+                        if (!dialogContext.mounted) return;
+                        if (response['success'] == true) {
+                          Navigator.of(dialogContext).pop(true);
+                          if (mounted) {
+                            final data = response['data'];
+                            final amount = data is Map
+                                ? (data['amount'] as num?)?.toDouble()
+                                : null;
+                            final km = data is Map
+                                ? (data['km'] as num?)?.toDouble()
+                                : null;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Provider travel invoiced from approved trips'
+                                  '${km != null ? ' · ${km.toStringAsFixed(2)} km' : ''}'
+                                  '${amount != null ? ' · \$${amount.toStringAsFixed(2)}' : ''}.',
+                                ),
+                              ),
+                            );
+                          }
+                        } else {
+                          setDialogState(() {
+                            isSaving = false;
+                            error =
+                                response['message']?.toString() ??
+                                'Automatic travel billing failed.';
+                          });
+                        }
+                      },
+                child: const Text('Auto-bill trips'),
+              ),
+              TextButton(
+                onPressed: isSaving
+                    ? null
+                    : () => Navigator.of(dialogContext).pop(false),
+                child: const Text('Cancel'),
+              ),
+              FilledButton(
+                onPressed: isSaving
+                    ? null
+                    : () async {
+                        setDialogState(() {
+                          isSaving = true;
+                          error = null;
+                        });
+                        final response = await api.createProviderTravelCharge(
+                          shiftId: shift.id,
+                          km: double.tryParse(kmController.text.trim()) ?? 0,
+                          minutes:
+                              double.tryParse(minutesController.text.trim()) ??
+                              0,
+                          nonLabourSupportNumber: nonLabourController.text
+                              .trim(),
+                          nonLabourSupportName: travelItem?['name'],
+                          labourSupportNumber: labourController.text.trim(),
+                        );
+                        if (!dialogContext.mounted) return;
+                        if (response['success'] == true) {
+                          Navigator.of(dialogContext).pop(true);
+                          if (mounted) {
+                            final data = response['data'];
+                            final amount = data is Map
+                                ? (data['amount'] as num?)?.toDouble()
+                                : null;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Provider travel invoiced'
+                                  '${amount != null ? ' · \$${amount.toStringAsFixed(2)}' : ''}.',
+                                ),
+                              ),
+                            );
+                          }
+                        } else {
+                          setDialogState(() {
+                            isSaving = false;
+                            error =
+                                response['message']?.toString() ??
+                                'Provider travel billing failed.';
+                          });
+                        }
+                      },
+                child: const Text('Bill travel'),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    kmController.dispose();
+    minutesController.dispose();
+    nonLabourController.dispose();
+    labourController.dispose();
+    if (result == true) await _loadShifts();
   }
 
   Color _getStatusColor(ShiftStatus status) {
