@@ -37,8 +37,8 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
         organizationId.isEmpty) {
       if (!mounted) return null;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Session data missing. Please log in again.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.sessionDataMissing),
           backgroundColor: BauhausDesign.error,
         ),
       );
@@ -185,8 +185,8 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
   ) async {
     if (business.id == null || business.id!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Cannot edit this business because ID is missing.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.cannotEditBusinessMissingId),
           backgroundColor: BauhausDesign.error,
         ),
       );
@@ -478,8 +478,8 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
   ) async {
     if (business.id == null || business.id!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Cannot delete this business because ID is missing.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.cannotDeleteBusinessMissingId),
           backgroundColor: BauhausDesign.error,
         ),
       );

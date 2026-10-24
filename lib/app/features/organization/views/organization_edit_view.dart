@@ -330,8 +330,8 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
 
     if (!_isValidBsb(_bsbController.text)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('BSB must be exactly 6 digits (format: XXX-XXX).'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.bsbMustBeSixDigits),
           backgroundColor: BauhausDesign.warning,
         ),
       );

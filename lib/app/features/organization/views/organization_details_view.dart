@@ -2095,7 +2095,7 @@ $appLink
                   borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
                 ),
               ),
-              child: const Text('COMPLETE STRIPE SETUP'),
+              child: Text(AppLocalizations.of(context)!.completeStripeSetup),
             ),
           ),
           SizedBox(height: BauhausDesign.space2),
@@ -2174,7 +2174,7 @@ $appLink
       child: OutlinedButton.icon(
         onPressed: () => _confirmDisconnectStripe(context, organizationId),
         icon: Icon(Icons.link_off, size: 18),
-        label: const Text('DISCONNECT STRIPE'),
+        label: Text(AppLocalizations.of(context)!.disconnectStripeCaps),
         style: OutlinedButton.styleFrom(
           foregroundColor: BauhausDesign.error,
           side: BorderSide(color: BauhausDesign.error, width: 2),
@@ -2202,7 +2202,7 @@ $appLink
             width: 2,
           ),
         ),
-        title: const Text('Disconnect Stripe?'),
+        title: Text(AppLocalizations.of(context)!.disconnectStripeQuestion),
         content: const Text(
           'This will remove the linked Stripe account. Clients will no longer '
           'be able to pay invoices online until you reconnect a Stripe account.',
@@ -2210,7 +2210,7 @@ $appLink
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('CANCEL'),
+            child: Text(AppLocalizations.of(context)!.cancelCaps),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -2218,7 +2218,7 @@ $appLink
               foregroundColor: Theme.of(context).colorScheme.surface,
             ),
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('DISCONNECT'),
+            child: Text(AppLocalizations.of(context)!.disconnectCaps),
           ),
         ],
       ),

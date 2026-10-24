@@ -13,6 +13,7 @@ import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
 
 import '../viewmodels/assignment_list_viewmodel.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class EditAssignmentView extends ConsumerStatefulWidget {
   final Map<String, dynamic> assignment;
@@ -210,7 +211,7 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
         if (mounted) {
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Assignment updated successfully')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.assignmentUpdatedSuccessfully)),
           );
         }
       } else {

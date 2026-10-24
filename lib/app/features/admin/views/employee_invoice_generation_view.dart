@@ -16,6 +16,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class EmployeeInvoiceGenerationView extends ConsumerStatefulWidget {
   final String adminEmail;
@@ -819,7 +820,7 @@ class _EmployeeInvoiceGenerationViewState
                     ),
                   ),
                 ),
-                child: const Text('Retry'),
+                child: Text(AppLocalizations.of(context)!.retryButton),
               ),
             ],
           ),

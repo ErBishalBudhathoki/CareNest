@@ -2560,7 +2560,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportAnalytics => 'Export analytics';
 
   @override
-  String get exportComingSoon => 'Export functionality coming soon...';
+  String get exportComingSoon => 'Export functionality coming soon!';
 
   @override
   String get exportConfiguration => 'Export Configuration';
@@ -2659,7 +2659,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failedToLoadEmployees => 'Failed to load employees';
 
   @override
-  String get failedToLoadNdisItems => 'Failed to load NDIS items';
+  String get failedToLoadNdisItems =>
+      'Failed to load NDIS items. Please try again.';
 
   @override
   String get failedToLoadRecommendations => 'Failed to load recommendations';
@@ -5919,7 +5920,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Selected items deleted successfully!';
 
   @override
-  String get selectEmployee => 'Select Employee';
+  String get selectEmployee => 'Select employee';
 
   @override
   String get selectEmployees => 'Select Employees';
@@ -8308,4 +8309,189 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get viewAllHistory => 'View all history';
+
+  @override
+  String get anErrorOccurredTryAgain => 'An error occurred. Please try again.';
+
+  @override
+  String get applyCaps => 'APPLY';
+
+  @override
+  String get assignmentUpdatedSuccessfully => 'Assignment updated successfully';
+
+  @override
+  String get assignWorkerBeforeBillingTravel =>
+      'Assign a worker before billing travel.';
+
+  @override
+  String get autoBillTrips => 'Auto-bill trips';
+
+  @override
+  String get autoFillRequiresShiftData =>
+      'Auto-fill feature requires shift data';
+
+  @override
+  String get autoFillShifts => 'AUTO-FILL SHIFTS';
+
+  @override
+  String get billCancellation => 'Bill cancellation';
+
+  @override
+  String get billTravel => 'Bill travel';
+
+  @override
+  String get bsbMustBeSixDigits =>
+      'BSB must be exactly 6 digits (format: XXX-XXX).';
+
+  @override
+  String get cancelAndBill => 'Cancel & bill';
+
+  @override
+  String get cancelCaps => 'CANCEL';
+
+  @override
+  String get cannotDeleteBusinessMissingId =>
+      'Cannot delete this business because ID is missing.';
+
+  @override
+  String get cannotDeleteClientMissingId =>
+      'Cannot delete this client because ID is missing.';
+
+  @override
+  String get cannotEditBusinessMissingId =>
+      'Cannot edit this business because ID is missing.';
+
+  @override
+  String get cannotRestoreClientMissingId =>
+      'Cannot restore this client because ID is missing.';
+
+  @override
+  String get clientIdMissingUnableToOpenCareTeam =>
+      'Client ID is missing. Unable to open Care Team.';
+
+  @override
+  String get clientIdMissingUnableToOpenFamilyAccess =>
+      'Client ID is missing. Unable to open Family Access.';
+
+  @override
+  String get closeCaps => 'CLOSE';
+
+  @override
+  String get completeStripeSetup => 'COMPLETE STRIPE SETUP';
+
+  @override
+  String get confirmCaps => 'CONFIRM';
+
+  @override
+  String get disconnectCaps => 'DISCONNECT';
+
+  @override
+  String get disconnectStripeCaps => 'DISCONNECT STRIPE';
+
+  @override
+  String get disconnectStripeQuestion => 'Disconnect Stripe?';
+
+  @override
+  String get employeeSignature => 'Employee Signature';
+
+  @override
+  String get fixedRate => 'Fixed Rate';
+
+  @override
+  String get generatingComplianceReport => 'Generating compliance report...';
+
+  @override
+  String get identifiedThreeTimesThisWeek => 'Identified 3 times this week.';
+
+  @override
+  String get leaveRequestSubmitted => 'Leave request submitted';
+
+  @override
+  String get loadingComplianceTrends => 'Loading compliance trends...';
+
+  @override
+  String get loadingExpiringDocuments => 'Loading expiring documents...';
+
+  @override
+  String get noComplianceDataAvailable => 'No compliance data available';
+
+  @override
+  String get noDemandForecastAvailable => 'No demand forecast available';
+
+  @override
+  String get noMatchingNdisItems => 'No matching NDIS items found.';
+
+  @override
+  String get noOvertimeData => 'No Overtime Data';
+
+  @override
+  String get noReliabilityData => 'No Reliability Data';
+
+  @override
+  String get noRevenueForecastAvailable => 'No revenue forecast available';
+
+  @override
+  String get nsccShortNotice => 'NSCC — short notice cancellation';
+
+  @override
+  String get nsdhDidNotShow => 'NSDH — did not show / no access';
+
+  @override
+  String get optimizeRoutes => 'OPTIMIZE ROUTES';
+
+  @override
+  String get pleaseEnterSixDigitCode => 'Please enter the 6-digit code.';
+
+  @override
+  String get pleaseEnterValidPrice => 'Please enter a valid price';
+
+  @override
+  String get pleaseFillAllFields => 'Please fill in all fields correctly.';
+
+  @override
+  String get pleaseSatisfyAllPasswordRequirements =>
+      'Please satisfy all password requirements.';
+
+  @override
+  String get pleaseSelectDates => 'Please select dates';
+
+  @override
+  String get providerTravel => 'Provider travel';
+
+  @override
+  String get requestApproved => 'Request approved';
+
+  @override
+  String get requestDeclined => 'Request declined';
+
+  @override
+  String get resetSubscriptionDev => 'RESET SUBSCRIPTION (DEV)';
+
+  @override
+  String get runningComplianceScan => 'Running compliance scan...';
+
+  @override
+  String get selectPayrollPeriod => 'Select Payroll Period';
+
+  @override
+  String get selectShiftCaps => 'SELECT SHIFT';
+
+  @override
+  String get sessionDataMissing => 'Session data missing. Please log in again.';
+
+  @override
+  String get shiftClaimedWaitingApproval =>
+      'Shift claimed! Waiting for approval.';
+
+  @override
+  String get tripApprovedSuccessfully => 'Trip approved successfully';
+
+  @override
+  String get tripRejectedSuccessfully => 'Trip rejected successfully';
+
+  @override
+  String get useYyyyMmFormat => 'Use YYYY-MM format (example: 2026-02).';
+
+  @override
+  String get userEmailNotFound => 'Error: User email not found.';
 }

@@ -107,8 +107,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
         organizationId.isEmpty) {
       if (!mounted) return null;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Session data missing. Please log in again.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.sessionDataMissing),
           backgroundColor: BauhausDesign.error,
         ),
       );
@@ -1386,8 +1386,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
   Future<void> _confirmDeleteClient(Patient client) async {
     if (client.id == null || client.id!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Cannot delete this client because ID is missing.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.cannotDeleteClientMissingId),
           backgroundColor: BauhausDesign.error,
         ),
       );
@@ -1442,8 +1442,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
   Future<void> _confirmRestoreClient(Patient client) async {
     if (client.id == null || client.id!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Cannot restore this client because ID is missing.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.cannotRestoreClientMissingId),
           backgroundColor: BauhausDesign.error,
         ),
       );
@@ -2135,8 +2135,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     final clientId = client.id?.trim();
     if (clientId == null || clientId.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Client ID is missing. Unable to open Family Access.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.clientIdMissingUnableToOpenFamilyAccess),
           backgroundColor: BauhausDesign.error,
         ),
       );
@@ -2157,8 +2157,8 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     final clientId = client.id?.trim();
     if (clientId == null || clientId.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Client ID is missing. Unable to open Care Team.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.clientIdMissingUnableToOpenCareTeam),
           backgroundColor: BauhausDesign.error,
         ),
       );

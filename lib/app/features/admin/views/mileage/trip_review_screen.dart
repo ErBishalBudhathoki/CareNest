@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/admin/viewmodels/admin_mileage_view_model.dart';
 import 'package:carenest/app/shared/widgets/platform_map_widget.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class TripReviewScreen extends ConsumerStatefulWidget {
   final String tripId;
@@ -251,8 +252,8 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                         if (success) {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Trip rejected successfully'),
+                            SnackBar(
+                              content: Text(AppLocalizations.of(context)!.tripRejectedSuccessfully),
                             ),
                           );
                         } else {
@@ -279,8 +280,8 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                         if (success) {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Trip approved successfully'),
+                            SnackBar(
+                              content: Text(AppLocalizations.of(context)!.tripApprovedSuccessfully),
                             ),
                           );
                         } else {

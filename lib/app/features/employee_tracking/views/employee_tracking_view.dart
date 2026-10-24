@@ -16,6 +16,7 @@ import '../viewmodels/employee_tracking_viewmodel.dart';
 import '../widgets/employee_status_card.dart';
 import '../widgets/employee_stats_overview.dart';
 import '../models/employee_tracking_model.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class EmployeeTrackingView extends ConsumerStatefulWidget {
   const EmployeeTrackingView({super.key});
@@ -1396,7 +1397,7 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
     // Implement export functionality
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Export functionality coming soon!'),
+        content: Text(AppLocalizations.of(context)!.exportComingSoon),
         backgroundColor: BauhausDesign.info,
       ),
     );

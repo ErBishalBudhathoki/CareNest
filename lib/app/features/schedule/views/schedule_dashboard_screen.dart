@@ -728,7 +728,7 @@ class _ScheduleDashboardScreenState
       barrierDismissible: false,
       builder: (dialogContext) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Cancel & bill'),
+          title: Text(AppLocalizations.of(context)!.cancelAndBill),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -736,21 +736,21 @@ class _ScheduleDashboardScreenState
                 '${shift.clientName ?? shift.clientEmail ?? 'Participant'} · '
                 '${DateFormat('d MMM, h:mm a').format(shift.startTime)}',
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 initialValue: reason,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Cancellation reason',
                   border: OutlineInputBorder(),
                 ),
-                items: const [
+                items: [
                   DropdownMenuItem(
                     value: 'NSCC',
-                    child: Text('NSCC — short notice cancellation'),
+                    child: Text(AppLocalizations.of(context)!.nsccShortNotice),
                   ),
                   DropdownMenuItem(
                     value: 'NSDH',
-                    child: Text('NSDH — did not show / no access'),
+                    child: Text(AppLocalizations.of(context)!.nsdhDidNotShow),
                   ),
                 ],
                 onChanged: isSaving
@@ -782,7 +782,7 @@ class _ScheduleDashboardScreenState
               onPressed: isSaving
                   ? null
                   : () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             FilledButton(
               onPressed: isSaving
@@ -829,7 +829,7 @@ class _ScheduleDashboardScreenState
                         });
                       }
                     },
-              child: const Text('Bill cancellation'),
+              child: Text(AppLocalizations.of(context)!.billCancellation),
             ),
           ],
         ),
@@ -891,7 +891,7 @@ class _ScheduleDashboardScreenState
   Future<void> _showProviderTravelDialog(ShiftModel shift) async {
     if (shift.employeeId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Assign a worker before billing travel.')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.assignWorkerBeforeBillingTravel)),
       );
       return;
     }
@@ -958,7 +958,7 @@ class _ScheduleDashboardScreenState
           }
 
           return AlertDialog(
-            title: const Text('Provider travel'),
+            title: Text(AppLocalizations.of(context)!.providerTravel),
             content: SizedBox(
               width: double.maxFinite,
               child: SingleChildScrollView(
@@ -1129,13 +1129,13 @@ class _ScheduleDashboardScreenState
                           });
                         }
                       },
-                child: const Text('Auto-bill trips'),
+                child: Text(AppLocalizations.of(context)!.autoBillTrips),
               ),
               TextButton(
                 onPressed: isSaving
                     ? null
                     : () => Navigator.of(dialogContext).pop(false),
-                child: const Text('Cancel'),
+                child: Text(AppLocalizations.of(context)!.cancel),
               ),
               FilledButton(
                 onPressed: isSaving
@@ -1182,7 +1182,7 @@ class _ScheduleDashboardScreenState
                           });
                         }
                       },
-                child: const Text('Bill travel'),
+                child: Text(AppLocalizations.of(context)!.billTravel),
               ),
             ],
           );

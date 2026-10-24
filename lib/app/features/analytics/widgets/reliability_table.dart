@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import '../models/analytics_models.dart';
 import 'bauhaus_container.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class ReliabilityTable extends StatelessWidget {
   final List<ReliabilityMetric> metrics;
@@ -27,9 +28,9 @@ class ReliabilityTable extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           if (metrics.isEmpty)
-            const Padding(
+            Padding(
               padding: EdgeInsets.all(16.0),
-              child: Text('No Reliability Data'),
+              child: Text(AppLocalizations.of(context)!.noReliabilityData),
             )
           else
             Table(

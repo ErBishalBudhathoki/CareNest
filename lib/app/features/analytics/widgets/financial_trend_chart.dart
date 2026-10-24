@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import '../models/analytics_models.dart';
 import 'bauhaus_container.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class FinancialTrendChart extends StatelessWidget {
   final List<FinancialMetric> metrics;
@@ -26,7 +27,7 @@ class FinancialTrendChart extends StatelessWidget {
           const SizedBox(height: 16),
           Expanded(
             child: metrics.isEmpty
-                ? const Center(child: Text('No Data'))
+                ? Center(child: Text(AppLocalizations.of(context)!.noData))
                 : BarChart(
                     BarChartData(
                       alignment: BarChartAlignment.spaceAround,

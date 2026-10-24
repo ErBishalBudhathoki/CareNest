@@ -115,8 +115,8 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
     if (!_meetsAllPasswordRules(newPassword)) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please satisfy all password requirements.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.pleaseSatisfyAllPasswordRequirements),
           backgroundColor: BauhausDesign.warning,
         ),
       );

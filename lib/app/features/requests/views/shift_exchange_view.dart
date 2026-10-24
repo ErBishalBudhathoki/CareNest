@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'dart:io' show Platform;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:carenest/app/core/utils/Services/launch_map_status.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class ShiftExchangeView extends ConsumerStatefulWidget {
   const ShiftExchangeView({super.key});
@@ -147,7 +148,7 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
     if (_userEmail == null || _userEmail!.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error: User email not found.')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.userEmailNotFound)),
         );
       }
       return;
@@ -164,8 +165,8 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
       if (response['success'] == true) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Shift claimed! Waiting for approval.'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.shiftClaimedWaitingApproval),
             ),
           );
           _loadData();

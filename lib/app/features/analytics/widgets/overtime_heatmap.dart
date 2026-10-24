@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import '../models/analytics_models.dart';
 import 'bauhaus_container.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class OvertimeHeatmap extends StatelessWidget {
   final List<OvertimeMetric> metrics;
@@ -51,7 +52,7 @@ class OvertimeHeatmap extends StatelessWidget {
           const SizedBox(height: 16),
 
           if (!hasTemporalData && metrics.isEmpty)
-            const Expanded(child: Center(child: Text('No Overtime Data')))
+            Expanded(child: Center(child: Text(AppLocalizations.of(context)!.noOvertimeData)))
           else ...[
             // 1. Temporal Analysis (Bar Chart)
             if (hasTemporalData) ...[

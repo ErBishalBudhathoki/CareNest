@@ -5,6 +5,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/features/scheduling/views/shift_matching_view.dart';
 import 'package:carenest/app/features/scheduling/viewmodels/shift_matching_viewmodel.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class AutoScheduleDashboard extends ConsumerWidget {
   final String? organizationId;
@@ -377,26 +378,26 @@ class AutoScheduleDashboard extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('AUTO-FILL SHIFTS'),
+        title: Text(AppLocalizations.of(context)!.autoFillShifts),
         content: const Text(
           'This will automatically assign the best matching workers to all open shifts. Continue?',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('CANCEL'),
+            child: Text(AppLocalizations.of(context)!.cancelCaps),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               // In production, trigger auto-fill
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Auto-fill feature requires shift data'),
+                SnackBar(
+                  content: Text(AppLocalizations.of(context)!.autoFillRequiresShiftData),
                 ),
               );
             },
-            child: const Text('CONFIRM'),
+            child: Text(AppLocalizations.of(context)!.confirmCaps),
           ),
         ],
       ),
@@ -407,14 +408,14 @@ class AutoScheduleDashboard extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('OPTIMIZE ROUTES'),
+        title: Text(AppLocalizations.of(context)!.optimizeRoutes),
         content: const Text(
           'This will optimize travel routes for all workers based on their assigned shifts. Continue?',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('CANCEL'),
+            child: Text(AppLocalizations.of(context)!.cancelCaps),
           ),
           ElevatedButton(
             onPressed: () {
@@ -427,7 +428,7 @@ class AutoScheduleDashboard extends ConsumerWidget {
                 ),
               );
             },
-            child: const Text('CONFIRM'),
+            child: Text(AppLocalizations.of(context)!.confirmCaps),
           ),
         ],
       ),

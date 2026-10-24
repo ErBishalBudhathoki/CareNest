@@ -7,6 +7,7 @@ import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class AdvancedPayrollDashboard extends ConsumerStatefulWidget {
   final String? organizationId;
@@ -1417,7 +1418,7 @@ class _AdvancedPayrollDashboardState
     final selected = await showDialog<String>(
       context: context,
       builder: (dialogContext) => SimpleDialog(
-        title: const Text('Select employee'),
+        title: Text(AppLocalizations.of(context)!.selectEmployee),
         children: [
           for (final employee in _employees)
             SimpleDialogOption(
@@ -1444,12 +1445,12 @@ class _AdvancedPayrollDashboardState
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: const Text('Select Payroll Period'),
+              title: Text(AppLocalizations.of(context)!.selectPayrollPeriod),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Use YYYY-MM format (example: 2026-02).'),
+                  Text(AppLocalizations.of(context)!.useYyyyMmFormat),
                   const SizedBox(height: BauhausDesign.space3),
                   TextField(
                     controller: controller,
@@ -1464,7 +1465,7 @@ class _AdvancedPayrollDashboardState
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('CANCEL'),
+                  child: Text(AppLocalizations.of(context)!.cancelCaps),
                 ),
                 FilledButton(
                   onPressed: () {
@@ -1484,7 +1485,7 @@ class _AdvancedPayrollDashboardState
                       _initializeDashboard(force: true);
                     }
                   },
-                  child: const Text('APPLY'),
+                  child: Text(AppLocalizations.of(context)!.applyCaps),
                 ),
               ],
             );

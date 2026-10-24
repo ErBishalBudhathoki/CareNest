@@ -5,6 +5,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/features/scheduling/models/shift_matching_models.dart';
 import 'package:carenest/app/features/scheduling/viewmodels/shift_matching_viewmodel.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class ShiftMatchingView extends ConsumerStatefulWidget {
   final String? organizationId;
@@ -311,7 +312,7 @@ class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('SELECT SHIFT'),
+        title: Text(AppLocalizations.of(context)!.selectShiftCaps),
         content: const Text(
           'This feature requires integration with your shift management system. '
           'Please provide a shift ID to find matching workers.',
@@ -319,7 +320,7 @@ class _ShiftMatchingViewState extends ConsumerState<ShiftMatchingView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+            child: Text(AppLocalizations.of(context)!.ok),
           ),
         ],
       ),

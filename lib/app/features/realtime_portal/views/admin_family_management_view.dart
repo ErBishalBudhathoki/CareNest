@@ -5,8 +5,8 @@ import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/features/realtime_portal/viewmodels/family_access_viewmodel.dart';
 import 'package:carenest/app/features/realtime_portal/models/realtime_portal_models.dart';
 import 'package:carenest/app/features/client/providers/client_provider.dart';
-import 'package:carenest/app/core/providers/app_providers.dart'
-    as app_providers;
+import 'package:carenest/generated/l10n/app_localizations.dart';
+import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
 
 class AdminFamilyManagementView extends ConsumerStatefulWidget {
   final String clientId;
@@ -365,7 +365,7 @@ class _AdminFamilyManagementViewState
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('CANCEL'),
+            child: Text(AppLocalizations.of(context)!.cancelCaps),
           ),
           TextButton(
             onPressed: () {

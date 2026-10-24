@@ -222,8 +222,8 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
     if (enteredOtp.length != 6) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter the 6-digit code.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.pleaseEnterSixDigitCode),
           backgroundColor: BauhausDesign.error,
         ),
       );

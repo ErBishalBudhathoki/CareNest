@@ -5,6 +5,7 @@ import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/features/care_intelligence/viewmodels/behavior_support_viewmodel.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/features/care_intelligence/views/incident_management_view.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class BehaviorSupportView extends ConsumerStatefulWidget {
   const BehaviorSupportView({super.key});
@@ -158,7 +159,7 @@ class _BehaviorSupportViewState extends ConsumerState<BehaviorSupportView> {
               'Anxiety Trigger',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            subtitle: const Text('Identified 3 times this week.'),
+            subtitle: Text(AppLocalizations.of(context)!.identifiedThreeTimesThisWeek),
             trailing: Icon(
               Icons.chevron_right,
               color: Theme.of(context).colorScheme.onSurface,

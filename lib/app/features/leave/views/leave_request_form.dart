@@ -44,14 +44,14 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedLeaveType == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a leave type')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.pleaseSelectLeaveType)),
       );
       return;
     }
     if (_selectedDateRange == null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Please select dates')));
+      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.pleaseSelectDates)));
       return;
     }
 
@@ -69,7 +69,7 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
     if (mounted) {
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Leave request submitted')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.leaveRequestSubmitted)),
         );
         Navigator.pop(context);
       } else {

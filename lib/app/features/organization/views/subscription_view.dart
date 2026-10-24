@@ -788,7 +788,7 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
                         borderRadius: BorderRadius.zero,
                       ),
                     ),
-                    child: const Text('RESET SUBSCRIPTION (DEV)'),
+                    child: Text(AppLocalizations.of(context)!.resetSubscriptionDev),
                   ),
                 ),
               ],

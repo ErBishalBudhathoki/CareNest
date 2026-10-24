@@ -1120,7 +1120,7 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
           isExpanded: true,
           items: [
             DropdownMenuItem(value: 'percentage', child: Text(l10n.percentage)),
-            const DropdownMenuItem(value: 'fixed', child: Text('Fixed Rate')),
+            DropdownMenuItem(value: 'fixed', child: Text(AppLocalizations.of(context)!.fixedRate)),
           ],
           onChanged: (value) {
             if (value != null) {

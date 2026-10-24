@@ -4741,7 +4741,7 @@ abstract class AppLocalizations {
   /// No description provided for @exportComingSoon.
   ///
   /// In en, this message translates to:
-  /// **'Export functionality coming soon...'**
+  /// **'Export functionality coming soon!'**
   String get exportComingSoon;
 
   /// No description provided for @exportConfiguration.
@@ -4903,7 +4903,7 @@ abstract class AppLocalizations {
   /// No description provided for @failedToLoadNdisItems.
   ///
   /// In en, this message translates to:
-  /// **'Failed to load NDIS items'**
+  /// **'Failed to load NDIS items. Please try again.'**
   String get failedToLoadNdisItems;
 
   /// No description provided for @failedToLoadRecommendations.
@@ -10848,7 +10848,7 @@ abstract class AppLocalizations {
   /// No description provided for @selectEmployee.
   ///
   /// In en, this message translates to:
-  /// **'Select Employee'**
+  /// **'Select employee'**
   String get selectEmployee;
 
   /// No description provided for @selectEmployees.
@@ -15289,6 +15289,354 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View all history'**
   String get viewAllHistory;
+
+  /// No description provided for @anErrorOccurredTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred. Please try again.'**
+  String get anErrorOccurredTryAgain;
+
+  /// No description provided for @applyCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'APPLY'**
+  String get applyCaps;
+
+  /// No description provided for @assignmentUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment updated successfully'**
+  String get assignmentUpdatedSuccessfully;
+
+  /// No description provided for @assignWorkerBeforeBillingTravel.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign a worker before billing travel.'**
+  String get assignWorkerBeforeBillingTravel;
+
+  /// No description provided for @autoBillTrips.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-bill trips'**
+  String get autoBillTrips;
+
+  /// No description provided for @autoFillRequiresShiftData.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-fill feature requires shift data'**
+  String get autoFillRequiresShiftData;
+
+  /// No description provided for @autoFillShifts.
+  ///
+  /// In en, this message translates to:
+  /// **'AUTO-FILL SHIFTS'**
+  String get autoFillShifts;
+
+  /// No description provided for @billCancellation.
+  ///
+  /// In en, this message translates to:
+  /// **'Bill cancellation'**
+  String get billCancellation;
+
+  /// No description provided for @billTravel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bill travel'**
+  String get billTravel;
+
+  /// No description provided for @bsbMustBeSixDigits.
+  ///
+  /// In en, this message translates to:
+  /// **'BSB must be exactly 6 digits (format: XXX-XXX).'**
+  String get bsbMustBeSixDigits;
+
+  /// No description provided for @cancelAndBill.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel & bill'**
+  String get cancelAndBill;
+
+  /// No description provided for @cancelCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'CANCEL'**
+  String get cancelCaps;
+
+  /// No description provided for @cannotDeleteBusinessMissingId.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot delete this business because ID is missing.'**
+  String get cannotDeleteBusinessMissingId;
+
+  /// No description provided for @cannotDeleteClientMissingId.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot delete this client because ID is missing.'**
+  String get cannotDeleteClientMissingId;
+
+  /// No description provided for @cannotEditBusinessMissingId.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot edit this business because ID is missing.'**
+  String get cannotEditBusinessMissingId;
+
+  /// No description provided for @cannotRestoreClientMissingId.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot restore this client because ID is missing.'**
+  String get cannotRestoreClientMissingId;
+
+  /// No description provided for @clientIdMissingUnableToOpenCareTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'Client ID is missing. Unable to open Care Team.'**
+  String get clientIdMissingUnableToOpenCareTeam;
+
+  /// No description provided for @clientIdMissingUnableToOpenFamilyAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Client ID is missing. Unable to open Family Access.'**
+  String get clientIdMissingUnableToOpenFamilyAccess;
+
+  /// No description provided for @closeCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'CLOSE'**
+  String get closeCaps;
+
+  /// No description provided for @completeStripeSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'COMPLETE STRIPE SETUP'**
+  String get completeStripeSetup;
+
+  /// No description provided for @confirmCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'CONFIRM'**
+  String get confirmCaps;
+
+  /// No description provided for @disconnectCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'DISCONNECT'**
+  String get disconnectCaps;
+
+  /// No description provided for @disconnectStripeCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'DISCONNECT STRIPE'**
+  String get disconnectStripeCaps;
+
+  /// No description provided for @disconnectStripeQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect Stripe?'**
+  String get disconnectStripeQuestion;
+
+  /// No description provided for @employeeSignature.
+  ///
+  /// In en, this message translates to:
+  /// **'Employee Signature'**
+  String get employeeSignature;
+
+  /// No description provided for @fixedRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed Rate'**
+  String get fixedRate;
+
+  /// No description provided for @generatingComplianceReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating compliance report...'**
+  String get generatingComplianceReport;
+
+  /// No description provided for @identifiedThreeTimesThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Identified 3 times this week.'**
+  String get identifiedThreeTimesThisWeek;
+
+  /// No description provided for @leaveRequestSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave request submitted'**
+  String get leaveRequestSubmitted;
+
+  /// No description provided for @loadingComplianceTrends.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading compliance trends...'**
+  String get loadingComplianceTrends;
+
+  /// No description provided for @loadingExpiringDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading expiring documents...'**
+  String get loadingExpiringDocuments;
+
+  /// No description provided for @noComplianceDataAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No compliance data available'**
+  String get noComplianceDataAvailable;
+
+  /// No description provided for @noDemandForecastAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No demand forecast available'**
+  String get noDemandForecastAvailable;
+
+  /// No description provided for @noMatchingNdisItems.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching NDIS items found.'**
+  String get noMatchingNdisItems;
+
+  /// No description provided for @noOvertimeData.
+  ///
+  /// In en, this message translates to:
+  /// **'No Overtime Data'**
+  String get noOvertimeData;
+
+  /// No description provided for @noReliabilityData.
+  ///
+  /// In en, this message translates to:
+  /// **'No Reliability Data'**
+  String get noReliabilityData;
+
+  /// No description provided for @noRevenueForecastAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No revenue forecast available'**
+  String get noRevenueForecastAvailable;
+
+  /// No description provided for @nsccShortNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'NSCC — short notice cancellation'**
+  String get nsccShortNotice;
+
+  /// No description provided for @nsdhDidNotShow.
+  ///
+  /// In en, this message translates to:
+  /// **'NSDH — did not show / no access'**
+  String get nsdhDidNotShow;
+
+  /// No description provided for @optimizeRoutes.
+  ///
+  /// In en, this message translates to:
+  /// **'OPTIMIZE ROUTES'**
+  String get optimizeRoutes;
+
+  /// No description provided for @pleaseEnterSixDigitCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the 6-digit code.'**
+  String get pleaseEnterSixDigitCode;
+
+  /// No description provided for @pleaseEnterValidPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid price'**
+  String get pleaseEnterValidPrice;
+
+  /// No description provided for @pleaseFillAllFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill in all fields correctly.'**
+  String get pleaseFillAllFields;
+
+  /// No description provided for @pleaseSatisfyAllPasswordRequirements.
+  ///
+  /// In en, this message translates to:
+  /// **'Please satisfy all password requirements.'**
+  String get pleaseSatisfyAllPasswordRequirements;
+
+  /// No description provided for @pleaseSelectDates.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select dates'**
+  String get pleaseSelectDates;
+
+  /// No description provided for @providerTravel.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider travel'**
+  String get providerTravel;
+
+  /// No description provided for @requestApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Request approved'**
+  String get requestApproved;
+
+  /// No description provided for @requestDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Request declined'**
+  String get requestDeclined;
+
+  /// No description provided for @resetSubscriptionDev.
+  ///
+  /// In en, this message translates to:
+  /// **'RESET SUBSCRIPTION (DEV)'**
+  String get resetSubscriptionDev;
+
+  /// No description provided for @runningComplianceScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Running compliance scan...'**
+  String get runningComplianceScan;
+
+  /// No description provided for @selectPayrollPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Payroll Period'**
+  String get selectPayrollPeriod;
+
+  /// No description provided for @selectShiftCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'SELECT SHIFT'**
+  String get selectShiftCaps;
+
+  /// No description provided for @sessionDataMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Session data missing. Please log in again.'**
+  String get sessionDataMissing;
+
+  /// No description provided for @shiftClaimedWaitingApproval.
+  ///
+  /// In en, this message translates to:
+  /// **'Shift claimed! Waiting for approval.'**
+  String get shiftClaimedWaitingApproval;
+
+  /// No description provided for @tripApprovedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip approved successfully'**
+  String get tripApprovedSuccessfully;
+
+  /// No description provided for @tripRejectedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip rejected successfully'**
+  String get tripRejectedSuccessfully;
+
+  /// No description provided for @useYyyyMmFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Use YYYY-MM format (example: 2026-02).'**
+  String get useYyyyMmFormat;
+
+  /// No description provided for @userEmailNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: User email not found.'**
+  String get userEmailNotFound;
 }
 
 class _AppLocalizationsDelegate

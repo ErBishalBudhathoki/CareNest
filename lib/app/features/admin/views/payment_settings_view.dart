@@ -473,7 +473,7 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
             width: 2,
           ),
         ),
-        title: const Text('Disconnect Stripe?'),
+        title: Text(AppLocalizations.of(context)!.disconnectStripeQuestion),
         content: const Text(
           'This will remove the linked Stripe account. Clients will no longer '
           'be able to pay invoices online until you reconnect.',
@@ -481,7 +481,7 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('CANCEL'),
+            child: Text(AppLocalizations.of(context)!.cancelCaps),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -489,7 +489,7 @@ class _PaymentSettingsViewState extends ConsumerState<PaymentSettingsView>
               foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
             ),
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('DISCONNECT'),
+            child: Text(AppLocalizations.of(context)!.disconnectCaps),
           ),
         ],
       ),

@@ -844,7 +844,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text('An error occurred. Please try again.'),
+              content: Text(AppLocalizations.of(context)!.anErrorOccurredTryAgain),
               backgroundColor: BauhausDesign.error,
             ),
           );
@@ -852,7 +852,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Please fill in all fields correctly.'),
+            content: Text(AppLocalizations.of(context)!.pleaseFillAllFields),
             backgroundColor: BauhausDesign.warning,
           ),
         );

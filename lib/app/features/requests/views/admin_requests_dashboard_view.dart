@@ -665,8 +665,8 @@ class _AdminRequestsDashboardViewState
             );
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Request declined'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.requestDeclined),
               backgroundColor: BauhausDesign.error,
             ),
           );
@@ -685,8 +685,8 @@ class _AdminRequestsDashboardViewState
             .updateRequestStatus(request.id!, 'approved');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Request approved'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.requestApproved),
               backgroundColor: BauhausDesign.success,
             ),
           );

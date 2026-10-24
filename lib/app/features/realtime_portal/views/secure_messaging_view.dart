@@ -11,6 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:carenest/app/features/realtime_portal/viewmodels/messaging_viewmodel.dart';
 import 'package:carenest/app/features/realtime_portal/widgets/message_bubble.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 /// Secure Messaging View
 /// Role-aware secure messaging between client and assigned worker.
@@ -1014,7 +1015,7 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
               foregroundColor: BauhausDesign.primary,
               textStyle: GoogleFonts.inter(fontWeight: FontWeight.bold),
             ),
-            child: const Text('CLOSE'),
+            child: Text(AppLocalizations.of(context)!.closeCaps),
           ),
         ],
       ),

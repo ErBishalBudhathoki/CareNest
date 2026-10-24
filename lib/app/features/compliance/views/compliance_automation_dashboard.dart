@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class ComplianceAutomationDashboard extends StatefulWidget {
   final String? organizationId;
@@ -320,24 +321,24 @@ class _ComplianceAutomationDashboardState
   void _runComplianceScan() {
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Running compliance scan...')));
+    ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.runningComplianceScan)));
   }
 
   void _viewExpiringDocuments() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Loading expiring documents...')),
+      SnackBar(content: Text(AppLocalizations.of(context)!.loadingExpiringDocuments)),
     );
   }
 
   void _generateReport() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Generating compliance report...')),
+      SnackBar(content: Text(AppLocalizations.of(context)!.generatingComplianceReport)),
     );
   }
 
   void _viewTrends() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Loading compliance trends...')),
+      SnackBar(content: Text(AppLocalizations.of(context)!.loadingComplianceTrends)),
     );
   }
 }

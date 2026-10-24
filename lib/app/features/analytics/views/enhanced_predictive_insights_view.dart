@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:carenest/generated/l10n/app_localizations.dart';
 
 class EnhancedPredictiveInsightsView extends ConsumerStatefulWidget {
   const EnhancedPredictiveInsightsView({super.key});
@@ -108,7 +109,7 @@ class _EnhancedPredictiveInsightsViewState
   // Revenue Forecast Tab
   Widget _buildRevenueForecastTab(PredictiveInsightsState state) {
     if (state.revenueForecast.isEmpty) {
-      return const Center(child: Text('No revenue forecast available'));
+      return Center(child: Text(AppLocalizations.of(context)!.noRevenueForecastAvailable));
     }
 
     final firstMetric = state.revenueForecast.first;
@@ -554,7 +555,7 @@ class _EnhancedPredictiveInsightsViewState
   // Demand Forecast Tab
   Widget _buildDemandForecastTab(PredictiveInsightsState state) {
     if (state.demandForecast.isEmpty) {
-      return const Center(child: Text('No demand forecast available'));
+      return Center(child: Text(AppLocalizations.of(context)!.noDemandForecastAvailable));
     }
 
     return SingleChildScrollView(
@@ -706,7 +707,7 @@ class _EnhancedPredictiveInsightsViewState
     final risk = state.complianceRisk;
 
     if (risk == null) {
-      return const Center(child: Text('No compliance data available'));
+      return Center(child: Text(AppLocalizations.of(context)!.noComplianceDataAvailable));
     }
 
     final riskColor = _getRiskColor(risk.riskLevel);

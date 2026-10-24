@@ -463,8 +463,8 @@ class _EnhancedNdisItemSelectionViewState
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to load NDIS items. Please try again.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.failedToLoadNdisItems),
           ),
         );
       }
@@ -933,8 +933,8 @@ class _EnhancedNdisItemSelectionViewState
                 )
               : Expanded(
                   child: _filteredNdisItems.isEmpty && _searchQuery.isNotEmpty
-                      ? const Center(
-                          child: Text('No matching NDIS items found.'),
+                      ? Center(
+                          child: Text(AppLocalizations.of(context)!.noMatchingNdisItems),
                         )
                       : ListView.builder(
                           controller: _listScrollController,
@@ -1510,8 +1510,8 @@ class _EnhancedNdisItemSelectionViewState
                         final price = _toPositiveDouble(controller?.text);
                         if (price == null || price <= 0) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Please enter a valid price'),
+                            SnackBar(
+                              content: Text(AppLocalizations.of(context)!.pleaseEnterValidPrice),
                             ),
                           );
                           return;
