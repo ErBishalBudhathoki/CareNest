@@ -1728,6 +1728,14 @@ class _ClientAndAppointmentDetailsState
       );
     }
 
+    // A clock-in only works when the server can resolve the shift: SIL shifts
+    // are resolved from the synthesised `schedule`, legacy rows from
+    // `dateList`. With neither there is nothing to log against, so the timer
+    // is hidden instead of failing with "Selected shift index is invalid".
+    final showTimer =
+        _hasClockableShift() ||
+        (timerService.isRunning && isCurrentClientTimer);
+
     return FadeTransition(
       opacity: _fadeAnimation,
       child: SlideTransition(
@@ -1756,8 +1764,10 @@ class _ClientAndAppointmentDetailsState
                 const SizedBox(height: BauhausDesign.space6),
 
                 // Timer Section
-                _buildTimerSection(timerService),
-                const SizedBox(height: BauhausDesign.space6),
+                if (showTimer) ...[
+                  _buildTimerSection(timerService),
+                  const SizedBox(height: BauhausDesign.space6),
+                ],
 
                 // Action Buttons
                 _buildActionButtons(),
@@ -1767,6 +1777,35 @@ class _ClientAndAppointmentDetailsState
         ),
       ),
     );
+  }
+
+  /// Whether the loaded payload offers at least one shift to log time against.
+  ///
+  /// SIL roster shifts arrive as a synthesised `schedule` array on the assigned
+  /// client; records created before the array format still use `dateList`.
+  bool _hasClockableShift() {
+    final data = clientAndAppointmentData['data'];
+    if (data is! Map) return false;
+
+    final assignedClient = data['assignedClient'];
+    Map<dynamic, dynamic>? client;
+    if (assignedClient is List) {
+      for (final entry in assignedClient) {
+        if (entry is Map && entry['clientEmail'] == widget.clientEmail) {
+          client = entry;
+          break;
+        }
+      }
+    } else if (assignedClient is Map) {
+      client = assignedClient;
+    }
+    if (client == null) return false;
+
+    final schedule = client['schedule'];
+    if (schedule is List && schedule.isNotEmpty) return true;
+
+    final dateList = client['dateList'];
+    return dateList is List && dateList.isNotEmpty;
   }
 
   Widget _buildPreferencesCard(Map<String, dynamic> clientData) {

@@ -206,5 +206,40 @@ void main() {
     expect(find.text('LOADING APPOINTMENT DETAILS...'), findsNothing);
     expect(find.textContaining('Nadia'), findsWidgets);
     expect(find.textContaining('2026-10-23'), findsWidgets);
+    // A SIL shift is clockable, so the timer stays available.
+    expect(find.text('START SHIFT'), findsOneWidget);
+  });
+
+  testWidgets('hides the clock-in control when there is no shift to log against', (
+    tester,
+  ) async {
+    // Participant exists but no shift was materialised, so `setWorkedTime` has
+    // nothing to resolve; the button would only produce "invalid shift index".
+    final api = _FakeApiMethod({
+      'success': true,
+      'data': {
+        'clientDetails': [
+          {
+            'clientFirstName': 'Nadia',
+            'clientLastName': 'NDIA',
+            'clientEmail': 'sil.ndia@mailinator.com',
+          },
+        ],
+        'assignedClient': {
+          'clientEmail': 'sil.ndia@mailinator.com',
+          'isSilRosterShift': true,
+          'schedule': <dynamic>[],
+          'dateList': <dynamic>[],
+          'timeRecords': <dynamic>[],
+        },
+      },
+    });
+
+    await tester.pumpWidget(_buildApp(api));
+    await _pumpFrames(tester);
+
+    expect(find.text('CLIENT INFORMATION'), findsOneWidget);
+    expect(find.text('START SHIFT'), findsNothing);
+    expect(find.text('END SHIFT'), findsNothing);
   });
 }
