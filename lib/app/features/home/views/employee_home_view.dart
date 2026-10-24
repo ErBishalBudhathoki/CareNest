@@ -6,6 +6,7 @@ import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/core/services/timer_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
 import 'package:carenest/app/features/admin/views/bank_details_view.dart';
@@ -505,51 +506,62 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                               );
                             }
 
-                            return ListView.separated(
-                              shrinkWrap: true,
-                              padding: EdgeInsets.zero,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: appointments.length,
-                              separatorBuilder: (_, _) =>
-                                  const SizedBox(height: 16),
-                              itemBuilder: (context, index) {
-                                final appointment = appointments[index];
-                                final clientEmail =
-                                    appointment['clientEmail']?.toString() ?? '';
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                if (data.isStale) ...[
+                                  _buildStaleBanner(context, data.lastSyncedAt),
+                                  const SizedBox(height: 8),
+                                ],
+                                ListView.separated(
+                                  shrinkWrap: true,
+                                  padding: EdgeInsets.zero,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: appointments.length,
+                                  separatorBuilder: (_, _) =>
+                                      const SizedBox(height: 16),
+                                  itemBuilder: (context, index) {
+                                    final appointment = appointments[index];
+                                    final clientEmail =
+                                        appointment['clientEmail']
+                                            ?.toString() ??
+                                        '';
 
-                                return BauhausAppointmentCard(
-                                  appointment: appointment,
-                                  onTap: () {
-                                    // SIL cards without a resolved participant
-                                    // have no email; the details screen keys on
-                                    // it, so explain instead of doing nothing.
-                                    if (clientEmail.isEmpty) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            AppLocalizations.of(
-                                              context,
-                                            )!.clientDetailsUnavailable,
-                                          ),
-                                        ),
-                                      );
-                                      return;
-                                    }
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            ClientAndAppointmentDetails(
-                                              userEmail: widget.email,
-                                              clientEmail: clientEmail,
+                                    return BauhausAppointmentCard(
+                                      appointment: appointment,
+                                      onTap: () {
+                                        // SIL cards without a resolved participant
+                                        // have no email; the details screen keys on
+                                        // it, so explain instead of doing nothing.
+                                        if (clientEmail.isEmpty) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.clientDetailsUnavailable,
+                                              ),
                                             ),
-                                      ),
+                                          );
+                                          return;
+                                        }
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ClientAndAppointmentDetails(
+                                                  userEmail: widget.email,
+                                                  clientEmail: clientEmail,
+                                                ),
+                                          ),
+                                        );
+                                      },
                                     );
                                   },
-                                );
-                              },
+                                ),
+                              ],
                             );
                           },
                           loading: () => _buildBauhausSkeleton(),
@@ -976,6 +988,45 @@ class _EmployeeHomeViewState extends ConsumerState<EmployeeHomeView> {
                       ),
                     ],
                   ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStaleBanner(BuildContext context, DateTime? lastSyncedAt) {
+    final l10n = AppLocalizations.of(context)!;
+    final scheme = Theme.of(context).colorScheme;
+    final time = lastSyncedAt == null
+        ? l10n.offlineBannerMessage
+        : l10n.lastSynced(
+            DateFormat('d MMM, h:mm a').format(lastSyncedAt.toLocal()),
+          );
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: BauhausDesign.space3,
+        vertical: BauhausDesign.space2,
+      ),
+      decoration: BoxDecoration(
+        color: scheme.tertiaryContainer,
+        border: Border.all(color: scheme.outline, width: 2),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.cloud_off_outlined,
+            size: 18,
+            color: scheme.onTertiaryContainer,
+          ),
+          const SizedBox(width: BauhausDesign.space2),
+          Expanded(
+            child: Text(
+              time,
+              style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+                color: scheme.onTertiaryContainer,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
         ],
       ),

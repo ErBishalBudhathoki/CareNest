@@ -1724,6 +1724,7 @@
     }
   },
   "lastSyncedTimeAgo": "Last synced: {timeAgo}",
+  "workedTimeQueuedOffline": "Saved offline. This shift will sync automatically when you are back online.",
   "@lastSyncedTimeAgo": {
     "placeholders": {
       "timeAgo": {

@@ -3478,6 +3478,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get workedTimeQueuedOffline =>
+      'Saved offline. This shift will sync automatically when you are back online.';
+
+  @override
   String get lastUpdatedColumn => 'Last Updated';
 
   @override

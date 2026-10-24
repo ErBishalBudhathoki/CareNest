@@ -1,5 +1,6 @@
 import 'package:carenest/app/features/teams/models/team_models.dart';
 import 'package:carenest/app/features/home/models/home_dashboard_data.dart';
+import 'package:carenest/app/features/home/services/home_cache_service.dart';
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/core/services/timer_service.dart';
@@ -17,8 +18,10 @@ final homeRepositoryProvider = Provider<HomeRepository>((ref) {
 /// Handles data fetching specifically for the Employee Home View.
 class HomeRepository {
   final ApiMethod _apiMethod;
+  final HomeCacheService _cache;
 
-  HomeRepository(this._apiMethod);
+  HomeRepository(this._apiMethod, {HomeCacheService? cache})
+    : _cache = cache ?? HomeCacheService();
 
   /// Fetch all data needed for the home dashboard
   Future<HomeDashboardData> getHomeDashboardData(String email) async {
@@ -100,7 +103,9 @@ class HomeRepository {
                   if (timerService.isRunning &&
                       timerService.timerClientEmail ==
                           assignment['clientEmail']) {
-                    final shiftDate = ScheduleTimeParser.parseDate(shift['date']);
+                    final shiftDate = ScheduleTimeParser.parseDate(
+                      shift['date'],
+                    );
                     if (shiftDate != null) {
                       final today = DateTime(now.year, now.month, now.day);
                       final isToday =
@@ -197,13 +202,40 @@ class HomeRepository {
         }
       }
 
-      return HomeDashboardData(
+      final result = HomeDashboardData(
         activeBroadcasts: broadcasts,
         upcomingAppointments: appointments,
         shiftsUnavailable: shiftsUnavailable,
         shiftsErrorMessage: shiftsErrorMessage,
       );
+
+      if (!shiftsUnavailable) {
+        await _cache.save(email, result);
+        return result;
+      }
+
+      // The live appointment feed failed but broadcasts may still be fresh.
+      // Fall back to the last successful card set and mark it stale so the
+      // worker can still open the shift and clock in/out offline.
+      final cached = await _cache.read(email);
+      if (cached != null && cached.data.upcomingAppointments.isNotEmpty) {
+        return result.copyWith(
+          upcomingAppointments: cached.data.upcomingAppointments,
+          isStale: true,
+          lastSyncedAt: cached.cachedAt,
+          shiftsUnavailable: false,
+        );
+      }
+      return result;
     } catch (e) {
+      final cached = await _cache.read(email);
+      if (cached != null && cached.data.upcomingAppointments.isNotEmpty) {
+        return cached.data.copyWith(
+          isStale: true,
+          lastSyncedAt: cached.cachedAt,
+          shiftsUnavailable: false,
+        );
+      }
       throw Exception('Failed to load home dashboard data: $e');
     }
   }

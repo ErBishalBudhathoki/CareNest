@@ -7,6 +7,8 @@ import 'package:carenest/backend/api_method.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:carenest/app/core/services/timer_service.dart';
+import 'package:carenest/app/core/services/offline/worked_time_queue_service.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:carenest/app/core/services/navigation_service.dart';
 import 'package:carenest/app/shared/utils/navigation_helper.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
@@ -86,7 +88,8 @@ class _ClientAndAppointmentDetailsState
           setState(() {
             isInitCompleted = true;
             clientDetails =
-                clientAndAppointmentData['data']?['clientDetails']?.isNotEmpty ==
+                clientAndAppointmentData['data']?['clientDetails']
+                        ?.isNotEmpty ==
                     true
                 ? clientAndAppointmentData['data']!['clientDetails'][0]
                 : null;
@@ -116,7 +119,9 @@ class _ClientAndAppointmentDetailsState
           response['isRunning'] == true &&
           serverTimer is Map &&
           serverTimer['startTime'] != null) {
-        final startTime = DateTime.tryParse(serverTimer['startTime'].toString());
+        final startTime = DateTime.tryParse(
+          serverTimer['startTime'].toString(),
+        );
         if (startTime == null) return;
         final currentTime = DateTime.now();
         final elapsedSeconds = currentTime.difference(startTime).inSeconds;
@@ -439,6 +444,7 @@ class _ClientAndAppointmentDetailsState
     final formattedTime = _formatTime(seconds);
     bool success = false;
     bool shouldRetry = true;
+    Map<String, dynamic>? pendingSave;
 
     while (shouldRetry && !success) {
       try {
@@ -536,6 +542,17 @@ class _ClientAndAppointmentDetailsState
         // If confirmed, stop the timer first!
         await _stopTimer(timerModel);
 
+        pendingSave = {
+          'userEmail': widget.userEmail,
+          'clientEmail': widget.clientEmail,
+          'workedTime': formattedTime,
+          'shiftIndex': selectedShiftIndex,
+          'shiftDate': shiftDate,
+          'shiftStartTime': shiftStartTime,
+          'shiftEndTime': shiftEndTime,
+          'shiftBreak': shiftBreak,
+        };
+
         final response = await apiMethod.setWorkedTime(
           widget.userEmail,
           widget.clientEmail,
@@ -568,6 +585,39 @@ class _ClientAndAppointmentDetailsState
         }
       } catch (e) {
         debugPrint('Error in _setWorkedTime: $e');
+
+        final connectivity = await Connectivity().checkConnectivity();
+        final offline = !connectivity.any(
+          (result) => result != ConnectivityResult.none,
+        );
+        final text = e.toString().toLowerCase();
+        final networkFailure =
+            text.contains('socketexception') ||
+            text.contains('timeoutexception') ||
+            text.contains('failed host lookup') ||
+            text.contains('network is unreachable');
+        if (pendingSave != null && (offline || networkFailure)) {
+          await WorkedTimeQueueService.instance.enqueue(
+            userEmail: pendingSave['userEmail'] as String,
+            clientEmail: pendingSave['clientEmail'] as String,
+            workedTime: pendingSave['workedTime'] as String,
+            shiftIndex: pendingSave['shiftIndex'] as int,
+            shiftDate: pendingSave['shiftDate'] as String?,
+            shiftStartTime: pendingSave['shiftStartTime'] as String?,
+            shiftEndTime: pendingSave['shiftEndTime'] as String?,
+            shiftBreak: pendingSave['shiftBreak'],
+          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  AppLocalizations.of(context)!.workedTimeQueuedOffline,
+                ),
+              ),
+            );
+          }
+          return;
+        }
 
         if (mounted) {
           final choice = await _showInvalidShiftDialog(e.toString());

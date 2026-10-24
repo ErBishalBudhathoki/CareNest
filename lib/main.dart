@@ -28,13 +28,15 @@ import 'package:carenest/app/shared/constants/themes/app_themes.dart';
 import 'package:carenest/app/features/auth/utils/deep_link_handler.dart';
 import 'package:carenest/app/shared/constants/values/strings/app_strings.dart';
 import 'package:carenest/app/shared/widgets/notification_handler_widget.dart';
+import 'package:carenest/app/core/services/offline/worked_time_queue_service.dart';
+import 'package:carenest/backend/api_method.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:carenest/config/environment.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
 // Views
 
 // ... existing imports
-
 
 // Note: navigation.dart is exported or imported via other files, ensuring we use the same key?
 // No, DeepLinkHandler imports it. main.dart imports DeepLinkHandler.
@@ -106,8 +108,21 @@ void main() async {
   await _initializeTimerService();
   setupLogger();
   runApp(const ProviderScope(child: MyApp()));
+  _startWorkedTimeQueue();
   WidgetsBinding.instance.addPostFrameCallback((_) {
     _processPendingInitialDeepLink();
+  });
+}
+
+/// Replay end-of-shift worked-time saves captured while the device was offline,
+/// and retry whenever connectivity returns.
+void _startWorkedTimeQueue() {
+  final api = ApiMethod();
+  WorkedTimeQueueService.instance.flush(api);
+  Connectivity().onConnectivityChanged.listen((results) {
+    if (results.any((result) => result != ConnectivityResult.none)) {
+      WorkedTimeQueueService.instance.flush(api);
+    }
   });
 }
 

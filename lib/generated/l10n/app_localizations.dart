@@ -6346,6 +6346,12 @@ abstract class AppLocalizations {
   /// **'Last synced: {timeAgo}'**
   String lastSyncedTimeAgo(String timeAgo);
 
+  /// No description provided for @workedTimeQueuedOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved offline. This shift will sync automatically when you are back online.'**
+  String get workedTimeQueuedOffline;
+
   /// No description provided for @lastUpdatedColumn.
   ///
   /// In en, this message translates to:
