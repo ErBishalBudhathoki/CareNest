@@ -1765,7 +1765,17 @@ class _ClientAndAppointmentDetailsState
 
                 // Timer Section
                 if (showTimer) ...[
-                  _buildTimerSection(timerService),
+                  // TimerService is a ChangeNotifier, but timerServiceProvider
+                  // only hands back that instance: its Notifier never re-emits
+                  // a new state, so ref.watch cannot rebuild this screen when
+                  // the clock starts or stops. Listening to the notifier is
+                  // what makes the control flip to END SHIFT in place instead
+                  // of only after reopening the participant.
+                  ListenableBuilder(
+                    listenable: timerService,
+                    builder: (context, _) =>
+                        _buildTimerSection(timerService),
+                  ),
                   const SizedBox(height: BauhausDesign.space6),
                 ],
 

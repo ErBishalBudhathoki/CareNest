@@ -32,6 +32,49 @@ class _FakeApiMethod extends ApiMethod {
       {'success': false, 'isRunning': false};
 }
 
+/// A clockable SIL shift plus a start-timer endpoint that succeeds, so the
+/// clock-in transition can be driven without a live backend.
+class _ClockableApiMethod extends _FakeApiMethod {
+  _ClockableApiMethod()
+    : super({
+        'success': true,
+        'data': {
+          'clientDetails': [
+            {
+              'clientFirstName': 'Nadia',
+              'clientLastName': 'NDIA',
+              'clientEmail': 'sil.ndia@mailinator.com',
+            },
+          ],
+          'assignedClient': {
+            'clientEmail': 'sil.ndia@mailinator.com',
+            'isSilRosterShift': true,
+            'schedule': [
+              {
+                'date': '2026-10-23',
+                'startTime': '09:00',
+                'endTime': '11:00',
+                'break': null,
+              },
+            ],
+            'timeRecords': <dynamic>[],
+          },
+        },
+      });
+
+  int startCalls = 0;
+
+  @override
+  Future<Map<String, dynamic>> startTimer({
+    String? userEmail,
+    String? clientEmail,
+    String? organizationId,
+  }) async {
+    startCalls += 1;
+    return {'success': true};
+  }
+}
+
 /// Simulates a transport-level failure (offline, timeout, stalled token) so the
 /// init chain's catch path is exercised rather than the API's fallback payload.
 class _ThrowingApiMethod extends ApiMethod {
@@ -209,6 +252,29 @@ void main() {
     // A SIL shift is clockable, so the timer stays available.
     expect(find.text('START SHIFT'), findsOneWidget);
   });
+
+  testWidgets(
+    'clocking in swaps START SHIFT for END SHIFT without reopening the client',
+    (tester) async {
+      final api = _ClockableApiMethod();
+
+      await tester.pumpWidget(_buildApp(api));
+      await _pumpFrames(tester);
+      expect(find.text('START SHIFT'), findsOneWidget);
+
+      await tester.ensureVisible(find.text('START SHIFT'));
+      await tester.tap(find.text('START SHIFT'));
+      await _pumpFrames(tester);
+
+      expect(api.startCalls, 1);
+      expect(find.text('END SHIFT'), findsOneWidget);
+      expect(find.text('START SHIFT'), findsNothing);
+
+      // The screen runs the TimerService singleton, whose periodic wake-up is
+      // still pending; the test binding fails the test if it outlives the tree.
+      TimerService().stop();
+    },
+  );
 
   testWidgets('hides the clock-in control when there is no shift to log against', (
     tester,
