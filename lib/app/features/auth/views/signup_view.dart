@@ -47,16 +47,6 @@ class _SignUpViewState extends ConsumerState<SignUpView>
   void initState() {
     super.initState();
 
-    // Set system UI overlay style
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: Theme.of(context).colorScheme.surface,
-        systemNavigationBarIconBrightness: Brightness.dark,
-      ),
-    );
-
     // Initialize animations
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 1200),
@@ -105,6 +95,18 @@ class _SignUpViewState extends ConsumerState<SignUpView>
     final topInset = MediaQuery.of(context).padding.top;
     final horizontalPadding = size.width > 600 ? 80.0 : 24.0;
     FlushBarWidget flushBarWidget = FlushBarWidget();
+
+    // Set system UI overlay style. This has to happen in build(), matching the
+    // other auth screens: Theme.of() is not allowed before initState() finishes,
+    // and calling it there threw and left the whole screen unbuilt.
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: _colorScheme.surface,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+    );
 
     return Scaffold(
       key: _scaffoldKey,
@@ -203,8 +205,14 @@ class _SignUpViewState extends ConsumerState<SignUpView>
                     position: _slideAnimation,
                     child: Consumer(
                       builder: (context, ref, child) {
-                        final signupViewModel = ref.watch(
-                          signupViewModelProvider,
+                        // The provider's state is an int revision counter, so it
+                        // has to be watched for rebuilds and the notifier read
+                        // separately. Watching the provider returned the int
+                        // itself, and every signupViewModel.model call below
+                        // then threw, leaving the form unbuilt.
+                        ref.watch(signupViewModelProvider);
+                        final signupViewModel = ref.read(
+                          signupViewModelProvider.notifier,
                         );
                         return Column(
                           children: [
