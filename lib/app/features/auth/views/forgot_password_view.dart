@@ -1,6 +1,7 @@
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/features/auth/views/verify_otp_view.dart';
+import 'package:carenest/app/features/auth/widgets/enhanced_auth_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
@@ -78,6 +79,12 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
           padding: const EdgeInsets.all(24),
           child: Consumer(
             builder: (context, ref, child) {
+              // Keep the autoDispose view model alive for as long as this screen
+              // is mounted. A bare ref.read() leaves it with no listeners, so it
+              // is disposed straight away and rebuilt with a fresh, empty text
+              // controller on the next rebuild — which happens whenever the
+              // keyboard opens or closes (this build reads MediaQuery).
+              ref.watch(forgotPasswordViewModelProvider);
               final viewModel = ref.read(
                 forgotPasswordViewModelProvider.notifier,
               );
@@ -255,25 +262,31 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
       return;
     }
 
+    // Drop the keyboard so the loading state in the button (and the dialog that
+    // follows) is not hidden behind it.
+    FocusScope.of(context).unfocus();
+
     await viewModel.resetPassword(context, (response) async {
       if (!mounted) return;
 
+      final email = viewModel.model.emailController.text.trim();
       final message =
           response['message']?.toString() ??
           'If an account with this email exists, a password reset code has been sent.';
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: BauhausDesign.success,
-        ),
-      );
-
-      await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) =>
-              VerifyOTPView(email: viewModel.model.emailController.text.trim()),
-        ),
+      // A dialog rather than a snackbar: the send takes a few seconds, and the
+      // confirmation needs to stay on screen until the user has read it.
+      await EnhancedAuthDialog.showSuccessDialog(
+        context,
+        title: 'Check your email',
+        message: message,
+        actionLabel: 'Enter code',
+        onAction: () {
+          if (!mounted) return;
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => VerifyOTPView(email: email)),
+          );
+        },
       );
     });
   }

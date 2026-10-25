@@ -52,6 +52,9 @@ class ForgotPasswordViewModel extends Notifier<bool> {
 
       final isSuccess = msg['success'] == true || msg['statusCode'] == 200;
       if (isSuccess) {
+        // Stop the button spinner before the success dialog opens, otherwise it
+        // keeps spinning behind the dialog until the user dismisses it.
+        _setLoading(false);
         await onSuccess(msg);
       } else {
         if (!context.mounted) return;
