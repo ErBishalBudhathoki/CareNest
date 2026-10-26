@@ -104,7 +104,7 @@ dev_dependencies:
   json_serializable: ^6.7.1
   flutter_test:
     sdk: flutter
-  freezed: ^3.2.5
+  freezed: ^4.0.1
   mockito: any
   test: any
   # Property-based testing support
