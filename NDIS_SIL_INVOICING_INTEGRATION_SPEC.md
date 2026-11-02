@@ -344,14 +344,24 @@ Use this checklist to track development. When completing an item, mark it `[x]` 
   - **File:** `backend/services/bulkInvoiceService.js`
   - **Completed:** Removed `subtotal * 0.1` and `total = subtotal + tax`. NDIS supports are GST-free under Australian tax law. Stamped canonical `financialSummary: { subtotal, taxAmount: 0, discountAmount: 0, expenseAmount: 0, totalAmount: subtotal, currency: 'AUD' }` alongside backward-compatible fields `tax: 0`, `total: subtotal`.
   - **Verification:** `backend/tests/middleware/bulkInvoiceService.test.js` updated to verify 0% tax and canonical financialSummary. All 3 tests pass.
-- [x] **M1.2 — Reconciled SIL Invoicing (WorkedTime vs RoC)**
-  - **File:** `backend/services/silBillingService.js`
-  - **Completed:** Added support for `opts.mode`: `'roc_quota'` (default), `'verified_timesheet'`, and `'reconciled'`. In `reconciled` mode, queries `WorkedTime` rows for property shifts, compares against planned hours per support item, and appends variance line items (`[Support Name] (Unplanned / Variance Hours)`) for delivered hours exceeding the quota. Stamped `metadata.silBillingMode` and `metadata.silReconciliation` on created invoice.
-  - **Verification:** `backend/tests/sil/silBillingService.test.js` expanded with tests for `mode: 'reconciled'` and `mode: 'verified_timesheet'`. All 10 tests pass.
+- [x] **M1.2 — Reconciled SIL Invoicing (WorkedTime vs RoC) & Date Boundary Hardening**
+  - **Files:** `backend/services/silBillingService.js`, `backend/controllers/silController.js`
+  - **Completed:**
+    1. Added support for `opts.mode`: `'roc_quota'` (default), `'verified_timesheet'`, and `'reconciled'`. In `reconciled` mode, queries `WorkedTime` rows for property shifts, compares against planned hours per support item, and appends variance line items (`[Support Name] (Unplanned / Variance Hours)`) for delivered hours exceeding the quota.
+    2. Fixed date boundary issue: shifts on the final day (`periodTo`) starting after midnight were previously excluded due to `$lte: periodTo`. Updated query to inclusive day window `startTime: { $gte: periodFrom, $lt: periodEndExclusive }`.
+    3. Added timezone-resilient Australian DD/MM/YYYY date input parsing via `normalizeToIsoDate`, preventing day/month swaps.
+    4. Fixed sleepover pricing in `verified_timesheet` mode: sleepover shifts are billed per shift (`unit: 'E'`), converting 8-hour sleepover entries into shift units (`Math.max(1, Math.round(actualHours / 8))`) rather than multiplying the fixed rate by hours.
+    5. Added tenant scoping (`organizationId`) to `WorkedTime` queries and fallback to `support.itemNumber` / `support.itemName`.
+    6. Wired `mode: req.body.mode` parameter in `silController.generateRosterOfCareInvoice`.
+  - **Verification:** `backend/tests/sil/silBillingService.test.js` expanded to 15 tests covering all modes, Australian DD/MM/YYYY parsing, and date bounds. All 15 tests pass. Pushed to `origin/dev` (commit `88715c6`).
 - [x] **M1.3 — Unify Invoicing Service Layer**
   - **File:** `backend/services/invoiceGenerationService.js`
   - **Completed:** Decoupled `generateInvoiceLineItems` from the strict `ClientAssignment` requirement. Validates `Client` first, attempts to find assignment, but safely falls back to `WorkedTime` and `Shift` records when `assignment` is null. Guarded `createLineItemFromWorkedTime` with null-safe lookups for `ndisItemNumber` and postcodes.
-  - **Verification:** `backend/tests/services/invoiceGenerationAssignmentDecoupled.test.js` created and passing. Full suite 88 suites / 937 tests pass.
+  - **Verification:** `backend/tests/services/invoiceGenerationAssignmentDecoupled.test.js` created and passing. Full backend test suite passes (89 suites / 941 tests).
+- [x] **M1.4 — Mobile App & Cloud Run E2E Integration Verification**
+  - **Environment:** Android Emulator (`emulator-5554`), Cloud Run dev backend (`https://backend-dev-406509736623.australia-southeast1.run.app/api/`)
+  - **Execution:** Booted `emulator-5554` via Artemis MCP, launched Flutter app with development flavor and dev API URLs. Authenticated as admin (`deverbishal331@gmail.com`), navigated via Command Desk to SIL Management > Rosters of Care.
+  - **Live Verification:** Triggered invoice generation for participant Nadia NDIA (RoC `6acfbe67`) for period `2026-10-01` to `2026-10-07`. The Cloud Run dev backend created invoice `INVAKM6101NA` ($2,280.00, 0% tax, NDIA claim CSV route). Inspected invoice details screen in app, verifying exact amounts, GST-free financial summary, and pending payment status. Also verified that out-of-plan periods are blocked with HTTP 422 by NDIS plan period validation.
 
 ---
 
