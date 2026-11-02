@@ -27,6 +27,9 @@ npm start
 ## Documentation Structure
 
 ### 📋 Core Documentation
+- **[NDIS + SIL Invoicing Integration Spec](./NDIS_SIL_INVOICING_INTEGRATION_SPEC.md)** ⭐ - Master integration spec & gap analysis for NDIS, SIL, and Invoicing
+- **[SIL Management Specification](./SIL_MANAGEMENT_SPEC.md)** - Supported Independent Living operations, quoting, and RoC
+- **[NDIS Depth Roadmap](./NDIS_DEPTH_ROADMAP.md)** - Master roadmap for SCHADS, notes, stakeholders, and claiming
 - **[Overview](./overview.md)** - System purpose, user flows, and architecture summary
 - **[API Documentation](./api/)** - Complete API endpoint documentation
 - **[File Map](./file_map.md)** - Codebase structure and ownership
