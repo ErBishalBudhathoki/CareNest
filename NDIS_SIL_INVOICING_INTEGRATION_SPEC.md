@@ -365,18 +365,29 @@ Use this checklist to track development. When completing an item, mark it `[x]` 
 
 ---
 
-### Milestone 2: P1 High-Impact Lifecycle & Model Parity
-- [ ] **M2.1 — SIL Absence & Hospital Leave Tracking**
+### Milestone 2: P1 High-Impact Lifecycle & Model Parity — ✅ COMPLETE (2026-11-03)
+- [x] **M2.1 — SIL Absence & Hospital Leave Tracking**
   - **Files:** `backend/models/SILOccupancy.js`, `backend/services/silOccupancyService.js`, `backend/services/silBillingService.js`
-  - **Action:** Add `absences: [{ startDate, endDate, reason, notes }]` to `SILOccupancy`. In `silBillingService`, check if a participant was on leave during the billing window; cap claims at 28 days for hospital stays; deduct unclaimable days.
-  - **Verification:** Test verifying that a 35-day hospital stay bills only the allowable 28 days.
-- [ ] **M2.2 — Flutter `Patient` Model Parity with Backend**
-  - **Files:** `lib/app/features/client/models/client_model.dart`, `lib/app/features/client/`
-  - **Action:** Convert `Patient` to `@freezed` class `ClientModel` with typed submodels: `ClientPlan`, `ClientPlanCategory`, `ClientSilRef`, and `ClientStakeholderRef`. Update client viewmodels and run `build_runner`.
-  - **Verification:** `flutter test` and `flutter analyze` passing with zero warnings.
-- [ ] **M2.3 — Dynamic Ratio & Multi-Participant Cost Splitting**
+  - **Completed:**
+    1. Added `silAbsenceSchema` and `absences` subdocument array to `SILOccupancy` with fields: `startDate`, `endDate`, `reason` (`hospital`, `family_leave`, `holiday`, `transition`, `other`), `notes`, `maxClaimableDays` (default 28), `claimedDays`, `createdBy`.
+    2. Implemented `recordAbsence`, `endAbsence`, and `listAbsences` in `silOccupancyService.js` with business event auditing (`sil_absence_recorded`, `sil_absence_ended`).
+    3. Implemented `calculateUnclaimableAbsenceDays` in `silBillingService.js`: under NDIS pricing rules, hospital stays may be claimed for up to 28 consecutive days; days 29+ are non-claimable and deducted from `billableDays`. Line items are prorated against `weeks = billableDays / 7`.
+    4. Stamped `silAbsenceDeductions` metadata (`totalUnclaimableDays`, `nominalPeriodDays`, `billableDays`, `deductions`) and appended notice to `internalNotes`. If all days in a period are non-claimable, returns `invalidState`.
+  - **Verification:** `backend/tests/sil/silAbsenceBilling.test.js` created. Verified that a 35-day hospital stay (5 weeks) bills only the allowable 28 days (4 weeks), and a 14-day stay incurs zero deductions. All 9 tests pass. Backend pushed to `origin/dev` (commit `db19f0a`).
+- [x] **M2.2 — Flutter `Patient` Model Parity with Backend**
+  - **Files:** `lib/app/features/client/models/client_model.dart`, `test/features/client/client_model_test.dart`
+  - **Completed:**
+    1. Converted `client_model.dart` to a Freezed architecture with submodels: `ClientPlanCategory`, `ClientPlan`, `ClientSilRef`, `ClientStakeholderRef`, and `ClientModel`.
+    2. Maintained 100% backward compatibility with legacy codebase and widget tests via `typedef Patient = ClientModel;` and permissive `ClientModel.fromJson` parsing (normalizing `_id`/`id`, string booleans, string dates, and activation statuses).
+    3. Preserved custom getter `displayName` via `const ClientModel._();`.
+    4. Executed `dart run build_runner build --delete-conflicting-outputs` to generate `client_model.freezed.dart` and `client_model.g.dart`.
+  - **Verification:** Ran `flutter test test/features/client/client_model_test.dart` (6/6 pass), `flutter test test/widget/client_appointment_details_view_test.dart` (7/7 pass), and `flutter analyze lib/app/features/client/` (0 issues).
+- [x] **M2.3 — Dynamic Ratio & Multi-Participant Cost Splitting**
   - **Files:** `backend/services/silRatioService.js`, `backend/services/silBillingService.js`
-  - **Action:** When generating invoices from actual property shifts, calculate billable hours per participant as: `Shift Duration × Staff Count / Present Residents Count`. Update support item number to reflect the resulting ratio (e.g., `01_011_0107_1_1` for 1:2 vs `01_015_0107_1_1` for 1:3).
+  - **Completed:**
+    1. Added `calculateParticipantShare` in `silRatioService.js`: calculates billable hours per participant as `(Shift Duration × Staff Count) / Present Residents Count`.
+    2. Integrated into `silBillingService.js` for verified timesheets and reconciled modes when a shift has multiple present residents or staff.
+  - **Verification:** Unit tests in `backend/tests/sil/silAbsenceBilling.test.js` verifying 1:2, 1:3 ratio shifts and dynamic ratio changes when a participant is absent on hospital leave. All tests pass. Backend pushed to `origin/dev` (commit `db19f0a`).
 
 ---
 
