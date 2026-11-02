@@ -39,6 +39,10 @@ class WorkedTimeQueueService {
     String? shiftEndTime,
     dynamic shiftBreak,
     String? clientRequestId,
+    // Milestone 3.3: offline sleepover disturbance data
+    String? shiftType,
+    List<Map<String, dynamic>>? disturbances,
+    bool? convertedToActiveNight,
   }) async {
     try {
       final box = await _ensureBox();
@@ -57,6 +61,9 @@ class WorkedTimeQueueService {
           'shiftEndTime': shiftEndTime,
           'shiftBreak': shiftBreak,
           'clientRequestId': clientRequestId,
+          'shiftType': ?shiftType,
+          'disturbances': ?disturbances,
+          'convertedToActiveNight': ?convertedToActiveNight,
         }),
       );
       debugPrint('WorkedTimeQueue: queued save for $clientEmail ($id)');
@@ -113,6 +120,14 @@ class WorkedTimeQueueService {
           shiftEndTime: entry['shiftEndTime']?.toString(),
           shiftBreak: entry['shiftBreak'],
           clientRequestId: entry['clientRequestId']?.toString(),
+          // Milestone 3.3: replay sleepover disturbance data
+          shiftType: entry['shiftType']?.toString(),
+          disturbances: entry['disturbances'] is List
+              ? (entry['disturbances'] as List)
+                  .map((e) => Map<String, dynamic>.from(e as Map))
+                  .toList()
+              : null,
+          convertedToActiveNight: entry['convertedToActiveNight'] as bool?,
         );
         if (id.isNotEmpty) await box.delete(id);
         synced += 1;

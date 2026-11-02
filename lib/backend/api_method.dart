@@ -1883,6 +1883,10 @@ class ApiMethod extends ChangeNotifier {
     String? shiftEndTime,
     dynamic shiftBreak,
     String? clientRequestId,
+    // Milestone 3.3: SCHADS Clause 25.7 Sleepover disturbance & active night conversion
+    String? shiftType,
+    List<Map<String, dynamic>>? disturbances,
+    bool? convertedToActiveNight,
   }) async {
     try {
       final url = '${_baseUrl}setWorkedTime';
@@ -1918,6 +1922,10 @@ class ApiMethod extends ChangeNotifier {
         'endTime': normalizedEndTime,
         'breakDuration': ?breakDuration,
         'clientRequestId': ?clientRequestId,
+        // Milestone 3.3 disturbance tracking
+        'shiftType': ?shiftType,
+        'disturbances': ?disturbances,
+        'convertedToActiveNight': ?convertedToActiveNight,
       };
 
       debugPrint('Request body: ${json.encode(body)}');

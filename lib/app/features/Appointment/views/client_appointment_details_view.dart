@@ -523,6 +523,8 @@ class _ClientAndAppointmentDetailsState
         String? shiftStartTime;
         String? shiftEndTime;
         dynamic shiftBreak;
+        // Milestone 3.3: Capture shiftType to check for sleepover disturbance
+        String? shiftType;
 
         if (currentClient['schedule'] != null &&
             currentClient['schedule'] is List) {
@@ -534,6 +536,7 @@ class _ClientAndAppointmentDetailsState
             shiftStartTime = schedule['startTime'];
             shiftEndTime = schedule['endTime'];
             shiftBreak = schedule['break'];
+            shiftType = schedule['shiftType']?.toString();
           }
         } else {
           // Fallback to legacy format
@@ -565,6 +568,26 @@ class _ClientAndAppointmentDetailsState
           continue; // Loop back to shift selection
         }
 
+        // Milestone 3.3: SCHADS Clause 25.7 Sleepover Disturbance Check
+        // If the selected shift is a sleepover, check if the worker was disturbed.
+        List<Map<String, dynamic>>? disturbances;
+        bool convertedToActiveNight = false;
+        if (shiftType == 'sleepover') {
+          final disturbanceResult = await _showSleepoverDisturbanceDialog();
+          if (disturbanceResult == null) {
+            // Worker chose to cancel or back out of clock-out
+            return;
+          }
+          final rawDist = disturbanceResult['disturbances'];
+          if (rawDist is List) {
+            disturbances = rawDist
+                .map((e) => Map<String, dynamic>.from(e as Map))
+                .toList();
+          }
+          convertedToActiveNight =
+              disturbanceResult['convertedToActiveNight'] == true;
+        }
+
         // If confirmed, stop the timer first!
         await _stopTimer(timerModel);
 
@@ -577,6 +600,10 @@ class _ClientAndAppointmentDetailsState
           'shiftStartTime': shiftStartTime,
           'shiftEndTime': shiftEndTime,
           'shiftBreak': shiftBreak,
+          // Milestone 3.3 fields for offline queue and server payload
+          'shiftType': shiftType,
+          'disturbances': disturbances,
+          'convertedToActiveNight': convertedToActiveNight,
           'clientRequestId':
               '${DateTime.now().microsecondsSinceEpoch}-${widget.clientEmail.hashCode}',
         };
@@ -591,6 +618,10 @@ class _ClientAndAppointmentDetailsState
           shiftEndTime: shiftEndTime,
           shiftBreak: shiftBreak,
           clientRequestId: pendingSave['clientRequestId'] as String?,
+          // Milestone 3.3 parameters
+          shiftType: shiftType,
+          disturbances: disturbances,
+          convertedToActiveNight: convertedToActiveNight,
         );
 
         if (response != null) {
@@ -607,8 +638,18 @@ class _ClientAndAppointmentDetailsState
           await _loadClientData();
 
           if (mounted) {
+            final isConverted = convertedToActiveNight ||
+                (response is Map &&
+                    response['data'] is Map &&
+                    response['data']['convertedToActiveNight'] == true);
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(AppLocalizations.of(context)!.timeUpdatedSuccessfully)),
+              SnackBar(
+                content: Text(
+                  isConverted
+                      ? 'Shift saved · Converted to Active Night under SCHADS Award (Disturbance > 60 min)'
+                      : AppLocalizations.of(context)!.timeUpdatedSuccessfully,
+                ),
+              ),
             );
           }
         }
@@ -636,6 +677,12 @@ class _ClientAndAppointmentDetailsState
             shiftEndTime: pendingSave['shiftEndTime'] as String?,
             shiftBreak: pendingSave['shiftBreak'],
             clientRequestId: pendingSave['clientRequestId'] as String?,
+            // Milestone 3.3 offline disturbance persistence
+            shiftType: pendingSave['shiftType'] as String?,
+            disturbances: (pendingSave['disturbances'] as List?)
+                ?.cast<Map<String, dynamic>>(),
+            convertedToActiveNight:
+                pendingSave['convertedToActiveNight'] as bool?,
           );
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -1141,6 +1188,330 @@ class _ClientAndAppointmentDetailsState
     }
   }
 
+  /// Milestone 3.3: SCHADS Clause 25.7 Sleepover disturbance prompt dialog.
+  /// Prompts the support worker on clock-out if they experienced disturbance during
+  /// a sleepover shift. If cumulative disturbance exceeds 60 minutes, flags the shift
+  /// to convert to Active Night hourly billing and payroll.
+  Future<Map<String, dynamic>?> _showSleepoverDisturbanceDialog() async {
+    int durationMinutes = 0;
+    final reasonController = TextEditingController();
+    bool hadDisturbance = false;
+
+    final result = await showDialog<Map<String, dynamic>>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          final isConverted = hadDisturbance && durationMinutes > 60;
+          return AlertDialog(
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            shape: const RoundedRectangleBorder(
+              side: BorderSide(color: BauhausDesign.neutral, width: 2),
+            ),
+            title: Text(
+              'SLEEPOVER SHIFT CHECK',
+              style: GoogleFonts.oswald(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                letterSpacing: 1.0,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Were you disturbed or required to perform active work during this sleepover shift?',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: !hadDisturbance
+                                ? BauhausDesign.primary.withValues(alpha: 0.15)
+                                : null,
+                            side: BorderSide(
+                              color: !hadDisturbance
+                                  ? BauhausDesign.primary
+                                  : Theme.of(context).colorScheme.outline,
+                              width: 1.5,
+                            ),
+                          ),
+                          onPressed: () => setDialogState(() => hadDisturbance = false),
+                          child: const Text('NO (Quiet)'),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: hadDisturbance
+                                ? BauhausDesign.warning.withValues(alpha: 0.2)
+                                : null,
+                            side: BorderSide(
+                              color: hadDisturbance
+                                  ? BauhausDesign.warning
+                                  : Theme.of(context).colorScheme.outline,
+                              width: 1.5,
+                            ),
+                          ),
+                          onPressed: () => setDialogState(() => hadDisturbance = true),
+                          child: const Text('YES (Disturbed)'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (hadDisturbance) ...[
+                    const SizedBox(height: 16),
+                    TextField(
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: 'Total Disturbance Duration (Minutes)',
+                        border: OutlineInputBorder(),
+                        hintText: 'e.g. 45 or 90',
+                      ),
+                      onChanged: (val) {
+                        setDialogState(() {
+                          durationMinutes = int.tryParse(val.trim()) ?? 0;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: reasonController,
+                      decoration: const InputDecoration(
+                        labelText: 'Reason for Disturbance',
+                        border: OutlineInputBorder(),
+                        hintText: 'e.g. Participant assistance, medication',
+                      ),
+                      maxLines: 2,
+                    ),
+                    if (isConverted) ...[
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: BauhausDesign.warning.withValues(alpha: 0.15),
+                          border: Border.all(color: BauhausDesign.warning),
+                        ),
+                        child: const Row(
+                          children: [
+                            Icon(Icons.warning_amber_rounded, color: BauhausDesign.warning, size: 20),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Disturbance exceeds 60 minutes. Under SCHADS Clause 25.7, this converts to Active Night.',
+                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(null),
+                child: const Text('CANCEL'),
+              ),
+              FilledButton(
+                onPressed: () {
+                  final disturbances = hadDisturbance && durationMinutes > 0
+                      ? [
+                          {
+                            'startTime': DateTime.now().subtract(Duration(minutes: durationMinutes)).toIso8601String(),
+                            'endTime': DateTime.now().toIso8601String(),
+                            'durationMinutes': durationMinutes,
+                            'reason': reasonController.text.trim(),
+                          }
+                        ]
+                      : <Map<String, dynamic>>[];
+                  Navigator.of(dialogContext).pop({
+                    'disturbances': disturbances,
+                    'convertedToActiveNight': isConverted,
+                  });
+                },
+                child: const Text('CONFIRM'),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+    reasonController.dispose();
+    return result;
+  }
+
+  /// Milestone 3.1: NDIS Short-Notice Cancellation dialog and billing invocation.
+  Future<void> _showCancellationDialog(
+    Map<String, dynamic> shift,
+    String shiftId,
+  ) async {
+    final now = DateTime.now();
+    DateTime shiftStart = now;
+    if (shift['date'] != null && shift['startTime'] != null) {
+      final parsedDate = DateTime.tryParse(shift['date'].toString());
+      if (parsedDate != null) {
+        final timeParts = shift['startTime'].toString().split(':');
+        if (timeParts.length >= 2) {
+          shiftStart = DateTime(
+            parsedDate.year,
+            parsedDate.month,
+            parsedDate.day,
+            int.tryParse(timeParts[0]) ?? 0,
+            int.tryParse(timeParts[1]) ?? 0,
+          );
+        }
+      }
+    }
+    final diffHours = shiftStart.difference(now).inMinutes / 60.0;
+    final noticeHours = diffHours < 0 ? 0.0 : diffHours;
+    final noticeController = TextEditingController(
+      text: noticeHours.toStringAsFixed(1),
+    );
+    String reason = 'NSCC';
+    bool isSaving = false;
+    String? error;
+
+    await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          shape: const RoundedRectangleBorder(
+            side: BorderSide(color: BauhausDesign.neutral, width: 2),
+          ),
+          title: Text(
+            AppLocalizations.of(context)?.cancelAndBill ?? 'Cancel & Bill Shift',
+            style: GoogleFonts.oswald(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              letterSpacing: 1.0,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${clientDetails?['clientFirstName'] ?? 'Participant'} · ${shift['date']} ${shift['startTime']}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                value: reason,
+                decoration: const InputDecoration(
+                  labelText: 'Cancellation Reason',
+                  border: OutlineInputBorder(),
+                ),
+                items: [
+                  DropdownMenuItem(
+                    value: 'NSCC',
+                    child: Text(AppLocalizations.of(context)?.nsccShortNotice ?? 'Short notice (< 7 days)'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'NSDH',
+                    child: Text(AppLocalizations.of(context)?.nsdhDidNotShow ?? 'No show / access denied'),
+                  ),
+                ],
+                onChanged: isSaving
+                    ? null
+                    : (value) => setDialogState(() => reason = value ?? 'NSCC'),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: noticeController,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(
+                  labelText: 'Notice (hours)',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              if (error != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  error!,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: isSaving ? null : () => Navigator.of(dialogContext).pop(false),
+              child: Text(AppLocalizations.of(context)?.cancel ?? 'Cancel'),
+            ),
+            FilledButton(
+              onPressed: isSaving
+                  ? null
+                  : () async {
+                      setDialogState(() {
+                        isSaving = true;
+                        error = null;
+                      });
+                      try {
+                        final response = await apiMethod.createCancellationCharge(
+                          shiftId: shiftId,
+                          reason: reason,
+                          noticeHours: double.tryParse(noticeController.text.trim()),
+                        );
+                        if (!dialogContext.mounted) return;
+                        if (response['success'] == true) {
+                          Navigator.of(dialogContext).pop(true);
+                          final data = response['data'];
+                          final billable = data is Map ? data['billable'] : null;
+                          final amount = data is Map
+                              ? (data['amount'] as num?)?.toDouble()
+                              : null;
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  billable == true
+                                      ? 'Cancellation fee invoiced'
+                                          '${amount != null ? ' · \$${amount.toStringAsFixed(2)}' : ''}.'
+                                      : response['message']?.toString() ??
+                                          'Shift cancelled. No fee applied.',
+                                ),
+                              ),
+                            );
+                            await _loadClientData();
+                          }
+                        } else {
+                          setDialogState(() {
+                            isSaving = false;
+                            error = response['message']?.toString() ??
+                                'Cancellation billing failed.';
+                          });
+                        }
+                      } catch (e) {
+                        setDialogState(() {
+                          isSaving = false;
+                          error = e.toString();
+                        });
+                      }
+                    },
+              child: Text(AppLocalizations.of(context)?.billCancellation ?? 'Bill Cancellation'),
+            ),
+          ],
+        ),
+      ),
+    );
+    noticeController.dispose();
+  }
+
   Future<void> _showSwapOfferDialog(Map<String, dynamic> shift) async {
     final reasonController = TextEditingController();
     String urgency = 'Medium';
@@ -1398,40 +1769,83 @@ class _ClientAndAppointmentDetailsState
       } catch (_) {}
     }
 
+    final shiftId = shift['shiftId']?.toString() ??
+        shift['_id']?.toString() ??
+        shift['id']?.toString();
+
     return Container(
       padding: const EdgeInsets.symmetric(
-        vertical: BauhausDesign.space2,
-        horizontal: BauhausDesign.space1,
+        vertical: BauhausDesign.space1,
+        horizontal: 2,
       ),
       alignment: Alignment.center,
-      child: Container(
-        width: 32,
-        height: 32,
-        decoration: BoxDecoration(
-          color: isPast
-              ? Theme.of(context).colorScheme.surfaceContainer
-              : BauhausDesign.accent,
-          border: Border.all(
-            color: isPast
-                ? Theme.of(context).colorScheme.onSurfaceVariant
-                : Theme.of(context).colorScheme.outline,
-            width: 1.5,
-          ),
-          boxShadow: isPast ? null : const [BauhausDesign.shadowHardXs],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: isPast ? null : () => _showSwapOfferDialog(shift),
-            child: Icon(
-              Icons.swap_horiz,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 28,
+            height: 28,
+            decoration: BoxDecoration(
               color: isPast
-                  ? Theme.of(context).colorScheme.onSurfaceVariant
-                  : Theme.of(context).colorScheme.onSurface,
-              size: 18,
+                  ? Theme.of(context).colorScheme.surfaceContainer
+                  : BauhausDesign.accent,
+              border: Border.all(
+                color: isPast
+                    ? Theme.of(context).colorScheme.onSurfaceVariant
+                    : Theme.of(context).colorScheme.outline,
+                width: 1.5,
+              ),
+              boxShadow: isPast ? null : const [BauhausDesign.shadowHardXs],
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: isPast ? null : () => _showSwapOfferDialog(shift),
+                child: Icon(
+                  Icons.swap_horiz,
+                  color: isPast
+                      ? Theme.of(context).colorScheme.onSurfaceVariant
+                      : Theme.of(context).colorScheme.onSurface,
+                  size: 16,
+                ),
+              ),
             ),
           ),
-        ),
+          if (shiftId != null && shiftId.isNotEmpty) ...[
+            const SizedBox(width: 4),
+            // Milestone 3.1: NDIS Cancellation & billing button
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                color: isPast
+                    ? Theme.of(context).colorScheme.surfaceContainer
+                    : BauhausDesign.warning,
+                border: Border.all(
+                  color: isPast
+                      ? Theme.of(context).colorScheme.onSurfaceVariant
+                      : Theme.of(context).colorScheme.outline,
+                  width: 1.5,
+                ),
+                boxShadow: isPast ? null : const [BauhausDesign.shadowHardXs],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: isPast ? null : () => _showCancellationDialog(shift, shiftId),
+                  child: Icon(
+                    Icons.cancel_outlined,
+                    color: isPast
+                        ? Theme.of(context).colorScheme.onSurfaceVariant
+                        : Theme.of(context).colorScheme.onSurface,
+                    size: 16,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -2444,11 +2858,11 @@ class _ClientAndAppointmentDetailsState
                 ),
               ),
               columnWidths: const {
-                0: FlexColumnWidth(2.5),
-                1: FlexColumnWidth(1.5),
-                2: FlexColumnWidth(1.5),
-                3: FlexColumnWidth(1.2),
-                4: FlexColumnWidth(1.0),
+                0: FlexColumnWidth(2.2),
+                1: FlexColumnWidth(1.4),
+                2: FlexColumnWidth(1.4),
+                3: FlexColumnWidth(1.1),
+                4: FlexColumnWidth(1.5),
               },
               children: _buildTableRows(),
             ),

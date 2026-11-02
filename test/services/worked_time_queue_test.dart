@@ -21,6 +21,9 @@ class _FakeApi extends ApiMethod {
     String? shiftEndTime,
     dynamic shiftBreak,
     String? clientRequestId,
+    String? shiftType,
+    List<Map<String, dynamic>>? disturbances,
+    bool? convertedToActiveNight,
   }) async {
     calls += 1;
     lastClientRequestId = clientRequestId;

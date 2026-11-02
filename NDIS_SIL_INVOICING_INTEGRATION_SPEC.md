@@ -392,18 +392,35 @@ Use this checklist to track development. When completing an item, mark it `[x]` 
 ---
 
 ### Milestone 3: P2 Compliance, Cancellations & Travel
-- [ ] **M3.1 — Wire NDIS Short-Notice Cancellation UI**
-  - **Files:** `lib/app/features/schedule/views/schedule_dashboard_screen.dart`, `lib/app/features/Appointment/`
-  - **Action:** When cancelling a shift < 7 days out, present cancellation dialog: Reason `NSCC` (Short notice) / `NSDH` (No show). Call `ApiMethod.createCancellationClaim` to automatically generate billable cancellation line items.
-- [ ] **M3.2 — Multi-Participant Activity Transport / Travel in SIL**
-  - **Files:** `backend/services/providerTravelService.js`, `backend/models/Trip.js`
-  - **Action:** Allow `Trip` to specify `propertyId` or multiple `clientIds`. Evenly split mileage distance across all transported clients during invoice generation.
-- [ ] **M3.3 — Sleepover Disturbance Logging**
-  - **Files:** `backend/models/WorkedTime.js`, `lib/app/features/clockInandOut/`
-  - **Action:** Add `disturbances: [{ startTime, endTime, reason }]` to `WorkedTime`. On mobile clock-out, prompt sleepover workers if they were woken up. If total disturbance > 60 minutes, automatically convert to active night hours for payroll and billing.
-- [ ] **M3.4 — Multi-Payer Split Routing (`combination` Funding)**
-  - **Files:** `backend/services/billingRoutingService.js`, `backend/models/Invoice.js`
-  - **Action:** In mixed-funding invoices, split line items by category: route Core/SIL items to NDIA Claim Batch and Capacity Building items to Plan Manager PDF.
+- [x] **M3.1 — Wire NDIS Short-Notice Cancellation UI**
+  - **Files:** `lib/app/features/schedule/views/schedule_dashboard_screen.dart`, `lib/app/features/Appointment/views/client_appointment_details_view.dart`, `lib/backend/api_method.dart`
+  - **Completed:**
+    1. Verified admin shift card cancellation dialog in `schedule_dashboard_screen.dart:715-841` invoking `api.createCancellationCharge(shiftId, reason: 'NSCC'|'NSDH', noticeHours)`.
+    2. Extended `client_appointment_details_view.dart` action cell to provide an NDIS cancel action button for non-past shifts.
+    3. Added `_showCancellationDialog(shift, shiftId)` calculating notice hours, displaying reason options (`NSCC` / `NSDH`), and invoking `apiMethod.createCancellationCharge`.
+  - **Verification:** Ran `flutter analyze` (0 issues) and widget tests in `test/widget/client_appointment_details_view_test.dart` (7/7 pass).
+- [x] **M3.2 — Multi-Participant Activity Transport / Travel in SIL**
+  - **Files:** `backend/models/Trip.js`, `backend/services/providerTravelService.js`
+  - **Completed:**
+    1. Added `propertyId` and `clientIds` array to `Trip` schema.
+    2. Implemented `splitMileageAmongParticipants({ totalKm, clientIds })` evenly dividing kilometres across co-transported residents (e.g. 30 km / 3 residents = 10 km each, share 0.33).
+    3. Implemented `createActivityTransportCharges()` to generate split invoice line specifications (Item `01_799_0107_1_1`).
+  - **Verification:** Created unit test suite `backend/tests/services/providerTravelMultiParticipant.test.js` (8/8 pass). Pushed to `origin/dev` (commit `35338dd`).
+- [x] **M3.3 — Sleepover Disturbance Logging & Active Night Conversion**
+  - **Files:** `backend/models/WorkedTime.js`, `backend/routes/appointment.js`, `backend/controllers/appointmentController.js`, `backend/services/appointmentService.js`, `lib/app/features/Appointment/views/client_appointment_details_view.dart`, `lib/app/core/services/offline/worked_time_queue_service.dart`, `lib/backend/api_method.dart`
+  - **Completed:**
+    1. Added `shiftType`, `disturbances: [{ startTime, endTime, reason, durationMinutes }]`, and `convertedToActiveNight` to `WorkedTime` schema.
+    2. In `appointmentService.setWorkedTime()`, calculated cumulative disturbance minutes under SCHADS Award Clause 25.7. If total disturbance > 60 minutes, automatically sets `convertedToActiveNight = true` and converts shift to `active_night` hourly billing.
+    3. In `client_appointment_details_view.dart`, added `_showSleepoverDisturbanceDialog()` on clock-out for sleepover shifts, calculating disturbance minutes, warning if > 60 min, and forwarding disturbances to `apiMethod.setWorkedTime`.
+    4. Extended `WorkedTimeQueueService` to persist disturbance fields for offline synchronization.
+  - **Verification:** Unit test suite `backend/tests/sil/silSleepoverDisturbance.test.js` (3/3 pass), frontend queue test `test/services/worked_time_queue_test.dart` (2/2 pass), and test `test/features/appointment/sleepover_disturbance_test.dart` (1/1 pass).
+- [x] **M3.4 — Multi-Payer Split Routing (`combination` Funding)**
+  - **Files:** `backend/models/Invoice.js`, `backend/services/billingRoutingService.js`
+  - **Completed:**
+    1. Added `fundingRoute: ['ndia_managed', 'plan_managed', 'self_managed']` to `Invoice` line items.
+    2. Implemented `resolveLineItemRoute()` routing Core/SIL items (Category 01, 04) to NDIA (`claim_csv`), Capacity Building items (Category 07, 14, 15) to Plan Manager (`invoice_pdf`), and Consumables (Category 03) to Participant Self-Managed (`invoice_pdf`).
+    3. Implemented `splitLineItemsByRoute()` to partition mixed invoice line items into separate route buckets and detect `hasMixedRoutes`.
+  - **Verification:** Unit test suite `backend/tests/services/billingRoutingCombination.test.js` (9/9 pass). All 9 non-SIL admin invoice operation suites (80 tests) remain 100% green and unaffected. Pushed to `origin/dev` (commit `35338dd`).
 
 ---
 
