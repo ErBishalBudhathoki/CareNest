@@ -118,6 +118,7 @@ We have identified **12 Critical Dimensions** where connections are broken, inco
   There is no unified domain engine for invoice creation. Different screens call different services with different schemas, validation rules, and tax logic.
 * **Required Connection:**  
   Deprecate the ad-hoc generation in `bulkInvoiceService.js` and `invoiceGenerationService.js`. Consolidate all billing through `InvoiceManagementService.createInvoice()`, ensuring all paths use the unified NDIS GST-free rule, NDIS price-cap validation, and `billingRoutingService`.
+* **Resolution:** ✅ **RESOLVED (M8.1)** — `bulkInvoiceService` now generates every invoice through the unified `invoiceManagementService.createInvoice()` path (plan-budget gate, NDIA price caps, `fundingRoute` stamping, analytics `InvoiceLineItem` insert). Return shape preserved. `invoiceGenerationService` remains assignment-coupled for non-SIL paths. Commit `4750186` (backend `origin/dev`).
 
 ---
 
@@ -136,6 +137,7 @@ We have identified **12 Critical Dimensions** where connections are broken, inco
   - Add `SILAbsence` model or expand `SILOccupancy` with `absences: [{ startDate, endDate, reason: ['hospital', 'family_leave', 'holiday', 'other'], claimedDays: Number, maxClaimableDays: { type: Number, default: 28 } }]`.
   - Update `silBillingService` to prorate deductions or flag when a participant has exceeded 28 consecutive days of absence.
   - Implement dynamic ratio re-evaluation in `silRatioService` based on *present* residents on any given date.
+* **Resolution:** ✅ **RESOLVED (M8.2)** — absence capture, billing proration and ratio shift already existed (M2.1, M2.3). The missing piece — exposing absences over REST — is now wired: `POST /api/sil/occupancy/:id/absences`, `PUT /api/sil/occupancy/:id/absences/:absenceId`, `GET /api/sil/absences`, with an in-app recording/listing sheet on the SIL property detail screen. Commit `202849e` (backend `origin/dev`); frontend commits follow in this document.
 
 ---
 
@@ -170,22 +172,23 @@ We have identified **12 Critical Dimensions** where connections are broken, inco
 
 ---
 
-### Gap 5: Short-Notice Cancellations (NSCC / NSDH) UI Disconnect
+### Gap 5: Short-Notice Cancellations (NSCC / NSDH) UI Disconnect  — ✅ RESOLVED (M3.1)
 * **Severity:** 🟡 **MEDIUM (P2)** — Revenue Recovery
 * **Current Behavior:**  
   The backend has a complete, tested service (`backend/services/cancellationBillingService.js`) and endpoint (`POST /api/ndis-claims/cancellations`) that creates cancellation invoices tagged with `claimType: 'CANCELLATION'` and `cancellationReason: 'NSCC' | 'NSDH'`.
   The frontend `ApiMethod` class also has the wrapper:
   ```dart
-  // lib/backend/api_method.dart:4690
-  Future<Map<String, dynamic>> createCancellationClaim({...})
+  // lib/backend/api_method.dart
+  Future<Map<String, dynamic>> createCancellationCharge({...})
   ```
 * **The Disconnect:**  
-  `createCancellationClaim` is **never called anywhere in the Flutter UI**. When an appointment or shift is cancelled in `schedule_dashboard_screen.dart` or `appointment_list_screen.dart`, the user is not prompted whether the cancellation is billable under the NDIS 7-day rule, nor can they select the cancellation reason (`NSCC` vs `NSDH`). The shift is simply marked `cancelled` and lost to billing.
-* **Required Connection:**  
-  In the shift cancellation modal, add an NDIS compliance check:
-  - If notice < 7 days (or funding route requires it), prompt: *"Bill as NDIS Short-Notice Cancellation (100% cap)?"*
+  `createCancellationCharge` was **never called anywhere in the Flutter UI**. When an appointment or shift is cancelled in `schedule_dashboard_screen.dart` or `appointment_list_screen.dart`, the user was not prompted whether the cancellation is billable under the NDIS 7-day rule, nor could they select the cancellation reason (`NSCC` vs `NSDH`). The shift was simply marked `cancelled` and lost to billing.
+* **Resolution (M3.1):**  
+  In the shift cancellation modal, an NDIS compliance check was added:
+  - If notice is early enough, prompt: *"Bill as NDIS Short-Notice Cancellation?"*
   - Dropdown: `NSCC` (Participant Short Notice) / `NSDH` (No Show / Denied Access).
-  - Trigger `createCancellationClaim` so the line item flows directly into the NDIA claim CSV or plan manager invoice.
+  - Trigger `createCancellationCharge` so the line item flows directly into the NDIA claim CSV or plan manager invoice.
+  - Wired in `schedule_dashboard_screen.dart` and `client_appointment_details_view.dart` (see M3.1).
 
 ---
 
@@ -201,6 +204,7 @@ We have identified **12 Critical Dimensions** where connections are broken, inco
   3. The provider absorbs vehicle wear-and-tear instead of claiming NDIS activity-based transport (Item `01_799_0107_1_1`).
 * **Required Connection:**  
   Allow `Trip` records to link to a `propertyId` or multiple `clientIds`. In `providerTravelService`, implement multi-participant distance splitting (e.g. 30 km trip / 3 participants = 10 km billed to each participant).
+* **Resolution:** ✅ **RESOLVED (M8.3)** — `Trip` now persists `propertyId` and `clientIds[]` (set on create, admin-write only), and the previously dead split code is reachable via `POST /api/trips/:tripId/transport-charges`, which delegates to `providerTravelService.createActivityTransportCharges`: it loads the trip, splits mileage evenly across the transported participants and returns one `01_799_0107_1_1` charge per participant. Commit `202849e` (backend `origin/dev`).
 
 ---
 
@@ -250,7 +254,8 @@ We have identified **12 Critical Dimensions** where connections are broken, inco
   Currently, the system assigns a single `artifact` (`claim_csv` or `invoice_pdf`) to the entire invoice. If an invoice contains mixed items, NDIA rejects the entire CSV file for unapproved support items.
 * **Required Connection:**  
   Support line-item level funding routes in `InvoiceLineItem` / `SILQuoteLine`:
-  Each line item indicates its own `fundingRoute` (`ndia`, `plan_manager`, `self`), allowing the invoice generator to split a mixed service delivery into an NDIA Claim Batch AND a Plan Manager PDF.
+  Each line item indicates its own `fundingRoute` (`ndia_managed`, `plan_managed`, `self_managed` — matching the `fundingType` enum used by `Client`), allowing the invoice generator to split a mixed service delivery into an NDIA Claim Batch AND a Plan Manager PDF.
+* **Resolution:** ✅ **RESOLVED (M8.4)** — routing logic now runs inside the unified invoice pipeline: `invoiceManagementService.createInvoice()` fetches the participant once (funding type + plan envelopes) and stamps every line item with its `fundingRoute` (best-effort, never blocks creation). Combination participants: Category 01/04 → `ndia_managed`, Category 07/14/15 → `plan_managed`, everything else → `self_managed`; plan categories may carry an explicit `fundingType` (new field on `Client.plan.categories`) which wins over the default mapping. Commit `4750186` (backend `origin/dev`). The 7-day follow-up gap (invoices created via older paths missing routes) is closed by M8.1.
 
 ---
 
@@ -267,6 +272,7 @@ We have identified **12 Critical Dimensions** where connections are broken, inco
 * **Required Connection:**  
   - Apply MMM postcode lookup when calculating SIL property line items (using `SILProperty.address.postcode`).
   - Add `effectiveDate` to support items so price lookups are historical-date aware.
+* **Resolution:** ✅ **RESOLVED (M4.1 + M7.2 + M8.5)** — MMM multipliers are applied in `silBillingService` line pricing (M4.1, MMM 6 +40% / MMM 7 +50%); effective-dated catalogue resolution is implemented in `priceValidationService.validatePrice` (M7.2); the catalogue sync now stamps `SupportItem.priceGuideVersion` from the row's `startDate` using the Australian fiscal year (e.g. `2025-07-01` → `2025-26`), so the previously dormant version field carries real data (M8.5, commit `908919c`).
 
 ---
 
@@ -345,6 +351,7 @@ Use this checklist to track development. When completing an item, mark it `[x]` 
   - **File:** `backend/services/bulkInvoiceService.js`
   - **Completed:** Removed `subtotal * 0.1` and `total = subtotal + tax`. NDIS supports are GST-free under Australian tax law. Stamped canonical `financialSummary: { subtotal, taxAmount: 0, discountAmount: 0, expenseAmount: 0, totalAmount: subtotal, currency: 'AUD' }` alongside backward-compatible fields `tax: 0`, `total: subtotal`.
   - **Verification:** `backend/tests/middleware/bulkInvoiceService.test.js` updated to verify 0% tax and canonical financialSummary. All 3 tests pass.
+  - **Follow-up (M8.1):** bulkInvoiceService is consolidated through `invoiceManagementService.createInvoice()` — the last bypass of the unified pipeline. Commit `4750186` (backend `origin/dev`).
 - [x] **M1.2 — Reconciled SIL Invoicing (WorkedTime vs RoC) & Date Boundary Hardening**
   - **Files:** `backend/services/silBillingService.js`, `backend/controllers/silController.js`
   - **Completed:**
@@ -375,6 +382,7 @@ Use this checklist to track development. When completing an item, mark it `[x]` 
     3. Implemented `calculateUnclaimableAbsenceDays` in `silBillingService.js`: under NDIS pricing rules, hospital stays may be claimed for up to 28 consecutive days; days 29+ are non-claimable and deducted from `billableDays`. Line items are prorated against `weeks = billableDays / 7`.
     4. Stamped `silAbsenceDeductions` metadata (`totalUnclaimableDays`, `nominalPeriodDays`, `billableDays`, `deductions`) and appended notice to `internalNotes`. If all days in a period are non-claimable, returns `invalidState`.
   - **Verification:** `backend/tests/sil/silAbsenceBilling.test.js` created. Verified that a 35-day hospital stay (5 weeks) bills only the allowable 28 days (4 weeks), and a 14-day stay incurs zero deductions. All 9 tests pass. Backend pushed to `origin/dev` (commit `db19f0a`).
+  - **Follow-up (M8.2):** absence recording/listing is reachable over REST (`POST/PUT/GET /api/sil/occupancy/:id/absences*`, `GET /api/sil/absences`) and from the SIL property detail screen; billing/proration logic unchanged. Commit `202849e` (backend `origin/dev`).
 - [x] **M2.2 — Flutter `Patient` Model Parity with Backend**
   - **Files:** `lib/app/features/client/models/client_model.dart`, `test/features/client/client_model_test.dart`
   - **Completed:**
@@ -407,6 +415,7 @@ Use this checklist to track development. When completing an item, mark it `[x]` 
     2. Implemented `splitMileageAmongParticipants({ totalKm, clientIds })` evenly dividing kilometres across co-transported residents (e.g. 30 km / 3 residents = 10 km each, share 0.33).
     3. Implemented `createActivityTransportCharges()` to generate split invoice line specifications (Item `01_799_0107_1_1`).
   - **Verification:** Created unit test suite `backend/tests/services/providerTravelMultiParticipant.test.js` (8/8 pass). Pushed to `origin/dev` (commit `35338dd`).
+  - **Follow-up (M8.3):** `Trip` persists `propertyId`/`clientIds` on create; the split logic is reachable via `POST /api/trips/:tripId/transport-charges`. Commit `202849e` (backend `origin/dev`).
 - [x] **M3.3 — Sleepover Disturbance Logging & Active Night Conversion**
   - **Files:** `backend/models/WorkedTime.js`, `backend/routes/appointment.js`, `backend/controllers/appointmentController.js`, `backend/services/appointmentService.js`, `lib/app/features/Appointment/views/client_appointment_details_view.dart`, `lib/app/core/services/offline/worked_time_queue_service.dart`, `lib/backend/api_method.dart`
   - **Completed:**
@@ -422,6 +431,7 @@ Use this checklist to track development. When completing an item, mark it `[x]` 
     2. Implemented `resolveLineItemRoute()` routing Core/SIL items (Category 01, 04) to NDIA (`claim_csv`), Capacity Building items (Category 07, 14, 15) to Plan Manager (`invoice_pdf`), and Consumables (Category 03) to Participant Self-Managed (`invoice_pdf`).
     3. Implemented `splitLineItemsByRoute()` to partition mixed invoice line items into separate route buckets and detect `hasMixedRoutes`.
   - **Verification:** Unit test suite `backend/tests/services/billingRoutingCombination.test.js` (9/9 pass). All 9 non-SIL admin invoice operation suites (80 tests) remain 100% green and unaffected. Pushed to `origin/dev` (commit `35338dd`).
+  - **Follow-up (M8.4):** `createInvoice()` stamps `fundingRoute` on every line item (best-effort, never blocks creation); combination participants now emit NDIA claim lines. New test suite `backend/tests/services/invoiceRouteStamping.test.js` (7/7). Commit `4750186` (backend `origin/dev`).
 
 ---
 
@@ -435,7 +445,7 @@ Use this checklist to track development. When completing an item, mark it `[x]` 
 | **Worker Aspect** | Authentication & Dashboard (M3) | Authenticated as Support Worker Ava (`employee.seed.1@mailinator.com`). Verified Support Worker Dashboard (`HELLO, AVA`, `PARI CARE SERVICES`), quick actions, and Settings. | **VERIFIED** |
 | **Worker Aspect** | Time Clock & Timesheet (M3) | Verified Time Clock screen (`TOTAL TODAY 0.0 HOURS WORKED`, date navigation `TUE 03/11`, timesheet request routing). | **VERIFIED** |
 | **Worker Aspect** | Shift Cancellation & Disturbance (M3.1, M3.3) | Verified short-notice cancellation dialog (`NSCC` / `NSDH`) and sleepover disturbance check with SCHADS Award Clause 25.7 automatic conversion (> 60m disturbance -> Active Night). Full widget test suite passing (9/9). | **VERIFIED** |
-| **Participant / Multi-Payer Aspect** | Funding Route Splitting (M3.4) | Verified combination plan multi-payer routing logic (Core/SIL -> NDIA CSV, Capacity Building -> Plan Manager PDF, Consumables -> Self-Managed PDF) across unit and integration suites. | **VERIFIED** |
+| **Participant / Multi-Payer Aspect** | Funding Route Splitting (M3.4) | Combination routing logic verified in unit and integration suites (9/9) AND the production pipeline is wired end-to-end (M8.4): `createInvoice()` stamps `fundingRoute` on every line item, so combination participants now emit NDIA claim lines with 07/14/15-category lines split to plan-manager PDFs. Emulator re-check of a live combination participant outstanding. | **VERIFIED (logic + wiring; emulator pending)** |
 | **Admin Aspect** | Consent Gate & Emergency Bypass (M4.2) | Verified RoC activation blocked with HTTP 409 when no signed agreement exists. Tested `_ConsentBypassDialog` with reason prompt, activating RoC and writing audit record to MongoDB history. | **VERIFIED** |
 | **Admin & Worker Aspect** | Irregular SIL Crisis Staffing (M4.3) | Verified Shift Creation modal with Irregular SIL toggle, reason selector, PACE justification, and incident reference. Verified `IRREGULAR SIL (CRISIS)` alert badge on schedule board. | **VERIFIED** |
 | **Admin Aspect** | NDIS Bulk Claiming & BPR Batch (M5.2, M5.3) | Navigated to NDIS Bulk Claiming (`Routes.claimDashboard`). Selected Nov 2026 period using Bauhaus date range picker and generated batch `Batch 6ae9a2a3`. Inspected batch details (`01_002_0107_1_1`, `01_016_0104_1_1`), payment status, and action menu. | **VERIFIED** |
@@ -572,6 +582,7 @@ Use this checklist to track development. When completing an item, mark it `[x]` 
     4. Added cross-organization authorization test covering `POST /api/sil/invoices/:id/dispatch`.
     5. Extended Flutter frontend (`api_method.dart`, `sil_repository.dart`, `sil_viewmodels.dart`, `sil_dashboard_view.dart`) with `dispatchSilInvoice` and replayed invoice indicator.
   - **Verification:** Unit test `tests/sil/silMilestone7.test.js` (pass), route test `tests/routes/silCrossOrgAuthorization.test.js` (78/78 pass), Flutter test `test/features/sil/sil_milestone7_idempotency_dispatch_test.dart` (pass).
+  - **Follow-up (M8.6):** the ROC invoice flow now closes with an "invoice ready" dialog offering View/Dispatch; ROC invoice generation passes a deterministic `x-idempotency-key` (`roc_<id>_YYYY-MM-DD_YYYY-MM-DD`) so double-submits replay instead of duplicating. Frontend test `test/widget/sil_invoice_dispatch_flow_test.dart` (1/1).
 - [x] **M7.4 — Non-SIL Invoicing System Isolation & Multi-Aspect Verification**
   - **Files:** Admin Invoice Operations section (`Routes.invoiceList`), Live Emulator `emulator-5554`
   - **Completed:**
@@ -579,6 +590,41 @@ Use this checklist to track development. When completing an item, mark it `[x]` 
     2. Re-verified multi-aspect emulator execution on `emulator-5554` across admin, support worker, and billing surfaces.
     3. Zero analyzer issues (`flutter analyze` 0 issues found) and 100% test pass rate across backend and frontend suites.
   - **Verification:** Live Android emulator screenshots captured and verified in report.
+
+---
+
+### Milestone 8: Audit Follow-ups — Pipeline Consolidation & Billing Integrity ✅ COMPLETE (2026-11-04)
+
+Implements the verification report's four partial milestones plus all minor findings. Backend commits `4750186`, `202849e`, `908919c` (backend `origin/dev`); frontend commits follow in the frontend repo history.
+
+- [x] **M8.1 — Bulk invoice generation consolidated through the unified pipeline (closes M1.1 Gap 2)**
+  - **Files:** `backend/services/bulkInvoiceService.js`, `backend/tests/middleware/bulkInvoiceService.test.js`
+  - **Completed:** `generateInvoicesFromAppointments` now builds the invoice payload (with embedded analytics-shaped `lineItems`) and calls `invoiceManagementService.createInvoice()` per invoice — plan-budget gate, NDIA price caps, `fundingRoute` stamping and the `InvoiceLineItem` analytics insert all apply to bulk invoices. The ad-hoc `new Invoice()`/`insertMany` path and its local line-item plumbing are removed; bulk jobs fail closed when the pipeline rejects an invoice and appointments are only marked invoiced on success. Return shape preserved (`{invoiceCount, appointmentCount, totalAmount}`).
+  - **Verification:** bulk suite 5/5; full documented backend suite **103 suites / 1069 tests green**.
+- [x] **M8.2 — SIL absence REST endpoints + in-app absence recording (closes M2.1)**
+  - **Files:** `backend/routes/silRoutes.js`, `backend/controllers/silController.js`, `backend/tests/routes/silAbsenceEndpoints.test.js`, `backend/tests/routes/silCrossOrgAuthorization.test.js`, `lib/backend/api_method.dart`, `lib/app/features/sil/repositories/sil_repository.dart`, `lib/app/features/sil/views/sil_absence_sheet.dart` (new), `lib/app/features/sil/views/sil_property_detail_view.dart`, `lib/l10n/app_en.arb`
+  - **Completed:** `POST /api/sil/occupancy/:id/absences` (validated: ISO dates, reason enum, ≤500-char notes, 1–365 max claimable days), `PUT .../absences/:absenceId`, `GET /api/sil/absences` (optional occupancyId/clientId/propertyId filters). Admin-only, org-scoped, cross-org covered by the authorization matrix (+3 entries). Flutter: property detail screen gains an absence action per occupied room opening a sheet to list/record/end absences (reason dropdown with the five backend reasons, remaining claimable days, ongoing marker, end confirmation).
+  - **Verification:** route suite 10/10; cross-org suite updated; widget suite `test/widget/sil_absence_sheet_test.dart` 4/4; full Flutter suite **790 tests green**; `flutter analyze` 0 issues.
+- [x] **M8.3 — Multi-participant activity transport wired end-to-end (closes M3.2)**
+  - **Files:** `backend/models/Trip.js` (via controller/service), `backend/controllers/tripController.js`, `backend/services/tripService.js`, `backend/routes/tripRoutes.js`, `backend/tests/routes/tripTransportCharges.test.js`
+  - **Completed:** `Trip` now persists `propertyId` and `clientIds[]` on create (≤20, ObjectIds); the previously dead `splitMileageAmongParticipants` / `createActivityTransportCharges` are reachable via `POST /api/trips/:tripId/transport-charges`, which loads the trip, evenly splits its distance across transported participants and returns one `01_799_0107_1_1` charge each. Trip validators added.
+  - **Verification:** route suite 9/9 (201/400/401/404 + createTrip persistence); providerTravelMultiParticipant suite still green.
+- [x] **M8.4 — Combination funding: `fundingRoute` stamped at invoice creation (closes M3.4)**
+  - **Files:** `backend/services/invoiceManagementService.js`, `backend/models/Client.js`, `backend/tests/services/invoiceRouteStamping.test.js`
+  - **Completed:** `createInvoice()` fetches the participant once (funding type + plan envelopes, reused by the price-cap gate) and stamps every line item via `billingRoutingService.resolveLineItemRoute()` supporting both routing styles (default category routing and explicit per-category override). `Client.plan.categories` items gained an optional `fundingType` enum (`ndia_managed | plan_managed | self_managed`, default null). Routing failures never block invoice creation. Combination invoices now match BPR filter expectations (`01/04 → ndia_managed`, `07/14/15 → plan_managed`, others `self_managed`).
+  - **Verification:** 7/7 stamping tests (combination split, per-category override, all funding types, graceful failure, no-client invoice); full documented backend suite **103 suites / 1069 tests green**.
+- [x] **M8.5 — Billing integrity minors**
+  - **Files:** `backend/services/billingAutomationService.js`, `backend/services/silBillingService.js`, `backend/services/ndisCatalogSyncService.js`, `backend/tests/sil/silBillingService.test.js`, `backend/tests/services/ndisCatalogSyncService.test.js`
+  - **Completed:** (1) credit notes are GST-free (`gst: 0`, `totalCredit = amount`) consistent with the NDIS GST rule already applied to invoices; (2) crisis-staffing base rate resolution is RoC price → effective-dated NDIS catalogue lookup (`01_451_0107_1_1`, never blocks on failure) → named `CATALOG_FALLBACK_CRISIS_RATE` ($65.47, last resort); (3) `SupportItem.priceGuideVersion` is now stamped by the catalogue sync from the row's start date using the Australian fiscal year.
+  - **Verification:** silBillingService 21/21 (new catalog-hit / catalog-miss / catalog-throws cases); catalog sync suite 6/6; credit-note fix covered by review (no prior harness exists for that service).
+- [x] **M8.6 — Dispatch workflow surfaced in the app (closes M7.3)**
+  - **Files:** `lib/app/features/sil/utils/roc_invoice_idempotency.dart` (new), `lib/app/features/sil/views/sil_dashboard_view.dart`, `test/widget/sil_invoice_dispatch_flow_test.dart`, `test/features/sil/roc_invoice_idempotency_test.dart`
+  - **Completed:** the ROC invoice generation flow passes a deterministic `x-idempotency-key` (`roc_<id>_YYYY-MM-DD_YYYY-MM-DD`, stable across retries) and closes with an "Invoice ready" dialog (View / Dispatch) instead of a bare snackbar; Dispatch confirms, calls the M7.3 endpoint and reports success/failure. The previously dead `dispatchInvoice` chain now has a real UI call site.
+  - **Verification:** widget test: deterministic key passed through repository → dialog shows → dispatch sends with `dispatchMethod: 'email'`; idempotency unit tests 4/4.
+- [x] **M8.7 — Localization sweep + deep-link cold-start fix**
+  - **Files:** `lib/l10n/app_en.arb`, `lib/app/features/sil/views/sil_dashboard_view.dart` (acceptance dialog), `lib/app/features/Appointment/views/client_appointment_details_view.dart` (sleepover disturbance + cancellation dialog), `lib/app/features/schedule/views/schedule_dashboard_screen.dart` (irregular-SIL form + cancellation dialog + two buttons), `lib/app/features/sil/views/sil_absence_sheet.dart`, `test/widget/client_appointment_details_view_test.dart`, `lib/app/features/auth/utils/deep_link_handler.dart`, `test/widget/deep_link_splash_routing_test.dart`
+  - **Completed:** all hardcoded English strings in the five flagged dialogs and the two adjacent buttons are localized (ARB + regenerated `lib/generated/l10n/`). Deep-link handler no longer claims cold-start links it cannot route (signup and generic known-route branches now return `false` when the navigator is not attached, matching the reset-password branch and the caller contract that gates `DeepLinkState.handled`).
+  - **Verification:** analyzer clean; full Flutter suite **790 tests green** (deep-link regression test green 3/3 runs, previously deterministic failure since commit `86846755`); date-picker guard suite green (absences use `showBauhausDatePicker`).
 
 ---
 
@@ -596,7 +642,7 @@ npx jest tests/claiming/ndisClaimService.test.js
 npx jest tests/services/schadsService.test.js
 npx jest tests/services/cancellationBillingService.test.js
 
-# Run full backend test suite (575+ tests must pass)
+# Run full backend test suite (1069 tests must pass)
 npx jest --testPathIgnorePatterns="integration|seed-data"
 ```
 
