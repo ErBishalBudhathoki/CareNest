@@ -150,15 +150,15 @@ class DeepLinkHandler {
           debugPrint('DeepLinkHandler: routing to $candidate');
           navState.pushNamed(candidate);
           return true;
-        } else {
-          debugPrint(
-            'DeepLinkHandler: navigator not ready yet, scheduling route to $candidate',
-          );
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            navigatorKey.currentState?.pushNamed(candidate);
-          });
-          return true;
         }
+        // Cold start: nothing has been routed, so report false. If the caller
+        // claimed the link now (DeepLinkState.handled), the splash screen
+        // would stand down and never route the user. The initial link is
+        // retried after the first frame mounts the navigator.
+        debugPrint(
+          'DeepLinkHandler: navigator not attached yet, not routing $candidate',
+        );
+        return false;
       }
     }
 
@@ -209,16 +209,14 @@ class DeepLinkHandler {
   static bool _navigateToSignupWithOrgCode(String orgCode) {
     final navState = navigatorKey.currentState;
     if (navState == null) {
+      // Cold start: nothing has been routed, so report false. If the caller
+      // claimed the link now (DeepLinkState.handled), the splash screen
+      // would stand down and never route the user. The initial link is
+      // retried after the first frame mounts the navigator.
       debugPrint(
-        'DeepLinkHandler: navigator not ready, scheduling route to signup with orgCode',
+        'DeepLinkHandler: navigator not attached yet, not routing signup with orgCode',
       );
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        navigatorKey.currentState?.pushNamed(
-          Routes.signup,
-          arguments: {'prefilledOrgCode': orgCode},
-        );
-      });
-      return true;
+      return false;
     }
     navState.pushNamed(Routes.signup, arguments: {'prefilledOrgCode': orgCode});
     return true;
@@ -228,13 +226,14 @@ class DeepLinkHandler {
   static bool _navigateToSignup() {
     final navState = navigatorKey.currentState;
     if (navState == null) {
+      // Cold start: nothing has been routed, so report false. If the caller
+      // claimed the link now (DeepLinkState.handled), the splash screen
+      // would stand down and never route the user. The initial link is
+      // retried after the first frame mounts the navigator.
       debugPrint(
-        'DeepLinkHandler: navigator not ready, scheduling route to signup',
+        'DeepLinkHandler: navigator not attached yet, not routing signup',
       );
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        navigatorKey.currentState?.pushNamed(Routes.signup);
-      });
-      return true;
+      return false;
     }
     navState.pushNamed(Routes.signup);
     return true;
