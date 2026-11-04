@@ -8594,4 +8594,259 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get viewFile => 'View File';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get cancellationBillingFailed => 'Cancellation billing failed.';
+
+  @override
+  String get cancellationInvoiced => 'Cancellation invoiced.';
+
+  @override
+  String cancellationInvoicedAmount(Object amount) {
+    return 'Cancellation invoiced · $amount';
+  }
+
+  @override
+  String get shiftCancelledNoFee => 'Shift cancelled. No fee applied.';
+
+  @override
+  String get participantFallback => 'Participant';
+
+  @override
+  String get silInvoiceReadyTitle => 'SIL invoice ready';
+
+  @override
+  String get silReplayBadge => 'Replayed';
+
+  @override
+  String get silDispatchAction => 'Dispatch';
+
+  @override
+  String silDispatchConfirmTitle(Object number) {
+    return 'Dispatch invoice $number?';
+  }
+
+  @override
+  String get silDispatchConfirmBody =>
+      'Email this invoice PDF to the recipient on file for this participant?';
+
+  @override
+  String get silDispatchSend => 'Send';
+
+  @override
+  String silDispatchSuccess(Object number) {
+    return 'Invoice $number dispatched';
+  }
+
+  @override
+  String silDispatchFailed(Object message) {
+    return 'Dispatch failed: $message';
+  }
+
+  @override
+  String get silDispatchError => 'Unknown error';
+
+  @override
+  String get silAbsencesAction => 'Absences';
+
+  @override
+  String get silAbsencesTitle => 'SIL absences';
+
+  @override
+  String get silAbsenceRecorded => 'Absence recorded';
+
+  @override
+  String get silAbsenceEnded => 'Absence ended';
+
+  @override
+  String silAbsenceSaveFailed(Object message) {
+    return 'Could not save absence: $message';
+  }
+
+  @override
+  String silAbsenceLoadFailed(Object message) {
+    return 'Could not load absences: $message';
+  }
+
+  @override
+  String get silAbsenceEmpty => 'No absences recorded for this resident.';
+
+  @override
+  String get silAbsenceRecordAction => 'Record absence';
+
+  @override
+  String get silAbsenceEndAction => 'End absence';
+
+  @override
+  String get silAbsenceReason => 'Reason';
+
+  @override
+  String get silAbsenceReasonHospital => 'Hospital';
+
+  @override
+  String get silAbsenceReasonFamilyLeave => 'Family leave';
+
+  @override
+  String get silAbsenceReasonHoliday => 'Holiday';
+
+  @override
+  String get silAbsenceReasonTransition => 'Transition / moving house';
+
+  @override
+  String get silAbsenceStartDate => 'Start date';
+
+  @override
+  String get silAbsenceEndDate => 'End date (optional)';
+
+  @override
+  String get silAbsenceStillAway => 'Still away (no end date yet)';
+
+  @override
+  String get silAbsenceOngoing => 'Ongoing';
+
+  @override
+  String get silAbsenceMaxClaimableDays => 'Max claimable days';
+
+  @override
+  String get silAbsenceNotesHint => 'e.g. Admitted to hospital — cardiology';
+
+  @override
+  String silAbsenceClaimableRemaining(Object days) {
+    return '$days claimable days left';
+  }
+
+  @override
+  String get silAbsenceEndConfirmTitle => 'End this absence?';
+
+  @override
+  String get silAbsenceEndConfirmBody =>
+      'Mark the absence as ending today. Remaining claimable days stop accruing against the 28-day leave allowance.';
+
+  @override
+  String silAbsenceClaimedDays(Object days, Object max) {
+    return 'Claimed $days of $max days';
+  }
+
+  @override
+  String get silSignIntro =>
+      'Record digital e-signature and auto-link the NDIS Service Agreement:';
+
+  @override
+  String get silSignatoryName => 'Signatory Name *';
+
+  @override
+  String get silSignatoryNameHint => 'e.g. John Doe';
+
+  @override
+  String get silSignatoryRole => 'Signatory Role';
+
+  @override
+  String get silRoleParticipant => 'Participant';
+
+  @override
+  String get silRoleGuardian => 'Guardian / Nominee';
+
+  @override
+  String get silRolePlanManager => 'Plan Manager';
+
+  @override
+  String get silRoleProviderRep => 'Provider authorized rep';
+
+  @override
+  String get silBoardLodgingLabel => 'Board & lodging (\$/week, optional)';
+
+  @override
+  String get silBoardLodgingHint => '0.00';
+
+  @override
+  String get silDigitalConsentConfirm =>
+      'I confirm digital acceptance and consent has been received.';
+
+  @override
+  String get silSignAndAccept => 'Sign & Accept';
+
+  @override
+  String get silQuoteAcceptedServiceAgreement =>
+      'Quote accepted (Service Agreement active)';
+
+  @override
+  String get sleepoverCheckTitle => 'Sleepover shift check';
+
+  @override
+  String get sleepoverDisturbanceQuestion =>
+      'Were you disturbed or required to perform active work during this sleepover shift?';
+
+  @override
+  String get sleepoverNoQuiet => 'No (quiet)';
+
+  @override
+  String get sleepoverYesDisturbed => 'Yes (disturbed)';
+
+  @override
+  String get sleepoverDisturbanceMinutes => 'Total disturbance (minutes)';
+
+  @override
+  String get sleepoverMinutesHint => 'e.g. 45 or 90';
+
+  @override
+  String get sleepoverDisturbanceReason => 'Reason for disturbance';
+
+  @override
+  String get sleepoverDisturbanceReasonHint =>
+      'e.g. Participant assistance, medication';
+
+  @override
+  String get sleepoverConversionWarning =>
+      'Disturbance exceeds 60 minutes. Under SCHADS Clause 25.7, this converts to Active Night.';
+
+  @override
+  String get irregularSilToggle => 'Irregular SIL / Crisis Support';
+
+  @override
+  String get irregularSilToggleSubtitle =>
+      'Flag as unplanned crisis/irregular SIL shift requiring NDIA PACE justification';
+
+  @override
+  String get irregularSilReasonLabel => 'Irregular SIL reason';
+
+  @override
+  String get irregularSilCrisisEvent => 'Crisis event';
+
+  @override
+  String get irregularSilHospitalDischarge => 'Hospital discharge';
+
+  @override
+  String get irregularSilPrnBehavioral => 'PRN behavioural support';
+
+  @override
+  String get irregularSilUnplannedAbsenceCover => 'Unplanned absence cover';
+
+  @override
+  String get paceCrisisJustificationLabel => 'PACE crisis justification *';
+
+  @override
+  String get paceCrisisJustificationHint =>
+      'Enter clinical / crisis justification notes for NDIA audit';
+
+  @override
+  String get paceCrisisJustificationRequired =>
+      'Crisis justification notes are required for irregular SIL';
+
+  @override
+  String get incidentReportRefLabel => 'Incident report reference (optional)';
+
+  @override
+  String get incidentReportRefHint => 'e.g. INC-2026-03-441';
+
+  @override
+  String get cancellationReason => 'Cancellation reason';
+
+  @override
+  String get noticeHours => 'Notice (hours)';
 }

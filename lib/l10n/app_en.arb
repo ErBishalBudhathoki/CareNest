@@ -4181,5 +4181,122 @@
   "sessionExpiredSignInAgain": "Session expired. Please sign in again.",
   "skipLimitedFeatures": "Skip (Limited Features)",
   "storagePermissionRequired": "Storage Permission Required",
-  "viewFile": "View File"
+  "viewFile": "View File",
+  "confirm": "Confirm",
+  "retry": "Retry",
+  "cancellationBillingFailed": "Cancellation billing failed.",
+  "cancellationInvoiced": "Cancellation invoiced.",
+  "cancellationInvoicedAmount": "Cancellation invoiced · {amount}",
+  "@cancellationInvoicedAmount": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "shiftCancelledNoFee": "Shift cancelled. No fee applied.",
+  "participantFallback": "Participant",
+  "silInvoiceReadyTitle": "SIL invoice ready",
+  "silReplayBadge": "Replayed",
+  "silDispatchAction": "Dispatch",
+  "silDispatchConfirmTitle": "Dispatch invoice {number}?",
+  "@silDispatchConfirmTitle": {
+    "placeholders": {
+      "number": {}
+    }
+  },
+  "silDispatchConfirmBody": "Email this invoice PDF to the recipient on file for this participant?",
+  "silDispatchSend": "Send",
+  "silDispatchSuccess": "Invoice {number} dispatched",
+  "@silDispatchSuccess": {
+    "placeholders": {
+      "number": {}
+    }
+  },
+  "silDispatchFailed": "Dispatch failed: {message}",
+  "@silDispatchFailed": {
+    "placeholders": {
+      "message": {}
+    }
+  },
+  "silDispatchError": "Unknown error",
+  "silAbsencesAction": "Absences",
+  "silAbsencesTitle": "SIL absences",
+  "silAbsenceRecorded": "Absence recorded",
+  "silAbsenceEnded": "Absence ended",
+  "silAbsenceSaveFailed": "Could not save absence: {message}",
+  "@silAbsenceSaveFailed": {
+    "placeholders": {
+      "message": {}
+    }
+  },
+  "silAbsenceLoadFailed": "Could not load absences: {message}",
+  "@silAbsenceLoadFailed": {
+    "placeholders": {
+      "message": {}
+    }
+  },
+  "silAbsenceEmpty": "No absences recorded for this resident.",
+  "silAbsenceRecordAction": "Record absence",
+  "silAbsenceEndAction": "End absence",
+  "silAbsenceReason": "Reason",
+  "silAbsenceReasonHospital": "Hospital",
+  "silAbsenceReasonFamilyLeave": "Family leave",
+  "silAbsenceReasonHoliday": "Holiday",
+  "silAbsenceReasonTransition": "Transition / moving house",
+  "silAbsenceStartDate": "Start date",
+  "silAbsenceEndDate": "End date (optional)",
+  "silAbsenceStillAway": "Still away (no end date yet)",
+  "silAbsenceOngoing": "Ongoing",
+  "silAbsenceMaxClaimableDays": "Max claimable days",
+  "silAbsenceNotesHint": "e.g. Admitted to hospital — cardiology",
+  "silAbsenceClaimableRemaining": "{days} claimable days left",
+  "@silAbsenceClaimableRemaining": {
+    "placeholders": {
+      "days": {}
+    }
+  },
+  "silAbsenceEndConfirmTitle": "End this absence?",
+  "silAbsenceEndConfirmBody": "Mark the absence as ending today. Remaining claimable days stop accruing against the 28-day leave allowance.",
+  "silAbsenceClaimedDays": "Claimed {days} of {max} days",
+  "@silAbsenceClaimedDays": {
+    "placeholders": {
+      "days": {},
+      "max": {}
+    }
+  },
+  "silSignIntro": "Record digital e-signature and auto-link the NDIS Service Agreement:",
+  "silSignatoryName": "Signatory Name *",
+  "silSignatoryNameHint": "e.g. John Doe",
+  "silSignatoryRole": "Signatory Role",
+  "silRoleParticipant": "Participant",
+  "silRoleGuardian": "Guardian / Nominee",
+  "silRolePlanManager": "Plan Manager",
+  "silRoleProviderRep": "Provider authorized rep",
+  "silBoardLodgingLabel": "Board & lodging ($/week, optional)",
+  "silBoardLodgingHint": "0.00",
+  "silDigitalConsentConfirm": "I confirm digital acceptance and consent has been received.",
+  "silSignAndAccept": "Sign & Accept",
+  "silQuoteAcceptedServiceAgreement": "Quote accepted (Service Agreement active)",
+  "sleepoverCheckTitle": "Sleepover shift check",
+  "sleepoverDisturbanceQuestion": "Were you disturbed or required to perform active work during this sleepover shift?",
+  "sleepoverNoQuiet": "No (quiet)",
+  "sleepoverYesDisturbed": "Yes (disturbed)",
+  "sleepoverDisturbanceMinutes": "Total disturbance (minutes)",
+  "sleepoverMinutesHint": "e.g. 45 or 90",
+  "sleepoverDisturbanceReason": "Reason for disturbance",
+  "sleepoverDisturbanceReasonHint": "e.g. Participant assistance, medication",
+  "sleepoverConversionWarning": "Disturbance exceeds 60 minutes. Under SCHADS Clause 25.7, this converts to Active Night.",
+  "irregularSilToggle": "Irregular SIL / Crisis Support",
+  "irregularSilToggleSubtitle": "Flag as unplanned crisis/irregular SIL shift requiring NDIA PACE justification",
+  "irregularSilReasonLabel": "Irregular SIL reason",
+  "irregularSilCrisisEvent": "Crisis event",
+  "irregularSilHospitalDischarge": "Hospital discharge",
+  "irregularSilPrnBehavioral": "PRN behavioural support",
+  "irregularSilUnplannedAbsenceCover": "Unplanned absence cover",
+  "paceCrisisJustificationLabel": "PACE crisis justification *",
+  "paceCrisisJustificationHint": "Enter clinical / crisis justification notes for NDIA audit",
+  "paceCrisisJustificationRequired": "Crisis justification notes are required for irregular SIL",
+  "incidentReportRefLabel": "Incident report reference (optional)",
+  "incidentReportRefHint": "e.g. INC-2026-03-441",
+  "cancellationReason": "Cancellation reason",
+  "noticeHours": "Notice (hours)"
 }

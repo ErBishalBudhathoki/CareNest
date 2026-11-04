@@ -9,6 +9,7 @@ import 'package:carenest/app/shared/widgets/bauhaus_time_picker.dart';
 import 'package:carenest/app/features/sil/models/sil_models.dart';
 import 'package:carenest/app/features/sil/repositories/sil_repository.dart';
 import 'package:carenest/app/features/sil/viewmodels/sil_viewmodels.dart';
+import 'package:carenest/app/features/sil/utils/roc_invoice_idempotency.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
@@ -523,18 +524,18 @@ class _QuoteActions extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Record digital e-signature and auto-link NDIS Service Agreement:',
-                  style: TextStyle(fontSize: 13, color: Colors.grey),
+                Text(
+                  l10n.silSignIntro,
+                  style: const TextStyle(fontSize: 13, color: Colors.grey),
                 ),
                 const SizedBox(height: 12),
                 TextField(
                   key: const ValueKey('sil_quote_signatory_name_field'),
                   controller: nameCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Signatory Name *',
-                    hintText: 'e.g. John Doe',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.silSignatoryName,
+                    hintText: l10n.silSignatoryNameHint,
+                    border: const OutlineInputBorder(),
                     isDense: true,
                   ),
                   onChanged: (_) => setDialogState(() {}),
@@ -543,16 +544,16 @@ class _QuoteActions extends ConsumerWidget {
                 DropdownButtonFormField<String>(
                   key: const ValueKey('sil_quote_signatory_role_dropdown'),
                   value: selectedRole,
-                  decoration: const InputDecoration(
-                    labelText: 'Signatory Role',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.silSignatoryRole,
+                    border: const OutlineInputBorder(),
                     isDense: true,
                   ),
-                  items: const [
-                    DropdownMenuItem(value: 'participant', child: Text('Participant')),
-                    DropdownMenuItem(value: 'guardian', child: Text('Guardian / Nominee')),
-                    DropdownMenuItem(value: 'plan_manager', child: Text('Plan Manager')),
-                    DropdownMenuItem(value: 'provider', child: Text('Provider Authorized Rep')),
+                  items: [
+                    DropdownMenuItem(value: 'participant', child: Text(l10n.silRoleParticipant)),
+                    DropdownMenuItem(value: 'guardian', child: Text(l10n.silRoleGuardian)),
+                    DropdownMenuItem(value: 'plan_manager', child: Text(l10n.silRolePlanManager)),
+                    DropdownMenuItem(value: 'provider', child: Text(l10n.silRoleProviderRep)),
                   ],
                   onChanged: (val) {
                     if (val != null) {
@@ -565,10 +566,10 @@ class _QuoteActions extends ConsumerWidget {
                   key: const ValueKey('sil_quote_board_lodging_field'),
                   controller: boardCtrl,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(
-                    labelText: 'Board & Lodging (\$/week, optional)',
-                    hintText: '0.00',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.silBoardLodgingLabel,
+                    hintText: l10n.silBoardLodgingHint,
+                    border: const OutlineInputBorder(),
                     isDense: true,
                   ),
                 ),
@@ -578,9 +579,9 @@ class _QuoteActions extends ConsumerWidget {
                   contentPadding: EdgeInsets.zero,
                   value: confirmed,
                   onChanged: (val) => setDialogState(() => confirmed = val ?? false),
-                  title: const Text(
-                    'I confirm digital acceptance and consent has been received.',
-                    style: TextStyle(fontSize: 12),
+                  title: Text(
+                    l10n.silDigitalConsentConfirm,
+                    style: const TextStyle(fontSize: 12),
                   ),
                   controlAffinity: ListTileControlAffinity.leading,
                 ),
@@ -590,14 +591,14 @@ class _QuoteActions extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(false),
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             ElevatedButton(
               key: const ValueKey('sil_quote_sign_accept_button'),
               onPressed: (confirmed && nameCtrl.text.trim().isNotEmpty)
                   ? () => Navigator.of(ctx).pop(true)
                   : null,
-              child: const Text('Sign & Accept'),
+              child: Text(l10n.silSignAndAccept),
             ),
           ],
         ),
@@ -621,7 +622,7 @@ class _QuoteActions extends ConsumerWidget {
         SnackBar(
           content: Text(
             ok
-                ? '${l10n.silQuoteAccepted} (Service Agreement active)'
+                ? l10n.silQuoteAcceptedServiceAgreement
                 : (error ?? l10n.silQuoteNotAccepted),
           ),
           backgroundColor: ok ? null : Theme.of(context).colorScheme.error,
@@ -1004,6 +1005,11 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
 
     setState(() => _invoicing = true);
     try {
+      final idempotencyKey = buildRocInvoiceIdempotencyKey(
+        rocId: roc.id,
+        from: range.start,
+        to: range.end,
+      );
       final invoice = await ref
           .read(silRepositoryProvider)
           .invoiceRosterOfCare(
@@ -1011,28 +1017,10 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
             from: _formatDate(range.start),
             to: _formatDate(range.end),
             dueDate: dueDate == null ? null : _formatDate(dueDate!),
+            idempotencyKey: idempotencyKey,
           );
       if (!mounted) return;
-      final route = invoice.billing;
-      final routeLabel = route == null
-          ? ''
-          : route.isClaim
-          ? l10n.silRouteNdiaClaim
-          : route.recipientType == 'plan_manager'
-          ? l10n.silRoutePlanManagerPdf
-          : l10n.silRouteParticipantPdf;
-      final replayNote = invoice.isIdempotentReplay == true ? ' (Replayed)' : '';
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${l10n.silInvoiceCreated(invoice.invoiceNumber)}$replayNote$routeLabel'),
-          action: invoice.invoiceId.isEmpty
-              ? null
-              : SnackBarAction(
-                  label: l10n.silViewAction,
-                  onPressed: () => _openInvoice(invoice.invoiceId),
-                ),
-        ),
-      );
+      await _showInvoiceReadyDialog(context, invoice);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1041,6 +1029,105 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
     } finally {
       if (mounted) setState(() => _invoicing = false);
     }
+  }
+
+  /// Milestone 7.3: show the freshly generated invoice with View / Dispatch
+  /// actions. The dispatch action emails the PDF to the recipient resolved on
+  /// the participant's record.
+  Future<void> _showInvoiceReadyDialog(
+    BuildContext context,
+    SILRosterOfCareInvoice invoice,
+  ) async {
+    final invoiceL10n = AppLocalizations.of(context)!;
+    final route = invoice.billing;
+    final routeLabel = route == null
+        ? ''
+        : route.isClaim
+        ? invoiceL10n.silRouteNdiaClaim
+        : route.recipientType == 'plan_manager'
+        ? invoiceL10n.silRoutePlanManagerPdf
+        : invoiceL10n.silRouteParticipantPdf;
+    final replayNote =
+        invoice.isIdempotentReplay == true ? ' · ${invoiceL10n.silReplayBadge}' : '';
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(invoiceL10n.silInvoiceReadyTitle),
+        content: Text(
+          '${invoiceL10n.silInvoiceCreated(invoice.invoiceNumber)}$routeLabel$replayNote',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(invoiceL10n.close),
+          ),
+          if (invoice.invoiceId.isNotEmpty) ...[
+            OutlinedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                _openInvoice(invoice.invoiceId);
+              },
+              child: Text(invoiceL10n.silViewAction),
+            ),
+            FilledButton(
+              key: const ValueKey('sil_invoice_dispatch_button'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                _dispatchInvoice(invoice);
+              },
+              child: Text(invoiceL10n.silDispatchAction),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// Milestone 7.3: dispatch the invoice to the resolved recipient (plan
+  /// manager or participant) via the SIL dispatch endpoint.
+  Future<void> _dispatchInvoice(SILRosterOfCareInvoice invoice) async {
+    final dispatchL10n = AppLocalizations.of(context)!;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(dispatchL10n.silDispatchConfirmTitle(invoice.invoiceNumber)),
+        content: Text(dispatchL10n.silDispatchConfirmBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(dispatchL10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(dispatchL10n.silDispatchSend),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    final result = await ref
+        .read(silRosterOfCareViewModelProvider.notifier)
+        .dispatchInvoice(invoice.invoiceId, dispatchMethod: 'email');
+    if (!mounted) return;
+
+    final messenger = ScaffoldMessenger.of(context);
+    if (result == null) {
+      final error =
+          ref.read(silRosterOfCareViewModelProvider).error ??
+          dispatchL10n.silDispatchError;
+      messenger.showSnackBar(
+        SnackBar(content: Text(dispatchL10n.silDispatchFailed(error))),
+      );
+      return;
+    }
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(dispatchL10n.silDispatchSuccess(invoice.invoiceNumber)),
+      ),
+    );
   }
 
   void _openInvoice(String invoiceId) {

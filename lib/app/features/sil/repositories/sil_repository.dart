@@ -1,6 +1,7 @@
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/features/sil/models/sil_models.dart';
+import 'package:carenest/app/features/sil/utils/roc_invoice_idempotency.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final silRepositoryProvider = Provider<SILRepository>((ref) {
@@ -79,6 +80,61 @@ class SILRepository {
     return SILOccupancy.fromJson(
       Map<String, dynamic>.from(response['data'] as Map),
     );
+  }
+
+  /// Milestone 2.1: Record an absence (hospital, family leave, …).
+  Future<Map<String, dynamic>> recordSilAbsence(
+    String occupancyId, {
+    required DateTime startDate,
+    DateTime? endDate,
+    String? reason,
+    String? notes,
+    int? maxClaimableDays,
+  }) async {
+    final response = await _apiMethod.recordSilAbsence(
+      occupancyId,
+      startDate: silIsoDate(startDate),
+      endDate: endDate == null ? null : silIsoDate(endDate),
+      reason: reason,
+      notes: notes,
+      maxClaimableDays: maxClaimableDays,
+    );
+    _ensureSuccess(response, 'Failed to record absence');
+    final data = response['data'];
+    return data is Map ? Map<String, dynamic>.from(data) : const {};
+  }
+
+  /// Milestone 2.1: End an ongoing absence (or set its return date).
+  Future<Map<String, dynamic>> endSilAbsence(
+    String occupancyId,
+    String absenceId, {
+    DateTime? endDate,
+  }) async {
+    final response = await _apiMethod.endSilAbsence(
+      occupancyId,
+      absenceId,
+      endDate: endDate == null ? null : silIsoDate(endDate),
+    );
+    _ensureSuccess(response, 'Failed to end absence');
+    final data = response['data'];
+    return data is Map ? Map<String, dynamic>.from(data) : const {};
+  }
+
+  /// Milestone 2.1: List absences, optionally filtered. Returns flattened
+  /// absence rows (newest first) exactly as the API serializes them.
+  Future<List<Map<String, dynamic>>> listSilAbsences({
+    String? occupancyId,
+    String? clientId,
+    String? propertyId,
+  }) async {
+    final response = await _apiMethod.listSilAbsences(
+      occupancyId: occupancyId,
+      clientId: clientId,
+      propertyId: propertyId,
+    );
+    _ensureSuccess(response, 'Failed to load absences');
+    final list = (response['data']?['absences'] as List?) ?? const [];
+    return list.whereType<Map>().map(Map<String, dynamic>.from).toList();
   }
 
   Future<SILOccupancy> endOccupancy(

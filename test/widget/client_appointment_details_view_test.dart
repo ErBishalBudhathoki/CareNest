@@ -385,7 +385,7 @@ void main() {
       await _pumpFrames(tester);
 
       // Verify the cancellation dialog appears
-      expect(find.text('Cancellation Reason'), findsOneWidget);
+      expect(find.text('Cancellation reason'), findsOneWidget);
       expect(find.text('Notice (hours)'), findsOneWidget);
       expect(find.text('Cancel'), findsOneWidget);
       expect(find.text('Bill cancellation'), findsOneWidget);
@@ -431,24 +431,24 @@ void main() {
       await _pumpFrames(tester);
 
       // Verify the sleepover check dialog is shown
-      expect(find.text('SLEEPOVER SHIFT CHECK'), findsOneWidget);
+      expect(find.text('Sleepover shift check'), findsOneWidget);
       expect(
         find.text(
           'Were you disturbed or required to perform active work during this sleepover shift?',
         ),
         findsOneWidget,
       );
-      expect(find.text('NO (Quiet)'), findsOneWidget);
-      expect(find.text('YES (Disturbed)'), findsOneWidget);
+      expect(find.text('No (quiet)'), findsOneWidget);
+      expect(find.text('Yes (disturbed)'), findsOneWidget);
 
       // Worker indicates disturbance
-      await tester.tap(find.text('YES (Disturbed)'));
+      await tester.tap(find.text('Yes (disturbed)'));
       await _pumpFrames(tester);
 
       // Enter 90 minutes of disturbance (> 60 minutes threshold for Active Night)
       final durationFieldFinder = find.widgetWithText(
         TextField,
-        'Total Disturbance Duration (Minutes)',
+        'Total disturbance (minutes)',
       );
       expect(durationFieldFinder, findsOneWidget);
       await tester.enterText(durationFieldFinder, '90');
@@ -461,7 +461,7 @@ void main() {
       );
 
       // Confirm disturbance details
-      await tester.tap(find.text('CONFIRM'));
+      await tester.tap(find.text('Confirm'));
       await _pumpFrames(tester);
 
       expect(api.setWorkedTimeCalls, 1);

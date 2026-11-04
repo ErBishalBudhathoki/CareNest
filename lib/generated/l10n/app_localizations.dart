@@ -15829,6 +15829,462 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View File'**
   String get viewFile;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @cancellationBillingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation billing failed.'**
+  String get cancellationBillingFailed;
+
+  /// No description provided for @cancellationInvoiced.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation invoiced.'**
+  String get cancellationInvoiced;
+
+  /// No description provided for @cancellationInvoicedAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation invoiced · {amount}'**
+  String cancellationInvoicedAmount(Object amount);
+
+  /// No description provided for @shiftCancelledNoFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Shift cancelled. No fee applied.'**
+  String get shiftCancelledNoFee;
+
+  /// No description provided for @participantFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Participant'**
+  String get participantFallback;
+
+  /// No description provided for @silInvoiceReadyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'SIL invoice ready'**
+  String get silInvoiceReadyTitle;
+
+  /// No description provided for @silReplayBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Replayed'**
+  String get silReplayBadge;
+
+  /// No description provided for @silDispatchAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispatch'**
+  String get silDispatchAction;
+
+  /// No description provided for @silDispatchConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispatch invoice {number}?'**
+  String silDispatchConfirmTitle(Object number);
+
+  /// No description provided for @silDispatchConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Email this invoice PDF to the recipient on file for this participant?'**
+  String get silDispatchConfirmBody;
+
+  /// No description provided for @silDispatchSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get silDispatchSend;
+
+  /// No description provided for @silDispatchSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice {number} dispatched'**
+  String silDispatchSuccess(Object number);
+
+  /// No description provided for @silDispatchFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispatch failed: {message}'**
+  String silDispatchFailed(Object message);
+
+  /// No description provided for @silDispatchError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown error'**
+  String get silDispatchError;
+
+  /// No description provided for @silAbsencesAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Absences'**
+  String get silAbsencesAction;
+
+  /// No description provided for @silAbsencesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'SIL absences'**
+  String get silAbsencesTitle;
+
+  /// No description provided for @silAbsenceRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Absence recorded'**
+  String get silAbsenceRecorded;
+
+  /// No description provided for @silAbsenceEnded.
+  ///
+  /// In en, this message translates to:
+  /// **'Absence ended'**
+  String get silAbsenceEnded;
+
+  /// No description provided for @silAbsenceSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save absence: {message}'**
+  String silAbsenceSaveFailed(Object message);
+
+  /// No description provided for @silAbsenceLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load absences: {message}'**
+  String silAbsenceLoadFailed(Object message);
+
+  /// No description provided for @silAbsenceEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No absences recorded for this resident.'**
+  String get silAbsenceEmpty;
+
+  /// No description provided for @silAbsenceRecordAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Record absence'**
+  String get silAbsenceRecordAction;
+
+  /// No description provided for @silAbsenceEndAction.
+  ///
+  /// In en, this message translates to:
+  /// **'End absence'**
+  String get silAbsenceEndAction;
+
+  /// No description provided for @silAbsenceReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get silAbsenceReason;
+
+  /// No description provided for @silAbsenceReasonHospital.
+  ///
+  /// In en, this message translates to:
+  /// **'Hospital'**
+  String get silAbsenceReasonHospital;
+
+  /// No description provided for @silAbsenceReasonFamilyLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'Family leave'**
+  String get silAbsenceReasonFamilyLeave;
+
+  /// No description provided for @silAbsenceReasonHoliday.
+  ///
+  /// In en, this message translates to:
+  /// **'Holiday'**
+  String get silAbsenceReasonHoliday;
+
+  /// No description provided for @silAbsenceReasonTransition.
+  ///
+  /// In en, this message translates to:
+  /// **'Transition / moving house'**
+  String get silAbsenceReasonTransition;
+
+  /// No description provided for @silAbsenceStartDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Start date'**
+  String get silAbsenceStartDate;
+
+  /// No description provided for @silAbsenceEndDate.
+  ///
+  /// In en, this message translates to:
+  /// **'End date (optional)'**
+  String get silAbsenceEndDate;
+
+  /// No description provided for @silAbsenceStillAway.
+  ///
+  /// In en, this message translates to:
+  /// **'Still away (no end date yet)'**
+  String get silAbsenceStillAway;
+
+  /// No description provided for @silAbsenceOngoing.
+  ///
+  /// In en, this message translates to:
+  /// **'Ongoing'**
+  String get silAbsenceOngoing;
+
+  /// No description provided for @silAbsenceMaxClaimableDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Max claimable days'**
+  String get silAbsenceMaxClaimableDays;
+
+  /// No description provided for @silAbsenceNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Admitted to hospital — cardiology'**
+  String get silAbsenceNotesHint;
+
+  /// No description provided for @silAbsenceClaimableRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} claimable days left'**
+  String silAbsenceClaimableRemaining(Object days);
+
+  /// No description provided for @silAbsenceEndConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'End this absence?'**
+  String get silAbsenceEndConfirmTitle;
+
+  /// No description provided for @silAbsenceEndConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark the absence as ending today. Remaining claimable days stop accruing against the 28-day leave allowance.'**
+  String get silAbsenceEndConfirmBody;
+
+  /// No description provided for @silAbsenceClaimedDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Claimed {days} of {max} days'**
+  String silAbsenceClaimedDays(Object days, Object max);
+
+  /// No description provided for @silSignIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Record digital e-signature and auto-link the NDIS Service Agreement:'**
+  String get silSignIntro;
+
+  /// No description provided for @silSignatoryName.
+  ///
+  /// In en, this message translates to:
+  /// **'Signatory Name *'**
+  String get silSignatoryName;
+
+  /// No description provided for @silSignatoryNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. John Doe'**
+  String get silSignatoryNameHint;
+
+  /// No description provided for @silSignatoryRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Signatory Role'**
+  String get silSignatoryRole;
+
+  /// No description provided for @silRoleParticipant.
+  ///
+  /// In en, this message translates to:
+  /// **'Participant'**
+  String get silRoleParticipant;
+
+  /// No description provided for @silRoleGuardian.
+  ///
+  /// In en, this message translates to:
+  /// **'Guardian / Nominee'**
+  String get silRoleGuardian;
+
+  /// No description provided for @silRolePlanManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Manager'**
+  String get silRolePlanManager;
+
+  /// No description provided for @silRoleProviderRep.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider authorized rep'**
+  String get silRoleProviderRep;
+
+  /// No description provided for @silBoardLodgingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Board & lodging (\$/week, optional)'**
+  String get silBoardLodgingLabel;
+
+  /// No description provided for @silBoardLodgingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'0.00'**
+  String get silBoardLodgingHint;
+
+  /// No description provided for @silDigitalConsentConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'I confirm digital acceptance and consent has been received.'**
+  String get silDigitalConsentConfirm;
+
+  /// No description provided for @silSignAndAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign & Accept'**
+  String get silSignAndAccept;
+
+  /// No description provided for @silQuoteAcceptedServiceAgreement.
+  ///
+  /// In en, this message translates to:
+  /// **'Quote accepted (Service Agreement active)'**
+  String get silQuoteAcceptedServiceAgreement;
+
+  /// No description provided for @sleepoverCheckTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleepover shift check'**
+  String get sleepoverCheckTitle;
+
+  /// No description provided for @sleepoverDisturbanceQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Were you disturbed or required to perform active work during this sleepover shift?'**
+  String get sleepoverDisturbanceQuestion;
+
+  /// No description provided for @sleepoverNoQuiet.
+  ///
+  /// In en, this message translates to:
+  /// **'No (quiet)'**
+  String get sleepoverNoQuiet;
+
+  /// No description provided for @sleepoverYesDisturbed.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes (disturbed)'**
+  String get sleepoverYesDisturbed;
+
+  /// No description provided for @sleepoverDisturbanceMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Total disturbance (minutes)'**
+  String get sleepoverDisturbanceMinutes;
+
+  /// No description provided for @sleepoverMinutesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 45 or 90'**
+  String get sleepoverMinutesHint;
+
+  /// No description provided for @sleepoverDisturbanceReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason for disturbance'**
+  String get sleepoverDisturbanceReason;
+
+  /// No description provided for @sleepoverDisturbanceReasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Participant assistance, medication'**
+  String get sleepoverDisturbanceReasonHint;
+
+  /// No description provided for @sleepoverConversionWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Disturbance exceeds 60 minutes. Under SCHADS Clause 25.7, this converts to Active Night.'**
+  String get sleepoverConversionWarning;
+
+  /// No description provided for @irregularSilToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Irregular SIL / Crisis Support'**
+  String get irregularSilToggle;
+
+  /// No description provided for @irregularSilToggleSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Flag as unplanned crisis/irregular SIL shift requiring NDIA PACE justification'**
+  String get irregularSilToggleSubtitle;
+
+  /// No description provided for @irregularSilReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Irregular SIL reason'**
+  String get irregularSilReasonLabel;
+
+  /// No description provided for @irregularSilCrisisEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Crisis event'**
+  String get irregularSilCrisisEvent;
+
+  /// No description provided for @irregularSilHospitalDischarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Hospital discharge'**
+  String get irregularSilHospitalDischarge;
+
+  /// No description provided for @irregularSilPrnBehavioral.
+  ///
+  /// In en, this message translates to:
+  /// **'PRN behavioural support'**
+  String get irregularSilPrnBehavioral;
+
+  /// No description provided for @irregularSilUnplannedAbsenceCover.
+  ///
+  /// In en, this message translates to:
+  /// **'Unplanned absence cover'**
+  String get irregularSilUnplannedAbsenceCover;
+
+  /// No description provided for @paceCrisisJustificationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'PACE crisis justification *'**
+  String get paceCrisisJustificationLabel;
+
+  /// No description provided for @paceCrisisJustificationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter clinical / crisis justification notes for NDIA audit'**
+  String get paceCrisisJustificationHint;
+
+  /// No description provided for @paceCrisisJustificationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Crisis justification notes are required for irregular SIL'**
+  String get paceCrisisJustificationRequired;
+
+  /// No description provided for @incidentReportRefLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Incident report reference (optional)'**
+  String get incidentReportRefLabel;
+
+  /// No description provided for @incidentReportRefHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. INC-2026-03-441'**
+  String get incidentReportRefHint;
+
+  /// No description provided for @cancellationReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation reason'**
+  String get cancellationReason;
+
+  /// No description provided for @noticeHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Notice (hours)'**
+  String get noticeHours;
 }
 
 class _AppLocalizationsDelegate

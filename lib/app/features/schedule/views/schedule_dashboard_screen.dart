@@ -745,7 +745,7 @@ class _ScheduleDashboardScreenState
                 children: [
                   Expanded(
                     child: BauhausActionButton(
-                      text: 'Cancel & bill',
+                      text: AppLocalizations.of(context)!.cancelAndBill,
                       icon: Icons.cancel_outlined,
                       variant: BauhausActionVariant.warning,
                       isSmall: true,
@@ -755,7 +755,7 @@ class _ScheduleDashboardScreenState
                   const SizedBox(width: BauhausDesign.space2),
                   Expanded(
                     child: BauhausActionButton(
-                      text: 'Provider travel',
+                      text: AppLocalizations.of(context)!.providerTravel,
                       icon: Icons.route_outlined,
                       variant: BauhausActionVariant.secondary,
                       isSmall: true,
@@ -780,6 +780,7 @@ class _ScheduleDashboardScreenState
   }
 
   Future<void> _showCancellationDialog(ShiftModel shift) async {
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
     final noticeHours = shift.startTime.difference(now).inMinutes / 60.0;
     final noticeController = TextEditingController(
@@ -800,15 +801,15 @@ class _ScheduleDashboardScreenState
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '${shift.clientName ?? shift.clientEmail ?? 'Participant'} · '
+                '${shift.clientName ?? shift.clientEmail ?? l10n.participantFallback} · '
                 '${DateFormat('d MMM, h:mm a').format(shift.startTime)}',
               ),
               SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 initialValue: reason,
                 decoration: InputDecoration(
-                  labelText: 'Cancellation reason',
-                  border: OutlineInputBorder(),
+                  labelText: l10n.cancellationReason,
+                  border: const OutlineInputBorder(),
                 ),
                 items: [
                   DropdownMenuItem(
@@ -830,9 +831,9 @@ class _ScheduleDashboardScreenState
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
-                decoration: const InputDecoration(
-                  labelText: 'Notice (hours)',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.noticeHours,
+                  border: const OutlineInputBorder(),
                 ),
               ),
               if (error != null) ...[
@@ -879,10 +880,13 @@ class _ScheduleDashboardScreenState
                             SnackBar(
                               content: Text(
                                 billable == true
-                                    ? 'Cancellation invoiced'
-                                          '${amount != null ? ' · \$${amount.toStringAsFixed(2)}' : ''}.'
+                                    ? (amount != null
+                                        ? l10n.cancellationInvoicedAmount(
+                                            '\$${amount.toStringAsFixed(2)}',
+                                          )
+                                        : l10n.cancellationInvoiced)
                                     : response['message']?.toString() ??
-                                          'Shift cancelled. No fee applied.',
+                                        l10n.shiftCancelledNoFee,
                               ),
                             ),
                           );
@@ -892,7 +896,7 @@ class _ScheduleDashboardScreenState
                           isSaving = false;
                           error =
                               response['message']?.toString() ??
-                              'Cancellation billing failed.';
+                              l10n.cancellationBillingFailed;
                         });
                       }
                     },
@@ -1757,15 +1761,15 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                     SwitchListTile(
                       contentPadding: EdgeInsets.zero,
                       title: Text(
-                        'Irregular SIL / Crisis Support',
+                        AppLocalizations.of(context)!.irregularSilToggle,
                         style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: _isIrregularSil ? Colors.orange.shade900 : null,
                             ),
                       ),
-                      subtitle: const Text(
-                        'Flag as unplanned crisis/irregular SIL shift requiring NDIA PACE justification',
-                        style: TextStyle(fontSize: 12),
+                      subtitle: Text(
+                        AppLocalizations.of(context)!.irregularSilToggleSubtitle,
+                        style: const TextStyle(fontSize: 12),
                       ),
                       value: _isIrregularSil,
                       onChanged: (val) => setState(() => _isIrregularSil = val),
@@ -1774,26 +1778,32 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                       const SizedBox(height: BauhausDesign.space2),
                       DropdownButtonFormField<String>(
                         value: _irregularSilReason,
-                        decoration: const InputDecoration(
-                          labelText: 'Irregular SIL Reason',
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.irregularSilReasonLabel,
+                          border: const OutlineInputBorder(),
                           isDense: true,
                         ),
-                        items: const [
-                          DropdownMenuItem(value: 'crisis', child: Text('Crisis Event')),
+                        items: [
+                          DropdownMenuItem(
+                            value: 'crisis',
+                            child: Text(AppLocalizations.of(context)!.irregularSilCrisisEvent),
+                          ),
                           DropdownMenuItem(
                             value: 'hospital_discharge',
-                            child: Text('Hospital Discharge'),
+                            child: Text(AppLocalizations.of(context)!.irregularSilHospitalDischarge),
                           ),
                           DropdownMenuItem(
                             value: 'prn_behavioral',
-                            child: Text('PRN Behavioral Support'),
+                            child: Text(AppLocalizations.of(context)!.irregularSilPrnBehavioral),
                           ),
                           DropdownMenuItem(
                             value: 'unplanned_absence_cover',
-                            child: Text('Unplanned Absence Cover'),
+                            child: Text(AppLocalizations.of(context)!.irregularSilUnplannedAbsenceCover),
                           ),
-                          DropdownMenuItem(value: 'other', child: Text('Other')),
+                          DropdownMenuItem(
+                            value: 'other',
+                            child: Text(AppLocalizations.of(context)!.other),
+                          ),
                         ],
                         onChanged: (val) {
                           if (val != null) {
@@ -1804,18 +1814,17 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                       const SizedBox(height: BauhausDesign.space3),
                       TextFormField(
                         controller: _crisisJustificationController,
-                        decoration: const InputDecoration(
-                          labelText: 'PACE Crisis Justification *',
-                          hintText:
-                              'Enter clinical / crisis justification notes for NDIA audit',
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.paceCrisisJustificationLabel,
+                          hintText: AppLocalizations.of(context)!.paceCrisisJustificationHint,
+                          border: const OutlineInputBorder(),
                           isDense: true,
                         ),
                         maxLines: 2,
                         validator: (value) {
                           if (_isIrregularSil &&
                               (value == null || value.trim().isEmpty)) {
-                            return 'Crisis justification notes are required for irregular SIL';
+                            return AppLocalizations.of(context)!.paceCrisisJustificationRequired;
                           }
                           return null;
                         },
@@ -1823,10 +1832,10 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                       const SizedBox(height: BauhausDesign.space3),
                       TextFormField(
                         controller: _incidentReportRefController,
-                        decoration: const InputDecoration(
-                          labelText: 'Incident Report Reference (Optional)',
-                          hintText: 'e.g. INC-2026-03-441',
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.incidentReportRefLabel,
+                          hintText: AppLocalizations.of(context)!.incidentReportRefHint,
+                          border: const OutlineInputBorder(),
                           isDense: true,
                         ),
                       ),

@@ -1193,6 +1193,7 @@ class _ClientAndAppointmentDetailsState
   /// a sleepover shift. If cumulative disturbance exceeds 60 minutes, flags the shift
   /// to convert to Active Night hourly billing and payroll.
   Future<Map<String, dynamic>?> _showSleepoverDisturbanceDialog() async {
+    final l10n = AppLocalizations.of(context)!;
     int durationMinutes = 0;
     final reasonController = TextEditingController();
     bool hadDisturbance = false;
@@ -1209,7 +1210,7 @@ class _ClientAndAppointmentDetailsState
               side: BorderSide(color: BauhausDesign.neutral, width: 2),
             ),
             title: Text(
-              'SLEEPOVER SHIFT CHECK',
+              l10n.sleepoverCheckTitle,
               style: GoogleFonts.oswald(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -1223,7 +1224,7 @@ class _ClientAndAppointmentDetailsState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Were you disturbed or required to perform active work during this sleepover shift?',
+                    l10n.sleepoverDisturbanceQuestion,
                     style: TextStyle(
                       fontSize: 14,
                       color: Theme.of(context).colorScheme.onSurface,
@@ -1246,7 +1247,7 @@ class _ClientAndAppointmentDetailsState
                             ),
                           ),
                           onPressed: () => setDialogState(() => hadDisturbance = false),
-                          child: const Text('NO (Quiet)'),
+                          child: Text(l10n.sleepoverNoQuiet),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -1264,7 +1265,7 @@ class _ClientAndAppointmentDetailsState
                             ),
                           ),
                           onPressed: () => setDialogState(() => hadDisturbance = true),
-                          child: const Text('YES (Disturbed)'),
+                          child: Text(l10n.sleepoverYesDisturbed),
                         ),
                       ),
                     ],
@@ -1273,10 +1274,10 @@ class _ClientAndAppointmentDetailsState
                     const SizedBox(height: 16),
                     TextField(
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: 'Total Disturbance Duration (Minutes)',
-                        border: OutlineInputBorder(),
-                        hintText: 'e.g. 45 or 90',
+                      decoration: InputDecoration(
+                        labelText: l10n.sleepoverDisturbanceMinutes,
+                        border: const OutlineInputBorder(),
+                        hintText: l10n.sleepoverMinutesHint,
                       ),
                       onChanged: (val) {
                         setDialogState(() {
@@ -1287,10 +1288,10 @@ class _ClientAndAppointmentDetailsState
                     const SizedBox(height: 12),
                     TextField(
                       controller: reasonController,
-                      decoration: const InputDecoration(
-                        labelText: 'Reason for Disturbance',
-                        border: OutlineInputBorder(),
-                        hintText: 'e.g. Participant assistance, medication',
+                      decoration: InputDecoration(
+                        labelText: l10n.sleepoverDisturbanceReason,
+                        border: const OutlineInputBorder(),
+                        hintText: l10n.sleepoverDisturbanceReasonHint,
                       ),
                       maxLines: 2,
                     ),
@@ -1302,14 +1303,14 @@ class _ClientAndAppointmentDetailsState
                           color: BauhausDesign.warning.withValues(alpha: 0.15),
                           border: Border.all(color: BauhausDesign.warning),
                         ),
-                        child: const Row(
+                        child: Row(
                           children: [
-                            Icon(Icons.warning_amber_rounded, color: BauhausDesign.warning, size: 20),
-                            SizedBox(width: 8),
+                            const Icon(Icons.warning_amber_rounded, color: BauhausDesign.warning, size: 20),
+                            const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                'Disturbance exceeds 60 minutes. Under SCHADS Clause 25.7, this converts to Active Night.',
-                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                l10n.sleepoverConversionWarning,
+                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ],
@@ -1323,7 +1324,7 @@ class _ClientAndAppointmentDetailsState
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(null),
-                child: const Text('CANCEL'),
+                child: Text(l10n.cancel),
               ),
               FilledButton(
                 onPressed: () {
@@ -1342,7 +1343,7 @@ class _ClientAndAppointmentDetailsState
                     'convertedToActiveNight': isConverted,
                   });
                 },
-                child: const Text('CONFIRM'),
+                child: Text(l10n.confirm),
               ),
             ],
           );
@@ -1359,6 +1360,7 @@ class _ClientAndAppointmentDetailsState
     Map<String, dynamic> shift,
     String shiftId,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
     DateTime shiftStart = now;
     if (shift['date'] != null && shift['startTime'] != null) {
@@ -1395,7 +1397,7 @@ class _ClientAndAppointmentDetailsState
             side: BorderSide(color: BauhausDesign.neutral, width: 2),
           ),
           title: Text(
-            AppLocalizations.of(context)?.cancelAndBill ?? 'Cancel & Bill Shift',
+            l10n.cancelAndBill,
             style: GoogleFonts.oswald(
               fontWeight: FontWeight.bold,
               fontSize: 18,
@@ -1407,24 +1409,24 @@ class _ClientAndAppointmentDetailsState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${clientDetails?['clientFirstName'] ?? 'Participant'} · ${shift['date']} ${shift['startTime']}',
+                '${clientDetails?['clientFirstName'] ?? l10n.participantFallback} · ${shift['date']} ${shift['startTime']}',
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 value: reason,
-                decoration: const InputDecoration(
-                  labelText: 'Cancellation Reason',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.cancellationReason,
+                  border: const OutlineInputBorder(),
                 ),
                 items: [
                   DropdownMenuItem(
                     value: 'NSCC',
-                    child: Text(AppLocalizations.of(context)?.nsccShortNotice ?? 'Short notice (< 7 days)'),
+                    child: Text(l10n.nsccShortNotice),
                   ),
                   DropdownMenuItem(
                     value: 'NSDH',
-                    child: Text(AppLocalizations.of(context)?.nsdhDidNotShow ?? 'No show / access denied'),
+                    child: Text(l10n.nsdhDidNotShow),
                   ),
                 ],
                 onChanged: isSaving
@@ -1435,9 +1437,9 @@ class _ClientAndAppointmentDetailsState
               TextField(
                 controller: noticeController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(
-                  labelText: 'Notice (hours)',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.noticeHours,
+                  border: const OutlineInputBorder(),
                 ),
               ),
               if (error != null) ...[
@@ -1452,7 +1454,7 @@ class _ClientAndAppointmentDetailsState
           actions: [
             TextButton(
               onPressed: isSaving ? null : () => Navigator.of(dialogContext).pop(false),
-              child: Text(AppLocalizations.of(context)?.cancel ?? 'Cancel'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: isSaving
@@ -1494,7 +1496,7 @@ class _ClientAndAppointmentDetailsState
                           setDialogState(() {
                             isSaving = false;
                             error = response['message']?.toString() ??
-                                'Cancellation billing failed.';
+                                l10n.cancellationBillingFailed;
                           });
                         }
                       } catch (e) {
@@ -1504,7 +1506,7 @@ class _ClientAndAppointmentDetailsState
                         });
                       }
                     },
-              child: Text(AppLocalizations.of(context)?.billCancellation ?? 'Bill Cancellation'),
+              child: Text(l10n.billCancellation),
             ),
           ],
         ),

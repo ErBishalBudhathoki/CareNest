@@ -4432,6 +4432,65 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
+  /// Milestone 2.1: Record an absence (hospital, family leave, …) for a SIL
+  /// occupancy. Dates are sent as ISO 8601 date strings.
+  Future<Map<String, dynamic>> recordSilAbsence(
+    String occupancyId, {
+    required String startDate,
+    String? endDate,
+    String? reason,
+    String? notes,
+    int? maxClaimableDays,
+  }) async {
+    try {
+      final body = <String, dynamic>{
+        'startDate': startDate,
+        'endDate': ?endDate,
+        'reason': ?reason,
+        'notes': ?notes,
+        'maxClaimableDays': ?maxClaimableDays,
+      };
+      return await post('sil/occupancy/$occupancyId/absences', body: body);
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Milestone 2.1: End an ongoing absence (or update its return date).
+  Future<Map<String, dynamic>> endSilAbsence(
+    String occupancyId,
+    String absenceId, {
+    String? endDate,
+  }) async {
+    try {
+      final body = <String, dynamic>{'endDate': ?endDate};
+      return await put('sil/occupancy/$occupancyId/absences/$absenceId', body: body);
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Milestone 2.1: List absences, optionally filtered by occupancy, client
+  /// or property. Returns one flattened row per absence.
+  Future<Map<String, dynamic>> listSilAbsences({
+    String? occupancyId,
+    String? clientId,
+    String? propertyId,
+  }) async {
+    try {
+      final params = <String, String>{};
+      if (occupancyId != null) params['occupancyId'] = occupancyId;
+      if (clientId != null) params['clientId'] = clientId;
+      if (propertyId != null) params['propertyId'] = propertyId;
+      final query = params.isEmpty
+          ? ''
+          : '?${params.entries.map((e) => '${e.key}=${Uri.encodeQueryComponent(e.value)}').join('&')}';
+      return await get('sil/absences$query');
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
   Future<Map<String, dynamic>> getSilRatioRules() async {
     try {
       return await get('sil/ratio-rules');

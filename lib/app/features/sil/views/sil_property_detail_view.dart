@@ -6,6 +6,7 @@ import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:carenest/app/features/sil/models/sil_models.dart';
 import 'package:carenest/app/features/sil/repositories/sil_repository.dart';
+import 'package:carenest/app/features/sil/views/sil_absence_sheet.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
@@ -185,14 +186,46 @@ class _SILPropertyDetailViewState extends ConsumerState<SILPropertyDetailView> {
                 : AppLocalizations.of(context)!.silPropertyVacant,
           ),
           trailing: occupied
-              ? TextButton(
-                  onPressed: () => _endOccupancy(occupancy.first),
-                  child: Text(AppLocalizations.of(context)!.silPropertyVacate),
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      tooltip: AppLocalizations.of(context)!.silAbsencesAction,
+                      icon: const Icon(Icons.local_hospital_outlined),
+                      onPressed: () => _showAbsences(
+                        context,
+                        occupancy.first,
+                        residentLabel: room.label.isNotEmpty
+                            ? room.label
+                            : room.roomId,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => _endOccupancy(occupancy.first),
+                      child: Text(AppLocalizations.of(context)!.silPropertyVacate),
+                    ),
+                  ],
                 )
               : null,
         ),
       );
     }).toList();
+  }
+
+  void _showAbsences(
+    BuildContext context,
+    SILOccupancy occupancy, {
+    required String residentLabel,
+  }) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (_) => SilAbsenceSheet(
+        occupancyId: occupancy.id,
+        residentLabel: residentLabel,
+      ),
+    );
   }
 
   Future<void> _endOccupancy(SILOccupancy occupancy) async {
