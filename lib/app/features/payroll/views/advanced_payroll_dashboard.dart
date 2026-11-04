@@ -266,51 +266,33 @@ class _AdvancedPayrollDashboardState
     final textTheme = BauhausDesign.getTextTheme(context);
 
     return AppBar(
-      foregroundColor: Theme.of(context).colorScheme.onSecondary,
-      systemOverlayStyle: SystemUiOverlayStyle.light,
-      backgroundColor: BauhausDesign.success,
-      elevation: 0,
-      titleSpacing: 0,
       title: Text(
         'ADVANCED PAYROLL',
         style: textTheme.titleLarge?.copyWith(
-          color: Theme.of(context).colorScheme.onSecondary,
+          color: Theme.of(context).colorScheme.onPrimary,
           fontWeight: FontWeight.w800,
           letterSpacing: 0.8,
+        ),
+      ),
+      centerTitle: true,
+      backgroundColor: BauhausDesign.primary,
+      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      elevation: 0,
+      shape: Border(
+        bottom: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
         ),
       ),
       leading: IconButton(
         icon: Icon(
           Icons.arrow_back,
-          color: Theme.of(context).colorScheme.onSecondary,
+          color: Theme.of(context).colorScheme.onPrimary,
         ),
         onPressed: () => Navigator.pop(context),
-      ),
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(8),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 3,
-              child: Container(
-                height: 8,
-                color: Theme.of(context).colorScheme.onSecondary,
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: Container(height: 8, color: BauhausDesign.accent),
-            ),
-            Expanded(
-              flex: 3,
-              child: Container(height: 8, color: BauhausDesign.primary),
-            ),
-            Expanded(
-              flex: 2,
-              child: Container(height: 8, color: BauhausDesign.secondary),
-            ),
-          ],
-        ),
       ),
     );
   }

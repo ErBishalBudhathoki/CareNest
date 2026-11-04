@@ -43,22 +43,28 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: colorScheme.secondary,
-        foregroundColor: colorScheme.onSecondary,
+        title: Text(
+          'Report Builder',
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
-        title: Text(
-          'Report Builder',
-          style: TextStyle(
-            color: colorScheme.onSecondary,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: colorScheme.onSecondary),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -201,11 +207,15 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
                   children: [
                     Icon(icon, size: 20, color: BauhausDesign.neutral),
                     const SizedBox(width: 12),
-                    Text(
-                      name,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Theme.of(context).colorScheme.onSurface,
+                    Expanded(
+                      child: Text(
+                        name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
                     ),
                   ],

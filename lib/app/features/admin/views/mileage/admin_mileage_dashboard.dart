@@ -24,28 +24,29 @@ class AdminMileageDashboard extends ConsumerWidget {
         title: Text(
           'MILEAGE ADMIN',
           style: textTheme.titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onInverseSurface,
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
           ),
         ),
-        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
-        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(2),
-          child: Container(
-            color: Theme.of(context).colorScheme.outline,
-            height: 2,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
           ),
         ),
         iconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.onInverseSurface,
+          color: Theme.of(context).colorScheme.onPrimary,
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.settings),
+            icon: Icon(Icons.settings, color: Theme.of(context).colorScheme.onPrimary),
             onPressed: () {
               Navigator.push(
                 context,

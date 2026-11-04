@@ -141,25 +141,34 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: colorScheme.secondary,
-        foregroundColor: colorScheme.onSecondary,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        scrolledUnderElevation: 0,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
         title: Text(
           isViewingChat
               ? 'SECURE CONVERSATION AUDIT'
               : 'SECURE MESSAGING LEDGER',
-          style: GoogleFonts.oswald(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: colorScheme.onSecondary,
-            letterSpacing: 1.1,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: colorScheme.onSurface,
+            width: 2,
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: colorScheme.onSecondary),
+          icon: Icon(
+            Icons.arrow_back,
+            color: colorScheme.onPrimary,
+            size: 24,
+          ),
           onPressed: () {
             if (isViewingChat) {
               ref
@@ -175,17 +184,10 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
             onPressed: isViewingChat
                 ? () => _openConversation(state.activeConversation!)
                 : _loadConversations,
-            icon: Icon(Icons.refresh, color: colorScheme.onSecondary),
+            icon: Icon(Icons.refresh, color: colorScheme.onPrimary),
             tooltip: 'Refresh',
           ),
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.5),
-          child: Container(
-            color: Theme.of(context).colorScheme.outline,
-            height: 1.5,
-          ),
-        ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

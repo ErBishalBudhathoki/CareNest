@@ -339,21 +339,28 @@ class _ClientPricingReviewViewState
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: BauhausDesign.primary,
-      foregroundColor: Theme.of(context).colorScheme.onPrimary,
-      systemOverlayStyle: SystemUiOverlayStyle.light,
-      surfaceTintColor: Colors.transparent,
-      scrolledUnderElevation: 0,
-      elevation: 0,
       title: Text(
         AppLocalizations.of(context)!.clientPricingReviewTitle,
         style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
           color: Theme.of(context).colorScheme.onPrimary,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+      centerTitle: true,
+      backgroundColor: BauhausDesign.primary,
+      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      elevation: 0,
+      shape: Border(
+        bottom: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
         ),
       ),
       leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios_new_rounded),
+        icon: Icon(Icons.arrow_back),
         onPressed: () => Navigator.of(context).pop(),
         tooltip: AppLocalizations.of(context)!.backAction,
         color: Theme.of(context).colorScheme.onPrimary,
@@ -366,13 +373,6 @@ class _ClientPricingReviewViewState
           color: Theme.of(context).colorScheme.onPrimary,
         ),
       ],
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(1),
-        child: Container(
-          color: Theme.of(context).colorScheme.onSurface,
-          height: 1,
-        ),
-      ),
     );
   }
 
@@ -1289,17 +1289,24 @@ class _ClientPricingDetailPageState
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.primary,
-        surfaceTintColor: Colors.transparent,
-        scrolledUnderElevation: 0,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        elevation: 0,
         title: Text(
           clientName,
-          style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
           ),
         ),
         actions: [
@@ -1310,13 +1317,6 @@ class _ClientPricingDetailPageState
             color: Theme.of(context).colorScheme.onPrimary,
           ),
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(
-            color: Theme.of(context).colorScheme.onSurface,
-            height: 1,
-          ),
-        ),
       ),
       body: _isLoading
           ? const Center(

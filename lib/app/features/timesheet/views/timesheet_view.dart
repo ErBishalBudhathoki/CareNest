@@ -8,6 +8,7 @@ import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/shared/widgets/offline_banner.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -132,76 +133,63 @@ class _TimesheetViewState extends ConsumerState<TimesheetView> {
     WidgetRef ref,
     String email,
   ) {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(kToolbarHeight),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          border: Border(
-            bottom: BorderSide(
-              color: Theme.of(context).colorScheme.outline,
-              width: 2,
-            ),
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: BauhausDesign.space4,
-            ),
-            child: Row(
-              children: [
-                BauhausIconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icons.arrow_back,
-                  variant: BauhausActionVariant.ghost,
-                ),
-                const SizedBox(width: BauhausDesign.space2),
-                Text(
-                  AppLocalizations.of(context)!.timesheetTitle,
-                  style: BauhausDesign.getTextTheme(context).displaySmall
-                      ?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                ),
-                const Spacer(),
-                BauhausIconButton(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => TimesheetHistoryView(email: email),
-                    ),
-                  ),
-                  icon: Icons.history_rounded,
-                  variant: BauhausActionVariant.ghost,
-                  tooltip: AppLocalizations.of(context)!.historyTitle,
-                ),
-                BauhausIconButton(
-                  onPressed: () async {
-                    final viewModel = ref.read(
-                      timesheetViewModelProvider(email).notifier,
-                    );
-                    final path = await viewModel.exportTimesheet();
-                    if (!context.mounted) return;
-                    final l10n = AppLocalizations.of(context)!;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          path == null
-                              ? l10n.timesheetExportFailed
-                              : l10n.timesheetExportSuccess(path),
-                        ),
-                      ),
-                    );
-                  },
-                  icon: Icons.file_download_outlined,
-                  variant: BauhausActionVariant.ghost,
-                  tooltip: AppLocalizations.of(context)!.exportAction,
-                ),
-              ],
-            ),
-          ),
+    return AppBar(
+      title: Text(
+        AppLocalizations.of(context)!.timesheetTitle,
+        style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+          color: Theme.of(context).colorScheme.onPrimary,
+          fontWeight: FontWeight.w800,
         ),
       ),
+      centerTitle: true,
+      backgroundColor: BauhausDesign.primary,
+      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      elevation: 0,
+      shape: Border(
+        bottom: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
+      ),
+      leading: IconButton(
+        onPressed: () => Navigator.pop(context),
+        icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
+      ),
+      actions: [
+        IconButton(
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => TimesheetHistoryView(email: email),
+            ),
+          ),
+          icon: Icon(Icons.history_rounded, color: Theme.of(context).colorScheme.onPrimary),
+          tooltip: AppLocalizations.of(context)!.historyTitle,
+        ),
+        IconButton(
+          onPressed: () async {
+            final viewModel = ref.read(
+              timesheetViewModelProvider(email).notifier,
+            );
+            final path = await viewModel.exportTimesheet();
+            if (!context.mounted) return;
+            final l10n = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  path == null
+                      ? l10n.timesheetExportFailed
+                      : l10n.timesheetExportSuccess(path),
+                ),
+              ),
+            );
+          },
+          icon: Icon(Icons.file_download_outlined, color: Theme.of(context).colorScheme.onPrimary),
+          tooltip: AppLocalizations.of(context)!.exportAction,
+        ),
+      ],
     );
   }
 }

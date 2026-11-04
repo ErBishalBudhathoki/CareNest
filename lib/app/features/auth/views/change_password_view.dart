@@ -230,7 +230,7 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
         leading: Navigator.of(context).canPop()
             ? IconButton(
                 icon: Icon(
-                  Icons.arrow_back_ios_new,
+                  Icons.arrow_back,
                   color: _colorScheme.surface,
                 ),
                 onPressed: () => Navigator.of(context).pop(),

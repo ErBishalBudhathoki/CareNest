@@ -1349,7 +1349,8 @@ class _ClientAndAppointmentDetailsState
         },
       ),
     );
-    reasonController.dispose();
+    // Note: Do not manually call reasonController.dispose() synchronously here;
+    // the dialog route exit transition may still be active and rebuild the TextField.
     return result;
   }
 
@@ -1509,7 +1510,8 @@ class _ClientAndAppointmentDetailsState
         ),
       ),
     );
-    noticeController.dispose();
+    // Note: Do not manually call noticeController.dispose() synchronously here;
+    // the dialog route exit transition may still be active and rebuild the TextField.
   }
 
   Future<void> _showSwapOfferDialog(Map<String, dynamic> shift) async {
@@ -3145,49 +3147,31 @@ class _ClientAndAppointmentDetailsState
           appBar: AppBar(
             title: Text(
               'CLIENT DETAILS',
-              style: GoogleFonts.oswald(
-                color: Theme.of(context).colorScheme.onSecondary,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
+              style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                color: Theme.of(context).colorScheme.onPrimary,
+                fontWeight: FontWeight.w800,
                 letterSpacing: 1.5,
               ),
             ),
-            backgroundColor: BauhausDesign.secondary,
-            foregroundColor: Theme.of(context).colorScheme.onSecondary,
+            backgroundColor: BauhausDesign.primary,
+            foregroundColor: Theme.of(context).colorScheme.onPrimary,
             systemOverlayStyle: SystemUiOverlayStyle.light,
             scrolledUnderElevation: 0,
             surfaceTintColor: Colors.transparent,
             elevation: 0,
             centerTitle: true,
-            leading: Padding(
-              padding: const EdgeInsets.all(BauhausDesign.space2),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.outline,
-                    width: 1.5,
-                  ),
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Icon(
-                      Icons.arrow_back,
-                      color: Theme.of(context).colorScheme.outline,
-                      size: 20,
-                    ),
-                  ),
-                ),
+            shape: Border(
+              bottom: BorderSide(
+                color: Theme.of(context).colorScheme.onSurface,
+                width: 2,
               ),
             ),
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(2),
-              child: Container(
-                color: Theme.of(context).colorScheme.outline,
-                height: 2,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: Theme.of(context).colorScheme.onPrimary,
               ),
+              onPressed: () => Navigator.of(context).pop(),
             ),
           ),
           body: isInitCompleted

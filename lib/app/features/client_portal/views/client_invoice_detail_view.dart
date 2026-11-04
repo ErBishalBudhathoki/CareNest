@@ -121,27 +121,34 @@ class _ClientInvoiceDetailViewState
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: colorScheme.secondary,
-        foregroundColor: colorScheme.onSecondary,
+        backgroundColor: BauhausDesign.primary,
+        centerTitle: true,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: colorScheme.onSecondary),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'INVOICE DETAIL',
-          style: GoogleFonts.oswald(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: colorScheme.onSecondary,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            fontWeight: FontWeight.w800,
+            color: Theme.of(context).colorScheme.onPrimary,
             letterSpacing: 1,
           ),
         ),
-        centerTitle: true,
-        shape: Border(bottom: BorderSide(color: colorScheme.outline, width: 2)),
       ),
       body: invoiceState.when(
         data: (invoice) =>
@@ -254,7 +261,7 @@ class _ClientInvoiceDetailViewState
                   invoice.invoiceNumber,
                   style: GoogleFonts.oswald(
                     fontSize: 22,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w800,
                     color: colorScheme.onInverseSurface,
                     letterSpacing: 0.5,
                   ),
@@ -315,7 +322,7 @@ class _ClientInvoiceDetailViewState
                   '\$${total.toStringAsFixed(2)}',
                   style: GoogleFonts.oswald(
                     fontSize: 40,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w800,
                     color: colorScheme.onInverseSurface,
                   ),
                 ),
@@ -721,7 +728,7 @@ class _ClientInvoiceDetailViewState
                 style: BauhausDesign.getTextTheme(context).labelMedium
                     ?.copyWith(
                       color: BauhausDesign.secondary,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w800,
                     ),
               ),
             ),
@@ -765,7 +772,7 @@ class _ClientInvoiceDetailViewState
             '\$${total.toStringAsFixed(2)}',
             style: GoogleFonts.oswald(
               fontSize: 18,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w800,
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
@@ -1026,7 +1033,7 @@ class _ClientInvoiceDetailViewState
         title: Text(
           'Dispute Invoice',
           style: GoogleFonts.oswald(
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w800,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
@@ -1428,27 +1435,34 @@ class _SecureReceiptViewerPageState
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: colorScheme.secondary,
-        foregroundColor: colorScheme.onSecondary,
+        backgroundColor: BauhausDesign.primary,
+        centerTitle: true,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: colorScheme.onSecondary),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'RECEIPT',
-          style: GoogleFonts.oswald(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: colorScheme.onSecondary,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            fontWeight: FontWeight.w800,
+            color: Theme.of(context).colorScheme.onPrimary,
             letterSpacing: 1,
           ),
         ),
-        centerTitle: true,
-        shape: Border(bottom: BorderSide(color: colorScheme.outline, width: 2)),
       ),
       body: _buildBody(context),
     );

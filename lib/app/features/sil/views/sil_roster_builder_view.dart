@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
@@ -188,15 +190,59 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
     }
   }
 
-  Future<void> _publish() async {
+  // Milestone 6.2: Ratio Breach Guard & Enforcement handling
+  Future<void> _publish({bool? forceOverride}) async {
     final roster = _roster;
     if (roster == null) return;
     try {
-      final published = await _repo.publishRoster(roster.id);
+      final published = await _repo.publishRoster(
+        roster.id,
+        blockOnRatioBreach: forceOverride == true ? false : null,
+      );
       if (mounted) setState(() => _roster = published);
-    } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('SIL Roster published successfully.')),
+        );
+      }
+    } catch (e) {
+      final errStr = e.toString();
+      if (mounted) {
+        if (errStr.contains('RATIO_BREACH') || errStr.toLowerCase().contains('understaffed')) {
+          showDialog<void>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Row(
+                children: [
+                  Icon(Icons.warning_amber_rounded, color: Colors.orange),
+                  SizedBox(width: 8),
+                  Text('Ratio Breach Guard'),
+                ],
+              ),
+              content: const Text(
+                'This roster has understaffed shifts. Organization ratio policy prohibits publishing rosters that do not meet mandatory participant-to-staff ratios.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: const Text('Back to Roster'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                    _publish(forceOverride: true);
+                  },
+                  child: const Text(
+                    'Override & Publish',
+                    style: TextStyle(color: Colors.orange),
+                  ),
+                ),
+              ],
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+        }
       }
     }
   }
@@ -207,12 +253,41 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
     final roster = _roster;
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.silRosterTitle(widget.propertyName)),
+        title: Text(
+          l10n.silRosterTitle(widget.propertyName),
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
+        ),
         actions: [
           if (roster != null && roster.status == 'draft')
             TextButton(
               onPressed: _publish,
-              child: Text(l10n.silRosterPublish),
+              child: Text(
+                l10n.silRosterPublish,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
         ],
       ),

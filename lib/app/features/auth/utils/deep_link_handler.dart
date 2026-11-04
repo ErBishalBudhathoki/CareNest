@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:carenest/app/core/utils/navigation.dart';
+import 'package:carenest/app/features/auth/utils/deep_link_state.dart';
 import 'package:carenest/app/features/auth/views/change_password_view.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -68,33 +69,37 @@ class DeepLinkHandler {
       return false;
     }
 
+    bool handled = false;
+
     // Handle custom scheme links (com.bishal.invoice://signup?orgCode=...)
     if (uri.scheme == _customScheme) {
-      return _handleCustomSchemeLink(uri);
+      handled = _handleCustomSchemeLink(uri);
+    } else {
+      final firebaseAction = _extractFirebaseAction(uri);
+      if (firebaseAction != null) {
+        if (firebaseAction.key == _firebaseResetPasswordMode) {
+          handled = _navigateToFirebaseResetPassword(firebaseAction.value);
+        } else if (firebaseAction.key == _firebaseVerifyEmailMode) {
+          handled = _handleFirebaseEmailVerification(firebaseAction.value);
+        }
+      } else if ((uri.scheme == 'https' || uri.scheme == 'http') &&
+          _supportedDomains.contains(uri.host) &&
+          _isSignupPath(uri)) {
+        final orgCode = uri.queryParameters['orgCode'];
+
+        if (orgCode != null && orgCode.isNotEmpty) {
+          // Navigate to signup page with pre-filled organization code
+          handled = _navigateToSignupWithOrgCode(orgCode);
+        } else {
+          // Navigate to regular signup page
+          handled = _navigateToSignup();
+        }
+      }
     }
 
-    final firebaseAction = _extractFirebaseAction(uri);
-    if (firebaseAction != null) {
-      if (firebaseAction.key == _firebaseResetPasswordMode) {
-        return _navigateToFirebaseResetPassword(firebaseAction.value);
-      } else if (firebaseAction.key == _firebaseVerifyEmailMode) {
-        return _handleFirebaseEmailVerification(firebaseAction.value);
-      }
-      return false;
-    }
-
-    // Handle universal/app links (https://bishalbudhathoki.com/signup?orgCode=...)
-    if ((uri.scheme == 'https' || uri.scheme == 'http') &&
-        _supportedDomains.contains(uri.host) &&
-        _isSignupPath(uri)) {
-      final orgCode = uri.queryParameters['orgCode'];
-
-      if (orgCode != null && orgCode.isNotEmpty) {
-        // Navigate to signup page with pre-filled organization code
-        return _navigateToSignupWithOrgCode(orgCode);
-      }
-      // Navigate to regular signup page
-      return _navigateToSignup();
+    if (handled) {
+      DeepLinkState.handled = true;
+      return true;
     }
 
     debugPrint('DeepLinkHandler: ignoring unrecognised link "$rawLink"');
@@ -125,6 +130,36 @@ class DeepLinkHandler {
       }
       // Navigate to regular signup page
       return _navigateToSignup();
+    }
+
+    // Check if it matches a known registered app route
+    final candidates = [
+      uri.path,
+      '/${uri.host}${uri.path}'.replaceAll('//', '/'),
+      '/${uri.host}',
+    ];
+    final knownRoutes = AppPages.buildRoutes();
+    for (final candidate in candidates) {
+      if (candidate.isNotEmpty &&
+          candidate != '/' &&
+          candidate != Routes.login &&
+          candidate != Routes.splashScreen &&
+          knownRoutes.containsKey(candidate)) {
+        final navState = navigatorKey.currentState;
+        if (navState != null) {
+          debugPrint('DeepLinkHandler: routing to $candidate');
+          navState.pushNamed(candidate);
+          return true;
+        } else {
+          debugPrint(
+            'DeepLinkHandler: navigator not ready yet, scheduling route to $candidate',
+          );
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            navigatorKey.currentState?.pushNamed(candidate);
+          });
+          return true;
+        }
+      }
     }
 
     debugPrint('DeepLinkHandler: no custom-scheme action for "$uri"');
@@ -175,9 +210,15 @@ class DeepLinkHandler {
     final navState = navigatorKey.currentState;
     if (navState == null) {
       debugPrint(
-        'DeepLinkHandler: navigator not ready, cannot route to signup yet',
+        'DeepLinkHandler: navigator not ready, scheduling route to signup with orgCode',
       );
-      return false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        navigatorKey.currentState?.pushNamed(
+          Routes.signup,
+          arguments: {'prefilledOrgCode': orgCode},
+        );
+      });
+      return true;
     }
     navState.pushNamed(Routes.signup, arguments: {'prefilledOrgCode': orgCode});
     return true;
@@ -188,9 +229,12 @@ class DeepLinkHandler {
     final navState = navigatorKey.currentState;
     if (navState == null) {
       debugPrint(
-        'DeepLinkHandler: navigator not ready, cannot route to signup yet',
+        'DeepLinkHandler: navigator not ready, scheduling route to signup',
       );
-      return false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        navigatorKey.currentState?.pushNamed(Routes.signup);
+      });
+      return true;
     }
     navState.pushNamed(Routes.signup);
     return true;

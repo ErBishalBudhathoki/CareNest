@@ -43,27 +43,33 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: colorScheme.secondary,
-        foregroundColor: colorScheme.onSecondary,
+        title: Text(
+          'Quality Assurance',
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
-        title: Text(
-          'Quality Assurance',
-          style: TextStyle(
-            color: colorScheme.onSecondary,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: colorScheme.onSecondary),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh, color: colorScheme.onSecondary),
+            icon: Icon(Icons.refresh, color: Theme.of(context).colorScheme.onPrimary),
             onPressed: _loadData,
           ),
         ],

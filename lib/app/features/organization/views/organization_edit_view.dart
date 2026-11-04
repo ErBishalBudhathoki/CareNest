@@ -452,48 +452,48 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        foregroundColor: colorScheme.onSecondary,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        backgroundColor: colorScheme.secondary,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.close, color: colorScheme.onSecondary),
-          onPressed: () => Navigator.pop(context),
-        ),
         title: Text(
           l10n.editDetailsTitle.toUpperCase(),
-          style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-            color: colorScheme.onSecondary,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 1.0,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
           ),
         ),
         centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.close, color: Theme.of(context).colorScheme.onPrimary),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           TextButton.icon(
             onPressed: _loading ? null : _saveOrganization,
             icon: Icon(
               Icons.check_circle_outline,
-              color: colorScheme.onSecondary,
+              color: Theme.of(context).colorScheme.onPrimary,
               size: 18,
             ),
             label: Text(
               l10n.saveChanges.toUpperCase(),
               style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: colorScheme.onSecondary,
+                color: Theme.of(context).colorScheme.onPrimary,
                 fontWeight: FontWeight.w900,
               ),
             ),
           ),
-          SizedBox(width: BauhausDesign.space1),
+          const SizedBox(width: BauhausDesign.space1),
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(
-            height: 1,
-            color: Theme.of(context).colorScheme.outline,
-          ),
-        ),
       ),
       body: _loading
           ? const Center(child: BauhausLoadingState())

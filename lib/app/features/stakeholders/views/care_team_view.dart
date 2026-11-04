@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 import 'package:carenest/app/features/stakeholders/models/stakeholder_models.dart';
 import 'package:carenest/app/features/stakeholders/viewmodels/stakeholder_viewmodel.dart';
@@ -50,7 +52,28 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
     final state = ref.watch(careTeamViewModelProvider(widget.clientId));
 
     return Scaffold(
-      appBar: AppBar(title: Text('Care team · ${widget.clientName}')),
+      appBar: AppBar(
+        title: Text(
+          'Care team · ${widget.clientName}',
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
+      ),
       body: state.isLoading && state.careTeam == null
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(

@@ -7,6 +7,23 @@ final silRepositoryProvider = Provider<SILRepository>((ref) {
   return SILRepository(ref.watch(apiMethodProvider));
 });
 
+/// Thrown when an operation (like activating an RoC) is blocked by the Consent Gate
+/// because no active signed NDIS Service Agreement covers the participant.
+class SILConsentRequiredException implements Exception {
+  final String message;
+  final String? code;
+  final Map<String, dynamic>? data;
+
+  const SILConsentRequiredException({
+    required this.message,
+    this.code = 'SERVICE_AGREEMENT_REQUIRED',
+    this.data,
+  });
+
+  @override
+  String toString() => message;
+}
+
 /// Thin repository over the `/api/sil/*` endpoints (Phase 4).
 class SILRepository {
   SILRepository(this._apiMethod);
@@ -131,8 +148,9 @@ class SILRepository {
     );
   }
 
-  Future<SILRoster> publishRoster(String id) async {
-    final response = await _apiMethod.publishSilRoster(id);
+  // Milestone 6.2: Supports ratio enforcement parameter (block on ratio breach)
+  Future<SILRoster> publishRoster(String id, {bool? blockOnRatioBreach}) async {
+    final response = await _apiMethod.publishSilRoster(id, blockOnRatioBreach: blockOnRatioBreach);
     _ensureSuccess(response, 'Failed to publish roster');
     return SILRoster.fromJson(
       Map<String, dynamic>.from(response['data'] as Map),
@@ -159,8 +177,9 @@ class SILRepository {
     );
   }
 
-  Future<SILQuote> acceptQuote(String id) async {
-    final response = await _apiMethod.acceptSilQuote(id);
+  // Milestone 6.1: Passes digital e-signature payload on accept
+  Future<SILQuote> acceptQuote(String id, {Map<String, dynamic>? signatureData}) async {
+    final response = await _apiMethod.acceptSilQuote(id, body: signatureData);
     _ensureSuccess(response, 'Failed to accept quote');
     return SILQuote.fromJson(
       Map<String, dynamic>.from(response['data'] as Map),
@@ -201,18 +220,36 @@ class SILRepository {
     required String from,
     required String to,
     String? dueDate,
+    String? idempotencyKey,
   }) async {
     final response = await _apiMethod.generateSilRosterOfCareInvoice(
       id,
       from: from,
       to: to,
       dueDate: dueDate,
+      idempotencyKey: idempotencyKey,
     );
     _ensureSuccess(response, 'Failed to generate invoice');
     final data = response['data'];
     return SILRosterOfCareInvoice.fromJson(
       data is Map ? Map<String, dynamic>.from(data) : const {},
     );
+  }
+
+  /// Milestone 7.3: Dispatch a SIL invoice PDF to the plan manager or participant.
+  Future<Map<String, dynamic>> dispatchInvoice(
+    String id, {
+    String? dispatchMethod,
+    String? recipientEmail,
+  }) async {
+    final response = await _apiMethod.dispatchSilInvoice(
+      id,
+      dispatchMethod: dispatchMethod,
+      recipientEmail: recipientEmail,
+    );
+    _ensureSuccess(response, 'Failed to dispatch invoice');
+    final data = response['data'];
+    return data is Map ? Map<String, dynamic>.from(data) : const {};
   }
 
   /// Materialise a roster of care's agreed weekly pattern into that week's
@@ -234,8 +271,75 @@ class SILRepository {
     );
   }
 
+  /// Update a roster of care (e.g. activating from draft to active, or applying emergency consent bypass).
+  Future<SILRosterOfCare> updateRosterOfCare(
+    String id,
+    Map<String, dynamic> body,
+  ) async {
+    final response = await _apiMethod.updateSilRosterOfCare(id, body);
+    _ensureSuccess(response, 'Failed to update roster of care');
+    final data = response['data'];
+    return SILRosterOfCare.fromJson(Map<String, dynamic>.from(data as Map));
+  }
+
+  // ---- Service agreements (Milestone 4.2 Consent Gate) ----
+
+  Future<List<SILServiceAgreement>> getServiceAgreements({
+    String? clientId,
+    String? status,
+  }) async {
+    final response = await _apiMethod.getSilServiceAgreements(
+      clientId: clientId,
+      status: status,
+    );
+    _ensureSuccess(response, 'Failed to load service agreements');
+    final list = (response['data']?['agreements'] as List?) ?? const [];
+    return list
+        .whereType<Map>()
+        .map((e) => SILServiceAgreement.fromJson(Map<String, dynamic>.from(e)))
+        .toList();
+  }
+
+  Future<SILServiceAgreement> createServiceAgreement(
+    Map<String, dynamic> body,
+  ) async {
+    final response = await _apiMethod.createSilServiceAgreement(body);
+    _ensureSuccess(response, 'Failed to create service agreement');
+    return SILServiceAgreement.fromJson(
+      Map<String, dynamic>.from(response['data'] as Map),
+    );
+  }
+
+  Future<SILServiceAgreement> signServiceAgreement(
+    String id,
+    Map<String, dynamic> body,
+  ) async {
+    final response = await _apiMethod.signSilServiceAgreement(id, body);
+    _ensureSuccess(response, 'Failed to sign service agreement');
+    return SILServiceAgreement.fromJson(
+      Map<String, dynamic>.from(response['data'] as Map),
+    );
+  }
+
+  Future<Map<String, dynamic>> checkServiceAgreement(String clientId) async {
+    final response = await _apiMethod.checkSilServiceAgreement(clientId);
+    _ensureSuccess(response, 'Failed to check service agreement');
+    return response['data'] is Map
+        ? Map<String, dynamic>.from(response['data'] as Map)
+        : <String, dynamic>{};
+  }
+
   void _ensureSuccess(Map<String, dynamic> response, String fallback) {
     if (response['success'] != true) {
+      if (response['code'] == 'SERVICE_AGREEMENT_REQUIRED') {
+        throw SILConsentRequiredException(
+          message: response['message']?.toString() ?? fallback,
+          code: 'SERVICE_AGREEMENT_REQUIRED',
+          data: response['data'] is Map
+              ? Map<String, dynamic>.from(response['data'] as Map)
+              : null,
+        );
+      }
       throw Exception(response['message']?.toString() ?? fallback);
     }
   }

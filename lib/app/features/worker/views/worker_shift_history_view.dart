@@ -6,6 +6,7 @@ import 'package:carenest/app/features/schedule/models/shift_model.dart';
 import 'package:carenest/app/features/worker/repositories/worker_repository.dart';
 import 'package:carenest/app/features/worker/views/widgets/worker_shift_card.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class WorkerShiftHistoryView extends ConsumerStatefulWidget {
   const WorkerShiftHistoryView({super.key});
@@ -64,21 +65,29 @@ class _WorkerShiftHistoryViewState
       appBar: AppBar(
         title: Text(
           'SHIFT HISTORY',
-          style: BauhausTheme.headerStyle.copyWith(
-            color: colorScheme.onInverseSurface,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
           ),
         ),
-        backgroundColor: colorScheme.inverseSurface,
-        foregroundColor: colorScheme.onInverseSurface,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        scrolledUnderElevation: 0,
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: colorScheme.onPrimary,
         surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
-        iconTheme: IconThemeData(color: colorScheme.onInverseSurface),
+        shape: Border(
+          bottom: BorderSide(
+            color: colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
+        iconTheme: IconThemeData(color: colorScheme.onPrimary),
         actions: [
           IconButton(
             onPressed: _loadHistory,
-            icon: Icon(Icons.refresh, color: colorScheme.onInverseSurface),
+            icon: Icon(Icons.refresh, color: colorScheme.onPrimary),
           ),
         ],
       ),

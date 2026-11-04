@@ -2,6 +2,7 @@ import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/app/shared/widgets/business_name_dropdown_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
@@ -87,22 +88,24 @@ class _AddClientDetailsState extends ConsumerState<AddClientDetails> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: BauhausDesign.secondary,
-        foregroundColor: Theme.of(context).colorScheme.onSecondary,
-        title: Text(
-          l10n.addClient.toUpperCase(),
-          style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-            fontWeight: FontWeight.w900,
-            color: Theme.of(context).colorScheme.onSecondary,
-            letterSpacing: 1.0,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        centerTitle: true,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
           ),
         ),
-        centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(
-            height: 1,
-            color: Theme.of(context).colorScheme.outline,
+        title: Text(
+          l10n.addClient.toUpperCase(),
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            fontWeight: FontWeight.w800,
+            color: Theme.of(context).colorScheme.onPrimary,
+            letterSpacing: 1.0,
           ),
         ),
       ),

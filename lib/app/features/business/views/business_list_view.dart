@@ -6,6 +6,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class BusinessListView extends ConsumerStatefulWidget {
@@ -536,14 +537,24 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        elevation: 0,
-        centerTitle: true,
         title: Text(
           l10n.businessesTitle,
-          style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            fontWeight: FontWeight.w800,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
             color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
           ),
         ),
         actions: [

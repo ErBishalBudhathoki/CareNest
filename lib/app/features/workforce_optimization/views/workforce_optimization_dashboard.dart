@@ -331,48 +331,31 @@ class _WorkforceOptimizationDashboardState
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return AppBar(
-      foregroundColor: colorScheme.onSecondary,
-      systemOverlayStyle: SystemUiOverlayStyle.light,
-      backgroundColor: colorScheme.secondary,
-      elevation: 0,
-      titleSpacing: 0,
       title: Text(
         'WORKFORCE OPTIMIZATION',
         style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-          color: colorScheme.onSecondary,
-          fontWeight: FontWeight.w700,
+          color: Theme.of(context).colorScheme.onPrimary,
+          fontWeight: FontWeight.w800,
           letterSpacing: 0.7,
         ),
       ),
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: colorScheme.onSecondary),
-        onPressed: () => Navigator.pop(context),
-      ),
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(8),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: Container(height: 8, color: BauhausDesign.accent),
-            ),
-            Expanded(
-              flex: 4,
-              child: Container(height: 8, color: colorScheme.surface),
-            ),
-            Expanded(
-              flex: 3,
-              child: Container(height: 8, color: BauhausDesign.primary),
-            ),
-            Expanded(
-              flex: 2,
-              child: Container(height: 8, color: BauhausDesign.success),
-            ),
-          ],
+      centerTitle: true,
+      backgroundColor: BauhausDesign.primary,
+      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      elevation: 0,
+      shape: Border(
+        bottom: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
         ),
+      ),
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
+        onPressed: () => Navigator.pop(context),
       ),
     );
   }

@@ -1136,30 +1136,33 @@ class _TimeAndDatePickerState extends ConsumerState<ScheduleAssignment> {
         key: _scaffoldKey,
         backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
-          backgroundColor: BauhausDesign.secondary,
-          foregroundColor: Theme.of(context).colorScheme.onSecondary,
+          backgroundColor: BauhausDesign.primary,
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
           systemOverlayStyle: SystemUiOverlayStyle.light,
           scrolledUnderElevation: 0,
           surfaceTintColor: Colors.transparent,
           elevation: 0,
+          shape: Border(
+            bottom: BorderSide(
+              color: Theme.of(context).colorScheme.onSurface,
+              width: 2,
+            ),
+          ),
           title: Text(
             AppLocalizations.of(context)!.scheduleAssignmentTitle,
             style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-              color: Theme.of(context).colorScheme.onSecondary,
+              color: Theme.of(context).colorScheme.onPrimary,
+              fontWeight: FontWeight.w800,
             ),
           ),
           centerTitle: true,
           leading: IconButton(
             icon: Icon(
-              Icons.arrow_back_ios_rounded,
-              color: Theme.of(context).colorScheme.onSecondary,
+              Icons.arrow_back,
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
             tooltip: AppLocalizations.of(context)!.backButton,
             onPressed: _returnToAdminDashboard,
-          ),
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(1),
-            child: Container(color: Theme.of(context).colorScheme.outline),
           ),
         ),
         body: SingleChildScrollView(

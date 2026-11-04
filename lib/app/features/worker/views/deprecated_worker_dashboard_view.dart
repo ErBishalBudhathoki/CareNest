@@ -48,29 +48,36 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.workerDashboardTitle,
-          style: BauhausTheme.headerStyle.copyWith(
-            color: colorScheme.onInverseSurface,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
           ),
         ),
-        backgroundColor: colorScheme.inverseSurface,
-        foregroundColor: colorScheme.onInverseSurface,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        scrolledUnderElevation: 0,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
         centerTitle: true,
-        iconTheme: IconThemeData(color: colorScheme.onInverseSurface),
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
+        iconTheme: IconThemeData(color: colorScheme.onPrimary),
         actions: [
           IconButton(
             tooltip: 'Scan Invoice',
             icon: Icon(
               Icons.document_scanner_outlined,
-              color: colorScheme.onInverseSurface,
+              color: colorScheme.onPrimary,
             ),
             onPressed: openScanInvoice,
           ),
           IconButton(
-            icon: Icon(Icons.refresh, color: colorScheme.onInverseSurface),
+            icon: Icon(Icons.refresh, color: colorScheme.onPrimary),
             onPressed: () =>
                 ref.read(workerDashboardViewModelProvider.notifier).refresh(),
           ),
@@ -170,8 +177,8 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
                     style: TextStyle(color: BauhausTheme.white),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: colorScheme.inverseSurface,
-                    foregroundColor: colorScheme.onInverseSurface,
+                    backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.zero,
                     ),
@@ -294,8 +301,8 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
                     // Logic to acknowledge could be added here
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: colorScheme.inverseSurface,
-                    foregroundColor: colorScheme.onInverseSurface,
+                    backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.zero,

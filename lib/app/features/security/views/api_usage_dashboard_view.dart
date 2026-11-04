@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:carenest/backend/api_method.dart';
 import 'package:carenest/backend/pinned_http_client.dart';
@@ -490,59 +491,43 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
   }
 
   PreferredSizeWidget _buildBauhausAppBar() {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(kToolbarHeight),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          border: Border(
-            bottom: BorderSide(
-              color: Theme.of(context).colorScheme.outline,
-              width: 2,
-            ),
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: BauhausDesign.space4,
-            ),
-            child: Row(
-              children: [
-                BauhausIconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: Icons.arrow_back,
-                  variant: BauhausActionVariant.ghost,
-                ),
-                const SizedBox(width: BauhausDesign.space2),
-                Text(
-                  AppLocalizations.of(context)!.apiSecurity,
-                  style: BauhausDesign.getTextTheme(context).displaySmall
-                      ?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                ),
-                const Spacer(),
-                BauhausIconButton(
-                  tooltip: AppLocalizations.of(context)!.realTimeTooltip,
-                  onPressed: _refreshRealTimeData,
-                  icon: Icons.refresh,
-                  variant: _realTimeLoading
-                      ? BauhausActionVariant.primary
-                      : BauhausActionVariant.neutral,
-                ),
-                const SizedBox(width: BauhausDesign.space2),
-                BauhausIconButton(
-                  tooltip: AppLocalizations.of(context)!.reloadAllTooltip,
-                  onPressed: _loadAll,
-                  icon: Icons.download,
-                  variant: BauhausActionVariant.neutral,
-                ),
-              ],
-            ),
-          ),
+    return AppBar(
+      title: Text(
+        AppLocalizations.of(context)!.apiSecurity,
+        style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+          color: Theme.of(context).colorScheme.onPrimary,
+          fontWeight: FontWeight.w800,
         ),
       ),
+      centerTitle: true,
+      backgroundColor: BauhausDesign.primary,
+      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      elevation: 0,
+      shape: Border(
+        bottom: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
+      ),
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      actions: [
+        IconButton(
+          tooltip: AppLocalizations.of(context)!.realTimeTooltip,
+          onPressed: _refreshRealTimeData,
+          icon: Icon(Icons.refresh, color: Theme.of(context).colorScheme.onPrimary),
+        ),
+        IconButton(
+          tooltip: AppLocalizations.of(context)!.reloadAllTooltip,
+          onPressed: _loadAll,
+          icon: Icon(Icons.download, color: Theme.of(context).colorScheme.onPrimary),
+        ),
+      ],
     );
   }
 

@@ -1,4 +1,5 @@
 import 'package:carenest/app/core/providers/app_providers.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/core/providers/theme_providers.dart';
 import 'package:carenest/app/services/notificationservice/firebase_messaging_service.dart';
 import 'package:carenest/app/core/services/timer_service.dart';
@@ -350,6 +351,29 @@ class MyApp extends ConsumerWidget {
         debugShowCheckedModeBanner: false,
         initialRoute: '/splashScreen',
         routes: AppPages.buildRoutes(),
+        onUnknownRoute: (settings) {
+          debugPrint('⚠️ onUnknownRoute caught: ${settings.name}');
+          return MaterialPageRoute(
+            settings: settings,
+            builder: (context) => Scaffold(
+              appBar: AppBar(
+                title: const Text('Page Not Found'),
+                centerTitle: true,
+                backgroundColor: BauhausDesign.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                leading: Navigator.canPop(context)
+                    ? IconButton(
+                        icon: const Icon(Icons.arrow_back, size: 24),
+                        onPressed: () => Navigator.of(context).pop(),
+                      )
+                    : null,
+              ),
+              body: Center(
+                child: Text('Route not found: ${settings.name}'),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

@@ -67,7 +67,7 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: BauhausIconButton(
-            icon: Iconsax.arrow_left,
+            icon: Icons.arrow_back,
             onPressed: () => Navigator.of(context).pop(),
             variant: BauhausActionVariant.neutral,
             isSmall: true,

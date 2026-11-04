@@ -56,27 +56,28 @@ class _AdminPayrollExportViewState
       appBar: AppBar(
         title: Text(
           'PAYROLL EXPORT',
-          style: GoogleFonts.oswald(
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onInverseSurface,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
             letterSpacing: 1.0,
           ),
         ),
-        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
-        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
-        iconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.onInverseSurface,
-        ),
         elevation: 0,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(2),
-          child: Container(
-            color: Theme.of(context).colorScheme.onInverseSurface,
-            height: 2,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
           ),
+        ),
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
         ),
       ),
       body: Padding(

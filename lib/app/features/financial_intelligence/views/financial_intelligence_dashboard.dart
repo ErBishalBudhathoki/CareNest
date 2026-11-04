@@ -335,17 +335,25 @@ class _FinancialIntelligenceDashboardState
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      foregroundColor: Theme.of(context).colorScheme.onPrimary,
-      systemOverlayStyle: SystemUiOverlayStyle.light,
-      backgroundColor: BauhausDesign.primary,
-      elevation: 0,
-      titleSpacing: 0,
       title: Text(
         'FINANCIAL INTELLIGENCE',
         style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
           color: Theme.of(context).colorScheme.onPrimary,
           letterSpacing: 0.6,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+      centerTitle: true,
+      backgroundColor: BauhausDesign.primary,
+      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      elevation: 0,
+      shape: Border(
+        bottom: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
         ),
       ),
       leading: IconButton(
@@ -354,32 +362,6 @@ class _FinancialIntelligenceDashboardState
           color: Theme.of(context).colorScheme.onPrimary,
         ),
         onPressed: () => Navigator.pop(context),
-      ),
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(8),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: Container(height: 8, color: BauhausDesign.secondary),
-            ),
-            Expanded(
-              flex: 5,
-              child: Container(
-                height: 8,
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: Container(height: 8, color: BauhausDesign.accent),
-            ),
-            Expanded(
-              flex: 3,
-              child: Container(height: 8, color: BauhausDesign.success),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -1663,7 +1645,7 @@ class _FinancialIntelligenceDashboardState
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('$moduleTitle module is ready for integration.'),
-        backgroundColor: BauhausDesign.secondary,
+        backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
       ),
     );
   }

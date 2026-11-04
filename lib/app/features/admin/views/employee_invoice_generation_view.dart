@@ -651,59 +651,42 @@ class _EmployeeInvoiceGenerationViewState
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
-        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        scrolledUnderElevation: 0,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: Container(
-            padding: const EdgeInsets.all(BauhausDesign.space2),
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-              border: Border.all(
-                color: Theme.of(
-                  context,
-                ).colorScheme.surface.withValues(alpha: 0.5),
-                width: 1.5,
-              ),
-            ),
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: Theme.of(context).colorScheme.surface,
-              size: 16,
-            ),
-          ),
-        ),
         title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               'Employee Invoice',
-              style: BauhausDesign.getTextTheme(context).headlineLarge
-                  ?.copyWith(
-                    color: Theme.of(context).colorScheme.surface,
-                    fontWeight: FontWeight.w800,
-                  ),
-            ),
-            Text(
-              widget.organizationName ?? '',
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontWeight: FontWeight.w600,
+              style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                color: Theme.of(context).colorScheme.onPrimary,
+                fontWeight: FontWeight.w800,
               ),
             ),
+            if (widget.organizationName != null && widget.organizationName!.isNotEmpty)
+              Text(
+                widget.organizationName!,
+                style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.85),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
           ],
         ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4),
-          child: Container(
-            height: 4,
-            color: Theme.of(context).colorScheme.outline,
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
           ),
+        ),
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
         ),
       ),
       body: _isLoadingEmployees

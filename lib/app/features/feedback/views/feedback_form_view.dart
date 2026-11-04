@@ -136,27 +136,29 @@ class _FeedbackFormViewState extends State<FeedbackFormView> {
         title: Text(
           l10n?.feedbackTitle ?? 'Submit Feedback',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: BauhausDesign.primary,
-            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
           ),
         ),
-        backgroundColor: _colorScheme.inverseSurface,
-        foregroundColor: _colorScheme.onInverseSurface,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        scrolledUnderElevation: 0,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
         centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
         leading: IconButton(
           icon: Icon(
-            Icons.arrow_back_ios,
-            color: _colorScheme.onInverseSurface,
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
           onPressed: () => Navigator.of(context).pop(),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(color: _colorScheme.outline, height: 1.5),
         ),
       ),
       body: _submitted ? _buildSuccessState(l10n) : _buildForm(l10n),

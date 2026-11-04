@@ -120,22 +120,30 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
         title: Text(
           'Add Notes',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onInverseSurface,
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
           ),
         ),
-        elevation: 0.0,
-        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
-        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        scrolledUnderElevation: 0,
-        surfaceTintColor: Colors.transparent,
         centerTitle: true,
-        leading: BauhausIconButton(
-          icon: Icons.arrow_back_ios_new,
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          variant: BauhausActionVariant.ghost,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+            size: 24,
+          ),
+          onPressed: () => Navigator.pop(context),
         ),
         actions: [
           if (_selectedTemplate == null)
@@ -153,13 +161,6 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
                   : () => setState(() => _selectedTemplate = null),
             ),
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(
-            color: Theme.of(context).colorScheme.outline,
-            height: 1,
-          ),
-        ),
       ),
       body: _selectedTemplate != null
           ? _buildStructuredBody(context)

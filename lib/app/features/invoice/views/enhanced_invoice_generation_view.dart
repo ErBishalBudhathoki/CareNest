@@ -637,20 +637,31 @@ class _EnhancedInvoiceGenerationViewState
 
   PreferredSizeWidget _buildAppBar(AppLocalizations l10n) {
     return AppBar(
-      foregroundColor: Theme.of(context).colorScheme.onPrimary,
-      systemOverlayStyle: SystemUiOverlayStyle.light,
-      scrolledUnderElevation: 0,
-      surfaceTintColor: Colors.transparent,
-      backgroundColor: BauhausDesign.primary,
-      elevation: 0,
       title: Text(
         l10n.generateInvoiceTitle,
-        style: BauhausDesign.getTextTheme(
-          context,
-        ).titleLarge?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
+        style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+          color: Theme.of(context).colorScheme.onPrimary,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+      centerTitle: true,
+      backgroundColor: BauhausDesign.primary,
+      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      elevation: 0,
+      shape: Border(
+        bottom: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
       ),
       leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios_new_rounded),
+        icon: Icon(
+          Icons.arrow_back,
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
         onPressed: () => Navigator.of(context).pop(),
       ),
       actions: [

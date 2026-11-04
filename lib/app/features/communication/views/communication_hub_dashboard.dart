@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
@@ -78,16 +79,26 @@ class _CommunicationHubDashboardState
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.secondary,
-        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         title: Text(
           'COMMUNICATION HUB',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onSecondary,
-            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
           ),
         ),
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
       ),
       body: Column(
         children: [

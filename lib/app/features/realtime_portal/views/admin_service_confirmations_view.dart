@@ -52,23 +52,29 @@ class AdminServiceConfirmationsView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: colorScheme.secondary,
+        backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
         elevation: 0,
+        centerTitle: true,
+        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
         title: Text(
           'Service Confirmation Ledger',
           style: GoogleFonts.oswald(
             fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: colorScheme.onSecondary,
+            fontWeight: FontWeight.w800,
+            color: Theme.of(context).colorScheme.onPrimary,
             letterSpacing: 1.1,
           ),
         ),
-        foregroundColor: colorScheme.onSecondary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: colorScheme.onSecondary),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+            size: 24,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
@@ -79,13 +85,7 @@ class AdminServiceConfirmationsView extends ConsumerWidget {
             tooltip: 'Refresh Ledger',
           ),
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.5),
-          child: Container(
-            color: Theme.of(context).colorScheme.outline,
-            height: 1.5,
-          ),
-        ),
+        
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -168,7 +168,7 @@ class AdminServiceConfirmationsView extends ConsumerWidget {
               context,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: 10,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w800,
             ),
           ),
           SizedBox(height: 4),
@@ -187,7 +187,7 @@ class AdminServiceConfirmationsView extends ConsumerWidget {
             style: GoogleFonts.shareTechMono(
               fontSize: 11,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w800,
             ),
           ),
         ],
@@ -241,7 +241,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                   child: Text(
                     service.date,
                     style: GoogleFonts.shareTechMono(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w800,
                       fontSize: 12,
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
@@ -274,7 +274,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                           ? BauhausDesign.success
                           : BauhausDesign.warning,
                       fontSize: 10,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                 ),
@@ -393,7 +393,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                       textAlign: TextAlign.center,
                       style: GoogleFonts.inter(
                         fontSize: BauhausDesign.fontMd,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w800,
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
@@ -409,7 +409,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                         'Detailed confirmation data is pending client submission.',
                         style: GoogleFonts.inter(
                           fontSize: BauhausDesign.fontMd,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w800,
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
@@ -448,7 +448,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                               'VERIFICATION INSIGHTS',
                               style: GoogleFonts.oswald(
                                 fontSize: 22,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w800,
                                 color: BauhausDesign.primary,
                                 letterSpacing: 1.1,
                               ),
@@ -497,7 +497,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                               'CLIENT RATING',
                               style: BauhausDesign.neoMonoStyle(
                                 context,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w800,
                                 fontSize: 11,
                               ),
                             ),
@@ -550,7 +550,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                               'COMPLETED TASK CHECKLIST',
                               style: BauhausDesign.neoMonoStyle(
                                 context,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w800,
                                 fontSize: 11,
                               ),
                             ),
@@ -603,7 +603,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                       title: Text(
                                         item.item,
                                         style: GoogleFonts.inter(
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.w800,
                                           fontSize: 14,
                                           decoration: completed
                                               ? TextDecoration.lineThrough
@@ -657,7 +657,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                               'DIGITAL SIGNATURE VERIFICATION',
                               style: BauhausDesign.neoMonoStyle(
                                 context,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w800,
                                 fontSize: 11,
                               ),
                             ),
@@ -686,7 +686,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                     'ELECTRONIC SIGNATURE SECURED',
                                     style: GoogleFonts.shareTechMono(
                                       fontSize: 13,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w800,
                                       color: BauhausDesign.success,
                                     ),
                                   ),
@@ -712,7 +712,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                 'SHIFTS ALERTS / INCIDENTS',
                                 style: BauhausDesign.neoMonoStyle(
                                   context,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w800,
                                   fontSize: 11,
                                   color: BauhausDesign.warning,
                                 ),
@@ -747,7 +747,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
                                           Text(
                                             '${incident.category.toUpperCase()} (${incident.severity.toUpperCase()})',
                                             style: GoogleFonts.shareTechMono(
-                                              fontWeight: FontWeight.bold,
+                                              fontWeight: FontWeight.w800,
                                               color: BauhausDesign.warning,
                                             ),
                                           ),
@@ -800,7 +800,7 @@ class _AdminServiceHistoryCard extends ConsumerWidget {
             TextSpan(
               text: '$label: ',
               style: TextStyle(
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w800,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),

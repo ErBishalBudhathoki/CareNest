@@ -19,18 +19,28 @@ class AutoScheduleDashboard extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+        backgroundColor: BauhausDesign.primary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        elevation: 0,
+        centerTitle: true,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
         title: Text(
           'AUTO-SCHEDULE',
-          style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-            color: Theme.of(context).colorScheme.onInverseSurface,
-            fontWeight: FontWeight.bold,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
           ),
         ),
         iconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.onInverseSurface,
+          color: Theme.of(context).colorScheme.onPrimary,
         ),
       ),
       body: SingleChildScrollView(

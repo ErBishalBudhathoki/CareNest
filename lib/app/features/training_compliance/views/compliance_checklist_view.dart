@@ -32,28 +32,23 @@ class _ComplianceChecklistViewState
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
           AppLocalizations.of(context)!.complianceChecklistsTitle,
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onSecondary,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
-        backgroundColor: BauhausDesign.secondary,
-        foregroundColor: Theme.of(context).colorScheme.onSecondary,
+        backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
+        foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         iconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.onSecondary,
+          color: Theme.of(context).colorScheme.onPrimary,
         ),
         elevation: 0,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(
-            color: Theme.of(context).colorScheme.outline,
-            height: 2,
-          ),
-        ),
+        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
       ),
       body: state.isLoading
           ? const Center(
@@ -181,28 +176,23 @@ class _ChecklistDetailViewState extends ConsumerState<ChecklistDetailView> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
           widget.checklist.title,
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onSecondary,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
-        backgroundColor: BauhausDesign.secondary,
-        foregroundColor: Theme.of(context).colorScheme.onSecondary,
+        backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
+        foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         iconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.onSecondary,
+          color: Theme.of(context).colorScheme.onPrimary,
         ),
         elevation: 0,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(
-            color: Theme.of(context).colorScheme.outline,
-            height: 2,
-          ),
-        ),
+        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
       ),
       body: Column(
         children: [
@@ -222,7 +212,7 @@ class _ChecklistDetailViewState extends ConsumerState<ChecklistDetailView> {
                     vertical: BauhausDesign.space1,
                   ),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onSecondary,
+                    color: Theme.of(context).colorScheme.onPrimary,
                     border: Border.all(
                       color: Theme.of(
                         context,

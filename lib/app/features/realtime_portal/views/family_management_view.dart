@@ -1456,12 +1456,14 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: colorScheme.secondary,
-        foregroundColor: colorScheme.onSecondary,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
+        centerTitle: true,
+        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -1469,14 +1471,14 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
               'Family Access',
               style: BauhausDesign.getTextTheme(
                 context,
-              ).titleLarge?.copyWith(color: colorScheme.onSecondary),
+              ).titleLarge?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
             ),
             if ((widget.clientName ?? '').trim().isNotEmpty)
               Text(
                 widget.clientName!.trim(),
                 style: BauhausDesign.getTextTheme(
                   context,
-                ).bodySmall?.copyWith(color: colorScheme.onSecondary),
+                ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
               ),
           ],
         ),

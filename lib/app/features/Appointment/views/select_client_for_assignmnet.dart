@@ -5,6 +5,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/confirmation_alert_dialog_widget.dart';
 import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:carenest/app/features/client/views/add_client_details_view.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
@@ -179,31 +180,42 @@ class _DropdownMenuState extends ConsumerState<SelectClientForAssignment>
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       elevation: 0,
+      centerTitle: true,
       backgroundColor: BauhausDesign.primary,
       foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      shape: Border(
+        bottom: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
+      ),
       title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             'Select Client',
-            style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
+            style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
               color: Theme.of(context).colorScheme.onPrimary,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w800,
             ),
           ),
           Text(
             'for ${widget.userName}',
-            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
               color: Theme.of(
                 context,
-              ).colorScheme.onPrimary.withValues(alpha: 0.7),
+              ).colorScheme.onPrimary.withValues(alpha: 0.85),
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
       ),
       leading: IconButton(
         icon: Icon(
-          Icons.arrow_back_ios,
+          Icons.arrow_back,
           // Must match the title: this app bar plane is the fixed yellow
           // `primary`, so its glyphs stay ink in both themes.
           color: Theme.of(context).colorScheme.onPrimary,

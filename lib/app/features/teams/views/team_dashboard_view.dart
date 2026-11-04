@@ -163,19 +163,44 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
     final colorScheme = Theme.of(context).colorScheme;
 
     return SliverAppBar(
-      expandedHeight: 130,
-      collapsedHeight: 62,
       pinned: true,
-      backgroundColor: colorScheme.inverseSurface,
-      foregroundColor: colorScheme.onInverseSurface,
+      toolbarHeight: kToolbarHeight,
+      centerTitle: true,
+      backgroundColor: BauhausDesign.primary,
+      foregroundColor: colorScheme.onPrimary,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      elevation: 0,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      shape: Border(
+        bottom: BorderSide(
+          color: colorScheme.onSurface,
+          width: 2,
+        ),
+      ),
       leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: colorScheme.onInverseSurface),
+        icon: Icon(
+          Icons.arrow_back,
+          color: colorScheme.onPrimary,
+          size: 24,
+        ),
         onPressed: () => Navigator.pop(context),
+      ),
+      title: Text(
+        'TEAM COORDINATION',
+        style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+          fontWeight: FontWeight.w800,
+          color: colorScheme.onPrimary,
+        ),
       ),
       actions: [
         IconButton(
           tooltip: 'Refresh',
-          icon: Icon(Icons.refresh, color: colorScheme.onInverseSurface),
+          icon: Icon(
+            Icons.refresh,
+            color: colorScheme.onPrimary,
+            size: 24,
+          ),
           onPressed: () {
             HapticFeedback.lightImpact();
             ref.read(teamViewModelProvider.notifier).loadMyTeams();
@@ -186,22 +211,6 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
           },
         ),
       ],
-      flexibleSpace: FlexibleSpaceBar(
-        titlePadding: const EdgeInsets.fromLTRB(16, 0, 0, 14),
-        title: Text(
-          'TEAM COORDINATION',
-          style: GoogleFonts.oswald(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: colorScheme.onInverseSurface,
-            letterSpacing: 2,
-          ),
-        ),
-        background: Container(
-          color: colorScheme.inverseSurface,
-          child: const SizedBox.shrink(),
-        ),
-      ),
     );
   }
 
@@ -242,17 +251,19 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                   size: 16,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  hasActive
-                      ? 'ACTIVE EMERGENCY  ·  ${broadcasts.length}'
-                      : 'EMERGENCY BROADCASTS',
-                  style: GoogleFonts.inter(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    color: hasActive
-                        ? colorScheme.onError
-                        : colorScheme.onInverseSurface,
-                    letterSpacing: 1.5,
+                Expanded(
+                  child: Text(
+                    hasActive
+                        ? 'ACTIVE EMERGENCY  ·  ${broadcasts.length}'
+                        : 'EMERGENCY BROADCASTS',
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: hasActive
+                          ? colorScheme.onError
+                          : colorScheme.onInverseSurface,
+                      letterSpacing: 1.5,
+                    ),
                   ),
                 ),
               ],
@@ -293,12 +304,14 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
                           size: 16,
                         ),
                         const SizedBox(width: 8),
-                        Text(
-                          'No active emergencies — all clear.',
-                          style: GoogleFonts.inter(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            color: Theme.of(context).colorScheme.onSurface,
+                        Expanded(
+                          child: Text(
+                            'No active emergencies — all clear.',
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
                           ),
                         ),
                       ],
@@ -364,13 +377,15 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
         children: [
           Container(width: 4, height: 16, color: BauhausDesign.secondary),
           const SizedBox(width: 10),
-          Text(
-            label,
-            style: GoogleFonts.oswald(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: Theme.of(context).colorScheme.onSurface,
-              letterSpacing: 2.5,
+          Expanded(
+            child: Text(
+              label,
+              style: GoogleFonts.oswald(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: Theme.of(context).colorScheme.onSurface,
+                letterSpacing: 2.5,
+              ),
             ),
           ),
         ],

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
@@ -61,14 +63,52 @@ class _SILDashboardViewState extends ConsumerState<SILDashboardView>
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.silManagement),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: [
-            Tab(text: l10n.silTabProperties),
-            Tab(text: l10n.silTabQuotes),
-            Tab(text: l10n.silTabRostersOfCare),
-          ],
+        title: Text(
+          l10n.silManagement,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(56),
+          child: Column(
+            children: [
+              TabBar(
+                controller: _tabController,
+                labelColor: Theme.of(context).colorScheme.onPrimary,
+                unselectedLabelColor: Theme.of(
+                  context,
+                ).colorScheme.onPrimary.withValues(alpha: 0.65),
+                indicatorColor: Theme.of(context).colorScheme.onPrimary,
+                indicatorWeight: 4,
+                labelStyle: BauhausDesign.getTextTheme(
+                  context,
+                ).labelLarge?.copyWith(fontWeight: FontWeight.w800),
+                unselectedLabelStyle: BauhausDesign.getTextTheme(
+                  context,
+                ).labelLarge?.copyWith(fontWeight: FontWeight.w600),
+                tabs: [
+                  Tab(text: l10n.silTabProperties),
+                  Tab(text: l10n.silTabQuotes),
+                  Tab(text: l10n.silTabRostersOfCare),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
       body: TabBarView(
@@ -462,6 +502,134 @@ class _QuoteActions extends ConsumerWidget {
   const _QuoteActions({required this.quote});
   final SILQuote quote;
 
+  Future<void> _showAcceptanceDialog(
+    BuildContext context,
+    WidgetRef ref,
+    SILQuote quote,
+    AppLocalizations l10n,
+  ) async {
+    final nameCtrl = TextEditingController();
+    final boardCtrl = TextEditingController();
+    String selectedRole = 'participant';
+    bool confirmed = false;
+
+    final accepted = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: Text(l10n.silQuoteAcceptAction),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Record digital e-signature and auto-link NDIS Service Agreement:',
+                  style: TextStyle(fontSize: 13, color: Colors.grey),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  key: const ValueKey('sil_quote_signatory_name_field'),
+                  controller: nameCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Signatory Name *',
+                    hintText: 'e.g. John Doe',
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                  ),
+                  onChanged: (_) => setDialogState(() {}),
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  key: const ValueKey('sil_quote_signatory_role_dropdown'),
+                  value: selectedRole,
+                  decoration: const InputDecoration(
+                    labelText: 'Signatory Role',
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 'participant', child: Text('Participant')),
+                    DropdownMenuItem(value: 'guardian', child: Text('Guardian / Nominee')),
+                    DropdownMenuItem(value: 'plan_manager', child: Text('Plan Manager')),
+                    DropdownMenuItem(value: 'provider', child: Text('Provider Authorized Rep')),
+                  ],
+                  onChanged: (val) {
+                    if (val != null) {
+                      setDialogState(() => selectedRole = val);
+                    }
+                  },
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  key: const ValueKey('sil_quote_board_lodging_field'),
+                  controller: boardCtrl,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(
+                    labelText: 'Board & Lodging (\$/week, optional)',
+                    hintText: '0.00',
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                CheckboxListTile(
+                  key: const ValueKey('sil_quote_consent_checkbox'),
+                  contentPadding: EdgeInsets.zero,
+                  value: confirmed,
+                  onChanged: (val) => setDialogState(() => confirmed = val ?? false),
+                  title: const Text(
+                    'I confirm digital acceptance and consent has been received.',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  controlAffinity: ListTileControlAffinity.leading,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              key: const ValueKey('sil_quote_sign_accept_button'),
+              onPressed: (confirmed && nameCtrl.text.trim().isNotEmpty)
+                  ? () => Navigator.of(ctx).pop(true)
+                  : null,
+              child: const Text('Sign & Accept'),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (accepted != true || !context.mounted) return;
+
+    final notifier = ref.read(silQuoteViewModelProvider.notifier);
+    final ok = await notifier.accept(
+      quote.id,
+      signedBy: nameCtrl.text.trim(),
+      signatoryRole: selectedRole,
+      signatureData: 'e-signed_${nameCtrl.text.trim()}_${DateTime.now().millisecondsSinceEpoch}',
+      boardAndLodgingWeekly: double.tryParse(boardCtrl.text.trim()),
+    );
+
+    if (context.mounted) {
+      final error = ref.read(silQuoteViewModelProvider).error;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            ok
+                ? '${l10n.silQuoteAccepted} (Service Agreement active)'
+                : (error ?? l10n.silQuoteNotAccepted),
+          ),
+          backgroundColor: ok ? null : Theme.of(context).colorScheme.error,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
@@ -469,25 +637,8 @@ class _QuoteActions extends ConsumerWidget {
       onSelected: (action) async {
         final notifier = ref.read(silQuoteViewModelProvider.notifier);
         if (action == 'accept') {
-          // A quote whose lines breach an NDIS price cap cannot be accepted
-          // (server returns 409 PRICE_VALIDATION_FAILED). Report the outcome:
-          // silently swallowing it left the officer with no feedback and no
-          // way to tell an accepted quote from a rejected one.
-          final ok = await notifier.accept(quote.id);
-          if (context.mounted) {
-            final error = ref.read(silQuoteViewModelProvider).error;
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  ok
-                      ? l10n.silQuoteAccepted
-                      : (error ?? l10n.silQuoteNotAccepted),
-                ),
-                backgroundColor:
-                    ok ? null : Theme.of(context).colorScheme.error,
-              ),
-            );
-          }
+          // Milestone 6.1: Show digital e-signature acceptance modal
+          await _showAcceptanceDialog(context, ref, quote, l10n);
         } else if (action == 'convert') {
           final roc = await notifier.convert(quote.id);
           if (roc != null && context.mounted) {
@@ -636,6 +787,64 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
     }
   }
 
+  /// Transition a draft RoC to active status. Enforces Milestone 4.2 Consent Gate:
+  /// blocks with a consent dialog if no active signed Service Agreement exists.
+  Future<void> _activateRosterOfCare(SILRosterOfCare roc) async {
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      final repo = ref.read(silRepositoryProvider);
+      await repo.updateRosterOfCare(roc.id, {'status': 'active'});
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.silRoCActivated)),
+      );
+      _load();
+    } on SILConsentRequiredException catch (e) {
+      if (!mounted) return;
+      _showConsentRequiredDialog(roc, e.message);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$e')),
+      );
+    }
+  }
+
+  /// Displays the Milestone 4.2 Consent Gate dialog with participant details
+  /// and allows entering an auditable justification note for Emergency Consent Bypass.
+  Future<void> _showConsentRequiredDialog(
+    SILRosterOfCare roc,
+    String errorMessage,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => _ConsentBypassDialog(
+        errorMessage: errorMessage,
+        onBypass: (reason) async {
+          try {
+            final repo = ref.read(silRepositoryProvider);
+            await repo.updateRosterOfCare(roc.id, {
+              'status': 'active',
+              'bypassConsent': true,
+              'bypassReason': reason,
+            });
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(l10n.silBypassDone)),
+            );
+            _load();
+          } catch (e) {
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('$e')),
+            );
+          }
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -674,6 +883,13 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Milestone 4.2 Consent Gate: Activate button for draft RoCs
+                      if (roc.status == 'draft')
+                        IconButton(
+                          icon: const Icon(Icons.check_circle_outline, color: Colors.teal),
+                          tooltip: l10n.silActivateRoCTooltip,
+                          onPressed: () => _activateRosterOfCare(roc),
+                        ),
                       IconButton(
                         icon: const Icon(Icons.event_available_outlined),
                         tooltip: plannable
@@ -805,9 +1021,10 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
           : route.recipientType == 'plan_manager'
           ? l10n.silRoutePlanManagerPdf
           : l10n.silRouteParticipantPdf;
+      final replayNote = invoice.isIdempotentReplay == true ? ' (Replayed)' : '';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${l10n.silInvoiceCreated(invoice.invoiceNumber)}$routeLabel'),
+          content: Text('${l10n.silInvoiceCreated(invoice.invoiceNumber)}$replayNote$routeLabel'),
           action: invoice.invoiceId.isEmpty
               ? null
               : SnackBarAction(
@@ -842,6 +1059,110 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
     final m = date.month.toString().padLeft(2, '0');
     final d = date.day.toString().padLeft(2, '0');
     return '${date.year}-$m-$d';
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Milestone 4.2 Consent Gate Dialog
+// ---------------------------------------------------------------------------
+
+class _ConsentBypassDialog extends StatefulWidget {
+  final String errorMessage;
+  final ValueChanged<String> onBypass;
+
+  const _ConsentBypassDialog({
+    required this.errorMessage,
+    required this.onBypass,
+  });
+
+  @override
+  State<_ConsentBypassDialog> createState() => _ConsentBypassDialogState();
+}
+
+class _ConsentBypassDialogState extends State<_ConsentBypassDialog> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return AlertDialog(
+      title: Row(
+        children: [
+          const Icon(Icons.gavel_outlined, color: Colors.orange),
+          const SizedBox(width: 8),
+          Text(l10n.silConsentRequiredTitle),
+        ],
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(widget.errorMessage),
+          const SizedBox(height: 12),
+          Text(
+            l10n.silConsentRequiredSubtitle,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+          ),
+          const SizedBox(height: 16),
+          const Divider(),
+          const SizedBox(height: 8),
+          Text(
+            l10n.silEmergencyBypass,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: 6),
+          TextField(
+            controller: _controller,
+            decoration: InputDecoration(
+              hintText: l10n.silBypassReasonHint,
+              border: const OutlineInputBorder(),
+              isDense: true,
+            ),
+            maxLines: 2,
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.amber.shade800,
+            foregroundColor: Colors.white,
+          ),
+          onPressed: () {
+            final reason = _controller.text.trim();
+            if (reason.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(l10n.silBypassReasonHint)),
+              );
+              return;
+            }
+            Navigator.of(context).pop();
+            widget.onBypass(reason);
+          },
+          child: Text(l10n.silEmergencyBypass),
+        ),
+      ],
+    );
   }
 }
 

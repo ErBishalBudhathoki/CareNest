@@ -110,63 +110,45 @@ class _AssignmentListViewState extends ConsumerState<AssignmentListView> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
-        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-            style: IconButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
-              side: BorderSide(
-                color: Theme.of(context).colorScheme.outline,
-                width: 1.5,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-              ),
-            ),
+        centerTitle: true,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+            size: 24,
           ),
         ),
         title: Text(
           AppLocalizations.of(context)!.assignmentList.toUpperCase(),
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onInverseSurface,
-            fontWeight: FontWeight.w700,
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
           ),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: IconButton(
-              onPressed: () =>
-                  viewModel.refreshAssignments(widget.organizationId),
-              icon: const Icon(Icons.refresh, size: 20),
-              style: IconButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
-                side: BorderSide(
-                  color: Theme.of(context).colorScheme.outline,
-                  width: 1.5,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                ),
-              ),
+          IconButton(
+            onPressed: () =>
+                viewModel.refreshAssignments(widget.organizationId),
+            icon: Icon(
+              Icons.refresh,
+              color: Theme.of(context).colorScheme.onPrimary,
+              size: 24,
             ),
           ),
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(2),
-          child: Container(
-            color: Theme.of(context).colorScheme.outline,
-            height: 2,
-          ),
-        ),
       ),
       body: Column(
         children: [

@@ -54,27 +54,30 @@ class ClientAppointmentDetailView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: colorScheme.secondary,
-        foregroundColor: colorScheme.onSecondary,
+        title: Text(
+          'APPOINTMENT DETAILS',
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: colorScheme.onSecondary),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          'APPOINTMENT DETAILS',
-          style: GoogleFonts.oswald(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: colorScheme.onSecondary,
-            letterSpacing: 1,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
           ),
         ),
-        centerTitle: true,
-        shape: Border(bottom: BorderSide(color: colorScheme.outline, width: 2)),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: appointmentState.when(
         data: (appointment) => _buildContent(context, ref, appointment),

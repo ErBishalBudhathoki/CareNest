@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:carenest/app/features/notes/viewmodels/note_templates_viewmodel.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_switch.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 /// Admin UI to manage organisation progress-note templates (Phase 2).
 ///
@@ -39,7 +41,29 @@ class _NoteTemplatesViewState extends ConsumerState<NoteTemplatesView> {
     final state = ref.watch(noteTemplatesViewModelProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.noteTemplates)),
+      appBar: AppBar(
+        // Standardized: Bauhaus primary AppBar matching "All Invoices" reference design
+        title: Text(
+          AppLocalizations.of(context)!.noteTemplates,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
+      ),
       body: state.isLoading && state.templates.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : state.templates.isEmpty

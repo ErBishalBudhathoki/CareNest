@@ -109,9 +109,10 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
           l10n.invoiceDetailsTitle,
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             fontWeight: FontWeight.w800,
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
+        centerTitle: true,
         backgroundColor: BauhausDesign.primary,
         surfaceTintColor: Colors.transparent, // Disable surface tint
         foregroundColor: Theme.of(context).colorScheme.onPrimary,

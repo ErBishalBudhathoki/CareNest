@@ -175,60 +175,43 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: AnimatedBuilder(
-        animation: _surfaceController,
-        builder: (context, child) {
-          return Column(
-            children: [
-              _buildBauhausAppBar(),
-              Expanded(child: _buildContent()),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildBauhausAppBar() {
-    return Container(
-      padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + BauhausDesign.space2,
-        left: BauhausDesign.space4,
-        right: BauhausDesign.space4,
-        bottom: BauhausDesign.space2,
-      ),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        border: Border(
+      appBar: AppBar(
+        title: Text(
+          AppLocalizations.of(context)!.assignmentComplete,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
           bottom: BorderSide(
-            color: Theme.of(context).colorScheme.outline,
+            color: Theme.of(context).colorScheme.onSurface,
             width: 2,
           ),
         ),
-      ),
-      child: Row(
-        children: [
-          BauhausIconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: Icons.arrow_back,
-            variant: BauhausActionVariant.ghost,
-          ),
-          const SizedBox(width: BauhausDesign.space2),
-          Expanded(
-            child: Text(
-              AppLocalizations.of(context)!.assignmentComplete,
-              style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          BauhausIconButton(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.share_rounded, color: Theme.of(context).colorScheme.onPrimary),
             onPressed: _shareAssignment,
-            icon: Icons.share_rounded,
-            variant: BauhausActionVariant.ghost,
           ),
         ],
+      ),
+      body: AnimatedBuilder(
+        animation: _surfaceController,
+        builder: (context, child) {
+          return _buildContent();
+        },
       ),
     );
   }

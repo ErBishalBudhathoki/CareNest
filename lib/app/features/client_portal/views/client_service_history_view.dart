@@ -54,20 +54,22 @@ class _ClientServiceHistoryViewState
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: colorScheme.secondary,
+        backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
         elevation: 0,
         title: Text(
           'Service History',
           style: GoogleFonts.oswald(
             fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: colorScheme.onSecondary,
+            fontWeight: FontWeight.w800,
+            color: Theme.of(context).colorScheme.onPrimary,
             letterSpacing: 1.1,
           ),
         ),
-        foregroundColor: colorScheme.onSecondary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
+        centerTitle: true,
+        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
         surfaceTintColor: Colors.transparent,
         actions: [
           IconButton(

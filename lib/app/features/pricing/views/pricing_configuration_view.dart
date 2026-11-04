@@ -1,5 +1,6 @@
 import 'package:carenest/backend/api_method.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
@@ -169,40 +170,32 @@ class _PricingConfigurationViewState
       toolbarHeight: BauhausDesign.appBarCompactHeight,
       floating: false,
       pinned: true,
-      centerTitle: false,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      surfaceTintColor: Theme.of(context).colorScheme.surface,
+      centerTitle: true,
+      backgroundColor: BauhausDesign.primary,
+      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      elevation: 0,
+      shape: Border(
+        bottom: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
+      ),
       leadingWidth: 44,
-      leading: Padding(
-        padding: const EdgeInsets.only(
-          left: BauhausDesign.space2,
-          top: BauhausDesign.space2,
-          bottom: BauhausDesign.space2,
+      leading: IconButton(
+        icon: Icon(
+          Icons.arrow_back,
+          color: Theme.of(context).colorScheme.onPrimary,
         ),
-        child: InkWell(
-          onTap: () => Navigator.of(context).pop(),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              border: Border.all(
-                color: Theme.of(context).colorScheme.onSurface,
-                width: BauhausDesign.borderThick,
-              ),
-            ),
-            child: Icon(
-              Icons.arrow_back,
-              size: BauhausDesign.iconMd,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-        ),
+        onPressed: () => Navigator.of(context).pop(),
       ),
       title: Text(
         l10n.pricingConfigurationTitle.toUpperCase(),
-        style: BauhausDesign.getTextTheme(context).headlineSmall?.copyWith(
-          color: Theme.of(context).colorScheme.onSurface,
-          fontWeight: FontWeight.w900,
-          letterSpacing: 0.4,
+        style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+          color: Theme.of(context).colorScheme.onPrimary,
+          fontWeight: FontWeight.w800,
         ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,

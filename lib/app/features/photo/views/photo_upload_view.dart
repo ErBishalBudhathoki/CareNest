@@ -104,7 +104,7 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
             cropGridStrokeWidth: 1,
             cropGridRowCount: 3,
             cropGridColumnCount: 3,
-            backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+            backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary (amber/yellow)
           ),
           IOSUiSettings(
             title: 'Crop Photo',
@@ -201,24 +201,30 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
       key: _scaffoldKey,
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        elevation: 0,
-        surfaceTintColor: Colors.transparent,
-        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
-        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
-        scrolledUnderElevation: 0,
         title: Text(
           'Profile Photo',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onInverseSurface,
+            fontWeight: FontWeight.w800,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
         centerTitle: true,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
         leading: IconButton(
           icon: Icon(
-            Icons.arrow_back_ios,
-            color: Theme.of(context).colorScheme.onInverseSurface,
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
@@ -396,10 +402,12 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
                 color: BauhausDesign.warning,
               ),
               const SizedBox(width: BauhausDesign.space3),
-              Text(
-                'A Few Quick Tips',
-                style: BauhausDesign.getTextTheme(context).headlineSmall
-                    ?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+              Expanded(
+                child: Text(
+                  'A Few Quick Tips',
+                  style: BauhausDesign.getTextTheme(context).headlineSmall
+                      ?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+                ),
               ),
             ],
           ),

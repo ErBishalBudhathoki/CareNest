@@ -4472,9 +4472,14 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
-  Future<Map<String, dynamic>> publishSilRoster(String id) async {
+  // Milestone 6.2: Supports optional blockOnRatioBreach parameter for SIL ratio enforcement
+  Future<Map<String, dynamic>> publishSilRoster(String id, {bool? blockOnRatioBreach}) async {
     try {
-      return await post('sil/rosters/$id/publish', body: const {});
+      final body = <String, dynamic>{};
+      if (blockOnRatioBreach != null) {
+        body['blockOnRatioBreach'] = blockOnRatioBreach;
+      }
+      return await post('sil/rosters/$id/publish', body: body);
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -4499,9 +4504,10 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
-  Future<Map<String, dynamic>> acceptSilQuote(String id) async {
+  // Milestone 6.1: Supports optional signature payload (signedBy, signatoryRole, signatureData, etc.)
+  Future<Map<String, dynamic>> acceptSilQuote(String id, {Map<String, dynamic>? body}) async {
     try {
-      return await post('sil/quotes/$id/accept', body: const {});
+      return await post('sil/quotes/$id/accept', body: body ?? const {});
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -4536,11 +4542,36 @@ class ApiMethod extends ChangeNotifier {
     required String from,
     required String to,
     String? dueDate,
+    String? idempotencyKey,
   }) async {
     try {
+      final body = <String, dynamic>{'from': from, 'to': to, 'dueDate': ?dueDate};
+      if (idempotencyKey != null) {
+        body['idempotencyKey'] = idempotencyKey;
+      }
       return await post(
         'sil/rosters-of-care/$id/invoice',
-        body: {'from': from, 'to': to, 'dueDate': ?dueDate},
+        body: body,
+        headers: idempotencyKey != null ? {'x-idempotency-key': idempotencyKey} : null,
+      );
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Milestone 7.3: Dispatch a SIL invoice PDF to the plan manager or participant.
+  Future<Map<String, dynamic>> dispatchSilInvoice(
+    String id, {
+    String? dispatchMethod,
+    String? recipientEmail,
+  }) async {
+    try {
+      final body = <String, dynamic>{};
+      if (dispatchMethod != null) body['dispatchMethod'] = dispatchMethod;
+      if (recipientEmail != null) body['recipientEmail'] = recipientEmail;
+      return await post(
+        'sil/invoices/$id/dispatch',
+        body: body,
       );
     } catch (e) {
       return {'success': false, 'message': e.toString()};
@@ -4558,6 +4589,76 @@ class ApiMethod extends ChangeNotifier {
         'sil/rosters-of-care/$id/materialize-shifts',
         body: {'weekStarting': weekStarting},
       );
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Update an existing SIL Roster of Care (e.g. activating draft to active,
+  /// subject to Milestone 4.2 Consent Gate or emergency bypass).
+  Future<Map<String, dynamic>> updateSilRosterOfCare(
+    String id,
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      return await put('sil/rosters-of-care/$id', body: body);
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Service Agreements & Consent Gate (Milestone 4.2)
+  // -------------------------------------------------------------------------
+
+  /// List Service Agreements for the current organization, optionally filtered
+  /// by participant (clientId) and status.
+  Future<Map<String, dynamic>> getSilServiceAgreements({
+    String? clientId,
+    String? status,
+  }) async {
+    try {
+      final params = <String>[];
+      if (clientId != null && clientId.isNotEmpty) {
+        params.add('clientId=${Uri.encodeQueryComponent(clientId)}');
+      }
+      if (status != null && status.isNotEmpty) {
+        params.add('status=${Uri.encodeQueryComponent(status)}');
+      }
+      final query = params.isNotEmpty ? '?${params.join('&')}' : '';
+      return await get('sil/service-agreements$query');
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Create a new NDIS Service Agreement in draft status.
+  Future<Map<String, dynamic>> createSilServiceAgreement(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      return await post('sil/service-agreements', body: body);
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Sign an NDIS Service Agreement (moves status to 'signed' / 'active').
+  Future<Map<String, dynamic>> signSilServiceAgreement(
+    String id,
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      return await post('sil/service-agreements/$id/sign', body: body);
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Check whether an active, signed Service Agreement exists for a participant.
+  Future<Map<String, dynamic>> checkSilServiceAgreement(String clientId) async {
+    try {
+      return await get('sil/service-agreements/check/$clientId');
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }

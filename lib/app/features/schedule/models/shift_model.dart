@@ -25,6 +25,11 @@ class ShiftModel {
   final String? recurringTemplateId;
   final String? notes;
   final int breakDuration; // in minutes
+  // Milestone 4.3: Irregular SIL, Crisis Staffing & PRN Support Billing
+  final bool isIrregularSil;
+  final String? irregularSilReason;
+  final String? crisisJustificationNotes;
+  final String? incidentReportReference;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -46,6 +51,10 @@ class ShiftModel {
     this.recurringTemplateId,
     this.notes,
     this.breakDuration = 0,
+    this.isIrregularSil = false,
+    this.irregularSilReason,
+    this.crisisJustificationNotes,
+    this.incidentReportReference,
     this.createdAt,
     this.updatedAt,
   });
@@ -76,6 +85,10 @@ class ShiftModel {
       recurringTemplateId: json['recurringTemplateId']?.toString(),
       notes: json['notes']?.toString(),
       breakDuration: (json['breakDuration'] as num?)?.toInt() ?? 0,
+      isIrregularSil: json['isIrregularSil'] == true,
+      irregularSilReason: json['irregularSilReason']?.toString(),
+      crisisJustificationNotes: json['crisisJustificationNotes']?.toString(),
+      incidentReportReference: json['incidentReportReference']?.toString(),
       createdAt: _parseDateTime(json['createdAt']),
       updatedAt: _parseDateTime(json['updatedAt']),
     );
@@ -100,6 +113,12 @@ class ShiftModel {
         'recurringTemplateId': recurringTemplateId,
       if (notes != null) 'notes': notes,
       'breakDuration': breakDuration,
+      if (isIrregularSil) 'isIrregularSil': true,
+      if (irregularSilReason != null) 'irregularSilReason': irregularSilReason,
+      if (crisisJustificationNotes != null)
+        'crisisJustificationNotes': crisisJustificationNotes,
+      if (incidentReportReference != null)
+        'incidentReportReference': incidentReportReference,
     };
   }
 
@@ -122,6 +141,10 @@ class ShiftModel {
     String? recurringTemplateId,
     String? notes,
     int? breakDuration,
+    bool? isIrregularSil,
+    String? irregularSilReason,
+    String? crisisJustificationNotes,
+    String? incidentReportReference,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -143,6 +166,12 @@ class ShiftModel {
       recurringTemplateId: recurringTemplateId ?? this.recurringTemplateId,
       notes: notes ?? this.notes,
       breakDuration: breakDuration ?? this.breakDuration,
+      isIrregularSil: isIrregularSil ?? this.isIrregularSil,
+      irregularSilReason: irregularSilReason ?? this.irregularSilReason,
+      crisisJustificationNotes:
+          crisisJustificationNotes ?? this.crisisJustificationNotes,
+      incidentReportReference:
+          incidentReportReference ?? this.incidentReportReference,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

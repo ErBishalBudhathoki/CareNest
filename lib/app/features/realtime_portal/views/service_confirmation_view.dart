@@ -87,32 +87,31 @@ class _ServiceConfirmationViewState
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: colorScheme.secondary,
-        foregroundColor: colorScheme.onSecondary,
+        backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
+        foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
+        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
         centerTitle: true,
         title: Text(
           'Service Confirmation',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: BauhausDesign.primary,
-            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
             fontSize: 20,
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: BauhausDesign.primary),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+            size: 24,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.5),
-          child: Container(
-            color: Theme.of(context).colorScheme.outline,
-            height: 1.5,
-          ),
-        ),
+        
       ),
       body: state.isLoading
           ? const Center(
@@ -263,7 +262,7 @@ class _ServiceConfirmationViewState
             'No checklist items available.',
             style: GoogleFonts.inter(
               fontSize: BauhausDesign.fontMd,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w800,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
@@ -278,7 +277,7 @@ class _ServiceConfirmationViewState
           'Service Checklist',
           style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
             color: Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w800,
           ),
         ),
         SizedBox(height: BauhausDesign.space2),
@@ -326,7 +325,7 @@ class _ServiceConfirmationViewState
                   item.item,
                   style: GoogleFonts.inter(
                     fontSize: BauhausDesign.fontLg,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w800,
                     color: Theme.of(context).colorScheme.onSurface,
                     decoration: item.completed == true
                         ? TextDecoration.lineThrough
@@ -340,9 +339,9 @@ class _ServiceConfirmationViewState
                       'REQUIRED TASK',
                       style: BauhausDesign.neoMonoStyle(
                         context,
-                        color: BauhausDesign.primary,
+                        color: Theme.of(context).colorScheme.onPrimary,
                         fontSize: BauhausDesign.fontXs,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                   ),
@@ -362,7 +361,7 @@ class _ServiceConfirmationViewState
           'Rate Your Experience',
           style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
             color: Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w800,
           ),
         ),
         SizedBox(height: BauhausDesign.space2),
@@ -416,7 +415,7 @@ class _ServiceConfirmationViewState
                   context,
                   fontSize: BauhausDesign.fontLg,
                   color: Theme.of(context).colorScheme.onSurface,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
             ),
@@ -427,7 +426,7 @@ class _ServiceConfirmationViewState
           'Additional Feedback (Optional)',
           style: GoogleFonts.inter(
             fontSize: BauhausDesign.fontLg,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w800,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
@@ -454,7 +453,7 @@ class _ServiceConfirmationViewState
           'Digital Signature',
           style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
             color: Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w800,
           ),
         ),
         SizedBox(height: BauhausDesign.space2),
@@ -533,7 +532,7 @@ class _ServiceConfirmationViewState
                   style: GoogleFonts.inter(
                     fontSize: BauhausDesign.fontMd,
                     color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
               ),
@@ -587,7 +586,7 @@ class _ServiceConfirmationViewState
                     'BACK',
                     style: GoogleFonts.inter(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w800,
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
@@ -631,7 +630,7 @@ class _ServiceConfirmationViewState
                         _currentStep == 2 ? 'SUBMIT' : 'NEXT',
                         style: GoogleFonts.inter(
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w800,
                           color: Theme.of(context).colorScheme.onPrimary,
                         ),
                       ),
@@ -671,7 +670,7 @@ class _ServiceConfirmationViewState
           content: Text(
             'Please provide your signature',
             style: GoogleFonts.inter(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w800,
               color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
@@ -749,7 +748,7 @@ class _ServiceConfirmationViewState
           content: Text(
             'Service confirmation submitted successfully',
             style: GoogleFonts.inter(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w800,
               color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
@@ -766,7 +765,7 @@ class _ServiceConfirmationViewState
           content: Text(
             'Failed to submit confirmation: $e',
             style: GoogleFonts.inter(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w800,
               color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),

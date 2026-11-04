@@ -19,22 +19,27 @@ class ThemeSettingsView extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.themeAppBarTitle,
-          style: theme.textTheme.titleLarge,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
+          ),
         ),
         centerTitle: true,
-        backgroundColor: colorScheme.inverseSurface,
-        foregroundColor: colorScheme.onInverseSurface,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.close, color: colorScheme.onInverseSurface),
-          onPressed: () => Navigator.pop(context),
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
         ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(2),
-          child: Divider(height: 2, color: colorScheme.outline, thickness: 2),
+        leading: IconButton(
+          icon: Icon(Icons.close, color: Theme.of(context).colorScheme.onPrimary),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SingleChildScrollView(

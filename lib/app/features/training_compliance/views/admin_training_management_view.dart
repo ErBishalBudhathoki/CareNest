@@ -31,28 +31,23 @@ class _AdminTrainingManagementViewState
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
           AppLocalizations.of(context)!.manageTrainingTitle,
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onSecondary,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
-        backgroundColor: BauhausDesign.secondary,
+        backgroundColor: BauhausDesign.primary,
         foregroundColor: Theme.of(context).colorScheme.onSecondary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         iconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.onSecondary,
+          color: Theme.of(context).colorScheme.onPrimary,
         ),
         elevation: 0,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(
-            color: Theme.of(context).colorScheme.outline,
-            height: 2,
-          ),
-        ),
+        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddModuleDialog(context),
@@ -142,7 +137,7 @@ class _AdminTrainingManagementViewState
               Expanded(
                 child: BauhausButton(
                   text: AppLocalizations.of(context)!.editButton,
-                  backgroundColor: BauhausDesign.secondary,
+                  backgroundColor: BauhausDesign.primary,
                   onPressed: () => _showEditModuleDialog(context, module),
                 ),
               ),

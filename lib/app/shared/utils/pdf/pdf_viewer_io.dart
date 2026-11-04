@@ -389,22 +389,29 @@ class _PdfViewPageState extends State<PdfViewPage> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: colorScheme.inverseSurface,
-        foregroundColor: colorScheme.onInverseSurface,
+        title: Text(
+          'Invoice PDF',
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: colorScheme.onInverseSurface),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          'Invoice PDF',
-          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: colorScheme.onInverseSurface,
-            fontWeight: FontWeight.w600,
+        shape: Border(
+          bottom: BorderSide(
+            color: colorScheme.onSurface,
+            width: 2,
           ),
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: colorScheme.onPrimary),
+          onPressed: () => Navigator.of(context).pop(),
         ),
         actions: <Widget>[
           Padding(

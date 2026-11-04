@@ -231,6 +231,21 @@ abstract class SILQuoteTotals with _$SILQuoteTotals {
       _$SILQuoteTotalsFromJson(json);
 }
 
+/// Milestone 6.1: Digital E-Signature record for SIL Quotes
+@freezed
+abstract class SILQuoteSignature with _$SILQuoteSignature {
+  const factory SILQuoteSignature({
+    @Default('') String signedBy,
+    @Default('participant') String signatoryRole,
+    @Default('') String signatureData,
+    String? signedAt,
+    @Default('') String ipAddress,
+  }) = _SILQuoteSignature;
+
+  factory SILQuoteSignature.fromJson(Map<String, dynamic> json) =>
+      _$SILQuoteSignatureFromJson(json);
+}
+
 @freezed
 abstract class SILQuote with _$SILQuote {
   const factory SILQuote({
@@ -243,6 +258,8 @@ abstract class SILQuote with _$SILQuote {
     @Default(<SILQuoteLine>[]) List<SILQuoteLine> lines,
     @Default(SILQuoteTotals()) SILQuoteTotals totals,
     String? rosterOfCareId,
+    // Milestone 6.1: Digital e-signature metadata
+    SILQuoteSignature? signature,
   }) = _SILQuote;
 
   factory SILQuote.fromJson(Map<String, dynamic> json) =>
@@ -339,11 +356,14 @@ class SILRosterOfCareInvoice {
     required this.invoiceId,
     required this.invoiceNumber,
     this.billing,
+    this.isIdempotentReplay,
   });
 
   final String invoiceId;
   final String invoiceNumber;
   final SILRosterOfCareBillingRoute? billing;
+  // Milestone 7.1: Explicit flag indicating whether invoice was retrieved from an existing idempotent replay
+  final bool? isIdempotentReplay;
 
   factory SILRosterOfCareInvoice.fromJson(Map<String, dynamic> json) {
     final billing = json['billing'];
@@ -355,6 +375,79 @@ class SILRosterOfCareInvoice {
               Map<String, dynamic>.from(billing),
             )
           : null,
+      isIdempotentReplay: json['isIdempotentReplay'] == true,
     );
   }
+}
+
+// ---------------------------------------------------------------------------
+// Service Agreement (Milestone 4.2 Consent Gate)
+// ---------------------------------------------------------------------------
+
+@freezed
+abstract class SILServiceAgreement with _$SILServiceAgreement {
+  const factory SILServiceAgreement({
+    required String id,
+    required String organizationId,
+    required String clientId,
+    String? propertyId,
+    String? quoteId,
+    String? rosterOfCareId,
+    required String agreementNumber,
+    @Default('sil') String agreementType,
+    @Default('draft') String status,
+    required String effectiveFrom,
+    String? effectiveTo,
+    String? signedAt,
+    @Default('') String signedByName,
+    @Default('participant') String signedByRole,
+    @Default(0) double boardAndLodgingWeekly,
+    @Default('') String notes,
+  }) = _SILServiceAgreement;
+
+  factory SILServiceAgreement.fromJson(Map<String, dynamic> json) =>
+      _$SILServiceAgreementFromJson(_normalizeServiceAgreementJson(json));
+}
+
+/// Helper to normalize MongoDB _id and nested signedBy/contribution structures for SILServiceAgreement
+Map<String, dynamic> _normalizeServiceAgreementJson(Map<String, dynamic> json) {
+  final normalized = Map<String, dynamic>.from(json);
+  normalized['id'] ??= json['_id']?.toString() ?? '';
+  if (json['clientId'] is Map) {
+    normalized['clientId'] = json['clientId']['_id']?.toString() ??
+        json['clientId']['id']?.toString() ??
+        '';
+  } else {
+    normalized['clientId'] = json['clientId']?.toString() ?? '';
+  }
+  if (json['propertyId'] is Map) {
+    normalized['propertyId'] = json['propertyId']['_id']?.toString() ??
+        json['propertyId']['id']?.toString();
+  }
+  if (json['quoteId'] is Map) {
+    normalized['quoteId'] = json['quoteId']['_id']?.toString() ??
+        json['quoteId']['id']?.toString();
+  }
+  if (json['rosterOfCareId'] is Map) {
+    normalized['rosterOfCareId'] =
+        json['rosterOfCareId']['_id']?.toString() ??
+            json['rosterOfCareId']['id']?.toString();
+  }
+  final signedBy = json['signedBy'] is Map ? json['signedBy'] as Map : null;
+  if (signedBy != null) {
+    normalized['signedByName'] = signedBy['name']?.toString() ??
+        normalized['signedByName'] ??
+        '';
+    normalized['signedByRole'] = signedBy['role']?.toString() ??
+        normalized['signedByRole'] ??
+        'participant';
+  }
+  final contrib = json['participantContribution'] is Map
+      ? json['participantContribution'] as Map
+      : null;
+  if (contrib != null) {
+    normalized['boardAndLodgingWeekly'] =
+        (contrib['boardAndLodgingWeekly'] as num?)?.toDouble() ?? 0.0;
+  }
+  return normalized;
 }

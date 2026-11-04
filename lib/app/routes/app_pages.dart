@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/features/Appointment/views/client_appointment_details_view.dart';
 import 'package:carenest/app/features/Appointment/views/select_employee_view.dart';
 import 'package:carenest/app/features/Appointment/widgets/shift_details_widget.dart';
@@ -59,7 +61,24 @@ import 'package:carenest/app/features/workforce_optimization/views/performance_a
 import 'package:carenest/app/features/workforce_optimization/views/quality_assurance_view.dart';
 import 'package:carenest/app/features/workforce_optimization/views/report_builder_view.dart';
 import 'package:carenest/app/features/workforce_optimization/views/resource_allocation_view.dart';
+import 'package:carenest/app/features/workforce_optimization/views/workforce_optimization_dashboard.dart';
 import 'package:carenest/app/features/workforce_optimization/views/workforce_planning_view.dart';
+import 'package:carenest/app/features/bulk_actions/views/bulk_actions_view.dart';
+import 'package:carenest/app/features/training_compliance/views/training_compliance_hub_view.dart';
+import 'package:carenest/app/features/payroll/views/advanced_payroll_dashboard.dart';
+import 'package:carenest/app/features/communication/views/communication_hub_dashboard.dart';
+import 'package:carenest/app/features/scheduling/views/auto_schedule_dashboard.dart';
+import 'package:carenest/app/features/scheduling/views/shift_matching_view.dart';
+import 'package:carenest/app/features/compliance/views/compliance_automation_dashboard.dart';
+import 'package:carenest/app/features/expenses/views/smart_expense_dashboard.dart';
+import 'package:carenest/app/features/notifications/views/notification_settings_view.dart';
+import 'package:carenest/app/features/invoice/views/invoice_ai_dashboard.dart';
+import 'package:carenest/app/features/financial_intelligence/views/financial_intelligence_dashboard.dart';
+import 'package:carenest/app/features/analytics/views/analytics_dashboard_view.dart';
+import 'package:carenest/app/features/photo/views/photo_upload_view.dart';
+import 'package:carenest/app/features/requests/views/requests_view.dart';
+import 'package:carenest/app/features/timesheet/views/timesheet_view.dart';
+import 'package:carenest/app/features/offline/views/offline_sync_dashboard.dart';
 import 'package:carenest/app/shared/widgets/bottom_nav_bar_widget.dart';
 import 'package:carenest/app/shared/widgets/nav_bar_widget.dart';
 import 'package:carenest/app/shared/widgets/splash_screen_widget.dart';
@@ -332,9 +351,26 @@ class AppPages {
                 arguments['shiftData'] as Map<String, dynamic>? ?? {};
             return Scaffold(
               appBar: AppBar(
-                title: Text(AppLocalizations.of(context)!.shiftDetails),
-                backgroundColor: Theme.of(context).colorScheme.primary,
+                title: Text(
+                  AppLocalizations.of(context)!.shiftDetails,
+                  style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                centerTitle: true,
+                backgroundColor: BauhausDesign.primary,
                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                surfaceTintColor: Colors.transparent,
+                scrolledUnderElevation: 0,
+                systemOverlayStyle: SystemUiOverlayStyle.light,
+                elevation: 0,
+                shape: Border(
+                  bottom: BorderSide(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 2,
+                  ),
+                ),
               ),
               body: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -483,6 +519,8 @@ class AppPages {
               const WorkerShiftHistoryView(),
           Routes.teamDashboard: (context) => const TeamDashboardView(),
           // Workforce Optimization Routes
+          Routes.workforceOptimization: (context) =>
+              const WorkforceOptimizationDashboard(),
           Routes.workforcePlanning: (context) => const WorkforcePlanningView(),
           Routes.resourceAllocation: (context) =>
               const ResourceAllocationView(),
@@ -519,6 +557,76 @@ class AppPages {
           Routes.claimDashboard: (context) => const ClaimDashboardView(),
           // Progress-note templates admin (Phase 2)
           Routes.noteTemplates: (context) => const NoteTemplatesView(),
+          Routes.bulkActions: (context) {
+            final args =
+                ModalRoute.of(context)?.settings.arguments as Map? ?? const {};
+            return BulkActionsView(
+              organizationId: args['organizationId']?.toString() ?? '',
+              userEmail: args['userEmail']?.toString() ?? '',
+            );
+          },
+          Routes.trainingCompliance: (context) =>
+              const TrainingComplianceHubView(),
+          Routes.advancedPayroll: (context) => const AdvancedPayrollDashboard(),
+          Routes.communicationHub: (context) =>
+              const CommunicationHubDashboard(),
+          Routes.autoSchedule: (context) => const AutoScheduleDashboard(),
+          Routes.shiftMatching: (context) => const ShiftMatchingView(),
+          Routes.complianceAutomation: (context) =>
+              const ComplianceAutomationDashboard(),
+          Routes.smartExpense: (context) => const SmartExpenseDashboard(),
+          Routes.notificationSettings: (context) =>
+              const NotificationSettingsView(),
+          Routes.invoiceAI: (context) => const InvoiceAIDashboard(),
+          Routes.financialIntelligence: (context) =>
+              const FinancialIntelligenceDashboard(),
+          Routes.enhancedAnalytics: (context) =>
+              const AnalyticsDashboardView(),
+          Routes.photoUploadScreen: (context) {
+            final args =
+                ModalRoute.of(context)?.settings.arguments as Map? ?? const {};
+            return PhotoUploadScreen(
+              email: args['email']?.toString() ?? '',
+            );
+          },
+          Routes.requests: (context) {
+            final args =
+                ModalRoute.of(context)?.settings.arguments as Map? ?? const {};
+            return RequestsView(email: args['email']?.toString());
+          },
+          Routes.timesheet: (context) {
+            final args =
+                ModalRoute.of(context)?.settings.arguments as Map? ?? const {};
+            return TimesheetView(
+              email: args['email']?.toString() ?? '',
+            );
+          },
+          Routes.assignClients: (context) => const AssignC2E(),
+          Routes.offlineSync: (context) {
+            final args =
+                ModalRoute.of(context)?.settings.arguments as Map? ?? const {};
+            return OfflineSyncDashboard(
+              userId: args['userId']?.toString(),
+            );
+          },
+          Routes.pricingOptimization: (context) =>
+              const FinancialIntelligenceDashboard(),
+          Routes.billingAutomation: (context) =>
+              const FinancialIntelligenceDashboard(),
+          Routes.cashFlowManagement: (context) =>
+              const FinancialIntelligenceDashboard(),
+          Routes.financialAnalytics: (context) =>
+              const FinancialIntelligenceDashboard(),
+          Routes.budgetManagement: (context) =>
+              const FinancialIntelligenceDashboard(),
+          Routes.paymentProcessing: (context) =>
+              const FinancialIntelligenceDashboard(),
+          Routes.financialReporting: (context) =>
+              const FinancialIntelligenceDashboard(),
+          Routes.revenueForecasting: (context) =>
+              const FinancialIntelligenceDashboard(),
+          Routes.financialCompliance: (context) =>
+              const FinancialIntelligenceDashboard(),
     };
   }
 

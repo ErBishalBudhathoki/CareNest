@@ -45,29 +45,24 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
           AppLocalizations.of(context)!.certificationsTitle,
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onSecondary,
-            fontWeight: FontWeight.w700,
+            color: Theme.of(context).colorScheme.onPrimary, // Standardized
+            fontWeight: FontWeight.w800,
           ),
         ),
-        backgroundColor: BauhausDesign.secondary,
-        foregroundColor: Theme.of(context).colorScheme.onSecondary,
+        backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
+        foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         iconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.onSecondary,
+          color: Theme.of(context).colorScheme.onPrimary,
         ),
         elevation: 0,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(
-            color: Theme.of(context).colorScheme.outline,
-            height: 2,
-          ),
-        ),
+        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
       ),
       body: state.isLoading
           ? const Center(
@@ -128,7 +123,7 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
                                           color: Theme.of(
                                             context,
                                           ).colorScheme.onSurface,
-                                          fontWeight: FontWeight.w700,
+                                          fontWeight: FontWeight.w800,
                                         ),
                                   ),
                                 ),
@@ -323,7 +318,7 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
                           style: BauhausDesign.getTextTheme(context).titleMedium
                               ?.copyWith(
                                 color: Theme.of(context).colorScheme.onSurface,
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w800,
                               ),
                         ),
                       ),
@@ -759,7 +754,7 @@ class _UploadCertificationDialogState
                   child: Container(
                     padding: const EdgeInsets.all(BauhausDesign.space3),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.onSecondary,
+                      color: Theme.of(context).colorScheme.onPrimary,
                       border: Border.all(
                         color: Theme.of(context).colorScheme.outline,
                       ),

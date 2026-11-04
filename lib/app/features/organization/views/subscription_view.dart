@@ -466,24 +466,22 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
       appBar: AppBar(
         title: Text(
           l10n.subscriptionTitle,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).titleLarge?.copyWith(color: Theme.of(context).colorScheme.surface),
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
+          ),
         ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
-        iconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.onPrimary,
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(2.0),
-          child: Container(
-            color: Theme.of(context).colorScheme.outline,
-            height: 2.0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
           ),
         ),
       ),

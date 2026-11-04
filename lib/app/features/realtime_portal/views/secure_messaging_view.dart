@@ -483,25 +483,24 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
       return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
-          backgroundColor: BauhausDesign.secondary,
-          foregroundColor: colorScheme.onSecondary,
-          systemOverlayStyle: SystemUiOverlayStyle.light,
-          scrolledUnderElevation: 0,
-          surfaceTintColor: Colors.transparent,
-          elevation: 0,
-          centerTitle: true,
           title: Text(
             'Secure Messaging',
             style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-              color: BauhausDesign.primary,
-              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onPrimary,
+              fontWeight: FontWeight.w800,
             ),
           ),
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(1.5),
-            child: Container(
-              color: Theme.of(context).colorScheme.outline,
-              height: 1.5,
+          centerTitle: true,
+          backgroundColor: BauhausDesign.primary,
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+          surfaceTintColor: Colors.transparent,
+          scrolledUnderElevation: 0,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
+          elevation: 0,
+          shape: Border(
+            bottom: BorderSide(
+              color: Theme.of(context).colorScheme.onSurface,
+              width: 2,
             ),
           ),
         ),
@@ -517,25 +516,24 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
       return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
-          backgroundColor: BauhausDesign.secondary,
-          foregroundColor: colorScheme.onSecondary,
-          systemOverlayStyle: SystemUiOverlayStyle.light,
-          scrolledUnderElevation: 0,
-          surfaceTintColor: Colors.transparent,
-          elevation: 0,
-          centerTitle: true,
           title: Text(
             'Secure Messaging',
             style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-              color: BauhausDesign.primary,
-              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onPrimary,
+              fontWeight: FontWeight.w800,
             ),
           ),
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(1.5),
-            child: Container(
-              color: Theme.of(context).colorScheme.outline,
-              height: 1.5,
+          centerTitle: true,
+          backgroundColor: BauhausDesign.primary,
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+          surfaceTintColor: Colors.transparent,
+          scrolledUnderElevation: 0,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
+          elevation: 0,
+          shape: Border(
+            bottom: BorderSide(
+              color: Theme.of(context).colorScheme.onSurface,
+              width: 2,
             ),
           ),
         ),
@@ -598,21 +596,15 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.secondary,
-        foregroundColor: Theme.of(context).colorScheme.surface,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        scrolledUnderElevation: 0,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
         title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               'Secure Messaging',
-              style: BauhausDesign.getTextTheme(context).displaySmall?.copyWith(
-                color: BauhausDesign.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
+              style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                color: Theme.of(context).colorScheme.onPrimary,
+                fontWeight: FontWeight.w800,
               ),
             ),
             Text(
@@ -621,30 +613,40 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
                   : 'WORKER COMMUNICATION',
               style: BauhausDesign.neoMonoStyle(
                 context,
-                color: Theme.of(context).colorScheme.surface,
+                color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.8),
                 fontSize: 10,
               ),
             ),
           ],
         ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: BauhausDesign.primary),
-          onPressed: () => Navigator.pop(context),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.5),
-          child: Container(
-            color: Theme.of(context).colorScheme.outline,
-            height: 1.5,
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
           ),
+        ),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+            size: 24,
+          ),
+          onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh, color: BauhausDesign.primary),
+            icon: Icon(Icons.refresh, color: Theme.of(context).colorScheme.onPrimary),
             onPressed: _loadConversations,
           ),
           IconButton(
-            icon: Icon(Icons.info_outline, color: BauhausDesign.primary),
+            icon: Icon(Icons.info_outline, color: Theme.of(context).colorScheme.onPrimary),
             onPressed: _showEncryptionInfo,
           ),
         ],

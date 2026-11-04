@@ -110,17 +110,20 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
         title: Text(
           l10n.stripeDashboardTitle,
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onInverseSurface,
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
           ),
         ),
-        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
-        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
+        backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary (amber/yellow)
+        foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
+        centerTitle: true,
+        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
         iconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.onInverseSurface,
+          color: Theme.of(context).colorScheme.onPrimary, // Standardized
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2.0),
@@ -963,7 +966,7 @@ class _StripeDashboardViewState extends ConsumerState<StripeDashboardView>
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: BauhausDesign.error,
-              foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
             ),
             onPressed: () => Navigator.pop(dialogContext, true),
             child: Text(l10n.stripeRefundConfirm),

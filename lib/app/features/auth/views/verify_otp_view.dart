@@ -50,7 +50,7 @@ class _VerifyOTPViewState extends ConsumerState<VerifyOTPView> {
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: BauhausIconButton(
-            icon: Iconsax.arrow_left,
+            icon: Icons.arrow_back,
             onPressed: () => Navigator.of(context).pop(),
             variant: BauhausActionVariant.neutral,
             isSmall: true,

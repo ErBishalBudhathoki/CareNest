@@ -323,7 +323,10 @@ class _CareIntelligenceDashboardState
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
+      centerTitle: true,
       foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
       systemOverlayStyle: SystemUiOverlayStyle.light,
       backgroundColor: BauhausDesign.primary,
       elevation: 0,
@@ -332,7 +335,7 @@ class _CareIntelligenceDashboardState
         'CARE INTELLIGENCE',
         style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
           color: Theme.of(context).colorScheme.onPrimary,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w800,
           letterSpacing: 0.7,
         ),
       ),
@@ -343,32 +346,7 @@ class _CareIntelligenceDashboardState
         ),
         onPressed: () => Navigator.pop(context),
       ),
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(8),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 3,
-              child: Container(height: 8, color: BauhausDesign.secondary),
-            ),
-            Expanded(
-              flex: 4,
-              child: Container(
-                height: 8,
-                color: Theme.of(context).colorScheme.surface,
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: Container(height: 8, color: BauhausDesign.accent),
-            ),
-            Expanded(
-              flex: 2,
-              child: Container(height: 8, color: BauhausDesign.success),
-            ),
-          ],
-        ),
-      ),
+      shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
     );
   }
 
@@ -458,7 +436,7 @@ class _CareIntelligenceDashboardState
                       style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
                             color: Theme.of(context).colorScheme.onSurface,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w800,
                           ),
                     ),
                     const SizedBox(height: BauhausDesign.space1),
@@ -467,7 +445,7 @@ class _CareIntelligenceDashboardState
                       style: BauhausDesign.getTextTheme(context).displayLarge
                           ?.copyWith(
                             color: BauhausDesign.primary,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w800,
                           ),
                     ),
                     const SizedBox(height: BauhausDesign.space1),
@@ -658,7 +636,7 @@ class _CareIntelligenceDashboardState
                   style: BauhausDesign.getTextTheme(context).labelSmall
                       ?.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
                       ),
                 ),
                 const SizedBox(height: 2),
@@ -815,7 +793,7 @@ class _CareIntelligenceDashboardState
                       style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
                             color: Theme.of(context).colorScheme.onSurface,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w800,
                           ),
                     ),
                   ],
@@ -933,7 +911,7 @@ class _CareIntelligenceDashboardState
                       style: BauhausDesign.getTextTheme(context).labelLarge
                           ?.copyWith(
                             color: Theme.of(context).colorScheme.onSurface,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w800,
                           ),
                     ),
                     const SizedBox(height: 2),
@@ -1051,7 +1029,7 @@ class _CareIntelligenceDashboardState
                         style: BauhausDesign.getTextTheme(context).labelLarge
                             ?.copyWith(
                               color: Theme.of(context).colorScheme.onSurface,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w800,
                             ),
                       ),
                     ),
@@ -1099,7 +1077,7 @@ class _CareIntelligenceDashboardState
                     style: BauhausDesign.getTextTheme(context).bodySmall
                         ?.copyWith(
                           color: signal.accent,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w800,
                         ),
                   ),
                 ),
@@ -1116,7 +1094,7 @@ class _CareIntelligenceDashboardState
                   style: BauhausDesign.getTextTheme(context).labelLarge
                       ?.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
                       ),
                 ),
               ),
@@ -1167,7 +1145,7 @@ class _CareIntelligenceDashboardState
                   style: BauhausDesign.getTextTheme(context).bodySmall
                       ?.copyWith(
                         color: signal.accent,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
                       ),
                 ),
               ),
@@ -1298,7 +1276,7 @@ class _CareIntelligenceDashboardState
                           style: BauhausDesign.getTextTheme(context).labelLarge
                               ?.copyWith(
                                 color: Theme.of(context).colorScheme.onSurface,
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w800,
                               ),
                         ),
                         const SizedBox(height: 2),
@@ -1318,7 +1296,7 @@ class _CareIntelligenceDashboardState
                                 color: Theme.of(
                                   context,
                                 ).colorScheme.onSurfaceVariant,
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w800,
                               ),
                         ),
                       ],
@@ -1374,7 +1352,7 @@ class _CareIntelligenceDashboardState
               'Organization not available',
               style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w800,
               ),
             ),
             const SizedBox(height: BauhausDesign.space1),
@@ -1410,7 +1388,7 @@ class _CareIntelligenceDashboardState
               'No clients available',
               style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w800,
               ),
             ),
             const SizedBox(height: BauhausDesign.space1),
@@ -1832,7 +1810,7 @@ class _CanvasTag extends StatelessWidget {
             label,
             style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
               color: Theme.of(context).colorScheme.onSurface,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: 2),

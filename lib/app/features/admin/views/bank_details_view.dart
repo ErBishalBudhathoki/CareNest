@@ -84,40 +84,25 @@ class _BankDetailsViewState extends ConsumerState<BankDetailsView> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        titleSpacing: BauhausDesign.space4,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'BANK DETAILS',
-              style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                fontWeight: FontWeight.w900,
-                color: Theme.of(context).colorScheme.surface,
-                letterSpacing: 1.2,
-              ),
-            ),
-            Text(
-              _isOrganizationScope
-                  ? 'Invoice payout destination'
-                  : 'Your payroll destination',
-              style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
-                color: Theme.of(context).colorScheme.surface,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
+        title: Text(
+          'BANK DETAILS',
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            fontWeight: FontWeight.w800,
+            color: Theme.of(context).colorScheme.onPrimary,
+            letterSpacing: 1.2,
+          ),
         ),
-        elevation: 0,
+        centerTitle: true,
         backgroundColor: BauhausDesign.primary,
-        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(3),
-          child: Container(
-            height: 3,
-            color: Theme.of(context).colorScheme.outline,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
           ),
         ),
       ),

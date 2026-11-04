@@ -3,6 +3,7 @@ import 'package:carenest/app/features/realtime_portal/viewmodels/realtime_tracki
 import 'package:carenest/app/features/realtime_portal/services/websocket_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -135,14 +136,19 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
       return Scaffold(
         backgroundColor: colorScheme.surface,
         appBar: AppBar(
-          backgroundColor: colorScheme.primary,
+          backgroundColor: BauhausDesign.primary,
+          foregroundColor: colorScheme.onPrimary,
+          surfaceTintColor: Colors.transparent,
+          scrolledUnderElevation: 0,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
           elevation: 0,
+          shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
+          centerTitle: true,
           title: Text(
             'Live Insights',
-            style: TextStyle(
+            style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
               color: colorScheme.onPrimary,
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w800,
             ),
           ),
           leading: IconButton(
@@ -183,7 +189,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w800,
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
@@ -210,14 +216,19 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
+        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
+        centerTitle: true,
         title: Text(
           'Live Insights',
-          style: TextStyle(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: colorScheme.onPrimary,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w800,
           ),
         ),
         leading: IconButton(
@@ -239,7 +250,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
                     style: TextStyle(
                       color: colorScheme.onSecondary,
                       fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                 ],
@@ -343,7 +354,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
                         '${location.eta} minutes',
                         style: TextStyle(
                           fontSize: 24,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w800,
                           color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
@@ -407,7 +418,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
             'No Active Insights',
             style: TextStyle(
               fontSize: 18,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w800,
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
@@ -454,7 +465,7 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
           value,
           style: TextStyle(
             fontSize: 14,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w800,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
@@ -43,16 +44,21 @@ class _CarePlanBuilderViewState extends ConsumerState<CarePlanBuilderView> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.secondary,
-        foregroundColor: Theme.of(context).colorScheme.onSecondary,
+        backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
+        foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
         title: Text(
           'CARE PLAN BUILDER',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onSecondary,
-            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onPrimary, // Standardized
+            fontWeight: FontWeight.w800,
           ),
         ),
         elevation: 0,
+        centerTitle: true,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
       ),
       body: state.isLoading
           ? const Center(child: BauhausLoadingState())

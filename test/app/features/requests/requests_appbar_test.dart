@@ -103,7 +103,7 @@ void main() {
       final ink =
           tester.widget<Text>(find.text('REQUESTS')).style?.color ??
           Theme.of(context).colorScheme.onSurface;
-      final bg = theme.colorScheme.inverseSurface;
+      final bg = BauhausDesign.primary;
       final ratio = _contrast(ink, bg);
 
       expect(

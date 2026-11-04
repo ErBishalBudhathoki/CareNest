@@ -37,42 +37,29 @@ class InvoiceAIConsentView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        scrolledUnderElevation: 0,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: Icon(Icons.arrow_back_ios_new, size: 20),
-            style: IconButton.styleFrom(
-              backgroundColor: BauhausDesign.surfaceOffWhite,
-              side: BorderSide(
-                color: Theme.of(context).colorScheme.onSurface,
-                width: 1.5,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-              ),
-            ),
-          ),
-        ),
         title: Text(
           'AI CONSENT',
           style: textTheme.titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.surface,
-            fontWeight: FontWeight.w700,
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
           ),
         ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(2),
-          child: Container(
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
             color: Theme.of(context).colorScheme.onSurface,
-            height: 2,
+            width: 2,
           ),
+        ),
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
         ),
       ),
       body: SingleChildScrollView(

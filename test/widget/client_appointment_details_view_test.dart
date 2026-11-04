@@ -35,7 +35,7 @@ class _FakeApiMethod extends ApiMethod {
 /// A clockable SIL shift plus a start-timer endpoint that succeeds, so the
 /// clock-in transition can be driven without a live backend.
 class _ClockableApiMethod extends _FakeApiMethod {
-  _ClockableApiMethod()
+  _ClockableApiMethod({String shiftType = 'day', String date = '2026-10-23'})
     : super({
         'success': true,
         'data': {
@@ -47,22 +47,36 @@ class _ClockableApiMethod extends _FakeApiMethod {
             },
           ],
           'assignedClient': {
+            '_id': 'sil-shift-6ada24d5210dbd451597fb82',
             'clientEmail': 'sil.ndia@mailinator.com',
             'isSilRosterShift': true,
             'schedule': [
               {
-                'date': '2026-10-23',
+                'shiftId': 'shift-test-123',
+                '_id': 'shift-test-123',
+                'date': date,
                 'startTime': '09:00',
                 'endTime': '11:00',
                 'break': null,
+                'shiftType': shiftType,
+                'status': 'pending',
               },
             ],
+            'dateList': [date],
+            'startTimeList': ['09:00'],
+            'endTimeList': ['11:00'],
+            'breakList': [null],
             'timeRecords': <dynamic>[],
           },
         },
       });
 
   int startCalls = 0;
+  int cancelCalls = 0;
+  String? lastCancelReason;
+  int setWorkedTimeCalls = 0;
+  List<Map<String, dynamic>>? lastDisturbances;
+  bool? lastConvertedToActiveNight;
 
   @override
   Future<Map<String, dynamic>> startTimer({
@@ -71,6 +85,48 @@ class _ClockableApiMethod extends _FakeApiMethod {
     String? organizationId,
   }) async {
     startCalls += 1;
+    return {'success': true};
+  }
+
+  // Override stopTimer to prevent network calls to development backend during tests
+  @override
+  Future<void> stopTimer({
+    String? userEmail,
+    String? organizationId,
+    bool persistWorkedTime = true,
+  }) async {}
+
+  @override
+  Future<Map<String, dynamic>> createCancellationCharge({
+    required String shiftId,
+    required String reason,
+    String? cancelledAt,
+    double? noticeHours,
+    double? unitPrice,
+  }) async {
+    cancelCalls += 1;
+    lastCancelReason = reason;
+    return {'success': true, 'data': {'chargeId': 'charge-123'}};
+  }
+
+  @override
+  Future<dynamic> setWorkedTime(
+    String userEmail,
+    String clientEmail,
+    String workedTime,
+    int shiftIndex, {
+    String? shiftDate,
+    String? shiftStartTime,
+    String? shiftEndTime,
+    dynamic shiftBreak,
+    String? clientRequestId,
+    String? shiftType,
+    List<Map<String, dynamic>>? disturbances,
+    bool? convertedToActiveNight,
+  }) async {
+    setWorkedTimeCalls += 1;
+    lastDisturbances = disturbances;
+    lastConvertedToActiveNight = convertedToActiveNight;
     return {'success': true};
   }
 }
@@ -308,4 +364,112 @@ void main() {
     expect(find.text('START SHIFT'), findsNothing);
     expect(find.text('END SHIFT'), findsNothing);
   });
+
+  // Milestone 3.1: Short-Notice Cancellation Dialog & Billing
+  testWidgets(
+    'Milestone 3.1: displays cancel icon for future shifts and opens cancellation dialog',
+    (tester) async {
+      // Use a future date so the shift is not treated as past
+      final api = _ClockableApiMethod(shiftType: 'day', date: '2026-11-20');
+
+      await tester.pumpWidget(_buildApp(api));
+      await _pumpFrames(tester);
+
+      // Verify the cancel icon exists in the action cell
+      final cancelIconFinder = find.byIcon(Icons.cancel_outlined);
+      expect(cancelIconFinder, findsOneWidget);
+
+      // Scroll to ensure the cancel button is visible and tap it
+      await tester.ensureVisible(cancelIconFinder);
+      await tester.tap(cancelIconFinder);
+      await _pumpFrames(tester);
+
+      // Verify the cancellation dialog appears
+      expect(find.text('Cancellation Reason'), findsOneWidget);
+      expect(find.text('Notice (hours)'), findsOneWidget);
+      expect(find.text('Cancel'), findsOneWidget);
+      expect(find.text('Bill cancellation'), findsOneWidget);
+
+      // Tap Bill cancellation to trigger billing invocation
+      await tester.tap(find.text('Bill cancellation'));
+      await _pumpFrames(tester);
+
+      expect(api.cancelCalls, 1);
+      expect(api.lastCancelReason, 'NSCC');
+    },
+  );
+
+  // Milestone 3.3: Sleepover Disturbance Check & SCHADS Clause 25.7 Conversion
+  testWidgets(
+    'Milestone 3.3: sleepover shift clock-out triggers disturbance check and converts to Active Night if > 60m',
+    (tester) async {
+      final api = _ClockableApiMethod(shiftType: 'sleepover', date: '2026-11-20');
+
+      await tester.pumpWidget(_buildApp(api));
+      await _pumpFrames(tester);
+
+      // Start the sleepover shift
+      await tester.ensureVisible(find.text('START SHIFT'));
+      await tester.tap(find.text('START SHIFT'));
+      await _pumpFrames(tester);
+      expect(find.text('END SHIFT'), findsOneWidget);
+
+      // Stop the shift to trigger the shift selection dialog
+      await tester.ensureVisible(find.text('END SHIFT'));
+      await tester.tap(find.text('END SHIFT'));
+      await _pumpFrames(tester);
+
+      // Select the shift from the shift selection dialog
+      final shiftTileFinder = find.textContaining('Date: 2026-11-20');
+      expect(shiftTileFinder, findsOneWidget);
+      await tester.tap(shiftTileFinder);
+      await _pumpFrames(tester);
+
+      // Confirm the shift association dialog
+      expect(find.text('CONFIRM SHIFT ASSOCIATION'), findsOneWidget);
+      await tester.tap(find.text('CONFIRM'));
+      await _pumpFrames(tester);
+
+      // Verify the sleepover check dialog is shown
+      expect(find.text('SLEEPOVER SHIFT CHECK'), findsOneWidget);
+      expect(
+        find.text(
+          'Were you disturbed or required to perform active work during this sleepover shift?',
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('NO (Quiet)'), findsOneWidget);
+      expect(find.text('YES (Disturbed)'), findsOneWidget);
+
+      // Worker indicates disturbance
+      await tester.tap(find.text('YES (Disturbed)'));
+      await _pumpFrames(tester);
+
+      // Enter 90 minutes of disturbance (> 60 minutes threshold for Active Night)
+      final durationFieldFinder = find.widgetWithText(
+        TextField,
+        'Total Disturbance Duration (Minutes)',
+      );
+      expect(durationFieldFinder, findsOneWidget);
+      await tester.enterText(durationFieldFinder, '90');
+      await _pumpFrames(tester);
+
+      // Verify SCHADS Award Clause 25.7 automatic conversion banner
+      expect(
+        find.textContaining('Under SCHADS Clause 25.7, this converts to Active Night'),
+        findsOneWidget,
+      );
+
+      // Confirm disturbance details
+      await tester.tap(find.text('CONFIRM'));
+      await _pumpFrames(tester);
+
+      expect(api.setWorkedTimeCalls, 1);
+      expect(api.lastConvertedToActiveNight, true);
+      expect(api.lastDisturbances, isNotNull);
+      expect(api.lastDisturbances!.first['durationMinutes'], 90);
+
+      TimerService().stop();
+    },
+  );
 }

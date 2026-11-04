@@ -4028,9 +4028,285 @@ as double,
 
 
 /// @nodoc
+mixin _$SILQuoteSignature {
+
+ String get signedBy; String get signatoryRole; String get signatureData; String? get signedAt; String get ipAddress;
+/// Create a copy of SILQuoteSignature
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SILQuoteSignatureCopyWith<SILQuoteSignature> get copyWith => _$SILQuoteSignatureCopyWithImpl<SILQuoteSignature>(this as SILQuoteSignature, _$identity);
+
+  /// Serializes this SILQuoteSignature to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SILQuoteSignature&&(identical(other.signedBy, signedBy) || other.signedBy == signedBy)&&(identical(other.signatoryRole, signatoryRole) || other.signatoryRole == signatoryRole)&&(identical(other.signatureData, signatureData) || other.signatureData == signatureData)&&(identical(other.signedAt, signedAt) || other.signedAt == signedAt)&&(identical(other.ipAddress, ipAddress) || other.ipAddress == ipAddress));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,signedBy,signatoryRole,signatureData,signedAt,ipAddress);
+
+@override
+String toString() {
+  return 'SILQuoteSignature(signedBy: $signedBy, signatoryRole: $signatoryRole, signatureData: $signatureData, signedAt: $signedAt, ipAddress: $ipAddress)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SILQuoteSignatureCopyWith<$Res>  {
+  factory $SILQuoteSignatureCopyWith(SILQuoteSignature value, $Res Function(SILQuoteSignature) _then) = _$SILQuoteSignatureCopyWithImpl;
+@useResult
+$Res call({
+ String signedBy, String signatoryRole, String signatureData, String? signedAt, String ipAddress
+});
+
+
+
+
+}
+/// @nodoc
+class _$SILQuoteSignatureCopyWithImpl<$Res>
+    implements $SILQuoteSignatureCopyWith<$Res> {
+  _$SILQuoteSignatureCopyWithImpl(this._self, this._then);
+
+  final SILQuoteSignature _self;
+  final $Res Function(SILQuoteSignature) _then;
+
+/// Create a copy of SILQuoteSignature
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? signedBy = null,Object? signatoryRole = null,Object? signatureData = null,Object? signedAt = freezed,Object? ipAddress = null,}) {
+  return _then(_self.copyWith(
+signedBy: null == signedBy ? _self.signedBy : signedBy // ignore: cast_nullable_to_non_nullable
+as String,signatoryRole: null == signatoryRole ? _self.signatoryRole : signatoryRole // ignore: cast_nullable_to_non_nullable
+as String,signatureData: null == signatureData ? _self.signatureData : signatureData // ignore: cast_nullable_to_non_nullable
+as String,signedAt: freezed == signedAt ? _self.signedAt : signedAt // ignore: cast_nullable_to_non_nullable
+as String?,ipAddress: null == ipAddress ? _self.ipAddress : ipAddress // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [SILQuoteSignature].
+extension SILQuoteSignaturePatterns on SILQuoteSignature {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _SILQuoteSignature value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _SILQuoteSignature() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _SILQuoteSignature value)  $default,){
+final _that = this;
+switch (_that) {
+case _SILQuoteSignature():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _SILQuoteSignature value)?  $default,){
+final _that = this;
+switch (_that) {
+case _SILQuoteSignature() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String signedBy,  String signatoryRole,  String signatureData,  String? signedAt,  String ipAddress)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _SILQuoteSignature() when $default != null:
+return $default(_that.signedBy,_that.signatoryRole,_that.signatureData,_that.signedAt,_that.ipAddress);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String signedBy,  String signatoryRole,  String signatureData,  String? signedAt,  String ipAddress)  $default,) {final _that = this;
+switch (_that) {
+case _SILQuoteSignature():
+return $default(_that.signedBy,_that.signatoryRole,_that.signatureData,_that.signedAt,_that.ipAddress);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String signedBy,  String signatoryRole,  String signatureData,  String? signedAt,  String ipAddress)?  $default,) {final _that = this;
+switch (_that) {
+case _SILQuoteSignature() when $default != null:
+return $default(_that.signedBy,_that.signatoryRole,_that.signatureData,_that.signedAt,_that.ipAddress);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _SILQuoteSignature implements SILQuoteSignature {
+  const _SILQuoteSignature({this.signedBy = '', this.signatoryRole = 'participant', this.signatureData = '', this.signedAt, this.ipAddress = ''});
+  factory _SILQuoteSignature.fromJson(Map<String, dynamic> json) => _$SILQuoteSignatureFromJson(json);
+
+@override@JsonKey() final  String signedBy;
+@override@JsonKey() final  String signatoryRole;
+@override@JsonKey() final  String signatureData;
+@override final  String? signedAt;
+@override@JsonKey() final  String ipAddress;
+
+/// Create a copy of SILQuoteSignature
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$SILQuoteSignatureCopyWith<_SILQuoteSignature> get copyWith => __$SILQuoteSignatureCopyWithImpl<_SILQuoteSignature>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$SILQuoteSignatureToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SILQuoteSignature&&(identical(other.signedBy, signedBy) || other.signedBy == signedBy)&&(identical(other.signatoryRole, signatoryRole) || other.signatoryRole == signatoryRole)&&(identical(other.signatureData, signatureData) || other.signatureData == signatureData)&&(identical(other.signedAt, signedAt) || other.signedAt == signedAt)&&(identical(other.ipAddress, ipAddress) || other.ipAddress == ipAddress));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,signedBy,signatoryRole,signatureData,signedAt,ipAddress);
+
+@override
+String toString() {
+  return 'SILQuoteSignature(signedBy: $signedBy, signatoryRole: $signatoryRole, signatureData: $signatureData, signedAt: $signedAt, ipAddress: $ipAddress)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$SILQuoteSignatureCopyWith<$Res> implements $SILQuoteSignatureCopyWith<$Res> {
+  factory _$SILQuoteSignatureCopyWith(_SILQuoteSignature value, $Res Function(_SILQuoteSignature) _then) = __$SILQuoteSignatureCopyWithImpl;
+@override @useResult
+$Res call({
+ String signedBy, String signatoryRole, String signatureData, String? signedAt, String ipAddress
+});
+
+
+
+
+}
+/// @nodoc
+class __$SILQuoteSignatureCopyWithImpl<$Res>
+    implements _$SILQuoteSignatureCopyWith<$Res> {
+  __$SILQuoteSignatureCopyWithImpl(this._self, this._then);
+
+  final _SILQuoteSignature _self;
+  final $Res Function(_SILQuoteSignature) _then;
+
+/// Create a copy of SILQuoteSignature
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? signedBy = null,Object? signatoryRole = null,Object? signatureData = null,Object? signedAt = freezed,Object? ipAddress = null,}) {
+  return _then(_SILQuoteSignature(
+signedBy: null == signedBy ? _self.signedBy : signedBy // ignore: cast_nullable_to_non_nullable
+as String,signatoryRole: null == signatoryRole ? _self.signatoryRole : signatoryRole // ignore: cast_nullable_to_non_nullable
+as String,signatureData: null == signatureData ? _self.signatureData : signatureData // ignore: cast_nullable_to_non_nullable
+as String,signedAt: freezed == signedAt ? _self.signedAt : signedAt // ignore: cast_nullable_to_non_nullable
+as String?,ipAddress: null == ipAddress ? _self.ipAddress : ipAddress // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
 mixin _$SILQuote {
 
- String get id; String get clientId; String? get propertyId; String get status; String get fundingType; String? get validUntil; List<SILQuoteLine> get lines; SILQuoteTotals get totals; String? get rosterOfCareId;
+ String get id; String get clientId; String? get propertyId; String get status; String get fundingType; String? get validUntil; List<SILQuoteLine> get lines; SILQuoteTotals get totals; String? get rosterOfCareId;// Milestone 6.1: Digital e-signature metadata
+ SILQuoteSignature? get signature;
 /// Create a copy of SILQuote
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -4043,16 +4319,16 @@ $SILQuoteCopyWith<SILQuote> get copyWith => _$SILQuoteCopyWithImpl<SILQuote>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SILQuote&&(identical(other.id, id) || other.id == id)&&(identical(other.clientId, clientId) || other.clientId == clientId)&&(identical(other.propertyId, propertyId) || other.propertyId == propertyId)&&(identical(other.status, status) || other.status == status)&&(identical(other.fundingType, fundingType) || other.fundingType == fundingType)&&(identical(other.validUntil, validUntil) || other.validUntil == validUntil)&&const DeepCollectionEquality().equals(other.lines, lines)&&(identical(other.totals, totals) || other.totals == totals)&&(identical(other.rosterOfCareId, rosterOfCareId) || other.rosterOfCareId == rosterOfCareId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SILQuote&&(identical(other.id, id) || other.id == id)&&(identical(other.clientId, clientId) || other.clientId == clientId)&&(identical(other.propertyId, propertyId) || other.propertyId == propertyId)&&(identical(other.status, status) || other.status == status)&&(identical(other.fundingType, fundingType) || other.fundingType == fundingType)&&(identical(other.validUntil, validUntil) || other.validUntil == validUntil)&&const DeepCollectionEquality().equals(other.lines, lines)&&(identical(other.totals, totals) || other.totals == totals)&&(identical(other.rosterOfCareId, rosterOfCareId) || other.rosterOfCareId == rosterOfCareId)&&(identical(other.signature, signature) || other.signature == signature));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,clientId,propertyId,status,fundingType,validUntil,const DeepCollectionEquality().hash(lines),totals,rosterOfCareId);
+int get hashCode => Object.hash(runtimeType,id,clientId,propertyId,status,fundingType,validUntil,const DeepCollectionEquality().hash(lines),totals,rosterOfCareId,signature);
 
 @override
 String toString() {
-  return 'SILQuote(id: $id, clientId: $clientId, propertyId: $propertyId, status: $status, fundingType: $fundingType, validUntil: $validUntil, lines: $lines, totals: $totals, rosterOfCareId: $rosterOfCareId)';
+  return 'SILQuote(id: $id, clientId: $clientId, propertyId: $propertyId, status: $status, fundingType: $fundingType, validUntil: $validUntil, lines: $lines, totals: $totals, rosterOfCareId: $rosterOfCareId, signature: $signature)';
 }
 
 
@@ -4063,11 +4339,11 @@ abstract mixin class $SILQuoteCopyWith<$Res>  {
   factory $SILQuoteCopyWith(SILQuote value, $Res Function(SILQuote) _then) = _$SILQuoteCopyWithImpl;
 @useResult
 $Res call({
- String id, String clientId, String? propertyId, String status, String fundingType, String? validUntil, List<SILQuoteLine> lines, SILQuoteTotals totals, String? rosterOfCareId
+ String id, String clientId, String? propertyId, String status, String fundingType, String? validUntil, List<SILQuoteLine> lines, SILQuoteTotals totals, String? rosterOfCareId, SILQuoteSignature? signature
 });
 
 
-$SILQuoteTotalsCopyWith<$Res> get totals;
+$SILQuoteTotalsCopyWith<$Res> get totals;$SILQuoteSignatureCopyWith<$Res>? get signature;
 
 }
 /// @nodoc
@@ -4080,7 +4356,7 @@ class _$SILQuoteCopyWithImpl<$Res>
 
 /// Create a copy of SILQuote
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? clientId = null,Object? propertyId = freezed,Object? status = null,Object? fundingType = null,Object? validUntil = freezed,Object? lines = null,Object? totals = null,Object? rosterOfCareId = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? clientId = null,Object? propertyId = freezed,Object? status = null,Object? fundingType = null,Object? validUntil = freezed,Object? lines = null,Object? totals = null,Object? rosterOfCareId = freezed,Object? signature = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,clientId: null == clientId ? _self.clientId : clientId // ignore: cast_nullable_to_non_nullable
@@ -4091,7 +4367,8 @@ as String,validUntil: freezed == validUntil ? _self.validUntil : validUntil // i
 as String?,lines: null == lines ? _self.lines : lines // ignore: cast_nullable_to_non_nullable
 as List<SILQuoteLine>,totals: null == totals ? _self.totals : totals // ignore: cast_nullable_to_non_nullable
 as SILQuoteTotals,rosterOfCareId: freezed == rosterOfCareId ? _self.rosterOfCareId : rosterOfCareId // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,signature: freezed == signature ? _self.signature : signature // ignore: cast_nullable_to_non_nullable
+as SILQuoteSignature?,
   ));
 }
 /// Create a copy of SILQuote
@@ -4102,6 +4379,18 @@ $SILQuoteTotalsCopyWith<$Res> get totals {
   
   return $SILQuoteTotalsCopyWith<$Res>(_self.totals, (value) {
     return _then(_self.copyWith(totals: value));
+  });
+}/// Create a copy of SILQuote
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$SILQuoteSignatureCopyWith<$Res>? get signature {
+    if (_self.signature == null) {
+    return null;
+  }
+
+  return $SILQuoteSignatureCopyWith<$Res>(_self.signature!, (value) {
+    return _then(_self.copyWith(signature: value));
   });
 }
 }
@@ -4185,10 +4474,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String clientId,  String? propertyId,  String status,  String fundingType,  String? validUntil,  List<SILQuoteLine> lines,  SILQuoteTotals totals,  String? rosterOfCareId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String clientId,  String? propertyId,  String status,  String fundingType,  String? validUntil,  List<SILQuoteLine> lines,  SILQuoteTotals totals,  String? rosterOfCareId,  SILQuoteSignature? signature)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SILQuote() when $default != null:
-return $default(_that.id,_that.clientId,_that.propertyId,_that.status,_that.fundingType,_that.validUntil,_that.lines,_that.totals,_that.rosterOfCareId);case _:
+return $default(_that.id,_that.clientId,_that.propertyId,_that.status,_that.fundingType,_that.validUntil,_that.lines,_that.totals,_that.rosterOfCareId,_that.signature);case _:
   return orElse();
 
 }
@@ -4206,10 +4495,10 @@ return $default(_that.id,_that.clientId,_that.propertyId,_that.status,_that.fund
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String clientId,  String? propertyId,  String status,  String fundingType,  String? validUntil,  List<SILQuoteLine> lines,  SILQuoteTotals totals,  String? rosterOfCareId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String clientId,  String? propertyId,  String status,  String fundingType,  String? validUntil,  List<SILQuoteLine> lines,  SILQuoteTotals totals,  String? rosterOfCareId,  SILQuoteSignature? signature)  $default,) {final _that = this;
 switch (_that) {
 case _SILQuote():
-return $default(_that.id,_that.clientId,_that.propertyId,_that.status,_that.fundingType,_that.validUntil,_that.lines,_that.totals,_that.rosterOfCareId);case _:
+return $default(_that.id,_that.clientId,_that.propertyId,_that.status,_that.fundingType,_that.validUntil,_that.lines,_that.totals,_that.rosterOfCareId,_that.signature);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -4226,10 +4515,10 @@ return $default(_that.id,_that.clientId,_that.propertyId,_that.status,_that.fund
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String clientId,  String? propertyId,  String status,  String fundingType,  String? validUntil,  List<SILQuoteLine> lines,  SILQuoteTotals totals,  String? rosterOfCareId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String clientId,  String? propertyId,  String status,  String fundingType,  String? validUntil,  List<SILQuoteLine> lines,  SILQuoteTotals totals,  String? rosterOfCareId,  SILQuoteSignature? signature)?  $default,) {final _that = this;
 switch (_that) {
 case _SILQuote() when $default != null:
-return $default(_that.id,_that.clientId,_that.propertyId,_that.status,_that.fundingType,_that.validUntil,_that.lines,_that.totals,_that.rosterOfCareId);case _:
+return $default(_that.id,_that.clientId,_that.propertyId,_that.status,_that.fundingType,_that.validUntil,_that.lines,_that.totals,_that.rosterOfCareId,_that.signature);case _:
   return null;
 
 }
@@ -4241,7 +4530,7 @@ return $default(_that.id,_that.clientId,_that.propertyId,_that.status,_that.fund
 @JsonSerializable()
 
 class _SILQuote implements SILQuote {
-  const _SILQuote({required this.id, required this.clientId, this.propertyId, this.status = 'draft', this.fundingType = 'plan_managed', this.validUntil, final  List<SILQuoteLine> lines = const <SILQuoteLine>[], this.totals = const SILQuoteTotals(), this.rosterOfCareId}): _lines = lines;
+  const _SILQuote({required this.id, required this.clientId, this.propertyId, this.status = 'draft', this.fundingType = 'plan_managed', this.validUntil, final  List<SILQuoteLine> lines = const <SILQuoteLine>[], this.totals = const SILQuoteTotals(), this.rosterOfCareId, this.signature}): _lines = lines;
   factory _SILQuote.fromJson(Map<String, dynamic> json) => _$SILQuoteFromJson(json);
 
 @override final  String id;
@@ -4259,6 +4548,8 @@ class _SILQuote implements SILQuote {
 
 @override@JsonKey() final  SILQuoteTotals totals;
 @override final  String? rosterOfCareId;
+// Milestone 6.1: Digital e-signature metadata
+@override final  SILQuoteSignature? signature;
 
 /// Create a copy of SILQuote
 /// with the given fields replaced by the non-null parameter values.
@@ -4273,16 +4564,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SILQuote&&(identical(other.id, id) || other.id == id)&&(identical(other.clientId, clientId) || other.clientId == clientId)&&(identical(other.propertyId, propertyId) || other.propertyId == propertyId)&&(identical(other.status, status) || other.status == status)&&(identical(other.fundingType, fundingType) || other.fundingType == fundingType)&&(identical(other.validUntil, validUntil) || other.validUntil == validUntil)&&const DeepCollectionEquality().equals(other._lines, _lines)&&(identical(other.totals, totals) || other.totals == totals)&&(identical(other.rosterOfCareId, rosterOfCareId) || other.rosterOfCareId == rosterOfCareId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SILQuote&&(identical(other.id, id) || other.id == id)&&(identical(other.clientId, clientId) || other.clientId == clientId)&&(identical(other.propertyId, propertyId) || other.propertyId == propertyId)&&(identical(other.status, status) || other.status == status)&&(identical(other.fundingType, fundingType) || other.fundingType == fundingType)&&(identical(other.validUntil, validUntil) || other.validUntil == validUntil)&&const DeepCollectionEquality().equals(other._lines, _lines)&&(identical(other.totals, totals) || other.totals == totals)&&(identical(other.rosterOfCareId, rosterOfCareId) || other.rosterOfCareId == rosterOfCareId)&&(identical(other.signature, signature) || other.signature == signature));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,clientId,propertyId,status,fundingType,validUntil,const DeepCollectionEquality().hash(_lines),totals,rosterOfCareId);
+int get hashCode => Object.hash(runtimeType,id,clientId,propertyId,status,fundingType,validUntil,const DeepCollectionEquality().hash(_lines),totals,rosterOfCareId,signature);
 
 @override
 String toString() {
-  return 'SILQuote(id: $id, clientId: $clientId, propertyId: $propertyId, status: $status, fundingType: $fundingType, validUntil: $validUntil, lines: $lines, totals: $totals, rosterOfCareId: $rosterOfCareId)';
+  return 'SILQuote(id: $id, clientId: $clientId, propertyId: $propertyId, status: $status, fundingType: $fundingType, validUntil: $validUntil, lines: $lines, totals: $totals, rosterOfCareId: $rosterOfCareId, signature: $signature)';
 }
 
 
@@ -4293,11 +4584,11 @@ abstract mixin class _$SILQuoteCopyWith<$Res> implements $SILQuoteCopyWith<$Res>
   factory _$SILQuoteCopyWith(_SILQuote value, $Res Function(_SILQuote) _then) = __$SILQuoteCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String clientId, String? propertyId, String status, String fundingType, String? validUntil, List<SILQuoteLine> lines, SILQuoteTotals totals, String? rosterOfCareId
+ String id, String clientId, String? propertyId, String status, String fundingType, String? validUntil, List<SILQuoteLine> lines, SILQuoteTotals totals, String? rosterOfCareId, SILQuoteSignature? signature
 });
 
 
-@override $SILQuoteTotalsCopyWith<$Res> get totals;
+@override $SILQuoteTotalsCopyWith<$Res> get totals;@override $SILQuoteSignatureCopyWith<$Res>? get signature;
 
 }
 /// @nodoc
@@ -4310,7 +4601,7 @@ class __$SILQuoteCopyWithImpl<$Res>
 
 /// Create a copy of SILQuote
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? clientId = null,Object? propertyId = freezed,Object? status = null,Object? fundingType = null,Object? validUntil = freezed,Object? lines = null,Object? totals = null,Object? rosterOfCareId = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? clientId = null,Object? propertyId = freezed,Object? status = null,Object? fundingType = null,Object? validUntil = freezed,Object? lines = null,Object? totals = null,Object? rosterOfCareId = freezed,Object? signature = freezed,}) {
   return _then(_SILQuote(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,clientId: null == clientId ? _self.clientId : clientId // ignore: cast_nullable_to_non_nullable
@@ -4321,7 +4612,8 @@ as String,validUntil: freezed == validUntil ? _self.validUntil : validUntil // i
 as String?,lines: null == lines ? _self._lines : lines // ignore: cast_nullable_to_non_nullable
 as List<SILQuoteLine>,totals: null == totals ? _self.totals : totals // ignore: cast_nullable_to_non_nullable
 as SILQuoteTotals,rosterOfCareId: freezed == rosterOfCareId ? _self.rosterOfCareId : rosterOfCareId // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,signature: freezed == signature ? _self.signature : signature // ignore: cast_nullable_to_non_nullable
+as SILQuoteSignature?,
   ));
 }
 
@@ -4333,6 +4625,18 @@ $SILQuoteTotalsCopyWith<$Res> get totals {
   
   return $SILQuoteTotalsCopyWith<$Res>(_self.totals, (value) {
     return _then(_self.copyWith(totals: value));
+  });
+}/// Create a copy of SILQuote
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$SILQuoteSignatureCopyWith<$Res>? get signature {
+    if (_self.signature == null) {
+    return null;
+  }
+
+  return $SILQuoteSignatureCopyWith<$Res>(_self.signature!, (value) {
+    return _then(_self.copyWith(signature: value));
   });
 }
 }
@@ -5208,6 +5512,314 @@ $SILReviewScheduleCopyWith<$Res> get reviewSchedule {
     return _then(_self.copyWith(reviewSchedule: value));
   });
 }
+}
+
+
+/// @nodoc
+mixin _$SILServiceAgreement {
+
+ String get id; String get organizationId; String get clientId; String? get propertyId; String? get quoteId; String? get rosterOfCareId; String get agreementNumber; String get agreementType; String get status; String get effectiveFrom; String? get effectiveTo; String? get signedAt; String get signedByName; String get signedByRole; double get boardAndLodgingWeekly; String get notes;
+/// Create a copy of SILServiceAgreement
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SILServiceAgreementCopyWith<SILServiceAgreement> get copyWith => _$SILServiceAgreementCopyWithImpl<SILServiceAgreement>(this as SILServiceAgreement, _$identity);
+
+  /// Serializes this SILServiceAgreement to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SILServiceAgreement&&(identical(other.id, id) || other.id == id)&&(identical(other.organizationId, organizationId) || other.organizationId == organizationId)&&(identical(other.clientId, clientId) || other.clientId == clientId)&&(identical(other.propertyId, propertyId) || other.propertyId == propertyId)&&(identical(other.quoteId, quoteId) || other.quoteId == quoteId)&&(identical(other.rosterOfCareId, rosterOfCareId) || other.rosterOfCareId == rosterOfCareId)&&(identical(other.agreementNumber, agreementNumber) || other.agreementNumber == agreementNumber)&&(identical(other.agreementType, agreementType) || other.agreementType == agreementType)&&(identical(other.status, status) || other.status == status)&&(identical(other.effectiveFrom, effectiveFrom) || other.effectiveFrom == effectiveFrom)&&(identical(other.effectiveTo, effectiveTo) || other.effectiveTo == effectiveTo)&&(identical(other.signedAt, signedAt) || other.signedAt == signedAt)&&(identical(other.signedByName, signedByName) || other.signedByName == signedByName)&&(identical(other.signedByRole, signedByRole) || other.signedByRole == signedByRole)&&(identical(other.boardAndLodgingWeekly, boardAndLodgingWeekly) || other.boardAndLodgingWeekly == boardAndLodgingWeekly)&&(identical(other.notes, notes) || other.notes == notes));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,organizationId,clientId,propertyId,quoteId,rosterOfCareId,agreementNumber,agreementType,status,effectiveFrom,effectiveTo,signedAt,signedByName,signedByRole,boardAndLodgingWeekly,notes);
+
+@override
+String toString() {
+  return 'SILServiceAgreement(id: $id, organizationId: $organizationId, clientId: $clientId, propertyId: $propertyId, quoteId: $quoteId, rosterOfCareId: $rosterOfCareId, agreementNumber: $agreementNumber, agreementType: $agreementType, status: $status, effectiveFrom: $effectiveFrom, effectiveTo: $effectiveTo, signedAt: $signedAt, signedByName: $signedByName, signedByRole: $signedByRole, boardAndLodgingWeekly: $boardAndLodgingWeekly, notes: $notes)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SILServiceAgreementCopyWith<$Res>  {
+  factory $SILServiceAgreementCopyWith(SILServiceAgreement value, $Res Function(SILServiceAgreement) _then) = _$SILServiceAgreementCopyWithImpl;
+@useResult
+$Res call({
+ String id, String organizationId, String clientId, String? propertyId, String? quoteId, String? rosterOfCareId, String agreementNumber, String agreementType, String status, String effectiveFrom, String? effectiveTo, String? signedAt, String signedByName, String signedByRole, double boardAndLodgingWeekly, String notes
+});
+
+
+
+
+}
+/// @nodoc
+class _$SILServiceAgreementCopyWithImpl<$Res>
+    implements $SILServiceAgreementCopyWith<$Res> {
+  _$SILServiceAgreementCopyWithImpl(this._self, this._then);
+
+  final SILServiceAgreement _self;
+  final $Res Function(SILServiceAgreement) _then;
+
+/// Create a copy of SILServiceAgreement
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? organizationId = null,Object? clientId = null,Object? propertyId = freezed,Object? quoteId = freezed,Object? rosterOfCareId = freezed,Object? agreementNumber = null,Object? agreementType = null,Object? status = null,Object? effectiveFrom = null,Object? effectiveTo = freezed,Object? signedAt = freezed,Object? signedByName = null,Object? signedByRole = null,Object? boardAndLodgingWeekly = null,Object? notes = null,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,organizationId: null == organizationId ? _self.organizationId : organizationId // ignore: cast_nullable_to_non_nullable
+as String,clientId: null == clientId ? _self.clientId : clientId // ignore: cast_nullable_to_non_nullable
+as String,propertyId: freezed == propertyId ? _self.propertyId : propertyId // ignore: cast_nullable_to_non_nullable
+as String?,quoteId: freezed == quoteId ? _self.quoteId : quoteId // ignore: cast_nullable_to_non_nullable
+as String?,rosterOfCareId: freezed == rosterOfCareId ? _self.rosterOfCareId : rosterOfCareId // ignore: cast_nullable_to_non_nullable
+as String?,agreementNumber: null == agreementNumber ? _self.agreementNumber : agreementNumber // ignore: cast_nullable_to_non_nullable
+as String,agreementType: null == agreementType ? _self.agreementType : agreementType // ignore: cast_nullable_to_non_nullable
+as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,effectiveFrom: null == effectiveFrom ? _self.effectiveFrom : effectiveFrom // ignore: cast_nullable_to_non_nullable
+as String,effectiveTo: freezed == effectiveTo ? _self.effectiveTo : effectiveTo // ignore: cast_nullable_to_non_nullable
+as String?,signedAt: freezed == signedAt ? _self.signedAt : signedAt // ignore: cast_nullable_to_non_nullable
+as String?,signedByName: null == signedByName ? _self.signedByName : signedByName // ignore: cast_nullable_to_non_nullable
+as String,signedByRole: null == signedByRole ? _self.signedByRole : signedByRole // ignore: cast_nullable_to_non_nullable
+as String,boardAndLodgingWeekly: null == boardAndLodgingWeekly ? _self.boardAndLodgingWeekly : boardAndLodgingWeekly // ignore: cast_nullable_to_non_nullable
+as double,notes: null == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [SILServiceAgreement].
+extension SILServiceAgreementPatterns on SILServiceAgreement {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _SILServiceAgreement value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _SILServiceAgreement() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _SILServiceAgreement value)  $default,){
+final _that = this;
+switch (_that) {
+case _SILServiceAgreement():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _SILServiceAgreement value)?  $default,){
+final _that = this;
+switch (_that) {
+case _SILServiceAgreement() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String organizationId,  String clientId,  String? propertyId,  String? quoteId,  String? rosterOfCareId,  String agreementNumber,  String agreementType,  String status,  String effectiveFrom,  String? effectiveTo,  String? signedAt,  String signedByName,  String signedByRole,  double boardAndLodgingWeekly,  String notes)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _SILServiceAgreement() when $default != null:
+return $default(_that.id,_that.organizationId,_that.clientId,_that.propertyId,_that.quoteId,_that.rosterOfCareId,_that.agreementNumber,_that.agreementType,_that.status,_that.effectiveFrom,_that.effectiveTo,_that.signedAt,_that.signedByName,_that.signedByRole,_that.boardAndLodgingWeekly,_that.notes);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String organizationId,  String clientId,  String? propertyId,  String? quoteId,  String? rosterOfCareId,  String agreementNumber,  String agreementType,  String status,  String effectiveFrom,  String? effectiveTo,  String? signedAt,  String signedByName,  String signedByRole,  double boardAndLodgingWeekly,  String notes)  $default,) {final _that = this;
+switch (_that) {
+case _SILServiceAgreement():
+return $default(_that.id,_that.organizationId,_that.clientId,_that.propertyId,_that.quoteId,_that.rosterOfCareId,_that.agreementNumber,_that.agreementType,_that.status,_that.effectiveFrom,_that.effectiveTo,_that.signedAt,_that.signedByName,_that.signedByRole,_that.boardAndLodgingWeekly,_that.notes);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String organizationId,  String clientId,  String? propertyId,  String? quoteId,  String? rosterOfCareId,  String agreementNumber,  String agreementType,  String status,  String effectiveFrom,  String? effectiveTo,  String? signedAt,  String signedByName,  String signedByRole,  double boardAndLodgingWeekly,  String notes)?  $default,) {final _that = this;
+switch (_that) {
+case _SILServiceAgreement() when $default != null:
+return $default(_that.id,_that.organizationId,_that.clientId,_that.propertyId,_that.quoteId,_that.rosterOfCareId,_that.agreementNumber,_that.agreementType,_that.status,_that.effectiveFrom,_that.effectiveTo,_that.signedAt,_that.signedByName,_that.signedByRole,_that.boardAndLodgingWeekly,_that.notes);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _SILServiceAgreement implements SILServiceAgreement {
+  const _SILServiceAgreement({required this.id, required this.organizationId, required this.clientId, this.propertyId, this.quoteId, this.rosterOfCareId, required this.agreementNumber, this.agreementType = 'sil', this.status = 'draft', required this.effectiveFrom, this.effectiveTo, this.signedAt, this.signedByName = '', this.signedByRole = 'participant', this.boardAndLodgingWeekly = 0, this.notes = ''});
+  factory _SILServiceAgreement.fromJson(Map<String, dynamic> json) => _$SILServiceAgreementFromJson(json);
+
+@override final  String id;
+@override final  String organizationId;
+@override final  String clientId;
+@override final  String? propertyId;
+@override final  String? quoteId;
+@override final  String? rosterOfCareId;
+@override final  String agreementNumber;
+@override@JsonKey() final  String agreementType;
+@override@JsonKey() final  String status;
+@override final  String effectiveFrom;
+@override final  String? effectiveTo;
+@override final  String? signedAt;
+@override@JsonKey() final  String signedByName;
+@override@JsonKey() final  String signedByRole;
+@override@JsonKey() final  double boardAndLodgingWeekly;
+@override@JsonKey() final  String notes;
+
+/// Create a copy of SILServiceAgreement
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$SILServiceAgreementCopyWith<_SILServiceAgreement> get copyWith => __$SILServiceAgreementCopyWithImpl<_SILServiceAgreement>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$SILServiceAgreementToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SILServiceAgreement&&(identical(other.id, id) || other.id == id)&&(identical(other.organizationId, organizationId) || other.organizationId == organizationId)&&(identical(other.clientId, clientId) || other.clientId == clientId)&&(identical(other.propertyId, propertyId) || other.propertyId == propertyId)&&(identical(other.quoteId, quoteId) || other.quoteId == quoteId)&&(identical(other.rosterOfCareId, rosterOfCareId) || other.rosterOfCareId == rosterOfCareId)&&(identical(other.agreementNumber, agreementNumber) || other.agreementNumber == agreementNumber)&&(identical(other.agreementType, agreementType) || other.agreementType == agreementType)&&(identical(other.status, status) || other.status == status)&&(identical(other.effectiveFrom, effectiveFrom) || other.effectiveFrom == effectiveFrom)&&(identical(other.effectiveTo, effectiveTo) || other.effectiveTo == effectiveTo)&&(identical(other.signedAt, signedAt) || other.signedAt == signedAt)&&(identical(other.signedByName, signedByName) || other.signedByName == signedByName)&&(identical(other.signedByRole, signedByRole) || other.signedByRole == signedByRole)&&(identical(other.boardAndLodgingWeekly, boardAndLodgingWeekly) || other.boardAndLodgingWeekly == boardAndLodgingWeekly)&&(identical(other.notes, notes) || other.notes == notes));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,organizationId,clientId,propertyId,quoteId,rosterOfCareId,agreementNumber,agreementType,status,effectiveFrom,effectiveTo,signedAt,signedByName,signedByRole,boardAndLodgingWeekly,notes);
+
+@override
+String toString() {
+  return 'SILServiceAgreement(id: $id, organizationId: $organizationId, clientId: $clientId, propertyId: $propertyId, quoteId: $quoteId, rosterOfCareId: $rosterOfCareId, agreementNumber: $agreementNumber, agreementType: $agreementType, status: $status, effectiveFrom: $effectiveFrom, effectiveTo: $effectiveTo, signedAt: $signedAt, signedByName: $signedByName, signedByRole: $signedByRole, boardAndLodgingWeekly: $boardAndLodgingWeekly, notes: $notes)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$SILServiceAgreementCopyWith<$Res> implements $SILServiceAgreementCopyWith<$Res> {
+  factory _$SILServiceAgreementCopyWith(_SILServiceAgreement value, $Res Function(_SILServiceAgreement) _then) = __$SILServiceAgreementCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String organizationId, String clientId, String? propertyId, String? quoteId, String? rosterOfCareId, String agreementNumber, String agreementType, String status, String effectiveFrom, String? effectiveTo, String? signedAt, String signedByName, String signedByRole, double boardAndLodgingWeekly, String notes
+});
+
+
+
+
+}
+/// @nodoc
+class __$SILServiceAgreementCopyWithImpl<$Res>
+    implements _$SILServiceAgreementCopyWith<$Res> {
+  __$SILServiceAgreementCopyWithImpl(this._self, this._then);
+
+  final _SILServiceAgreement _self;
+  final $Res Function(_SILServiceAgreement) _then;
+
+/// Create a copy of SILServiceAgreement
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? organizationId = null,Object? clientId = null,Object? propertyId = freezed,Object? quoteId = freezed,Object? rosterOfCareId = freezed,Object? agreementNumber = null,Object? agreementType = null,Object? status = null,Object? effectiveFrom = null,Object? effectiveTo = freezed,Object? signedAt = freezed,Object? signedByName = null,Object? signedByRole = null,Object? boardAndLodgingWeekly = null,Object? notes = null,}) {
+  return _then(_SILServiceAgreement(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,organizationId: null == organizationId ? _self.organizationId : organizationId // ignore: cast_nullable_to_non_nullable
+as String,clientId: null == clientId ? _self.clientId : clientId // ignore: cast_nullable_to_non_nullable
+as String,propertyId: freezed == propertyId ? _self.propertyId : propertyId // ignore: cast_nullable_to_non_nullable
+as String?,quoteId: freezed == quoteId ? _self.quoteId : quoteId // ignore: cast_nullable_to_non_nullable
+as String?,rosterOfCareId: freezed == rosterOfCareId ? _self.rosterOfCareId : rosterOfCareId // ignore: cast_nullable_to_non_nullable
+as String?,agreementNumber: null == agreementNumber ? _self.agreementNumber : agreementNumber // ignore: cast_nullable_to_non_nullable
+as String,agreementType: null == agreementType ? _self.agreementType : agreementType // ignore: cast_nullable_to_non_nullable
+as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,effectiveFrom: null == effectiveFrom ? _self.effectiveFrom : effectiveFrom // ignore: cast_nullable_to_non_nullable
+as String,effectiveTo: freezed == effectiveTo ? _self.effectiveTo : effectiveTo // ignore: cast_nullable_to_non_nullable
+as String?,signedAt: freezed == signedAt ? _self.signedAt : signedAt // ignore: cast_nullable_to_non_nullable
+as String?,signedByName: null == signedByName ? _self.signedByName : signedByName // ignore: cast_nullable_to_non_nullable
+as String,signedByRole: null == signedByRole ? _self.signedByRole : signedByRole // ignore: cast_nullable_to_non_nullable
+as String,boardAndLodgingWeekly: null == boardAndLodgingWeekly ? _self.boardAndLodgingWeekly : boardAndLodgingWeekly // ignore: cast_nullable_to_non_nullable
+as double,notes: null == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
 }
 
 // dart format on

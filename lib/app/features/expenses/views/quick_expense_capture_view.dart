@@ -12,6 +12,7 @@ import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:carenest/app/features/ocr/services/ocr_service.dart';
 import 'package:carenest/app/features/ocr/models/ocr_result.dart';
 import 'package:carenest/backend/api_method.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 class QuickExpenseCaptureView extends ConsumerStatefulWidget {
   final String adminEmail;
@@ -46,20 +47,30 @@ class _QuickExpenseCaptureViewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
         title: Text(
           AppLocalizations.of(context)!.quickCaptureTitle,
-          style: BauhausTheme.headerStyle.copyWith(
-            color: Theme.of(context).colorScheme.onInverseSurface,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
           ),
         ),
-        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
         iconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.onInverseSurface,
+          color: Theme.of(context).colorScheme.onPrimary,
         ),
       ),
       body: _isCapturing ? _buildCaptureLauncher() : _buildConfirmation(),
@@ -70,7 +81,7 @@ class _QuickExpenseCaptureViewState
     if (_isProcessing) {
       return Center(
         child: CircularProgressIndicator(
-          color: Theme.of(context).colorScheme.onInverseSurface,
+          color: Theme.of(context).colorScheme.onPrimary, // Standardized
         ),
       );
     }
@@ -206,7 +217,7 @@ class _QuickExpenseCaptureViewState
             child: ElevatedButton(
               onPressed: _navigateToAddExpenseFromState,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+                backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary (amber/yellow)
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(0),
                 ),
@@ -385,7 +396,7 @@ class _QuickExpenseCaptureViewState
     final result = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+      backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary (amber/yellow)
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       builder: (ctx) {
         return SafeArea(
@@ -478,7 +489,7 @@ class _QuickExpenseCaptureViewState
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+      backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary (amber/yellow)
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       builder: (ctx) {
         return SafeArea(

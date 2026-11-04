@@ -96,48 +96,34 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
     return AppBar(
       backgroundColor: BauhausDesign.primary,
       foregroundColor: Theme.of(context).colorScheme.onPrimary,
-      // This bar is the yellow `primary` plane with dark `onPrimary` content,
-      // so the status bar icons must be dark. `light` put white icons on
-      // yellow.
-      systemOverlayStyle: SystemUiOverlayStyle.dark,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
       scrolledUnderElevation: 0,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
-      // Room for the two-line title (20px + bodySmall) inside the toolbar.
+      centerTitle: true,
       toolbarHeight: 62,
+      shape: Border(
+        bottom: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
+      ),
       leading: IconButton(
-        icon: Container(
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-            border: Border.all(
-              color: Theme.of(
-                context,
-              ).colorScheme.onPrimary.withValues(alpha: 0.5),
-              width: 1.5,
-            ),
-          ),
-          child: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Theme.of(context).colorScheme.onPrimary,
-            size: 16,
-          ),
+        icon: Icon(
+          Icons.arrow_back,
+          color: Theme.of(context).colorScheme.onPrimary,
         ),
         onPressed: () => Navigator.of(context).pop(),
       ),
       title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             AppLocalizations.of(context)!.selectEmployeesAndClients,
-            // `headlineLarge` is 40px in this design system, which overflowed
-            // the toolbar and truncated the title. 20px matches the sibling
-            // select-client screen.
             style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
               color: Theme.of(context).colorScheme.onPrimary,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w800,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -154,13 +140,6 @@ class _EmployeeSelectionViewState extends ConsumerState<EmployeeSelectionView> {
             overflow: TextOverflow.ellipsis,
           ),
         ],
-      ),
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(4),
-        child: Container(
-          height: 4,
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
       ),
     );
   }

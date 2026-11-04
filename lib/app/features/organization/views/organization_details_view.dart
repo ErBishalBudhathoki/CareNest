@@ -946,39 +946,39 @@ $appLink
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        foregroundColor: colorScheme.onSecondary,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        backgroundColor: colorScheme.secondary,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back_ios_new),
-          color: colorScheme.onSecondary,
-        ),
         title: Text(
           l10n.organizationDetails.toUpperCase(),
-          style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
-            letterSpacing: 1.0,
-            color: colorScheme.onSecondary,
-            fontWeight: FontWeight.w900,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
           ),
         ),
         centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back),
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
         actions: [
           IconButton(
             onPressed: _navigateToEdit,
-            icon: Icon(Icons.edit_outlined),
-            color: colorScheme.onSecondary,
+            icon: const Icon(Icons.edit_outlined),
+            color: Theme.of(context).colorScheme.onPrimary,
             tooltip: l10n.editOrganization,
           ),
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(
-            color: Theme.of(context).colorScheme.outline,
-            height: 1,
-          ),
-        ),
       ),
       body: _loading
           ? Center(child: BauhausLoadingState())

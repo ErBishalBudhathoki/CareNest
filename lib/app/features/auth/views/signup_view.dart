@@ -133,7 +133,7 @@ class _SignUpViewState extends ConsumerState<SignUpView>
               leading: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: BauhausIconButton(
-                  icon: Iconsax.arrow_left,
+                  icon: Icons.arrow_back,
                   onPressed: () => Navigator.pop(context),
                   variant: BauhausActionVariant.neutral,
                   isSmall: true,

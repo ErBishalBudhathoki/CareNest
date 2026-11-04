@@ -188,26 +188,31 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
-        foregroundColor: Theme.of(context).colorScheme.onInverseSurface,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: BauhausIconButton(
-            icon: Icons.arrow_back,
-            onPressed: () => Navigator.pop(context),
-            variant: BauhausActionVariant.neutral,
-            isSmall: true,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
           ),
+        ),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+            size: 24,
+          ),
+          onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           'Shift Exchange',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onInverseSurface,
+            fontWeight: FontWeight.w800,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
         centerTitle: true,
@@ -217,19 +222,17 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.outline.withValues(alpha: 0.2),
-                  width: 1,
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 2,
                 ),
               ),
             ),
             child: TabBar(
               controller: _tabController,
-              labelColor: Theme.of(context).colorScheme.onInverseSurface,
+              labelColor: Theme.of(context).colorScheme.onPrimary,
               unselectedLabelColor: Theme.of(
                 context,
-              ).colorScheme.onInverseSurface.withValues(alpha: 0.6),
+              ).colorScheme.onPrimary.withValues(alpha: 0.65),
               indicatorColor: BauhausDesign.accent,
               indicatorWeight: 3,
               labelStyle: BauhausDesign.getTextTheme(

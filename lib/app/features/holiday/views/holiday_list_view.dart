@@ -293,43 +293,40 @@ class _HolidayListViewState extends ConsumerState<HolidayListView> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.secondary,
-        foregroundColor: Theme.of(context).colorScheme.onSecondary,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        leadingWidth: 64,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: BauhausDesign.space2),
-          child: Center(
-            child: BauhausIconButton(
-              icon: Icons.arrow_back_ios_new,
-              onPressed: () => Navigator.of(context).pop(),
-            ),
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
           ),
         ),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: BauhausDesign.space2),
-            child: BauhausIconButton(
-              icon: Icons.refresh,
-              onPressed: _isLoading ? null : _loadHolidays,
+          IconButton(
+            icon: Icon(
+              Icons.refresh,
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
+            onPressed: _isLoading ? null : _loadHolidays,
           ),
         ],
         title: Text(
           l10n.holidays,
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onSecondary,
-          ),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(2),
-          child: Container(
-            color: Theme.of(context).colorScheme.outline,
-            height: 2,
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
           ),
         ),
       ),

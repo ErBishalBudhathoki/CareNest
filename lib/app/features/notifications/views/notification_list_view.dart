@@ -102,7 +102,7 @@ class _NotificationListViewState extends ConsumerState<NotificationListView>
                   // Back button
                   BauhausIconButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: Icons.arrow_back_ios_new,
+                    icon: Icons.arrow_back,
                     variant: BauhausActionVariant.ghost,
                     isSmall: true,
                   ),

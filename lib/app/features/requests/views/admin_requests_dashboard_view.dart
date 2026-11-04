@@ -5,6 +5,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -76,90 +77,73 @@ class _AdminRequestsDashboardViewState
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: BauhausIconButton(
-            icon: Icons.arrow_back,
-            onPressed: () => Navigator.of(context).pop(),
-            isSmall: true,
-            variant: BauhausActionVariant.neutral,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+            size: 24,
           ),
+          onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           AppLocalizations.of(context)!.requestsDashboardTitle,
-          style: BauhausDesign.getTextTheme(context).titleMedium?.copyWith(
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onPrimary,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.5,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
           ),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: BauhausIconButton(
-              icon: Icons.refresh,
-              onPressed: () {
-                try {
-                  ref
-                      .read(adminRequestsViewModelProvider.notifier)
-                      .fetchRequests();
-                } catch (e) {
-                  debugPrint('Error refreshing requests: $e');
-                }
-              },
-              isSmall: true,
-              variant: BauhausActionVariant.neutral,
+          IconButton(
+            icon: Icon(
+              Icons.refresh,
+              color: Theme.of(context).colorScheme.onPrimary,
+              size: 24,
             ),
+            onPressed: () {
+              try {
+                ref
+                    .read(adminRequestsViewModelProvider.notifier)
+                    .fetchRequests();
+              } catch (e) {
+                debugPrint('Error refreshing requests: $e');
+              }
+            },
           ),
         ],
-        backgroundColor: BauhausDesign.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: BauhausDesign.space4,
-              vertical: BauhausDesign.space2,
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.outline,
-                  width: 2.0,
-                ),
-                boxShadow: const [BauhausDesign.shadowHardXs],
-              ),
-              child: TabBar(
-                controller: _tabController,
-                labelColor: Theme.of(context).colorScheme.onSurface,
-                unselectedLabelColor: Theme.of(
-                  context,
-                ).colorScheme.onSurfaceVariant,
-                indicatorSize: TabBarIndicatorSize.tab,
-                dividerColor: Colors.transparent,
-                indicator: BoxDecoration(
-                  color: BauhausDesign.secondary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.outline,
-                    width: 1.5,
-                  ),
-                ),
-                indicatorPadding: const EdgeInsets.all(4),
-                labelStyle: BauhausDesign.getTextTheme(context).labelMedium
-                    ?.copyWith(fontWeight: FontWeight.bold, letterSpacing: 0.5),
-                unselectedLabelStyle: BauhausDesign.getTextTheme(context)
-                    .labelMedium
-                    ?.copyWith(fontWeight: FontWeight.bold, letterSpacing: 0.5),
-                tabs: [
-                  Tab(text: AppLocalizations.of(context)!.pendingTab),
-                  Tab(text: AppLocalizations.of(context)!.approvedTab),
-                  Tab(text: AppLocalizations.of(context)!.declinedTab),
-                ],
-              ),
-            ),
+          preferredSize: const Size.fromHeight(48),
+          child: TabBar(
+            controller: _tabController,
+            labelColor: Theme.of(context).colorScheme.onPrimary,
+            unselectedLabelColor: Theme.of(
+              context,
+            ).colorScheme.onPrimary.withValues(alpha: 0.65),
+            indicatorColor: Theme.of(context).colorScheme.onPrimary,
+            indicatorWeight: 3,
+            labelStyle: BauhausDesign.getTextTheme(
+              context,
+            ).titleMedium?.copyWith(fontWeight: FontWeight.w800),
+            unselectedLabelStyle: BauhausDesign.getTextTheme(
+              context,
+            ).titleMedium?.copyWith(fontWeight: FontWeight.w600),
+            tabs: [
+              Tab(text: AppLocalizations.of(context)!.pendingTab),
+              Tab(text: AppLocalizations.of(context)!.approvedTab),
+              Tab(text: AppLocalizations.of(context)!.declinedTab),
+            ],
           ),
         ),
       ),

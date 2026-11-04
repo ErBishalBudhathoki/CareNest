@@ -14240,6 +14240,48 @@ abstract class AppLocalizations {
   /// **'This roster of care has no agreed weekly pattern to plan'**
   String get silPlanNoPattern;
 
+  /// No description provided for @silActivateRoCTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate roster of care'**
+  String get silActivateRoCTooltip;
+
+  /// No description provided for @silRoCActivated.
+  ///
+  /// In en, this message translates to:
+  /// **'Roster of Care activated successfully.'**
+  String get silRoCActivated;
+
+  /// No description provided for @silConsentRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Agreement Required'**
+  String get silConsentRequiredTitle;
+
+  /// No description provided for @silConsentRequiredSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'NDIS rules require an active signed Service Agreement before activating a SIL Roster of Care.'**
+  String get silConsentRequiredSubtitle;
+
+  /// No description provided for @silEmergencyBypass.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Consent Bypass'**
+  String get silEmergencyBypass;
+
+  /// No description provided for @silBypassReasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter clinical or crisis emergency justification'**
+  String get silBypassReasonHint;
+
+  /// No description provided for @silBypassDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Consent bypassed & Roster of Care activated.'**
+  String get silBypassDone;
+
   /// No description provided for @silGenerateInvoiceTooltip.
   ///
   /// In en, this message translates to:

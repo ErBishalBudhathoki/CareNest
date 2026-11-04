@@ -33,7 +33,7 @@ class _FakeSILRepository extends SILRepository {
       roster ?? (throw Exception('build unavailable in test'));
 
   @override
-  Future<SILRoster> publishRoster(String id) async {
+  Future<SILRoster> publishRoster(String id, {bool? blockOnRatioBreach}) async {
     publishCalls += 1;
     return roster!;
   }

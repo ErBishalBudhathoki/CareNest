@@ -129,7 +129,7 @@ class _PricingAnalyticsViewState extends State<PricingAnalyticsView>
                 ),
                 child: IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: Icon(Icons.arrow_back_ios_new, size: 20),
+                  icon: Icon(Icons.arrow_back, size: 20),
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),

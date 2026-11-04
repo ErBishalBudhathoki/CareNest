@@ -771,26 +771,25 @@ class _PriceOverrideViewState extends ConsumerState<PriceOverrideView> {
         title: Text(
           l10n.priceOverrideTitle,
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.surface,
-            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
           ),
         ),
+        centerTitle: true,
         backgroundColor: BauhausDesign.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
-        shadowColor: Colors.transparent,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
         iconTheme: IconThemeData(
           color: Theme.of(context).colorScheme.onPrimary,
-        ),
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(
-            color: Theme.of(context).colorScheme.onSurface,
-            height: 1,
-          ),
         ),
       ),
       body: Stack(

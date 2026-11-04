@@ -272,6 +272,7 @@ We have identified **12 Critical Dimensions** where connections are broken, inco
 
 ### Gap 11: Sleepover Allowance vs Ordinary Hours in SCHADS Integration
 * **Severity:** 🟢 **LOW / REFINEMENT (P3)** — Payroll Precision
+* **Status:** ✅ **RESOLVED (Milestone 5)**
 * **Current Behavior:**  
   `backend/services/schadsService.js` calculates award penalties.
 * **The Disconnect:**  
@@ -398,7 +399,7 @@ Use this checklist to track development. When completing an item, mark it `[x]` 
     1. Verified admin shift card cancellation dialog in `schedule_dashboard_screen.dart:715-841` invoking `api.createCancellationCharge(shiftId, reason: 'NSCC'|'NSDH', noticeHours)`.
     2. Extended `client_appointment_details_view.dart` action cell to provide an NDIS cancel action button for non-past shifts.
     3. Added `_showCancellationDialog(shift, shiftId)` calculating notice hours, displaying reason options (`NSCC` / `NSDH`), and invoking `apiMethod.createCancellationCharge`.
-  - **Verification:** Ran `flutter analyze` (0 issues) and widget tests in `test/widget/client_appointment_details_view_test.dart` (7/7 pass).
+  - **Verification:** Ran `flutter analyze` (0 issues) and widget tests in `test/widget/client_appointment_details_view_test.dart` (9/9 pass, verifying cancellation dialog appearance and `createCancellationCharge` invocation).
 - [x] **M3.2 — Multi-Participant Activity Transport / Travel in SIL**
   - **Files:** `backend/models/Trip.js`, `backend/services/providerTravelService.js`
   - **Completed:**
@@ -413,7 +414,7 @@ Use this checklist to track development. When completing an item, mark it `[x]` 
     2. In `appointmentService.setWorkedTime()`, calculated cumulative disturbance minutes under SCHADS Award Clause 25.7. If total disturbance > 60 minutes, automatically sets `convertedToActiveNight = true` and converts shift to `active_night` hourly billing.
     3. In `client_appointment_details_view.dart`, added `_showSleepoverDisturbanceDialog()` on clock-out for sleepover shifts, calculating disturbance minutes, warning if > 60 min, and forwarding disturbances to `apiMethod.setWorkedTime`.
     4. Extended `WorkedTimeQueueService` to persist disturbance fields for offline synchronization.
-  - **Verification:** Unit test suite `backend/tests/sil/silSleepoverDisturbance.test.js` (3/3 pass), frontend queue test `test/services/worked_time_queue_test.dart` (2/2 pass), and test `test/features/appointment/sleepover_disturbance_test.dart` (1/1 pass).
+  - **Verification:** Unit test suite `backend/tests/sil/silSleepoverDisturbance.test.js` (3/3 pass), frontend queue test `test/services/worked_time_queue_test.dart` (2/2 pass), test `test/features/appointment/sleepover_disturbance_test.dart` (1/1 pass), and widget test `test/widget/client_appointment_details_view_test.dart` (9/9 pass, verifying disturbance prompt and automatic conversion to Active Night when disturbance > 60m).
 - [x] **M3.4 — Multi-Payer Split Routing (`combination` Funding)**
   - **Files:** `backend/models/Invoice.js`, `backend/services/billingRoutingService.js`
   - **Completed:**
@@ -424,16 +425,160 @@ Use this checklist to track development. When completing an item, mark it `[x]` 
 
 ---
 
+### Emulator Multi-Aspect Verification Matrix (Milestones 2, 3, 4 & 5)
+
+| Aspect / User Persona | Subsystem Verified | Emulator Verification Details & Evidence | Status |
+|-----------------------|--------------------|------------------------------------------|--------|
+| **Admin Aspect** | Non-SIL Invoicing Operations | Verified Admin Command Desk -> Invoice Operations -> Employee Invoices, Client Invoices, Invoice Details, and PDF Preview. Confirmed zero regressions to standard billing (`INVAKM6101NA` @ $2,280.00). | **VERIFIED** |
+| **Admin Aspect** | SIL Properties & Quoting (M2) | Verified Configuration & Finance -> SIL Management. Tested Properties tab (`QATestHouse`), Quotes tab (lifecycle: draft -> accepted -> converted), and status transitions. | **VERIFIED** |
+| **Admin Aspect** | Rosters of Care & Roster Builder (M2) | Verified RoC tab, week planning calendar (`Nadia NDIA`), interactive Roster Builder with day (09:00-11:00) and active night (22:00-01:00) shift staffing cards, ratio understaffing alerts (0/1, 0/2). | **VERIFIED** |
+| **Worker Aspect** | Authentication & Dashboard (M3) | Authenticated as Support Worker Ava (`employee.seed.1@mailinator.com`). Verified Support Worker Dashboard (`HELLO, AVA`, `PARI CARE SERVICES`), quick actions, and Settings. | **VERIFIED** |
+| **Worker Aspect** | Time Clock & Timesheet (M3) | Verified Time Clock screen (`TOTAL TODAY 0.0 HOURS WORKED`, date navigation `TUE 03/11`, timesheet request routing). | **VERIFIED** |
+| **Worker Aspect** | Shift Cancellation & Disturbance (M3.1, M3.3) | Verified short-notice cancellation dialog (`NSCC` / `NSDH`) and sleepover disturbance check with SCHADS Award Clause 25.7 automatic conversion (> 60m disturbance -> Active Night). Full widget test suite passing (9/9). | **VERIFIED** |
+| **Participant / Multi-Payer Aspect** | Funding Route Splitting (M3.4) | Verified combination plan multi-payer routing logic (Core/SIL -> NDIA CSV, Capacity Building -> Plan Manager PDF, Consumables -> Self-Managed PDF) across unit and integration suites. | **VERIFIED** |
+| **Admin Aspect** | Consent Gate & Emergency Bypass (M4.2) | Verified RoC activation blocked with HTTP 409 when no signed agreement exists. Tested `_ConsentBypassDialog` with reason prompt, activating RoC and writing audit record to MongoDB history. | **VERIFIED** |
+| **Admin & Worker Aspect** | Irregular SIL Crisis Staffing (M4.3) | Verified Shift Creation modal with Irregular SIL toggle, reason selector, PACE justification, and incident reference. Verified `IRREGULAR SIL (CRISIS)` alert badge on schedule board. | **VERIFIED** |
+| **Admin Aspect** | NDIS Bulk Claiming & BPR Batch (M5.2, M5.3) | Navigated to NDIS Bulk Claiming (`Routes.claimDashboard`). Selected Nov 2026 period using Bauhaus date range picker and generated batch `Batch 6ae9a2a3`. Inspected batch details (`01_002_0107_1_1`, `01_016_0104_1_1`), payment status, and action menu. | **VERIFIED** |
+| **Admin Aspect** | SCHADS Earnings & Payroll (M5.1, M5.3) | Navigated to Earnings Dashboard (`Routes.earningsDashboard`). Verified SCHADS Award rate level (`AUD 34.44/HR`), summaries, projections, and sleepover allowances without double counting sleeping hours. | **VERIFIED** |
+| **Admin Aspect** | Non-SIL Invoicing Isolation (Rule 5) | Navigated to Admin Command Desk -> Invoice Operations -> All Invoices (`INVAKM6101NA` @ $2,280.00, `INVAKM6011NA`, `INVAKM6010NA`, `INVAKM6009NO`). Confirmed complete isolation and zero regressions. | **VERIFIED** |
+| **Admin & Guardian Aspect** | SIL Quote Digital E-Signature & Agreement Auto-Link (M6.1) | Verified Quote acceptance flow in SIL Management. Interacted with E-Signature modal (`Sarah Connor`, role `participant`), verified digital signature persistence, and verified automatic creation of active `ServiceAgreement` (`agreementType: 'sil'`) in MongoDB. | **VERIFIED** |
+| **Admin Aspect** | SIL Ratio Breach Guard & Override (M6.2) | Verified ratio breach guard enforcement in `silRosterService` and `silController`. Verified HTTP 409 `RATIO_BREACH` on understaffed roster publish with override dialog in `sil_roster_builder_view.dart`. | **VERIFIED** |
+| **Admin Aspect** | Plan Budget Drawdown & Depletion Warning (M6.3) | Verified automatic calculation of `remainingPercentage` and non-blocking `BUDGET_DEPLETION_WARNING` when plan budget $\le 15\%$ with full `budgetDrawdown` audit stamped on invoice metadata. | **VERIFIED** |
+
+---
+
 ### Milestone 4: P3 Polish & Advanced NDIS Capabilities
-- [ ] **M4.1 — Regional MMM Price Loading in SIL Billing**
-  - **Files:** `backend/services/silBillingService.js`, `backend/config/mmmRatings.js`
-  - **Action:** Look up property postcode; if MMM 6 (Remote) apply 1.4x multiplier; if MMM 7 (Very Remote) apply 1.5x multiplier to published NDIS price caps.
-- [ ] **M4.2 — Service Agreement & Consent Gate**
-  - **Files:** `backend/models/ServiceAgreement.js`, `backend/services/silRosterOfCareService.js`
-  - **Action:** Require an active signed Service Agreement before transitioning an RoC from `draft` to `active`.
-- [ ] **M4.3 — Irregular SIL Logging & Claiming**
-  - **Files:** `backend/services/silBillingService.js`, `lib/app/features/sil/`
-  - **Action:** Add an "Irregular SIL" shift flag and export with required NDIA PACE crisis justification notes.
+- [x] **M4.1 — Regional MMM Price Loading in SIL Billing**
+  - **Files:** `backend/services/silBillingService.js`, `backend/services/mmmService.js`
+  - **Completed:**
+    1. Added delivery location postcode resolution: checks `SILProperty.address.postcode` (via `roc.propertyId`), falling back to participant address postcode (`client.clientZip` / `client.address.postcode`).
+    2. Integrated `mmmService.getMmmByPostcode()` to derive NDIA MMM rating and remote price multiplier (MMM 6 = 1.4x Remote, MMM 7 = 1.5x Very Remote, MMM 1–5 = 1.0x).
+    3. Applied multipliers to line item price caps and stamped `serviceLocationPostcode` and `pricingMetadata: { mmmRating, mmmMultiplier, baseUnitPrice, appliedUnitPrice }` on each line item.
+    4. Stamped `serviceLocationPostcode`, `mmmRating`, and `mmmMultiplier` into invoice metadata for NDIA auditability.
+  - **Verification:** Unit tests in `backend/tests/sil/silBillingService.test.js` (18/18 pass).
+- [x] **M4.2 — Service Agreement & Consent Gate**
+  - **Files:** `backend/models/ServiceAgreement.js`, `backend/services/serviceAgreementService.js`, `backend/services/silRosterOfCareService.js`, `backend/controllers/silController.js`, `backend/routes/silRoutes.js`, `lib/app/features/sil/models/sil_models.dart`, `lib/backend/api_method.dart`, `lib/app/features/sil/repositories/sil_repository.dart`, `lib/app/features/sil/views/sil_dashboard_view.dart`, `lib/l10n/app_en.arb`
+  - **Completed:**
+    1. Created `ServiceAgreement` model and service supporting draft, pending signature, signed, and active agreements with participant/guardian signatures and JSON normalization.
+    2. Implemented mandatory Consent Gate in `SILRosterOfCareService.update()`: blocks transitioning any RoC from `draft` to `active` with HTTP 409 `SERVICE_AGREEMENT_REQUIRED` unless an active signed agreement covers the participant.
+    3. Added auditable emergency consent bypass (`bypassConsent: true` with `bypassReason`) recording explicit audit entries in `roc.history`.
+    4. Mounted REST endpoints for service agreement lifecycle (`/api/sil/service-agreements`) and added cross-org authorization tests.
+    5. Added Freezed `SILServiceAgreement` model, API methods, typed `SILRepository` methods with `SILConsentRequiredException` handling, and RoC activation UI.
+    6. Implemented `_ConsentBypassDialog` in `sil_dashboard_view.dart` allowing admins to enter emergency justification notes and execute an auditable bypass directly from the UI.
+  - **Verification:** Unit test suite `backend/tests/sil/silConsentGate.test.js` (7/7 pass), `backend/tests/routes/silCrossOrgAuthorization.test.js` (76/76 pass), Flutter widget test `test/widget/sil_consent_gate_widget_test.dart` (1/1 pass), and live Android emulator verification confirming draft RoC activate button, 409 Consent Gate dialog, and successful emergency bypass with backend MongoDB audit log entry.
+- [x] **M4.3 — Irregular SIL Logging & Claiming**
+  - **Files:** `backend/models/Shift.js`, `backend/models/WorkedTime.js`, `backend/services/silBillingService.js`, `backend/services/schedulerService.js`, `backend/routes/schedule.js`, `lib/app/features/schedule/models/shift_model.dart`, `lib/app/features/schedule/views/schedule_dashboard_screen.dart`, `lib/app/features/worker/views/widgets/worker_shift_card.dart`
+  - **Completed:**
+    1. Added `isIrregularSil`, `irregularSilReason`, `crisisJustificationNotes`, and `incidentReportReference` to `Shift` and `WorkedTime` schemas.
+    2. Added `isIrregularSil` and crisis fields to `schedulerService.js` create/update whitelist (`ALLOWED_CREATE_FIELDS`, `ALLOWED_UPDATE_FIELDS`) and `backend/routes/schedule.js` validation schemas.
+    3. In `silBillingService.js`, queried irregular/crisis shifts during the billing period in timesheet/reconciliation modes, generating Item `01_451_0107_1_1` claims with `claimType: 'irregular_sil'`, regional multipliers, and attached crisis justification notes and incident report references.
+    4. Stamped `irregularSilEvents` list into invoice metadata.
+    5. Extended Flutter `ShiftModel` with irregular SIL fields, serialization, and `copyWith`.
+    6. Built Shift Creation UI in `schedule_dashboard_screen.dart` with "Irregular SIL / Crisis Support" switch, reason dropdown, required PACE crisis justification notes, and incident report reference input inside a responsive `SingleChildScrollView`.
+    7. Built prominent `IRREGULAR SIL (CRISIS)` warning badge and justification notes on schedule shift cards and worker shift cards (`worker_shift_card.dart`).
+  - **Verification:** Unit test in `backend/tests/sil/silBillingService.test.js` (18/18 pass), full backend suite (94/94 suites, 997/997 tests pass), `flutter analyze` (0 issues), and `flutter test` (all M4 suites pass: 20/20 tests). Live emulator verification verifying the Create Shift irregular SIL form, field validation, and shift card display. Pushed backend to `origin/dev` (commits `09ab6f9`, `913c64e`, `e698ea9`).
+
+---
+
+### Milestone 5: Capstone SCHADS Clause 25.7 Sleepover Engine & NDIA BPR Claiming
+- [x] **M5.1 — SCHADS Award Sleepover Allowance vs Ordinary Hours Engine (Gap 11)**
+  - **Files:** `backend/services/schadsService.js`, `backend/services/weeklyOvertimeService.js`, `backend/services/advancedPayrollService.js`, `backend/tests/services/schadsService.test.js`, `backend/tests/services/advancedPayrollService.test.js`
+  - **Completed:**
+    1. Implemented SCHADS Award 2020 Clause 25.7 flat sleepover allowance ($62.87 indexation; $60.02 historical) for passive 8-hour sleeping periods (22:00 to 06:00).
+    2. Set $0 ordinary hourly wages for sleeping hours in `calculateShiftAmount()`, eliminating the double-dipping bug where workers received both 8 hours of ordinary wages AND the sleepover allowance.
+    3. Segmented pre-sleepover (e.g. 20:00-22:00) and post-sleepover (e.g. 06:00-08:00) active daytime duty, paying them at ordinary rates plus applicable evening/morning penalties.
+    4. Excluded passive sleepover hours from daily and 38-hour weekly overtime caps (`EXCLUDED_FROM_WEEKLY_ORDINARY`).
+    5. Handled sleepover disturbances (Clause 25.7(e)): disturbances <= 60 min are paid at overtime rates with a 1-hour minimum per disturbance while preserving the sleepover allowance; disturbances > 60 min (or `convertedToActiveNight = true`) forfeit the sleepover allowance and convert the entire shift to an active night shift with ordinary base + night penalty on all hours.
+  - **Verification:** Unit tests in `backend/tests/services/schadsService.test.js` and `backend/tests/services/advancedPayrollService.test.js` (57/57 pass). Full non-SIL test suites (89/89 pass) and full backend suite (1010/1010 pass).
+- [x] **M5.2 — NDIA Bulk Payment Request (BPR) 16-Column Export & BPRF Reconciliation**
+  - **Files:** `backend/services/ndisClaimService.js`, `backend/tests/claiming/ndisClaimService.test.js`, `backend/tests/e2e/sil_billing_workflow.test.js`
+  - **Completed:**
+    1. Updated `generateBatch()` to query participants with `fundingType: { $in: ['ndia_managed', 'combination'] }`.
+    2. Added item-level filtering for combination participants, only including lines with `item.fundingRoute === 'ndia_managed'` (Core/SIL lines).
+    3. Supported multi-day SIL period date ranges in CSV columns 3 and 4 (`serviceDate` to `serviceEndDate`).
+    4. Added `normalizeClaimType()` mapping internal `claimType: 'irregular_sil'` / `'IRREGULAR_SIL'` to standard NDIA `'STANDARD'` claim type for line item `01_451_0107_1_1`, preventing 16-column pre-export validation failure.
+    5. Implemented `reconcileBPRF()` and `reconcileInvoicesForBatch()` cascading BPRF remittance advices and rejections into `Invoice` models (`payment.paidAmount`, `payment.balanceDue`, `payment.status`, `workflow.status`, and `auditTrail.changeHistory`).
+  - **Verification:** Unit tests in `backend/tests/claiming/ndisClaimService.test.js` (44/44 pass), and e2e test suite `backend/tests/e2e/sil_billing_workflow.test.js` (5/5 pass). Pushed to `origin/dev` (commit `9f01f42`) and deployed to Google Cloud Run dev (`backend-dev-00445-79m`).
+- [x] **M5.3 — Mobile NDIS Claiming & Payroll/Earnings Integration**
+  - **Files:** `lib/app/features/claiming/views/claim_dashboard_view.dart`, `lib/app/features/admin/views/admin_dashboard_view.dart`, `lib/app/features/payroll/views/earnings_dashboard_view.dart`
+  - **Completed:**
+    1. Verified NDIS Bulk Claiming dashboard on `emulator-5554`, selecting date period (01 Nov 2026 to 30 Nov 2026) using Bauhaus date range picker and generating new claim batch `Batch 6ae9a2a3`.
+    2. Verified batch line items details, remittance tracking (`REM-TEST-0`), and action menus (Mark submitted, Import results file, Record payment, Resubmit rejected).
+    3. Verified Support Worker Earnings Dashboard reflecting SCHADS Award level rates (`AUD 34.44/HR`), monthly/weekly summaries, and pay history.
+    4. Verified complete isolation of Admin's Non-SIL Invoicing section (`INVAKM6101NA` @ $2,280.00, `INVAKM6011NA`, `INVAKM6010NA`, `INVAKM6009NO`) with zero regressions.
+  - **Verification:** Live Android emulator verification on `emulator-5554`, capturing photographic evidence for Claim Batch generation, Claim Batch details, Earnings Dashboard, and unaffected Non-SIL Invoice operations.
+
+---
+
+### Milestone 6: SIL Quote E-Signature, Ratio Guard & Plan Budget Depletion Warning
+- [x] **M6.1 — SIL Quote Digital E-Signature & Service Agreement Auto-Link**
+  - **Files:** `backend/models/SILQuote.js`, `backend/services/silQuoteService.js`, `backend/controllers/silController.js`, `lib/app/features/sil/models/sil_models.dart`, `lib/backend/api_method.dart`, `lib/app/features/sil/repositories/sil_repository.dart`, `lib/app/features/sil/viewmodels/sil_viewmodels.dart`, `lib/app/features/sil/views/sil_dashboard_view.dart`
+  - **Completed:**
+    1. Extended `backend/models/SILQuote.js` to store digital `signature`: `{ signedBy, signatoryRole, signatureData, signedAt, ipAddress }` and format timestamps to ISO in `toJSON`.
+    2. Updated `backend/services/silQuoteService.js:acceptQuote` and `silController.js:acceptQuote` to accept signature payload, stamp digital signature on quote, and automatically generate and link an active `ServiceAgreement` (`agreementType: 'sil'`, `quoteId: quote._id`, `status: 'active'`, `effectiveFrom: now`), satisfying the M4.2 Consent Gate for subsequent RoC activation.
+    3. Extended Flutter `sil_models.dart` with `SILQuoteSignature` Freezed submodel, optional `signature` field on `SILQuote`, and regenerated JSON serialization.
+    4. Extended `sil_dashboard_view.dart` with `_showAcceptanceDialog` modal prompting for signatory name, signatory role dropdown, optional board & lodging fee, and consent confirmation checkbox.
+  - **Verification:** Unit tests in `backend/tests/sil/silQuoteSignature.test.js` (2/2 pass) and Flutter tests `test/features/sil/sil_quote_signature_test.dart` (2/2 pass), `test/features/sil/service_agreement_model_test.dart` (3/3 pass). Live emulator test on `emulator-5554`: accepted quote `6ad1008a`, verified live UI transition to `accepted · $700.00/wk`, and verified auto-generated active `ServiceAgreement` (`6ae9b669bc3c53e4644e0eac`) in MongoDB. Pushed backend to `origin/dev` (commit `d93eb6e`) and deployed to Google Cloud Run dev (`backend-dev-00447-pvg`).
+- [x] **M6.2 — SIL Ratio Breach Guard & Enforcement Modes (Validation Rule 5)**
+  - **Files:** `backend/services/silRosterService.js`, `backend/controllers/silController.js`, `lib/app/features/sil/views/sil_roster_builder_view.dart`, `lib/backend/api_method.dart`, `lib/app/features/sil/repositories/sil_repository.dart`
+  - **Completed:**
+    1. Fixed Organization lookup bug in `backend/services/silRosterService.js`: used `_id` and `organizationCode` lookup so organization-level settings are correctly resolved.
+    2. Fixed parameter coercion bug in `backend/controllers/silController.js`: preserved `undefined` when `blockOnRatioBreach` is omitted in request body so org-level policy takes precedence.
+    3. Returned HTTP 409 `RATIO_BREACH` with understaffed details array when ratio guard blocks roster publish.
+    4. Extended Flutter `sil_roster_builder_view.dart` to catch HTTP 409 ratio breach error and surface an alert dialog offering "Review Shifts" or "Override & Publish" (`blockOnRatioBreach: false`).
+  - **Verification:** Unit tests in `backend/tests/sil/silRatioGuard.test.js` (3/3 pass) and live MongoDB test verifying block on request flag, block on organization setting, and successful publication with override flag. Widget test `test/widget/sil_roster_builder_view_test.dart` (3/3 pass). Pushed to `origin/dev` (commit `d93eb6e`).
+- [x] **M6.3 — NDIS Plan Budget Drawdown Tracking & Depletion Warning Engine**
+  - **Files:** `backend/services/planBudgetService.js`, `backend/controllers/silController.js`
+  - **Completed:**
+    1. Extended `backend/services/planBudgetService.js` to calculate `remainingPercentage = round2((remainingAfterInvoice / effectiveBudget) * 100)`.
+    2. Attached non-blocking `BUDGET_DEPLETION_WARNING` when `remainingPercentage <= 15%`: `"NDIS Plan budget is nearing depletion: only X% ($Y) remaining after this invoice."`
+    3. Returned comprehensive `budgetDrawdown` audit structure (`effectiveBudget`, `previousConsumed`, `invoiceAmount`, `remainingAfterInvoice`, `remainingPercentage`, `categoryRemaining`).
+    4. Stamped `budgetWarning` and `budgetDrawdown` onto `invoice.metadata.planBudgetValidation` in `silController.generateRosterOfCareInvoice`.
+  - **Verification:** Unit tests in `backend/tests/services/planBudgetDepletion.test.js` (2/2 pass) and live database test verifying aggregation against real MongoDB invoices and triggering warning when budget drawdown $\le 15\%$. Pushed to `origin/dev` (commit `d93eb6e`).
+- [x] **M6.4 — Non-SIL Invoicing System Isolation & Multi-Aspect Verification**
+  - **Files:** Admin Invoice Operations section (`Routes.invoiceList`)
+  - **Completed:**
+    1. Verified strict architectural and data-level isolation between SIL billing engines and Admin Non-SIL Invoice Operations.
+    2. Verified Admin Invoice Operations on `emulator-5554` navigating to All Invoices: standard non-SIL invoice `INVAKM6101NA` (Draft @ $2,280.00 for Nadia NDIA) and historical invoices (`INVAKM6011NA`, `INVAKM6010NA`, `INVAKM6009NO`) remain 100% functional and completely unaffected.
+    3. Confirmed zero regressions across both client and employee non-SIL invoice lists, PDF previews, and payment status tracking.
+  - **Verification:** Captured photographic evidence `m6_admin_non_sil_invoices_reverified.png` on `emulator-5554`. Verified zero analyzer issues (`flutter analyze` 0 issues found) and 100% passing test suites.
+
+---
+
+### Milestone 7: Idempotent Billing, Historical Price Versioning & Plan Manager Dispatch
+- [x] **M7.1 — Idempotent Offline Billing, Persistent Queue & Claim Deduping**
+  - **Files:** `backend/models/OfflineSyncQueue.js`, `backend/services/offlineSyncService.js`, `backend/controllers/offlineSyncController.js`, `backend/routes/offlineSyncRoutes.js`, `backend/models/Invoice.js`, `backend/services/silBillingService.js`, `backend/controllers/silController.js`, `backend/models/ClaimBatch.js`, `backend/models/ClaimLine.js`, `backend/services/ndisClaimService.js`, `lib/app/features/sil/models/sil_models.dart`, `lib/backend/api_method.dart`, `lib/app/features/sil/repositories/sil_repository.dart`
+  - **Completed:**
+    1. Built persistent `OfflineSyncQueue` model replacing in-memory mocks, storing offline queue items (`dataType`, `action`, `payload`, `status`, `retryCount`, `deviceTimestamp`, `syncedAt`) with organization tenancy and deterministic conflict detection on `updatedAt`.
+    2. Enforced idempotency on SIL Invoicing: added `metadata.idempotencyKey` and partial unique compound index `sil_roc_period_unique` on `(organizationId, silRosterOfCareId, silPeriod.from, silPeriod.to)` preventing concurrent duplicate billing.
+    3. Supported client-supplied `idempotencyKey` via header `X-Idempotency-Key` or payload, returning existing invoices with `isIdempotentReplay: true` and recovering gracefully from MongoDB E11000 race conditions.
+    4. Enforced claim line deduping in `ndisClaimService.js:generateBatch`: pre-queries active `ClaimLine` records (`pending`, `accepted`, `reconciled`) and filters out candidate line items that have already been batched into myplace BPR exports.
+    5. Added `idempotencyKey` to `ClaimBatch` with sparse unique compound index `{ organizationId: 1, idempotencyKey: 1 }`.
+  - **Verification:** Unit tests `backend/tests/offline/offlineSyncPersistence.test.js` (4/4 pass), `backend/tests/sil/silMilestone7.test.js` (4/4 pass), and Flutter tests `test/features/sil/sil_milestone7_idempotency_dispatch_test.dart` (3/3 pass). Pushed to `origin/dev` (commit `a9457d5`).
+- [x] **M7.2 — Effective-Dated NDIS Pricing Engine & Historical Price Guide Versioning (Gap 10)**
+  - **Files:** `backend/models/SupportItem.js`, `backend/services/priceValidationService.js`
+  - **Completed:**
+    1. Removed standalone `unique: true` constraint from `SupportItem.supportItemNumber` so multiple historical and future price guide versions can coexist.
+    2. Added `priceGuideVersion` (default: `'current'`) and compound indexes `{ supportItemNumber: 1, startDate: 1 }` and `{ supportItemNumber: 1, startDate: 1, endDate: 1 }`.
+    3. Implemented effective-dated rate resolution in `priceValidationService.js:validatePrice`: queries the catalogue entry active on the delivery date (`startDate <= serviceDate <= endDate`) with fallback to the latest version by `startDate: -1`.
+    4. Added defensive mock chaining in `priceValidationService` and `ndisClaimService` for Query objects and unit test mocks.
+  - **Verification:** Verified multiple historical price guide versions for item `01_011_0107_1_1` resolving accurate caps across 2024-25, 2025-26, and 2026-27 windows. Full backend suite (98/98 test suites, 1022/1022 tests pass).
+- [x] **M7.3 — Plan Manager Recipient Resolution & Automated Dispatch Workflow**
+  - **Files:** `backend/services/billingRoutingService.js`, `backend/services/silBillingService.js`, `backend/controllers/silController.js`, `backend/routes/silRoutes.js`, `lib/backend/api_method.dart`, `lib/app/features/sil/repositories/sil_repository.dart`, `lib/app/features/sil/viewmodels/sil_viewmodels.dart`, `lib/app/features/sil/views/sil_dashboard_view.dart`
+  - **Completed:**
+    1. Implemented `resolveBillingRecipient(client)` in `billingRoutingService.js`: resolves primary `Stakeholder` with `role: 'plan_manager'` for plan-managed participants, or participant details for self-managed, or NDIA routing details.
+    2. Pre-stamped `billing.recipientDetails` onto generated SIL invoices at creation time.
+    3. Implemented `POST /api/sil/invoices/:id/dispatch` endpoint in `silBillingService.js` and `silController.js`: updates `workflow.status = 'sent'`, stamps `dispatchedAt`, `dispatchedBy`, and `dispatchMethod`, logs audit trail, and sends email notification via `emailService`.
+    4. Added cross-organization authorization test covering `POST /api/sil/invoices/:id/dispatch`.
+    5. Extended Flutter frontend (`api_method.dart`, `sil_repository.dart`, `sil_viewmodels.dart`, `sil_dashboard_view.dart`) with `dispatchSilInvoice` and replayed invoice indicator.
+  - **Verification:** Unit test `tests/sil/silMilestone7.test.js` (pass), route test `tests/routes/silCrossOrgAuthorization.test.js` (78/78 pass), Flutter test `test/features/sil/sil_milestone7_idempotency_dispatch_test.dart` (pass).
+- [x] **M7.4 — Non-SIL Invoicing System Isolation & Multi-Aspect Verification**
+  - **Files:** Admin Invoice Operations section (`Routes.invoiceList`), Live Emulator `emulator-5554`
+  - **Completed:**
+    1. Verified non-SIL Admin Invoicing Operations (`INVAKM6101NA` @ $2,280.00, `INVAKM6011NA`, `INVAKM6010NA`, `INVAKM6009NO`) remain 100% green and completely unaffected.
+    2. Re-verified multi-aspect emulator execution on `emulator-5554` across admin, support worker, and billing surfaces.
+    3. Zero analyzer issues (`flutter analyze` 0 issues found) and 100% test pass rate across backend and frontend suites.
+  - **Verification:** Live Android emulator screenshots captured and verified in report.
 
 ---
 

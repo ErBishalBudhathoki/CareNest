@@ -74,27 +74,25 @@ class EarningsDashboardView extends ConsumerWidget {
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(2),
-          child: Container(
-            color: Theme.of(context).colorScheme.onPrimary,
-            height: 2,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
           ),
         ),
+        centerTitle: true,
         title: Text(
           l10n?.earningsDashboardTitle ?? 'Earnings Dashboard',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onPrimary,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.5,
+            fontWeight: FontWeight.w800,
           ),
         ),
         actions: [
           IconButton(
             icon: Icon(
               Icons.download_rounded,
-              color: Theme.of(context).colorScheme.surface,
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
             tooltip: l10n?.generatePayslip ?? 'Generate payslip',
             onPressed: () {

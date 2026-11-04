@@ -11,7 +11,6 @@ import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -286,19 +285,24 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
       appBar: AppBar(
         title: Text(
           'Voice Assistant',
-          style: GoogleFonts.oswald(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.6,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
           ),
         ),
-        backgroundColor: BauhausDesign.info,
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
-        elevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
       ),
       body: Column(
         children: [

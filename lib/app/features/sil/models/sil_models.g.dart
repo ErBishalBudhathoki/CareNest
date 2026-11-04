@@ -324,6 +324,24 @@ Map<String, dynamic> _$SILQuoteTotalsToJson(_SILQuoteTotals instance) =>
       'annualAmount': instance.annualAmount,
     };
 
+_SILQuoteSignature _$SILQuoteSignatureFromJson(Map<String, dynamic> json) =>
+    _SILQuoteSignature(
+      signedBy: json['signedBy'] as String? ?? '',
+      signatoryRole: json['signatoryRole'] as String? ?? 'participant',
+      signatureData: json['signatureData'] as String? ?? '',
+      signedAt: json['signedAt'] as String?,
+      ipAddress: json['ipAddress'] as String? ?? '',
+    );
+
+Map<String, dynamic> _$SILQuoteSignatureToJson(_SILQuoteSignature instance) =>
+    <String, dynamic>{
+      'signedBy': instance.signedBy,
+      'signatoryRole': instance.signatoryRole,
+      'signatureData': instance.signatureData,
+      'signedAt': instance.signedAt,
+      'ipAddress': instance.ipAddress,
+    };
+
 _SILQuote _$SILQuoteFromJson(Map<String, dynamic> json) => _SILQuote(
   id: json['id'] as String,
   clientId: json['clientId'] as String,
@@ -340,6 +358,9 @@ _SILQuote _$SILQuoteFromJson(Map<String, dynamic> json) => _SILQuote(
       ? const SILQuoteTotals()
       : SILQuoteTotals.fromJson(json['totals'] as Map<String, dynamic>),
   rosterOfCareId: json['rosterOfCareId'] as String?,
+  signature: json['signature'] == null
+      ? null
+      : SILQuoteSignature.fromJson(json['signature'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$SILQuoteToJson(_SILQuote instance) => <String, dynamic>{
@@ -352,6 +373,7 @@ Map<String, dynamic> _$SILQuoteToJson(_SILQuote instance) => <String, dynamic>{
   'lines': instance.lines,
   'totals': instance.totals,
   'rosterOfCareId': instance.rosterOfCareId,
+  'signature': instance.signature,
 };
 
 _SILRocSupport _$SILRocSupportFromJson(Map<String, dynamic> json) =>
@@ -429,3 +451,45 @@ Map<String, dynamic> _$SILRosterOfCareToJson(_SILRosterOfCare instance) =>
       'reviewSchedule': instance.reviewSchedule,
       'supports': instance.supports,
     };
+
+_SILServiceAgreement _$SILServiceAgreementFromJson(Map<String, dynamic> json) =>
+    _SILServiceAgreement(
+      id: json['id'] as String,
+      organizationId: json['organizationId'] as String,
+      clientId: json['clientId'] as String,
+      propertyId: json['propertyId'] as String?,
+      quoteId: json['quoteId'] as String?,
+      rosterOfCareId: json['rosterOfCareId'] as String?,
+      agreementNumber: json['agreementNumber'] as String,
+      agreementType: json['agreementType'] as String? ?? 'sil',
+      status: json['status'] as String? ?? 'draft',
+      effectiveFrom: json['effectiveFrom'] as String,
+      effectiveTo: json['effectiveTo'] as String?,
+      signedAt: json['signedAt'] as String?,
+      signedByName: json['signedByName'] as String? ?? '',
+      signedByRole: json['signedByRole'] as String? ?? 'participant',
+      boardAndLodgingWeekly:
+          (json['boardAndLodgingWeekly'] as num?)?.toDouble() ?? 0,
+      notes: json['notes'] as String? ?? '',
+    );
+
+Map<String, dynamic> _$SILServiceAgreementToJson(
+  _SILServiceAgreement instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'organizationId': instance.organizationId,
+  'clientId': instance.clientId,
+  'propertyId': instance.propertyId,
+  'quoteId': instance.quoteId,
+  'rosterOfCareId': instance.rosterOfCareId,
+  'agreementNumber': instance.agreementNumber,
+  'agreementType': instance.agreementType,
+  'status': instance.status,
+  'effectiveFrom': instance.effectiveFrom,
+  'effectiveTo': instance.effectiveTo,
+  'signedAt': instance.signedAt,
+  'signedByName': instance.signedByName,
+  'signedByRole': instance.signedByRole,
+  'boardAndLodgingWeekly': instance.boardAndLodgingWeekly,
+  'notes': instance.notes,
+};

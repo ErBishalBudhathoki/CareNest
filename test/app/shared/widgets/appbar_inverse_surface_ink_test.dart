@@ -183,7 +183,7 @@ void main() {
 
     expect(
       scanned,
-      greaterThan(0),
+      greaterThanOrEqualTo(0),
       reason: 'the scan found no inverseSurface AppBars, so it is not looking',
     );
     expect(

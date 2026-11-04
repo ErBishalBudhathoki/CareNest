@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
@@ -46,27 +47,40 @@ class _AdminFamilyManagementViewState
     final state = ref.watch(familyAccessViewModelProvider);
     final textTheme = BauhausDesign.getTextTheme(context);
     final clientState = ref.watch(clientProvider);
-    final client = clientState.clients.firstWhere(
-      (c) => c.id == widget.clientId,
-      orElse: () => clientState.clients.first,
-    );
+    final client = clientState.clients
+            .where((c) => c.id == widget.clientId)
+            .firstOrNull ??
+        clientState.clients.firstOrNull;
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: BauhausDesign.warning,
         title: Text(
           'FAMILY ADMINISTRATION',
           style: textTheme.titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.w700,
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
             letterSpacing: 0.8,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
           ),
         ),
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: Theme.of(context).colorScheme.onSurface,
+            color: Theme.of(context).colorScheme.onPrimary,
+            size: 24,
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -97,6 +111,9 @@ class _AdminFamilyManagementViewState
 
   Widget _buildClientHeader(dynamic client) {
     final textTheme = BauhausDesign.getTextTheme(context);
+    final String displayName = client?.displayName ??
+        (widget.clientId.isNotEmpty ? widget.clientId : 'Participant');
+    final String email = client?.clientEmail ?? '';
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(BauhausDesign.space4),
@@ -123,18 +140,19 @@ class _AdminFamilyManagementViewState
           ),
           SizedBox(height: 4),
           Text(
-            client.displayName,
+            displayName,
             style: textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.w800,
               color: BauhausDesign.primary,
             ),
           ),
-          Text(
-            client.clientEmail,
-            style: textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface,
+          if (email.isNotEmpty)
+            Text(
+              email,
+              style: textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
-          ),
         ],
       ),
     );

@@ -101,14 +101,16 @@ class _AutomaticInvoiceGenerationViewState
       systemOverlayStyle: SystemUiOverlayStyle.light,
       scrolledUnderElevation: 0,
       elevation: 0,
+      centerTitle: true,
       titleSpacing: BauhausDesign.space4,
       title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             AppLocalizations.of(context)!.automaticInvoiceGenerationTitle,
             style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w800,
               letterSpacing: 0.8,
               color: Theme.of(context).colorScheme.onPrimary,
             ),
@@ -127,11 +129,10 @@ class _AutomaticInvoiceGenerationViewState
       ),
       backgroundColor: BauhausDesign.primary,
       surfaceTintColor: Colors.transparent,
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(3),
-        child: Container(
-          height: 3,
+      shape: Border(
+        bottom: BorderSide(
           color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
         ),
       ),
     );

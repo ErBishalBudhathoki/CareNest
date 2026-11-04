@@ -439,16 +439,27 @@ class BauhausDesign {
       textTheme: textTheme,
       splashFactory: InkRipple.splashFactory,
       appBarTheme: AppBarTheme(
-        backgroundColor: inverseSurface,
-        foregroundColor: textLight,
+        backgroundColor: primary,
+        foregroundColor: textDark,
         elevation: 0,
         centerTitle: true,
         shadowColor: neoInk,
         surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        titleTextStyle: textTheme.titleLarge?.copyWith(color: textLight),
-        iconTheme: const IconThemeData(color: textLight),
-        actionsIconTheme: const IconThemeData(color: textLight),
+        titleTextStyle: textTheme.titleLarge?.copyWith(
+          color: textDark,
+          fontWeight: FontWeight.w800,
+        ),
+        iconTheme: const IconThemeData(color: textDark, size: 24),
+        actionsIconTheme: const IconThemeData(color: textDark, size: 24),
+      ),
+      actionIconTheme: ActionIconThemeData(
+        backButtonIconBuilder: (BuildContext context) => const Icon(
+          Icons.arrow_back,
+          color: textDark,
+          size: 24,
+        ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -723,16 +734,27 @@ class BauhausDesign {
       textTheme: textTheme,
       splashFactory: InkRipple.splashFactory,
       appBarTheme: AppBarTheme(
-        backgroundColor: surfaceDarkest,
-        foregroundColor: textLight,
+        backgroundColor: primary,
+        foregroundColor: textDark,
         elevation: 0,
         centerTitle: true,
         shadowColor: neoInk,
         surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        titleTextStyle: textTheme.titleLarge?.copyWith(color: textLight),
-        iconTheme: const IconThemeData(color: textLight),
-        actionsIconTheme: const IconThemeData(color: textLight),
+        titleTextStyle: textTheme.titleLarge?.copyWith(
+          color: textDark,
+          fontWeight: FontWeight.w800,
+        ),
+        iconTheme: const IconThemeData(color: textDark, size: 24),
+        actionsIconTheme: const IconThemeData(color: textDark, size: 24),
+      ),
+      actionIconTheme: ActionIconThemeData(
+        backButtonIconBuilder: (BuildContext context) => const Icon(
+          Icons.arrow_back,
+          color: textDark,
+          size: 24,
+        ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(

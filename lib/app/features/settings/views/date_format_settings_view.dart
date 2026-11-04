@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carenest/app/features/settings/providers/settings_providers.dart';
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
+import 'package:carenest/app/shared/widgets/app_bar_widget.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
 
@@ -26,7 +27,9 @@ class DateFormatSettingsView extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: _buildBauhausAppBar(context),
+      appBar: AppBarWidget(
+        title: AppLocalizations.of(context)!.dateFormatAppBarTitle,
+      ),
       body: vm.isLoading
           ? const Center(
               child: CircularProgressIndicator(color: BauhausDesign.primary),
@@ -185,44 +188,7 @@ class DateFormatSettingsView extends ConsumerWidget {
     );
   }
 
-  PreferredSizeWidget _buildBauhausAppBar(BuildContext context) {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(kToolbarHeight),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          border: Border(
-            bottom: BorderSide(
-              color: Theme.of(context).colorScheme.outline,
-              width: 2,
-            ),
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: BauhausDesign.space4,
-            ),
-            child: Row(
-              children: [
-                BauhausIconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: Icons.arrow_back,
-                  variant: BauhausActionVariant.ghost,
-                ),
-                const SizedBox(width: BauhausDesign.space2),
-                Text(
-                  AppLocalizations.of(context)!.dateFormatAppBarTitle,
-                  style: BauhausDesign.getTextTheme(context).displaySmall,
-                ),
-                const Spacer(),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+
 
   Widget _buildOptionCard(
     BuildContext context, {

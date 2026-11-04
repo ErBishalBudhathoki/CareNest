@@ -7,6 +7,7 @@ import 'package:carenest/app/features/claiming/models/claim_models.dart';
 import 'package:carenest/app/features/claiming/viewmodels/claim_viewmodel.dart';
 import 'package:carenest/app/features/invoice/widgets/bauhaus_date_range_picker.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 /// NDIS claiming dashboard (Phase 6): generate a Bulk Payment Request CSV for
 /// NDIA-managed claims and import the returned results file.
@@ -36,11 +37,30 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.ndisClaiming),
+        title: Text(
+          AppLocalizations.of(context)!.ndisClaiming,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
         actions: [
           IconButton(
             tooltip: 'Pick period & generate',
-            icon: const Icon(Icons.playlist_add_check),
+            icon: Icon(Icons.playlist_add_check, color: Theme.of(context).colorScheme.onPrimary),
             onPressed: state.isLoading ? null : _pickRangeAndGenerate,
           ),
         ],

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:carenest/backend/api_method.dart';
 
 import 'package:carenest/app/shared/constants/bauhaus_design.dart';
@@ -60,46 +61,32 @@ class _InvoicingEmailViewState extends ConsumerState<InvoicingEmailView> {
     debugPrint('InvoicingEmailView key: ${widget.genKey}');
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        elevation: 0,
-        foregroundColor: Theme.of(context).colorScheme.onSurface,
-        leading: Center(
-          child: Container(
-            margin: const EdgeInsets.only(left: BauhausDesign.space2),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              border: Border.all(
-                color: Theme.of(context).colorScheme.onSurface,
-                width: 1.5,
-              ),
-              borderRadius: BorderRadius.zero,
-              boxShadow: const [BauhausDesign.shadowHardXs],
-            ),
-            child: IconButton(
-              padding: EdgeInsets.zero,
-              icon: Icon(
-                Icons.arrow_back_ios_new,
-                color: Theme.of(context).colorScheme.onSurface,
-                size: 18,
-              ),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ),
-        ),
         title: Text(
           'INVOICING EMAIL',
-          style: BauhausDesign.getTextTheme(context).titleLarge!.copyWith(
-            color: Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.w700,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
           ),
         ),
         centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
-          child: Container(
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
             color: Theme.of(context).colorScheme.onSurface,
-            height: 2.0, // Bold border at bottom of AppBar
+            width: 2,
           ),
+        ),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       backgroundColor: Theme.of(context).colorScheme.surface,

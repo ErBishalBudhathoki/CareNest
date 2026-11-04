@@ -7744,6 +7744,29 @@ class AppLocalizationsEn extends AppLocalizations {
       'This roster of care has no agreed weekly pattern to plan';
 
   @override
+  String get silActivateRoCTooltip => 'Activate roster of care';
+
+  @override
+  String get silRoCActivated => 'Roster of Care activated successfully.';
+
+  @override
+  String get silConsentRequiredTitle => 'Service Agreement Required';
+
+  @override
+  String get silConsentRequiredSubtitle =>
+      'NDIS rules require an active signed Service Agreement before activating a SIL Roster of Care.';
+
+  @override
+  String get silEmergencyBypass => 'Emergency Consent Bypass';
+
+  @override
+  String get silBypassReasonHint =>
+      'Enter clinical or crisis emergency justification';
+
+  @override
+  String get silBypassDone => 'Consent bypassed & Roster of Care activated.';
+
+  @override
   String get silGenerateInvoiceTooltip => 'Generate invoice';
 
   @override

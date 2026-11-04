@@ -775,21 +775,36 @@ class RequestsAppBar extends StatelessWidget {
     return SliverAppBar(
       pinned: true,
       toolbarHeight: BauhausDesign.appBarCompactHeight,
-      backgroundColor: colorScheme.inverseSurface,
+      backgroundColor: BauhausDesign.primary,
+      foregroundColor: colorScheme.onPrimary,
       surfaceTintColor: Colors.transparent,
       scrolledUnderElevation: 0,
       elevation: 0,
-      // inverseSurface is near-black in both schemes, so the status bar icons
-      // stay light either way and the bar colour never needs to flip.
+      centerTitle: true,
       systemOverlayStyle: SystemUiOverlayStyle.light,
-      titleSpacing: BauhausDesign.space4,
+      shape: Border(
+        bottom: BorderSide(
+          color: colorScheme.onSurface,
+          width: 2,
+        ),
+      ),
+      leading: Navigator.canPop(context)
+          ? IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: colorScheme.onPrimary,
+                size: 24,
+              ),
+              onPressed: () => Navigator.of(context).pop(),
+            )
+          : null,
       title: Text(
         title,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-          fontWeight: FontWeight.bold,
-          color: colorScheme.onInverseSurface,
+          fontWeight: FontWeight.w800,
+          color: colorScheme.onPrimary,
         ),
       ),
       actions: [
@@ -811,13 +826,6 @@ class RequestsAppBar extends StatelessWidget {
           ),
         ),
       ],
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(1),
-        child: Container(
-          height: 1,
-          color: colorScheme.outline.withValues(alpha: 0.2),
-        ),
-      ),
     );
   }
 }

@@ -33,15 +33,26 @@ class ExpenseDetailView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
         title: Text(
           l10n.expensesDetailsTitle,
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
             color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
           ),
         ),
+        centerTitle: true,
         backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
         iconTheme: IconThemeData(
           color: Theme.of(context).colorScheme.onPrimary,
         ),

@@ -244,21 +244,28 @@ class _ScheduleDashboardScreenState
 
   PreferredSizeWidget _buildBauhausAppBar() {
     return AppBar(
-      backgroundColor: BauhausDesign.secondary,
-      foregroundColor: Theme.of(context).colorScheme.onSecondary,
+      backgroundColor: BauhausDesign.primary,
+      foregroundColor: Theme.of(context).colorScheme.onPrimary,
       systemOverlayStyle: SystemUiOverlayStyle.light,
       scrolledUnderElevation: 0,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
-      leading: BauhausIconButton(
+      centerTitle: true,
+      shape: Border(
+        bottom: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
+      ),
+      leading: IconButton(
         onPressed: () => Navigator.of(context).pop(),
-        icon: Icons.arrow_back,
-        variant: BauhausActionVariant.ghost,
+        icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
       ),
       title: Text(
         AppLocalizations.of(context)!.scheduleTitle,
         style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-          color: Theme.of(context).colorScheme.onSecondary,
+          color: Theme.of(context).colorScheme.onPrimary,
+          fontWeight: FontWeight.w800,
         ),
       ),
       actions: [
@@ -267,13 +274,6 @@ class _ScheduleDashboardScreenState
           child: _buildFilterDropdown(),
         ),
       ],
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(2),
-        child: Container(
-          color: Theme.of(context).colorScheme.outline,
-          height: 2,
-        ),
-      ),
     );
   }
 
@@ -670,6 +670,73 @@ class _ScheduleDashboardScreenState
                   ),
               ],
             ),
+            // Milestone 4.3: Irregular SIL / Crisis Shift visual badge
+            if (shift.isIrregularSil) ...[
+              const SizedBox(height: BauhausDesign.space2),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: BauhausDesign.space2,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.orange.shade50,
+                  border: Border.all(color: Colors.orange.shade700, width: 1.5),
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.warning_amber_rounded,
+                          size: 16,
+                          color: Colors.orange.shade900,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            'IRREGULAR SIL (CRISIS)${shift.irregularSilReason != null && shift.irregularSilReason!.isNotEmpty ? " • ${shift.irregularSilReason!.toUpperCase()}" : ""}',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.orange.shade900,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (shift.crisisJustificationNotes != null &&
+                        shift.crisisJustificationNotes!.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        'Justification: ${shift.crisisJustificationNotes}',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.orange.shade900,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                    if (shift.incidentReportReference != null &&
+                        shift.incidentReportReference!.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        'Incident Ref: ${shift.incidentReportReference}',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.orange.shade900,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
             if (widget.isAdmin &&
                 shift.status != ShiftStatus.completed &&
                 shift.status != ShiftStatus.cancelled) ...[
@@ -1230,6 +1297,11 @@ class _CreateShiftDialog extends ConsumerStatefulWidget {
 class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
   final _formKey = GlobalKey<FormState>();
   final _notesController = TextEditingController();
+  // Milestone 4.3: Irregular SIL / Crisis Shift controllers & state
+  bool _isIrregularSil = false;
+  String _irregularSilReason = 'crisis';
+  final _crisisJustificationController = TextEditingController();
+  final _incidentReportRefController = TextEditingController();
 
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _startTime = const TimeOfDay(hour: 9, minute: 0);
@@ -1328,6 +1400,8 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
   @override
   void dispose() {
     _notesController.dispose();
+    _crisisJustificationController.dispose();
+    _incidentReportRefController.dispose();
     super.dispose();
   }
 
@@ -1374,6 +1448,14 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
       'endTime': normalizedEndDateTime.toIso8601String(),
       'notes': _notesController.text.trim(),
       'status': _selectedEmployeeEmail != null ? 'approved' : 'pending',
+      // Milestone 4.3: Irregular SIL / Crisis Logging fields
+      if (_isIrregularSil) ...{
+        'isIrregularSil': true,
+        'irregularSilReason': _irregularSilReason,
+        'crisisJustificationNotes': _crisisJustificationController.text.trim(),
+        if (_incidentReportRefController.text.trim().isNotEmpty)
+          'incidentReportReference': _incidentReportRefController.text.trim(),
+      },
     };
 
     if (_selectedEmployeeEmail != null) {
@@ -1422,9 +1504,11 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
         ),
         child: Form(
           key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          // Wrap form content in SingleChildScrollView so keyboard & expanded irregular SIL fields scroll smoothly without overflow
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 AppLocalizations.of(context)!.createNewShift,
@@ -1652,6 +1736,104 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
                 hintText: AppLocalizations.of(context)!.additionalDetailsHint,
                 maxLines: 3,
               ),
+              // Milestone 4.3: Irregular SIL / Crisis Support Form Section
+              const SizedBox(height: BauhausDesign.space4),
+              Container(
+                decoration: BoxDecoration(
+                  color: _isIrregularSil
+                      ? Colors.orange.shade50
+                      : Theme.of(context).colorScheme.surface,
+                  border: Border.all(
+                    color: _isIrregularSil
+                        ? Colors.orange.shade700
+                        : Theme.of(context).dividerColor,
+                  ),
+                  borderRadius: BorderRadius.circular(BauhausDesign.space1),
+                ),
+                padding: const EdgeInsets.all(BauhausDesign.space3),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SwitchListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(
+                        'Irregular SIL / Crisis Support',
+                        style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: _isIrregularSil ? Colors.orange.shade900 : null,
+                            ),
+                      ),
+                      subtitle: const Text(
+                        'Flag as unplanned crisis/irregular SIL shift requiring NDIA PACE justification',
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      value: _isIrregularSil,
+                      onChanged: (val) => setState(() => _isIrregularSil = val),
+                    ),
+                    if (_isIrregularSil) ...[
+                      const SizedBox(height: BauhausDesign.space2),
+                      DropdownButtonFormField<String>(
+                        value: _irregularSilReason,
+                        decoration: const InputDecoration(
+                          labelText: 'Irregular SIL Reason',
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: 'crisis', child: Text('Crisis Event')),
+                          DropdownMenuItem(
+                            value: 'hospital_discharge',
+                            child: Text('Hospital Discharge'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'prn_behavioral',
+                            child: Text('PRN Behavioral Support'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'unplanned_absence_cover',
+                            child: Text('Unplanned Absence Cover'),
+                          ),
+                          DropdownMenuItem(value: 'other', child: Text('Other')),
+                        ],
+                        onChanged: (val) {
+                          if (val != null) {
+                            setState(() => _irregularSilReason = val);
+                          }
+                        },
+                      ),
+                      const SizedBox(height: BauhausDesign.space3),
+                      TextFormField(
+                        controller: _crisisJustificationController,
+                        decoration: const InputDecoration(
+                          labelText: 'PACE Crisis Justification *',
+                          hintText:
+                              'Enter clinical / crisis justification notes for NDIA audit',
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                        ),
+                        maxLines: 2,
+                        validator: (value) {
+                          if (_isIrregularSil &&
+                              (value == null || value.trim().isEmpty)) {
+                            return 'Crisis justification notes are required for irregular SIL';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: BauhausDesign.space3),
+                      TextFormField(
+                        controller: _incidentReportRefController,
+                        decoration: const InputDecoration(
+                          labelText: 'Incident Report Reference (Optional)',
+                          hintText: 'e.g. INC-2026-03-441',
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
               const SizedBox(height: BauhausDesign.space6),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -1676,6 +1858,7 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
               ),
             ],
           ),
+        ),
         ),
       ),
     );

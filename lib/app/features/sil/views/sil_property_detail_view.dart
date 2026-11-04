@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:carenest/app/features/client/models/client_model.dart';
@@ -8,6 +9,7 @@ import 'package:carenest/app/features/sil/repositories/sil_repository.dart';
 import 'package:carenest/app/routes/app_pages.dart';
 import 'package:carenest/app/core/providers/app_providers.dart'
     as app_providers;
+import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 
 /// Property detail: vacancy board + occupancy management (Phase 4).
 class SILPropertyDetailView extends ConsumerStatefulWidget {
@@ -77,7 +79,27 @@ class _SILPropertyDetailViewState extends ConsumerState<SILPropertyDetailView> {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.propertyName),
+        // Standardized: Bauhaus primary AppBar matching "All Invoices" reference design
+        title: Text(
+          widget.propertyName,
+          style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
         actions: [
           IconButton(
             tooltip: l10n.silPropertyRosterTooltip,

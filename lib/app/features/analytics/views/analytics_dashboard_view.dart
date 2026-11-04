@@ -28,20 +28,20 @@ class AnalyticsDashboardView extends ConsumerWidget {
         title: Text(
           'WORKFORCE ANALYTICS',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-            fontWeight: FontWeight.w700,
-            color: Theme.of(context).colorScheme.onSecondary,
+            fontWeight: FontWeight.w800,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
         centerTitle: true,
-        backgroundColor: BauhausDesign.success,
-        foregroundColor: Theme.of(context).colorScheme.onSecondary,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        scrolledUnderElevation: 0,
+        backgroundColor: BauhausDesign.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
         shape: Border(
           bottom: BorderSide(
-            color: Theme.of(context).colorScheme.outline,
+            color: Theme.of(context).colorScheme.onSurface,
             width: 2,
           ),
         ),

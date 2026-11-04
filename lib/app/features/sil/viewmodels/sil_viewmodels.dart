@@ -7,6 +7,9 @@ import 'package:carenest/app/features/sil/repositories/sil_repository.dart';
 /// strings are shown to support coordinators in snack bars, so drop the Dart
 /// noise and keep the message the API actually wrote.
 String silErrorMessage(Object error) {
+  if (error is SILConsentRequiredException) {
+    return error.message;
+  }
   final text = error.toString();
   return text.startsWith('Exception: ') ? text.substring(11) : text;
 }
@@ -269,10 +272,30 @@ class SILQuoteViewModel extends Notifier<SILQuoteState> {
     }
   }
 
-  Future<bool> accept(String id) async {
+  // Milestone 6.1: Digital E-Signature parameters for quote acceptance
+  Future<bool> accept(
+    String id, {
+    String? signedBy,
+    String? signatoryRole,
+    String? signatureData,
+    double? boardAndLodgingWeekly,
+  }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      await _repository.acceptQuote(id);
+      final payload = <String, dynamic>{};
+      if (signedBy != null && signedBy.trim().isNotEmpty) {
+        payload['signedBy'] = signedBy.trim();
+      }
+      if (signatoryRole != null && signatoryRole.trim().isNotEmpty) {
+        payload['signatoryRole'] = signatoryRole.trim();
+      }
+      if (signatureData != null && signatureData.trim().isNotEmpty) {
+        payload['signatureData'] = signatureData.trim();
+      }
+      if (boardAndLodgingWeekly != null) {
+        payload['boardAndLodgingWeekly'] = boardAndLodgingWeekly;
+      }
+      await _repository.acceptQuote(id, signatureData: payload.isNotEmpty ? payload : null);
       await load();
       return true;
     } catch (e) {
@@ -296,3 +319,128 @@ class SILQuoteViewModel extends Notifier<SILQuoteState> {
 
 final silQuoteViewModelProvider =
     NotifierProvider<SILQuoteViewModel, SILQuoteState>(SILQuoteViewModel.new);
+
+// ---------------------------------------------------------------------------
+// Rosters of Care & Consent Gate (Milestone 4.2)
+// ---------------------------------------------------------------------------
+
+class SILRosterOfCareState {
+  final bool isLoading;
+  final String? error;
+  final List<SILRosterOfCare> rosters;
+
+  SILRosterOfCareState({
+    this.isLoading = false,
+    this.error,
+    this.rosters = const [],
+  });
+
+  SILRosterOfCareState copyWith({
+    bool? isLoading,
+    String? error,
+    List<SILRosterOfCare>? rosters,
+  }) {
+    return SILRosterOfCareState(
+      isLoading: isLoading ?? this.isLoading,
+      error: error,
+      rosters: rosters ?? this.rosters,
+    );
+  }
+}
+
+class SILRosterOfCareViewModel extends Notifier<SILRosterOfCareState> {
+  SILRepository get _repository => ref.read(silRepositoryProvider);
+
+  @override
+  SILRosterOfCareState build() {
+    ref.watch(silRepositoryProvider);
+    return SILRosterOfCareState();
+  }
+
+  Future<void> load({String? clientId}) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final rosters = await _repository.getRostersOfCare(clientId: clientId);
+      state = state.copyWith(isLoading: false, rosters: rosters);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: silErrorMessage(e));
+    }
+  }
+
+  /// Activates a draft RoC. Subject to Milestone 4.2 Consent Gate requiring
+  /// an active signed Service Agreement or an auditable emergency consent bypass.
+  Future<SILRosterOfCare?> activate(
+    String id, {
+    bool bypassConsent = false,
+    String? bypassReason,
+  }) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final updated = await _repository.updateRosterOfCare(id, {
+        'status': 'active',
+        if (bypassConsent) 'bypassConsent': true,
+        if (bypassReason != null && bypassReason.isNotEmpty)
+          'bypassReason': bypassReason,
+      });
+      await load();
+      return updated;
+    } on SILConsentRequiredException {
+      state = state.copyWith(isLoading: false);
+      rethrow;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: silErrorMessage(e));
+      return null;
+    }
+  }
+
+  /// Bill one period of an active roster of care with idempotency token support.
+  Future<SILRosterOfCareInvoice?> generateInvoice(
+    String id, {
+    required String from,
+    required String to,
+    String? dueDate,
+    String? idempotencyKey,
+  }) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final invoice = await _repository.invoiceRosterOfCare(
+        id,
+        from: from,
+        to: to,
+        dueDate: dueDate,
+        idempotencyKey: idempotencyKey,
+      );
+      state = state.copyWith(isLoading: false);
+      return invoice;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: silErrorMessage(e));
+      return null;
+    }
+  }
+
+  /// Milestone 7.3: Dispatch a SIL invoice PDF to plan manager or participant.
+  Future<Map<String, dynamic>?> dispatchInvoice(
+    String id, {
+    String? dispatchMethod,
+    String? recipientEmail,
+  }) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final result = await _repository.dispatchInvoice(
+        id,
+        dispatchMethod: dispatchMethod,
+        recipientEmail: recipientEmail,
+      );
+      state = state.copyWith(isLoading: false);
+      return result;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: silErrorMessage(e));
+      return null;
+    }
+  }
+}
+
+final silRosterOfCareViewModelProvider =
+    NotifierProvider<SILRosterOfCareViewModel, SILRosterOfCareState>(
+      SILRosterOfCareViewModel.new,
+    );

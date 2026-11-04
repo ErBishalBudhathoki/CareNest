@@ -17,6 +17,7 @@ import 'package:carenest/app/shared/constants/bauhaus_design.dart';
 import 'package:carenest/app/shared/widgets/bauhaus_widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Real-Time Client Portal dashboard connected to live backend data.
@@ -343,52 +344,35 @@ class _RealtimePortalDashboardState
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
-    final textTheme = BauhausDesign.getTextTheme(context);
-
     return AppBar(
-      backgroundColor: BauhausDesign.accent,
-      elevation: 0,
-      titleSpacing: 0,
       title: Text(
         'REALTIME PORTAL',
-        style: textTheme.titleLarge?.copyWith(
-          color: Theme.of(context).colorScheme.onSurface,
-          fontWeight: FontWeight.w700,
+        style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+          color: Theme.of(context).colorScheme.onPrimary,
+          fontWeight: FontWeight.w800,
           letterSpacing: 0.8,
+        ),
+      ),
+      centerTitle: true,
+      backgroundColor: BauhausDesign.primary,
+      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      elevation: 0,
+      shape: Border(
+        bottom: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
         ),
       ),
       leading: IconButton(
         icon: Icon(
           Icons.arrow_back,
-          color: Theme.of(context).colorScheme.onSurface,
+          color: Theme.of(context).colorScheme.onPrimary,
+          size: 24,
         ),
         onPressed: () => Navigator.pop(context),
-      ),
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(8),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: Container(height: 8, color: BauhausDesign.primary),
-            ),
-            Expanded(
-              flex: 3,
-              child: Container(
-                height: 8,
-                color: Theme.of(context).colorScheme.surface,
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: Container(height: 8, color: BauhausDesign.secondary),
-            ),
-            Expanded(
-              flex: 2,
-              child: Container(height: 8, color: BauhausDesign.success),
-            ),
-          ],
-        ),
       ),
     );
   }

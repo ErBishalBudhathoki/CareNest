@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -118,43 +119,30 @@ class TimesheetHistoryView extends ConsumerWidget {
   }
 
   PreferredSizeWidget _buildBauhausAppBar(BuildContext context) {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(kToolbarHeight),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          border: Border(
-            bottom: BorderSide(
-              color: Theme.of(context).colorScheme.outline,
-              width: 2,
-            ),
-          ),
+    return AppBar(
+      title: Text(
+        AppLocalizations.of(context)!.historyTitle,
+        style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+          color: Theme.of(context).colorScheme.onPrimary,
+          fontWeight: FontWeight.w800,
         ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: BauhausDesign.space4,
-            ),
-            child: Row(
-              children: [
-                BauhausIconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: Icons.arrow_back,
-                  variant: BauhausActionVariant.ghost,
-                ),
-                const SizedBox(width: BauhausDesign.space2),
-                Text(
-                  AppLocalizations.of(context)!.historyTitle,
-                  style: BauhausDesign.getTextTheme(context).displaySmall
-                      ?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                ),
-                const Spacer(),
-              ],
-            ),
-          ),
+      ),
+      centerTitle: true,
+      backgroundColor: BauhausDesign.primary,
+      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      elevation: 0,
+      shape: Border(
+        bottom: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
         ),
+      ),
+      leading: IconButton(
+        onPressed: () => Navigator.of(context).pop(),
+        icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
       ),
     );
   }

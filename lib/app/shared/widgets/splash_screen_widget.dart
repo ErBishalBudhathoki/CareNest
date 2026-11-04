@@ -144,12 +144,20 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: SizedBox(
-        width: double.infinity,
-        height: double.infinity,
-        child: Image.asset(
-          'assets/images/splash_screen.webp',
-          fit: BoxFit.cover,
+      body: GestureDetector(
+        // Tap fail-safe to immediately navigate to login if splash is tapped or stuck
+        onTap: () {
+          if (ModalRoute.of(context)?.isCurrent == true) {
+            Navigator.of(context).pushReplacementNamed('/login');
+          }
+        },
+        child: SizedBox(
+          width: double.infinity,
+          height: double.infinity,
+          child: Image.asset(
+            'assets/images/splash_screen.webp',
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );

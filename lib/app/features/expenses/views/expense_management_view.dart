@@ -189,22 +189,22 @@ class _ExpenseManagementViewState extends ConsumerState<ExpenseManagementView>
       floating: false,
       pinned: true,
       toolbarHeight: 64,
-      centerTitle: false,
-      titleSpacing: 12,
-      backgroundColor: BauhausDesign.secondary,
-      foregroundColor: Theme.of(context).colorScheme.onSecondary,
+      centerTitle: true,
+      backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
+      foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
       elevation: 0,
       scrolledUnderElevation: 0,
+      surfaceTintColor: Colors.transparent,
       systemOverlayStyle: SystemUiOverlayStyle.light,
-      shape: const Border(
-        bottom: BorderSide(color: BauhausDesign.accent, width: 3),
+      shape: Border(
+        bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2),
       ),
       title: Text(
         l10n.expensesTitle,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: BauhausDesign.getTextTheme(context).headlineMedium?.copyWith(
-          color: Theme.of(context).colorScheme.onSecondary,
+          color: Theme.of(context).colorScheme.onPrimary, // Standardized
           fontWeight: FontWeight.w800,
           fontSize: 22,
         ),

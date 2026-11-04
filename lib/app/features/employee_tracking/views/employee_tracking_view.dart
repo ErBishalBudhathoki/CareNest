@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/foundation.dart'
@@ -131,17 +132,24 @@ class _EmployeeTrackingViewState extends ConsumerState<EmployeeTrackingView>
   PreferredSizeWidget _buildAppBar() {
     final colorScheme = Theme.of(context).colorScheme;
     return AppBar(
-      elevation: 0,
-      flexibleSpace: Container(
-        decoration: const BoxDecoration(color: BauhausDesign.primary),
-      ),
-      backgroundColor: Colors.transparent,
-      foregroundColor: colorScheme.onPrimary,
       title: Text(
         'Employee Insights',
         style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
           color: colorScheme.onPrimary,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+      centerTitle: true,
+      backgroundColor: BauhausDesign.primary,
+      foregroundColor: colorScheme.onPrimary,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      elevation: 0,
+      shape: Border(
+        bottom: BorderSide(
+          color: colorScheme.onSurface,
+          width: 2,
         ),
       ),
       actions: [
